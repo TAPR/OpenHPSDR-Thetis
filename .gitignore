@@ -1,0 +1,6 @@
+bin
+build/x86/Release
+Source/Console/obj
+Source/Midi2Cat/obj
+Source/Midi2Cat/bin
+lib/WinFormsUI/obj

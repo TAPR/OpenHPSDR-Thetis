@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{66ADE184-31BA-4F5B-8007-F39EF1B90F95}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Midi2Cat</RootNamespace>
+    <AssemblyName>Midi2Cat</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helpers\ControlHelpers.cs" />
+    <Compile Include="Midi2Cat.Data\CatCmdDb.cs" />
+    <Compile Include="Midi2Cat.Data\CatCommandAttribute.cs" />
+    <Compile Include="Midi2Cat.Data\ControllerBinding.cs" />
+    <Compile Include="Midi2Cat.Data\ControllerMapping.cs" />
+    <Compile Include="Midi2Cat.Data\Database.cs" />
+    <Compile Include="Midi2Cat.Data\Enums.cs" />
+    <Compile Include="Midi2Cat.Data\EnumsDB.cs" />
+    <Compile Include="Midi2Cat.Data\MappedCommands.cs" />
+    <Compile Include="Midi2Cat.Data\MidiDiag.cs" />
+    <Compile Include="Midi2Cat.IO\LoadDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\LoadDialog.Designer.cs">
+      <DependentUpon>LoadDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\MidiDevice.cs" />
+    <Compile Include="Midi2Cat.IO\MidiDevices.cs" />
+    <Compile Include="Midi2Cat.IO\MidiDeviceSetup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\MidiDeviceSetup.designer.cs">
+      <DependentUpon>MidiDeviceSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\OrganiseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\OrganiseDialog.Designer.cs">
+      <DependentUpon>OrganiseDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\PickDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\PickDialog.Designer.cs">
+      <DependentUpon>PickDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\SaveAsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\SaveAsDialog.Designer.cs">
+      <DependentUpon>SaveAsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Midi2Cat.IO\WinMM.cs" />
+    <Compile Include="Midi2CatSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Midi2CatSetupForm.Designer.cs">
+      <DependentUpon>Midi2CatSetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MidiMessageManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Midi2Cat.IO\LoadDialog.resx">
+      <DependentUpon>LoadDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Midi2Cat.IO\MidiDeviceSetup.resx">
+      <DependentUpon>MidiDeviceSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Midi2Cat.IO\OrganiseDialog.resx">
+      <DependentUpon>OrganiseDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Midi2Cat.IO\PickDialog.resx">
+      <DependentUpon>PickDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Midi2Cat.IO\SaveAsDialog.resx">
+      <DependentUpon>SaveAsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Midi2CatSetupForm.resx">
+      <DependentUpon>Midi2CatSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

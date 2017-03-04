@@ -1,0 +1,25 @@
+﻿Build started 11/7/2013 6:27:22 AM.
+     1>Project "E:\Documents\Ham Radio\1 HPSDR\1 WDSP\2013-10-20 PowerSDR_HPSDR_mRX\lib\fftw_wisdom\fftw_wisdom.vcxproj" on node 2 (rebuild target(s)).
+     1>InitializeBuildStatus:
+         Creating "./temp/Release\fftw_wisdom.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\FFTW\fftw /I..\FFTW /I. /Zi /nologo /W3 /WX- /O2 /Ob2 /Ot /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0710 /D _MBCS /Gm- /EHsc /MT /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"./temp/Release\\" /Fd"./temp/Release\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt main.c
+         main.c
+     1>main.c(30): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>main.c(31): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>main.c(34): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(234) : see declaration of 'fopen'
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(990,5): warning MSB8012: TargetPath(E:\Documents\Ham Radio\1 HPSDR\1 WDSP\2013-10-20 PowerSDR_HPSDR_mRX\lib\fftw_wisdom\./temp/Release\fftw_wisdom.exe) does not match the Linker's OutputFile property value (E:\Documents\Ham Radio\1 HPSDR\1 WDSP\2013-10-20 PowerSDR_HPSDR_mRX\bin\Release\fftw_wisdom.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"../../bin/Release/fftw_wisdom.exe" /INCREMENTAL:NO /NOLOGO "../FFTW/libfftw3f-3.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"./temp/Release\fftw_wisdom.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /PDB:"./bin/fftw_wisdom.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"./temp/Release\fftw_wisdom.lib" /MACHINE:X86 ./temp/Release\main.obj
+         fftw_wisdom.vcxproj -> E:\Documents\Ham Radio\1 HPSDR\1 WDSP\2013-10-20 PowerSDR_HPSDR_mRX\lib\fftw_wisdom\./temp/Release\fftw_wisdom.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"../../bin/Release/fftw_wisdom.exe;#1" /manifest ./temp/Release\fftw_wisdom.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "./temp/Release\fftw_wisdom.unsuccessfulbuild".
+         Touching "./temp/Release\fftw_wisdom.lastbuildstate".
+     1>Done Building Project "E:\Documents\Ham Radio\1 HPSDR\1 WDSP\2013-10-20 PowerSDR_HPSDR_mRX\lib\fftw_wisdom\fftw_wisdom.vcxproj" (rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.25

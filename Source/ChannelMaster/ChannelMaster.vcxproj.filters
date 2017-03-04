@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aamix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="amix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmaster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmbuffs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmcomm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsetup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ivac.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pipe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sync.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="znob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="znobII.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ilv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="router.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="txgain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nanotimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="network.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="obbuffs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aamix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="amix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmaster.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmbuffs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmsetup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ivac.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pipe.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sync.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vox.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="znob.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="znobII.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zeer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmUtilities.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ilv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="router.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="txgain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nanotime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netInterface.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="network.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="obbuffs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
