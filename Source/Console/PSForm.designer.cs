@@ -127,8 +127,6 @@
             // chkPSStbl
             // 
             this.chkPSStbl.AutoSize = true;
-            this.chkPSStbl.Checked = true;
-            this.chkPSStbl.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPSStbl.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSStbl.Image = null;
             this.chkPSStbl.Location = new System.Drawing.Point(434, 108);

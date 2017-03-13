@@ -379,10 +379,10 @@ void create_txa (int channel)
 		0.0,										// loop delay
 		0.8,										// ptol
 		0,											// mox
-		1,											// solidmox
+		0,											// solidmox
 		1,											// pin mode
 		1,											// map mode
-		1,											// stbl mode
+		0,											// stbl mode
 		256,										// pin samples
 		0.9);										// alpha
 

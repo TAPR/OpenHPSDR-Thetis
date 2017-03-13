@@ -842,7 +842,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 	if (a->runcal)
 	{
 		a->size = size;
-		if (a->mox && a->txdelay->tdelay != 0.0)
+		if (InterlockedAnd (&a->mox, 1) && a->txdelay->tdelay != 0.0)
 		{
 			SetDelayBuffs (a->rxdelay, a->size, rx, rx);
 			xdelay (a->rxdelay);
@@ -875,8 +875,11 @@ void pscc (int channel, int size, double* tx, double* rx)
 					a->ctrl.state = LRESET;
 				else if (a->ctrl.turnon)
 					a->ctrl.state = LTURNON;
-				else if (a->mox)
+				else if (InterlockedAnd (&a->mox, 1))
+				{
 					a->ctrl.state = LMOXDELAY;
+					InterlockedBitTestAndSet (&a->solidmox, 0);
+				}
 				break;
 			case LMOXDELAY:
 				InterlockedExchange (&a->ctrl.current_state, LMOXDELAY);
@@ -885,7 +888,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 					a->ctrl.state = LRESET;
 				else if (a->ctrl.turnon)
 					a->ctrl.state = LTURNON;
-				else if (!a->mox || !a->solidmox)
+				else if (!InterlockedAnd (&a->mox, 1) || !InterlockedAnd (&a->solidmox, 1))
 					a->ctrl.state = LWAIT;
 				else if ((a->ctrl.moxcount - a->size) >= a->ctrl.moxsamps)
 					a->ctrl.state = LSETUP;
@@ -905,7 +908,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 					a->ctrl.state = LRESET;
 				else if (a->ctrl.turnon)
 					a->ctrl.state = LTURNON;
-				else if (a->mox && a->solidmox)
+				else if (InterlockedAnd (&a->mox, 1) && InterlockedAnd (&a->solidmox, 1))
 				{
 					a->ctrl.state = LCOLLECT;
 					SetTXAiqcDogCount (channel, a->info[13] = 0);
@@ -956,7 +959,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 					a->ctrl.state = LRESET;
 				else if (a->ctrl.turnon)
 					a->ctrl.state = LTURNON;
-				else if (!a->mox || !a->solidmox)
+				else if (!InterlockedAnd (&a->mox, 1) || !InterlockedAnd (&a->solidmox, 1))
 					a->ctrl.state = LWAIT;
 				else if (a->ctrl.full_ints == a->ints)
 					a->ctrl.state = MOXCHECK;
@@ -979,7 +982,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 					a->ctrl.state = LRESET;
 				else if (a->ctrl.turnon)
 					a->ctrl.state = LTURNON;
-				else if (!a->mox || !a->solidmox)
+				else if (!InterlockedAnd (&a->mox, 1) || !InterlockedAnd (&a->solidmox, 1))
 					a->ctrl.state = LWAIT;
 				else
 					a->ctrl.state = LCALC;
@@ -1008,7 +1011,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 					}
 					else if (++(a->ctrl.bs_count) >= 2)
 						a->ctrl.state = LRESET;
-					else if (a->mox && a->solidmox) 
+					else if (InterlockedAnd (&a->mox, 1) && InterlockedAnd (&a->solidmox, 1)) 
 						a->ctrl.state = LSETUP;
 					else a->ctrl.state = LWAIT;
 				}
@@ -1024,7 +1027,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 				{
 					if (a->ctrl.automode)
 					{
-						if (a->mox && a->solidmox)
+						if (InterlockedAnd (&a->mox, 1) && InterlockedAnd (&a->solidmox, 1))
 							a->ctrl.state = LSETUP;
 						else
 							a->ctrl.state = LWAIT;
@@ -1057,8 +1060,8 @@ void psccF (int channel, int size, float *Itxbuff, float *Qtxbuff, float *Irxbuf
 	CALCC a;
 	EnterCriticalSection (&txa[channel].calcc.cs_update);
 	a = txa[channel].calcc.p;
-	a->mox = mox;
-	a->solidmox = solidmox;
+	// a->mox = mox;
+	// a->solidmox = solidmox;
 	LeaveCriticalSection (&txa[channel].calcc.cs_update);
 	for (i = 0; i < size; i++)
 	{
@@ -1114,21 +1117,14 @@ void SetPSRunCal (int channel, int run)
 PORT
 void SetPSMox (int channel, int mox)
 {
-	CALCC a;
-	EnterCriticalSection (&txa[channel].calcc.cs_update);
-	a = txa[channel].calcc.p;
-	a->mox = mox;
-	LeaveCriticalSection (&txa[channel].calcc.cs_update);
-}
-
-PORT
-void SetPSSolidmox (int channel, int solidmox)
-{
-	CALCC a;
-	EnterCriticalSection (&txa[channel].calcc.cs_update);
-	a = txa[channel].calcc.p;
-	a->solidmox = solidmox;
-	LeaveCriticalSection (&txa[channel].calcc.cs_update);
+	CALCC a = txa[channel].calcc.p;;
+	if (mox)
+		InterlockedBitTestAndSet (&a->mox, 0);
+	else
+	{
+		InterlockedBitTestAndReset (&a->mox, 0);
+		InterlockedBitTestAndReset (&a->solidmox, 0);
+	}
 }
 
 PORT 

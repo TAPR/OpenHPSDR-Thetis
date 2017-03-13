@@ -32,8 +32,8 @@ typedef struct _calcc
 	int channel;
 	int runcal;
 	int size;
-	int mox;
-	int solidmox;
+	volatile long mox;
+	volatile long solidmox;
 	int rate;
 	int ints;
 	int spi;
