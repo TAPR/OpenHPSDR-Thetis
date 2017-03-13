@@ -154,6 +154,7 @@ namespace Thetis
             set
             {
                 mox = value;
+                puresignal.SetPSMox(txachannel, value);
             }
         }
 
@@ -641,9 +642,6 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "SetPSMox", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSMox(int channel, bool mox);
-
-        [DllImport("wdsp.dll", EntryPoint = "SetPSSolidmox", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetPSSolidmox(int channel, bool solidmox);
 
         [DllImport("wdsp.dll", EntryPoint = "GetPSInfo", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetPSInfo(int channel, int* info);

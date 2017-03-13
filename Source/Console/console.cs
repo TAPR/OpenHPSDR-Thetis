@@ -28355,7 +28355,7 @@ namespace Thetis
             else                        // change to RX mode
             {
                 mox = tx;
-
+                psform.Mox = tx;
                 wdsp.SetChannelState(wdsp.id(1, 0), 0, 1);  // turn off the transmitter (no action if it's already off)
 
                 if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
@@ -28372,7 +28372,6 @@ namespace Thetis
                 UpdateRXADCCtrl();
                 AudioMOXChanged(tx);    // set audio.cs to RX
                 HdwMOXChanged(tx, freq);// flip the hardware
-                psform.Mox = tx;
                 cmaster.Mox = tx;       // loads router bit, among other things
                 if (ANAN10EPresent) if (mox_delay > 0) Thread.Sleep(mox_delay);
 
