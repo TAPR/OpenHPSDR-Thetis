@@ -217,7 +217,6 @@ namespace Thetis
                     Scope.dscope[0].Condx = 0;
                 }
                 cmaster.CMSetEERRun(0);
-                cmaster.CMSetPSMox(wdsp.id(1, 0));
             }
         }
 
@@ -559,11 +558,6 @@ namespace Thetis
             bool run = Audio.console.radio.GetDSPTX(0).TXEERModeRun && Audio.MOX;
            //  wdsp.SetEERSize(id, Audio.OutCount);
             wdsp.SetEERRun(id, run);
-        }
-
-        public static void CMSetPSMox(int channel)
-        {
-            puresignal.SetPSMox(channel, mox);
         }
 
         public static void CMSetTXAVoxRun(int id)
