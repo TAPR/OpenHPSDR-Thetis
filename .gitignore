@@ -1,6 +1,6 @@
-bin
-build/x86/Release
-Source/Console/obj
-Source/Midi2Cat/obj
-Source/Midi2Cat/bin
-lib/WinFormsUI/obj
+Project Files/bin
+Project Files/build
+Project Files/Source/Console/obj
+Project Files/Source/Midi2Cat/obj
+Project Files/Source/Midi2Cat/bin
+Project Files/lib/WinFormsUI/obj
