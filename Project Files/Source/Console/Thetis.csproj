@@ -1,0 +1,707 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{831AEB2F-CA78-4057-85D7-32B4816ED6AE}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>hpsdr5-64.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Thetis</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Thetis</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>Thetis.Console</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ManifestCertificateThumbprint>AEF2072BFD4E1723668C4A72938E707A73AAFB8B</ManifestCertificateThumbprint>
+    <ManifestKeyFile>PowerSDR_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>false</GenerateManifests>
+    <SignManifests>false</SignManifests>
+    <TargetZone>LocalIntranet</TargetZone>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>C:\Documents and Settings\w5wc\Desktop\PowerSDR 1.19.3\publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;NEW_KEYER</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NEW_KEYER</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>..\..\bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|AnyCPU'">
+    <OutputPath>bin\Interleaved\</OutputPath>
+    <DefineConstants>TRACE;</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|x86'">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE;INTERLEAVED</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NEW_KEYER</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>..\..\bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|x64'">
+    <OutputPath>bin\x64\Interleaved\</OutputPath>
+    <DefineConstants>TRACE;INTERLEAVED</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ADODB">
+      <Name>adodb</Name>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Microsoft.NET\Primary Interop Assemblies\adodb.dll</HintPath>
+      <AssemblyFolderKey>hklm\primary interop assemblies</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="NAudio">
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Lame">
+      <HintPath>..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AmpView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AmpView.Designer.cs">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Channel.cs" />
+    <Compile Include="cmaster.cs" />
+    <Compile Include="KE9N\conrec.cs" />
+    <Compile Include="console.Designer.cs">
+      <DependentUpon>console.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CW\CWInput.cs" />
+    <Compile Include="GlobalMouseHandler.cs" />
+    <Compile Include="HPSDR\Alex.cs" />
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="audio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\CATCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\CATParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\CATTester.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CAT\SDRSerialPortII.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\SerialPortPTT.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\SerialRxEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CAT\SIOListenerII.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ColorButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="common.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="console.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="cwedit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="cwx.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="database.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="deltacp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="display.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DiversityForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dsp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="eqform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="filter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FilterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="hiperftimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HPSDR\NetworkIOImports.cs" />
+    <Compile Include="HPSDR\specHPSDR.cs" />
+    <Compile Include="InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="invoke.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Invoke\buttonts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\checkboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\comboboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\groupboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\invoke.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Invoke\labelts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\numericupdownts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\panelts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\radiobuttonts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\textboxts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Invoke\trackbarts.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HPSDR\NetworkIO.cs" />
+    <Compile Include="ivac.cs" />
+    <Compile Include="KE9N\Http.cs" />
+    <Compile Include="KE9N\HttpServer\GetTRXParamHandler.cs" />
+    <Compile Include="KE9N\HttpServer\HandlerFactory.cs" />
+    <Compile Include="KE9N\HttpServer\HttpServer.cs" />
+    <Compile Include="KE9N\HttpServer\IHandler.cs" />
+    <Compile Include="KE9N\HttpServer\ImageRequestHandler.cs" />
+    <Compile Include="KE9N\HttpServer\SetParamRequestHandler.cs" />
+    <Compile Include="KE9N\HttpServer\UnknownRequestHandler.cs" />
+    <Compile Include="KE9N\HttpServer\WebPageRequestHandler.cs" />
+    <Compile Include="KE9N\scan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KE9N\stack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KE9N\swl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="keyboard.cs" />
+    <Compile Include="Memory\DXMemList.cs" />
+    <Compile Include="Memory\DXMemRecord.cs" />
+    <Compile Include="Memory\MemoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Memory\MemoryForm.designer.cs">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Memory\MemoryList.cs" />
+    <Compile Include="Memory\MemoryRecord.cs" />
+    <Compile Include="Midi2CatCommands.cs" />
+    <Compile Include="notch.cs" />
+    <Compile Include="notchlist.cs" />
+    <Compile Include="HPSDR\Penny.cs" />
+    <Compile Include="PanDisplay.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Path_Illustrator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Path_Illustrator.Designer.cs">
+      <DependentUpon>Path_Illustrator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="portaudio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrettyTrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="process_sample_thread_controller.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="progress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PSForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PSForm.designer.cs">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="radio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RAForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RAForm.designer.cs">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ringbuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="rxa.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="rxa.Designer.cs">
+      <DependentUpon>rxa.cs</DependentUpon>
+    </Compile>
+    <Compile Include="rxaControls.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="rxaControls.Designer.cs">
+      <DependentUpon>rxaControls.cs</DependentUpon>
+    </Compile>
+    <Compile Include="setup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setup.designer.cs">
+      <DependentUpon>setup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Skin.cs" />
+    <Compile Include="SortableBindingList.cs" />
+    <Compile Include="splash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KE9N\spot.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KE9N\spot_options.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThreadedBindingList.cs" />
+    <Compile Include="titlebar.cs" />
+    <Compile Include="TuneStep.cs" />
+    <Compile Include="wave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="wave_options.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="wbDisplay.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="wideband.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="wideband.Designer.cs">
+      <DependentUpon>wideband.cs</DependentUpon>
+    </Compile>
+    <Compile Include="win32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="xvtr.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <EmbeddedResource Include="KE9N\scan.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>scan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\picD1orig.png" />
+    <Content Include="Resources\picD2.png" />
+    <EmbeddedResource Include="Resources\star.png" />
+    <EmbeddedResource Include="KE9N\HttpServer\template.html" />
+    <EmbeddedResource Include="KE9N\stack.resx">
+      <DependentUpon>stack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KE9N\swl.resx">
+      <DependentUpon>swl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\met3.jpg" />
+    <EmbeddedResource Include="Resources\picD1.png" />
+    <EmbeddedResource Include="Resources\s-meter-collins3.png" />
+    <EmbeddedResource Include="Resources\sun.png" />
+    <EmbeddedResource Include="Resources\digital7.ttf" />
+    <None Include="Resources\grabbing.cur" />
+    <None Include="Resources\grab.cur" />
+    <EmbeddedResource Include="AmpView.resx">
+      <DependentUpon>AmpView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CAT\CATTester.resx">
+      <DependentUpon>CATTester.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorButton.resx">
+      <DependentUpon>ColorButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="console.resx">
+      <DependentUpon>console.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwedit.resx">
+      <DependentUpon>cwedit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="cwx.resx">
+      <DependentUpon>cwx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiversityForm.resx">
+      <DependentUpon>DiversityForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="eqform.resx">
+      <DependentUpon>eqform.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterForm.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\clock.jpg" />
+    <EmbeddedResource Include="images\demi144-28frs.jpg" />
+    <EmbeddedResource Include="images\flex-5000.jpg" />
+    <EmbeddedResource Include="images\no_hardware.jpg" />
+    <EmbeddedResource Include="images\sdr-1000.jpg" />
+    <EmbeddedResource Include="images\sdr-atu.jpg" />
+    <EmbeddedResource Include="images\sdr-pa100.jpg" />
+    <EmbeddedResource Include="images\sdr-rfe.jpg" />
+    <EmbeddedResource Include="images\sdr-usb.jpg" />
+    <EmbeddedResource Include="images\softrock40.jpg" />
+    <EmbeddedResource Include="images\soundcard.jpg" />
+    <EmbeddedResource Include="images\splash.jpg" />
+    <EmbeddedResource Include="InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Memory\MemoryForm.resx">
+      <DependentUpon>MemoryForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Path_Illustrator.resx">
+      <DependentUpon>Path_Illustrator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="progress.resx">
+      <DependentUpon>progress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSForm.resx">
+      <DependentUpon>PSForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RAForm.resx">
+      <DependentUpon>RAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="rxa.resx">
+      <DependentUpon>rxa.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="rxaControls.resx">
+      <DependentUpon>rxaControls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setup.resx">
+      <DependentUpon>setup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="splash.resx">
+      <DependentUpon>splash.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KE9N\spot.resx">
+      <DependentUpon>spot.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KE9N\spot_options.resx">
+      <DependentUpon>spot_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave.resx">
+      <DependentUpon>wave.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wave_options.resx">
+      <DependentUpon>wave_options.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wideband.resx">
+      <DependentUpon>wideband.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wizard.resx">
+      <DependentUpon>wizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xvtr.resx">
+      <DependentUpon>xvtr.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="CAT\CATStructs.xml" />
+    <EmbeddedResource Include="images\flex-3000.jpg" />
+    <Content Include="hpsdr5-64.ico" />
+    <Content Include="images\hpsdr.jpg" />
+    <Content Include="images\hpsdr5.png" />
+    <Content Include="images\openhpsdr4_splash.png" />
+    <Content Include="images\openhpsdr_splash.png" />
+    <Content Include="images\PowerSDR.ico" />
+    <EmbeddedResource Include="Resources\swiss.ttf" />
+    <EmbeddedResource Include="Resources\swissb.ttf" />
+    <EmbeddedResource Include="Resources\swissbi.ttf" />
+    <EmbeddedResource Include="Resources\swissbo.ttf" />
+    <EmbeddedResource Include="Resources\swissc.ttf" />
+    <EmbeddedResource Include="Resources\swisscb.ttf" />
+    <EmbeddedResource Include="Resources\swisscbi.ttf" />
+    <EmbeddedResource Include="Resources\swisscbo.ttf" />
+    <EmbeddedResource Include="Resources\swissci.ttf" />
+    <EmbeddedResource Include="Resources\swissck.ttf" />
+    <EmbeddedResource Include="Resources\swisscki.ttf" />
+    <EmbeddedResource Include="Resources\swisscl.ttf" />
+    <EmbeddedResource Include="Resources\swisscli.ttf" />
+    <EmbeddedResource Include="Resources\swisse.ttf" />
+    <EmbeddedResource Include="Resources\swisseb.ttf" />
+    <EmbeddedResource Include="Resources\swissek.ttf" />
+    <EmbeddedResource Include="Resources\swissel.ttf" />
+    <EmbeddedResource Include="Resources\swissi.ttf" />
+    <EmbeddedResource Include="Resources\swissk.ttf" />
+    <EmbeddedResource Include="Resources\swisski.ttf" />
+    <EmbeddedResource Include="Resources\swissko.ttf" />
+    <EmbeddedResource Include="Resources\swissl.ttf" />
+    <EmbeddedResource Include="Resources\swissli.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="PowerSDR_TemporaryKey.pfx" />
+    <None Include="Properties\app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\WinFormsUI\WinFormsUI.csproj">
+      <Project>{c75532c4-765b-418e-b09b-46d36b2abdb1}</Project>
+      <Name>WinFormsUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Midi2Cat\Midi2Cat.csproj">
+      <Project>{66ade184-31ba-4f5b-8007-f39ef1b90f95}</Project>
+      <Name>Midi2Cat</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>copy /Y "$(ProjectDir)CAT\CATStructs.xml" "$(ProjectDir)$(OutDir)";
+copy /Y "$(SolutionDir)\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDir)$(OutDir)";
+copy /Y "$(SolutionDir)\..\lib\fftw_$(PlatformName)\libfftw3f-3.dll" "$(ProjectDir)$(OutDir)";
+copy /Y "$(SolutionDir)\..\lib\wdsp_resources\calculus" "$(ProjectDir)$(OutDir)";
+copy /Y "$(SolutionDir)\..\lib\wdsp_resources\PureSignal.pdf" "$(ProjectDir)$(OutDir)";
+copy /Y "$(SolutionDir)\..\lib\wdsp_resources\Midi2Cat_Instructions_V3.pdf" "$(ProjectDir)$(OutDir)";</PostBuildEvent>
+  </PropertyGroup>
+</Project>
