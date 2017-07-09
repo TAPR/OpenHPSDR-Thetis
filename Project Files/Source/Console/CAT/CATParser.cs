@@ -587,6 +587,12 @@ namespace Thetis
 
 			switch(extended)
 			{
+                case "ZZAA":
+                    rtncmd = cmdlist.ZZAA(suffix);
+                    break;
+                case "ZZAB":
+                    rtncmd = cmdlist.ZZAB(suffix);
+                    break;
                 case "ZZAC":
                     rtncmd = cmdlist.ZZAC(suffix);
                     break;
@@ -599,11 +605,17 @@ namespace Thetis
 				case "ZZAI":
 					rtncmd = cmdlist.ZZAI(suffix);
 					break;
+                case "ZZAP":
+                    rtncmd = cmdlist.ZZAP(suffix);
+                    break;
 				case "ZZAR":
 					rtncmd = cmdlist.ZZAR(suffix);
 					break;
                 case "ZZAS":
                     rtncmd = cmdlist.ZZAS(suffix);
+                    break;
+                case "ZZAT":
+                    rtncmd = cmdlist.ZZAT(suffix);
                     break;
                 case "ZZAU":
                     rtncmd = cmdlist.ZZAU(suffix);
@@ -854,6 +866,9 @@ namespace Thetis
                 case "ZZLH":
                     rtncmd = cmdlist.ZZLH(suffix);
                     break;
+                case "ZZLI":
+                    rtncmd = cmdlist.ZZLI(suffix);
+                    break;
 				case "ZZMA":
 					rtncmd = cmdlist.ZZMA(suffix);
 					break;
@@ -932,6 +947,9 @@ namespace Thetis
                 case "ZZNR":
 					rtncmd = cmdlist.ZZNR(suffix);
 					break;
+                case "ZZNS":
+                    rtncmd = cmdlist.ZZNS(suffix);
+                    break;
 				case "ZZNT":
 					rtncmd = cmdlist.ZZNT(suffix);
 					break;

@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2011, 2012, 2013 Warren Pratt, NR0V
+Copyright (C) 2011 - 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -592,6 +592,15 @@ SetTXAALCHang (int channel, int hang)
 {
 	EnterCriticalSection (&ch[channel].csDSP);
 	txa[channel].alc.p->hangtime = (double)hang / 1000.0;
+	loadWcpAGC(txa[channel].alc.p);
+	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT void
+SetTXAALCMaxGain (int channel, double maxgain)
+{
+	EnterCriticalSection (&ch[channel].csDSP);
+	txa[channel].alc.p->max_gain = pow (10.0,(double)maxgain / 20.0);
 	loadWcpAGC(txa[channel].alc.p);
 	LeaveCriticalSection (&ch[channel].csDSP);
 }

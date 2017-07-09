@@ -18,6 +18,7 @@
             System.Windows.Forms.NumericUpDownTS numericUpDownTS10;
             System.Windows.Forms.NumericUpDownTS numericUpDownTS12;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
+            this.chkEnableXVTRHF = new System.Windows.Forms.CheckBoxTS();
             this.chkBPF2Gnd = new System.Windows.Forms.CheckBoxTS();
             this.chkDisableRXOut = new System.Windows.Forms.CheckBoxTS();
             this.chkEXT2OutOnTx = new System.Windows.Forms.CheckBoxTS();
@@ -1448,7 +1449,7 @@
             this.tbDSPALCHangThreshold = new System.Windows.Forms.TrackBarTS();
             this.udDSPALCHangTime = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPALCHangTime = new System.Windows.Forms.LabelTS();
-            this.udDSPALCThreshold = new System.Windows.Forms.NumericUpDownTS();
+            this.udDSPALCMaximumGain = new System.Windows.Forms.NumericUpDownTS();
             this.udDSPALCSlope = new System.Windows.Forms.NumericUpDownTS();
             this.udDSPALCDecay = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPALCSlope = new System.Windows.Forms.LabelTS();
@@ -1487,6 +1488,10 @@
             this.udDSPAGCFixedGaindB = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPAGCFixed = new System.Windows.Forms.LabelTS();
             this.tpDSPAMSAM = new System.Windows.Forms.TabPage();
+            this.grpAMTX = new System.Windows.Forms.GroupBoxTS();
+            this.radTXUSB = new System.Windows.Forms.RadioButtonTS();
+            this.radTXLSB = new System.Windows.Forms.RadioButtonTS();
+            this.radTXDSB = new System.Windows.Forms.RadioButtonTS();
             this.grpAMSQMaxTail = new System.Windows.Forms.GroupBoxTS();
             this.labelTS355 = new System.Windows.Forms.LabelTS();
             this.udRXAMSQMaxTail = new System.Windows.Forms.NumericUpDownTS();
@@ -1685,7 +1690,62 @@
             this.labelTS151 = new System.Windows.Forms.LabelTS();
             this.udDSPNB = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPNBThreshold = new System.Windows.Forms.LabelTS();
+            this.tpDSPCFC = new System.Windows.Forms.TabPage();
+            this.lblCFCPEG = new System.Windows.Forms.LabelTS();
+            this.lblCFCPEG15 = new System.Windows.Forms.LabelTS();
+            this.lblCFCPEG0 = new System.Windows.Forms.LabelTS();
+            this.tbCFCPEQGAIN = new System.Windows.Forms.TrackBarTS();
+            this.grpPhRot = new System.Windows.Forms.GroupBoxTS();
+            this.lblPHROTStages = new System.Windows.Forms.LabelTS();
+            this.udPHROTStages = new System.Windows.Forms.NumericUpDownTS();
+            this.lblPHROTFreq = new System.Windows.Forms.LabelTS();
+            this.udPhRotFreq = new System.Windows.Forms.NumericUpDownTS();
+            this.chkPHROTEnable = new System.Windows.Forms.CheckBoxTS();
+            this.chkCFCPeqEnable = new System.Windows.Forms.CheckBoxTS();
+            this.lblCFCPRECOMP = new System.Windows.Forms.LabelTS();
+            this.lblCFCPC15 = new System.Windows.Forms.LabelTS();
+            this.lblCFCPC0 = new System.Windows.Forms.LabelTS();
+            this.tbCFCPRECOMP = new System.Windows.Forms.TrackBarTS();
+            this.lblCFCEQPOST = new System.Windows.Forms.LabelTS();
+            this.lblCFCEQ10dB = new System.Windows.Forms.LabelTS();
+            this.lblCFCEQ0dB = new System.Windows.Forms.LabelTS();
+            this.tbCFCEQ9 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ6 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ7 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ8 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ3 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ4 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ5 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ0 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ1 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ2 = new System.Windows.Forms.TrackBarTS();
+            this.chkCFCEnable = new System.Windows.Forms.CheckBoxTS();
+            this.lblCFCFreq = new System.Windows.Forms.LabelTS();
+            this.lblCFCComp = new System.Windows.Forms.LabelTS();
+            this.udCFC9 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC8 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC7 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC6 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC5 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC4 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC3 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC2 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC1 = new System.Windows.Forms.NumericUpDownTS();
+            this.udCFC0 = new System.Windows.Forms.NumericUpDownTS();
+            this.lblCFC15dB = new System.Windows.Forms.LabelTS();
+            this.lblCFC0dB = new System.Windows.Forms.LabelTS();
+            this.tbCFC9 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC6 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC7 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC8 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC3 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC4 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC5 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC0 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC1 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
             this.chkDSPTXMeterPeak = new System.Windows.Forms.CheckBoxTS();
             this.chkLimitExtAmpOnOverload = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPSpeechProcessor = new System.Windows.Forms.GroupBoxTS();
@@ -3139,7 +3199,7 @@
             this.grpDSPALC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPALCHangThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCHangTime)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCThreshold)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCMaximumGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCSlope)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCDecay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCAttack)).BeginInit();
@@ -3159,6 +3219,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).BeginInit();
             this.tpDSPAMSAM.SuspendLayout();
+            this.grpAMTX.SuspendLayout();
             this.grpAMSQMaxTail.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udRXAMSQMaxTail)).BeginInit();
             this.grpAMSAM.SuspendLayout();
@@ -3242,6 +3303,42 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNBLead)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNBTransition)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNB)).BeginInit();
+            this.tpDSPCFC.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCPEQGAIN)).BeginInit();
+            this.grpPhRot.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udPHROTStages)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udPhRotFreq)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCPRECOMP)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).BeginInit();
             this.tpTransmit.SuspendLayout();
             this.grpDSPSpeechProcessor.SuspendLayout();
             this.grpExtTXInhibit.SuspendLayout();
@@ -3687,6 +3784,7 @@
             // tpAlexAntCtrl
             // 
             tpAlexAntCtrl.BackColor = System.Drawing.SystemColors.Control;
+            tpAlexAntCtrl.Controls.Add(this.chkEnableXVTRHF);
             tpAlexAntCtrl.Controls.Add(this.chkBPF2Gnd);
             tpAlexAntCtrl.Controls.Add(this.chkDisableRXOut);
             tpAlexAntCtrl.Controls.Add(this.chkEXT2OutOnTx);
@@ -3705,6 +3803,19 @@
             tpAlexAntCtrl.Size = new System.Drawing.Size(575, 313);
             tpAlexAntCtrl.TabIndex = 0;
             tpAlexAntCtrl.Text = "Antenna";
+            // 
+            // chkEnableXVTRHF
+            // 
+            this.chkEnableXVTRHF.AutoSize = true;
+            this.chkEnableXVTRHF.Image = null;
+            this.chkEnableXVTRHF.Location = new System.Drawing.Point(450, 290);
+            this.chkEnableXVTRHF.Name = "chkEnableXVTRHF";
+            this.chkEnableXVTRHF.Size = new System.Drawing.Size(108, 17);
+            this.chkEnableXVTRHF.TabIndex = 19;
+            this.chkEnableXVTRHF.Text = "Enable XVTR HF";
+            this.toolTip1.SetToolTip(this.chkEnableXVTRHF, "Enables the XVTR T/R relay on HF");
+            this.chkEnableXVTRHF.UseVisualStyleBackColor = true;
+            this.chkEnableXVTRHF.CheckedChanged += new System.EventHandler(this.chkEnableXVTRHF_CheckedChanged);
             // 
             // chkBPF2Gnd
             // 
@@ -3834,7 +3945,7 @@
             this.chkSWRTuneProtection.Name = "chkSWRTuneProtection";
             this.chkSWRTuneProtection.Size = new System.Drawing.Size(116, 30);
             this.chkSWRTuneProtection.TabIndex = 4;
-            this.chkSWRTuneProtection.Text = "Disable on Tune Pwr <10W";
+            this.chkSWRTuneProtection.Text = "Disable on Tune Pwr <35W";
             this.toolTip1.SetToolTip(this.chkSWRTuneProtection, "Disables SWR Protection during Tune.");
             this.chkSWRTuneProtection.UseVisualStyleBackColor = true;
             this.chkSWRTuneProtection.CheckedChanged += new System.EventHandler(this.chkSWRTuneProtection_CheckedChanged);
@@ -22388,6 +22499,7 @@
             this.tcDSP.Controls.Add(this.tpDSPNR);
             this.tcDSP.Controls.Add(this.tpDSPMNF);
             this.tcDSP.Controls.Add(this.tpDSPNB);
+            this.tcDSP.Controls.Add(this.tpDSPCFC);
             this.tcDSP.Location = new System.Drawing.Point(0, 0);
             this.tcDSP.Name = "tcDSP";
             this.tcDSP.SelectedIndex = 0;
@@ -23540,19 +23652,20 @@
             this.grpDSPKeyerSemiBreakIn.Size = new System.Drawing.Size(136, 76);
             this.grpDSPKeyerSemiBreakIn.TabIndex = 38;
             this.grpDSPKeyerSemiBreakIn.TabStop = false;
-            this.grpDSPKeyerSemiBreakIn.Text = "Break In";
+            this.grpDSPKeyerSemiBreakIn.Text = "CW Break-In";
             // 
             // chkCWBreakInEnabled
             // 
+            this.chkCWBreakInEnabled.AutoSize = true;
             this.chkCWBreakInEnabled.Checked = true;
             this.chkCWBreakInEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkCWBreakInEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCWBreakInEnabled.Image = null;
             this.chkCWBreakInEnabled.Location = new System.Drawing.Point(16, 24);
             this.chkCWBreakInEnabled.Name = "chkCWBreakInEnabled";
-            this.chkCWBreakInEnabled.Size = new System.Drawing.Size(80, 16);
+            this.chkCWBreakInEnabled.Size = new System.Drawing.Size(92, 17);
             this.chkCWBreakInEnabled.TabIndex = 36;
-            this.chkCWBreakInEnabled.Text = "Enabled";
+            this.chkCWBreakInEnabled.Text = "Semi Break-In";
             this.toolTip1.SetToolTip(this.chkCWBreakInEnabled, "Enables Semi Break In operation.");
             this.chkCWBreakInEnabled.CheckedChanged += new System.EventHandler(this.chkDSPKeyerSemiBreakInEnabled_CheckedChanged);
             // 
@@ -23822,7 +23935,7 @@
             0,
             0});
             this.udDSPLevelerDecay.Minimum = new decimal(new int[] {
-            10,
+            1,
             0,
             0,
             0});
@@ -23925,7 +24038,7 @@
             this.grpDSPALC.Controls.Add(this.tbDSPALCHangThreshold);
             this.grpDSPALC.Controls.Add(this.udDSPALCHangTime);
             this.grpDSPALC.Controls.Add(this.lblDSPALCHangTime);
-            this.grpDSPALC.Controls.Add(this.udDSPALCThreshold);
+            this.grpDSPALC.Controls.Add(this.udDSPALCMaximumGain);
             this.grpDSPALC.Controls.Add(this.udDSPALCSlope);
             this.grpDSPALC.Controls.Add(this.udDSPALCDecay);
             this.grpDSPALC.Controls.Add(this.lblDSPALCSlope);
@@ -24003,37 +24116,36 @@
             this.lblDSPALCHangTime.Text = "Hang (ms):";
             this.lblDSPALCHangTime.Visible = false;
             // 
-            // udDSPALCThreshold
+            // udDSPALCMaximumGain
             // 
-            this.udDSPALCThreshold.Increment = new decimal(new int[] {
+            this.udDSPALCMaximumGain.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udDSPALCThreshold.Location = new System.Drawing.Point(88, 72);
-            this.udDSPALCThreshold.Maximum = new decimal(new int[] {
+            this.udDSPALCMaximumGain.Location = new System.Drawing.Point(88, 72);
+            this.udDSPALCMaximumGain.Maximum = new decimal(new int[] {
             120,
             0,
             0,
             0});
-            this.udDSPALCThreshold.Minimum = new decimal(new int[] {
-            120,
+            this.udDSPALCMaximumGain.Minimum = new decimal(new int[] {
             0,
             0,
-            -2147483648});
-            this.udDSPALCThreshold.Name = "udDSPALCThreshold";
-            this.udDSPALCThreshold.Size = new System.Drawing.Size(48, 20);
-            this.udDSPALCThreshold.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.udDSPALCThreshold, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
+            0,
+            0});
+            this.udDSPALCMaximumGain.Name = "udDSPALCMaximumGain";
+            this.udDSPALCMaximumGain.Size = new System.Drawing.Size(48, 20);
+            this.udDSPALCMaximumGain.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.udDSPALCMaximumGain, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
         "in over this Max Gain is applied.");
-            this.udDSPALCThreshold.Value = new decimal(new int[] {
-            120,
+            this.udDSPALCMaximumGain.Value = new decimal(new int[] {
             0,
             0,
-            -2147483648});
-            this.udDSPALCThreshold.Visible = false;
-            this.udDSPALCThreshold.ValueChanged += new System.EventHandler(this.udDSPALCThreshold_ValueChanged);
-            this.udDSPALCThreshold.LostFocus += new System.EventHandler(this.udDSPALCThreshold_LostFocus);
+            0,
+            0});
+            this.udDSPALCMaximumGain.ValueChanged += new System.EventHandler(this.udDSPALCMaximumGain_ValueChanged);
+            this.udDSPALCMaximumGain.LostFocus += new System.EventHandler(this.udDSPALCThreshold_LostFocus);
             // 
             // udDSPALCSlope
             // 
@@ -24160,8 +24272,8 @@
             this.lblDSPALCThreshold.Name = "lblDSPALCThreshold";
             this.lblDSPALCThreshold.Size = new System.Drawing.Size(88, 24);
             this.lblDSPALCThreshold.TabIndex = 7;
-            this.lblDSPALCThreshold.Text = "Neg. Gain (dB):";
-            this.lblDSPALCThreshold.Visible = false;
+            this.lblDSPALCThreshold.Text = "Max Gain (dB):";
+            this.lblDSPALCThreshold.VisibleChanged += new System.EventHandler(this.udDSPALCMaximumGain_ValueChanged);
             // 
             // grpDSPAGC
             // 
@@ -24744,6 +24856,7 @@
             // tpDSPAMSAM
             // 
             this.tpDSPAMSAM.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDSPAMSAM.Controls.Add(this.grpAMTX);
             this.tpDSPAMSAM.Controls.Add(this.grpAMSQMaxTail);
             this.tpDSPAMSAM.Controls.Add(this.grpAMSAM);
             this.tpDSPAMSAM.Controls.Add(this.grpRX2AMSAM);
@@ -24753,6 +24866,56 @@
             this.tpDSPAMSAM.Size = new System.Drawing.Size(592, 338);
             this.tpDSPAMSAM.TabIndex = 4;
             this.tpDSPAMSAM.Text = "AM/SAM";
+            // 
+            // grpAMTX
+            // 
+            this.grpAMTX.Controls.Add(this.radTXUSB);
+            this.grpAMTX.Controls.Add(this.radTXLSB);
+            this.grpAMTX.Controls.Add(this.radTXDSB);
+            this.grpAMTX.Location = new System.Drawing.Point(330, 175);
+            this.grpAMTX.Name = "grpAMTX";
+            this.grpAMTX.Size = new System.Drawing.Size(172, 92);
+            this.grpAMTX.TabIndex = 44;
+            this.grpAMTX.TabStop = false;
+            this.grpAMTX.Text = "AM Transmit Sideband Select";
+            // 
+            // radTXUSB
+            // 
+            this.radTXUSB.AutoSize = true;
+            this.radTXUSB.Image = null;
+            this.radTXUSB.Location = new System.Drawing.Point(6, 65);
+            this.radTXUSB.Name = "radTXUSB";
+            this.radTXUSB.Size = new System.Drawing.Size(47, 17);
+            this.radTXUSB.TabIndex = 2;
+            this.radTXUSB.Text = "USB";
+            this.radTXUSB.UseVisualStyleBackColor = true;
+            this.radTXUSB.CheckedChanged += new System.EventHandler(this.radTXDSB_CheckedChanged);
+            // 
+            // radTXLSB
+            // 
+            this.radTXLSB.AutoSize = true;
+            this.radTXLSB.Image = null;
+            this.radTXLSB.Location = new System.Drawing.Point(6, 42);
+            this.radTXLSB.Name = "radTXLSB";
+            this.radTXLSB.Size = new System.Drawing.Size(45, 17);
+            this.radTXLSB.TabIndex = 1;
+            this.radTXLSB.Text = "LSB";
+            this.radTXLSB.UseVisualStyleBackColor = true;
+            this.radTXLSB.CheckedChanged += new System.EventHandler(this.radTXDSB_CheckedChanged);
+            // 
+            // radTXDSB
+            // 
+            this.radTXDSB.AutoSize = true;
+            this.radTXDSB.Checked = true;
+            this.radTXDSB.Image = null;
+            this.radTXDSB.Location = new System.Drawing.Point(6, 19);
+            this.radTXDSB.Name = "radTXDSB";
+            this.radTXDSB.Size = new System.Drawing.Size(73, 17);
+            this.radTXDSB.TabIndex = 0;
+            this.radTXDSB.TabStop = true;
+            this.radTXDSB.Text = "LSB+USB";
+            this.radTXDSB.UseVisualStyleBackColor = true;
+            this.radTXDSB.CheckedChanged += new System.EventHandler(this.radTXDSB_CheckedChanged);
             // 
             // grpAMSQMaxTail
             // 
@@ -27802,8 +27965,912 @@
             this.lblDSPNBThreshold.TabIndex = 9;
             this.lblDSPNBThreshold.Text = "Threshold";
             // 
+            // tpDSPCFC
+            // 
+            this.tpDSPCFC.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDSPCFC.Controls.Add(this.lblCFCPEG);
+            this.tpDSPCFC.Controls.Add(this.lblCFCPEG15);
+            this.tpDSPCFC.Controls.Add(this.lblCFCPEG0);
+            this.tpDSPCFC.Controls.Add(this.tbCFCPEQGAIN);
+            this.tpDSPCFC.Controls.Add(this.grpPhRot);
+            this.tpDSPCFC.Controls.Add(this.chkCFCPeqEnable);
+            this.tpDSPCFC.Controls.Add(this.lblCFCPRECOMP);
+            this.tpDSPCFC.Controls.Add(this.lblCFCPC15);
+            this.tpDSPCFC.Controls.Add(this.lblCFCPC0);
+            this.tpDSPCFC.Controls.Add(this.tbCFCPRECOMP);
+            this.tpDSPCFC.Controls.Add(this.lblCFCEQPOST);
+            this.tpDSPCFC.Controls.Add(this.lblCFCEQ10dB);
+            this.tpDSPCFC.Controls.Add(this.lblCFCEQ0dB);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ9);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ6);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ7);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ8);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ3);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ4);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ5);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ0);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ1);
+            this.tpDSPCFC.Controls.Add(this.tbCFCEQ2);
+            this.tpDSPCFC.Controls.Add(this.chkCFCEnable);
+            this.tpDSPCFC.Controls.Add(this.lblCFCFreq);
+            this.tpDSPCFC.Controls.Add(this.lblCFCComp);
+            this.tpDSPCFC.Controls.Add(this.udCFC9);
+            this.tpDSPCFC.Controls.Add(this.udCFC8);
+            this.tpDSPCFC.Controls.Add(this.udCFC7);
+            this.tpDSPCFC.Controls.Add(this.udCFC6);
+            this.tpDSPCFC.Controls.Add(this.udCFC5);
+            this.tpDSPCFC.Controls.Add(this.udCFC4);
+            this.tpDSPCFC.Controls.Add(this.udCFC3);
+            this.tpDSPCFC.Controls.Add(this.udCFC2);
+            this.tpDSPCFC.Controls.Add(this.udCFC1);
+            this.tpDSPCFC.Controls.Add(this.udCFC0);
+            this.tpDSPCFC.Controls.Add(this.lblCFC15dB);
+            this.tpDSPCFC.Controls.Add(this.lblCFC0dB);
+            this.tpDSPCFC.Controls.Add(this.tbCFC9);
+            this.tpDSPCFC.Controls.Add(this.tbCFC6);
+            this.tpDSPCFC.Controls.Add(this.tbCFC7);
+            this.tpDSPCFC.Controls.Add(this.tbCFC8);
+            this.tpDSPCFC.Controls.Add(this.tbCFC3);
+            this.tpDSPCFC.Controls.Add(this.tbCFC4);
+            this.tpDSPCFC.Controls.Add(this.tbCFC5);
+            this.tpDSPCFC.Controls.Add(this.tbCFC0);
+            this.tpDSPCFC.Controls.Add(this.tbCFC1);
+            this.tpDSPCFC.Controls.Add(this.tbCFC2);
+            this.tpDSPCFC.Location = new System.Drawing.Point(4, 22);
+            this.tpDSPCFC.Name = "tpDSPCFC";
+            this.tpDSPCFC.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPCFC.Size = new System.Drawing.Size(592, 338);
+            this.tpDSPCFC.TabIndex = 12;
+            this.tpDSPCFC.Text = "CFC";
+            // 
+            // lblCFCPEG
+            // 
+            this.lblCFCPEG.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPEG.Image = null;
+            this.lblCFCPEG.Location = new System.Drawing.Point(149, 243);
+            this.lblCFCPEG.Name = "lblCFCPEG";
+            this.lblCFCPEG.Size = new System.Drawing.Size(40, 39);
+            this.lblCFCPEG.TabIndex = 174;
+            this.lblCFCPEG.Text = "POST EQ GAIN";
+            // 
+            // lblCFCPEG15
+            // 
+            this.lblCFCPEG15.AutoSize = true;
+            this.lblCFCPEG15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPEG15.Image = null;
+            this.lblCFCPEG15.Location = new System.Drawing.Point(149, 189);
+            this.lblCFCPEG15.Name = "lblCFCPEG15";
+            this.lblCFCPEG15.Size = new System.Drawing.Size(41, 13);
+            this.lblCFCPEG15.TabIndex = 173;
+            this.lblCFCPEG15.Text = "+10 dB";
+            // 
+            // lblCFCPEG0
+            // 
+            this.lblCFCPEG0.AutoSize = true;
+            this.lblCFCPEG0.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPEG0.Image = null;
+            this.lblCFCPEG0.Location = new System.Drawing.Point(149, 303);
+            this.lblCFCPEG0.Name = "lblCFCPEG0";
+            this.lblCFCPEG0.Size = new System.Drawing.Size(38, 13);
+            this.lblCFCPEG0.TabIndex = 172;
+            this.lblCFCPEG0.Text = "-16 dB";
+            // 
+            // tbCFCPEQGAIN
+            // 
+            this.tbCFCPEQGAIN.AutoSize = false;
+            this.tbCFCPEQGAIN.BackColor = System.Drawing.Color.Black;
+            this.tbCFCPEQGAIN.LargeChange = 2;
+            this.tbCFCPEQGAIN.Location = new System.Drawing.Point(189, 190);
+            this.tbCFCPEQGAIN.Minimum = -16;
+            this.tbCFCPEQGAIN.Name = "tbCFCPEQGAIN";
+            this.tbCFCPEQGAIN.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCPEQGAIN.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCPEQGAIN.TabIndex = 171;
+            this.tbCFCPEQGAIN.TickFrequency = 2;
+            this.tbCFCPEQGAIN.Scroll += new System.EventHandler(this.tbCFCPEG_Scroll);
+            // 
+            // grpPhRot
+            // 
+            this.grpPhRot.Controls.Add(this.lblPHROTStages);
+            this.grpPhRot.Controls.Add(this.udPHROTStages);
+            this.grpPhRot.Controls.Add(this.lblPHROTFreq);
+            this.grpPhRot.Controls.Add(this.udPhRotFreq);
+            this.grpPhRot.Controls.Add(this.chkPHROTEnable);
+            this.grpPhRot.Location = new System.Drawing.Point(6, 123);
+            this.grpPhRot.Name = "grpPhRot";
+            this.grpPhRot.Size = new System.Drawing.Size(124, 100);
+            this.grpPhRot.TabIndex = 170;
+            this.grpPhRot.TabStop = false;
+            this.grpPhRot.Text = "Phase Rotator";
+            // 
+            // lblPHROTStages
+            // 
+            this.lblPHROTStages.AutoSize = true;
+            this.lblPHROTStages.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPHROTStages.Image = null;
+            this.lblPHROTStages.Location = new System.Drawing.Point(69, 72);
+            this.lblPHROTStages.Name = "lblPHROTStages";
+            this.lblPHROTStages.Size = new System.Drawing.Size(48, 13);
+            this.lblPHROTStages.TabIndex = 156;
+            this.lblPHROTStages.Text = "STAGES";
+            // 
+            // udPHROTStages
+            // 
+            this.udPHROTStages.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udPHROTStages.Location = new System.Drawing.Point(7, 69);
+            this.udPHROTStages.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.udPHROTStages.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udPHROTStages.Name = "udPHROTStages";
+            this.udPHROTStages.Size = new System.Drawing.Size(58, 20);
+            this.udPHROTStages.TabIndex = 155;
+            this.udPHROTStages.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.udPHROTStages.ValueChanged += new System.EventHandler(this.udPHROTStages_ValueChanged);
+            // 
+            // lblPHROTFreq
+            // 
+            this.lblPHROTFreq.AutoSize = true;
+            this.lblPHROTFreq.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPHROTFreq.Image = null;
+            this.lblPHROTFreq.Location = new System.Drawing.Point(69, 46);
+            this.lblPHROTFreq.Name = "lblPHROTFreq";
+            this.lblPHROTFreq.Size = new System.Drawing.Size(35, 13);
+            this.lblPHROTFreq.TabIndex = 154;
+            this.lblPHROTFreq.Text = "FREQ";
+            // 
+            // udPhRotFreq
+            // 
+            this.udPhRotFreq.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udPhRotFreq.Location = new System.Drawing.Point(7, 43);
+            this.udPhRotFreq.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.udPhRotFreq.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udPhRotFreq.Name = "udPhRotFreq";
+            this.udPhRotFreq.Size = new System.Drawing.Size(58, 20);
+            this.udPhRotFreq.TabIndex = 153;
+            this.udPhRotFreq.Value = new decimal(new int[] {
+            338,
+            0,
+            0,
+            0});
+            this.udPhRotFreq.ValueChanged += new System.EventHandler(this.udPhRotFreq_ValueChanged);
+            // 
+            // chkPHROTEnable
+            // 
+            this.chkPHROTEnable.AutoSize = true;
+            this.chkPHROTEnable.Image = null;
+            this.chkPHROTEnable.Location = new System.Drawing.Point(6, 19);
+            this.chkPHROTEnable.Name = "chkPHROTEnable";
+            this.chkPHROTEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkPHROTEnable.TabIndex = 152;
+            this.chkPHROTEnable.Text = "Enable";
+            this.chkPHROTEnable.UseVisualStyleBackColor = true;
+            this.chkPHROTEnable.CheckedChanged += new System.EventHandler(this.chkPHROTEnable_CheckedChanged);
+            // 
+            // chkCFCPeqEnable
+            // 
+            this.chkCFCPeqEnable.AutoSize = true;
+            this.chkCFCPeqEnable.Image = null;
+            this.chkCFCPeqEnable.Location = new System.Drawing.Point(6, 29);
+            this.chkCFCPeqEnable.Name = "chkCFCPeqEnable";
+            this.chkCFCPeqEnable.Size = new System.Drawing.Size(124, 17);
+            this.chkCFCPeqEnable.TabIndex = 169;
+            this.chkCFCPeqEnable.Text = "Post-CFC EQ Enable";
+            this.chkCFCPeqEnable.UseVisualStyleBackColor = true;
+            this.chkCFCPeqEnable.CheckedChanged += new System.EventHandler(this.chkCFCPeqEnable_CheckedChanged);
+            // 
+            // lblCFCPRECOMP
+            // 
+            this.lblCFCPRECOMP.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPRECOMP.Image = null;
+            this.lblCFCPRECOMP.Location = new System.Drawing.Point(149, 65);
+            this.lblCFCPRECOMP.Name = "lblCFCPRECOMP";
+            this.lblCFCPRECOMP.Size = new System.Drawing.Size(40, 26);
+            this.lblCFCPRECOMP.TabIndex = 168;
+            this.lblCFCPRECOMP.Text = "PRE- COMP";
+            // 
+            // lblCFCPC15
+            // 
+            this.lblCFCPC15.AutoSize = true;
+            this.lblCFCPC15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPC15.Image = null;
+            this.lblCFCPC15.Location = new System.Drawing.Point(149, 6);
+            this.lblCFCPC15.Name = "lblCFCPC15";
+            this.lblCFCPC15.Size = new System.Drawing.Size(35, 13);
+            this.lblCFCPC15.TabIndex = 167;
+            this.lblCFCPC15.Text = "16 dB";
+            // 
+            // lblCFCPC0
+            // 
+            this.lblCFCPC0.AutoSize = true;
+            this.lblCFCPC0.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPC0.Image = null;
+            this.lblCFCPC0.Location = new System.Drawing.Point(149, 123);
+            this.lblCFCPC0.Name = "lblCFCPC0";
+            this.lblCFCPC0.Size = new System.Drawing.Size(29, 13);
+            this.lblCFCPC0.TabIndex = 166;
+            this.lblCFCPC0.Text = "0 dB";
+            // 
+            // tbCFCPRECOMP
+            // 
+            this.tbCFCPRECOMP.AutoSize = false;
+            this.tbCFCPRECOMP.BackColor = System.Drawing.Color.Black;
+            this.tbCFCPRECOMP.LargeChange = 2;
+            this.tbCFCPRECOMP.Location = new System.Drawing.Point(189, 6);
+            this.tbCFCPRECOMP.Maximum = 16;
+            this.tbCFCPRECOMP.Name = "tbCFCPRECOMP";
+            this.tbCFCPRECOMP.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCPRECOMP.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCPRECOMP.TabIndex = 165;
+            this.tbCFCPRECOMP.Scroll += new System.EventHandler(this.tbCFCPRECOMP_Scroll);
+            // 
+            // lblCFCEQPOST
+            // 
+            this.lblCFCEQPOST.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCEQPOST.Image = null;
+            this.lblCFCEQPOST.Location = new System.Drawing.Point(219, 243);
+            this.lblCFCEQPOST.Name = "lblCFCEQPOST";
+            this.lblCFCEQPOST.Size = new System.Drawing.Size(40, 26);
+            this.lblCFCEQPOST.TabIndex = 164;
+            this.lblCFCEQPOST.Text = "POST EQ";
+            // 
+            // lblCFCEQ10dB
+            // 
+            this.lblCFCEQ10dB.AutoSize = true;
+            this.lblCFCEQ10dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCEQ10dB.Image = null;
+            this.lblCFCEQ10dB.Location = new System.Drawing.Point(218, 189);
+            this.lblCFCEQ10dB.Name = "lblCFCEQ10dB";
+            this.lblCFCEQ10dB.Size = new System.Drawing.Size(41, 13);
+            this.lblCFCEQ10dB.TabIndex = 163;
+            this.lblCFCEQ10dB.Text = "+10 dB";
+            // 
+            // lblCFCEQ0dB
+            // 
+            this.lblCFCEQ0dB.AutoSize = true;
+            this.lblCFCEQ0dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCEQ0dB.Image = null;
+            this.lblCFCEQ0dB.Location = new System.Drawing.Point(219, 303);
+            this.lblCFCEQ0dB.Name = "lblCFCEQ0dB";
+            this.lblCFCEQ0dB.Size = new System.Drawing.Size(38, 13);
+            this.lblCFCEQ0dB.TabIndex = 162;
+            this.lblCFCEQ0dB.Text = "-10 dB";
+            // 
+            // tbCFCEQ9
+            // 
+            this.tbCFCEQ9.AutoSize = false;
+            this.tbCFCEQ9.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ9.LargeChange = 2;
+            this.tbCFCEQ9.Location = new System.Drawing.Point(540, 190);
+            this.tbCFCEQ9.Minimum = -10;
+            this.tbCFCEQ9.Name = "tbCFCEQ9";
+            this.tbCFCEQ9.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ9.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ9.TabIndex = 161;
+            this.tbCFCEQ9.TickFrequency = 2;
+            this.tbCFCEQ9.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ6
+            // 
+            this.tbCFCEQ6.AutoSize = false;
+            this.tbCFCEQ6.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ6.LargeChange = 2;
+            this.tbCFCEQ6.Location = new System.Drawing.Point(450, 190);
+            this.tbCFCEQ6.Minimum = -10;
+            this.tbCFCEQ6.Name = "tbCFCEQ6";
+            this.tbCFCEQ6.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ6.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ6.TabIndex = 158;
+            this.tbCFCEQ6.TickFrequency = 2;
+            this.tbCFCEQ6.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ7
+            // 
+            this.tbCFCEQ7.AutoSize = false;
+            this.tbCFCEQ7.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ7.LargeChange = 2;
+            this.tbCFCEQ7.Location = new System.Drawing.Point(480, 190);
+            this.tbCFCEQ7.Minimum = -10;
+            this.tbCFCEQ7.Name = "tbCFCEQ7";
+            this.tbCFCEQ7.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ7.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ7.TabIndex = 159;
+            this.tbCFCEQ7.TickFrequency = 2;
+            this.tbCFCEQ7.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ8
+            // 
+            this.tbCFCEQ8.AutoSize = false;
+            this.tbCFCEQ8.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ8.LargeChange = 2;
+            this.tbCFCEQ8.Location = new System.Drawing.Point(510, 189);
+            this.tbCFCEQ8.Minimum = -10;
+            this.tbCFCEQ8.Name = "tbCFCEQ8";
+            this.tbCFCEQ8.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ8.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ8.TabIndex = 160;
+            this.tbCFCEQ8.TickFrequency = 2;
+            this.tbCFCEQ8.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ3
+            // 
+            this.tbCFCEQ3.AutoSize = false;
+            this.tbCFCEQ3.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ3.LargeChange = 2;
+            this.tbCFCEQ3.Location = new System.Drawing.Point(360, 190);
+            this.tbCFCEQ3.Minimum = -10;
+            this.tbCFCEQ3.Name = "tbCFCEQ3";
+            this.tbCFCEQ3.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ3.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ3.TabIndex = 155;
+            this.tbCFCEQ3.TickFrequency = 2;
+            this.tbCFCEQ3.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ4
+            // 
+            this.tbCFCEQ4.AutoSize = false;
+            this.tbCFCEQ4.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ4.LargeChange = 2;
+            this.tbCFCEQ4.Location = new System.Drawing.Point(390, 190);
+            this.tbCFCEQ4.Minimum = -10;
+            this.tbCFCEQ4.Name = "tbCFCEQ4";
+            this.tbCFCEQ4.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ4.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ4.TabIndex = 156;
+            this.tbCFCEQ4.TickFrequency = 2;
+            this.tbCFCEQ4.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ5
+            // 
+            this.tbCFCEQ5.AutoSize = false;
+            this.tbCFCEQ5.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ5.LargeChange = 2;
+            this.tbCFCEQ5.Location = new System.Drawing.Point(420, 190);
+            this.tbCFCEQ5.Minimum = -10;
+            this.tbCFCEQ5.Name = "tbCFCEQ5";
+            this.tbCFCEQ5.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ5.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ5.TabIndex = 157;
+            this.tbCFCEQ5.TickFrequency = 2;
+            this.tbCFCEQ5.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ0
+            // 
+            this.tbCFCEQ0.AutoSize = false;
+            this.tbCFCEQ0.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ0.LargeChange = 2;
+            this.tbCFCEQ0.Location = new System.Drawing.Point(270, 190);
+            this.tbCFCEQ0.Minimum = -10;
+            this.tbCFCEQ0.Name = "tbCFCEQ0";
+            this.tbCFCEQ0.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ0.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ0.TabIndex = 152;
+            this.tbCFCEQ0.TickFrequency = 2;
+            this.tbCFCEQ0.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ1
+            // 
+            this.tbCFCEQ1.AutoSize = false;
+            this.tbCFCEQ1.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ1.LargeChange = 2;
+            this.tbCFCEQ1.Location = new System.Drawing.Point(300, 190);
+            this.tbCFCEQ1.Minimum = -10;
+            this.tbCFCEQ1.Name = "tbCFCEQ1";
+            this.tbCFCEQ1.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ1.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ1.TabIndex = 153;
+            this.tbCFCEQ1.TickFrequency = 2;
+            this.tbCFCEQ1.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ2
+            // 
+            this.tbCFCEQ2.AutoSize = false;
+            this.tbCFCEQ2.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ2.LargeChange = 2;
+            this.tbCFCEQ2.Location = new System.Drawing.Point(330, 190);
+            this.tbCFCEQ2.Minimum = -10;
+            this.tbCFCEQ2.Name = "tbCFCEQ2";
+            this.tbCFCEQ2.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ2.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ2.TabIndex = 154;
+            this.tbCFCEQ2.TickFrequency = 2;
+            this.tbCFCEQ2.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // chkCFCEnable
+            // 
+            this.chkCFCEnable.AutoSize = true;
+            this.chkCFCEnable.Image = null;
+            this.chkCFCEnable.Location = new System.Drawing.Point(6, 6);
+            this.chkCFCEnable.Name = "chkCFCEnable";
+            this.chkCFCEnable.Size = new System.Drawing.Size(82, 17);
+            this.chkCFCEnable.TabIndex = 149;
+            this.chkCFCEnable.Text = "CFC Enable";
+            this.chkCFCEnable.UseVisualStyleBackColor = true;
+            this.chkCFCEnable.CheckedChanged += new System.EventHandler(this.chkCFCEnable_CheckedChanged);
+            // 
+            // lblCFCFreq
+            // 
+            this.lblCFCFreq.AutoSize = true;
+            this.lblCFCFreq.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCFreq.Image = null;
+            this.lblCFCFreq.Location = new System.Drawing.Point(215, 157);
+            this.lblCFCFreq.Name = "lblCFCFreq";
+            this.lblCFCFreq.Size = new System.Drawing.Size(35, 13);
+            this.lblCFCFreq.TabIndex = 148;
+            this.lblCFCFreq.Text = "FREQ";
+            // 
+            // lblCFCComp
+            // 
+            this.lblCFCComp.AutoSize = true;
+            this.lblCFCComp.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCComp.Image = null;
+            this.lblCFCComp.Location = new System.Drawing.Point(219, 65);
+            this.lblCFCComp.Name = "lblCFCComp";
+            this.lblCFCComp.Size = new System.Drawing.Size(38, 13);
+            this.lblCFCComp.TabIndex = 147;
+            this.lblCFCComp.Text = "COMP";
+            // 
+            // udCFC9
+            // 
+            this.udCFC9.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC9.Location = new System.Drawing.Point(525, 141);
+            this.udCFC9.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC9.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC9.Name = "udCFC9";
+            this.udCFC9.Size = new System.Drawing.Size(50, 20);
+            this.udCFC9.TabIndex = 146;
+            this.udCFC9.Value = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC9.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC8
+            // 
+            this.udCFC8.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC8.Location = new System.Drawing.Point(495, 164);
+            this.udCFC8.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC8.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC8.Name = "udCFC8";
+            this.udCFC8.Size = new System.Drawing.Size(50, 20);
+            this.udCFC8.TabIndex = 145;
+            this.udCFC8.Value = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.udCFC8.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC7
+            // 
+            this.udCFC7.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC7.Location = new System.Drawing.Point(465, 141);
+            this.udCFC7.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC7.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC7.Name = "udCFC7";
+            this.udCFC7.Size = new System.Drawing.Size(50, 20);
+            this.udCFC7.TabIndex = 144;
+            this.udCFC7.Value = new decimal(new int[] {
+            4000,
+            0,
+            0,
+            0});
+            this.udCFC7.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC6
+            // 
+            this.udCFC6.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC6.Location = new System.Drawing.Point(435, 164);
+            this.udCFC6.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC6.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC6.Name = "udCFC6";
+            this.udCFC6.Size = new System.Drawing.Size(50, 20);
+            this.udCFC6.TabIndex = 143;
+            this.udCFC6.Value = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.udCFC6.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC5
+            // 
+            this.udCFC5.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC5.Location = new System.Drawing.Point(405, 141);
+            this.udCFC5.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC5.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC5.Name = "udCFC5";
+            this.udCFC5.Size = new System.Drawing.Size(50, 20);
+            this.udCFC5.TabIndex = 142;
+            this.udCFC5.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.udCFC5.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC4
+            // 
+            this.udCFC4.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC4.Location = new System.Drawing.Point(375, 164);
+            this.udCFC4.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC4.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC4.Name = "udCFC4";
+            this.udCFC4.Size = new System.Drawing.Size(50, 20);
+            this.udCFC4.TabIndex = 141;
+            this.udCFC4.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udCFC4.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC3
+            // 
+            this.udCFC3.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC3.Location = new System.Drawing.Point(345, 141);
+            this.udCFC3.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC3.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC3.Name = "udCFC3";
+            this.udCFC3.Size = new System.Drawing.Size(50, 20);
+            this.udCFC3.TabIndex = 140;
+            this.udCFC3.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.udCFC3.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC2
+            // 
+            this.udCFC2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC2.Location = new System.Drawing.Point(315, 164);
+            this.udCFC2.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC2.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC2.Name = "udCFC2";
+            this.udCFC2.Size = new System.Drawing.Size(50, 20);
+            this.udCFC2.TabIndex = 139;
+            this.udCFC2.Value = new decimal(new int[] {
+            250,
+            0,
+            0,
+            0});
+            this.udCFC2.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC1
+            // 
+            this.udCFC1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC1.Location = new System.Drawing.Point(285, 141);
+            this.udCFC1.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC1.Name = "udCFC1";
+            this.udCFC1.Size = new System.Drawing.Size(50, 20);
+            this.udCFC1.TabIndex = 138;
+            this.udCFC1.Value = new decimal(new int[] {
+            125,
+            0,
+            0,
+            0});
+            this.udCFC1.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // udCFC0
+            // 
+            this.udCFC0.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCFC0.Location = new System.Drawing.Point(255, 164);
+            this.udCFC0.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udCFC0.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC0.Name = "udCFC0";
+            this.udCFC0.Size = new System.Drawing.Size(50, 20);
+            this.udCFC0.TabIndex = 137;
+            this.udCFC0.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCFC0.ValueChanged += new System.EventHandler(this.setCFCProfile);
+            // 
+            // lblCFC15dB
+            // 
+            this.lblCFC15dB.AutoSize = true;
+            this.lblCFC15dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFC15dB.Image = null;
+            this.lblCFC15dB.Location = new System.Drawing.Point(219, 6);
+            this.lblCFC15dB.Name = "lblCFC15dB";
+            this.lblCFC15dB.Size = new System.Drawing.Size(35, 13);
+            this.lblCFC15dB.TabIndex = 136;
+            this.lblCFC15dB.Text = "10 dB";
+            // 
+            // lblCFC0dB
+            // 
+            this.lblCFC0dB.AutoSize = true;
+            this.lblCFC0dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFC0dB.Image = null;
+            this.lblCFC0dB.Location = new System.Drawing.Point(219, 123);
+            this.lblCFC0dB.Name = "lblCFC0dB";
+            this.lblCFC0dB.Size = new System.Drawing.Size(29, 13);
+            this.lblCFC0dB.TabIndex = 135;
+            this.lblCFC0dB.Text = "0 dB";
+            // 
+            // tbCFC9
+            // 
+            this.tbCFC9.AutoSize = false;
+            this.tbCFC9.BackColor = System.Drawing.Color.Black;
+            this.tbCFC9.LargeChange = 2;
+            this.tbCFC9.Location = new System.Drawing.Point(540, 6);
+            this.tbCFC9.Name = "tbCFC9";
+            this.tbCFC9.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC9.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC9.TabIndex = 134;
+            this.tbCFC9.Value = 5;
+            this.tbCFC9.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC6
+            // 
+            this.tbCFC6.AutoSize = false;
+            this.tbCFC6.BackColor = System.Drawing.Color.Black;
+            this.tbCFC6.LargeChange = 2;
+            this.tbCFC6.Location = new System.Drawing.Point(450, 6);
+            this.tbCFC6.Name = "tbCFC6";
+            this.tbCFC6.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC6.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC6.TabIndex = 131;
+            this.tbCFC6.Value = 5;
+            this.tbCFC6.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC7
+            // 
+            this.tbCFC7.AutoSize = false;
+            this.tbCFC7.BackColor = System.Drawing.Color.Black;
+            this.tbCFC7.LargeChange = 2;
+            this.tbCFC7.Location = new System.Drawing.Point(480, 6);
+            this.tbCFC7.Name = "tbCFC7";
+            this.tbCFC7.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC7.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC7.TabIndex = 132;
+            this.tbCFC7.Value = 5;
+            this.tbCFC7.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC8
+            // 
+            this.tbCFC8.AutoSize = false;
+            this.tbCFC8.BackColor = System.Drawing.Color.Black;
+            this.tbCFC8.LargeChange = 2;
+            this.tbCFC8.Location = new System.Drawing.Point(510, 5);
+            this.tbCFC8.Name = "tbCFC8";
+            this.tbCFC8.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC8.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC8.TabIndex = 133;
+            this.tbCFC8.Value = 5;
+            this.tbCFC8.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC3
+            // 
+            this.tbCFC3.AutoSize = false;
+            this.tbCFC3.BackColor = System.Drawing.Color.Black;
+            this.tbCFC3.LargeChange = 2;
+            this.tbCFC3.Location = new System.Drawing.Point(360, 6);
+            this.tbCFC3.Name = "tbCFC3";
+            this.tbCFC3.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC3.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC3.TabIndex = 128;
+            this.tbCFC3.Value = 5;
+            this.tbCFC3.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC4
+            // 
+            this.tbCFC4.AutoSize = false;
+            this.tbCFC4.BackColor = System.Drawing.Color.Black;
+            this.tbCFC4.LargeChange = 2;
+            this.tbCFC4.Location = new System.Drawing.Point(390, 6);
+            this.tbCFC4.Name = "tbCFC4";
+            this.tbCFC4.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC4.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC4.TabIndex = 129;
+            this.tbCFC4.Value = 5;
+            this.tbCFC4.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC5
+            // 
+            this.tbCFC5.AutoSize = false;
+            this.tbCFC5.BackColor = System.Drawing.Color.Black;
+            this.tbCFC5.LargeChange = 2;
+            this.tbCFC5.Location = new System.Drawing.Point(420, 6);
+            this.tbCFC5.Name = "tbCFC5";
+            this.tbCFC5.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC5.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC5.TabIndex = 130;
+            this.tbCFC5.Value = 5;
+            this.tbCFC5.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC0
+            // 
+            this.tbCFC0.AutoSize = false;
+            this.tbCFC0.BackColor = System.Drawing.Color.Black;
+            this.tbCFC0.LargeChange = 2;
+            this.tbCFC0.Location = new System.Drawing.Point(270, 6);
+            this.tbCFC0.Name = "tbCFC0";
+            this.tbCFC0.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC0.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC0.TabIndex = 125;
+            this.tbCFC0.Value = 5;
+            this.tbCFC0.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC1
+            // 
+            this.tbCFC1.AutoSize = false;
+            this.tbCFC1.BackColor = System.Drawing.Color.Black;
+            this.tbCFC1.LargeChange = 2;
+            this.tbCFC1.Location = new System.Drawing.Point(300, 6);
+            this.tbCFC1.Name = "tbCFC1";
+            this.tbCFC1.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC1.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC1.TabIndex = 126;
+            this.tbCFC1.Value = 5;
+            this.tbCFC1.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFC2
+            // 
+            this.tbCFC2.AutoSize = false;
+            this.tbCFC2.BackColor = System.Drawing.Color.Black;
+            this.tbCFC2.LargeChange = 2;
+            this.tbCFC2.Location = new System.Drawing.Point(330, 6);
+            this.tbCFC2.Name = "tbCFC2";
+            this.tbCFC2.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFC2.Size = new System.Drawing.Size(20, 128);
+            this.tbCFC2.TabIndex = 127;
+            this.tbCFC2.Value = 5;
+            this.tbCFC2.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.btnExportCurrentTXProfile);
             this.tpTransmit.Controls.Add(this.chkDSPTXMeterPeak);
             this.tpTransmit.Controls.Add(this.chkLimitExtAmpOnOverload);
             this.tpTransmit.Controls.Add(this.grpDSPSpeechProcessor);
@@ -27827,6 +28894,17 @@
             this.tpTransmit.Size = new System.Drawing.Size(584, 364);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
+            // 
+            // btnExportCurrentTXProfile
+            // 
+            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(477, 182);
+            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
+            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(64, 54);
+            this.btnExportCurrentTXProfile.TabIndex = 73;
+            this.btnExportCurrentTXProfile.Text = "Export Current Profile";
+            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
+            this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
+            this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
             // 
             // chkDSPTXMeterPeak
             // 
@@ -28198,8 +29276,8 @@
             this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
             this.btnTXProfileDefImport.Size = new System.Drawing.Size(64, 24);
             this.btnTXProfileDefImport.TabIndex = 54;
-            this.btnTXProfileDefImport.Text = "Import";
-            this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Click to save the current settings to a TX Profile.");
+            this.btnTXProfileDefImport.Text = "Include";
+            this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Include the selected profile from the above list into my own list of profiles.");
             this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
             // 
             // lstTXProfileDef
@@ -45770,7 +46848,7 @@
             this.btnImportDB.Size = new System.Drawing.Size(112, 23);
             this.btnImportDB.TabIndex = 21;
             this.btnImportDB.Text = "Import Database...";
-            this.toolTip1.SetToolTip(this.btnImportDB, "Import a saved Thetis Database file.");
+            this.toolTip1.SetToolTip(this.btnImportDB, "Import a database file, or partial database file such as an exported TX Profile");
             this.btnImportDB.Click += new System.EventHandler(this.btnImportDB_Click);
             // 
             // btnResetDB
@@ -47226,6 +48304,7 @@
             this.grpDSPKeyerOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udCWKeyerWeight)).EndInit();
             this.grpDSPKeyerSemiBreakIn.ResumeLayout(false);
+            this.grpDSPKeyerSemiBreakIn.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).EndInit();
             this.tpDSPAGCALC.ResumeLayout(false);
             this.grpDSPLeveler.ResumeLayout(false);
@@ -47238,7 +48317,7 @@
             this.grpDSPALC.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPALCHangThreshold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCHangTime)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCThreshold)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCMaximumGain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCSlope)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCDecay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCAttack)).EndInit();
@@ -47258,6 +48337,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).EndInit();
             this.tpDSPAMSAM.ResumeLayout(false);
+            this.grpAMTX.ResumeLayout(false);
+            this.grpAMTX.PerformLayout();
             this.grpAMSQMaxTail.ResumeLayout(false);
             this.grpAMSQMaxTail.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udRXAMSQMaxTail)).EndInit();
@@ -47367,6 +48448,44 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNBLead)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNBTransition)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNB)).EndInit();
+            this.tpDSPCFC.ResumeLayout(false);
+            this.tpDSPCFC.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCPEQGAIN)).EndInit();
+            this.grpPhRot.ResumeLayout(false);
+            this.grpPhRot.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udPHROTStages)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udPhRotFreq)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCPRECOMP)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFC0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).EndInit();
             this.tpTransmit.ResumeLayout(false);
             this.tpTransmit.PerformLayout();
             this.grpDSPSpeechProcessor.ResumeLayout(false);
@@ -50028,7 +51147,7 @@
         private System.Windows.Forms.TrackBarTS tbDSPALCHangThreshold;
         private System.Windows.Forms.NumericUpDownTS udDSPALCHangTime;
         private System.Windows.Forms.LabelTS lblDSPALCHangTime;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCThreshold;
+        private System.Windows.Forms.NumericUpDownTS udDSPALCMaximumGain;
         private System.Windows.Forms.NumericUpDownTS udDSPALCSlope;
         private System.Windows.Forms.NumericUpDownTS udDSPALCDecay;
         private System.Windows.Forms.LabelTS lblDSPALCSlope;
@@ -50617,6 +51736,66 @@
         private LabelTS labelTS256;
         public TextBoxTS textCaldFwdPower;
         private LabelTS labelTS255;
+        private TabPage tpDSPCFC;
+        private LabelTS lblCFCPEG;
+        private LabelTS lblCFCPEG15;
+        private LabelTS lblCFCPEG0;
+        private TrackBarTS tbCFCPEQGAIN;
+        private GroupBoxTS grpPhRot;
+        private LabelTS lblPHROTStages;
+        private NumericUpDownTS udPHROTStages;
+        private LabelTS lblPHROTFreq;
+        private NumericUpDownTS udPhRotFreq;
+        private CheckBoxTS chkPHROTEnable;
+        private CheckBoxTS chkCFCPeqEnable;
+        private LabelTS lblCFCPRECOMP;
+        private LabelTS lblCFCPC15;
+        private LabelTS lblCFCPC0;
+        private TrackBarTS tbCFCPRECOMP;
+        private LabelTS lblCFCEQPOST;
+        private LabelTS lblCFCEQ10dB;
+        private LabelTS lblCFCEQ0dB;
+        private TrackBarTS tbCFCEQ9;
+        private TrackBarTS tbCFCEQ6;
+        private TrackBarTS tbCFCEQ7;
+        private TrackBarTS tbCFCEQ8;
+        private TrackBarTS tbCFCEQ3;
+        private TrackBarTS tbCFCEQ4;
+        private TrackBarTS tbCFCEQ5;
+        private TrackBarTS tbCFCEQ0;
+        private TrackBarTS tbCFCEQ1;
+        private TrackBarTS tbCFCEQ2;
+        private CheckBoxTS chkCFCEnable;
+        private LabelTS lblCFCFreq;
+        private LabelTS lblCFCComp;
+        private NumericUpDownTS udCFC9;
+        private NumericUpDownTS udCFC8;
+        private NumericUpDownTS udCFC7;
+        private NumericUpDownTS udCFC6;
+        private NumericUpDownTS udCFC5;
+        private NumericUpDownTS udCFC4;
+        private NumericUpDownTS udCFC3;
+        private NumericUpDownTS udCFC2;
+        private NumericUpDownTS udCFC1;
+        private NumericUpDownTS udCFC0;
+        private LabelTS lblCFC15dB;
+        private LabelTS lblCFC0dB;
+        private TrackBarTS tbCFC9;
+        private TrackBarTS tbCFC6;
+        private TrackBarTS tbCFC7;
+        private TrackBarTS tbCFC8;
+        private TrackBarTS tbCFC3;
+        private TrackBarTS tbCFC4;
+        private TrackBarTS tbCFC5;
+        private TrackBarTS tbCFC0;
+        private TrackBarTS tbCFC1;
+        private TrackBarTS tbCFC2;
+        private CheckBoxTS chkEnableXVTRHF;
+        private System.Windows.Forms.GroupBoxTS grpAMTX;
+        private System.Windows.Forms.RadioButtonTS radTXUSB;
+        private System.Windows.Forms.RadioButtonTS radTXLSB;
+        private System.Windows.Forms.RadioButtonTS radTXDSB;
+        private System.Windows.Forms.Button btnExportCurrentTXProfile;
 
     }
 }

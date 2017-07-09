@@ -46,33 +46,27 @@ namespace Thetis
 		private System.Windows.Forms.TrackBarTS tbRXEQ1;
 		private System.Windows.Forms.TrackBarTS tbRXEQ2;
 		private System.Windows.Forms.TrackBarTS tbRXEQ3;
-		private System.Windows.Forms.TrackBarTS tbTXEQ3;
-		private System.Windows.Forms.TrackBarTS tbTXEQ1;
 		private System.Windows.Forms.TrackBarTS tbTXEQ2;
+		private System.Windows.Forms.TrackBarTS tbTXEQ0;
+		private System.Windows.Forms.TrackBarTS tbTXEQ1;
 		private System.Windows.Forms.LabelTS lblRXEQ0dB;
 		private System.Windows.Forms.LabelTS lblTXEQ0dB;
 		private System.Windows.Forms.LabelTS lblRXEQ1;
 		private System.Windows.Forms.LabelTS lblRXEQ2;
-		private System.Windows.Forms.LabelTS lblRXEQ3;
-		private System.Windows.Forms.LabelTS lblTXEQ3;
-		private System.Windows.Forms.LabelTS lblTXEQ2;
-		private System.Windows.Forms.LabelTS lblTXEQ1;
+        private System.Windows.Forms.LabelTS lblRXEQ3;
 		private System.Windows.Forms.LabelTS lblRXEQPreamp;
 		private System.Windows.Forms.LabelTS lblTXEQPreamp;
 		private System.Windows.Forms.CheckBoxTS chkTXEQEnabled;
 		private System.Windows.Forms.TrackBarTS tbRXEQPreamp;
-		private System.Windows.Forms.TrackBarTS tbTXEQPreamp;
+		private System.Windows.Forms.TrackBarTS tbTXEQPre;
 		private System.Windows.Forms.CheckBoxTS chkRXEQEnabled;
-		private System.Windows.Forms.PictureBox picRXEQ;
-		private System.Windows.Forms.PictureBox picTXEQ;
-		private System.Windows.Forms.ButtonTS btnTXEQReset;
+        private System.Windows.Forms.PictureBox picRXEQ;
 		private System.Windows.Forms.ButtonTS btnRXEQReset;
 		private System.Windows.Forms.LabelTS lblRXEQ15db;
 		private System.Windows.Forms.LabelTS lblTXEQ15db;
 		private System.Windows.Forms.LabelTS lblRXEQminus12db;
 		private System.Windows.Forms.LabelTS lblTXEQminus12db;
-		private System.Windows.Forms.ToolTip toolTip1;
-		private System.Windows.Forms.CheckBoxTS chkTXEQ160Notch;
+        private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.TrackBarTS tbRXEQ4;
 		private System.Windows.Forms.TrackBarTS tbRXEQ5;
 		private System.Windows.Forms.TrackBarTS tbRXEQ6;
@@ -88,27 +82,31 @@ namespace Thetis
 		private System.Windows.Forms.LabelTS lblTXEQminus12db2;
 		private System.Windows.Forms.RadioButtonTS rad3Band;
 		private System.Windows.Forms.RadioButtonTS rad10Band;
+		private System.Windows.Forms.TrackBarTS tbTXEQ3;
 		private System.Windows.Forms.TrackBarTS tbTXEQ4;
 		private System.Windows.Forms.TrackBarTS tbTXEQ5;
 		private System.Windows.Forms.TrackBarTS tbTXEQ6;
 		private System.Windows.Forms.TrackBarTS tbTXEQ7;
 		private System.Windows.Forms.TrackBarTS tbTXEQ8;
 		private System.Windows.Forms.TrackBarTS tbTXEQ9;
-		private System.Windows.Forms.TrackBarTS tbTXEQ10;
 		private System.Windows.Forms.LabelTS lblRXEQ4;
 		private System.Windows.Forms.LabelTS lblRXEQ5;
 		private System.Windows.Forms.LabelTS lblRXEQ6;
 		private System.Windows.Forms.LabelTS lblRXEQ7;
 		private System.Windows.Forms.LabelTS lblRXEQ8;
 		private System.Windows.Forms.LabelTS lblRXEQ9;
-		private System.Windows.Forms.LabelTS lblRXEQ10;
-		private System.Windows.Forms.LabelTS lblTXEQ4;
-		private System.Windows.Forms.LabelTS lblTXEQ5;
-		private System.Windows.Forms.LabelTS lblTXEQ6;
-		private System.Windows.Forms.LabelTS lblTXEQ7;
-		private System.Windows.Forms.LabelTS lblTXEQ8;
-		private System.Windows.Forms.LabelTS lblTXEQ9;
-		private System.Windows.Forms.LabelTS lblTXEQ10;
+        private System.Windows.Forms.LabelTS lblRXEQ10;
+        private LabelTS lblCFCFreq;
+        private NumericUpDownTS udTXEQ9;
+        private NumericUpDownTS udTXEQ8;
+        private NumericUpDownTS udTXEQ7;
+        private NumericUpDownTS udTXEQ6;
+        private NumericUpDownTS udTXEQ5;
+        private NumericUpDownTS udTXEQ4;
+        private NumericUpDownTS udTXEQ3;
+        private NumericUpDownTS udTXEQ2;
+        private NumericUpDownTS udTXEQ1;
+        private NumericUpDownTS udTXEQ0;
 		private System.ComponentModel.IContainer components;
 		
 		#endregion
@@ -125,7 +123,7 @@ namespace Thetis
 			Common.RestoreForm(this, "EQForm", false);
             
 			tbRXEQ_Scroll(this, EventArgs.Empty);
-			tbTXEQ_Scroll(this, EventArgs.Empty);
+			//tbTXEQ_Scroll(this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -154,6 +152,12 @@ namespace Thetis
 		{
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EQForm));
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.lblRXEQ9 = new System.Windows.Forms.LabelTS();
+            this.lblRXEQ5 = new System.Windows.Forms.LabelTS();
+            this.lblRXEQ1 = new System.Windows.Forms.LabelTS();
+            this.rad10Band = new System.Windows.Forms.RadioButtonTS();
+            this.rad3Band = new System.Windows.Forms.RadioButtonTS();
             this.grpRXEQ = new System.Windows.Forms.GroupBoxTS();
             this.lblRXEQ15db2 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ0dB2 = new System.Windows.Forms.LabelTS();
@@ -162,7 +166,6 @@ namespace Thetis
             this.tbRXEQ10 = new System.Windows.Forms.TrackBarTS();
             this.lblRXEQ7 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ8 = new System.Windows.Forms.LabelTS();
-            this.lblRXEQ9 = new System.Windows.Forms.LabelTS();
             this.tbRXEQ7 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ8 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ9 = new System.Windows.Forms.TrackBarTS();
@@ -170,7 +173,6 @@ namespace Thetis
             this.tbRXEQ5 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ6 = new System.Windows.Forms.TrackBarTS();
             this.lblRXEQ4 = new System.Windows.Forms.LabelTS();
-            this.lblRXEQ5 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ6 = new System.Windows.Forms.LabelTS();
             this.picRXEQ = new System.Windows.Forms.PictureBox();
             this.btnRXEQReset = new System.Windows.Forms.ButtonTS();
@@ -178,7 +180,6 @@ namespace Thetis
             this.tbRXEQ1 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ2 = new System.Windows.Forms.TrackBarTS();
             this.tbRXEQ3 = new System.Windows.Forms.TrackBarTS();
-            this.lblRXEQ1 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ2 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ3 = new System.Windows.Forms.LabelTS();
             this.lblRXEQPreamp = new System.Windows.Forms.LabelTS();
@@ -187,41 +188,36 @@ namespace Thetis
             this.lblRXEQ0dB = new System.Windows.Forms.LabelTS();
             this.lblRXEQminus12db = new System.Windows.Forms.LabelTS();
             this.grpTXEQ = new System.Windows.Forms.GroupBoxTS();
+            this.lblCFCFreq = new System.Windows.Forms.LabelTS();
+            this.udTXEQ9 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ8 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ7 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ6 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ5 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ4 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ3 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ2 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ1 = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXEQ0 = new System.Windows.Forms.NumericUpDownTS();
             this.lblTXEQ15db2 = new System.Windows.Forms.LabelTS();
             this.lblTXEQ0dB2 = new System.Windows.Forms.LabelTS();
             this.lblTXEQminus12db2 = new System.Windows.Forms.LabelTS();
-            this.tbTXEQ10 = new System.Windows.Forms.TrackBarTS();
-            this.lblTXEQ10 = new System.Windows.Forms.LabelTS();
+            this.tbTXEQ9 = new System.Windows.Forms.TrackBarTS();
+            this.tbTXEQ6 = new System.Windows.Forms.TrackBarTS();
             this.tbTXEQ7 = new System.Windows.Forms.TrackBarTS();
             this.tbTXEQ8 = new System.Windows.Forms.TrackBarTS();
-            this.tbTXEQ9 = new System.Windows.Forms.TrackBarTS();
-            this.lblTXEQ7 = new System.Windows.Forms.LabelTS();
-            this.lblTXEQ8 = new System.Windows.Forms.LabelTS();
-            this.lblTXEQ9 = new System.Windows.Forms.LabelTS();
+            this.tbTXEQ3 = new System.Windows.Forms.TrackBarTS();
             this.tbTXEQ4 = new System.Windows.Forms.TrackBarTS();
             this.tbTXEQ5 = new System.Windows.Forms.TrackBarTS();
-            this.tbTXEQ6 = new System.Windows.Forms.TrackBarTS();
-            this.lblTXEQ4 = new System.Windows.Forms.LabelTS();
-            this.lblTXEQ5 = new System.Windows.Forms.LabelTS();
-            this.lblTXEQ6 = new System.Windows.Forms.LabelTS();
-            this.chkTXEQ160Notch = new System.Windows.Forms.CheckBoxTS();
-            this.picTXEQ = new System.Windows.Forms.PictureBox();
-            this.btnTXEQReset = new System.Windows.Forms.ButtonTS();
             this.chkTXEQEnabled = new System.Windows.Forms.CheckBoxTS();
+            this.tbTXEQ0 = new System.Windows.Forms.TrackBarTS();
             this.tbTXEQ1 = new System.Windows.Forms.TrackBarTS();
             this.tbTXEQ2 = new System.Windows.Forms.TrackBarTS();
-            this.tbTXEQ3 = new System.Windows.Forms.TrackBarTS();
-            this.lblTXEQ1 = new System.Windows.Forms.LabelTS();
-            this.lblTXEQ2 = new System.Windows.Forms.LabelTS();
-            this.lblTXEQ3 = new System.Windows.Forms.LabelTS();
             this.lblTXEQPreamp = new System.Windows.Forms.LabelTS();
-            this.tbTXEQPreamp = new System.Windows.Forms.TrackBarTS();
+            this.tbTXEQPre = new System.Windows.Forms.TrackBarTS();
             this.lblTXEQ15db = new System.Windows.Forms.LabelTS();
             this.lblTXEQ0dB = new System.Windows.Forms.LabelTS();
             this.lblTXEQminus12db = new System.Windows.Forms.LabelTS();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.rad3Band = new System.Windows.Forms.RadioButtonTS();
-            this.rad10Band = new System.Windows.Forms.RadioButtonTS();
             this.grpRXEQ.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ10)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ7)).BeginInit();
@@ -236,19 +232,84 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQPreamp)).BeginInit();
             this.grpTXEQ.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ10)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ8)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picTXEQ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQPreamp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQPre)).BeginInit();
             this.SuspendLayout();
+            // 
+            // lblRXEQ9
+            // 
+            this.lblRXEQ9.Image = null;
+            this.lblRXEQ9.Location = new System.Drawing.Point(400, 56);
+            this.lblRXEQ9.Name = "lblRXEQ9";
+            this.lblRXEQ9.Size = new System.Drawing.Size(40, 16);
+            this.lblRXEQ9.TabIndex = 123;
+            this.lblRXEQ9.Text = "High";
+            this.lblRXEQ9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblRXEQ9, "1500-6000Hz");
+            // 
+            // lblRXEQ5
+            // 
+            this.lblRXEQ5.Image = null;
+            this.lblRXEQ5.Location = new System.Drawing.Point(240, 56);
+            this.lblRXEQ5.Name = "lblRXEQ5";
+            this.lblRXEQ5.Size = new System.Drawing.Size(40, 16);
+            this.lblRXEQ5.TabIndex = 116;
+            this.lblRXEQ5.Text = "Mid";
+            this.lblRXEQ5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblRXEQ5, "400-1500Hz");
+            // 
+            // lblRXEQ1
+            // 
+            this.lblRXEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRXEQ1.Image = null;
+            this.lblRXEQ1.Location = new System.Drawing.Point(80, 56);
+            this.lblRXEQ1.Name = "lblRXEQ1";
+            this.lblRXEQ1.Size = new System.Drawing.Size(40, 16);
+            this.lblRXEQ1.TabIndex = 43;
+            this.lblRXEQ1.Text = "Low";
+            this.lblRXEQ1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblRXEQ1, "0-400Hz");
+            // 
+            // rad10Band
+            // 
+            this.rad10Band.Image = null;
+            this.rad10Band.Location = new System.Drawing.Point(144, 8);
+            this.rad10Band.Name = "rad10Band";
+            this.rad10Band.Size = new System.Drawing.Size(120, 24);
+            this.rad10Band.TabIndex = 3;
+            this.rad10Band.Text = "10-Band Equalizer";
+            this.rad10Band.CheckedChanged += new System.EventHandler(this.rad10Band_CheckedChanged);
+            // 
+            // rad3Band
+            // 
+            this.rad3Band.Checked = true;
+            this.rad3Band.Image = null;
+            this.rad3Band.Location = new System.Drawing.Point(16, 8);
+            this.rad3Band.Name = "rad3Band";
+            this.rad3Band.Size = new System.Drawing.Size(120, 24);
+            this.rad3Band.TabIndex = 2;
+            this.rad3Band.TabStop = true;
+            this.rad3Band.Text = "3-Band Equalizer";
+            this.rad3Band.CheckedChanged += new System.EventHandler(this.rad3Band_CheckedChanged);
             // 
             // grpRXEQ
             // 
@@ -315,7 +376,7 @@ namespace Thetis
             this.lblRXEQminus12db2.Image = null;
             this.lblRXEQminus12db2.Location = new System.Drawing.Point(480, 178);
             this.lblRXEQminus12db2.Name = "lblRXEQminus12db2";
-            this.lblRXEQminus12db2.Size = new System.Drawing.Size(34, 16);
+            this.lblRXEQminus12db2.Size = new System.Drawing.Size(38, 16);
             this.lblRXEQminus12db2.TabIndex = 128;
             this.lblRXEQminus12db2.Text = "-12dB";
             this.lblRXEQminus12db2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -368,17 +429,6 @@ namespace Thetis
             this.lblRXEQ8.Text = "4K";
             this.lblRXEQ8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblRXEQ8.Visible = false;
-            // 
-            // lblRXEQ9
-            // 
-            this.lblRXEQ9.Image = null;
-            this.lblRXEQ9.Location = new System.Drawing.Point(400, 56);
-            this.lblRXEQ9.Name = "lblRXEQ9";
-            this.lblRXEQ9.Size = new System.Drawing.Size(40, 16);
-            this.lblRXEQ9.TabIndex = 123;
-            this.lblRXEQ9.Text = "High";
-            this.lblRXEQ9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblRXEQ9, "1500-6000Hz");
             // 
             // tbRXEQ7
             // 
@@ -480,17 +530,6 @@ namespace Thetis
             this.lblRXEQ4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblRXEQ4.Visible = false;
             // 
-            // lblRXEQ5
-            // 
-            this.lblRXEQ5.Image = null;
-            this.lblRXEQ5.Location = new System.Drawing.Point(240, 56);
-            this.lblRXEQ5.Name = "lblRXEQ5";
-            this.lblRXEQ5.Size = new System.Drawing.Size(40, 16);
-            this.lblRXEQ5.TabIndex = 116;
-            this.lblRXEQ5.Text = "Mid";
-            this.lblRXEQ5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblRXEQ5, "400-1500Hz");
-            // 
             // lblRXEQ6
             // 
             this.lblRXEQ6.Image = null;
@@ -514,10 +553,11 @@ namespace Thetis
             // 
             // btnRXEQReset
             // 
+            this.btnRXEQReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRXEQReset.Image = null;
-            this.btnRXEQReset.Location = new System.Drawing.Point(16, 200);
+            this.btnRXEQReset.Location = new System.Drawing.Point(478, 28);
             this.btnRXEQReset.Name = "btnRXEQReset";
-            this.btnRXEQReset.Size = new System.Drawing.Size(56, 20);
+            this.btnRXEQReset.Size = new System.Drawing.Size(42, 20);
             this.btnRXEQReset.TabIndex = 110;
             this.btnRXEQReset.Text = "Reset";
             this.btnRXEQReset.Click += new System.EventHandler(this.btnRXEQReset_Click);
@@ -575,18 +615,6 @@ namespace Thetis
             this.tbRXEQ3.TickFrequency = 3;
             this.tbRXEQ3.Visible = false;
             this.tbRXEQ3.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
-            // 
-            // lblRXEQ1
-            // 
-            this.lblRXEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRXEQ1.Image = null;
-            this.lblRXEQ1.Location = new System.Drawing.Point(80, 56);
-            this.lblRXEQ1.Name = "lblRXEQ1";
-            this.lblRXEQ1.Size = new System.Drawing.Size(40, 16);
-            this.lblRXEQ1.TabIndex = 43;
-            this.lblRXEQ1.Text = "Low";
-            this.lblRXEQ1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblRXEQ1, "0-400Hz");
             // 
             // lblRXEQ2
             // 
@@ -660,42 +688,40 @@ namespace Thetis
             this.lblRXEQminus12db.Image = null;
             this.lblRXEQminus12db.Location = new System.Drawing.Point(52, 178);
             this.lblRXEQminus12db.Name = "lblRXEQminus12db";
-            this.lblRXEQminus12db.Size = new System.Drawing.Size(34, 16);
+            this.lblRXEQminus12db.Size = new System.Drawing.Size(38, 16);
             this.lblRXEQminus12db.TabIndex = 42;
             this.lblRXEQminus12db.Text = "-12dB";
             this.lblRXEQminus12db.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // grpTXEQ
             // 
+            this.grpTXEQ.Controls.Add(this.lblCFCFreq);
+            this.grpTXEQ.Controls.Add(this.udTXEQ9);
+            this.grpTXEQ.Controls.Add(this.udTXEQ8);
+            this.grpTXEQ.Controls.Add(this.udTXEQ7);
+            this.grpTXEQ.Controls.Add(this.udTXEQ6);
+            this.grpTXEQ.Controls.Add(this.udTXEQ5);
+            this.grpTXEQ.Controls.Add(this.udTXEQ4);
+            this.grpTXEQ.Controls.Add(this.udTXEQ3);
+            this.grpTXEQ.Controls.Add(this.udTXEQ2);
+            this.grpTXEQ.Controls.Add(this.udTXEQ1);
+            this.grpTXEQ.Controls.Add(this.udTXEQ0);
             this.grpTXEQ.Controls.Add(this.lblTXEQ15db2);
             this.grpTXEQ.Controls.Add(this.lblTXEQ0dB2);
             this.grpTXEQ.Controls.Add(this.lblTXEQminus12db2);
-            this.grpTXEQ.Controls.Add(this.tbTXEQ10);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ10);
+            this.grpTXEQ.Controls.Add(this.tbTXEQ9);
+            this.grpTXEQ.Controls.Add(this.tbTXEQ6);
             this.grpTXEQ.Controls.Add(this.tbTXEQ7);
             this.grpTXEQ.Controls.Add(this.tbTXEQ8);
-            this.grpTXEQ.Controls.Add(this.tbTXEQ9);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ7);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ8);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ9);
+            this.grpTXEQ.Controls.Add(this.tbTXEQ3);
             this.grpTXEQ.Controls.Add(this.tbTXEQ4);
             this.grpTXEQ.Controls.Add(this.tbTXEQ5);
-            this.grpTXEQ.Controls.Add(this.tbTXEQ6);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ4);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ5);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ6);
-            this.grpTXEQ.Controls.Add(this.chkTXEQ160Notch);
-            this.grpTXEQ.Controls.Add(this.picTXEQ);
-            this.grpTXEQ.Controls.Add(this.btnTXEQReset);
             this.grpTXEQ.Controls.Add(this.chkTXEQEnabled);
+            this.grpTXEQ.Controls.Add(this.tbTXEQ0);
             this.grpTXEQ.Controls.Add(this.tbTXEQ1);
             this.grpTXEQ.Controls.Add(this.tbTXEQ2);
-            this.grpTXEQ.Controls.Add(this.tbTXEQ3);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ1);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ2);
-            this.grpTXEQ.Controls.Add(this.lblTXEQ3);
             this.grpTXEQ.Controls.Add(this.lblTXEQPreamp);
-            this.grpTXEQ.Controls.Add(this.tbTXEQPreamp);
+            this.grpTXEQ.Controls.Add(this.tbTXEQPre);
             this.grpTXEQ.Controls.Add(this.lblTXEQ15db);
             this.grpTXEQ.Controls.Add(this.lblTXEQ0dB);
             this.grpTXEQ.Controls.Add(this.lblTXEQminus12db);
@@ -706,10 +732,301 @@ namespace Thetis
             this.grpTXEQ.TabStop = false;
             this.grpTXEQ.Text = "Transmit Equalizer";
             // 
+            // lblCFCFreq
+            // 
+            this.lblCFCFreq.AutoSize = true;
+            this.lblCFCFreq.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCFreq.Image = null;
+            this.lblCFCFreq.Location = new System.Drawing.Point(38, 50);
+            this.lblCFCFreq.Name = "lblCFCFreq";
+            this.lblCFCFreq.Size = new System.Drawing.Size(35, 13);
+            this.lblCFCFreq.TabIndex = 159;
+            this.lblCFCFreq.Text = "FREQ";
+            // 
+            // udTXEQ9
+            // 
+            this.udTXEQ9.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ9.Location = new System.Drawing.Point(438, 37);
+            this.udTXEQ9.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ9.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ9.Name = "udTXEQ9";
+            this.udTXEQ9.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ9.TabIndex = 158;
+            this.udTXEQ9.Value = new decimal(new int[] {
+            16000,
+            0,
+            0,
+            0});
+            this.udTXEQ9.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ8
+            // 
+            this.udTXEQ8.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ8.Location = new System.Drawing.Point(398, 60);
+            this.udTXEQ8.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ8.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ8.Name = "udTXEQ8";
+            this.udTXEQ8.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ8.TabIndex = 157;
+            this.udTXEQ8.Value = new decimal(new int[] {
+            8000,
+            0,
+            0,
+            0});
+            this.udTXEQ8.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ7
+            // 
+            this.udTXEQ7.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ7.Location = new System.Drawing.Point(358, 37);
+            this.udTXEQ7.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ7.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ7.Name = "udTXEQ7";
+            this.udTXEQ7.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ7.TabIndex = 156;
+            this.udTXEQ7.Value = new decimal(new int[] {
+            4000,
+            0,
+            0,
+            0});
+            this.udTXEQ7.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ6
+            // 
+            this.udTXEQ6.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ6.Location = new System.Drawing.Point(318, 60);
+            this.udTXEQ6.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ6.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ6.Name = "udTXEQ6";
+            this.udTXEQ6.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ6.TabIndex = 155;
+            this.udTXEQ6.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.udTXEQ6.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ5
+            // 
+            this.udTXEQ5.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ5.Location = new System.Drawing.Point(278, 37);
+            this.udTXEQ5.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ5.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ5.Name = "udTXEQ5";
+            this.udTXEQ5.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ5.TabIndex = 154;
+            this.udTXEQ5.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udTXEQ5.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ4
+            // 
+            this.udTXEQ4.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ4.Location = new System.Drawing.Point(238, 60);
+            this.udTXEQ4.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ4.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ4.Name = "udTXEQ4";
+            this.udTXEQ4.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ4.TabIndex = 153;
+            this.udTXEQ4.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.udTXEQ4.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ3
+            // 
+            this.udTXEQ3.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ3.Location = new System.Drawing.Point(198, 37);
+            this.udTXEQ3.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ3.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ3.Name = "udTXEQ3";
+            this.udTXEQ3.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ3.TabIndex = 152;
+            this.udTXEQ3.Value = new decimal(new int[] {
+            250,
+            0,
+            0,
+            0});
+            this.udTXEQ3.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ2
+            // 
+            this.udTXEQ2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ2.Location = new System.Drawing.Point(158, 60);
+            this.udTXEQ2.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ2.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ2.Name = "udTXEQ2";
+            this.udTXEQ2.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ2.TabIndex = 151;
+            this.udTXEQ2.Value = new decimal(new int[] {
+            125,
+            0,
+            0,
+            0});
+            this.udTXEQ2.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ1
+            // 
+            this.udTXEQ1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ1.Location = new System.Drawing.Point(118, 37);
+            this.udTXEQ1.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ1.Name = "udTXEQ1";
+            this.udTXEQ1.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ1.TabIndex = 150;
+            this.udTXEQ1.Value = new decimal(new int[] {
+            63,
+            0,
+            0,
+            0});
+            this.udTXEQ1.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
+            // udTXEQ0
+            // 
+            this.udTXEQ0.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTXEQ0.Location = new System.Drawing.Point(78, 60);
+            this.udTXEQ0.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXEQ0.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXEQ0.Name = "udTXEQ0";
+            this.udTXEQ0.Size = new System.Drawing.Size(50, 20);
+            this.udTXEQ0.TabIndex = 149;
+            this.udTXEQ0.Value = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.udTXEQ0.ValueChanged += new System.EventHandler(this.setTXEQProfile);
+            // 
             // lblTXEQ15db2
             // 
             this.lblTXEQ15db2.Image = null;
-            this.lblTXEQ15db2.Location = new System.Drawing.Point(483, 78);
+            this.lblTXEQ15db2.Location = new System.Drawing.Point(483, 87);
             this.lblTXEQ15db2.Name = "lblTXEQ15db2";
             this.lblTXEQ15db2.Size = new System.Drawing.Size(32, 16);
             this.lblTXEQ15db2.TabIndex = 129;
@@ -719,7 +1036,7 @@ namespace Thetis
             // lblTXEQ0dB2
             // 
             this.lblTXEQ0dB2.Image = null;
-            this.lblTXEQ0dB2.Location = new System.Drawing.Point(483, 134);
+            this.lblTXEQ0dB2.Location = new System.Drawing.Point(483, 143);
             this.lblTXEQ0dB2.Name = "lblTXEQ0dB2";
             this.lblTXEQ0dB2.Size = new System.Drawing.Size(32, 16);
             this.lblTXEQ0dB2.TabIndex = 128;
@@ -729,349 +1046,192 @@ namespace Thetis
             // lblTXEQminus12db2
             // 
             this.lblTXEQminus12db2.Image = null;
-            this.lblTXEQminus12db2.Location = new System.Drawing.Point(480, 178);
+            this.lblTXEQminus12db2.Location = new System.Drawing.Point(480, 187);
             this.lblTXEQminus12db2.Name = "lblTXEQminus12db2";
-            this.lblTXEQminus12db2.Size = new System.Drawing.Size(34, 16);
+            this.lblTXEQminus12db2.Size = new System.Drawing.Size(38, 16);
             this.lblTXEQminus12db2.TabIndex = 130;
             this.lblTXEQminus12db2.Text = "-12dB";
             this.lblTXEQminus12db2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tbTXEQ10
-            // 
-            this.tbTXEQ10.AutoSize = false;
-            this.tbTXEQ10.LargeChange = 3;
-            this.tbTXEQ10.Location = new System.Drawing.Point(448, 72);
-            this.tbTXEQ10.Maximum = 15;
-            this.tbTXEQ10.Minimum = -12;
-            this.tbTXEQ10.Name = "tbTXEQ10";
-            this.tbTXEQ10.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbTXEQ10.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ10.TabIndex = 126;
-            this.tbTXEQ10.TickFrequency = 3;
-            this.tbTXEQ10.Visible = false;
-            this.tbTXEQ10.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
-            // 
-            // lblTXEQ10
-            // 
-            this.lblTXEQ10.Image = null;
-            this.lblTXEQ10.Location = new System.Drawing.Point(440, 56);
-            this.lblTXEQ10.Name = "lblTXEQ10";
-            this.lblTXEQ10.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ10.TabIndex = 127;
-            this.lblTXEQ10.Text = "16K";
-            this.lblTXEQ10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ10, "1500-6000Hz");
-            this.lblTXEQ10.Visible = false;
-            // 
-            // tbTXEQ7
-            // 
-            this.tbTXEQ7.AutoSize = false;
-            this.tbTXEQ7.LargeChange = 3;
-            this.tbTXEQ7.Location = new System.Drawing.Point(328, 72);
-            this.tbTXEQ7.Maximum = 15;
-            this.tbTXEQ7.Minimum = -12;
-            this.tbTXEQ7.Name = "tbTXEQ7";
-            this.tbTXEQ7.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbTXEQ7.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ7.TabIndex = 120;
-            this.tbTXEQ7.TickFrequency = 3;
-            this.tbTXEQ7.Visible = false;
-            this.tbTXEQ7.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
-            // 
-            // tbTXEQ8
-            // 
-            this.tbTXEQ8.AutoSize = false;
-            this.tbTXEQ8.LargeChange = 3;
-            this.tbTXEQ8.Location = new System.Drawing.Point(368, 72);
-            this.tbTXEQ8.Maximum = 15;
-            this.tbTXEQ8.Minimum = -12;
-            this.tbTXEQ8.Name = "tbTXEQ8";
-            this.tbTXEQ8.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbTXEQ8.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ8.TabIndex = 121;
-            this.tbTXEQ8.TickFrequency = 3;
-            this.tbTXEQ8.Visible = false;
-            this.tbTXEQ8.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
             // 
             // tbTXEQ9
             // 
             this.tbTXEQ9.AutoSize = false;
             this.tbTXEQ9.LargeChange = 3;
-            this.tbTXEQ9.Location = new System.Drawing.Point(408, 72);
+            this.tbTXEQ9.Location = new System.Drawing.Point(448, 81);
             this.tbTXEQ9.Maximum = 15;
             this.tbTXEQ9.Minimum = -12;
             this.tbTXEQ9.Name = "tbTXEQ9";
             this.tbTXEQ9.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.tbTXEQ9.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ9.TabIndex = 122;
+            this.tbTXEQ9.TabIndex = 126;
             this.tbTXEQ9.TickFrequency = 3;
-            this.tbTXEQ9.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
-            // 
-            // lblTXEQ7
-            // 
-            this.lblTXEQ7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTXEQ7.Image = null;
-            this.lblTXEQ7.Location = new System.Drawing.Point(320, 56);
-            this.lblTXEQ7.Name = "lblTXEQ7";
-            this.lblTXEQ7.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ7.TabIndex = 123;
-            this.lblTXEQ7.Text = "2K";
-            this.lblTXEQ7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ7, "0-400Hz");
-            this.lblTXEQ7.Visible = false;
-            // 
-            // lblTXEQ8
-            // 
-            this.lblTXEQ8.Image = null;
-            this.lblTXEQ8.Location = new System.Drawing.Point(360, 56);
-            this.lblTXEQ8.Name = "lblTXEQ8";
-            this.lblTXEQ8.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ8.TabIndex = 124;
-            this.lblTXEQ8.Text = "4K";
-            this.lblTXEQ8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ8, "400-1500Hz");
-            this.lblTXEQ8.Visible = false;
-            // 
-            // lblTXEQ9
-            // 
-            this.lblTXEQ9.Image = null;
-            this.lblTXEQ9.Location = new System.Drawing.Point(400, 56);
-            this.lblTXEQ9.Name = "lblTXEQ9";
-            this.lblTXEQ9.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ9.TabIndex = 125;
-            this.lblTXEQ9.Text = "High";
-            this.lblTXEQ9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ9, "1500-6000Hz");
-            // 
-            // tbTXEQ4
-            // 
-            this.tbTXEQ4.AutoSize = false;
-            this.tbTXEQ4.LargeChange = 3;
-            this.tbTXEQ4.Location = new System.Drawing.Point(208, 72);
-            this.tbTXEQ4.Maximum = 15;
-            this.tbTXEQ4.Minimum = -12;
-            this.tbTXEQ4.Name = "tbTXEQ4";
-            this.tbTXEQ4.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbTXEQ4.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ4.TabIndex = 114;
-            this.tbTXEQ4.TickFrequency = 3;
-            this.tbTXEQ4.Visible = false;
-            this.tbTXEQ4.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
-            // 
-            // tbTXEQ5
-            // 
-            this.tbTXEQ5.AutoSize = false;
-            this.tbTXEQ5.LargeChange = 3;
-            this.tbTXEQ5.Location = new System.Drawing.Point(248, 72);
-            this.tbTXEQ5.Maximum = 15;
-            this.tbTXEQ5.Minimum = -12;
-            this.tbTXEQ5.Name = "tbTXEQ5";
-            this.tbTXEQ5.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbTXEQ5.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ5.TabIndex = 115;
-            this.tbTXEQ5.TickFrequency = 3;
-            this.tbTXEQ5.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
+            this.tbTXEQ9.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
             // tbTXEQ6
             // 
             this.tbTXEQ6.AutoSize = false;
             this.tbTXEQ6.LargeChange = 3;
-            this.tbTXEQ6.Location = new System.Drawing.Point(288, 72);
+            this.tbTXEQ6.Location = new System.Drawing.Point(328, 81);
             this.tbTXEQ6.Maximum = 15;
             this.tbTXEQ6.Minimum = -12;
             this.tbTXEQ6.Name = "tbTXEQ6";
             this.tbTXEQ6.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.tbTXEQ6.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ6.TabIndex = 116;
+            this.tbTXEQ6.TabIndex = 120;
             this.tbTXEQ6.TickFrequency = 3;
-            this.tbTXEQ6.Visible = false;
-            this.tbTXEQ6.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
+            this.tbTXEQ6.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
-            // lblTXEQ4
+            // tbTXEQ7
             // 
-            this.lblTXEQ4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTXEQ4.Image = null;
-            this.lblTXEQ4.Location = new System.Drawing.Point(200, 56);
-            this.lblTXEQ4.Name = "lblTXEQ4";
-            this.lblTXEQ4.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ4.TabIndex = 117;
-            this.lblTXEQ4.Text = "250";
-            this.lblTXEQ4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ4, "0-400Hz");
-            this.lblTXEQ4.Visible = false;
+            this.tbTXEQ7.AutoSize = false;
+            this.tbTXEQ7.LargeChange = 3;
+            this.tbTXEQ7.Location = new System.Drawing.Point(368, 81);
+            this.tbTXEQ7.Maximum = 15;
+            this.tbTXEQ7.Minimum = -12;
+            this.tbTXEQ7.Name = "tbTXEQ7";
+            this.tbTXEQ7.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbTXEQ7.Size = new System.Drawing.Size(32, 128);
+            this.tbTXEQ7.TabIndex = 121;
+            this.tbTXEQ7.TickFrequency = 3;
+            this.tbTXEQ7.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
-            // lblTXEQ5
+            // tbTXEQ8
             // 
-            this.lblTXEQ5.Image = null;
-            this.lblTXEQ5.Location = new System.Drawing.Point(240, 56);
-            this.lblTXEQ5.Name = "lblTXEQ5";
-            this.lblTXEQ5.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ5.TabIndex = 118;
-            this.lblTXEQ5.Text = "Mid";
-            this.lblTXEQ5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ5, "400-1500Hz");
+            this.tbTXEQ8.AutoSize = false;
+            this.tbTXEQ8.LargeChange = 3;
+            this.tbTXEQ8.Location = new System.Drawing.Point(408, 81);
+            this.tbTXEQ8.Maximum = 15;
+            this.tbTXEQ8.Minimum = -12;
+            this.tbTXEQ8.Name = "tbTXEQ8";
+            this.tbTXEQ8.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbTXEQ8.Size = new System.Drawing.Size(32, 128);
+            this.tbTXEQ8.TabIndex = 122;
+            this.tbTXEQ8.TickFrequency = 3;
+            this.tbTXEQ8.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
-            // lblTXEQ6
+            // tbTXEQ3
             // 
-            this.lblTXEQ6.Image = null;
-            this.lblTXEQ6.Location = new System.Drawing.Point(280, 56);
-            this.lblTXEQ6.Name = "lblTXEQ6";
-            this.lblTXEQ6.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ6.TabIndex = 119;
-            this.lblTXEQ6.Text = "1K";
-            this.lblTXEQ6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ6, "1500-6000Hz");
-            this.lblTXEQ6.Visible = false;
+            this.tbTXEQ3.AutoSize = false;
+            this.tbTXEQ3.LargeChange = 3;
+            this.tbTXEQ3.Location = new System.Drawing.Point(208, 81);
+            this.tbTXEQ3.Maximum = 15;
+            this.tbTXEQ3.Minimum = -12;
+            this.tbTXEQ3.Name = "tbTXEQ3";
+            this.tbTXEQ3.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbTXEQ3.Size = new System.Drawing.Size(32, 128);
+            this.tbTXEQ3.TabIndex = 114;
+            this.tbTXEQ3.TickFrequency = 3;
+            this.tbTXEQ3.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
-            // chkTXEQ160Notch
+            // tbTXEQ4
             // 
-            this.chkTXEQ160Notch.Image = null;
-            this.chkTXEQ160Notch.Location = new System.Drawing.Point(104, 200);
-            this.chkTXEQ160Notch.Name = "chkTXEQ160Notch";
-            this.chkTXEQ160Notch.Size = new System.Drawing.Size(96, 16);
-            this.chkTXEQ160Notch.TabIndex = 113;
-            this.chkTXEQ160Notch.Text = "160Hz Notch";
-            this.chkTXEQ160Notch.Visible = false;
+            this.tbTXEQ4.AutoSize = false;
+            this.tbTXEQ4.LargeChange = 3;
+            this.tbTXEQ4.Location = new System.Drawing.Point(248, 81);
+            this.tbTXEQ4.Maximum = 15;
+            this.tbTXEQ4.Minimum = -12;
+            this.tbTXEQ4.Name = "tbTXEQ4";
+            this.tbTXEQ4.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbTXEQ4.Size = new System.Drawing.Size(32, 128);
+            this.tbTXEQ4.TabIndex = 115;
+            this.tbTXEQ4.TickFrequency = 3;
+            this.tbTXEQ4.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
-            // picTXEQ
+            // tbTXEQ5
             // 
-            this.picTXEQ.BackColor = System.Drawing.Color.Black;
-            this.picTXEQ.Location = new System.Drawing.Point(88, 24);
-            this.picTXEQ.Name = "picTXEQ";
-            this.picTXEQ.Size = new System.Drawing.Size(384, 24);
-            this.picTXEQ.TabIndex = 112;
-            this.picTXEQ.TabStop = false;
-            this.picTXEQ.Paint += new System.Windows.Forms.PaintEventHandler(this.picTXEQ_Paint);
-            // 
-            // btnTXEQReset
-            // 
-            this.btnTXEQReset.Image = null;
-            this.btnTXEQReset.Location = new System.Drawing.Point(16, 200);
-            this.btnTXEQReset.Name = "btnTXEQReset";
-            this.btnTXEQReset.Size = new System.Drawing.Size(56, 20);
-            this.btnTXEQReset.TabIndex = 107;
-            this.btnTXEQReset.Text = "Reset";
-            this.btnTXEQReset.Click += new System.EventHandler(this.btnTXEQReset_Click);
+            this.tbTXEQ5.AutoSize = false;
+            this.tbTXEQ5.LargeChange = 3;
+            this.tbTXEQ5.Location = new System.Drawing.Point(288, 81);
+            this.tbTXEQ5.Maximum = 15;
+            this.tbTXEQ5.Minimum = -12;
+            this.tbTXEQ5.Name = "tbTXEQ5";
+            this.tbTXEQ5.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbTXEQ5.Size = new System.Drawing.Size(32, 128);
+            this.tbTXEQ5.TabIndex = 116;
+            this.tbTXEQ5.TickFrequency = 3;
+            this.tbTXEQ5.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
             // chkTXEQEnabled
             // 
             this.chkTXEQEnabled.Image = null;
-            this.chkTXEQEnabled.Location = new System.Drawing.Point(16, 24);
+            this.chkTXEQEnabled.Location = new System.Drawing.Point(16, 18);
             this.chkTXEQEnabled.Name = "chkTXEQEnabled";
             this.chkTXEQEnabled.Size = new System.Drawing.Size(72, 16);
             this.chkTXEQEnabled.TabIndex = 106;
             this.chkTXEQEnabled.Text = "Enabled";
             this.chkTXEQEnabled.CheckedChanged += new System.EventHandler(this.chkTXEQEnabled_CheckedChanged);
             // 
+            // tbTXEQ0
+            // 
+            this.tbTXEQ0.AutoSize = false;
+            this.tbTXEQ0.LargeChange = 3;
+            this.tbTXEQ0.Location = new System.Drawing.Point(88, 81);
+            this.tbTXEQ0.Maximum = 15;
+            this.tbTXEQ0.Minimum = -12;
+            this.tbTXEQ0.Name = "tbTXEQ0";
+            this.tbTXEQ0.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbTXEQ0.Size = new System.Drawing.Size(32, 128);
+            this.tbTXEQ0.TabIndex = 4;
+            this.tbTXEQ0.TickFrequency = 3;
+            this.tbTXEQ0.Scroll += new System.EventHandler(this.setTXEQProfile);
+            // 
             // tbTXEQ1
             // 
             this.tbTXEQ1.AutoSize = false;
             this.tbTXEQ1.LargeChange = 3;
-            this.tbTXEQ1.Location = new System.Drawing.Point(88, 72);
+            this.tbTXEQ1.Location = new System.Drawing.Point(128, 81);
             this.tbTXEQ1.Maximum = 15;
             this.tbTXEQ1.Minimum = -12;
             this.tbTXEQ1.Name = "tbTXEQ1";
             this.tbTXEQ1.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.tbTXEQ1.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ1.TabIndex = 4;
+            this.tbTXEQ1.TabIndex = 5;
             this.tbTXEQ1.TickFrequency = 3;
-            this.tbTXEQ1.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
+            this.tbTXEQ1.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
             // tbTXEQ2
             // 
             this.tbTXEQ2.AutoSize = false;
             this.tbTXEQ2.LargeChange = 3;
-            this.tbTXEQ2.Location = new System.Drawing.Point(128, 72);
+            this.tbTXEQ2.Location = new System.Drawing.Point(168, 81);
             this.tbTXEQ2.Maximum = 15;
             this.tbTXEQ2.Minimum = -12;
             this.tbTXEQ2.Name = "tbTXEQ2";
             this.tbTXEQ2.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.tbTXEQ2.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ2.TabIndex = 5;
+            this.tbTXEQ2.TabIndex = 6;
             this.tbTXEQ2.TickFrequency = 3;
-            this.tbTXEQ2.Visible = false;
-            this.tbTXEQ2.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
-            // 
-            // tbTXEQ3
-            // 
-            this.tbTXEQ3.AutoSize = false;
-            this.tbTXEQ3.LargeChange = 3;
-            this.tbTXEQ3.Location = new System.Drawing.Point(168, 72);
-            this.tbTXEQ3.Maximum = 15;
-            this.tbTXEQ3.Minimum = -12;
-            this.tbTXEQ3.Name = "tbTXEQ3";
-            this.tbTXEQ3.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbTXEQ3.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQ3.TabIndex = 6;
-            this.tbTXEQ3.TickFrequency = 3;
-            this.tbTXEQ3.Visible = false;
-            this.tbTXEQ3.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
-            // 
-            // lblTXEQ1
-            // 
-            this.lblTXEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTXEQ1.Image = null;
-            this.lblTXEQ1.Location = new System.Drawing.Point(80, 56);
-            this.lblTXEQ1.Name = "lblTXEQ1";
-            this.lblTXEQ1.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ1.TabIndex = 74;
-            this.lblTXEQ1.Text = "Low";
-            this.lblTXEQ1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ1, "0-400Hz");
-            // 
-            // lblTXEQ2
-            // 
-            this.lblTXEQ2.Image = null;
-            this.lblTXEQ2.Location = new System.Drawing.Point(120, 56);
-            this.lblTXEQ2.Name = "lblTXEQ2";
-            this.lblTXEQ2.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ2.TabIndex = 75;
-            this.lblTXEQ2.Text = "63";
-            this.lblTXEQ2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ2, "400-1500Hz");
-            this.lblTXEQ2.Visible = false;
-            // 
-            // lblTXEQ3
-            // 
-            this.lblTXEQ3.Image = null;
-            this.lblTXEQ3.Location = new System.Drawing.Point(160, 56);
-            this.lblTXEQ3.Name = "lblTXEQ3";
-            this.lblTXEQ3.Size = new System.Drawing.Size(40, 16);
-            this.lblTXEQ3.TabIndex = 76;
-            this.lblTXEQ3.Text = "125";
-            this.lblTXEQ3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXEQ3, "1500-6000Hz");
-            this.lblTXEQ3.Visible = false;
+            this.tbTXEQ2.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
             // lblTXEQPreamp
             // 
             this.lblTXEQPreamp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTXEQPreamp.Image = null;
-            this.lblTXEQPreamp.Location = new System.Drawing.Point(8, 56);
+            this.lblTXEQPreamp.Location = new System.Drawing.Point(8, 69);
             this.lblTXEQPreamp.Name = "lblTXEQPreamp";
             this.lblTXEQPreamp.Size = new System.Drawing.Size(48, 16);
             this.lblTXEQPreamp.TabIndex = 105;
             this.lblTXEQPreamp.Text = "Preamp";
             this.lblTXEQPreamp.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // tbTXEQPreamp
+            // tbTXEQPre
             // 
-            this.tbTXEQPreamp.AutoSize = false;
-            this.tbTXEQPreamp.LargeChange = 3;
-            this.tbTXEQPreamp.Location = new System.Drawing.Point(16, 72);
-            this.tbTXEQPreamp.Maximum = 15;
-            this.tbTXEQPreamp.Minimum = -12;
-            this.tbTXEQPreamp.Name = "tbTXEQPreamp";
-            this.tbTXEQPreamp.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbTXEQPreamp.Size = new System.Drawing.Size(32, 128);
-            this.tbTXEQPreamp.TabIndex = 36;
-            this.tbTXEQPreamp.TickFrequency = 3;
-            this.tbTXEQPreamp.Scroll += new System.EventHandler(this.tbTXEQ_Scroll);
+            this.tbTXEQPre.AutoSize = false;
+            this.tbTXEQPre.LargeChange = 3;
+            this.tbTXEQPre.Location = new System.Drawing.Point(16, 81);
+            this.tbTXEQPre.Maximum = 15;
+            this.tbTXEQPre.Minimum = -12;
+            this.tbTXEQPre.Name = "tbTXEQPre";
+            this.tbTXEQPre.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbTXEQPre.Size = new System.Drawing.Size(32, 128);
+            this.tbTXEQPre.TabIndex = 36;
+            this.tbTXEQPre.TickFrequency = 3;
+            this.tbTXEQPre.Scroll += new System.EventHandler(this.setTXEQProfile);
             // 
             // lblTXEQ15db
             // 
             this.lblTXEQ15db.Image = null;
-            this.lblTXEQ15db.Location = new System.Drawing.Point(56, 80);
+            this.lblTXEQ15db.Location = new System.Drawing.Point(56, 89);
             this.lblTXEQ15db.Name = "lblTXEQ15db";
             this.lblTXEQ15db.Size = new System.Drawing.Size(32, 16);
             this.lblTXEQ15db.TabIndex = 43;
@@ -1081,7 +1241,7 @@ namespace Thetis
             // lblTXEQ0dB
             // 
             this.lblTXEQ0dB.Image = null;
-            this.lblTXEQ0dB.Location = new System.Drawing.Point(56, 134);
+            this.lblTXEQ0dB.Location = new System.Drawing.Point(56, 143);
             this.lblTXEQ0dB.Name = "lblTXEQ0dB";
             this.lblTXEQ0dB.Size = new System.Drawing.Size(32, 16);
             this.lblTXEQ0dB.TabIndex = 0;
@@ -1091,38 +1251,15 @@ namespace Thetis
             // lblTXEQminus12db
             // 
             this.lblTXEQminus12db.Image = null;
-            this.lblTXEQminus12db.Location = new System.Drawing.Point(52, 176);
+            this.lblTXEQminus12db.Location = new System.Drawing.Point(52, 185);
             this.lblTXEQminus12db.Name = "lblTXEQminus12db";
-            this.lblTXEQminus12db.Size = new System.Drawing.Size(34, 16);
+            this.lblTXEQminus12db.Size = new System.Drawing.Size(38, 16);
             this.lblTXEQminus12db.TabIndex = 45;
             this.lblTXEQminus12db.Text = "-12dB";
             this.lblTXEQminus12db.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // rad3Band
-            // 
-            this.rad3Band.Checked = true;
-            this.rad3Band.Image = null;
-            this.rad3Band.Location = new System.Drawing.Point(16, 8);
-            this.rad3Band.Name = "rad3Band";
-            this.rad3Band.Size = new System.Drawing.Size(120, 24);
-            this.rad3Band.TabIndex = 2;
-            this.rad3Band.TabStop = true;
-            this.rad3Band.Text = "3-Band Equalizer";
-            this.rad3Band.CheckedChanged += new System.EventHandler(this.rad3Band_CheckedChanged);
-            // 
-            // rad10Band
-            // 
-            this.rad10Band.Image = null;
-            this.rad10Band.Location = new System.Drawing.Point(144, 8);
-            this.rad10Band.Name = "rad10Band";
-            this.rad10Band.Size = new System.Drawing.Size(120, 24);
-            this.rad10Band.TabIndex = 3;
-            this.rad10Band.Text = "10-Band Equalizer";
-            this.rad10Band.CheckedChanged += new System.EventHandler(this.rad10Band_CheckedChanged);
-            // 
             // EQForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(5, 13);
             this.ClientSize = new System.Drawing.Size(544, 502);
             this.Controls.Add(this.rad10Band);
             this.Controls.Add(this.rad3Band);
@@ -1146,18 +1283,28 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQPreamp)).EndInit();
             this.grpTXEQ.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ10)).EndInit();
+            this.grpTXEQ.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXEQ0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ8)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picTXEQ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQ3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQPreamp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTXEQPre)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -1256,67 +1403,89 @@ namespace Thetis
 		{
 			get 
 			{
-				if(rad3Band.Checked)
-				{
-					int[] eq = new int[4];
-					eq[0] = tbTXEQPreamp.Value;
-					eq[1] = tbTXEQ1.Value;
-					eq[2] = tbTXEQ5.Value;
-					eq[3] = tbTXEQ9.Value;
-					return eq;
-				}
-				else //if(rad10Band.Checked)
-				{
-					int[] eq = new int[11];
-					eq[0] = tbTXEQPreamp.Value;
-					eq[1] = tbTXEQ1.Value;
-					eq[2] = tbTXEQ2.Value;
-					eq[3] = tbTXEQ3.Value;
-					eq[4] = tbTXEQ4.Value;
-					eq[5] = tbTXEQ5.Value;
-					eq[6] = tbTXEQ6.Value;
-					eq[7] = tbTXEQ7.Value;
-					eq[8] = tbTXEQ8.Value;
-					eq[9] = tbTXEQ9.Value;
-					eq[10] = tbTXEQ10.Value;
-					return eq;
-				}
+                //if(rad3Band.Checked)
+                //{
+                //    int[] eq = new int[4];
+                //    //eq[0] = tbTXEQPreamp.Value;
+                //    //eq[1] = tbTXEQ1.Value;
+                //    //eq[2] = tbTXEQ5.Value;
+                //    //eq[3] = tbTXEQ9.Value;
+                //    return eq;
+                //}
+                //else //if(rad10Band.Checked)
+                //{
+					int[] eq = new int[21];
+                    eq[0]  = tbTXEQPre.Value;
+                    eq[1]  = tbTXEQ0.Value;
+                    eq[2]  = tbTXEQ1.Value;
+                    eq[3]  = tbTXEQ2.Value;
+                    eq[4]  = tbTXEQ3.Value;
+                    eq[5]  = tbTXEQ4.Value;
+                    eq[6]  = tbTXEQ5.Value;
+                    eq[7]  = tbTXEQ6.Value;
+                    eq[8]  = tbTXEQ7.Value;
+                    eq[9]  = tbTXEQ8.Value;
+                    eq[10] = tbTXEQ9.Value;
+
+                    eq[11] = (int)udTXEQ0.Value;
+                    eq[12] = (int)udTXEQ1.Value;
+                    eq[13] = (int)udTXEQ2.Value;
+                    eq[14] = (int)udTXEQ3.Value;
+                    eq[15] = (int)udTXEQ4.Value;
+                    eq[16] = (int)udTXEQ5.Value;
+                    eq[17] = (int)udTXEQ6.Value;
+                    eq[18] = (int)udTXEQ7.Value;
+                    eq[19] = (int)udTXEQ8.Value;
+                    eq[20] = (int)udTXEQ9.Value;
+                    return eq;
+                //}
 			}
 			set
 			{
-				if(rad3Band.Checked)
-				{
-					if(value.Length < 4)
-					{
-						MessageBox.Show("Error setting TX EQ");
-						return;
-					}
-					tbTXEQPreamp.Value = Math.Max(tbTXEQPreamp.Minimum, Math.Min(tbTXEQPreamp.Maximum, value[0]));
-					tbTXEQ1.Value = Math.Max(tbTXEQ1.Minimum, Math.Min(tbTXEQ1.Maximum, value[1]));
-					tbTXEQ5.Value = Math.Max(tbTXEQ5.Minimum, Math.Min(tbTXEQ5.Maximum, value[2]));
-					tbTXEQ9.Value = Math.Max(tbTXEQ9.Minimum, Math.Min(tbTXEQ9.Maximum, value[3]));
-				}
-				else if(rad10Band.Checked)
-				{
-					if(value.Length < 11)
-					{
-						MessageBox.Show("Error setting TX EQ");
-						return;
-					}
-					tbTXEQPreamp.Value = Math.Max(tbTXEQPreamp.Minimum, Math.Min(tbTXEQPreamp.Maximum, value[0]));
-					tbTXEQ1.Value = Math.Max(tbTXEQ1.Minimum, Math.Min(tbTXEQ1.Maximum, value[1]));
-					tbTXEQ2.Value = Math.Max(tbTXEQ2.Minimum, Math.Min(tbTXEQ2.Maximum, value[2]));
-					tbTXEQ3.Value = Math.Max(tbTXEQ3.Minimum, Math.Min(tbTXEQ3.Maximum, value[3]));
-					tbTXEQ4.Value = Math.Max(tbTXEQ4.Minimum, Math.Min(tbTXEQ4.Maximum, value[4]));
-					tbTXEQ5.Value = Math.Max(tbTXEQ5.Minimum, Math.Min(tbTXEQ5.Maximum, value[5]));
-					tbTXEQ6.Value = Math.Max(tbTXEQ6.Minimum, Math.Min(tbTXEQ6.Maximum, value[6]));
-					tbTXEQ7.Value = Math.Max(tbTXEQ7.Minimum, Math.Min(tbTXEQ7.Maximum, value[7]));
-					tbTXEQ8.Value = Math.Max(tbTXEQ8.Minimum, Math.Min(tbTXEQ8.Maximum, value[8]));
-					tbTXEQ9.Value = Math.Max(tbTXEQ9.Minimum, Math.Min(tbTXEQ9.Maximum, value[9]));
-					tbTXEQ10.Value = Math.Max(tbTXEQ10.Minimum, Math.Min(tbTXEQ10.Maximum, value[10]));
-				}
-				picTXEQ.Invalidate();
-				tbTXEQ_Scroll(this, EventArgs.Empty);
+                //if(rad3Band.Checked)
+                //{
+                //    if(value.Length < 4)
+                //    {
+                //        MessageBox.Show("Error setting TX EQ");
+                //        return;
+                //    }
+                //    //tbTXEQPreamp.Value = Math.Max(tbTXEQPreamp.Minimum, Math.Min(tbTXEQPreamp.Maximum, value[0]));
+                //    //tbTXEQ1.Value = Math.Max(tbTXEQ1.Minimum, Math.Min(tbTXEQ1.Maximum, value[1]));
+                //    //tbTXEQ5.Value = Math.Max(tbTXEQ5.Minimum, Math.Min(tbTXEQ5.Maximum, value[2]));
+                //    //tbTXEQ9.Value = Math.Max(tbTXEQ9.Minimum, Math.Min(tbTXEQ9.Maximum, value[3]));
+                //}
+                //else if(rad10Band.Checked)
+                //{
+                //    if(value.Length < 11)
+                //    {
+                //        MessageBox.Show("Error setting TX EQ");
+                //        return;
+                //    }
+                tbTXEQPre.Value = Math.Max(tbTXEQPre.Minimum, Math.Min(tbTXEQPre.Maximum, value[0]));
+                tbTXEQ0.Value = Math.Max(tbTXEQ0.Minimum, Math.Min(tbTXEQ0.Maximum, value[1]));
+                tbTXEQ1.Value = Math.Max(tbTXEQ1.Minimum, Math.Min(tbTXEQ1.Maximum, value[2]));
+                tbTXEQ2.Value = Math.Max(tbTXEQ2.Minimum, Math.Min(tbTXEQ2.Maximum, value[3]));
+                tbTXEQ3.Value = Math.Max(tbTXEQ3.Minimum, Math.Min(tbTXEQ3.Maximum, value[4]));
+                tbTXEQ4.Value = Math.Max(tbTXEQ4.Minimum, Math.Min(tbTXEQ4.Maximum, value[5]));
+                tbTXEQ5.Value = Math.Max(tbTXEQ5.Minimum, Math.Min(tbTXEQ5.Maximum, value[6]));
+                tbTXEQ6.Value = Math.Max(tbTXEQ6.Minimum, Math.Min(tbTXEQ6.Maximum, value[7]));
+                tbTXEQ7.Value = Math.Max(tbTXEQ7.Minimum, Math.Min(tbTXEQ7.Maximum, value[8]));
+                tbTXEQ8.Value = Math.Max(tbTXEQ8.Minimum, Math.Min(tbTXEQ8.Maximum, value[9]));
+                tbTXEQ9.Value = Math.Max(tbTXEQ9.Minimum, Math.Min(tbTXEQ9.Maximum, value[10]));
+
+                udTXEQ0.Value = Math.Max(udTXEQ0.Minimum, Math.Min(udTXEQ0.Maximum, value[11]));
+                udTXEQ1.Value = Math.Max(udTXEQ1.Minimum, Math.Min(udTXEQ1.Maximum, value[12]));
+                udTXEQ2.Value = Math.Max(udTXEQ2.Minimum, Math.Min(udTXEQ2.Maximum, value[13]));
+                udTXEQ3.Value = Math.Max(udTXEQ3.Minimum, Math.Min(udTXEQ3.Maximum, value[14]));
+                udTXEQ4.Value = Math.Max(udTXEQ4.Minimum, Math.Min(udTXEQ4.Maximum, value[15]));
+                udTXEQ5.Value = Math.Max(udTXEQ5.Minimum, Math.Min(udTXEQ5.Maximum, value[16]));
+                udTXEQ6.Value = Math.Max(udTXEQ6.Minimum, Math.Min(udTXEQ6.Maximum, value[17]));
+                udTXEQ7.Value = Math.Max(udTXEQ7.Minimum, Math.Min(udTXEQ7.Maximum, value[18]));
+                udTXEQ8.Value = Math.Max(udTXEQ8.Minimum, Math.Min(udTXEQ8.Maximum, value[19]));
+                udTXEQ9.Value = Math.Max(udTXEQ9.Minimum, Math.Min(udTXEQ9.Maximum, value[20]));
+                //}
+				//picTXEQ.Invalidate();
+				//tbTXEQ_Scroll(this, EventArgs.Empty);
 			}
 		}
 
@@ -1375,19 +1544,19 @@ namespace Thetis
 			picRXEQ.Invalidate();
 		}
 
-		private void tbTXEQ_Scroll(object sender, System.EventArgs e)
-		{
-			int[] txeq = TXEQ;
-			if(rad3Band.Checked) 
-			{
-				console.radio.GetDSPTX(0).TXEQ3 = txeq;
-			}
-			else
-			{
-				console.radio.GetDSPTX(0).TXEQ10 = txeq;
-			}
-			picTXEQ.Invalidate();
-		}
+        //private void tbTXEQ_Scroll(object sender, System.EventArgs e)
+        //{
+        //    int[] txeq = TXEQ;
+        //    if(rad3Band.Checked) 
+        //    {
+        //        console.radio.GetDSPTX(0).TXEQ3 = txeq;
+        //    }
+        //    else
+        //    {
+        //        console.radio.GetDSPTX(0).TXEQ10 = txeq;
+        //    }
+        //    picTXEQ.Invalidate();
+        //}
 
 		private void picRXEQ_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
@@ -1411,27 +1580,27 @@ namespace Thetis
 			e.Graphics.DrawLines(new Pen(Color.LightGreen), points);
 		}
 
-		private void picTXEQ_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
-		{
-			int[] txeq = TXEQ;
-			if(!chkTXEQEnabled.Checked)
-			{
-				for(int i=0; i<txeq.Length; i++)
-					txeq[i] = 0;
-			}
+        //private void picTXEQ_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        //{
+        //    int[] txeq = TXEQ;
+        //    if(!chkTXEQEnabled.Checked)
+        //    {
+        //        for(int i=0; i<txeq.Length; i++)
+        //            txeq[i] = 0;
+        //    }
 
-			Point[] points = new Point[txeq.Length-1];
-			for(int i=1; i<txeq.Length; i++)
-			{
-				points[i-1].X = (int)((i-1)*picTXEQ.Width/(float)(txeq.Length-2));
-				points[i-1].Y = picTXEQ.Height/2 - (int)(txeq[i]*(picTXEQ.Height-6)/2/15.0f +
-					tbTXEQPreamp.Value * 3 / 15.0f);
-			}
+        //    Point[] points = new Point[txeq.Length-1];
+        //    for(int i=1; i<txeq.Length; i++)
+        //    {
+        //        points[i-1].X = (int)((i-1)*picTXEQ.Width/(float)(txeq.Length-2));
+        //        points[i-1].Y = picTXEQ.Height/2 - (int)(txeq[i]*(picTXEQ.Height-6)/2/15.0f +
+        //            tbTXEQPre.Value * 3 / 15.0f);
+        //    }
 
-			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			e.Graphics.FillRectangle(new SolidBrush(Color.Black), 0, 0, picTXEQ.Width, picTXEQ.Height);
-			e.Graphics.DrawLines(new Pen(Color.LightGreen), points);
-		}
+        //    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+        //    e.Graphics.FillRectangle(new SolidBrush(Color.Black), 0, 0, picTXEQ.Width, picTXEQ.Height);
+        //    e.Graphics.DrawLines(new Pen(Color.LightGreen), points);
+        //}
 
 		private void chkRXEQEnabled_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -1443,7 +1612,7 @@ namespace Thetis
 		private void chkTXEQEnabled_CheckedChanged(object sender, System.EventArgs e)
 		{
 			console.radio.GetDSPTX(0).TXEQOn = chkTXEQEnabled.Checked;
-			picTXEQ.Invalidate();
+			//picTXEQ.Invalidate();
 			console.TXEQ = chkTXEQEnabled.Checked;
 		}
 
@@ -1468,31 +1637,26 @@ namespace Thetis
 			tbRXEQ_Scroll(this, EventArgs.Empty);
 		}
 
-		private void btnTXEQReset_Click(object sender, System.EventArgs e)
-		{
-			DialogResult dr = MessageBox.Show(
-				"Are you sure you want to reset the Transmit Equalizer\n"+
-				"to flat (zero)?",
-				"Are you sure?",
-				MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question);
+        //private void btnTXEQReset_Click(object sender, System.EventArgs e)
+        //{
+        //    DialogResult dr = MessageBox.Show(
+        //        "Are you sure you want to reset the Transmit Equalizer\n"+
+        //        "to flat (zero)?",
+        //        "Are you sure?",
+        //        MessageBoxButtons.YesNo,
+        //        MessageBoxIcon.Question);
 			
-			if(dr == DialogResult.No)
-				return;
+        //    if(dr == DialogResult.No)
+        //        return;
 
-			foreach(Control c in grpTXEQ.Controls)
-			{
-				if(c.GetType() == typeof(TrackBarTS))
-					((TrackBarTS)c).Value = 0;
-			}
+        //    foreach (Control c in grpTXEQ.Controls)
+        //    {
+        //        if (c.GetType() == typeof(TrackBarTS))
+        //            ((TrackBarTS)c).Value = 0;
+        //    }
 
-			tbTXEQ_Scroll(this, EventArgs.Empty);
-		}
-
-		private void chkTXEQ160Notch_CheckedChanged(object sender, System.EventArgs e)
-		{
-			console.radio.GetDSPTX(0).Notch160 = chkTXEQ160Notch.Checked;
-		}
+        //    //tbTXEQ_Scroll(this, EventArgs.Empty);
+        //}
 
 		private void rad3Band_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -1525,44 +1689,44 @@ namespace Thetis
 				toolTip1.SetToolTip(lblRXEQ9, "1500-6000Hz");
 				toolTip1.SetToolTip(tbRXEQ9, "1500-6000Hz");
 
-				lblTXEQ2.Visible = false;
-				lblTXEQ3.Visible = false;
-				lblTXEQ4.Visible = false;
-				lblTXEQ6.Visible = false;
-				lblTXEQ7.Visible = false;
-				lblTXEQ8.Visible = false;
-				lblTXEQ10.Visible = false;
+                //lblTXEQ2.Visible = false;
+                //lblTXEQ3.Visible = false;
+                //lblTXEQ4.Visible = false;
+                //lblTXEQ6.Visible = false;
+                //lblTXEQ7.Visible = false;
+                //lblTXEQ8.Visible = false;
+                //lblTXEQ10.Visible = false;
 
-				tbTXEQ2.Visible = false;
-				tbTXEQ3.Visible = false;
-				tbTXEQ4.Visible = false;
-				tbTXEQ6.Visible = false;
-				tbTXEQ7.Visible = false;
-				tbTXEQ8.Visible = false;
-				tbTXEQ10.Visible = false;
+                //tbTXEQ2.Visible = false;
+                //tbTXEQ3.Visible = false;
+                //tbTXEQ4.Visible = false;
+                //tbTXEQ6.Visible = false;
+                //tbTXEQ7.Visible = false;
+                //tbTXEQ8.Visible = false;
+                //tbTXEQ10.Visible = false;
 
-				lblTXEQ1.Text = "Low";
-				lblTXEQ5.Text = "Mid";
-				lblTXEQ9.Text = "High";
+                //lblTXEQ1.Text = "Low";
+                //lblTXEQ5.Text = "Mid";
+                //lblTXEQ9.Text = "High";
 
-				toolTip1.SetToolTip(lblTXEQ1, "0-400Hz");
-				toolTip1.SetToolTip(tbTXEQ1, "0-400Hz");
-				toolTip1.SetToolTip(lblTXEQ5, "400-1500Hz");
-				toolTip1.SetToolTip(tbTXEQ5, "400-1500Hz");
-				toolTip1.SetToolTip(lblTXEQ9, "1500-6000Hz");
-				toolTip1.SetToolTip(tbTXEQ9, "1500-6000Hz");
+                //toolTip1.SetToolTip(lblTXEQ1, "0-400Hz");
+                //toolTip1.SetToolTip(tbTXEQ1, "0-400Hz");
+                //toolTip1.SetToolTip(lblTXEQ5, "400-1500Hz");
+                //toolTip1.SetToolTip(tbTXEQ5, "400-1500Hz");
+                //toolTip1.SetToolTip(lblTXEQ9, "1500-6000Hz");
+                //toolTip1.SetToolTip(tbTXEQ9, "1500-6000Hz");
 
 				RXEQ = console.radio.GetDSPRX(0, 0).RXEQ3;
-				TXEQ = console.radio.GetDSPTX(0).TXEQ3;
+				//TXEQ = console.radio.GetDSPTX(0).TXEQ3;
 
 				tbRXEQ_Scroll(this, EventArgs.Empty);
-				tbTXEQ_Scroll(this, EventArgs.Empty);
+				//tbTXEQ_Scroll(this, EventArgs.Empty);
 
 				picRXEQ.Invalidate();
-				picTXEQ.Invalidate();
+				//picTXEQ.Invalidate();
 		
 				console.radio.GetDSPRX(0, 0).RXEQNumBands = 3;
-				console.radio.GetDSPTX(0).TXEQNumBands = 3;
+				//console.radio.GetDSPTX(0).TXEQNumBands = 3;
 			}
 		}
 
@@ -1597,46 +1761,82 @@ namespace Thetis
 				toolTip1.SetToolTip(lblRXEQ9, "");
 				toolTip1.SetToolTip(tbRXEQ9, "");
 
-				lblTXEQ2.Visible = true;
-				lblTXEQ3.Visible = true;
-				lblTXEQ4.Visible = true;
-				lblTXEQ6.Visible = true;
-				lblTXEQ7.Visible = true;
-				lblTXEQ8.Visible = true;
-				lblTXEQ10.Visible = true;
+                //lblTXEQ2.Visible = true;
+                //lblTXEQ3.Visible = true;
+                //lblTXEQ4.Visible = true;
+                //lblTXEQ6.Visible = true;
+                //lblTXEQ7.Visible = true;
+                //lblTXEQ8.Visible = true;
+                //lblTXEQ10.Visible = true;
 
-				tbTXEQ2.Visible = true;
-				tbTXEQ3.Visible = true;
-				tbTXEQ4.Visible = true;
-				tbTXEQ6.Visible = true;
-				tbTXEQ7.Visible = true;
-				tbTXEQ8.Visible = true;
-				tbTXEQ10.Visible = true;
+                //tbTXEQ2.Visible = true;
+                //tbTXEQ3.Visible = true;
+                //tbTXEQ4.Visible = true;
+                //tbTXEQ6.Visible = true;
+                //tbTXEQ7.Visible = true;
+                //tbTXEQ8.Visible = true;
+                //tbTXEQ10.Visible = true;
 
-				lblTXEQ1.Text = "32";
-				lblTXEQ5.Text = "500";
-				lblTXEQ9.Text = "8K";
+                //lblTXEQ1.Text = "32";
+                //lblTXEQ5.Text = "500";
+                //lblTXEQ9.Text = "8K";
 
-				toolTip1.SetToolTip(lblTXEQ1, "");
-				toolTip1.SetToolTip(tbTXEQ1, "");
-				toolTip1.SetToolTip(lblTXEQ5, "");
-				toolTip1.SetToolTip(tbTXEQ5, "");
-				toolTip1.SetToolTip(lblTXEQ9, "");
-				toolTip1.SetToolTip(tbTXEQ9, "");
+                //toolTip1.SetToolTip(lblTXEQ1, "");
+                //toolTip1.SetToolTip(tbTXEQ1, "");
+                //toolTip1.SetToolTip(lblTXEQ5, "");
+                //toolTip1.SetToolTip(tbTXEQ5, "");
+                //toolTip1.SetToolTip(lblTXEQ9, "");
+                //toolTip1.SetToolTip(tbTXEQ9, "");
 
 				RXEQ = console.radio.GetDSPRX(0, 0).RXEQ10;
-				TXEQ = console.radio.GetDSPTX(0).TXEQ10;
+				//TXEQ = console.radio.GetDSPTX(0).TXEQ10;
 
 				tbRXEQ_Scroll(this, EventArgs.Empty);
-				tbTXEQ_Scroll(this, EventArgs.Empty);
+				//tbTXEQ_Scroll(this, EventArgs.Empty);
 
 				picRXEQ.Invalidate();
-				picTXEQ.Invalidate();	
+				//picTXEQ.Invalidate();	
 			
 				console.radio.GetDSPRX(0, 0).RXEQNumBands = 10;
-				console.radio.GetDSPTX(0).TXEQNumBands = 10;
+				//console.radio.GetDSPTX(0).TXEQNumBands = 10;
 			}
 		}
+
+        public void setTXEQProfile(object sender, EventArgs e)
+        {
+            const int nfreqs = 10;
+            double[] F = new double[nfreqs + 1];
+            double[] G = new double[nfreqs + 1];
+            F[0]  = 0.0;
+            F[1]  = (double)udTXEQ0.Value;
+            F[2]  = (double)udTXEQ1.Value;
+            F[3]  = (double)udTXEQ2.Value;
+            F[4]  = (double)udTXEQ3.Value;
+            F[5]  = (double)udTXEQ4.Value;
+            F[6]  = (double)udTXEQ5.Value;
+            F[7]  = (double)udTXEQ6.Value;
+            F[8]  = (double)udTXEQ7.Value;
+            F[9]  = (double)udTXEQ8.Value;
+            F[10] = (double)udTXEQ9.Value;
+            G[0]  = (double)tbTXEQPre.Value;
+            G[1]  = (double)tbTXEQ0.Value;
+            G[2]  = (double)tbTXEQ1.Value;
+            G[3]  = (double)tbTXEQ2.Value;
+            G[4]  = (double)tbTXEQ3.Value;
+            G[5]  = (double)tbTXEQ4.Value;
+            G[6]  = (double)tbTXEQ5.Value;
+            G[7]  = (double)tbTXEQ6.Value;
+            G[8]  = (double)tbTXEQ7.Value;
+            G[9]  = (double)tbTXEQ8.Value;
+            G[10] = (double)tbTXEQ9.Value;
+            unsafe
+            {
+                fixed (double* Fptr = &F[0], Gptr = &G[0])
+                {
+                  //  WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr);
+                }
+            }
+        }
 
 		#endregion		
 	}

@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -26,24 +26,48 @@ warren@wpratt.com
 
 #include "comm.h"
 
+int fEQcompare (const void * a, const void * b)
+{
+	if (*(double*)a < *(double*)b)
+		return -1;
+	else if (*(double*)a == *(double*)b)
+		return 0;
+	else
+		return 1;
+}
+
 double* eq_impulse (int N, int nfreqs, double* F, double* G, double samplerate, double scale, int ctfmode, int wintype)
 {
 	double* fp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* gp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* A  = (double *) malloc0 ((N / 2 + 1) * sizeof (double));
+	double* sary = (double *) malloc0 (2 * nfreqs * sizeof (double));
 	double gpreamp, f, frac;
 	double* impulse;
 	int i, j, mid;
 	fp[0] = 0.0;
 	fp[nfreqs + 1] = 1.0;
-	gp[0] = G[1];
-	gp[nfreqs + 1] = G[nfreqs];
 	gpreamp = G[0];
 	for (i = 1; i <= nfreqs; i++)
 	{
 		fp[i] = 2.0 * F[i] / samplerate;
+		if (fp[i] < 0.0) fp[i] = 0.0;
+		if (fp[i] > 1.0) fp[i] = 1.0;
 		gp[i] = G[i];
 	}
+	for (i = 1, j = 0; i <= nfreqs; i++, j+=2)
+	{
+		sary[j + 0] = fp[i];
+		sary[j + 1] = gp[i];
+	}
+	qsort (sary, nfreqs, 2 * sizeof (double), fEQcompare);
+	for (i = 1, j = 0; i <= nfreqs; i++, j+=2)
+	{
+		fp[i] = sary[j + 0];
+		gp[i] = sary[j + 1];
+	}
+	gp[0] = gp[1];
+	gp[nfreqs + 1] = gp[nfreqs];
 	mid = N / 2;
 	j = 0;
 	if (N & 1)
@@ -126,6 +150,7 @@ double* eq_impulse (int N, int nfreqs, double* F, double* G, double samplerate, 
 	else
 		impulse = fir_fsamp(N, A, 1, 1.0, wintype);
 	// print_impulse("eq.txt", N, impulse, 1, 0);
+	_aligned_free (sary);
 	_aligned_free (A);
 	_aligned_free (gp);
 	_aligned_free (fp);

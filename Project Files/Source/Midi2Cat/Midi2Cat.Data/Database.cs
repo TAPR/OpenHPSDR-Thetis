@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at:  midi2cat@cametrix.com
 
+Modifications to support the Behringer CMD PL-1 controller
+by Chris Codella, W2PA, Feb 2017.  Indicated by //-W2PA comment lines.
+
 */
 
 using System;
@@ -242,6 +245,23 @@ namespace Midi2Cat.Data
             if (dr != null)
             {
                 mapping = PopulateMapping(dr);
+            }
+            return mapping;
+        }
+
+        public ControllerMapping GetReverseMapping(string MidiDeviceName, CatCmd cmd)  //-W2PA To allow flowing commands back to MIDI devices
+        {
+            ControllerMapping mapping = null;
+            DataTable t = GetTable(MidiDeviceName);
+            DataRow dr = t.Rows.Find(cmd);
+
+            string sel = "CatCmdId = " + Convert.ToString((int)cmd);
+            DataRow[] dr1 = t.Select(sel);
+
+            if (dr1.Length == 0) return mapping;
+            if (dr1[0] != null)
+            {
+                mapping = PopulateMapping(dr1[0]);
             }
             return mapping;
         }

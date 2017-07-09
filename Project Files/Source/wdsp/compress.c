@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2011, 2013 Warren Pratt, NR0V
+Copyright (C) 2011, 2013, 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -99,10 +99,13 @@ void setSize_compressor (COMPRESSOR a, int size)
 PORT void
 SetTXACompressorRun (int channel, int run)
 {
-	EnterCriticalSection (&ch[channel].csDSP);
-	txa[channel].compressor.p->run = run;
-	txa[channel].bp1.p->run = run;
-	LeaveCriticalSection (&ch[channel].csDSP);
+	if (txa[channel].compressor.p->run != run)
+	{
+		EnterCriticalSection (&ch[channel].csDSP);
+		txa[channel].compressor.p->run = run;
+		TXASetupBPFilters (channel);
+		LeaveCriticalSection (&ch[channel].csDSP);
+	}
 }
 
 PORT void

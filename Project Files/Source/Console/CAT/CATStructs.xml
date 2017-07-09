@@ -749,6 +749,34 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
+	<catstruct code="ZZAP">
+		<desc>Audio peak filter on off</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZAT">
+		<desc>APF tune</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+    </catstruct>
+	<catstruct code="ZZAB">
+		<desc>APF bandwidth</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+    </catstruct>
+	<catstruct code="ZZAA">
+		<desc>APF gain</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+    </catstruct>
 	<catstruct code="ZZMD">
 		<desc>extended modes</desc>
 		<active>true</active>
@@ -792,7 +820,14 @@
 		<nansparms>1</nansparms>
 	</catstruct>
 	<catstruct code="ZZNR">
-		<desc>extended nr status</desc>
+		<desc>extended rx1 nr status</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+  <catstruct code="ZZNS">
+    <desc>extended rx1 nr2 status</desc>
 		<active>true</active>
 		<nsetparms>1</nsetparms>
 		<ngetparms>0</ngetparms>
@@ -826,6 +861,13 @@
     <ngetparms>0</ngetparms>
     <nansparms>1</nansparms>
   </catstruct>
+  <catstruct code="ZZNO">
+    <desc>RX2 SNB Button</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
   <catstruct code="ZZNV">
     <desc>extended rx2 nr status</desc>
     <active>true</active>
@@ -835,13 +877,6 @@
   </catstruct>
   <catstruct code="ZZNW">
     <desc>extended rx2 nr2 status</desc>
-    <active>true</active>
-    <nsetparms>1</nsetparms>
-    <ngetparms>0</ngetparms>
-    <nansparms>1</nansparms>
-  </catstruct>
-  <catstruct code="ZZNO">
-    <desc>RX2 SNB Button</desc>
     <active>true</active>
     <nsetparms>1</nsetparms>
     <ngetparms>0</ngetparms>
@@ -2382,6 +2417,13 @@
   </catstruct>
   <catstruct code="ZZLH">
     <desc>AutoMute RX2 on VFOA TX</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
+  <catstruct code="ZZLI">
+    <desc>PS-A Enable Button</desc>
     <active>true</active>
     <nsetparms>1</nsetparms>
     <ngetparms>0</ngetparms>

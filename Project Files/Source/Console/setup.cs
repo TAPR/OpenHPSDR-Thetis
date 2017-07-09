@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2016  Doug Wigley
+// Copyright (C) 2010-2017  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -113,13 +113,13 @@ namespace Thetis
             comboDSPDigRXBuf.Text = "1024";
             comboDSPDigTXBuf.Text = "1024";
 
-            comboDSPPhoneRXFiltSize.Text = "1024";
-            comboDSPPhoneTXFiltSize.Text = "1024";
-            comboDSPFMRXFiltSize.Text = "1024";
-            comboDSPFMTXFiltSize.Text = "1024";
-            comboDSPCWRXFiltSize.Text = "1024";
-            comboDSPDigRXFiltSize.Text = "1024";
-            comboDSPDigTXFiltSize.Text = "1024";
+            comboDSPPhoneRXFiltSize.Text = "4096";
+            comboDSPPhoneTXFiltSize.Text = "4096";
+            comboDSPFMRXFiltSize.Text = "4096";
+            comboDSPFMTXFiltSize.Text = "4096";
+            comboDSPCWRXFiltSize.Text = "4096";
+            comboDSPDigRXFiltSize.Text = "4096";
+            comboDSPDigTXFiltSize.Text = "4096";
 
             comboDSPPhoneRXFiltType.SelectedIndex = 0;
             comboDSPPhoneTXFiltType.SelectedIndex = 0;
@@ -157,6 +157,7 @@ namespace Thetis
             comboCATdatabits.Text = "8";
             comboCATstopbits.Text = "1";
             comboCATRigType.Text = "TS-2000";
+            comboFocusMasterMode.Text = "None";
 
             if (comboCAT2Port.Items.Count > 0) comboCAT2Port.SelectedIndex = 0;
             // if (comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
@@ -591,14 +592,18 @@ namespace Thetis
 
             if (skin == "")
             {
-                if (comboAppSkin.Items.Contains("Default"))
-                    comboAppSkin.Text = "Default";
+                //if (comboAppSkin.Items.Contains("Default"))
+                //    comboAppSkin.Text = "Default";
+                //else
+                //    comboAppSkin.Text = "IK3VIG Special"; //"OpenHPSDR-Gray";
+                if (comboAppSkin.Items.Contains("IK3VIG Special"))
+                    comboAppSkin.Text = "IK3VIG Special";
                 else
-                    comboAppSkin.Text = "OpenHPSDR-Gray";
+                    comboAppSkin.Text = "OpenHPSDR-Gray"; //"OpenHPSDR-Gray";
             }
             else if (comboAppSkin.Items.Contains(skin))
-                comboAppSkin.Text = skin;
-            else comboAppSkin.Text = "Default";
+                     comboAppSkin.Text = skin;
+            else comboAppSkin.Text = "IK3VIG Special";
         }
 
         private void GetHosts()
@@ -660,11 +665,6 @@ namespace Thetis
                 foreach (Control c2 in c.Controls)
                     ControlList(c2, ref a);
             }
-
-            //if (c.Name.StartsWith("rad"))
-            //{
-            //    Debug.WriteLine(c.Name);
-            //}
 
             if (c.GetType() == typeof(CheckBoxTS) || c.GetType() == typeof(CheckBox) ||
                 c.GetType() == typeof(ComboBoxTS) || c.GetType() == typeof(ComboBox) ||
@@ -1214,7 +1214,7 @@ namespace Thetis
             udDSPLevelerThreshold_ValueChanged(this, e);
             udDSPLevelerDecay_ValueChanged(this, e);
             //ALC
-            udDSPALCThreshold_ValueChanged(this, e);
+            udDSPALCMaximumGain_ValueChanged(this, e);
             udDSPALCDecay_ValueChanged(this, e);
             // AM/SAM Tab
             chkLevelFades_CheckedChanged(this, e);
@@ -1227,6 +1227,7 @@ namespace Thetis
             radRX2USB_CheckedChanged(this, e);
             chkCBlock_CheckedChanged(this, e);
             chkRX2CBlock_CheckedChanged(this, e);
+            radTXDSB_CheckedChanged(this, e);
             // FM Tab
             chkEmphPos_CheckedChanged(this, e);
             chkRemoveTone_CheckedChanged(this, e);
@@ -1255,6 +1256,7 @@ namespace Thetis
             udTXFilterHigh_ValueChanged(this, e);
             udTXFilterLow_ValueChanged(this, e);
             udTransmitTunePower_ValueChanged(this, e);
+            chkTXTunePower_CheckedChanged(this, e);
             udPAGain_ValueChanged(this, e);
             radMicIn_CheckedChanged(this, e);
             radLineIn_CheckedChanged(this, e);
@@ -1263,6 +1265,7 @@ namespace Thetis
             udLineInBoost_ValueChanged(this, e);
             udTXAMCarrierLevel_ValueChanged(this, e);
             chkLimitExtAmpOnOverload_CheckedChanged(this, e);
+            chkBPF2Gnd_CheckedChanged(this, e);
             // Keyboard Tab
             comboKBTuneUp1_SelectedIndexChanged(this, e);
             comboKBTuneUp2_SelectedIndexChanged(this, e);
@@ -1378,9 +1381,35 @@ namespace Thetis
             udDSPRX1DollyF1_ValueChanged(this, e);
             udDSPRX1SubDollyF1_ValueChanged(this, e);
             udDSPRX2DollyF1_ValueChanged(this, e);
+            // CAT
+            comboFocusMasterMode_SelectedIndexChanged(this, e);
+            // SNB
+            udDSPSNBThresh1_ValueChanged(this, e);
+            udDSPSNBThresh2_ValueChanged(this, e);
+            // MNF
+            chkMNFAutoIncrease_CheckedChanged(this, e);
+
+			chkEnableXVTRHF_CheckedChanged(this, e);
+
+            // CFCompressor
+            chkCFCEnable_CheckedChanged(this, e);
+            setCFCProfile(this, e);
+            tbCFCPRECOMP_Scroll(this, e);
+            chkCFCPeqEnable_CheckedChanged(this, e);
+            tbCFCPEG_Scroll(this, e);
+
+            // Phase Rotator
+            chkPHROTEnable_CheckedChanged(this, e);
+            udPhRotFreq_ValueChanged(this, e);
+            udPHROTStages_ValueChanged(this, e);
+        
+            // TXEQ
+            console.EQForm.setTXEQProfile(this, e);
 
             //ADC assignment
             radDDCADC_CheckedChanged(this, e);
+
+            chkWheelReverse_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -1441,7 +1470,7 @@ namespace Thetis
             if (console.EQForm.TXEQEnabled != (bool)rows[0]["TXEQEnabled"])
                 return true;
 
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
             {
                 if (eq[i] != (int)rows[0]["TXEQ" + i])
                     return true;
@@ -1484,10 +1513,10 @@ namespace Thetis
             dr["TXEQNumBands"] = console.EQForm.NumBands;
             int[] eq = console.EQForm.TXEQ;
             dr["TXEQPreamp"] = eq[0];
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
                 dr["TXEQ" + i.ToString()] = eq[i];
-            for (int i = eq.Length; i < 11; i++)
-                dr["TXEQ" + i.ToString()] = 0;
+            for (int i = 11; i < 21; i++)
+                dr["TxEqFreq" + (i - 10).ToString()] = eq[i];
 
             dr["DXOn"] = console.DX;
             dr["DXLevel"] = console.DXLevel;
@@ -1506,7 +1535,7 @@ namespace Thetis
             dr["Lev_HangThreshold"] = tbDSPLevelerHangThreshold.Value;
 
             dr["ALC_Slope"] = (int)udDSPALCSlope.Value;
-            dr["ALC_MaxGain"] = (int)udDSPALCThreshold.Value;
+            dr["ALC_MaximumGain"] = (int)udDSPALCMaximumGain.Value;
             dr["ALC_Attack"] = (int)udDSPALCAttack.Value;
             dr["ALC_Decay"] = (int)udDSPALCDecay.Value;
             dr["ALC_Hang"] = (int)udDSPALCHangTime.Value;
@@ -1589,6 +1618,24 @@ namespace Thetis
             dr["Line_Input_Level"] = udLineInBoost.Value;
 
             dr["CESSB_On"] = chkDSPCESSB.Checked;
+            dr["Pure_Signal_Enabled"] = console.PureSignalEnabled; 
+
+            //CFC
+            dr["CFCEnabled"] = chkCFCEnable.Checked;
+            dr["CFCPostEqEnabled"] = chkCFCPeqEnable.Checked;
+            dr["CFCPhaseRotatorEnabled"] = chkPHROTEnable.Checked;
+            dr["CFCPhaseRotatorFreq"] = (int)udPhRotFreq.Value;
+            dr["CFCPhaseRotatorStages"] = (int)udPHROTStages.Value;
+            int[] cfceq = CFCCOMPEQ;
+            dr["CFCPreComp"] = cfceq[0];
+            for (int i = 1; i < 11; i++)
+                dr["CFCPreComp" + (i - 1).ToString()] = cfceq[i];
+            dr["CFCPostEqGain"] = cfceq[11];
+            for (int i = 12; i < 22; i++)
+                dr["CFCPostEqGain" + (i - 12).ToString()] = cfceq[i];
+            for (int i = 22; i < 32; i++)
+                dr["CFCEqFreq" + (i - 22).ToString()] = cfceq[i];
+
         }
 
         public void UpdateWaterfallBandInfo()
@@ -2945,6 +2992,10 @@ namespace Thetis
                     case Model.ANAN200D:
                         force_model = true;
                         radGenModelANAN200D.Checked = true;
+                        break;
+                    case Model.ANAN8000D:
+                        force_model = true;
+                        radGenModelANAN8000D.Checked = true;
                         break;
 
                 }
@@ -5140,6 +5191,97 @@ namespace Thetis
         }
 
 
+        public int[] CFCCOMPEQ
+        {
+            get
+            {
+                int[] cfceq = new int[32];
+                cfceq[0] = tbCFCPRECOMP.Value;
+                cfceq[1] = tbCFC0.Value;
+                cfceq[2] = tbCFC1.Value;
+                cfceq[3] = tbCFC2.Value;
+                cfceq[4] = tbCFC3.Value;
+                cfceq[5] = tbCFC4.Value;
+                cfceq[6] = tbCFC5.Value;
+                cfceq[7] = tbCFC6.Value;
+                cfceq[8] = tbCFC7.Value;
+                cfceq[9] = tbCFC8.Value;
+                cfceq[10] = tbCFC9.Value;
+
+                cfceq[11] = tbCFCPEQGAIN.Value;
+                cfceq[12] = tbCFCEQ0.Value;
+                cfceq[13] = tbCFCEQ1.Value;
+                cfceq[14] = tbCFCEQ2.Value;
+                cfceq[15] = tbCFCEQ3.Value;
+                cfceq[16] = tbCFCEQ4.Value;
+                cfceq[17] = tbCFCEQ5.Value;
+                cfceq[18] = tbCFCEQ6.Value;
+                cfceq[19] = tbCFCEQ7.Value;
+                cfceq[20] = tbCFCEQ8.Value;
+                cfceq[21] = tbCFCEQ9.Value;
+
+                cfceq[22] = (int)udCFC0.Value;
+                cfceq[23] = (int)udCFC1.Value;
+                cfceq[24] = (int)udCFC2.Value;
+                cfceq[25] = (int)udCFC3.Value;
+                cfceq[26] = (int)udCFC4.Value;
+                cfceq[27] = (int)udCFC5.Value;
+                cfceq[28] = (int)udCFC6.Value;
+                cfceq[29] = (int)udCFC7.Value;
+                cfceq[30] = (int)udCFC8.Value;
+                cfceq[31] = (int)udCFC9.Value;
+
+                return cfceq;
+            }
+
+            set
+            {
+                if (value.Length < 32)
+                {
+                    MessageBox.Show("Error setting CFC EQ");
+                    return;
+                }
+                tbCFCPRECOMP.Value = Math.Max(tbCFCPRECOMP.Minimum, Math.Min(tbCFCPRECOMP.Maximum, value[0]));
+                tbCFC0.Value = Math.Max(tbCFC0.Minimum, Math.Min(tbCFC0.Maximum, value[1]));
+                tbCFC1.Value = Math.Max(tbCFC1.Minimum, Math.Min(tbCFC1.Maximum, value[2]));
+                tbCFC2.Value = Math.Max(tbCFC2.Minimum, Math.Min(tbCFC2.Maximum, value[3]));
+                tbCFC3.Value = Math.Max(tbCFC3.Minimum, Math.Min(tbCFC3.Maximum, value[4]));
+                tbCFC4.Value = Math.Max(tbCFC4.Minimum, Math.Min(tbCFC4.Maximum, value[5]));
+                tbCFC5.Value = Math.Max(tbCFC5.Minimum, Math.Min(tbCFC5.Maximum, value[6]));
+                tbCFC6.Value = Math.Max(tbCFC6.Minimum, Math.Min(tbCFC6.Maximum, value[7]));
+                tbCFC7.Value = Math.Max(tbCFC7.Minimum, Math.Min(tbCFC7.Maximum, value[8]));
+                tbCFC8.Value = Math.Max(tbCFC8.Minimum, Math.Min(tbCFC8.Maximum, value[9]));
+                tbCFC9.Value = Math.Max(tbCFC9.Minimum, Math.Min(tbCFC9.Maximum, value[10]));
+                tbCFCPEQGAIN.Value = Math.Max(tbCFCPEQGAIN.Minimum, Math.Min(tbCFCPEQGAIN.Maximum, value[11]));
+                tbCFCEQ0.Value = Math.Max(tbCFCEQ0.Minimum, Math.Min(tbCFCEQ0.Maximum, value[12]));
+                tbCFCEQ1.Value = Math.Max(tbCFCEQ1.Minimum, Math.Min(tbCFCEQ1.Maximum, value[13]));
+                tbCFCEQ2.Value = Math.Max(tbCFCEQ2.Minimum, Math.Min(tbCFCEQ2.Maximum, value[14]));
+                tbCFCEQ3.Value = Math.Max(tbCFCEQ3.Minimum, Math.Min(tbCFCEQ3.Maximum, value[15]));
+                tbCFCEQ4.Value = Math.Max(tbCFCEQ4.Minimum, Math.Min(tbCFCEQ4.Maximum, value[16]));
+                tbCFCEQ5.Value = Math.Max(tbCFCEQ5.Minimum, Math.Min(tbCFCEQ5.Maximum, value[17]));
+                tbCFCEQ6.Value = Math.Max(tbCFCEQ6.Minimum, Math.Min(tbCFCEQ6.Maximum, value[18]));
+                tbCFCEQ7.Value = Math.Max(tbCFCEQ7.Minimum, Math.Min(tbCFCEQ7.Maximum, value[19]));
+                tbCFCEQ8.Value = Math.Max(tbCFCEQ8.Minimum, Math.Min(tbCFCEQ8.Maximum, value[20]));
+                tbCFCEQ9.Value = Math.Max(tbCFCEQ9.Minimum, Math.Min(tbCFCEQ9.Maximum, value[21]));
+                udCFC0.Value = Math.Max(udCFC0.Minimum, Math.Min(udCFC0.Maximum, value[22]));
+                udCFC1.Value = Math.Max(udCFC1.Minimum, Math.Min(udCFC1.Maximum, value[23]));
+                udCFC2.Value = Math.Max(udCFC2.Minimum, Math.Min(udCFC2.Maximum, value[24]));
+                udCFC3.Value = Math.Max(udCFC3.Minimum, Math.Min(udCFC3.Maximum, value[25]));
+                udCFC4.Value = Math.Max(udCFC4.Minimum, Math.Min(udCFC4.Maximum, value[26]));
+                udCFC5.Value = Math.Max(udCFC5.Minimum, Math.Min(udCFC5.Maximum, value[27]));
+                udCFC6.Value = Math.Max(udCFC6.Minimum, Math.Min(udCFC6.Maximum, value[28]));
+                udCFC7.Value = Math.Max(udCFC7.Minimum, Math.Min(udCFC7.Maximum, value[29]));
+                udCFC8.Value = Math.Max(udCFC8.Minimum, Math.Min(udCFC8.Maximum, value[30]));
+                udCFC9.Value = Math.Max(udCFC9.Minimum, Math.Min(udCFC9.Maximum, value[31]));
+
+                tbCFCPRECOMP_Scroll(this, EventArgs.Empty);
+                tbCFCPEG_Scroll(this, EventArgs.Empty);
+                setCFCProfile(this, EventArgs.Empty);
+            }
+        }
+
+
+
         #endregion
 
         #region General Tab Event Handlers
@@ -6143,21 +6285,24 @@ namespace Thetis
             if (radGenModelANAN10.Checked || radGenModelANAN10E.Checked)
             {
                 chkRxOutOnTx.Checked = false;
-                chkRxOutOnTx.Enabled = false;
+                chkRxOutOnTx.Visible = false;
                 chkEXT1OutOnTx.Checked = false;
-                chkEXT1OutOnTx.Enabled = false;
+                chkEXT1OutOnTx.Visible = false;
                 chkEXT2OutOnTx.Checked = false;
-                chkEXT2OutOnTx.Enabled = false;
+                chkEXT2OutOnTx.Visible = false;
                 panelAlex1HPFControl.Visible = false;
                 tpAlexFilterControl.Text = "LPF";
                 panelAlexRXXVRTControl.Visible = false;
                 labelAlexFilterActive.Location = new Point(298, 0);
                 grp10WattMeterTrim.BringToFront();
+                chkEnableXVTRHF.Visible = false;
             }
             else if (radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked)
             {
-                chkRxOutOnTx.Enabled = true;
-                chkEXT1OutOnTx.Enabled = true;
+                chkRxOutOnTx.Checked = false;
+                chkRxOutOnTx.Visible = false;
+                chkEXT1OutOnTx.Checked = false;
+                chkEXT1OutOnTx.Visible = false;
                 chkEXT2OutOnTx.Checked = false;
                 chkEXT2OutOnTx.Visible = false;
                 // panelAlex1HPFControl.Visible = true;
@@ -6166,17 +6311,21 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "BPF1";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz BPF";
                 chkDisableHPFonTX.Text = "BPF ByPass on TX";
-                panelAlexRXXVRTControl.Visible = true;
+                panelAlexRXXVRTControl.Visible = false;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
                 grp200WattMeterTrim.BringToFront();
+                chkEnableXVTRHF.Visible = true;
             }
             else
             {
                 chkRxOutOnTx.Enabled = true;
+                chkRxOutOnTx.Visible = true;
                 chkEXT1OutOnTx.Enabled = true;
+                chkEXT1OutOnTx.Visible = true;
                 chkEXT2OutOnTx.Enabled = true;
+                chkEXT2OutOnTx.Visible = true;
                 panelAlex1HPFControl.Visible = true;
                 tpAlexFilterControl.Text = "HPF/LPF";
                 labelAlex1FilterHPF.Text = "HPF";
@@ -6187,6 +6336,7 @@ namespace Thetis
                 ud6mRx2LNAGainOffset.Visible = false;
                 lblRx26mLNA.Visible = false;
                 grp100WattMeterTrim.BringToFront();
+                chkEnableXVTRHF.Visible = false;
             }
 
             if (radGenModelHermes.Checked || radGenModelHPSDR.Checked)
@@ -8826,9 +8976,10 @@ namespace Thetis
 
         #region ALC
 
-        private void udDSPALCThreshold_ValueChanged(object sender, System.EventArgs e)
+        private void udDSPALCMaximumGain_ValueChanged(object sender, System.EventArgs e)
         {
-            //DttSP.SetTXALCBot((double)udDSPALCThreshold.Value);
+            WDSP.SetTXAALCMaxGain(WDSP.id(1, 0), (double)udDSPALCMaximumGain.Value);
+            WDSP.ALCGain = (double)udDSPALCMaximumGain.Value;
         }
 
         private void udDSPALCDecay_ValueChanged(object sender, System.EventArgs e)
@@ -8944,14 +9095,18 @@ namespace Thetis
 
             DataRow dr = rows[0];
             int[] eq = null;
-            eq = new int[11];
+            eq = new int[21];
+            int[] cfceq = null;
+            cfceq = new int[32];
 
             console.EQForm.TXEQEnabled = (bool)dr["TXEQEnabled"];
             console.EQForm.NumBands = (int)dr["TXEQNumBands"];
 
             eq[0] = (int)dr["TXEQPreamp"];
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
                 eq[i] = (int)dr["TXEQ" + i.ToString()];
+            for (int i = 11; i < 21; i++)
+                eq[i] = (int)dr["TxEqFreq" + (i - 10).ToString()];
             console.EQForm.TXEQ = eq;
 
             udTXFilterLow.Value = Math.Min(Math.Max((int)dr["FilterLow"], udTXFilterLow.Minimum), udTXFilterLow.Maximum);
@@ -8975,7 +9130,7 @@ namespace Thetis
             tbDSPLevelerHangThreshold.Value = (int)dr["Lev_HangThreshold"];
 
             udDSPALCSlope.Value = (int)dr["ALC_Slope"];
-            udDSPALCThreshold.Value = (int)dr["ALC_MaxGain"];
+            udDSPALCMaximumGain.Value = (int)dr["ALC_MaximumGain"];
             udDSPALCAttack.Value = (int)dr["ALC_Attack"];
             udDSPALCDecay.Value = (int)dr["ALC_Decay"];
             udDSPALCHangTime.Value = (int)dr["ALC_Hang"];
@@ -9053,6 +9208,33 @@ namespace Thetis
             comboDSPDigTXFiltType.Text = (string)dr["Digi_TX_DSP_Filter_Type"];
             comboDSPCWRXFiltType.Text = (string)dr["CW_RX_DSP_Filter_Type"];
 
+            radMicIn.Checked = (bool)dr["Mic_Input_On"];
+            chk20dbMicBoost.Checked = (bool)dr["Mic_Input_Boost"];
+            radLineIn.Checked = (bool)dr["Line_Input_On"];
+            udLineInBoost.Value = (decimal)dr["Line_Input_Level"];
+            chkDSPCESSB.Checked = (bool)dr["CESSB_On"];
+            console.PureSignalEnabled = (bool)dr["Pure_Signal_Enabled"];
+
+            //CFC
+            chkCFCEnable.Checked = (bool)dr["CFCEnabled"];
+            chkCFCPeqEnable.Checked = (bool)dr["CFCPostEqEnabled"];
+            chkPHROTEnable.Checked = (bool)dr["CFCPhaseRotatorEnabled"];
+
+            udPhRotFreq.Value = Math.Min(Math.Max((int)dr["CFCPhaseRotatorFreq"], udPhRotFreq.Minimum), udPhRotFreq.Maximum);
+            udPHROTStages.Value = Math.Min(Math.Max((int)dr["CFCPhaseRotatorStages"], udPHROTStages.Minimum), udPHROTStages.Maximum);
+
+            cfceq[0] = (int)dr["CFCPreComp"];
+            for (int i = 1; i < 11; i++)
+                cfceq[i] = (int)dr["CFCPreComp" + (i - 1).ToString()];
+
+            cfceq[11] = (int)dr["CFCPostEqGain"];
+            for (int i = 12; i < 22; i++)
+                cfceq[i] = (int)dr["CFCPostEqGain" + (i - 12).ToString()];
+            for (int i = 22; i < 32; i++)
+                cfceq[i] = (int)dr["CFCEqFreq" + (i - 22).ToString()];
+
+            CFCCOMPEQ = cfceq;
+
             current_profile = comboTXProfileName.Text;
         }
 
@@ -9100,10 +9282,10 @@ namespace Thetis
             dr["TXEQNumBands"] = console.EQForm.NumBands;
             int[] eq = console.EQForm.TXEQ;
             dr["TXEQPreamp"] = eq[0];
-            for (int i = 1; i < eq.Length; i++)
+            for (int i = 1; i < 11; i++)
                 dr["TXEQ" + i.ToString()] = eq[i];
-            for (int i = eq.Length; i < 11; i++)
-                dr["TXEQ" + i.ToString()] = 0;
+            for (int i = 11; i < 21; i++)
+                dr["TxEqFreq" + (i - 10).ToString()] = eq[i];
 
             dr["DXOn"] = console.DX;
             dr["DXLevel"] = console.DXLevel;
@@ -9121,7 +9303,7 @@ namespace Thetis
             dr["Lev_HangThreshold"] = tbDSPLevelerHangThreshold.Value;
 
             dr["ALC_Slope"] = (int)udDSPALCSlope.Value;
-            dr["ALC_MaxGain"] = (int)udDSPALCThreshold.Value;
+            dr["ALC_MaximumGain"] = (int)udDSPALCMaximumGain.Value;
             dr["ALC_Attack"] = (int)udDSPALCAttack.Value;
             dr["ALC_Decay"] = (int)udDSPALCDecay.Value;
             dr["ALC_Hang"] = (int)udDSPALCHangTime.Value;
@@ -9205,6 +9387,23 @@ namespace Thetis
             dr["Line_Input_On"] = (bool)radLineIn.Checked;
             dr["Line_Input_Level"] = udLineInBoost.Value;
             dr["CESSB_On"] = chkDSPCESSB.Checked;
+            dr["Pure_Signal_Enabled"] = console.PureSignalEnabled;
+
+            //CFC
+            dr["CFCEnabled"] = chkCFCEnable.Checked;
+            dr["CFCPostEqEnabled"] = chkCFCPeqEnable.Checked;
+            dr["CFCPhaseRotatorEnabled"] = chkPHROTEnable.Checked;
+            dr["CFCPhaseRotatorFreq"] = (int)udPhRotFreq.Value;
+            dr["CFCPhaseRotatorStages"] = (int)udPHROTStages.Value;
+            int[] cfceq = CFCCOMPEQ;
+            dr["CFCPreComp"] = cfceq[0];
+            for (int i = 1; i < 11; i++)
+                dr["CFCPreComp" + (i - 1).ToString()] = cfceq[i];
+            dr["CFCPostEqGain"] = cfceq[11];
+            for (int i = 12; i < 22; i++)
+                dr["CFCPostEqGain" + (i - 12).ToString()] = cfceq[i];
+            for (int i = 22; i < 32; i++)
+                dr["CFCEqFreq" + (i - 22).ToString()] = cfceq[i];
 
             if (!comboTXProfileName.Items.Contains(name))
             {
@@ -11156,35 +11355,84 @@ namespace Thetis
             path = path.Substring(0, path.LastIndexOf("\\"));
             openFileDialog1.InitialDirectory = path;
             openFileDialog1.ShowDialog();
+            bool ok = false;
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                ok = CompleteImport();
+            }
+            if (ok) console.Close();  // Save everything 
         }
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CompleteImport();
+           // CompleteImport();
         }
 
-        private void CompleteImport()
+        private bool CompleteImport()
         {
-            if (DB.ImportDatabase(openFileDialog1.FileName))
-                MessageBox.Show("Database Imported Successfully");
+            bool success;
+            //if (DB.ImportDatabase(openFileDialog1.FileName))
+            //    MessageBox.Show("Database Imported Successfully");
 
-            GetTxProfiles();
-            console.UpdateTXProfile(TXProfile);
+            //-W2PA Import more carefully, allowing DBs created by previous versions to retain settings and options
+            if (DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath))
+            {
+                MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.");
+                success = true;
+            }
+            else
+            {
+                MessageBox.Show("Database could not be imported. Previous database has been kept.");
+                success = false;
+            }
 
-            GetOptions();					// load all database values
-            console.GetState();
-            if (console.EQForm != null) Common.RestoreForm(console.EQForm, "EQForm", false);
-            if (console.XVTRForm != null) Common.RestoreForm(console.XVTRForm, "XVTR", false);
-            // if (console.ProdTestForm != null) Common.RestoreForm(console.ProdTestForm, "ProdTest", false);
+            // Archive old database file write a new one.
+            if (success)
+            {
+                string archivePath = console.AppDataPath + "DB_Archive\\";
+                if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
+                string justFileName = console.DBFileName.Substring(console.DBFileName.LastIndexOf("\\") + 1);
+                string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
+                File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + ".xml");
+                File.Delete(console.DBFileName);
+                DB.WriteCurrentDB(console.DBFileName);
 
-            SaveOptions();					// save all database values
-            console.SaveState();
-            if (console.EQForm != null) Common.SaveForm(console.EQForm, "EQForm");
-            if (console.XVTRForm != null) Common.SaveForm(console.XVTRForm, "XVTR");
-            // if (console.ProdTestForm != null) Common.SaveForm(console.ProdTestForm, "ProdTest");
+                //// Unnecessary to do this applicationof new settings since we close after import and preserve the newly merged database
+                //// Also, not closing would allow changes to the configuration that would be overwritten
+                //// Saving for later consideration
+                //GetTxProfiles();  // load new database values
+                //GetOptions();
+                //console.GetState();
+                //GetTxProfiles();
+                //GetTxProfileDefs();
+                //if (console.EQForm != null) Common.RestoreForm(console.EQForm, "EQForm", false);
+                //if (console.XVTRForm != null) Common.RestoreForm(console.XVTRForm, "XVTR", false);
+                //if (console.memoryForm != null) Common.RestoreForm(console.memoryForm, "MemoryForm", false);
+                //if (console.diversityForm != null) Common.RestoreForm(console.diversityForm, "DiversityForm", false);
+                //if (console.psform != null) Common.RestoreForm(console.psform, "PureSignal", false);
+                ////if (console.ampView != null) Common.RestoreForm(console.XVTRForm, "AmpView", false);  //handled by PSform?
+            }
 
-            udTransmitTunePower_ValueChanged(this, EventArgs.Empty);
-            //console.ResetMemForm();
+            return success;
+
+            ////Old code
+            //GetTxProfiles();
+            //console.UpdateTXProfile(TXProfile);
+
+            //GetOptions();					// load all database values
+            //console.GetState();
+            //if (console.EQForm != null) Common.RestoreForm(console.EQForm, "EQForm", false);
+            //if (console.XVTRForm != null) Common.RestoreForm(console.XVTRForm, "XVTR", false);
+            //// if (console.ProdTestForm != null) Common.RestoreForm(console.ProdTestForm, "ProdTest", false);
+
+            //SaveOptions();					// save all database values
+            //console.SaveState();
+            //if (console.EQForm != null) Common.SaveForm(console.EQForm, "EQForm");
+            //if (console.XVTRForm != null) Common.SaveForm(console.XVTRForm, "XVTR");
+            //// if (console.ProdTestForm != null) Common.SaveForm(console.ProdTestForm, "ProdTest");
+
+            //udTransmitTunePower_ValueChanged(this, EventArgs.Empty);
+            ////console.ResetMemForm();
         }
 
         #endregion
@@ -11527,7 +11775,7 @@ namespace Thetis
 
         private void udDSPALCThreshold_LostFocus(object sender, EventArgs e)
         {
-            udDSPALCThreshold.Value = udDSPALCThreshold.Value;
+            udDSPALCMaximumGain.Value = udDSPALCMaximumGain.Value;
         }
 
         private void udDSPALCSlope_LostFocus(object sender, EventArgs e)
@@ -12217,8 +12465,8 @@ namespace Thetis
         private void btnResetDB_Click(object sender, System.EventArgs e)
         {
             DialogResult dr = MessageBox.Show("This will close the program, make a copy of the current\n" +
-                "database to your desktop, and reset the active database\n" +
-                "the next time Thetis is launched.\n\n" +
+                "database to the DB_Archive folder and reset the active database\n" +
+                "the next time PowerSDR is launched.\n\n" +
                 "Are you sure you want to reset the database?",
                 "Reset Database?",
                 MessageBoxButtons.YesNo,
@@ -12341,8 +12589,8 @@ namespace Thetis
         {
             if (lstTXProfileDef.SelectedIndex < 0) return;
 
-            DialogResult result = MessageBox.Show("Import profile from defaults?",
-                "Import?",
+            DialogResult result = MessageBox.Show("Include this Additional TX profile in your profiles list?",
+                "Include?",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -12400,6 +12648,67 @@ namespace Thetis
             }
 
             console.UpdateTXProfile(name);
+        }
+
+        //-W2PA Export a single TX Profile to send to someone else for importing.
+        private void ExportCurrentTxProfile()
+        {
+            string fileName = current_profile;
+
+            string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            foreach (char c in invalid)
+            {
+                fileName = fileName.Replace(c.ToString(), "_");  // Remove profile name chars that are invalid in filenames.
+            }
+
+            fileName = console.AppDataPath + fileName;
+
+            int i = 1;
+            string tempFN = fileName;
+            while (File.Exists(tempFN + ".xml")) {
+                tempFN = fileName + Convert.ToString(i);  // Get a slightly different file name if it already exists.
+                i++;           
+            }
+            fileName = tempFN + ".xml";
+
+            DataRow[] rows = DB.ds.Tables["TxProfile"].Select(
+                "'" + current_profile + "' = Name");
+            DataRow exportRow = null;
+            if (rows.Length > 0)
+            {
+                exportRow = rows[0];
+            }
+            else
+            {
+                MessageBox.Show("Can not locate " + current_profile + ".",  // This should never happen.
+                    "Profile error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            DataSet exDS = DB.ds.Clone();
+            DataTable pTable = pTable = DB.ds.Tables["TxProfile"].Clone();
+            pTable.ImportRow(exportRow);
+            exDS.Merge(pTable);
+
+            try
+            {
+                exDS.WriteXml(fileName, XmlWriteMode.WriteSchema); // Writing with schema is necessary for import
+            }
+            catch
+            {
+                MessageBox.Show("Can not write " + fileName + ".",
+                    "Export error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show("Profile" + current_profile + " has been saved in file " + fileName,
+                    "Done",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private void Setup_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -17193,6 +17502,100 @@ namespace Thetis
             console.RX6mGainOffsetRx2 = (float)ud6mRx2LNAGainOffset.Value;
         }
 
+        private void chkEnableXVTRHF_CheckedChanged(object sender, EventArgs e)
+        {
+            console.EnableXVTRHF = chkEnableXVTRHF.Checked;
+        }
+
+        private void chkCFCEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            int run;
+            if (chkCFCEnable.Checked) run = 1;
+            else run = 0;
+            WDSP.SetTXACFCOMPRun(WDSP.id(1, 0), run);
+        }
+
+        private void setCFCProfile(object sender, EventArgs e)
+        {
+            const int nfreqs = 10;
+            double[] F = new double[nfreqs];
+            double[] G = new double[nfreqs];
+            double[] E = new double[nfreqs];
+            F[0] = (double)udCFC0.Value;
+            F[1] = (double)udCFC1.Value;
+            F[2] = (double)udCFC2.Value;
+            F[3] = (double)udCFC3.Value;
+            F[4] = (double)udCFC4.Value;
+            F[5] = (double)udCFC5.Value;
+            F[6] = (double)udCFC6.Value;
+            F[7] = (double)udCFC7.Value;
+            F[8] = (double)udCFC8.Value;
+            F[9] = (double)udCFC9.Value;
+            G[0] = (double)tbCFC0.Value;
+            G[1] = (double)tbCFC1.Value;
+            G[2] = (double)tbCFC2.Value;
+            G[3] = (double)tbCFC3.Value;
+            G[4] = (double)tbCFC4.Value;
+            G[5] = (double)tbCFC5.Value;
+            G[6] = (double)tbCFC6.Value;
+            G[7] = (double)tbCFC7.Value;
+            G[8] = (double)tbCFC8.Value;
+            G[9] = (double)tbCFC9.Value;
+            E[0] = (double)tbCFCEQ0.Value;
+            E[1] = (double)tbCFCEQ1.Value;
+            E[2] = (double)tbCFCEQ2.Value;
+            E[3] = (double)tbCFCEQ3.Value;
+            E[4] = (double)tbCFCEQ4.Value;
+            E[5] = (double)tbCFCEQ5.Value;
+            E[6] = (double)tbCFCEQ6.Value;
+            E[7] = (double)tbCFCEQ7.Value;
+            E[8] = (double)tbCFCEQ8.Value;
+            E[9] = (double)tbCFCEQ9.Value;
+            unsafe
+            {
+                fixed (double* Fptr = &F[0], Gptr = &G[0], Eptr = &E[0])
+                {
+                    WDSP.SetTXACFCOMPprofile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, Eptr);
+                }
+            }
+        }
+
+        private void tbCFCPRECOMP_Scroll(object sender, EventArgs e)
+        {
+            WDSP.SetTXACFCOMPPrecomp(WDSP.id(1, 0), (double)tbCFCPRECOMP.Value);
+        }
+
+        private void chkCFCPeqEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            int run;
+            if (chkCFCPeqEnable.Checked) run = 1;
+            else run = 0;
+            WDSP.SetTXACFCOMPPeqRun(WDSP.id(1, 0), run);
+        }
+
+        private void chkPHROTEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            int run;
+            if (chkPHROTEnable.Checked) run = 1;
+            else run = 0;
+            WDSP.SetTXAPHROTRun(WDSP.id(1, 0), run);
+        }
+
+        private void udPhRotFreq_ValueChanged(object sender, EventArgs e)
+        {
+            WDSP.SetTXAPHROTCorner(WDSP.id(1, 0), (double)udPhRotFreq.Value);
+        }
+
+        private void udPHROTStages_ValueChanged(object sender, EventArgs e)
+        {
+            WDSP.SetTXAPHROTNstages(WDSP.id(1, 0), (int)udPHROTStages.Value);
+        }
+
+        private void tbCFCPEG_Scroll(object sender, EventArgs e)
+        {
+            WDSP.SetTXACFCOMPPrePeq(WDSP.id(1, 0), (double)tbCFCPEQGAIN.Value);
+        }
+
         private void chkBoxHTTP_CheckedChanged(object sender, EventArgs e)
         {
             if (chkBoxHTTP.Checked == true)
@@ -17262,6 +17665,22 @@ namespace Thetis
             chkBoxHTTP.Checked = false;
         }
 
+        private void radTXDSB_CheckedChanged(object sender, EventArgs e)
+        {
+            int value = 0;
+            if (radTXDSB.Checked)
+                value = 0;
+            else if (radTXLSB.Checked)
+                value = 1;
+            else if (radTXUSB.Checked)
+                value = 2;
+            console.radio.GetDSPTX(0).SubAMMode = value;
+        }
+
+        private void btnExportCurrentTXProfile_Click(object sender, EventArgs e)
+        {
+            ExportCurrentTxProfile();
+        }
     }
 
     #region PADeviceInfo Helper Class

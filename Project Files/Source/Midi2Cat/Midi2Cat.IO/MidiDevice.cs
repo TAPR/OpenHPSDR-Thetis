@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at:  midi2cat@cametrix.com
 
+Modifications to support the Behringer CMD PL-1 controller
+by Chris Codella, W2PA, Feb 2017.  Indicated by //-W2PA comment lines.
+
 */
 
 using Midi2Cat.Data;
@@ -31,6 +34,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace Midi2Cat.IO
 {
@@ -52,6 +56,11 @@ namespace Midi2Cat.IO
         public event MidiInputEventHandler onMidiInput;
         public event DebugMsgEventHandler onMidiDebugMessage;
 
+        static public int VFOSelect;  //-W2PA for switching Behringer PL-1 main wheel between VFO A and B.  Used in inDevice_ChannelMessageReceived() below and in MidiDeviceSetup.cs
+        public int latestControlID = 0;
+        public int lastLED = 0;
+
+
         private WinMM.MidiInCallback callback;
         private int midi_in_handle=0;
         private int midi_out_handle=0;
@@ -71,10 +80,16 @@ namespace Midi2Cat.IO
         int DeviceIndex = 0;
         string DeviceName;
 
+        public string GetDeviceName()
+        {
+            return DeviceName;
+        }
+
         public bool OpenMidiIn(int deviceIndex,string deviceName)
         {
             DeviceIndex = deviceIndex;
             this.DeviceName = deviceName;
+            //this.VFOSelect = 0;
             callback = new WinMM.MidiInCallback(InCallback);
             int result = WinMM.MidiInOpen(ref midi_in_handle, DeviceIndex, callback, 0, CALLBACK_FUNCTION);
             if (result != 0)
@@ -590,14 +605,49 @@ namespace Midi2Cat.IO
 
         public void inDevice_ChannelMessageReceived(int ControlId, int Data, int Status, int Event, int Channel)
         {
-            if (onMidiInput != null)
+            if (onMidiInput != null) 
             {
                 try
                 {
+                    ControlId = FixBehringerCtlID(ControlId, Status); //-W2PA Disambiguate messages from Behringer controllers
+
                     onMidiInput(this, DeviceIndex, ControlId, Data, Status, Event, Channel);
                 }
                 catch { }
             }
+        }
+
+        private int FixBehringerCtlID(int ControlId, int Status) //-W2PA Test for DeviceName is a Behringer type, and disambiguate the messages if necessary
+        {            
+            if (DeviceName == "CMD PL-1")
+            {
+                if (Status == 0xE0) //-W2PA Trap Status E0 from Behringer PL-1 slider, change the ID to something that doesn't conflict with other controls
+                {
+                    ControlId = 73;  //-W2PA Since PL-1 sliders send a variety of IDs, fix it at something unused: 73 (it uses 10 as its ID for LEDs)
+                }
+
+                if (ControlId == 0x1F && VFOSelect == 2) //-W2PA Trap PL-1 main wheel, change the ID to something that doesn't conflict with other controls, indicating VFO number (1=A, 2=B)
+                {
+                    ControlId = 77;  //-W2PA This isn't the ID of any other control on the PL-1, so use for VFOB
+                }
+            }
+            if (DeviceName == "CMD Micro")
+            {
+                if (Status == 0xB0) //-W2PA Trap Status E0 from Behringer CMD Micro controls, change the ID to something that doesn't conflict with buttons
+                {
+                    if (ControlId == 0x10) ControlId = 73; // sliders
+                    if (ControlId == 0x12) ControlId = 74;
+                    if (ControlId == 0x22) ControlId = 75;
+                    if (ControlId == 0x20) ControlId = 76;
+
+                    if (ControlId == 0x11) ControlId = 77; // large wheels
+                    if (ControlId == 0x21) ControlId = 78;
+
+                    if (ControlId == 0x30) ControlId = 79; // small wheel-knobs
+                    if (ControlId == 0x31) ControlId = 80;
+                }
+            }
+            return ControlId;
         }
 
         private void DebugMsg(Direction direction, Status status, string msg1 = "", string msg2 = "")
@@ -705,7 +755,7 @@ namespace Midi2Cat.IO
 
         public string[] ValidateMidiMessages(string inMessages)
         {
-            List<string> Errors=new List<string>();
+            List<string> Errors=new List<string>(); 
             char[] parms= {' ', ',', ';', ':'};
             string[] messages = inMessages.Split(parms, StringSplitOptions.RemoveEmptyEntries);
             foreach (string msg in messages)
@@ -718,5 +768,39 @@ namespace Midi2Cat.IO
             }
             return Errors.ToArray();
         }
+
+        public void SetPL1ButtonLight(int n)  //-W2PA Set PL1 button light: 0=default, 1=alternate, 2=blink.   Used by Midi2CatCommands. 
+        {
+            int inCtlID = latestControlID;
+            string cID = inCtlID.ToString("X2");
+            string led;
+            if (n == 0 || n == 1 || n == 2) led = n.ToString("X2"); else led = "00";
+            string knobCmd = "90" + cID + led;
+            SendMsg(0x01, 0x01, 0x90, inCtlID, knobCmd);
+            return;
+        }
+
+        public void SetPL1ButtonLight(int n, int inCtlID)  //-W2PA Set PL1 button light: 0=default, 1=alternate, 2=blink, for PL1 button whose ID=inCtlID  Used by the UI console.
+        {
+            string cID = inCtlID.ToString("X2");
+            string led;
+            if (n == 0 || n == 1 || n == 2) led = n.ToString("X2"); else led = "00";
+            string knobCmd = "90" + cID + led;
+            SendMsg(0x01, 0x01, 0x90, inCtlID, knobCmd);
+            return;
+        }
+
+        public void SetPL1KnobLight(int n, int inCtlID)  //-W2PA Light LED number n for PL1 knob/wheel whose ID=inCtlID.  Used by the UI console.
+        {
+            if (n == lastLED && inCtlID == 73) return; // Special handling for the ill-behaved PL-1 slider
+            else lastLED = n; string cID = inCtlID.ToString("X2");
+            string led = n.ToString("X2");
+            string knobCmd = "B0" + cID + led;
+            SendMsg(0x01, 0x00, 0x00, 0x00, knobCmd);
+            Thread.Sleep(1); //-W2PA This is necessary for the PL-1 slider, which can cause a deluge of messages while also receiving them.
+            return;
+        }
+
+
     }
 }

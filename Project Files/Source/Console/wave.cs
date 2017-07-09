@@ -51,7 +51,8 @@ namespace Thetis
         private static Bitmap ke9ns_bmp;                    // ke9ns add call sign waterfall tx id
         
         private Console console;
-		private WaveOptions WaveOptions;
+		//private WaveOptions WaveOptions;
+        private WaveOptions waveOptionsForm;
 		private ArrayList file_list;
 
         private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Thetis";
@@ -107,7 +108,7 @@ namespace Thetis
 			
 			file_list = new ArrayList();
 			currently_playing = -1;
-			WaveOptions = new WaveOptions();
+            waveOptionsForm = new WaveOptions();
 			this.ActiveControl = btnAdd;
 			Common.RestoreForm(this, "WaveOptions", false);
 		}
@@ -137,7 +138,11 @@ namespace Thetis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WaveControl));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.grpPlaylist = new System.Windows.Forms.GroupBox();
+            this.checkBoxRandom = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxLoop = new System.Windows.Forms.CheckBoxTS();
+            this.btnAdd = new System.Windows.Forms.ButtonTS();
             this.lstPlaylist = new System.Windows.Forms.ListBox();
+            this.btnRemove = new System.Windows.Forms.ButtonTS();
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.mnuWaveOptions = new System.Windows.Forms.MenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -151,10 +156,6 @@ namespace Thetis
             this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.tbPreamp = new System.Windows.Forms.TrackBar();
             this.udPreamp = new System.Windows.Forms.NumericUpDownTS();
-            this.checkBoxRandom = new System.Windows.Forms.CheckBoxTS();
-            this.checkBoxLoop = new System.Windows.Forms.CheckBoxTS();
-            this.btnAdd = new System.Windows.Forms.ButtonTS();
-            this.btnRemove = new System.Windows.Forms.ButtonTS();
             this.groupBox2 = new System.Windows.Forms.GroupBoxTS();
             this.checkBoxRecord = new System.Windows.Forms.CheckBoxTS();
             this.grpPlayback = new System.Windows.Forms.GroupBoxTS();
@@ -193,6 +194,43 @@ namespace Thetis
             this.grpPlaylist.TabStop = false;
             this.grpPlaylist.Text = "Playlist";
             // 
+            // checkBoxRandom
+            // 
+            this.checkBoxRandom.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxRandom.Enabled = false;
+            this.checkBoxRandom.Image = null;
+            this.checkBoxRandom.Location = new System.Drawing.Point(224, 24);
+            this.checkBoxRandom.Name = "checkBoxRandom";
+            this.checkBoxRandom.Size = new System.Drawing.Size(56, 23);
+            this.checkBoxRandom.TabIndex = 13;
+            this.checkBoxRandom.Text = "Random";
+            this.checkBoxRandom.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxRandom.Visible = false;
+            this.checkBoxRandom.CheckedChanged += new System.EventHandler(this.checkBoxRandom_CheckedChanged);
+            // 
+            // checkBoxLoop
+            // 
+            this.checkBoxLoop.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxLoop.Enabled = false;
+            this.checkBoxLoop.Image = null;
+            this.checkBoxLoop.Location = new System.Drawing.Point(176, 24);
+            this.checkBoxLoop.Name = "checkBoxLoop";
+            this.checkBoxLoop.Size = new System.Drawing.Size(40, 23);
+            this.checkBoxLoop.TabIndex = 12;
+            this.checkBoxLoop.Text = "Loop";
+            this.checkBoxLoop.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxLoop.CheckedChanged += new System.EventHandler(this.checkBoxLoop_CheckedChanged);
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Image = null;
+            this.btnAdd.Location = new System.Drawing.Point(24, 24);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(48, 23);
+            this.btnAdd.TabIndex = 6;
+            this.btnAdd.Text = "Add...";
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
             // lstPlaylist
             // 
             this.lstPlaylist.Location = new System.Drawing.Point(16, 56);
@@ -202,6 +240,17 @@ namespace Thetis
             this.lstPlaylist.TabIndex = 0;
             this.lstPlaylist.SelectedIndexChanged += new System.EventHandler(this.lstPlaylist_SelectedIndexChanged);
             this.lstPlaylist.DoubleClick += new System.EventHandler(this.lstPlaylist_DoubleClick);
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.Enabled = false;
+            this.btnRemove.Image = null;
+            this.btnRemove.Location = new System.Drawing.Point(80, 24);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(56, 23);
+            this.btnRemove.TabIndex = 11;
+            this.btnRemove.Text = "Remove";
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // mainMenu1
             // 
@@ -260,6 +309,7 @@ namespace Thetis
             this.chkBoxMP3.Size = new System.Drawing.Size(165, 26);
             this.chkBoxMP3.TabIndex = 62;
             this.chkBoxMP3.Text = "QuickAudio Create MP3\r\n";
+            this.chkBoxMP3.Visible = false;
             // 
             // chkQuickAudioFolder
             // 
@@ -269,6 +319,7 @@ namespace Thetis
             this.chkQuickAudioFolder.Size = new System.Drawing.Size(172, 26);
             this.chkQuickAudioFolder.TabIndex = 61;
             this.chkQuickAudioFolder.Text = "QuickAudio Save Folder";
+            this.chkQuickAudioFolder.Visible = false;
             this.chkQuickAudioFolder.CheckedChanged += new System.EventHandler(this.chkQuickAudioFolder_CheckedChanged);
             // 
             // labelTS1
@@ -360,54 +411,6 @@ namespace Thetis
             0});
             this.udPreamp.ValueChanged += new System.EventHandler(this.udPreamp_ValueChanged);
             this.udPreamp.LostFocus += new System.EventHandler(this.udPreamp_LostFocus);
-            // 
-            // checkBoxRandom
-            // 
-            this.checkBoxRandom.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxRandom.Enabled = false;
-            this.checkBoxRandom.Image = null;
-            this.checkBoxRandom.Location = new System.Drawing.Point(224, 24);
-            this.checkBoxRandom.Name = "checkBoxRandom";
-            this.checkBoxRandom.Size = new System.Drawing.Size(56, 23);
-            this.checkBoxRandom.TabIndex = 13;
-            this.checkBoxRandom.Text = "Random";
-            this.checkBoxRandom.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxRandom.Visible = false;
-            this.checkBoxRandom.CheckedChanged += new System.EventHandler(this.checkBoxRandom_CheckedChanged);
-            // 
-            // checkBoxLoop
-            // 
-            this.checkBoxLoop.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxLoop.Enabled = false;
-            this.checkBoxLoop.Image = null;
-            this.checkBoxLoop.Location = new System.Drawing.Point(176, 24);
-            this.checkBoxLoop.Name = "checkBoxLoop";
-            this.checkBoxLoop.Size = new System.Drawing.Size(40, 23);
-            this.checkBoxLoop.TabIndex = 12;
-            this.checkBoxLoop.Text = "Loop";
-            this.checkBoxLoop.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxLoop.CheckedChanged += new System.EventHandler(this.checkBoxLoop_CheckedChanged);
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Image = null;
-            this.btnAdd.Location = new System.Drawing.Point(24, 24);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(48, 23);
-            this.btnAdd.TabIndex = 6;
-            this.btnAdd.Text = "Add...";
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-            // 
-            // btnRemove
-            // 
-            this.btnRemove.Enabled = false;
-            this.btnRemove.Image = null;
-            this.btnRemove.Location = new System.Drawing.Point(80, 24);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(56, 23);
-            this.btnRemove.TabIndex = 11;
-            this.btnRemove.Text = "Remove";
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // groupBox2
             // 
@@ -606,7 +609,7 @@ namespace Thetis
 
             set
             {
-                WaveOptions.RECPLAY1 = value;
+                waveOptionsForm.RECPLAY1 = value;
 
             }
         } // RECPLAY
@@ -620,8 +623,8 @@ namespace Thetis
             set
             {
 
-                quickmp3SR = WaveOptions.comboSampleRate.Text; // save SR value before reducing
-                WaveOptions.comboSampleRate.Text = "48000"; // reduce file size
+                quickmp3SR = waveOptionsForm.comboSampleRate.Text; // save SR value before reducing
+                waveOptionsForm.comboSampleRate.Text = "48000"; // reduce file size
             }
         } // RECPLAY2
 
@@ -634,10 +637,10 @@ namespace Thetis
             set
             {
 
-                WaveOptions.radRXPreProcessed.Checked = WaveOptions.temp_record;
-                WaveOptions.radTXPreProcessed.Checked = WaveOptions.temp_record;
+                waveOptionsForm.radRXPreProcessed.Checked = waveOptionsForm.temp_record;
+                waveOptionsForm.radTXPreProcessed.Checked = waveOptionsForm.temp_record;
 
-                WaveOptions.comboSampleRate.Text = quickmp3SR; // restore file size SR
+                waveOptionsForm.comboSampleRate.Text = quickmp3SR; // restore file size SR
 
             }
         } // RECPLAY3
@@ -919,7 +922,7 @@ namespace Thetis
 				checkBoxRecord.BackColor = console.ButtonSelectedColor;
 				string temp = console.RX1DSPMode.ToString()+" ";
 				temp += console.VFOAFreq.ToString("f6")+"MHz [";
-                int short_sample_rate = WaveOptions.SampleRate / 1000;
+                int short_sample_rate = waveOptionsForm.SampleRate / 1000;
                 temp += Audio.BitDepth.ToString() + "bit ";
                 temp += short_sample_rate.ToString() + "k] ";
                 temp += DateTime.Now.ToString();
@@ -934,13 +937,13 @@ namespace Thetis
                 scheduleName = file_name; // ke9ns add
 
                // string file_name2 = file_name+"-rx2";				
-				WaveThing.wave_file_writer[0] = new WaveFileWriter(0, 2, WaveOptions.SampleRate, file_name);
+                WaveThing.wave_file_writer[0] = new WaveFileWriter(0, 2, waveOptionsForm.SampleRate, file_name);
  
                 if (console.RX2Enabled)
                 {
                     string temp_rx2 = console.RX2DSPMode.ToString() + " ";
                     temp_rx2 += console.VFOBFreq.ToString("f6") + "MHz [";
-                    int short_rx2_sample_rate = WaveOptions.SampleRate / 1000;
+                    int short_rx2_sample_rate = waveOptionsForm.SampleRate / 1000;
                     temp_rx2 += Audio.BitDepth.ToString() + "bit ";
                     temp_rx2 += short_sample_rate.ToString() + "k] ";
                     temp_rx2 += DateTime.Now.ToString();
@@ -949,7 +952,7 @@ namespace Thetis
                     temp_rx2 = console.AppDataPath + temp_rx2;
                     string file_name2 = temp_rx2 + "-rx2.wav";
 
-                    WaveThing.wave_file_writer[1] = new WaveFileWriter(1, 2, WaveOptions.SampleRate, file_name2);
+                    WaveThing.wave_file_writer[1] = new WaveFileWriter(1, 2, waveOptionsForm.SampleRate, file_name2);
                 }
 			}
 			
@@ -1113,12 +1116,12 @@ namespace Thetis
 
 		private void mnuWaveOptions_Click(object sender, System.EventArgs e)
 		{
-			if(WaveOptions == null || WaveOptions.IsDisposed)
-				WaveOptions = new WaveOptions();
+            if (waveOptionsForm == null || waveOptionsForm.IsDisposed)
+                waveOptionsForm = new WaveOptions();
 
-			WaveOptions.Show();
-			WaveOptions.Focus();
-		}
+            waveOptionsForm.Show();
+            waveOptionsForm.Focus();
+        }
 
 		private void udPreamp_ValueChanged(object sender, System.EventArgs e)
 		{
@@ -1236,10 +1239,10 @@ namespace Thetis
             {
 
                 temp_record = Audio.RecordRXPreProcessed;
-                quickmp3SR = WaveOptions.comboSampleRate.Text;
+                quickmp3SR = waveOptionsForm.comboSampleRate.Text;
 
                 if (chkBoxMP3.Checked == true)
-                    WaveOptions.comboSampleRate.Text = "48000"; // reduce file size
+                    waveOptionsForm.comboSampleRate.Text = "48000"; // reduce file size
 
                 Audio.RecordRXPreProcessed = false;                            //ke9ns add  set this FALSE temporarily
 
@@ -1271,7 +1274,7 @@ namespace Thetis
 
                 }
 
-                Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, WaveOptions.SampleRate, file_name);
+                WaveThing.wave_file_writer[0] = new WaveFileWriter(0, 2, waveOptionsForm.SampleRate, file_name);
 
             } //chkQuickRec.checked
 
@@ -1279,7 +1282,7 @@ namespace Thetis
 
             if (!chkQuickRec.Checked)
             {
-                string file_name = Audio.wave_file_writer.Stop();
+                string file_name = WaveThing.wave_file_writer[0].Stop();
 
                 chkQuickRec.BackColor = SystemColors.Control;
 
@@ -1291,7 +1294,7 @@ namespace Thetis
                 //}
 
                 Audio.RecordRXPreProcessed = temp_record; //return to original state
-                WaveOptions.comboSampleRate.Text = quickmp3SR; // restore file size
+                waveOptionsForm.comboSampleRate.Text = quickmp3SR; // restore file size
 
                 //---------------------------------------------------------
                 // ke9ns add save an MP3 to go along with the WAV file
