@@ -154,3 +154,43 @@ extern void setSamplerate_mpeak (MPEAK a, int rate);
 extern void setSize_mpeak (MPEAK a, int size);
 
 #endif
+
+/********************************************************************************************************
+*																										*
+*										     Phase Rotator      										*
+*																										*
+********************************************************************************************************/
+
+#ifndef _phrot_h
+#define _phrot_h
+
+typedef struct _phrot
+{
+	int run;
+	int size;
+	double* in;
+	double* out;
+	int rate;
+	double fc;
+	int nstages;
+	// normalized such that a0 = 1
+	double a1, b0, b1;
+	double *x0, *x1, *y0, *y1;
+	CRITICAL_SECTION cs_update;
+} phrot, *PHROT;
+
+extern PHROT create_phrot (int run, int size, double* in, double* out, int rate, double fc, int nstages);
+
+extern void destroy_phrot (PHROT a);
+
+extern void flush_phrot (PHROT a);
+
+extern void xphrot (PHROT a);
+
+extern void setBuffers_phrot (PHROT a, double* in, double* out);
+
+extern void setSamplerate_phrot (PHROT a, int rate);
+
+extern void setSize_phrot (PHROT a, int size);
+
+#endif

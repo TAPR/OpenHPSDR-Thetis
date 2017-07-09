@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013-2015 Warren Pratt, NR0V
+Copyright (C) 2013-2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -129,6 +129,9 @@ namespace Thetis
 
         [DllImport("WDSP.dll", EntryPoint = "SetTXAALCDecay", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAALCDecay(int channel, int decay);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXAALCMaxGain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAALCMaxGain(int channel, double maxgain);
 
         [DllImport("WDSP.dll", EntryPoint = "SetRXAAMDSBMode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAAMDSBMode(int channel, int sbmode);
@@ -337,13 +340,13 @@ namespace Thetis
         [DllImport("WDSP.dll", EntryPoint = "RXAGetaSipF1", CallingConvention = CallingConvention.Cdecl)]
         public static extern void RXAGetaSipF1(int channel, float* results, int size);
 
-        [DllImport("WDSP.dll", EntryPoint = "TXASetSipPosition", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "TXASetSipPosition", CallingConvention = CallingConvention.Cdecl)]
         public static extern void TXASetSipPosition(int channel, int pos);
 
-        [DllImport("WDSP.dll", EntryPoint = "TXASetSipMode", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "TXASetSipMode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void TXASetSipMode(int channel, int mode);
 
-        [DllImport("WDSP.dll", EntryPoint = "TXASetSipDisplay", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "TXASetSipDisplay", CallingConvention = CallingConvention.Cdecl)]
         public static extern void TXASetSipDisplay(int channel, int disp);
 
         [DllImport("WDSP.dll", EntryPoint = "TXAGetaSipF", CallingConvention = CallingConvention.Cdecl)]
@@ -476,9 +479,6 @@ namespace Thetis
 
         [DllImport("WDSP.dll", EntryPoint = "SetEXTDIVRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetEXTDIVRun(int id, int run);
-
-        // [DllImport("WDSP.dll", EntryPoint = "SetEXTDIVBuffsize", CallingConvention = CallingConvention.Cdecl)]
-        // public static extern void SetEXTDIVBuffsize(int id, int size);
 
         [DllImport("WDSP.dll", EntryPoint = "SetEXTDIVNr", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetEXTDIVNr (int id, int nr);
@@ -619,6 +619,38 @@ namespace Thetis
         [DllImport("WDSP.dll", EntryPoint = "TXASetNC", CallingConvention = CallingConvention.Cdecl)]
         public static extern void TXASetNC(int channel, int nc);
 
+        // cfcomp
+        [DllImport("WDSP.dll", EntryPoint = "SetTXACFCOMPRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPRun(int channel, int run);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXACFCOMPprofile", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPprofile(int channel, int nfreqs, double* F, double* G, double* E);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXACFCOMPPosition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPosition(int channel, int pos);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXACFCOMPPrecomp", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPrecomp(int channel, double precomp);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXACFCOMPPeqRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPeqRun(int channel, int run);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXACFCOMPPrePeq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXACFCOMPPrePeq(int channel, double prepeq);
+
+        // phrot
+        [DllImport("WDSP.dll", EntryPoint = "SetTXAPHROTRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPHROTRun(int channel, int run);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXAPHROTCorner", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPHROTCorner(int channel, double corner);
+
+        [DllImport("WDSP.dll", EntryPoint = "SetTXAPHROTNstages", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPHROTNstages(int channel, int nstages);
+
+        // TXEQ
+        [DllImport("WDSP.dll", EntryPoint = "SetTXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAEQProfile(int channel, int nfreqs, double* F, double* G);
         #endregion
 
         #region Enums
@@ -645,6 +677,8 @@ namespace Thetis
             LEVELER_PK,
             COMP_PK,
             CPDR_PK,
+            CFC_PK,
+            CFC_G
         }
 
         public enum rxaMeterType
@@ -668,6 +702,9 @@ namespace Thetis
             TXA_LVLR_PK,
             TXA_LVLR_AV,
             TXA_LVLR_GAIN,
+            TXA_CFC_PK,
+            TXA_CFC_AV,
+            TXA_CFC_GAIN,
             TXA_COMP_PK,
             TXA_COMP_AV,
             TXA_ALC_PK,
@@ -732,6 +769,16 @@ namespace Thetis
 	        return (float)val;
         }
 
+        private static double alcgain = 0.0;
+        public static double ALCGain
+        {
+            get { return alcgain; }
+            set
+            { 
+                alcgain = value;
+            }
+        }
+
         public static float CalculateTXMeter (uint thread, MeterType MT)
         {
             int channel = cmaster.CMsubrcvr * cmaster.CMrcvr;   // txachannel
@@ -760,7 +807,7 @@ namespace Thetis
                 val = GetTXAMeter(channel, txaMeterType.TXA_COMP_AV);
 		        break;
 	        case MeterType.ALC_G:
-                val = GetTXAMeter(channel, txaMeterType.TXA_ALC_GAIN);
+                val = GetTXAMeter(channel, txaMeterType.TXA_ALC_GAIN) + alcgain;
 		        break;
 	        case MeterType.LVL_G:
                 val = GetTXAMeter(channel, txaMeterType.TXA_LVLR_GAIN);
@@ -783,6 +830,12 @@ namespace Thetis
 	        case MeterType.CPDR_PK:
                 val = GetTXAMeter(channel, txaMeterType.TXA_COMP_PK);
 		        break;
+            case MeterType.CFC_PK:
+                val = GetTXAMeter(channel, txaMeterType.TXA_CFC_PK);
+                break;
+            case MeterType.CFC_G:
+                val = GetTXAMeter(channel, txaMeterType.TXA_CFC_GAIN);
+                break;
 	        default:
 		        val = -400.0;
 		        break;

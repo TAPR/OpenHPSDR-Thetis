@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -55,12 +55,24 @@ void xammod (AMMOD a)
 	if (a->run)
 	{
 		int i;
-		if (a->mode)
-			for (i = 0; i < a->size; i++)
-				a->out[2 * i + 0] = a->out[2 * i + 1] = a->mult * a->in[2 * i + 0];
-		else
+		switch (a->mode)
+		{
+		case 0:	// AM
 			for (i = 0; i < a->size; i++)
 				a->out[2 * i + 0] = a->out[2 * i + 1] = a->mult * (a->c_level + a->a_level * a->in[2 * i + 0]);
+			break;
+		case 1:	// DSB
+			for (i = 0; i < a->size; i++)
+				a->out[2 * i + 0] = a->out[2 * i + 1] = a->mult * a->in[2 * i + 0];
+			break;
+		case 2:	// SSB w/Carrier
+			for (i = 0; i < a->size; i++)
+			{
+				a->out[2 * i + 0] = a->mult * a->c_level + a->a_level * a->in[2 * i + 0];
+				a->out[2 * i + 1] = a->mult * a->c_level + a->a_level * a->in[2 * i + 1];
+			}
+			break;
+		}
 	}
 	else if (a->in != a->out)
 		memcpy (a->out, a->in, a->size * sizeof (complex));

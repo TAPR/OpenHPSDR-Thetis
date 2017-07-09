@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -361,6 +361,20 @@ void setGain_bandpass (BANDPASS a, double gain, int update)
 	_aligned_free (impulse);
 }
 
+void CalcBandpassFilter (BANDPASS a, double f_low, double f_high, double gain)
+{
+	double* impulse;
+	if ((a->f_low != f_low) || (a->f_high != f_high) || (a->gain != gain))
+	{
+		a->f_low = f_low;
+		a->f_high = f_high;
+		a->gain = gain;
+		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
+		setImpulse_fircore (a->p, impulse, 1);
+		_aligned_free (impulse);
+	}
+}
+
 /********************************************************************************************************
 *																										*
 *											RXA Properties												*
@@ -456,39 +470,39 @@ void SetTXABandpassRun (int channel, int run)
 	LeaveCriticalSection (&ch[channel].csDSP);
 }
 
-PORT
-void SetTXABandpassFreqs (int channel, double f_low, double f_high)
-{
-	double* impulse;
-	BANDPASS a;
-	a = txa[channel].bp0.p;
-	if ((f_low != a->f_low) || (f_high != a->f_high))
-	{
-		a->f_low = f_low;
-		a->f_high = f_high;
-		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
-		setImpulse_fircore (a->p, impulse, 1);
-		_aligned_free (impulse);
-	}
-	a = txa[channel].bp1.p;
-	if ((f_low != a->f_low) || (f_high != a->f_high))
-	{
-		a->f_low = f_low;
-		a->f_high = f_high;
-		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
-		setImpulse_fircore (a->p, impulse, 1);
-		_aligned_free (impulse);
-	}
-	a = txa[channel].bp2.p;
-	if ((f_low != a->f_low) || (f_high != a->f_high))
-	{
-		a->f_low = f_low;
-		a->f_high = f_high;
-		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
-		setImpulse_fircore (a->p, impulse, 1);
-		_aligned_free (impulse);
-	}
-}
+//PORT
+//void SetTXABandpassFreqs (int channel, double f_low, double f_high)
+//{
+//	double* impulse;
+//	BANDPASS a;
+//	a = txa[channel].bp0.p;
+//	if ((f_low != a->f_low) || (f_high != a->f_high))
+//	{
+//		a->f_low = f_low;
+//		a->f_high = f_high;
+//		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
+//		setImpulse_fircore (a->p, impulse, 1);
+//		_aligned_free (impulse);
+//	}
+//	a = txa[channel].bp1.p;
+//	if ((f_low != a->f_low) || (f_high != a->f_high))
+//	{
+//		a->f_low = f_low;
+//		a->f_high = f_high;
+//		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
+//		setImpulse_fircore (a->p, impulse, 1);
+//		_aligned_free (impulse);
+//	}
+//	a = txa[channel].bp2.p;
+//	if ((f_low != a->f_low) || (f_high != a->f_high))
+//	{
+//		a->f_low = f_low;
+//		a->f_high = f_high;
+//		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate, a->wintype, 1, a->gain / (double)(2 * a->size));
+//		setImpulse_fircore (a->p, impulse, 1);
+//		_aligned_free (impulse);
+//	}
+//}
 
 PORT
 void SetTXABandpassWindow (int channel, int wintype)

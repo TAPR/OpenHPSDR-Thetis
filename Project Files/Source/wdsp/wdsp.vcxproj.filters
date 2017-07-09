@@ -165,6 +165,9 @@
     <ClInclude Include="firmin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cfcomp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="channel.c">
@@ -312,6 +315,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="firmin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cfcomp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="version.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

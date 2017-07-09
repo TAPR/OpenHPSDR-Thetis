@@ -5093,11 +5093,11 @@
             this.panelVFO.Controls.Add(this.btnIFtoVFO);
             this.panelVFO.Controls.Add(this.chkRIT);
             this.panelVFO.Controls.Add(this.btnVFOSwap);
-            this.panelVFO.Controls.Add(this.chkXIT);
             this.panelVFO.Controls.Add(this.btnVFOBtoA);
-            this.panelVFO.Controls.Add(this.udXIT);
             this.panelVFO.Controls.Add(this.btnVFOAtoB);
+            this.panelVFO.Controls.Add(this.chkXIT);
             this.panelVFO.Controls.Add(this.chkVAC1);
+            this.panelVFO.Controls.Add(this.udXIT);
             this.panelVFO.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelVFO.Name = "panelVFO";
             // 
@@ -6354,9 +6354,9 @@
             this.Controls.Add(this.panelModeSpecificPhone);
             this.Controls.Add(this.panelModeSpecificFM);
             this.Controls.Add(this.panelModeSpecificDigital);
-            this.Controls.Add(this.panelBandGEN);
             this.Controls.Add(this.panelBandHF);
             this.Controls.Add(this.panelBandVHF);
+            this.Controls.Add(this.panelBandGEN);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Console";

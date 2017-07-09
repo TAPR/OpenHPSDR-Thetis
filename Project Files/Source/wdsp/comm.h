@@ -40,6 +40,7 @@ warren@wpratt.com
 #include "bandpass.h"
 #include "calcc.h"
 #include "cblock.h"
+#include "cfcomp.h"
 #include "cfir.h"
 #include "channel.h"
 #include "compress.h"

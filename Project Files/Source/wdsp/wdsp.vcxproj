@@ -202,6 +202,7 @@
     <ClInclude Include="bandpass.h" />
     <ClInclude Include="calcc.h" />
     <ClInclude Include="cblock.h" />
+    <ClInclude Include="cfcomp.h" />
     <ClInclude Include="cfir.h" />
     <ClInclude Include="compress.h" />
     <ClInclude Include="delay.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="bandpass.c" />
     <ClCompile Include="calcc.c" />
     <ClCompile Include="cblock.c" />
+    <ClCompile Include="cfcomp.c" />
     <ClCompile Include="cfir.c" />
     <ClCompile Include="compress.c" />
     <ClCompile Include="delay.c" />
@@ -292,6 +294,7 @@
     <ClCompile Include="snb.c" />
     <ClCompile Include="TXA.c" />
     <ClCompile Include="utilities.c" />
+    <ClCompile Include="version.c" />
     <ClCompile Include="wcpAGC.c" />
     <ClCompile Include="wisdom.c" />
   </ItemGroup>

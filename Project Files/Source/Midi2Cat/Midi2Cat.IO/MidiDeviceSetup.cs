@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at:  midi2cat@cametrix.com
 
+Modifications to support the Behringer CMD PL-1 controller
+by Chris Codella, W2PA, Feb 2017.  Indicated by //-W2PA comment lines.
+
 */
 
 using System.Linq;
@@ -177,6 +180,8 @@ namespace Midi2Cat.IO
             if (DateTime.Now < ignoreMidiMessagesUntil)
                 return;
 
+            ControlId = FixBehringerCtlID(ControlId, Status); //-W2PA Disambiguate messages from Behringer controllers
+
             this.InvokeIfRequired(p =>
             {
                 if (tabControl.SelectedTab == debugTab)
@@ -230,6 +235,39 @@ namespace Midi2Cat.IO
                     SendMidiCommand(Channel, Data, Status, ControlId, mapping);
                 }
             });
+        }
+
+        private int FixBehringerCtlID(int ControlId, int Status) //-W2PA Test for DeviceName is a Behringer type, and disambiguate the messages if necessary
+        {
+            if (DeviceName == "CMD PL-1")
+            {
+                if (Status == 0xE0) //-W2PA Trap Status E0 from Behringer PL-1 slider, change the ID to something that doesn't conflict with other controls
+                {
+                    ControlId = 73;  //-W2PA I don't think this corresponds to the ID of any other control on the PL-1
+                }
+
+                if (ControlId == 0x1F && MidiDevice.VFOSelect == 2) //-W2PA Trap PL-1 main wheel, change the ID to something that doesn't conflict with other controls, indicating VFO number (0=A, 1=B)
+                {
+                    ControlId = 77;  //-W2PA I don't think this corresponds to the ID of any other control on the PL-1, so use for VFOB
+                }
+            }
+            if (DeviceName == "CMD Micro")
+            {
+                if (Status == 0xB0) //-W2PA Trap Status E0 from Behringer CMD Micro controls, change the ID to something that doesn't conflict with buttons
+                {
+                    if (ControlId == 0x10) ControlId = 73; // sliders
+                    if (ControlId == 0x12) ControlId = 74;
+                    if (ControlId == 0x22) ControlId = 75;
+                    if (ControlId == 0x20) ControlId = 76;
+
+                    if (ControlId == 0x11) ControlId = 77; // large wheels
+                    if (ControlId == 0x21) ControlId = 78;
+
+                    if (ControlId == 0x30) ControlId = 79; // small wheel-knobs
+                    if (ControlId == 0x31) ControlId = 80;
+                }
+            }
+            return ControlId; 
         }
 
         void onMidiDebugMsg(int Device, Direction direction, Status status, string msg1, string msg2)

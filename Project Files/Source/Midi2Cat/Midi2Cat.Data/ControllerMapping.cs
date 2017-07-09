@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at:  midi2cat@cametrix.com
 
+Modifications to support the Behringer CMD PL-1 controller
+by Chris Codella, W2PA, Feb 2017.  Indicated by //-W2PA comment lines.
+
 */
 
 using System;
@@ -27,11 +30,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Midi2Cat.IO;
 
 namespace Midi2Cat.Data
 {
-    public delegate void ProcessMidiMessageHandler(int msg);
-    public delegate CmdState ProcessMidiMessageToggleHandler(int msg);
+    public delegate void ProcessMidiMessageHandler(int msg, MidiDevice device); //-W2PA Added device parameter for msg flow to MIDI device
+    public delegate CmdState ProcessMidiMessageToggleHandler(int msg, MidiDevice device);
 
     public class ControllerMapping
     {

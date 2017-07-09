@@ -25,9 +25,12 @@
 //    Austin, TX 78728
 //    USA
 //=================================================================
+// Modifications to the database import function to allow using files created with earlier versions.
+// by Chris Codella, W2PA, May 2017.  Indicated by //-W2PA comment lines. 
 
 using System;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 using System.Collections;
 using System.Diagnostics;
@@ -50,6 +53,21 @@ namespace Thetis
         public static string FileName
         {
             set { file_name = value; }
+        }
+
+        private static bool importedDS = false;
+
+        private static string version_nr = "";
+        public static string VersionNumber
+        {
+            set { version_nr = value; }
+            get { return version_nr; }
+        }
+        private static string version_str = "";
+        public static string VersionString
+        {
+            set { version_str = value; }
+            get { return version_str; }
         }
 
         #endregion
@@ -2438,41 +2456,63 @@ namespace Thetis
             object[] data = {
 								"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
 								"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
-								"160M", "USB", "F6", 1.845000, false, 150, 0.0,
-								"80M", "CWL", "F1", 3.501000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.751000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.850000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.840000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
+                                "80M", "CWU", "F1", 3.501000, false, 150, 0.0,
+                                "80M", "CWU", "F1", 3.520000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.650000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.715000, false, 150, 0.0,
+                                "80M", "SAM", "F5", 3.875000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.330500, false, 150, 0.0, 
 								"60M", "USB", "F6", 5.346500, false, 150, 0.0,
 								"60M", "USB", "F6", 5.357000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.371500, false, 150, 0.0,                             
 								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
-								"40M", "CWL", "F1", 7.001000, false, 150, 0.0,
+                                "40M", "CWU", "F1", 7.001000, false, 150, 0.0,
+                                "40M", "CWU", "F3", 7.021000, false, 150, 0.0,
 								"40M", "LSB", "F6", 7.152000, false, 150, 0.0,
+                                "40M", "LSB", "F6", 7.180000, false, 150, 0.0,
 								"40M", "LSB", "F6", 7.255000, false, 150, 0.0, 
+                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
 								"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
 								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+                                "20M", "CWU", "F1", 14.020000, false, 150, 0.0,
+                                "20M", "USB", "F6", 14.155000, false, 150, 0.0,
 								"20M", "USB", "F6", 14.230000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.336000, false, 150, 0.0,
+                                "20M", "USB", "F6", 14.334000, false, 150, 0.0,
+                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
 								"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.125000, false, 150, 0.0,
+                                "17M", "USB", "F6", 18.135000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
 								"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
+                                "15M", "CWU", "F1", 21.021000, false, 150, 0.0,
+                                "15M", "USB", "F6", 21.205000, false, 150, 0.0,
 								"15M", "USB", "F6", 21.255000, false, 150, 0.0,
 								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
 								"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.900000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.910000, false, 150, 0.0,
+                                "12M", "CWU", "F1", 24.898000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.931000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.940000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
 								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.300000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+                                "10M", "CWU", "F1", 28.020000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.305000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.350000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
 								"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
+                                "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
 								"6M", "USB", "F6", 50.125000, false, 150, 0.0,
+                                "6M", "USB", "F6", 50.130000, false, 150, 0.0,
 								"6M", "USB", "F6", 50.200000, false, 150, 0.0,
 								"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
+                                "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.200000, false, 150, 0.0,
+                                "2M", "USB", "F6", 144.220000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.210000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
@@ -2510,42 +2550,64 @@ namespace Thetis
             DataTable t = ds.Tables["BandStack"];
 
             object[] data = {
-								"160M", "CWL", "F1", 1.820000, false, 150, 0.0,
+								"160M", "CWL", "F1", 1.805000, false, 150, 0.0,
+                                "160M", "CWL", "F1", 1.810000, false, 150, 0.0,
 								"160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
-								"160M", "USB", "F6", 1.843000, false, 150, 0.0,
+								"160M", "LSB", "F6", 1.843000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.850000, false, 150, 0.0,
+                                "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
 								"80M", "CWL", "F1", 3.510000, false, 150, 0.0,
 								"80M", "DIGU", "F1", 3.590000, false, 150, 0.0,
 								"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.900000, false, 150, 0.0,
                                 "60M", "USB", "F6", 5.250000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.325000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.400000, false, 150, 0.0,
+                                "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
                                 "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
 								"40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
+								"40M", "LSB", "F6", 7.09000, false, 150, 0.0,
 								"40M", "LSB", "F6", 7.10000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.115000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
 								"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
+								"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
 								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
 								"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
+								"20M", "USB", "F6", 14.155000, false, 150, 0.0,
 								"20M", "USB", "F6", 14.225000, false, 150, 0.0,
+                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
 								"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
 								"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
+								"17M", "USB", "F6", 18.120000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
 								"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
 								"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
+								"15M", "USB", "F6", 21.210000, false, 150, 0.0,
+                                "15M", "USB", "F6", 21.290000, false, 150, 0.0,
 								"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
+                                "12M", "CWU", "F1", 24.905000, false, 150, 0.0,
 								"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
 								"12M", "USB", "F6", 24.940000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
+                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
 								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
 								"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
 								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
+                                "6M", "CWU", "F1", 50.080000, false, 150, 0.0,
 								"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
 								"6M", "USB", "F6", 50.150000, false, 150, 0.0,
+                                "6M", "USB", "F6", 50.165000, false, 150, 0.0,
 								"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
+								"2M", "CWU", "F1", 144.040000, false, 150, 0.0,
 								"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
 								"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.300000, false, 150, 0.0,
+                                "2M", "USB", "F6", 144.310000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
@@ -2581,41 +2643,63 @@ namespace Thetis
             object[] data = {
 								"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
 								"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
-								"160M", "USB", "F6", 1.845000, false, 150, 0.0,
-								"80M", "CWL", "F1", 3.501000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.751000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.850000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.840000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
+                                "80M", "CWU", "F1", 3.501000, false, 150, 0.0,
+                                "80M", "CWU", "F1", 3.520000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.650000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.715000, false, 150, 0.0,
+                                "80M", "SAM", "F5", 3.875000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.330500, false, 150, 0.0,
 								"60M", "USB", "F6", 5.346500, false, 150, 0.0,
 								"60M", "USB", "F6", 5.357000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.371500, false, 150, 0.0,                              
 								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
-								"40M", "CWL", "F1", 7.001000, false, 150, 0.0,
+                                "40M", "CWU", "F1", 7.001000, false, 150, 0.0,
+                                "40M", "CWU", "F3", 7.021000, false, 150, 0.0,
 								"40M", "LSB", "F6", 7.152000, false, 150, 0.0,
+                                "40M", "LSB", "F6", 7.180000, false, 150, 0.0,
 								"40M", "LSB", "F6", 7.255000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
 								"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
 								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+                                "20M", "CWU", "F1", 14.020000, false, 150, 0.0,
+                                "20M", "USB", "F6", 14.155000, false, 150, 0.0,
 								"20M", "USB", "F6", 14.230000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.336000, false, 150, 0.0,
+                                "20M", "USB", "F6", 14.334000, false, 150, 0.0,
+                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
 								"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.125000, false, 150, 0.0,
+                                "17M", "USB", "F6", 18.135000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
 								"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
+                                "15M", "CWU", "F1", 21.021000, false, 150, 0.0,
+                                "15M", "USB", "F6", 21.205000, false, 150, 0.0,
 								"15M", "USB", "F6", 21.255000, false, 150, 0.0,
 								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
 								"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.900000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.910000, false, 150, 0.0,
+                                "12M", "CWU", "F1", 24.898000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.931000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.940000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
 								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.300000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+                                "10M", "CWU", "F1", 28.020000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.305000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.350000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
 								"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
+                                "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
 								"6M", "USB", "F6", 50.125000, false, 150, 0.0,
+                                "6M", "USB", "F6", 50.130000, false, 150, 0.0,
 								"6M", "USB", "F6", 50.200000, false, 150, 0.0,								
 								"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
+                                "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.200000, false, 150, 0.0,
+                                "2M", "USB", "F6", 144.220000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.210000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
@@ -2719,10 +2803,14 @@ namespace Thetis
 
             object[] data = {
 								"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
+								"160M", "CWU", "F1", 1.825000, false, 150, 0.0,
 								"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
+                                "160M", "USB", "F6", 1.840000, false, 150, 0.0,
 								"160M", "USB", "F6", 1.845000, false, 150, 0.0,
 								"80M", "CWL", "F1", 3.501000, false, 150, 0.0,
+                                "80M", "CWU", "F1", 3.510000, false, 150, 0.0,
 								"80M", "LSB", "F6", 3.751000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.755000, false, 150, 0.0,
 								"80M", "LSB", "F6", 3.850000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.330500, false, 150, 0.0,
 								"60M", "USB", "F6", 5.346500, false, 150, 0.0,
@@ -2730,32 +2818,50 @@ namespace Thetis
 								"60M", "USB", "F6", 5.371500, false, 150, 0.0,                              
 								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
 								"40M", "CWL", "F1", 7.001000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.152000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.255000, false, 150, 0.0,
+                                "40M", "CWU", "F1", 7.005000, false, 150, 0.0,
+                                "40M", "LSB", "F6", 7.090000, false, 150, 0.0,
+								"40M", "LSB", "F6", 7.105000, false, 150, 0.0,
+                                "40M", "LSB", "F6", 7.190000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.105000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
 								"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
+								"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
 								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+                                "20M", "USB", "F6", 14.136000, false, 150, 0.0,
 								"20M", "USB", "F6", 14.230000, false, 150, 0.0,
 								"20M", "USB", "F6", 14.336000, false, 150, 0.0,
 								"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
+                                "17M", "CWU", "F1", 18.095000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.125000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+                                "17M", "USB", "F6", 18.145000, false, 150, 0.0,
 								"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
+                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
 								"15M", "USB", "F6", 21.255000, false, 150, 0.0,
+								"15M", "USB", "F6", 21.270000, false, 150, 0.0,
 								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
 								"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
+                                "12M", "CWU", "F1", 24.897000, false, 150, 0.0,
 								"12M", "USB", "F6", 24.900000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.910000, false, 150, 0.0,
+								"12M", "USB", "F6", 24.935000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.945000, false, 150, 0.0,
+                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
 								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
 								"10M", "USB", "F6", 28.300000, false, 150, 0.0,
 								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
 								"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
+                                "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
 								"6M", "USB", "F6", 50.125000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.200000, false, 150, 0.0,								
+								"6M", "USB", "F6", 50.18000, false, 150, 0.0,
+                                "6M", "USB", "F6", 50.190000, false, 150, 0.0,
 								"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
+                                "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.200000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.210000, false, 150, 0.0,
+                                "2M", "USB", "F6", 144.215000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
@@ -3320,12 +3426,16 @@ namespace Thetis
             DataTable t = ds.Tables["BandStack"];
 
             object[] data = {
-								"160M", "CWL", "F1", 1.820000, false, 150, 0.0,
+								"160M", "CWL", "F1", 1.810000, false, 150, 0.0,
+                                "160M", "CWU", "F1", 1.820000, false, 150, 0.0,
 								"160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
-								"160M", "USB", "F6", 1.843000, false, 150, 0.0,
-								"80M", "CWL", "F1", 3.510000, false, 150, 0.0,
+								"160M", "USB", "F6", 1.840000, false, 150, 0.0,
+                                "160M", "USB", "F6", 1.845000, false, 150, 0.0,
+                                "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
+                                "80M", "CWU", "F1", 3.510000, false, 150, 0.0,
 								"80M", "DIGU", "F1", 3.590000, false, 150, 0.0,
 								"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.770000, false, 150, 0.0,
                                 "60M", "USB", "F6", 5.258500, false, 150, 0.0,
 								"60M", "USB", "F6", 5.276000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.288500, false, 150, 0.0,
@@ -3337,33 +3447,51 @@ namespace Thetis
 								"60M", "USB", "F6", 5.378000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.395000, false, 150, 0.0,
 								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
-                                "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
+                                "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
+                                "40M", "CWU", "F1", 7.010000, false, 150, 0.0,
 								"40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
+								"40M", "LSB", "F6", 7.09000, false, 150, 0.0,
 								"40M", "LSB", "F6", 7.10000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.105000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
 								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.130000, false, 150, 0.0,
 								"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
+								"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
 								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
 								"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
+                                "20M", "USB", "F6", 14.145000, false, 150, 0.0,
 								"20M", "USB", "F6", 14.225000, false, 150, 0.0,
+								"17M", "CWU", "F1", 18.070000, false, 150, 0.0,
 								"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
 								"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
 								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+                                "17M", "USB", "F6", 18.150000, false, 150, 0.0,
+                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
 								"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
 								"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
+								"15M", "USB", "F6", 21.250000, false, 150, 0.0,
 								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
 								"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
+                                "12M", "CWU", "F1", 24.910000, false, 150, 0.0,
 								"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
 								"12M", "USB", "F6", 24.940000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
+                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
 								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
 								"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
 								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
 								"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
+                                "6M", "CWU", "F1", 50.095000, false, 150, 0.0,
 								"6M", "USB", "F6", 50.150000, false, 150, 0.0,
+                                "6M", "USB", "F6", 50.160000, false, 150, 0.0,
 								"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
+								"2M", "CWU", "F1", 144.030000, false, 150, 0.0,
 								"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
 								"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
 								"2M", "USB", "F6", 144.300000, false, 150, 0.0,
+                                "2M", "USB", "F6", 144.310000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
 								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
@@ -3397,43 +3525,65 @@ namespace Thetis
             DataTable t = ds.Tables["BandStack"];
 
             object[] data = {
-          "160M", "CWL", "F1", 1.820000, false, 150, 0.0,
+                                "160M", "CWL", "F1", 1.805000, false, 150, 0.0,
+                                "160M", "CWL", "F1", 1.810000, false, 150, 0.0,
 		  "160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
-		  "160M", "USB", "F6", 1.843000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.843000, false, 150, 0.0,
+                                "160M", "LSB", "F6", 1.850000, false, 150, 0.0,
+                                "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
 		  "80M", "CWL", "F1", 3.510000, false, 150, 0.0,
 		  "80M", "DIGU","F1", 3.590000, false, 150, 0.0,
 		  "80M", "LSB", "F6", 3.750000, false, 150, 0.0,
+                                "80M", "LSB", "F6", 3.900000, false, 150, 0.0,
 		  "60M", "USB", "F6", 5.310000, false, 150, 0.0,
 		  "60M", "USB", "F6", 5.320000, false, 150, 0.0,
 		  "60M", "USB", "F6", 5.380000, false, 150, 0.0,
           "60M", "USB", "F6", 5.390000, false, 150, 0.0,
+                                "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
 		  "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
 		  "40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
-		  "40M", "LSB", "F6", 7.100000, false, 150, 0.0,
+                                "40M", "LSB", "F6", 7.09000, false, 150, 0.0,
+                                "40M", "LSB", "F6", 7.10000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
 		  "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+                                "30M", "CWU", "F1", 10.115000, false, 150, 0.0,
 		  "30M", "CWU", "F1", 10.120000, false, 150, 0.0,
 		  "30M", "DIGU", "F1",10.140000, false, 150, 0.0,
+                                "20M", "CWU", "F1", 14.005000, false, 150, 0.0,
 		  "20M", "CWU", "F1", 14.010000, false, 150, 0.0,
 		  "20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
+                                "20M", "USB", "F6", 14.155000, false, 150, 0.0,
           "20M", "USB", "F6", 14.225000, false, 150, 0.0,
+                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
 		  "17M", "CWU", "F1", 18.078000, false, 150, 0.0,
 		  "17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
+                                "17M", "USB", "F6", 18.120000, false, 150, 0.0,
 		  "17M", "USB", "F6", 18.140000, false, 150, 0.0,
+                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
 		  "15M", "CWU", "F1", 21.010000, false, 150, 0.0,
 		  "15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
-		  "15M", "USB", "F6", 21.300000, false, 150, 0.0,
+                                "15M", "USB", "F6", 21.210000, false, 150, 0.0,
+                                "15M", "USB", "F6", 21.290000, false, 150, 0.0,
 		  "12M", "CWU", "F1", 24.900000, false, 150, 0.0,
+                                "12M", "CWU", "F1", 24.905000, false, 150, 0.0,
 		  "12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
           "12M", "USB", "F6", 24.940000, false, 150, 0.0,
+                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
+                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
 		  "10M", "CWU", "F1", 28.010000, false, 150, 0.0,
 		  "10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
 		  "10M", "USB", "F6", 28.400000, false, 150, 0.0,
+                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
+                                "6M", "CWU", "F1", 50.080000, false, 150, 0.0,
 		  "6M", "CWU","F1", 50.090000, false, 150, 0.0,
 		  "6M", "USB", "F6", 50.150000, false, 150, 0.0,
+                                "6M", "USB", "F6", 50.165000, false, 150, 0.0,
 		  "6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
+                                "2M", "CWU", "F1", 144.040000, false, 150, 0.0,
 		  "2M", "CWU", "F1", 144.050000, false, 150, 0.0,
 		  "2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
-          "2M", "USB", "F6", 144.300000, false, 150, 0.0,
+                  "2M", "USB", "F6", 144.300000, false, 150, 0.0,
+                  "2M", "USB", "F6", 144.310000, false, 150, 0.0,
 		  "WWV", "SAM", "F5", 2.500000, false, 150, 0.0,
 		  "WWV", "SAM", "F5", 5.000000, false, 150, 0.0,
 		  "WWV", "SAM", "F5", 10.000000, false, 150, 0.0,
@@ -3525,6 +3675,16 @@ namespace Thetis
             t.Columns.Add("TXEQ8", typeof(int));
             t.Columns.Add("TXEQ9", typeof(int));
             t.Columns.Add("TXEQ10", typeof(int));
+            t.Columns.Add("TxEqFreq1", typeof(int));
+            t.Columns.Add("TxEqFreq2", typeof(int));
+            t.Columns.Add("TxEqFreq3", typeof(int));
+            t.Columns.Add("TxEqFreq4", typeof(int));
+            t.Columns.Add("TxEqFreq5", typeof(int));
+            t.Columns.Add("TxEqFreq6", typeof(int));
+            t.Columns.Add("TxEqFreq7", typeof(int));
+            t.Columns.Add("TxEqFreq8", typeof(int));
+            t.Columns.Add("TxEqFreq9", typeof(int));
+            t.Columns.Add("TxEqFreq10", typeof(int));
             t.Columns.Add("DXOn", typeof(bool));
             t.Columns.Add("DXLevel", typeof(int));
             t.Columns.Add("CompanderOn", typeof(bool));
@@ -3539,7 +3699,7 @@ namespace Thetis
             t.Columns.Add("Lev_Hang", typeof(int));
             t.Columns.Add("Lev_HangThreshold", typeof(int));
             t.Columns.Add("ALC_Slope", typeof(int));
-            t.Columns.Add("ALC_MaxGain", typeof(int));
+            t.Columns.Add("ALC_MaximumGain", typeof(int));
             t.Columns.Add("ALC_Attack", typeof(int));
             t.Columns.Add("ALC_Decay", typeof(int));
             t.Columns.Add("ALC_Hang", typeof(int));
@@ -3557,7 +3717,6 @@ namespace Thetis
             t.Columns.Add("TX_AF_Level", typeof(int));
             t.Columns.Add("AM_Carrier_Level", typeof(int));
             t.Columns.Add("Show_TX_Filter", typeof(bool));
-
             t.Columns.Add("VAC1_On", typeof(bool));
             t.Columns.Add("VAC1_Auto_On", typeof(bool));
             t.Columns.Add("VAC1_RX_Gain", typeof(int));
@@ -3614,9 +3773,51 @@ namespace Thetis
             t.Columns.Add("Line_Input_Level", typeof(decimal));
 
             t.Columns.Add("CESSB_On", typeof(bool));
-            t.Columns.Add("Disable_Pure_Signal", typeof(bool));
-            //t.Columns.Add("FlexWire_Input_On", typeof(string));
-            //t.Columns.Add("FlexWire_Input_Level", typeof(int));
+            t.Columns.Add("Pure_Signal_Enabled", typeof(bool));
+
+            // CFC
+            t.Columns.Add("CFCEnabled", typeof(bool));
+            t.Columns.Add("CFCPostEqEnabled", typeof(bool));
+            t.Columns.Add("CFCPhaseRotatorEnabled", typeof(bool));
+
+            t.Columns.Add("CFCPhaseRotatorFreq", typeof(int));
+            t.Columns.Add("CFCPhaseRotatorStages", typeof(int));
+
+            t.Columns.Add("CFCPreComp", typeof(int));
+            t.Columns.Add("CFCPostEqGain", typeof(int));
+
+            t.Columns.Add("CFCPreComp0", typeof(int));
+            t.Columns.Add("CFCPreComp1", typeof(int));
+            t.Columns.Add("CFCPreComp2", typeof(int));
+            t.Columns.Add("CFCPreComp3", typeof(int));
+            t.Columns.Add("CFCPreComp4", typeof(int));
+            t.Columns.Add("CFCPreComp5", typeof(int));
+            t.Columns.Add("CFCPreComp6", typeof(int));
+            t.Columns.Add("CFCPreComp7", typeof(int));
+            t.Columns.Add("CFCPreComp8", typeof(int));
+            t.Columns.Add("CFCPreComp9", typeof(int));
+
+            t.Columns.Add("CFCPostEqGain0", typeof(int));
+            t.Columns.Add("CFCPostEqGain1", typeof(int));
+            t.Columns.Add("CFCPostEqGain2", typeof(int));
+            t.Columns.Add("CFCPostEqGain3", typeof(int));
+            t.Columns.Add("CFCPostEqGain4", typeof(int));
+            t.Columns.Add("CFCPostEqGain5", typeof(int));
+            t.Columns.Add("CFCPostEqGain6", typeof(int));
+            t.Columns.Add("CFCPostEqGain7", typeof(int));
+            t.Columns.Add("CFCPostEqGain8", typeof(int));
+            t.Columns.Add("CFCPostEqGain9", typeof(int));
+
+            t.Columns.Add("CFCEqFreq0", typeof(int));
+            t.Columns.Add("CFCEqFreq1", typeof(int));
+            t.Columns.Add("CFCEqFreq2", typeof(int));
+            t.Columns.Add("CFCEqFreq3", typeof(int));
+            t.Columns.Add("CFCEqFreq4", typeof(int));
+            t.Columns.Add("CFCEqFreq5", typeof(int));
+            t.Columns.Add("CFCEqFreq6", typeof(int));
+            t.Columns.Add("CFCEqFreq7", typeof(int));
+            t.Columns.Add("CFCEqFreq8", typeof(int));
+            t.Columns.Add("CFCEqFreq9", typeof(int));
 
             #region Default
 
@@ -3637,6 +3838,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -3651,7 +3862,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -3725,9 +3936,51 @@ namespace Thetis
             dr["Line_Input_Level"] = 0.0;
 
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -3752,6 +4005,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = true;
             dr["DXLevel"] = 5;
             dr["CompanderOn"] = false;
@@ -3766,7 +4029,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -3839,10 +4102,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
+            dr["Pure_Signal_Enabled"] = false;
 
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -3870,6 +4174,16 @@ namespace Thetis
             t.Columns.Add("TXEQ8", typeof(int));
             t.Columns.Add("TXEQ9", typeof(int));
             t.Columns.Add("TXEQ10", typeof(int));
+            t.Columns.Add("TxEqFreq1", typeof(int));
+            t.Columns.Add("TxEqFreq2", typeof(int));
+            t.Columns.Add("TxEqFreq3", typeof(int));
+            t.Columns.Add("TxEqFreq4", typeof(int));
+            t.Columns.Add("TxEqFreq5", typeof(int));
+            t.Columns.Add("TxEqFreq6", typeof(int));
+            t.Columns.Add("TxEqFreq7", typeof(int));
+            t.Columns.Add("TxEqFreq8", typeof(int));
+            t.Columns.Add("TxEqFreq9", typeof(int));
+            t.Columns.Add("TxEqFreq10", typeof(int));
             t.Columns.Add("DXOn", typeof(bool));
             t.Columns.Add("DXLevel", typeof(int));
             t.Columns.Add("CompanderOn", typeof(bool));
@@ -3884,7 +4198,7 @@ namespace Thetis
             t.Columns.Add("Lev_Hang", typeof(int));
             t.Columns.Add("Lev_HangThreshold", typeof(int));
             t.Columns.Add("ALC_Slope", typeof(int));
-            t.Columns.Add("ALC_MaxGain", typeof(int));
+            t.Columns.Add("ALC_MaximumGain", typeof(int));
             t.Columns.Add("ALC_Attack", typeof(int));
             t.Columns.Add("ALC_Decay", typeof(int));
             t.Columns.Add("ALC_Hang", typeof(int));
@@ -3958,9 +4272,52 @@ namespace Thetis
             t.Columns.Add("Line_Input_Level", typeof(decimal));
 
             t.Columns.Add("CESSB_On", typeof(bool));
-            t.Columns.Add("Disable_Pure_Signal", typeof(bool));
-            //t.Columns.Add("FlexWire_Input_On", typeof(string));
-            //t.Columns.Add("FlexWire_Input_Level", typeof(int));
+            t.Columns.Add("Pure_Signal_Enabled", typeof(bool));
+
+            // CFC
+            t.Columns.Add("CFCEnabled", typeof(bool));
+            t.Columns.Add("CFCPostEqEnabled", typeof(bool));
+            t.Columns.Add("CFCPhaseRotatorEnabled", typeof(bool));
+
+            t.Columns.Add("CFCPhaseRotatorFreq", typeof(int));
+            t.Columns.Add("CFCPhaseRotatorStages", typeof(int));
+
+            t.Columns.Add("CFCPreComp", typeof(int));
+            t.Columns.Add("CFCPostEqGain", typeof(int));
+
+            t.Columns.Add("CFCPreComp0", typeof(int));
+            t.Columns.Add("CFCPreComp1", typeof(int));
+            t.Columns.Add("CFCPreComp2", typeof(int));
+            t.Columns.Add("CFCPreComp3", typeof(int));
+            t.Columns.Add("CFCPreComp4", typeof(int));
+            t.Columns.Add("CFCPreComp5", typeof(int));
+            t.Columns.Add("CFCPreComp6", typeof(int));
+            t.Columns.Add("CFCPreComp7", typeof(int));
+            t.Columns.Add("CFCPreComp8", typeof(int));
+            t.Columns.Add("CFCPreComp9", typeof(int));
+
+            t.Columns.Add("CFCPostEqGain0", typeof(int));
+            t.Columns.Add("CFCPostEqGain1", typeof(int));
+            t.Columns.Add("CFCPostEqGain2", typeof(int));
+            t.Columns.Add("CFCPostEqGain3", typeof(int));
+            t.Columns.Add("CFCPostEqGain4", typeof(int));
+            t.Columns.Add("CFCPostEqGain5", typeof(int));
+            t.Columns.Add("CFCPostEqGain6", typeof(int));
+            t.Columns.Add("CFCPostEqGain7", typeof(int));
+            t.Columns.Add("CFCPostEqGain8", typeof(int));
+            t.Columns.Add("CFCPostEqGain9", typeof(int));
+
+            t.Columns.Add("CFCEqFreq0", typeof(int));
+            t.Columns.Add("CFCEqFreq1", typeof(int));
+            t.Columns.Add("CFCEqFreq2", typeof(int));
+            t.Columns.Add("CFCEqFreq3", typeof(int));
+            t.Columns.Add("CFCEqFreq4", typeof(int));
+            t.Columns.Add("CFCEqFreq5", typeof(int));
+            t.Columns.Add("CFCEqFreq6", typeof(int));
+            t.Columns.Add("CFCEqFreq7", typeof(int));
+            t.Columns.Add("CFCEqFreq8", typeof(int));
+            t.Columns.Add("CFCEqFreq9", typeof(int));
+
 
             #region Default
 
@@ -3981,6 +4338,18 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000; 
+
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -3995,7 +4364,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -4068,9 +4437,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -4095,6 +4506,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = true;
             dr["DXLevel"] = 5;
             dr["CompanderOn"] = false;
@@ -4109,7 +4530,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -4181,9 +4602,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -4209,6 +4672,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 0;
             dr["CompanderOn"] = false;
@@ -4223,7 +4696,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -4294,193 +4767,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
 
-            t.Rows.Add(dr);
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
 
-            #endregion
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
 
-            #region FHM-1
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
 
-            dr = t.NewRow();
-            dr["Name"] = "FHM-1";
-            dr["FilterLow"] = 150;
-            dr["FilterHigh"] = 3050;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = -3;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = -3;
-            dr["TXEQ3"] = -7;
-            dr["TXEQ4"] = -5;
-            dr["TXEQ5"] = -3;
-            dr["TXEQ6"] = 2;
-            dr["TXEQ7"] = 6;
-            dr["TXEQ8"] = 3;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = -6;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = true;
-            dr["CompanderLevel"] = 2;
-            dr["MicGain"] = 35;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 5;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attenuate"] = 80;
-            dr["VOX_On"] = false;
-            dr["VOX_Threshold"] = 100;
-            dr["VOX_HangTime"] = 250;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-           // dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 25;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "2048";
-            dr["Phone_TX_DSP_Buffer"] = "1024";
-            dr["Digi_RX_DSP_Buffer"] = "2048";
-            dr["Digi_TX_DSP_Buffer"] = "2048";
-            dr["CW_RX_DSP_Buffer"] = "2048";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = false;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
              
-            t.Rows.Add(dr);
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
 
-            #endregion
-
-            #region FHM-1 DX
-
-            dr = t.NewRow();
-            dr["Name"] = "FHM-1 DX";
-            dr["FilterLow"] = 300;
-            dr["FilterHigh"] = 2400;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = -3;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = -3;
-            dr["TXEQ3"] = -6;
-            dr["TXEQ4"] = -10;
-            dr["TXEQ5"] = -6;
-            dr["TXEQ6"] = 3;
-            dr["TXEQ7"] = 6;
-            dr["TXEQ8"] = 3;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = -6;
-            dr["DXOn"] = true;
-            dr["DXLevel"] = 5;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 35;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 5;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 500;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attenuate"] = 80;
-            dr["VOX_On"] = false;
-            dr["VOX_Threshold"] = 100;
-            dr["VOX_HangTime"] = 250;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-           // dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 25;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "2048";
-            dr["Phone_TX_DSP_Buffer"] = "2048";
-            dr["Digi_RX_DSP_Buffer"] = "2048";
-            dr["Digi_TX_DSP_Buffer"] = "2048";
-            dr["CW_RX_DSP_Buffer"] = "2048";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = false;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -4506,6 +4837,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 0;
             dr["CompanderOn"] = false;
@@ -4520,7 +4861,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -4591,9 +4932,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -4618,6 +5001,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = false;
@@ -4632,7 +5025,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -4703,9 +5096,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -4730,6 +5165,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = false;
@@ -4744,7 +5189,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -4815,9 +5260,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -4842,6 +5329,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = false;
@@ -4856,7 +5353,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -4927,9 +5424,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -4954,6 +5493,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -4968,7 +5517,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5039,9 +5588,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5066,6 +5657,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = false;
@@ -5080,7 +5681,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5151,9 +5752,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5178,6 +5821,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = true;
             dr["DXLevel"] = 5;
             dr["CompanderOn"] = false;
@@ -5192,7 +5845,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5263,9 +5916,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5290,6 +5985,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -5304,7 +6009,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5375,9 +6080,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5402,6 +6149,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = false;
@@ -5416,7 +6173,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5487,9 +6244,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5514,6 +6313,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -5528,7 +6337,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5599,9 +6408,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5626,6 +6477,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = false;
@@ -5640,7 +6501,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5711,9 +6572,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5738,6 +6641,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -5752,7 +6665,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5823,9 +6736,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5850,6 +6805,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = false;
@@ -5864,7 +6829,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -5935,9 +6900,51 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
-            //dr["FlexWire_Input_On"] = "0";
-            //dr["FlexWire_Input_Level"] = 0;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
 
             t.Rows.Add(dr);
 
@@ -5962,6 +6969,16 @@ namespace Thetis
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+            dr["TxEqFreq1"] = 32;
+            dr["TxEqFreq2"] = 63;
+            dr["TxEqFreq3"] = 125;
+            dr["TxEqFreq4"] = 250;
+            dr["TxEqFreq5"] = 500;
+            dr["TxEqFreq6"] = 1000;
+            dr["TxEqFreq7"] = 2000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 8000;
+            dr["TxEqFreq10"] = 16000;
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -5976,7 +6993,7 @@ namespace Thetis
             dr["Lev_Hang"] = 500;
             dr["Lev_HangThreshold"] = 0;
             dr["ALC_Slope"] = 0;
-            dr["ALC_MaxGain"] = -20;
+            dr["ALC_MaximumGain"] = 0;
             dr["ALC_Attack"] = 2;
             dr["ALC_Decay"] = 10;
             dr["ALC_Hang"] = 500;
@@ -6047,7 +7064,707 @@ namespace Thetis
             dr["Line_Input_On"] = false;
             dr["Line_Input_Level"] = 0.0;
             dr["CESSB_On"] = false;
-            dr["Disable_Pure_Signal"] = true;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = false;
+            dr["CFCPostEqEnabled"] = false;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 0;
+            dr["CFCPostEqGain"] = 0;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 5;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 5;
+            dr["CFCPreComp7"] = 5;
+            dr["CFCPreComp8"] = 5;
+            dr["CFCPreComp9"] = 5;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = 0;
+            dr["CFCPostEqGain2"] = 0;
+            dr["CFCPostEqGain3"] = 0;
+            dr["CFCPostEqGain4"] = 0;
+            dr["CFCPostEqGain5"] = 0;
+            dr["CFCPostEqGain6"] = 0;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 0;
+            dr["CFCPostEqGain9"] = 0;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 125;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 2000;
+            dr["CFCEqFreq6"] = 3000;
+            dr["CFCEqFreq7"] = 4000;
+            dr["CFCEqFreq8"] = 5000;
+            dr["CFCEqFreq9"] = 10000;
+
+            t.Rows.Add(dr);
+
+            #endregion
+
+            #region SSB 2.8k CFC
+
+            dr = t.NewRow();
+            dr["Name"] = "SSB 2.8k CFC";
+            dr["FilterLow"] = 100;
+            dr["FilterHigh"] = 2900;
+            dr["TXEQNumBands"] = 10;
+            dr["TXEQEnabled"] = true;
+            dr["TXEQPreamp"] = 4;
+            dr["TXEQ1"] = -9;
+            dr["TXEQ2"] = -6;
+            dr["TXEQ3"] = -4;
+            dr["TXEQ4"] = -3;
+            dr["TXEQ5"] = -2;
+            dr["TXEQ6"] = -1;
+            dr["TXEQ7"] = -1;
+            dr["TXEQ8"] = -1;
+            dr["TXEQ9"] = -2;
+            dr["TXEQ10"] = -2;
+            dr["TxEqFreq1"] = 30;
+            dr["TxEqFreq2"] = 70;
+            dr["TxEqFreq3"] = 300;
+            dr["TxEqFreq4"] = 500;
+            dr["TxEqFreq5"] = 1000;
+            dr["TxEqFreq6"] = 2000;
+            dr["TxEqFreq7"] = 3000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 5000;
+            dr["TxEqFreq10"] = 6000;
+            dr["DXOn"] = false;
+            dr["DXLevel"] = 3;
+            dr["CompanderOn"] = false;
+            dr["CompanderLevel"] = 1;
+            dr["MicGain"] = 10;
+            dr["FMMicGain"] = 6;
+            dr["Lev_On"] = true;
+            dr["Lev_Slope"] = 0;
+            dr["Lev_MaxGain"] = 5;
+            dr["Lev_Attack"] = 2;
+            dr["Lev_Decay"] = 1;
+            dr["Lev_Hang"] = 500;
+            dr["Lev_HangThreshold"] = 0;
+            dr["ALC_Slope"] = 0;
+            dr["ALC_MaximumGain"] = 0;
+            dr["ALC_Attack"] = 2;
+            dr["ALC_Decay"] = 10;
+            dr["ALC_Hang"] = 500;
+            dr["ALC_HangThreshold"] = 0;
+            dr["Power"] = 50;
+            dr["Dexp_On"] = false;
+            dr["Dexp_Threshold"] = -40;
+            dr["Dexp_Attenuate"] = 80;
+            dr["VOX_On"] = false;
+            dr["VOX_Threshold"] = 100;
+            dr["VOX_HangTime"] = 250;
+            dr["Tune_Power"] = 10;
+            dr["Tune_Meter_Type"] = "SWR";
+            //dr["TX_Limit_Slew"] = false;
+            dr["TX_AF_Level"] = 100;
+            dr["AM_Carrier_Level"] = 85;
+            dr["Show_TX_Filter"] = false;
+            dr["VAC1_On"] = false;
+            dr["VAC1_Auto_On"] = false;
+            dr["VAC1_RX_GAIN"] = 0;
+            dr["VAC1_TX_GAIN"] = 0;
+            dr["VAC1_Stereo_On"] = true;
+            dr["VAC1_Sample_Rate"] = "48000";
+            dr["VAC1_Buffer_Size"] = "1024";
+            dr["VAC1_IQ_Output"] = false;
+            dr["VAC1_IQ_Correct"] = true;
+            dr["VAC1_PTT_OverRide"] = false;
+            dr["VAC1_Combine_Input_Channels"] = false;
+            dr["VAC1_Latency_On"] = true;
+            dr["VAC1_Latency_Duration"] = 60;
+            dr["VAC2_On"] = false;
+            dr["VAC2_Auto_On"] = false;
+            dr["VAC2_RX_GAIN"] = 0;
+            dr["VAC2_TX_GAIN"] = 0;
+            dr["VAC2_Stereo_On"] = false;
+            dr["VAC2_Sample_Rate"] = "48000";
+            dr["VAC2_Buffer_Size"] = "2048";
+            dr["VAC2_IQ_Output"] = false;
+            dr["VAC2_IQ_Correct"] = true;
+            dr["VAC2_Combine_Input_Channels"] = false;
+            dr["VAC2_Latency_On"] = true;
+            dr["VAC2_Latency_Duration"] = 120;
+            dr["Phone_RX_DSP_Buffer"] = "64";
+            dr["Phone_TX_DSP_Buffer"] = "128";
+            dr["FM_RX_DSP_Buffer"] = "256";
+            dr["FM_TX_DSP_Buffer"] = "128";
+            dr["Digi_RX_DSP_Buffer"] = "64";
+            dr["Digi_TX_DSP_Buffer"] = "128";
+            dr["CW_RX_DSP_Buffer"] = "64";
+
+            dr["Phone_RX_DSP_Filter_Size"] = "2048";
+            dr["Phone_TX_DSP_Filter_Size"] = "2048";
+            dr["FM_RX_DSP_Filter_Size"] = "4096";
+            dr["FM_TX_DSP_Filter_Size"] = "2048";
+            dr["Digi_RX_DSP_Filter_Size"] = "2048";
+            dr["Digi_TX_DSP_Filter_Size"] = "2048";
+            dr["CW_RX_DSP_Filter_Size"] = "2048";
+
+            dr["Phone_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Phone_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["CW_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Mic_Input_On"] = true;
+            dr["Mic_Input_Boost"] = false;
+            dr["Line_Input_On"] = false;
+            dr["Line_Input_Level"] = 0.0;
+            dr["CESSB_On"] = false;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = true;
+            dr["CFCPostEqEnabled"] = true;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 6;
+            dr["CFCPostEqGain"] = -6;
+
+            dr["CFCPreComp0"] = 5;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 4;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 6;
+            dr["CFCPreComp6"] = 7;
+            dr["CFCPreComp7"] = 8;
+            dr["CFCPreComp8"] = 9;
+            dr["CFCPreComp9"] = 9;
+
+            dr["CFCPostEqGain0"] = -7;
+            dr["CFCPostEqGain1"] = -7;
+            dr["CFCPostEqGain2"] = -8;
+            dr["CFCPostEqGain3"] = -8;
+            dr["CFCPostEqGain4"] = -8;
+            dr["CFCPostEqGain5"] = -7;
+            dr["CFCPostEqGain6"] = -5;
+            dr["CFCPostEqGain7"] = -4;
+            dr["CFCPostEqGain8"] = -4;
+            dr["CFCPostEqGain9"] = -5;
+
+            dr["CFCEqFreq0"] = 100;
+            dr["CFCEqFreq1"] = 150;
+            dr["CFCEqFreq2"] = 300;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 750;
+            dr["CFCEqFreq5"] = 1250;
+            dr["CFCEqFreq6"] = 1750;
+            dr["CFCEqFreq7"] = 2000;
+            dr["CFCEqFreq8"] = 2600;
+            dr["CFCEqFreq9"] = 2900;
+
+            t.Rows.Add(dr);
+
+            #endregion
+
+            #region SSB 3.0k CFC
+
+            dr = t.NewRow();
+            dr["Name"] = "SSB 3.0k CFC";
+            dr["FilterLow"] = 100;
+            dr["FilterHigh"] = 3100;
+            dr["TXEQNumBands"] = 10;
+            dr["TXEQEnabled"] = true;
+            dr["TXEQPreamp"] = 4;
+            dr["TXEQ1"] = -9;
+            dr["TXEQ2"] = -6;
+            dr["TXEQ3"] = -4;
+            dr["TXEQ4"] = -3;
+            dr["TXEQ5"] = -2;
+            dr["TXEQ6"] = -1;
+            dr["TXEQ7"] = -1;
+            dr["TXEQ8"] = -1;
+            dr["TXEQ9"] = -2;
+            dr["TXEQ10"] = -2;
+            dr["TxEqFreq1"] = 30;
+            dr["TxEqFreq2"] = 70;
+            dr["TxEqFreq3"] = 300;
+            dr["TxEqFreq4"] = 500;
+            dr["TxEqFreq5"] = 1000;
+            dr["TxEqFreq6"] = 2000;
+            dr["TxEqFreq7"] = 3000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 5000;
+            dr["TxEqFreq10"] = 6000;
+            dr["DXOn"] = false;
+            dr["DXLevel"] = 3;
+            dr["CompanderOn"] = false;
+            dr["CompanderLevel"] = 1;
+            dr["MicGain"] = 10;
+            dr["FMMicGain"] = 6;
+            dr["Lev_On"] = true;
+            dr["Lev_Slope"] = 0;
+            dr["Lev_MaxGain"] = 5;
+            dr["Lev_Attack"] = 2;
+            dr["Lev_Decay"] = 1;
+            dr["Lev_Hang"] = 500;
+            dr["Lev_HangThreshold"] = 0;
+            dr["ALC_Slope"] = 0;
+            dr["ALC_MaximumGain"] = 0;
+            dr["ALC_Attack"] = 2;
+            dr["ALC_Decay"] = 10;
+            dr["ALC_Hang"] = 500;
+            dr["ALC_HangThreshold"] = 0;
+            dr["Power"] = 50;
+            dr["Dexp_On"] = false;
+            dr["Dexp_Threshold"] = -40;
+            dr["Dexp_Attenuate"] = 80;
+            dr["VOX_On"] = false;
+            dr["VOX_Threshold"] = 100;
+            dr["VOX_HangTime"] = 250;
+            dr["Tune_Power"] = 10;
+            dr["Tune_Meter_Type"] = "SWR";
+            //dr["TX_Limit_Slew"] = false;
+            dr["TX_AF_Level"] = 100;
+            dr["AM_Carrier_Level"] = 85;
+            dr["Show_TX_Filter"] = false;
+            dr["VAC1_On"] = false;
+            dr["VAC1_Auto_On"] = false;
+            dr["VAC1_RX_GAIN"] = 0;
+            dr["VAC1_TX_GAIN"] = 0;
+            dr["VAC1_Stereo_On"] = true;
+            dr["VAC1_Sample_Rate"] = "48000";
+            dr["VAC1_Buffer_Size"] = "1024";
+            dr["VAC1_IQ_Output"] = false;
+            dr["VAC1_IQ_Correct"] = true;
+            dr["VAC1_PTT_OverRide"] = false;
+            dr["VAC1_Combine_Input_Channels"] = false;
+            dr["VAC1_Latency_On"] = true;
+            dr["VAC1_Latency_Duration"] = 60;
+            dr["VAC2_On"] = false;
+            dr["VAC2_Auto_On"] = false;
+            dr["VAC2_RX_GAIN"] = 0;
+            dr["VAC2_TX_GAIN"] = 0;
+            dr["VAC2_Stereo_On"] = false;
+            dr["VAC2_Sample_Rate"] = "48000";
+            dr["VAC2_Buffer_Size"] = "2048";
+            dr["VAC2_IQ_Output"] = false;
+            dr["VAC2_IQ_Correct"] = true;
+            dr["VAC2_Combine_Input_Channels"] = false;
+            dr["VAC2_Latency_On"] = true;
+            dr["VAC2_Latency_Duration"] = 120;
+            dr["Phone_RX_DSP_Buffer"] = "64";
+            dr["Phone_TX_DSP_Buffer"] = "128";
+            dr["FM_RX_DSP_Buffer"] = "256";
+            dr["FM_TX_DSP_Buffer"] = "128";
+            dr["Digi_RX_DSP_Buffer"] = "64";
+            dr["Digi_TX_DSP_Buffer"] = "128";
+            dr["CW_RX_DSP_Buffer"] = "64";
+
+            dr["Phone_RX_DSP_Filter_Size"] = "2048";
+            dr["Phone_TX_DSP_Filter_Size"] = "2048";
+            dr["FM_RX_DSP_Filter_Size"] = "4096";
+            dr["FM_TX_DSP_Filter_Size"] = "2048";
+            dr["Digi_RX_DSP_Filter_Size"] = "2048";
+            dr["Digi_TX_DSP_Filter_Size"] = "2048";
+            dr["CW_RX_DSP_Filter_Size"] = "2048";
+
+            dr["Phone_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Phone_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["CW_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Mic_Input_On"] = true;
+            dr["Mic_Input_Boost"] = false;
+            dr["Line_Input_On"] = false;
+            dr["Line_Input_Level"] = 0.0;
+            dr["CESSB_On"] = false;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = true;
+            dr["CFCPostEqEnabled"] = true;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 6;
+            dr["CFCPostEqGain"] = -7;
+
+            dr["CFCPreComp0"] = 6;
+            dr["CFCPreComp1"] = 6;
+            dr["CFCPreComp2"] = 5;
+            dr["CFCPreComp3"] = 4;
+            dr["CFCPreComp4"] = 5;
+            dr["CFCPreComp5"] = 6;
+            dr["CFCPreComp6"] = 7;
+            dr["CFCPreComp7"] = 8;
+            dr["CFCPreComp8"] = 9;
+            dr["CFCPreComp9"] = 9;
+
+            dr["CFCPostEqGain0"] = -4;
+            dr["CFCPostEqGain1"] = -5;
+            dr["CFCPostEqGain2"] = -7;
+            dr["CFCPostEqGain3"] = -8;
+            dr["CFCPostEqGain4"] = -8;
+            dr["CFCPostEqGain5"] = -7;
+            dr["CFCPostEqGain6"] = -4;
+            dr["CFCPostEqGain7"] = -2;
+            dr["CFCPostEqGain8"] = -1;
+            dr["CFCPostEqGain9"] = -1;
+
+            dr["CFCEqFreq0"] = 100;
+            dr["CFCEqFreq1"] = 150;
+            dr["CFCEqFreq2"] = 300;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 750;
+            dr["CFCEqFreq5"] = 1250;
+            dr["CFCEqFreq6"] = 1750;
+            dr["CFCEqFreq7"] = 2000;
+            dr["CFCEqFreq8"] = 2600;
+            dr["CFCEqFreq9"] = 3100;
+
+            t.Rows.Add(dr);
+
+            #endregion
+
+            #region SSB 3.3k CFC
+
+            dr = t.NewRow();
+            dr["Name"] = "SSB 3.3k CFC";
+            dr["FilterLow"] = 50;
+            dr["FilterHigh"] = 3350;
+            dr["TXEQNumBands"] = 10;
+            dr["TXEQEnabled"] = true;
+            dr["TXEQPreamp"] = 4;
+            dr["TXEQ1"] = -9;
+            dr["TXEQ2"] = -6;
+            dr["TXEQ3"] = -4;
+            dr["TXEQ4"] = -3;
+            dr["TXEQ5"] = -2;
+            dr["TXEQ6"] = -1;
+            dr["TXEQ7"] = -1;
+            dr["TXEQ8"] = -1;
+            dr["TXEQ9"] = -2;
+            dr["TXEQ10"] = -2;
+            dr["TxEqFreq1"] = 30;
+            dr["TxEqFreq2"] = 70;
+            dr["TxEqFreq3"] = 300;
+            dr["TxEqFreq4"] = 500;
+            dr["TxEqFreq5"] = 1000;
+            dr["TxEqFreq6"] = 2000;
+            dr["TxEqFreq7"] = 3000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 5000;
+            dr["TxEqFreq10"] = 6000;
+            dr["DXOn"] = false;
+            dr["DXLevel"] = 3;
+            dr["CompanderOn"] = false;
+            dr["CompanderLevel"] = 1;
+            dr["MicGain"] = 10;
+            dr["FMMicGain"] = 6;
+            dr["Lev_On"] = true;
+            dr["Lev_Slope"] = 0;
+            dr["Lev_MaxGain"] = 5;
+            dr["Lev_Attack"] = 2;
+            dr["Lev_Decay"] = 1;
+            dr["Lev_Hang"] = 500;
+            dr["Lev_HangThreshold"] = 0;
+            dr["ALC_Slope"] = 0;
+            dr["ALC_MaximumGain"] = 0;
+            dr["ALC_Attack"] = 2;
+            dr["ALC_Decay"] = 10;
+            dr["ALC_Hang"] = 500;
+            dr["ALC_HangThreshold"] = 0;
+            dr["Power"] = 50;
+            dr["Dexp_On"] = false;
+            dr["Dexp_Threshold"] = -40;
+            dr["Dexp_Attenuate"] = 80;
+            dr["VOX_On"] = false;
+            dr["VOX_Threshold"] = 100;
+            dr["VOX_HangTime"] = 250;
+            dr["Tune_Power"] = 10;
+            dr["Tune_Meter_Type"] = "SWR";
+            //dr["TX_Limit_Slew"] = false;
+            dr["TX_AF_Level"] = 100;
+            dr["AM_Carrier_Level"] = 85;
+            dr["Show_TX_Filter"] = false;
+            dr["VAC1_On"] = false;
+            dr["VAC1_Auto_On"] = false;
+            dr["VAC1_RX_GAIN"] = 0;
+            dr["VAC1_TX_GAIN"] = 0;
+            dr["VAC1_Stereo_On"] = true;
+            dr["VAC1_Sample_Rate"] = "48000";
+            dr["VAC1_Buffer_Size"] = "1024";
+            dr["VAC1_IQ_Output"] = false;
+            dr["VAC1_IQ_Correct"] = true;
+            dr["VAC1_PTT_OverRide"] = false;
+            dr["VAC1_Combine_Input_Channels"] = false;
+            dr["VAC1_Latency_On"] = true;
+            dr["VAC1_Latency_Duration"] = 60;
+            dr["VAC2_On"] = false;
+            dr["VAC2_Auto_On"] = false;
+            dr["VAC2_RX_GAIN"] = 0;
+            dr["VAC2_TX_GAIN"] = 0;
+            dr["VAC2_Stereo_On"] = false;
+            dr["VAC2_Sample_Rate"] = "48000";
+            dr["VAC2_Buffer_Size"] = "2048";
+            dr["VAC2_IQ_Output"] = false;
+            dr["VAC2_IQ_Correct"] = true;
+            dr["VAC2_Combine_Input_Channels"] = false;
+            dr["VAC2_Latency_On"] = true;
+            dr["VAC2_Latency_Duration"] = 120;
+            dr["Phone_RX_DSP_Buffer"] = "64";
+            dr["Phone_TX_DSP_Buffer"] = "128";
+            dr["FM_RX_DSP_Buffer"] = "256";
+            dr["FM_TX_DSP_Buffer"] = "128";
+            dr["Digi_RX_DSP_Buffer"] = "64";
+            dr["Digi_TX_DSP_Buffer"] = "128";
+            dr["CW_RX_DSP_Buffer"] = "64";
+
+            dr["Phone_RX_DSP_Filter_Size"] = "2048";
+            dr["Phone_TX_DSP_Filter_Size"] = "2048";
+            dr["FM_RX_DSP_Filter_Size"] = "4096";
+            dr["FM_TX_DSP_Filter_Size"] = "2048";
+            dr["Digi_RX_DSP_Filter_Size"] = "2048";
+            dr["Digi_TX_DSP_Filter_Size"] = "2048";
+            dr["CW_RX_DSP_Filter_Size"] = "2048";
+
+            dr["Phone_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Phone_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["CW_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Mic_Input_On"] = true;
+            dr["Mic_Input_Boost"] = false;
+            dr["Line_Input_On"] = false;
+            dr["Line_Input_Level"] = 0.0;
+            dr["CESSB_On"] = false;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = true;
+            dr["CFCPostEqEnabled"] = true;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 8;
+
+            dr["CFCPreComp"] = 7;
+            dr["CFCPostEqGain"] = -6;
+
+            dr["CFCPreComp0"] = 4;
+            dr["CFCPreComp1"] = 4;
+            dr["CFCPreComp2"] = 3;
+            dr["CFCPreComp3"] = 3;
+            dr["CFCPreComp4"] = 4;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 6;
+            dr["CFCPreComp7"] = 7;
+            dr["CFCPreComp8"] = 8;
+            dr["CFCPreComp9"] = 8;
+
+            dr["CFCPostEqGain0"] = -6;
+            dr["CFCPostEqGain1"] = -6;
+            dr["CFCPostEqGain2"] = -7;
+            dr["CFCPostEqGain3"] = -8;
+            dr["CFCPostEqGain4"] = -8;
+            dr["CFCPostEqGain5"] = -7;
+            dr["CFCPostEqGain6"] = -5;
+            dr["CFCPostEqGain7"] = -5;
+            dr["CFCPostEqGain8"] = -4;
+            dr["CFCPostEqGain9"] = -5;
+
+            dr["CFCEqFreq0"] = 50;
+            dr["CFCEqFreq1"] = 150;
+            dr["CFCEqFreq2"] = 300;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 750;
+            dr["CFCEqFreq5"] = 1250;
+            dr["CFCEqFreq6"] = 1750;
+            dr["CFCEqFreq7"] = 2000;
+            dr["CFCEqFreq8"] = 2600;
+            dr["CFCEqFreq9"] = 3350;
+
+            t.Rows.Add(dr);
+
+            #endregion
+
+            #region AM 10k CFC
+
+            dr = t.NewRow();
+            dr["Name"] = "AM 10k CFC";
+            dr["FilterLow"] = 0;
+            dr["FilterHigh"] = 5000;
+            dr["TXEQNumBands"] = 10;
+            dr["TXEQEnabled"] = true;
+            dr["TXEQPreamp"] = 4;
+            dr["TXEQ1"] = -9;
+            dr["TXEQ2"] = -6;
+            dr["TXEQ3"] = -4;
+            dr["TXEQ4"] = -3;
+            dr["TXEQ5"] = -2;
+            dr["TXEQ6"] = -1;
+            dr["TXEQ7"] = -1;
+            dr["TXEQ8"] = -1;
+            dr["TXEQ9"] = -2;
+            dr["TXEQ10"] = -2;
+            dr["TxEqFreq1"] = 30;
+            dr["TxEqFreq2"] = 70;
+            dr["TxEqFreq3"] = 300;
+            dr["TxEqFreq4"] = 500;
+            dr["TxEqFreq5"] = 1000;
+            dr["TxEqFreq6"] = 2000;
+            dr["TxEqFreq7"] = 3000;
+            dr["TxEqFreq8"] = 4000;
+            dr["TxEqFreq9"] = 5000;
+            dr["TxEqFreq10"] = 6000;
+            dr["DXOn"] = false;
+            dr["DXLevel"] = 3;
+            dr["CompanderOn"] = false;
+            dr["CompanderLevel"] = 1;
+            dr["MicGain"] = 10;
+            dr["FMMicGain"] = 6;
+            dr["Lev_On"] = true;
+            dr["Lev_Slope"] = 0;
+            dr["Lev_MaxGain"] = 5;
+            dr["Lev_Attack"] = 2;
+            dr["Lev_Decay"] = 1;
+            dr["Lev_Hang"] = 500;
+            dr["Lev_HangThreshold"] = 0;
+            dr["ALC_Slope"] = 0;
+            dr["ALC_MaximumGain"] = 0;
+            dr["ALC_Attack"] = 2;
+            dr["ALC_Decay"] = 10;
+            dr["ALC_Hang"] = 500;
+            dr["ALC_HangThreshold"] = 0;
+            dr["Power"] = 50;
+            dr["Dexp_On"] = false;
+            dr["Dexp_Threshold"] = -40;
+            dr["Dexp_Attenuate"] = 80;
+            dr["VOX_On"] = false;
+            dr["VOX_Threshold"] = 100;
+            dr["VOX_HangTime"] = 250;
+            dr["Tune_Power"] = 10;
+            dr["Tune_Meter_Type"] = "SWR";
+            //dr["TX_Limit_Slew"] = false;
+            dr["TX_AF_Level"] = 100;
+            dr["AM_Carrier_Level"] = 95;
+            dr["Show_TX_Filter"] = false;
+            dr["VAC1_On"] = false;
+            dr["VAC1_Auto_On"] = false;
+            dr["VAC1_RX_GAIN"] = 0;
+            dr["VAC1_TX_GAIN"] = 0;
+            dr["VAC1_Stereo_On"] = true;
+            dr["VAC1_Sample_Rate"] = "48000";
+            dr["VAC1_Buffer_Size"] = "1024";
+            dr["VAC1_IQ_Output"] = false;
+            dr["VAC1_IQ_Correct"] = true;
+            dr["VAC1_PTT_OverRide"] = false;
+            dr["VAC1_Combine_Input_Channels"] = false;
+            dr["VAC1_Latency_On"] = true;
+            dr["VAC1_Latency_Duration"] = 60;
+            dr["VAC2_On"] = false;
+            dr["VAC2_Auto_On"] = false;
+            dr["VAC2_RX_GAIN"] = 0;
+            dr["VAC2_TX_GAIN"] = 0;
+            dr["VAC2_Stereo_On"] = false;
+            dr["VAC2_Sample_Rate"] = "48000";
+            dr["VAC2_Buffer_Size"] = "2048";
+            dr["VAC2_IQ_Output"] = false;
+            dr["VAC2_IQ_Correct"] = true;
+            dr["VAC2_Combine_Input_Channels"] = false;
+            dr["VAC2_Latency_On"] = true;
+            dr["VAC2_Latency_Duration"] = 120;
+            dr["Phone_RX_DSP_Buffer"] = "64";
+            dr["Phone_TX_DSP_Buffer"] = "128";
+            dr["FM_RX_DSP_Buffer"] = "256";
+            dr["FM_TX_DSP_Buffer"] = "128";
+            dr["Digi_RX_DSP_Buffer"] = "64";
+            dr["Digi_TX_DSP_Buffer"] = "128";
+            dr["CW_RX_DSP_Buffer"] = "64";
+
+            dr["Phone_RX_DSP_Filter_Size"] = "2048";
+            dr["Phone_TX_DSP_Filter_Size"] = "2048";
+            dr["FM_RX_DSP_Filter_Size"] = "4096";
+            dr["FM_TX_DSP_Filter_Size"] = "2048";
+            dr["Digi_RX_DSP_Filter_Size"] = "2048";
+            dr["Digi_TX_DSP_Filter_Size"] = "2048";
+            dr["CW_RX_DSP_Filter_Size"] = "2048";
+
+            dr["Phone_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Phone_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["FM_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Digi_TX_DSP_Filter_Type"] = "Linear Phase";
+            dr["CW_RX_DSP_Filter_Type"] = "Linear Phase";
+            dr["Mic_Input_On"] = true;
+            dr["Mic_Input_Boost"] = false;
+            dr["Line_Input_On"] = false;
+            dr["Line_Input_Level"] = 0.0;
+            dr["CESSB_On"] = false;
+            dr["Pure_Signal_Enabled"] = false;
+
+            // CFC
+            dr["CFCEnabled"] = true;
+            dr["CFCPostEqEnabled"] = true;
+            dr["CFCPhaseRotatorEnabled"] = false;
+
+            dr["CFCPhaseRotatorFreq"] = 338;
+            dr["CFCPhaseRotatorStages"] = 9;
+
+            dr["CFCPreComp"] = 6;
+            dr["CFCPostEqGain"] = -8;
+
+            dr["CFCPreComp0"] = 6;
+            dr["CFCPreComp1"] = 5;
+            dr["CFCPreComp2"] = 4;
+            dr["CFCPreComp3"] = 4;
+            dr["CFCPreComp4"] = 4;
+            dr["CFCPreComp5"] = 5;
+            dr["CFCPreComp6"] = 6;
+            dr["CFCPreComp7"] = 7;
+            dr["CFCPreComp8"] = 7;
+            dr["CFCPreComp9"] = 7;
+
+            dr["CFCPostEqGain0"] = 0;
+            dr["CFCPostEqGain1"] = -1;
+            dr["CFCPostEqGain2"] = -2;
+            dr["CFCPostEqGain3"] = -3;
+            dr["CFCPostEqGain4"] = -3;
+            dr["CFCPostEqGain5"] = -2;
+            dr["CFCPostEqGain6"] = -1;
+            dr["CFCPostEqGain7"] = 0;
+            dr["CFCPostEqGain8"] = 1;
+            dr["CFCPostEqGain9"] = 1;
+
+            dr["CFCEqFreq0"] = 0;
+            dr["CFCEqFreq1"] = 70;
+            dr["CFCEqFreq2"] = 250;
+            dr["CFCEqFreq3"] = 500;
+            dr["CFCEqFreq4"] = 1000;
+            dr["CFCEqFreq5"] = 1500;
+            dr["CFCEqFreq6"] = 2000;
+            dr["CFCEqFreq7"] = 3000;
+            dr["CFCEqFreq8"] = 4000;
+            dr["CFCEqFreq9"] = 5000;
 
             t.Rows.Add(dr);
 
@@ -6095,16 +7812,31 @@ namespace Thetis
         // Public Member Functions 
         // ======================================================
 
-        public static void Init()
+        public static bool Init(Console thisConsole)
         {
             ds = new DataSet("Data");
 
             if (File.Exists(file_name))
+            {
+                try
+                {
                 ds.ReadXml(file_name);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+                
 
             VerifyTables();
 
             CheckBandTextValid();
+
+            VersionNumber = thisConsole.getVersion();
+            VersionString = TitleBar.GetString();
+
+            return true;
         }
 
         public static void Update()
@@ -6122,9 +7854,56 @@ namespace Thetis
             }
         }
 
+        //-W2PA Write the database to a specific file
+        public static bool WriteDB(string fn)
+        {
+           // if (!File.Exists(fn)) return false;
+
+            try
+            {
+                ds.WriteXml(fn, XmlWriteMode.WriteSchema);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("A database write to file operation failed.  " +
+                    "The exception error was:\n\n" + ex.Message,
+                    "ERROR: Database Write Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+
+        //-W2PA Write specific dataset to a file 
+        public static bool WriteDB(string fn, DataSet dsIN)
+        {
+            // if (!File.Exists(fn)) return false;
+
+            try
+            {
+                dsIN.WriteXml(fn, XmlWriteMode.WriteSchema);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("A database write to file operation failed.  " +
+                    "The exception error was:\n\n" + ex.Message,
+                    "ERROR: Database Write Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+
+        public static bool WriteCurrentDB(string fn)
+        {
+            return WriteDB(fn, ds);
+        }
+
         public static void Exit()
         {
+            if (!importedDS) //-W2PA Only update if not just imported.
             Update();
+            else importedDS = false;
             ds = null;
         }
 
@@ -6447,6 +8226,372 @@ namespace Thetis
             return list;
         }
 
+        //-W2PA New version of ImportDatabase to merge an old database or partly corruped one with a new default one
+        public static bool ImportAndMergeDatabase(string filename, string appDataPath)
+        {
+            importedDS = false;
+            if (!File.Exists(filename)) return false;
+
+            bool DBdebug = false;  // Set =true to write various versions of the xml file during testing
+
+            // Initialize the log file
+            string logFN = appDataPath + "ImportLog.txt";
+            FileStream fs = File.Open(logFN, FileMode.Create);
+            fs.Close();
+                       
+            // Make a copy of the existing DB
+            DataSet existingDB = ds.Copy();            
+
+            if (DBdebug) WriteDB(appDataPath + "existingDB.xml", existingDB);
+
+            // Read in DB to be merged 
+            DataSet oldDB = new DataSet();
+            try
+            {
+                oldDB.ReadXml(filename);
+            }
+            catch (Exception)  // Something is seriously wrong with the file.
+            {
+                //MessageBox.Show("The file: " + filename + " could not be read successfully.","Error",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            if (DBdebug) WriteDB(appDataPath + "oldDB.xml", oldDB);
+            WriteImportLog(logFN, "Read <" + filename + ">\n\n");
+
+            // Check that imported DB has basic validity
+            string validationProblems = ValidateImportedDatabase(oldDB);
+            if (validationProblems != "")
+            {
+                WriteImportLog(logFN, validationProblems);
+                return false;
+            }
+
+            DataSet mergedDB = ds.Clone(); // Adopt the new DB schema
+
+            // Start by merging any tables in the imported DB that don't come with a freshly reset database
+            foreach (DataTable oldTable in oldDB.Tables)
+            {
+                bool found = false;
+                foreach (DataTable existingTable in existingDB.Tables)
+                {
+                    if (existingTable.TableName == oldTable.TableName)
+                    {                       
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) mergedDB.Merge(oldTable);
+            }            
+
+            foreach (DataTable table in existingDB.Tables)
+            {                
+                DataTableCollection oldDBtables = oldDB.Tables;
+                bool foundTable = false;
+                DataTable tempMergedTable = table.Clone();
+                DataTable tempTable = table.Clone();
+
+                switch (table.TableName)
+                {
+                    //------Uncomment this section to allow importing BandText rows from old db, and also comment out duplicate case below
+                    //case "BandText":
+                    //    // Get table of same name in oldDB       
+                    //    tempTable.Clear();
+                    //    tempMergedTable.Clear();
+                    //    foreach (DataTable t in oldDB.Tables)
+                    //    {
+                    //        if (t.TableName == table.TableName)
+                    //        {
+                    //            tempTable = t.Copy();
+                    //            foundTable = true;
+                    //            break;
+                    //        }
+                    //    }
+                    //    if (!foundTable) break;
+
+                    //    // For each row of existingDB, if there is matching Low and High in oldDB, 
+                    //    // copy that entry, else take existing one, into tempMergedTable.
+                    //    foreach (DataRow row in table.Rows)
+                    //    {
+                    //        string selector = "Low = " + row["Low"] + " AND High = " + row["High"];
+                    //        DataRow[] foundRow = tempTable.Select(selector);
+                    //        if (foundRow.Length != 0) tempMergedTable.ImportRow(foundRow[0]);
+                    //        else tempMergedTable.ImportRow(row);
+                    //    }
+
+                    //    // Copy tempTable into mergedDB 
+                    //    mergedDB.Merge(tempMergedTable);
+                    //    WriteImportLog(logFN, "Imported table <" + table.TableName + "> into database.\n")
+                    //    break;
+
+                    case "BandStack":
+                        // Get table of same name in oldDB       
+                        tempTable.Clear();
+                        tempMergedTable.Clear();
+                        foreach (DataTable t in oldDB.Tables)
+                        {
+                            if (t.TableName == "BandStack")
+                            {
+                                tempTable = t.Copy();
+                                foundTable = true;
+                                break;
+                            }
+                        }
+                        if (!foundTable)
+                        {
+                            WriteImportLog(logFN, "Did not import table <" + table.TableName + "> into database. None found.\n");
+                            break;
+                        }
+
+                        // For each row of existingDB, if there is a matching BandName in oldDB, 
+                        // copy those entries, else take existing ones, into tempMergedTable.
+                        string bandName = "";
+                        foreach (DataRow row in table.Rows)
+                        {
+                            if (Convert.ToString(row["Bandname"]) != bandName) // haven't seen this band yet (do each band only once)
+                            {
+                                bandName = Convert.ToString(row["BandName"]);
+                                string selector = "BandName = \'" + bandName + "\'";
+                                DataRow[] foundRowsOld = tempTable.Select(selector);
+                                DataRow[] foundRowsExisting = table.Select(selector);
+
+                                if (foundRowsOld.Length > 0)
+                                {
+                                    for (int i = 0; i < foundRowsOld.Length; i++)
+                                    {
+                                        tempMergedTable.ImportRow(foundRowsOld[i]);
+                                    }
+                                }
+                                for (int i = foundRowsOld.Length; i < foundRowsExisting.Length; i++) // Pad with more rows if the new version has more band stack rows
+                                {
+                                    tempMergedTable.ImportRow(foundRowsExisting[i]);
+                                }
+                            }
+                        }
+
+                        // Copy tempTable into mergedDB 
+                        mergedDB.Merge(tempMergedTable);
+                        WriteImportLog(logFN, "Imported table <" + table.TableName + "> into database.\n");
+                        break;
+                    case "BandText":
+                   // case "BandStack":
+                    case "GroupList":
+                    case "Memory":
+                        mergedDB.Merge(table); // don't overwrite current tables for these cases
+                        WriteImportLog(logFN, "Did not import table <" + table.TableName + "> into database.\n");
+                        break;
+
+                    case "TXProfile":
+                        // Get table of same name in oldDB   
+                        DataTable tempOldTable = oldDB.Tables["TXProfile"].Clone();
+                        tempMergedTable.Clear();
+                        foreach (DataTable t in oldDB.Tables)
+                        {
+                            if (t.TableName == table.TableName)
+                            {
+                                tempOldTable = t.Copy();
+                                foundTable = true;
+                                break;
+                            }
+                        }
+                        if (!foundTable) break;
+
+                        // First, merge all rows of oldDB.
+                        //tempMergedTable.Merge(tempTable,false,MissingSchemaAction.Add);
+                        DataTable tT = ExpandOldTxProfileTable(tempOldTable);
+                        if (tT != null) tempMergedTable.Merge(tT);
+                        else { tempMergedTable.Merge(table); break; } // No default model exists so reject the old TXProfiles
+
+                        // For each row of existingDB, if there is matching key in oldDB, 
+                        // keep that entry, else import new existing one into tempMergedTable.
+                        foreach (DataRow row in table.Rows)
+                        {
+                            string selector = "Name = '" + row["Name"] + "'";
+                            DataRow[] foundRow = tempMergedTable.Select(selector);
+                            if (foundRow.Length == 0) tempMergedTable.ImportRow(row); // If not in the oldDB, take the new one
+                        }
+
+                        // Copy tempTable into mergedDB 
+                        mergedDB.Merge(tempMergedTable);
+                        WriteImportLog(logFN, "Imported table <" + table.TableName + "> into database.\n");
+                        break;
+
+                    case "TXProfileDef":
+                        mergedDB.Merge(table); // don't overwrite current table of defaults
+                        WriteImportLog(logFN, "Did not import table <" + table.TableName + "> into database.\n");
+                        break;
+
+                    // These tables all have Key/Value pairs so can all be processed the same way
+                    case "State":
+                    case "Options":
+                    case "EQForm":
+                    case "MemoryForm":
+                    case "DiversityForm":
+                    case "AmpView":
+                    case "PureSignal":
+                        // Get table of same name in oldDB     
+                        tempTable.Clear();
+                        tempMergedTable.Clear();
+                        foreach (DataTable t in oldDB.Tables)
+                        {
+                            if (t.TableName == table.TableName)
+                            {
+                                tempTable = t.Copy();
+                                foundTable = true;
+                                break;
+                            }                            
+                        }
+                        if (!foundTable)
+                        {
+                            // No corresponding table found in old database - must be new, so retain it as-is
+                            mergedDB.Merge(table);
+                            WriteImportLog(logFN, "New table not found in imported database: " + table.TableName + "\n");
+                            break;
+                        }
+
+                        // For each row of existingDB table, if there is matching key in corresponding oldDB table, 
+                        // copy that entry, else take the existing one, into tempMergedTable.
+                        foreach (DataRow row in table.Rows)
+                        {
+                            string thisKey = Convert.ToString(row["Key"]);
+                            if (thisKey == "VersionNumber") // Exception: don't overwrite version number with an old one
+                            {
+                                row["Value"] = VersionNumber;
+                                tempMergedTable.ImportRow(row);
+                            } 
+                            else if (thisKey == "Version")
+                            {
+                                row["Value"] = VersionString;
+                                tempMergedTable.ImportRow(row);
+                            }
+                            else if (thisKey.Contains("_by_band")) // Exception: expand an old per-band string into a new, longer one
+                            {
+                                DataRow newSettingsRow = row;
+                                DataRow oldSettingsRow;
+                                string selector = "Key = '" + row["Key"] + "'";
+                                DataRow[] foundRow = tempTable.Select(selector);
+                                if (foundRow.Length != 0)
+                                {
+                                    oldSettingsRow = foundRow[0];
+                                    string oldSettingsValue = Convert.ToString(oldSettingsRow["Value"]);
+                                    string newSettingsValue = oldSettingsValue;
+                                    int newSettingsLength = (Convert.ToString(newSettingsRow["Value"])).Length;
+                                    string paddingDefault = "|" + oldSettingsValue[oldSettingsValue.Length - 1];
+                                    for (int i = (oldSettingsValue.Length); i < newSettingsLength; i += 2)  // if new length is shorter, do nothing
+                                        newSettingsValue += paddingDefault;  // expand old string into larger new string
+                                    newSettingsRow["Value"] = newSettingsValue;
+                                    tempMergedTable.ImportRow(newSettingsRow);
+                                }
+                                else tempMergedTable.ImportRow(row);
+                            }
+                            else
+                            {
+                                string selector = "Key = '" + row["Key"] + "'";
+                                DataRow[] foundRow = tempTable.Select(selector);
+                                if (foundRow.Length != 0) tempMergedTable.ImportRow(foundRow[0]);
+                                else tempMergedTable.ImportRow(row);
+                            }                           
+                        }
+
+                        // Merge in the assembled temp table into mergedDB 
+                        mergedDB.Merge(tempMergedTable);
+                        WriteImportLog(logFN, "Imported table <" + table.TableName + "> into database.\n");
+                        break;
+
+                    default:
+                        // Unrecognized table
+                        WriteImportLog(logFN, "Unrecognized table: " + table.TableName + "\n");
+                        break;                        
+                }
+            }
+
+            // If we've gotten this far, activate the newly merged DB
+            ds = mergedDB.Copy();
+
+            // For debugging
+            if (DBdebug)
+            {
+                WriteDB(appDataPath + "mergedDB.xml", mergedDB);
+                WriteDB(appDataPath + "resultantDB.xml", ds);
+            }
+
+            WriteImportLog(logFN, "\nImport succeeded.\n");
+            importedDS = true;  // Prevents overwriting the new database file on next exit
+            return true;
+        }
+
+        //-W2PA Basic validity checks of imported DataSet xml file
+        private static string ValidateImportedDatabase(DataSet oldDB)
+        {
+            string problems = "";
+
+            //Basic kinds of non-validity:
+            if (oldDB.HasErrors 
+                || oldDB.DataSetName != "Data"
+                || !oldDB.IsInitialized
+                || oldDB.Tables.Count == 0
+                )
+            {
+                // For debugging:
+                problems = problems
+                    + "Invalid database read. \n\n"
+                    + "DataSet characteristics:"
+                    + "\nHasErrors=" + oldDB.HasErrors
+                    + "\nDataSetName=" + oldDB.DataSetName
+                    + "\nIsInitialized=" + oldDB.IsInitialized
+                    + "\nNamespace=" + oldDB.Namespace
+                    + "\nNumTables=" + oldDB.Tables.Count
+                    + "\n";
+
+                foreach (DataTable table in oldDB.Tables)
+                {
+                    problems = problems
+                        + "\nTable: " + table.TableName;
+                }
+            }
+
+            return problems;
+        }
+
+        //-W2PA Expand an old TxProfile table into a newer one with more colunms. Fill in missing ones with default values.
+        private static DataTable ExpandOldTxProfileTable(DataTable oldTable)
+        {
+            //Get a Default TXProfile to fill in missing columns in an old version
+            DataTable dsTXPDefTable = ds.Tables["TXProfileDef"];
+            DataTable expandedTable = dsTXPDefTable.Clone();
+            DataRow[] DefaultRows = dsTXPDefTable.Select("Name = 'Default'");
+            DataRow DefaultRow;
+            if (DefaultRows.Length > 0) DefaultRow = DefaultRows[0];  // Found a row of default values
+            else return null;
+         
+            foreach (DataRow OldRow in oldTable.Rows)
+            {
+                DataRow newRow = DefaultRow;
+                foreach (DataColumn col in oldTable.Columns) // Overwrite the subset of columns that were in the old table
+                {
+                    if ((ds.Tables["TXProfile"].Columns).Contains(col.ColumnName))  // Don't import a row having a colummn that's no longer used
+                    {
+                        System.Type oldType = OldRow[col.ColumnName].GetType();
+                        System.Type newType = newRow[col.ColumnName].GetType();
+                        if (newType.FullName == oldType.FullName)  // Don't assign a value of a different type
+                            newRow[col.ColumnName] = OldRow[col.ColumnName];
+                    }                                
+                }
+                if ("Default" != (string)(newRow["Name"]))  // Don't take in the old Default TXProfile at all
+                    expandedTable.ImportRow(newRow);
+            }
+
+            return expandedTable;
+        }
+
+        //-W2PA Write a message to the ImportLog file during the import process
+        private static void WriteImportLog(string logFN, string s)
+        {            
+            File.AppendAllText(logFN, s);
+            return;
+        }
+
+        //-W2PA Original version of ImportDatabase
         public static bool ImportDatabase(string filename)
         {
             if (!File.Exists(filename)) return false;

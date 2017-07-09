@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2014 Warren Pratt, NR0V
+Copyright (C) 2014, 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -141,8 +141,11 @@ void setSize_osctrl (OSCTRL a, int size)
 PORT
 void SetTXAosctrlRun (int channel, int run)
 {
-	EnterCriticalSection (&ch[channel].csDSP);
-	txa[channel].osctrl.p->run = run;
-	txa[channel].bp2.p->run = run;
-	LeaveCriticalSection (&ch[channel].csDSP);
+	if (txa[channel].osctrl.p->run != run)
+	{
+		EnterCriticalSection (&ch[channel].csDSP);
+		txa[channel].osctrl.p->run = run;
+		TXASetupBPFilters (channel);
+		LeaveCriticalSection (&ch[channel].csDSP);
+	}
 }

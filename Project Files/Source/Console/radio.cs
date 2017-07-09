@@ -1820,6 +1820,7 @@ namespace Thetis
 		private void SyncAll()
 		{		
 			CurrentDSPMode = current_dsp_mode;
+            SubAMMode = sub_am_mode;
 			SetTXFilter(tx_filter_low, tx_filter_high);
             FilterSize = filter_size;
             FilterType = filter_type;
@@ -1995,12 +1996,59 @@ namespace Thetis
 				{
 					if(value != current_dsp_mode_dsp || force)
 					{
-                        WDSP.SetTXAMode(WDSP.id(thread, 0), value);
+                        if (current_dsp_mode == DSPMode.AM || current_dsp_mode == DSPMode.SAM)
+                        {
+                            switch (sub_am_mode)
+                            {
+                                case 0: // double-sided AM
+                                    WDSP.SetTXAMode(WDSP.id(thread, 0), DSPMode.AM);
+                                    break;
+                                case 1:
+                                    WDSP.SetTXAMode(WDSP.id(thread, 0), DSPMode.AM_LSB);
+                                    break;
+                                case 2:
+                                    WDSP.SetTXAMode(WDSP.id(thread, 0), DSPMode.AM_USB);
+                                    break;
+                            }
+                        }
+                        else
+                            WDSP.SetTXAMode(WDSP.id(thread, 0), value);
 						current_dsp_mode_dsp = value;
 					}
 				}
 			}
 		}
+
+        private int sub_am_mode_dsp = 0;
+        private int sub_am_mode = 0;
+        public int SubAMMode
+        {
+            get { return sub_am_mode; }
+            set
+            {
+                sub_am_mode = value;
+                if (update)
+                {
+                    if (value != sub_am_mode_dsp || force)
+                    {
+                        if (current_dsp_mode == DSPMode.AM || current_dsp_mode == DSPMode.SAM)
+                            switch (sub_am_mode)
+                            {
+                                case 0: // double-sided AM
+                                    WDSP.SetTXAMode(WDSP.id(thread, 0), DSPMode.AM);
+                                    break;
+                                case 1:
+                                    WDSP.SetTXAMode(WDSP.id(thread, 0), DSPMode.AM_LSB);
+                                    break;
+                                case 2:
+                                    WDSP.SetTXAMode(WDSP.id(thread, 0), DSPMode.AM_USB);
+                                    break;
+                            }
+                        sub_am_mode_dsp = value;
+                    }
+                }
+            }
+        }
 
 		public void SetTXFilter(int low, int high)
 		{

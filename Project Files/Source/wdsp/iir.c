@@ -546,3 +546,144 @@ void SetRXAmpeakFilGain (int channel, int fil, double gain)
 	calc_speak(a->pfil[fil]);
 	LeaveCriticalSection (&a->cs_update);
 }
+
+
+/********************************************************************************************************
+*																										*
+*										    Phase Rotator												*
+*																										*
+********************************************************************************************************/
+
+void calc_phrot (PHROT a)
+{
+	double g;
+	a->x0 = (double *) malloc0 (a->nstages * sizeof (double));
+	a->x1 = (double *) malloc0 (a->nstages * sizeof (double));
+	a->y0 = (double *) malloc0 (a->nstages * sizeof (double));
+	a->y1 = (double *) malloc0 (a->nstages * sizeof (double));
+	g = tan (PI * a->fc / (double)a->rate);
+	a->b0 = (g - 1.0) / (g + 1.0);
+	a->b1 = 1.0;
+	a->a1 = a->b0;
+}
+
+PHROT create_phrot (int run, int size, double* in, double* out, int rate, double fc, int nstages)
+{
+	PHROT a = (PHROT) malloc0 (sizeof (phrot));
+	a->run = run;
+	a->size = size;
+	a->in = in;
+	a->out = out;
+	a->rate = rate;
+	a->fc = fc;
+	a->nstages = nstages;
+	InitializeCriticalSectionAndSpinCount ( &a->cs_update, 2500 );
+	calc_phrot (a);
+	return a;
+}
+
+void decalc_phrot (PHROT a)
+{
+	_aligned_free (a->y1);
+	_aligned_free (a->y0);
+	_aligned_free (a->x1);
+	_aligned_free (a->x0);
+}
+
+void destroy_phrot (PHROT a)
+{
+	decalc_phrot (a);
+	DeleteCriticalSection (&a->cs_update);
+	_aligned_free (a);
+}
+
+void flush_phrot (PHROT a)
+{
+	memset (a->x0, 0, a->nstages * sizeof (double));
+	memset (a->x1, 0, a->nstages * sizeof (double));
+	memset (a->y0, 0, a->nstages * sizeof (double));
+	memset (a->y1, 0, a->nstages * sizeof (double));
+}
+
+void xphrot (PHROT a)
+{
+	EnterCriticalSection (&a->cs_update);
+	if (a->run)
+	{
+		int i, n;
+		for (i = 0; i < a->size; i++)
+		{
+			a->x0[0] = a->in[2 * i + 0];
+			for (n = 0; n < a->nstages; n++)
+			{
+				if (n > 0) a->x0[n] = a->y0[n - 1];
+				a->y0[n]	= a->b0 * a->x0[n]
+							+ a->b1 * a->x1[n]
+							- a->a1 * a->y1[n];
+				a->y1[n] = a->y0[n];
+				a->x1[n] = a->x0[n];
+			}
+			a->out[2 * i + 0] = a->y0[a->nstages - 1];
+		}
+	}
+	else if (a->out != a->in)
+		memcpy (a->out, a->in, a->size * sizeof (complex));
+	LeaveCriticalSection (&a->cs_update);
+}
+
+void setBuffers_phrot (PHROT a, double* in, double* out)
+{
+	a->in = in;
+	a->out = out;
+}
+
+void setSamplerate_phrot (PHROT a, int rate)
+{
+	decalc_phrot (a);
+	a->rate = rate;
+	calc_phrot (a);
+}
+
+void setSize_phrot (PHROT a, int size)
+{
+	a->size = size;
+	flush_phrot (a);
+}
+
+/********************************************************************************************************
+*																										*
+*											TXA Properties												*
+*																										*
+********************************************************************************************************/
+
+PORT
+void SetTXAPHROTRun (int channel, int run)
+{
+	PHROT a = txa[channel].phrot.p;
+	EnterCriticalSection (&a->cs_update);
+	a->run = run;
+	if (a->run) flush_phrot (a);
+	LeaveCriticalSection (&a->cs_update);
+}
+
+PORT
+void SetTXAPHROTCorner (int channel, double corner)
+{
+	PHROT a = txa[channel].phrot.p;
+	EnterCriticalSection (&a->cs_update);
+	decalc_phrot (a);
+	a->fc = corner;
+	calc_phrot (a);
+	LeaveCriticalSection (&a->cs_update);
+}
+
+PORT
+void SetTXAPHROTNstages (int channel, int nstages)
+{
+	PHROT a = txa[channel].phrot.p;
+	EnterCriticalSection (&a->cs_update);
+	decalc_phrot (a);
+	a->nstages = nstages;
+	calc_phrot (a);
+	LeaveCriticalSection (&a->cs_update);
+}

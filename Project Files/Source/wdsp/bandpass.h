@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2017 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -127,6 +127,8 @@ extern void setSamplerate_bandpass (BANDPASS a, int rate);
 extern void setSize_bandpass (BANDPASS a, int size);
 
 extern void setGain_bandpass (BANDPASS a, double gain, int update);
+
+extern void CalcBandpassFilter (BANDPASS a, double f_low, double f_high, double gain);
 
 extern __declspec (dllexport) void SetRXABandpassFreqs (int channel, double f_low, double f_high);
 
