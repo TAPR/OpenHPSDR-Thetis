@@ -342,7 +342,7 @@ PORT int StartAudioIVAC(int id)
 		&a->inParam,
 		&a->outParam,
 		a->vac_rate,
-		paFramesPerBufferUnspecified, // a->vac_size, 
+		a->vac_size, // paFramesPerBufferUnspecified,
 		0,
 		CallbackIVAC,
 		(void *)id);	// pass 'id' as userData

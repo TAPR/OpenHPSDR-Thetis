@@ -1,3 +1,3 @@
 # Thetis releases
 
-Latest Beta Release v2.5.2 July 09, 2017
+Latest Beta Release v2.5.3 July 11, 2017

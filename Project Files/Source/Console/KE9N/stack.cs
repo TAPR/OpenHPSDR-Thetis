@@ -42,11 +42,11 @@ namespace Thetis
     public class StackControl : System.Windows.Forms.Form
     {
 
-       
+
         public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs 
         public ScanControl ScanForm;                            // ke9ns add freq Scanner function
-        
-       
+
+
         public static Console console;   // ke9ns mod  to allow console to pass back values to stack screen
         public Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
@@ -63,7 +63,7 @@ namespace Thetis
         private Button buttonSort;
         private IContainer components;
 
-     //   public DXMemList dxmemlist;
+        //   public DXMemList dxmemlist;
 
         #region Constructor and Destructor
 
@@ -73,10 +73,10 @@ namespace Thetis
             console = c;
 
             Common.RestoreForm(this, "StackForm", true);
-  
+
 
             bandstackupdate();
-           
+
 
 
         } // stackcontrol
@@ -124,7 +124,7 @@ namespace Thetis
             // 
             // textBox1
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox1.BackColor = System.Drawing.Color.LightYellow;
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
@@ -206,18 +206,18 @@ namespace Thetis
         private void StackControl_Load(object sender, EventArgs e)
         {
             bandstackupdate();
-           
+
         }
 
 
         //=======================================================================================================================
         private void StackControl_FormClosing(object sender, FormClosingEventArgs e)
         {
-           
+
             this.Hide();
             e.Cancel = true;
             Common.SaveForm(this, "StackForm");
-         
+
 
         }
 
@@ -250,10 +250,10 @@ namespace Thetis
                                      "VHF6", "VHF7", "VHF8", "VHF9", "VHF10", "VHF11",
                                      "VHF12", "VHF13" };
 
-       //===========================================================================================================
+        //===========================================================================================================
         public void bandstackupdate()
         {
- 
+
             string bigmessage = null; // full textbox string (combine 1 and 2)
             string bigmessage1 = null; // each freq string
             string bigmessage2 = null; // each memory string
@@ -264,7 +264,7 @@ namespace Thetis
                 if (band_list[iii] == console.last_band) break; // this is the current band_list index 
             }
 
-      
+
             for (int ii = 0; ii < console.band_stacks[iii]; ii++)
             {
                 if (DB.GetBandStack(band_list[iii], ii, out mode, out filter, out freq, out CTUN, out ZoomFactor, out CenterFreq))
@@ -292,10 +292,10 @@ namespace Thetis
 
                     }
 
-                  
+
                     freq1[ii] = freq;
 
-                    bigmessage1 = (ii + 1).ToString() + " : " + freq.ToString("N" + 6) +" :";
+                    bigmessage1 = (ii + 1).ToString() + " : " + freq.ToString("N" + 6) + " :";
 
                     bigmessage2 = " --- :";
                     //----------------------------------------------------------------
@@ -303,7 +303,7 @@ namespace Thetis
 
                     if (SpotForm != null)
                     {
-                      //  Debug.WriteLine("1Rows Count " + SpotForm.dataGridView2.Rows.Count);
+                        //  Debug.WriteLine("1Rows Count " + SpotForm.dataGridView2.Rows.Count);
 
                         for (int aa = 0; aa < SpotForm.dataGridView2.Rows.Count; aa++) // get current # of memories we have available; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
                         {
@@ -324,12 +324,12 @@ namespace Thetis
                     //----------------------------------------------------------------
 
                     bigmessage1 = bigmessage1 + bigmessage2 + bigmessage3;
-                     
+
                     bigmessage1 = bigmessage1.PadRight(28); // was 28 char long
 
                     bigmessage += bigmessage1 + ":\r\n"; // + 3 more was 31 now 33
 
-                 //   Debug.WriteLine("LENGTH=====" + bigmessage.Length);
+                    //   Debug.WriteLine("LENGTH=====" + bigmessage.Length);
 
 
                 } // if bandstack available for band
@@ -343,7 +343,7 @@ namespace Thetis
 
             //  bigmessage += (DX_FULLSTRING[ii] + DXmode + " " + (DX_country[ii].PadRight(8)).Substring(0, 8) + " :" + DX_Age[ii] + "\r\n");
 
-          
+
 
             textBox1.Text = bigmessage; // update screen
 
@@ -352,131 +352,131 @@ namespace Thetis
             textBox1.Focus();
             textBox1.Show();
 
-         //   textBox1.SelectionStart = (console.iii * 31); // highlight the index line of the bandstack screen
-         //   textBox1.SelectionLength = 31;
+            //   textBox1.SelectionStart = (console.iii * 31); // highlight the index line of the bandstack screen
+            //   textBox1.SelectionLength = 31;
 
 
-           
-                        int value;
-/*
-                        if (int.TryParse(console.regBox1.Text, out value))
-                        {
 
-                            if (value > 0)
-                            {
-                                textBox1.SelectionStart = (value - 1) * 31;       // start of each bandstack line
-                                textBox1.SelectionLength = 31;                    // length of each bandstack line
-                                Debug.WriteLine("Value "+value);
-                             }
-                            else
-                            {
-                                textBox1.SelectionStart = 0;
-                                textBox1.SelectionLength = 31;
-                            }
+            int value;
+            
+                                    if (int.TryParse(console.regBox1.Text, out value))
+                                    {
 
-                        }
-                        else
-                        {
-                            Debug.WriteLine("no value");
-                            textBox1.SelectionStart = 0;
-                            textBox1.SelectionLength = 31;
-                        }
-            */
+                                        if (value > 0)
+                                        {
+                                            textBox1.SelectionStart = (value - 1) * 31;       // start of each bandstack line
+                                            textBox1.SelectionLength = 31;                    // length of each bandstack line
+                                            Debug.WriteLine("Value "+value);
+                                         }
+                                        else
+                                        {
+                                            textBox1.SelectionStart = 0;
+                                            textBox1.SelectionLength = 31;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine("no value");
+                                        textBox1.SelectionStart = 0;
+                                        textBox1.SelectionLength = 31;
+                                    }
+                        
         } // bandstackupdate
 
 
         //======================================================================== 
-        void updateindex()    
-    {
-        switch(console.RX1Band)
-			{
-				case Band.B160M:
+        void updateindex()
+        {
+            switch (console.RX1Band)
+            {
+                case Band.B160M:
                     console.band_160m_index = xxx;
-		
-					break;
-				case Band.B80M:
+
+                    break;
+                case Band.B80M:
                     console.band_80m_index = xxx;
 
                     break;
-				case Band.B60M:
+                case Band.B60M:
                     console.band_60m_index = xxx;
 
                     break;
-				case Band.B40M:
+                case Band.B40M:
                     console.band_40m_index = xxx;
                     break;
-				case Band.B30M:
+                case Band.B30M:
                     console.band_30m_index = xxx;
                     break;
-				case Band.B20M:
+                case Band.B20M:
                     console.band_20m_index = xxx;
                     break;
-				case Band.B17M:
+                case Band.B17M:
                     console.band_17m_index = xxx;
                     break;
-				case Band.B15M:
+                case Band.B15M:
                     console.band_15m_index = xxx;
                     break;
-				case Band.B12M:
+                case Band.B12M:
                     console.band_12m_index = xxx;
                     break;
-				case Band.B10M:
+                case Band.B10M:
                     console.band_10m_index = xxx;
                     break;
-				case Band.B6M:
+                case Band.B6M:
                     console.band_6m_index = xxx;
                     break;
-				case Band.B2M:
+                case Band.B2M:
                     console.band_2m_index = xxx;
                     break;
-				case Band.WWV:
-					console.band_wwv_index = xxx;
-					break;
+                case Band.WWV:
+                    console.band_wwv_index = xxx;
+                    break;
                 case Band.GEN:
                     console.band_gen_index = xxx;
                     break;
 
-             
-				case Band.VHF0:
+
+                case Band.VHF0:
                     console.band_vhf0_index = xxx;
                     break;
-				case Band.VHF1:
+                case Band.VHF1:
                     console.band_vhf1_index = xxx;
                     break;
-				case Band.VHF2:
+                case Band.VHF2:
                     console.band_vhf2_index = xxx;
                     break;
-				case Band.VHF3:
+                case Band.VHF3:
                     console.band_vhf3_index = xxx;
                     break;
-				case Band.VHF4:
+                case Band.VHF4:
                     console.band_vhf4_index = xxx;
                     break;
-				case Band.VHF5:
+                case Band.VHF5:
                     console.band_vhf5_index = xxx;
                     break;
-				case Band.VHF6:
+                case Band.VHF6:
                     console.band_vhf6_index = xxx;
                     break;
-				case Band.VHF7:
+                case Band.VHF7:
                     console.band_vhf7_index = xxx;
                     break;
-				case Band.VHF8:
+                case Band.VHF8:
                     console.band_vhf8_index = xxx;
                     break;
-				case Band.VHF9:
+                case Band.VHF9:
                     console.band_vhf9_index = xxx;
                     break;
-				case Band.VHF10:
+                case Band.VHF10:
                     console.band_vhf10_index = xxx;
                     break;
-				case Band.VHF11:
+                case Band.VHF11:
                     console.band_vhf11_index = xxx;
                     break;
-				case Band.VHF12:
+                case Band.VHF12:
                     console.band_vhf12_index = xxx;
                     break;
-				case Band.VHF13:
+                case Band.VHF13:
                     console.band_vhf13_index = xxx;
                     break;
 
@@ -531,8 +531,8 @@ namespace Thetis
 
             } // switch rx1band
 
-    } // updateindex
-       //====================================================================================
+        } // updateindex
+        //====================================================================================
 
         private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e)
         {
@@ -755,10 +755,10 @@ namespace Thetis
 
                     if (xxx >= console.band_stacks[iii]) return;    // if you click past the last index freq, then do nothing.
 
-                   
+
                     textBox1.SelectionStart = (xxx * 31);
                     textBox1.SelectionLength = 31;
-                 
+
                     console.iii = xxx;                            // update new position in bandstack for checking if its locked
 
 
@@ -771,7 +771,7 @@ namespace Thetis
                         bandstackupdate();
                     }
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     Debug.WriteLine("Bad location2");
 
@@ -797,18 +797,18 @@ namespace Thetis
 
             try
             {
-               if (index < 2) return; // nothing to sort
+                if (index < 2) return; // nothing to sort
 
 
                 // bubble sort
-                for (int d = 0; d < index;)
+                for (int d = 0; d < index; )
                 {
 
                     for (int f = index - 1; f > d; f--)  // check end of list first and work back to front
                     {
                         if (freq1[d] > freq1[f])
                         {
-  
+
                             string tempmode = mode1[d];
                             string tempfilter = filter1[d];
                             double tempfreq = freq1[d];
@@ -837,18 +837,18 @@ namespace Thetis
                     } // for f
 
                     if (bubble == false) d++;
-                    else  bubble = false;  // reset
+                    else bubble = false;  // reset
 
                 } // for d
-            
-                   // CTUN1[xxx],
-                   // ZoomFactor1[xxx],
-                   // CenterFreq1[xxx]);
+
+                // CTUN1[xxx],
+                // ZoomFactor1[xxx],
+                // CenterFreq1[xxx]);
 
                 for (int g = 0; g < index; g++)  // update database with new sorted bandstack
                 {
 
-                     console.SortBandStack(g, mode1[g], filter1[g], freq1[g], CTUN1[g], ZoomFactor1[g], CenterFreq1[g]);     //   DB.SaveBandStack(console.last_band, g, mode1[g], filter1[g], freq1[g]);
+                    console.SortBandStack(g, mode1[g], filter1[g], freq1[g], CTUN1[g], ZoomFactor1[g], CenterFreq1[g]);     //   DB.SaveBandStack(console.last_band, g, mode1[g], filter1[g], freq1[g]);
 
                 }
 
@@ -866,8 +866,8 @@ namespace Thetis
 
         public static int RIndex1 = 0;
 
-       
-      
+
+
 
 
 

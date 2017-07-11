@@ -2140,11 +2140,11 @@ namespace Thetis
 					tx_eq3[i] = value[i];
 				if(update)
 				{
-                    unsafe
-                    {
-                        fixed (int* ptr = &(tx_eq3[0]))
-                            WDSP.SetTXAGrphEQ(WDSP.id(thread, 0), ptr);
-                    }
+                    //unsafe
+                    //{
+                    //    fixed (int* ptr = &(tx_eq3[0]))
+                    //        WDSP.SetTXAGrphEQ(WDSP.id(thread, 0), ptr);
+                    //}
 						for(int i=0; i<tx_eq3_dsp.Length && i<value.Length; i++)
 							tx_eq3_dsp[i] = value[i];
 				}
@@ -2162,11 +2162,11 @@ namespace Thetis
 					tx_eq10[i] = value[i];
 				if(update)
 				{
-                    unsafe
-                    {
-                        fixed (int* ptr = &(tx_eq10[0]))
-                            WDSP.SetTXAGrphEQ10(WDSP.id(thread, 0), ptr);
-                    }
+                    //unsafe
+                    //{
+                    //    fixed (int* ptr = &(tx_eq10[0]))
+                    //        WDSP.SetTXAGrphEQ10(WDSP.id(thread, 0), ptr);
+                    //}
 						for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
 							tx_eq10_dsp[i] = value[i];
 				}

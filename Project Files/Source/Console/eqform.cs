@@ -1833,7 +1833,7 @@ namespace Thetis
             {
                 fixed (double* Fptr = &F[0], Gptr = &G[0])
                 {
-                  //  WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr);
+                   WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr);
                 }
             }
         }

@@ -922,6 +922,7 @@ namespace Thetis
         private Point gr_filter_basis_location = new Point(100, 100);		//k6jca
         private Point gr_Multimeter_basis_location = new Point(100, 100);		//k6jca
         private Point gr_BandHF_basis_location = new Point(100, 100);		//k6jca
+        private Point gr_BandGEN_basis_location = new Point(100, 100);		
         private Point gr_BandVHF_basis_location = new Point(100, 100);		//k6jca
         private Point gr_Mode_basis_location = new Point(100, 100);		//k6jca
         private Point gr_VFOB_basis_location = new Point(100, 100);		//k6jca
@@ -1048,6 +1049,7 @@ namespace Thetis
         private Point ud_rx2_step_att_present_data_basis = new Point(100, 100);
         private Size tb_display_zoom_size_basis = new Size(100, 100);
         private Size gr_BandHF_basis_size = new Size(100, 100);
+        private Size gr_BandGEN_basis_size = new Size(100, 100);
         private Size gr_BandVHF_basis_size = new Size(100, 100);
         private Size gr_Mode_basis_size = new Size(100, 100);
         private Point rad_band160_basis = new Point(100, 100);
@@ -1080,6 +1082,21 @@ namespace Thetis
         private Point rad_bandVHF13_basis = new Point(100, 100);//w3sz added
         private Point btn_bandVHF_basis = new Point(100, 100);//w3sz added
         private Point btn_bandHF_basis = new Point(100, 100);//w3sz added
+        private Point rad_bandGEN0_basis = new Point(100, 100); 
+        private Point rad_bandGEN1_basis = new Point(100, 100); 
+        private Point rad_bandGEN2_basis = new Point(100, 100); 
+        private Point rad_bandGEN3_basis = new Point(100, 100); 
+        private Point rad_bandGEN4_basis = new Point(100, 100); 
+        private Point rad_bandGEN5_basis = new Point(100, 100); 
+        private Point rad_bandGEN6_basis = new Point(100, 100); 
+        private Point rad_bandGEN7_basis = new Point(100, 100); 
+        private Point rad_bandGEN8_basis = new Point(100, 100); 
+        private Point rad_bandGEN9_basis = new Point(100, 100); 
+        private Point rad_bandGEN10_basis = new Point(100, 100); 
+        private Point rad_bandGEN11_basis = new Point(100, 100); 
+        private Point rad_bandGEN12_basis = new Point(100, 100); 
+        private Point rad_bandGEN13_basis = new Point(100, 100); 
+        private Point btn_bandHF1_basis = new Point(100, 100); 
         private Point rad_mode_lsb_basis = new Point(100, 100);
         private Point rad_mode_usb_basis = new Point(100, 100);
         private Point rad_mode_dsb_basis = new Point(100, 100);
@@ -5386,6 +5403,21 @@ namespace Thetis
                     }
                 }
             }
+
+            foreach (Control c in panelBandGEN.Controls)
+            {
+                c.Enabled = false;
+
+                RadioButtonTS b = c as RadioButtonTS;
+                if (b != null)
+                {
+                    if (b.BackColor == button_selected_color)
+                    {
+                        b.BackColor = vfo_text_dark_color;
+                    }
+                }
+            }
+
         }
 
 
@@ -5423,6 +5455,34 @@ namespace Thetis
                 }
                 else c.Enabled = true;
             }
+
+            foreach (Control c in panelBandGEN.Controls) // ke9ns add
+            {
+                RadioButtonTS b = c as RadioButtonTS;
+                Debug.WriteLine("enableallbnads");
+
+                if (b != null)
+                {
+
+                    if (b.Name == "panelBandHF")
+                    {
+                        b.Enabled = true;
+                    }
+                    else
+                    {
+                        b.Enabled = true;
+
+                    }
+
+                    if (b.BackColor == vfo_text_dark_color) b.BackColor = button_selected_color;
+                }
+                else
+                {
+                    c.Enabled = true;
+
+                }
+            }
+
         }
 
         private void DisableAllModes()
@@ -12972,11 +13032,13 @@ namespace Thetis
             if (rx1_xvtr_index >= 0)
             {
                 panelBandHF.Visible = false;
+                panelBandGEN.Visible = false;
                 panelBandVHF.Visible = true;
             }
             else
             {
-                panelBandHF.Visible = true;
+                panelBandGEN.Visible = true;
+                //panelBandHF.Visible = true;
                 panelBandVHF.Visible = false;
             }
             // UpdateWaterfallLevelValues();
@@ -46951,6 +47013,7 @@ namespace Thetis
 
                 grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y);
                 panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, gr_BandHF_basis_location.Y + (v_delta / 4));
+                panelBandGEN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, gr_BandGEN_basis_location.Y + (v_delta / 4));
                 panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, gr_BandVHF_basis_location.Y + (v_delta / 4));
                 panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, gr_Mode_basis_location.Y + (v_delta / 2));
                 //grpVFOB.Location = new Point(gr_VFOB_basis_location.X+h_delta-(h_delta/4),gr_VFOB_basis_location.Y);
@@ -47076,6 +47139,7 @@ namespace Thetis
 
             gr_Multimeter_basis_location = this.grpMultimeter.Location;
             gr_BandHF_basis_location = this.panelBandHF.Location;
+            gr_BandGEN_basis_location = this.panelBandGEN.Location;
             gr_BandVHF_basis_location = this.panelBandVHF.Location;
             gr_Mode_basis_location = this.panelMode.Location;
             gr_VFOB_basis_location = this.grpVFOB.Location;
@@ -47197,6 +47261,7 @@ namespace Thetis
             ud_rx1_step_att_present_data_basis = this.udRX1StepAttData.Location;
             ud_rx2_step_att_present_data_basis = this.udRX2StepAttData.Location;
             gr_BandHF_basis_size = panelBandHF.Size;
+            gr_BandGEN_basis_size = panelBandGEN.Size;
             gr_BandVHF_basis_size = panelBandVHF.Size;
             gr_Mode_basis_size = panelMode.Size;
             rad_band160_basis = radBand160.Location;
@@ -47229,6 +47294,21 @@ namespace Thetis
             rad_bandVHF13_basis = radBandVHF13.Location;
             btn_bandHF_basis = btnBandHF.Location; //w3sz
             btn_bandVHF_basis = btnBandVHF.Location; //w3sz
+            rad_bandGEN0_basis = radBandGEN0.Location;
+            rad_bandGEN1_basis = radBandGEN1.Location;
+            rad_bandGEN2_basis = radBandGEN2.Location;
+            rad_bandGEN3_basis = radBandGEN3.Location;
+            rad_bandGEN4_basis = radBandGEN4.Location;
+            rad_bandGEN5_basis = radBandGEN5.Location;
+            rad_bandGEN6_basis = radBandGEN6.Location;
+            rad_bandGEN7_basis = radBandGEN7.Location;
+            rad_bandGEN8_basis = radBandGEN8.Location;
+            rad_bandGEN9_basis = radBandGEN9.Location;
+            rad_bandGEN10_basis = radBandGEN10.Location;
+            rad_bandGEN11_basis = radBandGEN11.Location;
+            rad_bandGEN12_basis = radBandGEN12.Location;
+            rad_bandGEN13_basis = radBandGEN13.Location;
+            btn_bandHF1_basis = btnBandHF1.Location;
             rad_mode_lsb_basis = radModeLSB.Location;
             rad_mode_usb_basis = radModeUSB.Location;
             rad_mode_dsb_basis = radModeDSB.Location;
@@ -51121,10 +51201,15 @@ namespace Thetis
             {
                 btnBandVHF_Click(btnBandVHF, EventArgs.Empty);
             }
-            else //if (this.panelBandHF.Visible)
+            else if (this.panelBandGEN.Visible)
+            {
+                btnBandGEN_Click(radBandGEN, EventArgs.Empty);                
+            }
+            else 
             {
                 btnBandHF_Click(btnBandHF, EventArgs.Empty);
             }
+
             //w3sz section ends here
             // panelBandVHF.Show();
 
@@ -51356,6 +51441,24 @@ namespace Thetis
             radBandGEN.Location = rad_bandgen_basis;
             btnBandVHF.Location = btn_bandVHF_basis;//w3sz
 
+            panelBandGEN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, gr_BandGEN_basis_location.Y + (v_delta / 4));
+            panelBandGEN.Size = gr_BandGEN_basis_size;
+            radBandGEN0.Location = rad_bandGEN0_basis;
+            radBandGEN1.Location = rad_bandGEN1_basis;
+            radBandGEN2.Location = rad_bandGEN2_basis;
+            radBandGEN3.Location = rad_bandGEN3_basis;
+            radBandGEN4.Location = rad_bandGEN4_basis;
+            radBandGEN5.Location = rad_bandGEN5_basis;
+            radBandGEN6.Location = rad_bandGEN6_basis;
+            radBandGEN7.Location = rad_bandGEN7_basis;
+            radBandGEN8.Location = rad_bandGEN8_basis;
+            radBandGEN9.Location = rad_bandGEN9_basis;
+            radBandGEN10.Location = rad_bandGEN10_basis;
+            radBandGEN11.Location = rad_bandGEN11_basis;
+            radBandGEN12.Location = rad_bandGEN12_basis;
+            radBandGEN13.Location = rad_bandGEN13_basis;
+            btnBandHF1.Location = btn_bandHF1_basis;
+
             panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, gr_BandVHF_basis_location.Y + (v_delta / 4));
             panelBandVHF.Size = gr_BandVHF_basis_size;
             radBandVHF0.Location = rad_bandVHF0_basis;
@@ -51456,14 +51559,22 @@ namespace Thetis
             panelModeSpecificDigital.Hide();
             panelModeSpecificFM.Hide();
             panelFilter.Hide();
-            if (panelBandHF.Visible == true)  //w3sz added
+            if (panelBandHF.Visible)  //w3sz added
             {
                 panelBandVHF.Hide();
+                panelBandGEN.Hide();
+            }
+            else if (panelBandVHF.Visible)
+            {
+                panelBandHF.Hide();
+                panelBandGEN.Hide();
             }
             else
             {
                 panelBandHF.Hide();
+                panelBandVHF.Hide();
             }
+
             // chkBCI.Hide();
             grpVFOBetween.Hide();
             // grpVFOB.Hide();
@@ -51726,19 +51837,24 @@ namespace Thetis
 
             if (this.showBandControls)
             {
-                if (panelBandVHF.Visible == true)  //w3sz added
+                if (panelBandVHF.Visible)  //w3sz added
                 {
                     panelBandVHF.Show();  //w3sz added "V"
                 }
-                else //w3sz
+                else if (panelBandHF.Visible)
                 {
                     panelBandHF.Show();  //w3sz
+                }
+               else 
+                {
+                    panelBandGEN.Show();  
                 }
             }
             else //w3sz added
             {
                 panelBandVHF.Hide(); //w3sz added "V"
                 panelBandHF.Hide(); //w3sz added
+                panelBandGEN.Hide();
             }
 
             if (this.showModeControls)
@@ -52004,11 +52120,10 @@ namespace Thetis
 
             if (this.showBandControls)
             {
-                if (panelBandVHF.Visible == true)  //w3sz added
+                if (panelBandVHF.Visible)  //w3sz added
                 {
                     panelBandVHF.Location = new Point(this.ClientSize.Width / 2 - radBandVHF0.Width * 7, top); //w3sz added "V"
                     panelBandVHF.Size = new Size(radBandVHF0.Width * 15, radBandVHF0.Height); //w3sz added "V" 
-
                     radBandVHF0.Location = new Point(0, 0);//w3sz added
                     radBandVHF1.Location = new Point(radBandVHF0.Location.X + radBandVHF0.Width, 0);//w3sz added
                     radBandVHF2.Location = new Point(radBandVHF1.Location.X + radBandVHF1.Width, 0);//w3sz added
@@ -52026,11 +52141,10 @@ namespace Thetis
                     btnBandHF.Location = new Point(radBandVHF13.Location.X + radBandVHF13.Width, 0);//w3sz added
                     top = panelBandVHF.Location.Y + panelBandVHF.Height;//w3sz added "V"
                 }
-                else //w3sz added 
+                else if (panelBandHF.Visible) 
                 {
                     panelBandHF.Location = new Point(this.ClientSize.Width / 2 - radBand160.Width * 7, top);
                     panelBandHF.Size = new Size(radBand160.Width * 15, radBand160.Height);
-
                     radBand160.Location = new Point(0, 0);
                     radBand80.Location = new Point(radBand160.Location.X + radBand160.Width, 0);
                     radBand60.Location = new Point(radBand80.Location.X + radBand80.Width, 0);
@@ -52042,16 +52156,33 @@ namespace Thetis
                     radBand12.Location = new Point(radBand15.Location.X + radBand15.Width, 0);
                     radBand10.Location = new Point(radBand12.Location.X + radBand12.Width, 0);
                     radBand6.Location = new Point(radBand10.Location.X + radBand10.Width, 0);
-                    // radBand2.Location = new Point(radBand6.Location.X + radBand6.Width, 0);
-                    // radBandWWV.Location = new Point(radBand2.Location.X + radBand2.Width, 0);
-                    // radBandGEN.Location = new Point(radBandWWV.Location.X + radBandWWV.Width, 0);
-                    // btnBandVHF.Location = new Point(radBandGEN.Location.X + radBandGEN.Width, 0);//w3sz added
                     radBandWWV.Location = new Point(radBand6.Location.X + radBand2.Width, 0);
                     radBandGEN.Location = new Point(radBandWWV.Location.X + radBandWWV.Width, 0);
                     btnBandVHF.Location = new Point(radBandGEN.Location.X + radBandGEN.Width, 0);//w3sz added
-
                     top = panelBandHF.Location.Y + panelBandHF.Height;
                 }
+                else
+                {
+                    panelBandGEN.Location = new Point(this.ClientSize.Width / 2 - radBandGEN0.Width * 7, top);
+                    panelBandGEN.Size = new Size(radBandGEN0.Width * 15, radBandGEN0.Height);
+                    radBandGEN0.Location = new Point(0, 0);
+                    radBandGEN1.Location = new Point(radBandGEN0.Location.X + radBandGEN0.Width, 0);
+                    radBandGEN2.Location = new Point(radBandGEN1.Location.X + radBandGEN1.Width, 0);
+                    radBandGEN3.Location = new Point(radBandGEN2.Location.X + radBandGEN2.Width, 0);
+                    radBandGEN4.Location = new Point(radBandGEN3.Location.X + radBandGEN3.Width, 0);
+                    radBandGEN5.Location = new Point(radBandGEN4.Location.X + radBandGEN4.Width, 0);
+                    radBandGEN6.Location = new Point(radBandGEN5.Location.X + radBandGEN5.Width, 0);
+                    radBandGEN7.Location = new Point(radBandGEN6.Location.X + radBandGEN6.Width, 0);
+                    radBandGEN8.Location = new Point(radBandGEN7.Location.X + radBandGEN7.Width, 0);
+                    radBandGEN9.Location = new Point(radBandGEN8.Location.X + radBandGEN8.Width, 0);
+                    radBandGEN10.Location = new Point(radBandGEN9.Location.X + radBandGEN9.Width, 0);
+                    radBandGEN11.Location = new Point(radBandGEN10.Location.X + radBandGEN10.Width, 0);
+                    radBandGEN12.Location = new Point(radBandGEN11.Location.X + radBandGEN11.Width, 0);
+                    radBandGEN13.Location = new Point(radBandGEN12.Location.X + radBandGEN12.Width, 0);
+                    btnBandHF1.Location = new Point(radBandGEN13.Location.X + radBandGEN13.Width, 0);
+                    top = panelBandGEN.Location.Y + panelBandGEN.Height;
+                }
+
             }
 
             if (this.showModeControls)
