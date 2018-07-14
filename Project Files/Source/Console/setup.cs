@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2017  Doug Wigley
+// Copyright (C) 2010-2018  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -1410,6 +1410,9 @@ namespace Thetis
             radDDCADC_CheckedChanged(this, e);
 
             chkWheelReverse_CheckedChanged(this, e);
+            // IVAC
+            chkVAC1_Force_CheckedChanged(this, e);
+            chkVAC1_Force2_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -2993,6 +2996,10 @@ namespace Thetis
                         force_model = true;
                         radGenModelANAN200D.Checked = true;
                         break;
+                    case Model.ANAN7000D:
+                        force_model = true;
+                        radGenModelANAN7000D.Checked = true;
+                        break;
                     case Model.ANAN8000D:
                         force_model = true;
                         radGenModelANAN8000D.Checked = true;
@@ -4095,6 +4102,157 @@ namespace Thetis
         {
             get { return (float)udANANPAGainVHF13.Value; }
             set { udANANPAGainVHF13.Value = (decimal)value; }
+        }
+
+        //PAGain ANAN-7000DLE
+        public float ANAN7000DPAGain160
+        {
+            get { return (float)udANAN7000DPAGain160.Value; }
+            set { udANAN7000DPAGain160.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain80
+        {
+            get { return (float)udANAN7000DPAGain80.Value; }
+            set { udANAN7000DPAGain80.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain60
+        {
+            get { return (float)udANAN7000DPAGain60.Value; }
+            set { udANAN7000DPAGain60.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain40
+        {
+            get { return (float)udANAN7000DPAGain40.Value; }
+            set { udANAN7000DPAGain40.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain30
+        {
+            get { return (float)udANAN7000DPAGain30.Value; }
+            set { udANAN7000DPAGain30.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain20
+        {
+            get { return (float)udANAN7000DPAGain20.Value; }
+            set { udANAN7000DPAGain20.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain17
+        {
+            get { return (float)udANAN7000DPAGain17.Value; }
+            set { udANAN7000DPAGain17.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain15
+        {
+            get { return (float)udANAN7000DPAGain15.Value; }
+            set { udANAN7000DPAGain15.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain12
+        {
+            get { return (float)udANAN7000DPAGain12.Value; }
+            set { udANAN7000DPAGain12.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain10
+        {
+            get { return (float)udANAN7000DPAGain10.Value; }
+            set { udANAN7000DPAGain10.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGain6
+        {
+            get { return (float)udANAN7000DPAGain6.Value; }
+            set { udANAN7000DPAGain6.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF0
+        {
+            get { return (float)udANAN7000DPAGainVHF0.Value; }
+            set { udANAN7000DPAGainVHF0.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF1
+        {
+            get { return (float)udANAN7000DPAGainVHF1.Value; }
+            set { udANAN7000DPAGainVHF1.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF2
+        {
+            get { return (float)udANAN7000DPAGainVHF2.Value; }
+            set { udANAN7000DPAGainVHF2.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF3
+        {
+            get { return (float)udANAN7000DPAGainVHF3.Value; }
+            set { udANAN7000DPAGainVHF3.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF4
+        {
+            get { return (float)udANAN7000DPAGainVHF4.Value; }
+            set { udANAN7000DPAGainVHF4.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF5
+        {
+            get { return (float)udANAN7000DPAGainVHF5.Value; }
+            set { udANAN7000DPAGainVHF5.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF6
+        {
+            get { return (float)udANAN7000DPAGainVHF6.Value; }
+            set { udANAN7000DPAGainVHF6.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF7
+        {
+            get { return (float)udANAN7000DPAGainVHF7.Value; }
+            set { udANAN7000DPAGainVHF7.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF8
+        {
+            get { return (float)udANAN7000DPAGainVHF8.Value; }
+            set { udANAN7000DPAGainVHF8.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF9
+        {
+            get { return (float)udANAN7000DPAGainVHF9.Value; }
+            set { udANAN7000DPAGainVHF9.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF10
+        {
+            get { return (float)udANAN7000DPAGainVHF10.Value; }
+            set { udANAN7000DPAGainVHF10.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF11
+        {
+            get { return (float)udANAN7000DPAGainVHF11.Value; }
+            set { udANAN7000DPAGainVHF11.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF12
+        {
+            get { return (float)udANAN7000DPAGainVHF12.Value; }
+            set { udANAN7000DPAGainVHF12.Value = (decimal)value; }
+        }
+
+        public float ANAN7000DPAGainVHF13
+        {
+            get { return (float)udANAN7000DPAGainVHF13.Value; }
+            set { udANAN7000DPAGainVHF13.Value = (decimal)value; }
         }
 
         //PAGain Orion
@@ -5938,6 +6096,126 @@ namespace Thetis
             }
         }
 
+        private void radGenModelANAN7000D_CheckedChanged(object sender, System.EventArgs e)
+        {
+            HPSDRModel old_model = console.CurrentHPSDRModel;
+            console.ANAN7000DPresent = radGenModelANAN7000D.Checked;
+
+            if (radGenModelANAN7000D.Checked)
+            {
+                NetworkIO.fwVersionsChecked = false;
+                console.CurrentHPSDRModel = HPSDRModel.ANAN7000D;
+                chkPennyPresent.Checked = false;
+                chkPennyPresent.Enabled = false;
+                chkMercuryPresent.Checked = true;
+                chkMercuryPresent.Enabled = false;
+                chkExcaliburPresent.Checked = false;
+                chkExcaliburPresent.Enabled = false;
+                chkExcaliburPresent.Visible = false;
+                chkPennyLane.Checked = true;
+                chkPennyLane.Enabled = false;
+                radPenny10MHz.Checked = true;
+                rad12288MHzPenny.Checked = true;
+                chkAlexPresent.Enabled = true;
+                chkApolloPresent.Enabled = true;
+                groupBox10MhzClock.Visible = false;
+                groupBox122MHz.Visible = false;
+                groupBoxMicSource.Visible = false;
+                chkGeneralRXOnly.Visible = true;
+                chkHermesStepAttenuator.Enabled = true;
+                groupBoxRXOptions.Text = "ANAN Options";
+                grpMetisAddr.Text = "ANAN Address";
+                grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
+                chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
+                chkAutoPACalibrate.Checked = false;
+                chkAutoPACalibrate.Visible = false;
+                chkBypassANANPASettings.Visible = true;
+                grpANAN7000DPAGainByBand.BringToFront();
+
+                labelRXAntControl.Text = "  BYPS  EXT1  XVTR";
+                labelATTOnTX.Visible = true;
+                udATTOnTX.Visible = true;
+                console.RX2PreampPresent = true;
+                chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
+                //chkRxOutOnTx.Visible = false;
+                chkEXT1OutOnTx.Text = "Ext 1 on Tx";
+                chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
+
+                chkAlexPresent.Parent = grpGeneralHardwareORION;
+                chkAlexPresent.Location = new Point(43, 120);
+                chkApolloPresent.Parent = grpGeneralHardwareORION;
+                chkApolloPresent.Location = new Point(43, 140);
+
+                panelAlex1HPFControl.Visible = false;
+                panelBPFControl.Visible = true;
+
+                chkDisable6mLNAonRX.Parent = panelBPFControl;
+                chkDisable6mLNAonRX.Location = new Point(16, 208);
+                chkDisable6mLNAonTX.Parent = panelBPFControl;
+                chkDisable6mLNAonTX.Location = new Point(63, 208);
+
+                chkAlexHPFBypass.Parent = panelBPFControl;
+                chkAlexHPFBypass.Location = new Point(140, 185);
+                chkDisableHPFonTX.Parent = panelBPFControl;
+                chkDisableHPFonTX.Location = new Point(140, 213);
+
+                cmaster.SetADCSupply(0, 50);
+                NetworkIO.SetRxADC(2);
+
+                radDDC0ADC2.Enabled = true;
+                radDDC1ADC2.Enabled = true;
+                radDDC2ADC2.Enabled = true;
+                radDDC3ADC2.Enabled = true;
+                radDDC4ADC2.Enabled = true;
+                radDDC5ADC2.Enabled = true;
+                radDDC6ADC2.Enabled = true;
+
+                //chkDisableRXOut.Visible = false;
+                //chkBPF2Gnd.Visible = true;
+            }
+            else
+            {
+                chkAlexPresent.Parent = groupBoxHPSDRHW;
+                chkAlexPresent.Location = new Point(25, 80);
+                chkApolloPresent.Parent = groupBoxHPSDRHW;
+                chkApolloPresent.Location = new Point(25, 100);
+
+                panelBPFControl.Visible = false;
+                panelAlex1HPFControl.Visible = true;
+
+                chkDisable6mLNAonRX.Parent = panelAlex1HPFControl;
+                chkDisable6mLNAonRX.Location = new Point(16, 208);
+                chkDisable6mLNAonTX.Parent = panelAlex1HPFControl;
+                chkDisable6mLNAonTX.Location = new Point(63, 208);
+
+                chkAlexHPFBypass.Parent = panelAlex1HPFControl;
+                chkAlexHPFBypass.Location = new Point(140, 185);
+                chkDisableHPFonTX.Parent = panelAlex1HPFControl;
+                chkDisableHPFonTX.Location = new Point(140, 213);
+                panelAlex1HPFControl.Visible = false;
+
+            }
+            radGenModelHPSDR_or_Hermes_CheckedChanged(sender, e, true);
+
+            if (radGenModelANAN7000D.Checked)
+            {
+                bool power = console.PowerOn;
+
+                if (power && (old_model != console.CurrentHPSDRModel))
+                {
+                    console.PowerOn = false;
+                    Thread.Sleep(100);
+                }
+                cmaster.CMLoadRouterAll(console.CurrentHPSDRModel);
+
+                if (power && (old_model != console.CurrentHPSDRModel))
+                {
+                    console.PowerOn = true;
+                }
+            }
+        }
+
         private void radGenModelANAN8000D_CheckedChanged(object sender, System.EventArgs e)
         {
             HPSDRModel old_model = console.CurrentHPSDRModel;
@@ -6260,7 +6538,8 @@ namespace Thetis
 
             if (is_hermes)
             {
-                if (radGenModelANAN200D.Checked || radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked)
+                if (radGenModelANAN200D.Checked || radGenModelANAN7000D.Checked ||
+                    radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked)
                 {
                     groupBoxHPSDRHW.Visible = false;
                     grpGeneralHardwareORION.Visible = true;
@@ -6278,9 +6557,26 @@ namespace Thetis
             chkCalExpert.Enabled = false;
             grpHPSDRFreqCalDbg.Visible = true;
 
-            if (radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked)
+            if (radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked || radGenModelANAN7000D.Checked)
+            {
+                chkLPFBypass.Checked = false;
+                chkLPFBypass.Visible = false;
                 console.MKIIBPFPresent = true;
-            else console.MKIIBPFPresent = false;
+                chkDisableRXOut.Visible = false;
+                chkBPF2Gnd.Visible = true;
+                chkEnableXVTRHF.Visible = true;
+                toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable Rx BYPASS during transmit.");
+            }
+            else
+            {
+                chkLPFBypass.Visible = true;
+                console.MKIIBPFPresent = false;
+                chkDisableRXOut.Visible = true;
+                chkBPF2Gnd.Visible = false;
+                chkEnableXVTRHF.Visible = false;
+                toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable RX 1 IN on Alex or Ext 2 on ANAN during transmit.");
+            }
+
 
             if (radGenModelANAN10.Checked || radGenModelANAN10E.Checked)
             {
@@ -6297,15 +6593,25 @@ namespace Thetis
                 grp10WattMeterTrim.BringToFront();
                 chkEnableXVTRHF.Visible = false;
             }
-            else if (radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked)
+            else if (radGenModelORIONMKII.Checked || radGenModelANAN7000D.Checked || radGenModelANAN8000D.Checked)
             {
-                chkRxOutOnTx.Checked = false;
-                chkRxOutOnTx.Visible = false;
-                chkEXT1OutOnTx.Checked = false;
-                chkEXT1OutOnTx.Visible = false;
-                chkEXT2OutOnTx.Checked = false;
-                chkEXT2OutOnTx.Visible = false;
-                // panelAlex1HPFControl.Visible = true;
+                if (radGenModelANAN7000D.Checked)
+                {
+                    chkRxOutOnTx.Visible = false;
+                    chkEXT1OutOnTx.Visible = false;
+                    chkEXT2OutOnTx.Visible = true;
+                    panelAlexRXXVRTControl.Visible = true;
+                    grp100WattMeterTrim.BringToFront();
+                }
+                else
+                {
+                    chkRxOutOnTx.Visible = false;
+                    chkEXT1OutOnTx.Visible = false;
+                    chkEXT2OutOnTx.Visible = false;
+                    panelAlexRXXVRTControl.Visible = false;
+                    grp200WattMeterTrim.BringToFront();
+                }
+
                 tpAlexFilterControl.Text = "BPF1/LPF";
                 tpAlex2FilterControl.Text = "BPF2";
                 labelAlex1FilterHPF.Text = "BPF1";
@@ -6315,7 +6621,6 @@ namespace Thetis
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
-                grp200WattMeterTrim.BringToFront();
                 chkEnableXVTRHF.Visible = true;
             }
             else
@@ -6356,7 +6661,7 @@ namespace Thetis
             if (radGenModelHPSDR.Checked) tpPennyCtrl.Text = "Penny Ctrl";
             else if (radGenModelHermes.Checked) tpPennyCtrl.Text = "Hermes Ctrl";
             // else if (radGenModelOrion.Checked) tpPennyCtrl.Text = "Orion Ctrl";
-            else tpPennyCtrl.Text = "ANAN Ctrl";
+            else tpPennyCtrl.Text = "OC Control";
 
             if (!console.RX2PreampPresent &&
                 console.diversityForm != null)
@@ -6367,7 +6672,7 @@ namespace Thetis
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();
 
-            console.UpdatePAVoltsAmpsDisplay();
+            // console.UpdatePAVoltsAmpsDisplay();
         }
 
         public void UpdateDisplayMeter()
@@ -6431,7 +6736,7 @@ namespace Thetis
             }
 
             if (radGenModelANAN200D.Checked || radGenModelANAN100D.Checked ||
-                radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked)
+                radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked || radGenModelANAN7000D.Checked)
             {
                 if (!tcGeneral.TabPages.Contains(tpADC))
                 {
@@ -6507,7 +6812,7 @@ namespace Thetis
                 }
             }
 
-            if (radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked)
+            if (radGenModelORIONMKII.Checked || radGenModelANAN8000D.Checked || radGenModelANAN7000D.Checked)
             {
                 if (!tcAlexControl.TabPages.Contains(tpAlex2FilterControl))
                 {
@@ -7088,6 +7393,9 @@ namespace Thetis
                 // remove the RX1 main and sub audio streams from the mix set
                 unsafe { cmaster.SetAAudioMixStates((void*)0, 0, 3, 0); }
 
+                // disable VAC
+                if (console.VACEnabled) Audio.EnableVAC1(false);
+
                 // turn OFF the DDC(s) 
                 NetworkIO.EnableRx(0, 0);
                 NetworkIO.EnableRx(1, 0);
@@ -7114,12 +7422,15 @@ namespace Thetis
                 if (was_enabled)
                 {
                     // turn on the DDC(s)
-                    console.UpdateReceivers(true);
+                    console.UpdateDDCs(true);
                     // wait for samples at the new rate to be received
                     Thread.Sleep(1);
                     // add the audio streams to the mix set
                     unsafe { cmaster.SetAAudioMixStates((void*)0, 0, 3, 3); }
                 }
+
+                // enable VAC
+                if (console.VACEnabled) Audio.EnableVAC1(true);
 
                 // turn ON the DSP channels
                 int w_enable = 0;
@@ -7147,8 +7458,10 @@ namespace Thetis
                 WDSP.SetChannelState(WDSP.id(2, 0), 0, 1);
                 // remove the RX2 audio stream from the mix set
                 unsafe { cmaster.SetAAudioMixState((void*)0, 0, 2, false); }
+                // disable VAC
+                if (console.VAC2Enabled) Audio.EnableVAC2(false);
                 // turn OFF the DDC for RX2; had to add rx2_enabled as a parameter to UpdateReceivers() to do this --- THIS IS S HACK.  BETTER WAY?
-                console.UpdateReceivers(false);
+                console.UpdateDDCs(false);
                 // wait for all inflight packets to arrive
                 Thread.Sleep(20);   // need to experiment with this time
 
@@ -7167,12 +7480,14 @@ namespace Thetis
                 // turn the DDC for RX2 back ON; had to add rx2_enabled as a parameter to UpdateReceivers() to do this
                 if (was_enabled)
                 {
-                    console.UpdateReceivers(true);
+                    console.UpdateDDCs(true);
                     // wait for samples at the new rate to be received
                     Thread.Sleep(1);   // need to experiment with this time
                     // add the RX2 audio stream to the mix set
                     unsafe { cmaster.SetAAudioMixState((void*)0, 0, 2, true); }
                 }
+                // enable VAC2
+                if (console.VAC2Enabled) Audio.EnableVAC2(true);
                 // turn ON the DSP channel if it was ON before
                 int w_enable = 0;
                 if (was_enabled) w_enable = 1;
@@ -9863,6 +10178,36 @@ namespace Thetis
                 udANAN8000DPAGainVHF13.Value = 56.2M;
             }
 
+            if (radGenModelANAN7000D.Checked)
+            {
+                ANAN7000DPAGain160 = 51.3f;
+                ANAN7000DPAGain80 = 53.3f;
+                ANAN7000DPAGain60 = 53.9f;
+                ANAN7000DPAGain40 = 54.0f;
+                ANAN7000DPAGain30 = 54.2f;
+                ANAN7000DPAGain20 = 53.6f;
+                ANAN7000DPAGain17 = 53.0f;
+                ANAN7000DPAGain15 = 52.7f;
+                ANAN7000DPAGain12 = 51.7f;
+                ANAN7000DPAGain10 = 50.3f;
+                ANAN7000DPAGain6 = 46.6f;
+
+                udANAN7000DPAGainVHF0.Value = 63.1M;
+                udANAN7000DPAGainVHF1.Value = 63.1M;
+                udANAN7000DPAGainVHF2.Value = 63.1M;
+                udANAN7000DPAGainVHF3.Value = 63.1M;
+                udANAN7000DPAGainVHF4.Value = 63.1M;
+                udANAN7000DPAGainVHF5.Value = 63.1M;
+                udANAN7000DPAGainVHF6.Value = 63.1M;
+                udANAN7000DPAGainVHF7.Value = 63.1M;
+                udANAN7000DPAGainVHF8.Value = 63.1M;
+                udANAN7000DPAGainVHF9.Value = 63.1M;
+                udANAN7000DPAGainVHF10.Value = 63.1M;
+                udANAN7000DPAGainVHF11.Value = 63.1M;
+                udANAN7000DPAGainVHF12.Value = 63.1M;
+                udANAN7000DPAGainVHF13.Value = 63.1M;
+            }
+
             if (radGenModelHermes.Checked)
             {
                 HermesPAGain160 = 41.0f;
@@ -11284,13 +11629,6 @@ namespace Thetis
         // Display Tab Event Handlers
         // ======================================================
 
-        private void btnWizard_Click(object sender, System.EventArgs e)
-        {
-            // SetupWizard w = new SetupWizard(console, comboAudioSoundCard.SelectedIndex);
-            // w.Show();
-            // w.Focus();
-        }
-
         private void btnOK_Click(object sender, System.EventArgs e)
         {
             console.SetFocusMaster(true);
@@ -11354,7 +11692,6 @@ namespace Thetis
             string path = console.AppDataPath;
             path = path.Substring(0, path.LastIndexOf("\\"));
             openFileDialog1.InitialDirectory = path;
-            openFileDialog1.ShowDialog();
             bool ok = false;
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -13594,6 +13931,7 @@ namespace Thetis
         {
             grpPennyExtCtrl.Enabled = chkPennyExtCtrl.Checked;
             grpPennyExtCtrlVHF.Enabled = chkPennyExtCtrl.Checked;
+            grpExtCtrlSWL.Enabled = chkPennyExtCtrl.Checked;
             console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;
 
 #if false 		
@@ -13683,56 +14021,298 @@ namespace Thetis
 
         private void radAlexR_160_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_160.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_160.Checked) radAlexT1_160.Checked = true;
+                    radAlexT2_160.Enabled = false;
+                }
+                else radAlexT2_160.Enabled = true;
+            }
+            else radAlexT2_160.Enabled = true;
+
+            if (radAlexR3_160.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_160.Checked) radAlexT1_160.Checked = true;
+                    radAlexT3_160.Enabled = false;
+                }
+                else radAlexT3_160.Enabled = true;
+            }
+            else radAlexT3_160.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B160M, false);
         }
 
         private void radAlexR_80_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_80.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_80.Checked) radAlexT1_80.Checked = true;
+                    radAlexT2_80.Enabled = false;
+                }
+                else radAlexT2_80.Enabled = true;
+            }
+            else radAlexT2_80.Enabled = true;
+
+            if (radAlexR3_80.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_80.Checked) radAlexT1_80.Checked = true;
+                    radAlexT3_80.Enabled = false;
+                }
+                else radAlexT3_80.Enabled = true;
+            }
+            else radAlexT3_80.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B80M, false);
         }
 
         private void radAlexR_60_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_60.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_60.Checked) radAlexT1_60.Checked = true;
+                    radAlexT2_60.Enabled = false;
+                }
+                else radAlexT2_60.Enabled = true;
+            }
+            else radAlexT2_60.Enabled = true;
+
+            if (radAlexR3_60.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_60.Checked) radAlexT1_60.Checked = true;
+                    radAlexT3_60.Enabled = false;
+                }
+                else radAlexT3_60.Enabled = true;
+            }
+            else radAlexT3_60.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B60M, false);
         }
 
         private void radAlexR_40_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_40.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_40.Checked) radAlexT1_40.Checked = true;
+                    radAlexT2_40.Enabled = false;
+                }
+                else radAlexT2_40.Enabled = true;
+            }
+            else radAlexT2_40.Enabled = true;
+
+            if (radAlexR3_40.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_40.Checked) radAlexT1_40.Checked = true;
+                    radAlexT3_40.Enabled = false;
+                }
+                else radAlexT3_40.Enabled = true;
+            }
+            else radAlexT3_40.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B40M, false);
         }
 
         private void radAlexR_30_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_30.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_30.Checked) radAlexT1_30.Checked = true;
+                    radAlexT2_30.Enabled = false;
+                }
+                else radAlexT2_30.Enabled = true;
+            }
+            else radAlexT2_30.Enabled = true;
+
+            if (radAlexR3_30.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_30.Checked) radAlexT1_30.Checked = true;
+                    radAlexT3_30.Enabled = false;
+                }
+                else radAlexT3_30.Enabled = true;
+            }
+            else radAlexT3_30.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B30M, false);
         }
 
         private void radAlexR_20_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_20.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_20.Checked) radAlexT1_20.Checked = true;
+                    radAlexT2_20.Enabled = false;
+                }
+                else radAlexT2_20.Enabled = true;
+            }
+            else radAlexT2_20.Enabled = true;
+
+            if (radAlexR3_20.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_20.Checked) radAlexT1_20.Checked = true;
+                    radAlexT3_20.Enabled = false;
+                }
+                else radAlexT3_20.Enabled = true;
+            }
+            else radAlexT3_20.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B20M, false);
         }
 
         private void radAlexR_17_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_17.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_17.Checked) radAlexT1_17.Checked = true;
+                    radAlexT2_17.Enabled = false;
+                }
+                else radAlexT2_17.Enabled = true;
+            }
+            else radAlexT2_17.Enabled = true;
+
+            if (radAlexR3_17.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_17.Checked) radAlexT1_17.Checked = true;
+                    radAlexT3_17.Enabled = false;
+                }
+                else radAlexT3_17.Enabled = true;
+            }
+            else radAlexT3_17.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B17M, false);
         }
 
         private void radAlexR_15_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_15.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_15.Checked) radAlexT1_15.Checked = true;
+                    radAlexT2_15.Enabled = false;
+                }
+                else radAlexT2_15.Enabled = true;
+            }
+            else radAlexT2_15.Enabled = true;
+
+            if (radAlexR3_15.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_15.Checked) radAlexT1_15.Checked = true;
+                    radAlexT3_15.Enabled = false;
+                }
+                else radAlexT3_15.Enabled = true;
+            }
+            else radAlexT3_15.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B15M, false);
         }
 
         private void radAlexR_12_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_12.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_12.Checked) radAlexT1_12.Checked = true;
+                    radAlexT2_12.Enabled = false;
+                }
+                else radAlexT2_12.Enabled = true;
+            }
+            else radAlexT2_12.Enabled = true;
+
+            if (radAlexR3_12.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_12.Checked) radAlexT1_12.Checked = true;
+                    radAlexT3_12.Enabled = false;
+                }
+                else radAlexT3_12.Enabled = true;
+            }
+            else radAlexT3_12.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B12M, false);
         }
 
         private void radAlexR_10_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_10.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_10.Checked) radAlexT1_10.Checked = true;
+                    radAlexT2_10.Enabled = false;
+                }
+                else radAlexT2_10.Enabled = true;
+            }
+            else radAlexT2_10.Enabled = true;
+
+            if (radAlexR3_10.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_10.Checked) radAlexT1_10.Checked = true;
+                    radAlexT3_10.Enabled = false;
+                }
+                else radAlexT3_10.Enabled = true;
+            }
+            else radAlexT3_10.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B10M, false);
         }
 
         private void radAlexR_6_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (radAlexR2_6.Checked)
+            {
+                if (chkBlockTxAnt2.Checked)
+                {
+                    if (radAlexT2_6.Checked) radAlexT1_6.Checked = true;
+                    radAlexT2_6.Enabled = false;
+                }
+                else radAlexT2_6.Enabled = true;
+            }
+            else radAlexT2_6.Enabled = true;
+
+            if (radAlexR3_6.Checked)
+            {
+                if (chkBlockTxAnt3.Checked)
+                {
+                    if (radAlexT3_6.Checked) radAlexT1_6.Checked = true;
+                    radAlexT3_6.Enabled = false;
+                }
+                else radAlexT3_6.Enabled = true;
+            }
+            else radAlexT3_6.Enabled = true;
+
             ProcessAlexAntRadioButton(sender, Band.B6M, false);
         }
 
@@ -14184,6 +14764,17 @@ namespace Thetis
             foreach (Control c in grpPennyExtCtrlVHF.Controls)
             {
                 if (c.Name.StartsWith("chkPenOC"))
+                {
+                    ((CheckBoxTS)c).Checked = false;
+                }
+            }
+        }
+
+        private void btnCtrlSWLReset_Click(object sender, EventArgs e)
+        {
+            foreach (Control c in grpExtCtrlSWL.Controls)
+            {
+                if (c.Name.StartsWith("chkOC"))
                 {
                     ((CheckBoxTS)c).Checked = false;
                 }
@@ -14911,6 +15502,454 @@ namespace Thetis
             Penny.getPenny().setBandABitMask(Band.VHF11, (byte)val, true);
             console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
         }
+        
+        private void chkOCrcvLMW_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcvLMW1.Checked) val += 1 << 0;
+            if (chkOCrcvLMW2.Checked) val += 1 << 1;
+            if (chkOCrcvLMW3.Checked) val += 1 << 2;
+            if (chkOCrcvLMW4.Checked) val += 1 << 3;
+            if (chkOCrcvLMW5.Checked) val += 1 << 4;
+            if (chkOCrcvLMW6.Checked) val += 1 << 5;
+            if (chkOCrcvLMW7.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.BLMF, (byte)(val & 0x70), false); // 0000xxx
+            Penny.getPenny().setBandABitMask(Band.BLMF, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv120_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv1201.Checked) val += 1 << 0;
+            if (chkOCrcv1202.Checked) val += 1 << 1;
+            if (chkOCrcv1203.Checked) val += 1 << 2;
+            if (chkOCrcv1204.Checked) val += 1 << 3;
+            if (chkOCrcv1205.Checked) val += 1 << 4;
+            if (chkOCrcv1206.Checked) val += 1 << 5;
+            if (chkOCrcv1207.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B120M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B120M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv90_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv901.Checked) val += 1 << 0;
+            if (chkOCrcv902.Checked) val += 1 << 1;
+            if (chkOCrcv903.Checked) val += 1 << 2;
+            if (chkOCrcv904.Checked) val += 1 << 3;
+            if (chkOCrcv905.Checked) val += 1 << 4;
+            if (chkOCrcv906.Checked) val += 1 << 5;
+            if (chkOCrcv907.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B90M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B90M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv61_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv611.Checked) val += 1 << 0;
+            if (chkOCrcv612.Checked) val += 1 << 1;
+            if (chkOCrcv613.Checked) val += 1 << 2;
+            if (chkOCrcv614.Checked) val += 1 << 3;
+            if (chkOCrcv615.Checked) val += 1 << 4;
+            if (chkOCrcv616.Checked) val += 1 << 5;
+            if (chkOCrcv617.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B61M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B61M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv49_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv491.Checked) val += 1 << 0;
+            if (chkOCrcv492.Checked) val += 1 << 1;
+            if (chkOCrcv493.Checked) val += 1 << 2;
+            if (chkOCrcv494.Checked) val += 1 << 3;
+            if (chkOCrcv495.Checked) val += 1 << 4;
+            if (chkOCrcv496.Checked) val += 1 << 5;
+            if (chkOCrcv497.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B49M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B49M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv41_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv411.Checked) val += 1 << 0;
+            if (chkOCrcv412.Checked) val += 1 << 1;
+            if (chkOCrcv413.Checked) val += 1 << 2;
+            if (chkOCrcv414.Checked) val += 1 << 3;
+            if (chkOCrcv415.Checked) val += 1 << 4;
+            if (chkOCrcv416.Checked) val += 1 << 5;
+            if (chkOCrcv417.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B41M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B41M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv31_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv311.Checked) val += 1 << 0;
+            if (chkOCrcv312.Checked) val += 1 << 1;
+            if (chkOCrcv313.Checked) val += 1 << 2;
+            if (chkOCrcv314.Checked) val += 1 << 3;
+            if (chkOCrcv315.Checked) val += 1 << 4;
+            if (chkOCrcv316.Checked) val += 1 << 5;
+            if (chkOCrcv317.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B31M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B31M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv25_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv251.Checked) val += 1 << 0;
+            if (chkOCrcv252.Checked) val += 1 << 1;
+            if (chkOCrcv253.Checked) val += 1 << 2;
+            if (chkOCrcv254.Checked) val += 1 << 3;
+            if (chkOCrcv255.Checked) val += 1 << 4;
+            if (chkOCrcv256.Checked) val += 1 << 5;
+            if (chkOCrcv257.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B25M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B25M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv22_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv221.Checked) val += 1 << 0;
+            if (chkOCrcv222.Checked) val += 1 << 1;
+            if (chkOCrcv223.Checked) val += 1 << 2;
+            if (chkOCrcv224.Checked) val += 1 << 3;
+            if (chkOCrcv225.Checked) val += 1 << 4;
+            if (chkOCrcv226.Checked) val += 1 << 5;
+            if (chkOCrcv227.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B22M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B22M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code  
+        }
+
+        private void chkOCrcv19_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv191.Checked) val += 1 << 0;
+            if (chkOCrcv192.Checked) val += 1 << 1;
+            if (chkOCrcv193.Checked) val += 1 << 2;
+            if (chkOCrcv194.Checked) val += 1 << 3;
+            if (chkOCrcv195.Checked) val += 1 << 4;
+            if (chkOCrcv196.Checked) val += 1 << 5;
+            if (chkOCrcv197.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B19M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B19M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code  
+        }
+
+        private void chkOCrcv16_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv161.Checked) val += 1 << 0;
+            if (chkOCrcv162.Checked) val += 1 << 1;
+            if (chkOCrcv163.Checked) val += 1 << 2;
+            if (chkOCrcv164.Checked) val += 1 << 3;
+            if (chkOCrcv165.Checked) val += 1 << 4;
+            if (chkOCrcv166.Checked) val += 1 << 5;
+            if (chkOCrcv167.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B16M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B16M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code  
+        }
+
+        private void chkOCrcv14_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv141.Checked) val += 1 << 0;
+            if (chkOCrcv142.Checked) val += 1 << 1;
+            if (chkOCrcv143.Checked) val += 1 << 2;
+            if (chkOCrcv144.Checked) val += 1 << 3;
+            if (chkOCrcv145.Checked) val += 1 << 4;
+            if (chkOCrcv146.Checked) val += 1 << 5;
+            if (chkOCrcv147.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B14M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B14M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+
+        private void chkOCrcv13_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv131.Checked) val += 1 << 0;
+            if (chkOCrcv132.Checked) val += 1 << 1;
+            if (chkOCrcv133.Checked) val += 1 << 2;
+            if (chkOCrcv134.Checked) val += 1 << 3;
+            if (chkOCrcv135.Checked) val += 1 << 4;
+            if (chkOCrcv136.Checked) val += 1 << 5;
+            if (chkOCrcv137.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B13M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B13M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code  
+        }
+
+        private void chkOCrcv11_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCrcv111.Checked) val += 1 << 0;
+            if (chkOCrcv112.Checked) val += 1 << 1;
+            if (chkOCrcv113.Checked) val += 1 << 2;
+            if (chkOCrcv114.Checked) val += 1 << 3;
+            if (chkOCrcv115.Checked) val += 1 << 4;
+            if (chkOCrcv116.Checked) val += 1 << 5;
+            if (chkOCrcv117.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B11M, (byte)(val & 0x70), false);
+            Penny.getPenny().setBandABitMask(Band.B11M, (byte)val, false);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
+        }
+        
+        private void chkOCxmitLMW_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmitLMW1.Checked) val += 1 << 0;
+            if (chkOCxmitLMW2.Checked) val += 1 << 1;
+            if (chkOCxmitLMW3.Checked) val += 1 << 2;
+            if (chkOCxmitLMW4.Checked) val += 1 << 3;
+            if (chkOCxmitLMW5.Checked) val += 1 << 4;
+            if (chkOCxmitLMW6.Checked) val += 1 << 5;
+            if (chkOCxmitLMW7.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.BLMF, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.BLMF, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit120_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit1201.Checked) val += 1 << 0;
+            if (chkOCxmit1202.Checked) val += 1 << 1;
+            if (chkOCxmit1203.Checked) val += 1 << 2;
+            if (chkOCxmit1204.Checked) val += 1 << 3;
+            if (chkOCxmit1205.Checked) val += 1 << 4;
+            if (chkOCxmit1206.Checked) val += 1 << 5;
+            if (chkOCxmit1207.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B120M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B120M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit90_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit901.Checked) val += 1 << 0;
+            if (chkOCxmit902.Checked) val += 1 << 1;
+            if (chkOCxmit903.Checked) val += 1 << 2;
+            if (chkOCxmit904.Checked) val += 1 << 3;
+            if (chkOCxmit905.Checked) val += 1 << 4;
+            if (chkOCxmit906.Checked) val += 1 << 5;
+            if (chkOCxmit907.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B90M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B90M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit61_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit611.Checked) val += 1 << 0;
+            if (chkOCxmit612.Checked) val += 1 << 1;
+            if (chkOCxmit613.Checked) val += 1 << 2;
+            if (chkOCxmit614.Checked) val += 1 << 3;
+            if (chkOCxmit615.Checked) val += 1 << 4;
+            if (chkOCxmit616.Checked) val += 1 << 5;
+            if (chkOCxmit617.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B61M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B61M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit49_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit491.Checked) val += 1 << 0;
+            if (chkOCxmit492.Checked) val += 1 << 1;
+            if (chkOCxmit493.Checked) val += 1 << 2;
+            if (chkOCxmit494.Checked) val += 1 << 3;
+            if (chkOCxmit495.Checked) val += 1 << 4;
+            if (chkOCxmit496.Checked) val += 1 << 5;
+            if (chkOCxmit497.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B49M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B49M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit41_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit411.Checked) val += 1 << 0;
+            if (chkOCxmit412.Checked) val += 1 << 1;
+            if (chkOCxmit413.Checked) val += 1 << 2;
+            if (chkOCxmit414.Checked) val += 1 << 3;
+            if (chkOCxmit415.Checked) val += 1 << 4;
+            if (chkOCxmit416.Checked) val += 1 << 5;
+            if (chkOCxmit417.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B41M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B41M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit31_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit311.Checked) val += 1 << 0;
+            if (chkOCxmit312.Checked) val += 1 << 1;
+            if (chkOCxmit313.Checked) val += 1 << 2;
+            if (chkOCxmit314.Checked) val += 1 << 3;
+            if (chkOCxmit315.Checked) val += 1 << 4;
+            if (chkOCxmit316.Checked) val += 1 << 5;
+            if (chkOCxmit317.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B31M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B31M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit25_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit251.Checked) val += 1 << 0;
+            if (chkOCxmit252.Checked) val += 1 << 1;
+            if (chkOCxmit253.Checked) val += 1 << 2;
+            if (chkOCxmit254.Checked) val += 1 << 3;
+            if (chkOCxmit255.Checked) val += 1 << 4;
+            if (chkOCxmit256.Checked) val += 1 << 5;
+            if (chkOCxmit257.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B25M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B25M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit22_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit221.Checked) val += 1 << 0;
+            if (chkOCxmit222.Checked) val += 1 << 1;
+            if (chkOCxmit223.Checked) val += 1 << 2;
+            if (chkOCxmit224.Checked) val += 1 << 3;
+            if (chkOCxmit225.Checked) val += 1 << 4;
+            if (chkOCxmit226.Checked) val += 1 << 5;
+            if (chkOCxmit227.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B22M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B22M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit19_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit191.Checked) val += 1 << 0;
+            if (chkOCxmit192.Checked) val += 1 << 1;
+            if (chkOCxmit193.Checked) val += 1 << 2;
+            if (chkOCxmit194.Checked) val += 1 << 3;
+            if (chkOCxmit195.Checked) val += 1 << 4;
+            if (chkOCxmit196.Checked) val += 1 << 5;
+            if (chkOCxmit197.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B19M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B19M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit16_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit161.Checked) val += 1 << 0;
+            if (chkOCxmit162.Checked) val += 1 << 1;
+            if (chkOCxmit163.Checked) val += 1 << 2;
+            if (chkOCxmit164.Checked) val += 1 << 3;
+            if (chkOCxmit165.Checked) val += 1 << 4;
+            if (chkOCxmit166.Checked) val += 1 << 5;
+            if (chkOCxmit167.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B16M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B16M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit14_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit141.Checked) val += 1 << 0;
+            if (chkOCxmit142.Checked) val += 1 << 1;
+            if (chkOCxmit143.Checked) val += 1 << 2;
+            if (chkOCxmit144.Checked) val += 1 << 3;
+            if (chkOCxmit145.Checked) val += 1 << 4;
+            if (chkOCxmit146.Checked) val += 1 << 5;
+            if (chkOCxmit147.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B14M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B14M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit13_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit131.Checked) val += 1 << 0;
+            if (chkOCxmit132.Checked) val += 1 << 1;
+            if (chkOCxmit133.Checked) val += 1 << 2;
+            if (chkOCxmit134.Checked) val += 1 << 3;
+            if (chkOCxmit135.Checked) val += 1 << 4;
+            if (chkOCxmit136.Checked) val += 1 << 5;
+            if (chkOCxmit137.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B13M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B13M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
+
+        private void chkOCxmit11_CheckedChanged(object sender, EventArgs e)
+        {
+            int val = 0;
+            if (chkOCxmit111.Checked) val += 1 << 0;
+            if (chkOCxmit112.Checked) val += 1 << 1;
+            if (chkOCxmit113.Checked) val += 1 << 2;
+            if (chkOCxmit114.Checked) val += 1 << 3;
+            if (chkOCxmit115.Checked) val += 1 << 4;
+            if (chkOCxmit116.Checked) val += 1 << 5;
+            if (chkOCxmit117.Checked) val += 1 << 6;
+
+            Penny.getPenny().setBandBBitMask(Band.B11M, (byte)(val & 0x70), true);
+            Penny.getPenny().setBandABitMask(Band.B11M, (byte)val, true);
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
+        }
 
         private void chkDisable6mLNAonTX_CheckedChanged(object sender, EventArgs e)
         {
@@ -15097,19 +16136,26 @@ namespace Thetis
                     lblHFTxControl.Text = "J6 Transmit Pins";
                     lblVHFRxControl.Text = "J6 Receive Pins";
                     lblVHFTxControl.Text = "J6 Transmit Pins";
+                    lblSWLRxControl.Text = "J6 Receive Pins";
+                    lblSWLTxControl.Text = "J6 Transmit Pins";
+                    break;
+                case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN8000D:
+                    lblHFRxControl.Text = "OC Receive Pins";
+                    lblHFTxControl.Text = "OC Transmit Pins";
+                    lblVHFRxControl.Text = "OC Receive Pins";
+                    lblVHFTxControl.Text = "OC Transmit Pins";
+                    lblSWLRxControl.Text = "OC Receive Pins";
+                    lblSWLTxControl.Text = "OC Transmit Pins";
                     break;
                 default:
                     lblHFRxControl.Text = "J16 Receive Pins";
                     lblHFTxControl.Text = "J16 Transmit Pins";
                     lblVHFRxControl.Text = "J16 Receive Pins";
                     lblVHFTxControl.Text = "J16 Transmit Pins";
+                    lblSWLRxControl.Text = "J16 Receive Pins";
+                    lblSWLTxControl.Text = "J16 Transmit Pins";
                     break;
-                //default:
-                //    lblHFRxControl.Text = "J6 Receive Pins";
-                //    lblHFTxControl.Text = "J6 Transmit Pins";
-                //    lblVHFRxControl.Text = "J6 Receive Pins";
-                //    lblVHFTxControl.Text = "J6 Transmit Pins";
-                //    break;
             }
         }
 
@@ -17494,7 +18540,7 @@ namespace Thetis
         private void chkANAN8000DLEDisplayVoltsAmps_CheckedChanged(object sender, EventArgs e)
         {
             console.ANAN8000DLEDisplayVoltsAmps = chkANAN8000DLEDisplayVoltsAmps.Checked;
-            console.UpdatePAVoltsAmpsDisplay();
+            //console.UpdatePAVoltsAmpsDisplay();
         }
 
         private void ud6mRx2LNAGainOffset_ValueChanged(object sender, EventArgs e)
@@ -17680,6 +18726,166 @@ namespace Thetis
         private void btnExportCurrentTXProfile_Click(object sender, EventArgs e)
         {
             ExportCurrentTxProfile();
+        }
+
+        private void timer_VAC_Monitor_Tick(object sender, EventArgs e)
+        {
+            int underflows, overflows, ringsize;
+            double var;
+            unsafe
+            {
+                ivac.getIVACdiags(0, 0, &underflows, &overflows, &var, &ringsize);
+            }
+            lblVAC1ovfl.Text = overflows.ToString();
+            lblVAC1unfl.Text = underflows.ToString();
+            lblVAC1var.Text = var.ToString("F6");
+            unsafe
+            {
+                ivac.getIVACdiags(0, 1, &underflows, &overflows, &var, &ringsize);
+            }
+            lblVAC1ovfl2.Text = overflows.ToString();
+            lblVAC1unfl2.Text = underflows.ToString();
+            lblVAC1var2.Text = var.ToString("F6");
+
+            unsafe
+            {
+                ivac.getIVACdiags(1, 0, &underflows, &overflows, &var, &ringsize);
+            }
+            lblVAC2ovfl.Text = overflows.ToString();
+            lblVAC2unfl.Text = underflows.ToString();
+            lblVAC2var.Text = var.ToString("F6");
+            unsafe
+            {
+                ivac.getIVACdiags(1, 1, &underflows, &overflows, &var, &ringsize);
+            }
+            lblVAC2ovfl2.Text = overflows.ToString();
+            lblVAC2unfl2.Text = underflows.ToString();
+            lblVAC2var2.Text = var.ToString("F6");
+        }
+
+        private void chkVAC1_Force_CheckedChanged(object sender, EventArgs e)
+        {
+            bool force = chkVAC1_Force.Checked;
+            double fvar = (double)udVAC1_Force.Value;
+            ivac.forceIVACvar(0, 0, force, fvar);
+        }
+
+        private void chkVAC1_Force2_CheckedChanged(object sender, EventArgs e)
+        {
+            bool force = chkVAC1_Force2.Checked;
+            double fvar = (double)udVAC1_Force2.Value;
+            ivac.forceIVACvar(0, 1, force, fvar);
+        }
+
+        private void chkVAC2_Force_CheckedChanged(object sender, EventArgs e)
+        {
+            bool force = chkVAC2_Force.Checked;
+            double fvar = (double)udVAC2_Force.Value;
+            ivac.forceIVACvar(1, 0, force, fvar);
+        }
+
+        private void chkVAC2_Force2_CheckedChanged(object sender, EventArgs e)
+        {
+            bool force = chkVAC2_Force2.Checked;
+            double fvar = (double)udVAC2_Force2.Value;
+            ivac.forceIVACvar(1, 1, force, fvar);
+        }
+
+        private void chkBlockTxAnt2_CheckedChanged(object sender, EventArgs e)
+        {
+            radAlexR_160_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_80_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_60_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_40_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_30_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_20_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_17_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_15_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_12_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_10_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_6_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkBlockTxAnt3_CheckedChanged(object sender, EventArgs e)
+        {
+            radAlexR_160_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_80_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_60_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_40_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_30_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_20_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_17_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_15_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_12_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_10_CheckedChanged(this, EventArgs.Empty);
+            radAlexR_6_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkLPFBypass_CheckedChanged(object sender, EventArgs e)
+        {
+            console.LPFBypass = chkLPFBypass.Checked;
+        }
+
+        private void lblVAC1ovfl_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(0, 0);
+        }
+
+        private void lblVAC1unfl_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(0, 0);
+        }
+
+        private void lblVAC1ovfl2_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(0, 1);
+        }
+
+        private void lblVAC1unfl2_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(0, 1);
+        }
+
+        private void lblVAC2ovfl_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(1, 0);
+        }
+
+        private void lblVAC2unfl_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(1, 0);
+        }
+
+        private void lblVAC2ovfl2_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(1, 1);
+        }
+
+        private void lblVAC2unfl2_Click(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(1, 1);
+        }
+
+        private void timer_LED_Mirror_Tick(object sender, EventArgs e)
+        {
+            int LED_data = 0;
+            LED_data = cmaster.getLEDs();
+            Color[] LEDColor = new Color[10];
+            for (int i = 0; i < 10; i++)
+                if (((LED_data >> i) & 1) == 1)
+                    LEDColor[i] = Color.Red;
+                else
+                    LEDColor[i] = Color.Black;
+            lblLED01.BackColor = LEDColor[0];
+            lblLED02.BackColor = LEDColor[1];
+            lblLED03.BackColor = LEDColor[2];
+            lblLED04.BackColor = LEDColor[3];
+            lblLED05.BackColor = LEDColor[4];
+            lblLED06.BackColor = LEDColor[5];
+            lblLED07.BackColor = LEDColor[6];
+            lblLED08.BackColor = LEDColor[7];
+            lblLED09.BackColor = LEDColor[8];
+            lblLED10.BackColor = LEDColor[9];
         }
     }
 

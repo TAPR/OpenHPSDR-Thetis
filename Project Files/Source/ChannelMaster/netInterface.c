@@ -23,7 +23,7 @@
 #include "network.h"
 #include "obbuffs.h"
 
-#define MDECAY  0.9992f
+#define MDECAY 0.99f;
 const int numInputBuffs = 12;
 
 //
@@ -212,14 +212,14 @@ int getExciterPower() {
 PORT
 float getFwdPower() {
 
-	PeakFwdPower((float)prn->tx[0].fwd_power);
+	// PeakFwdPower((float)prn->tx[0].fwd_power);
 	return FwdPower;
 }
 
 PORT
 float getRevPower() {
 
-	PeakRevPower((float)prn->tx[0].rev_power);
+	// PeakRevPower((float)prn->tx[0].rev_power);
 	return RevPower;
 }
 
@@ -407,7 +407,7 @@ PORT
 void SetOutputPowerFactor(int u) {
 
 	
-	if (prn->tx[0].drive_level = u)
+	if (prn->tx[0].drive_level != u)
 	{
 		prn->tx[0].drive_level = u;
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
@@ -1052,8 +1052,8 @@ void EnableRxs(int rxs) {
 		{
 			prn->rx[i].enable = (rxs >> i) & 0x1;
 		}
-		if (listenSock != INVALID_SOCKET)
-			CmdRx();
+		/*if (listenSock != INVALID_SOCKET)
+			CmdRx();*/
 	}
 
 }
@@ -1064,8 +1064,8 @@ void EnableRxSync(int id, int sync)
 	if (prn->rx[id].sync != sync)
 	{
 		prn->rx[id].sync = sync & 0xff;
-		if (listenSock != INVALID_SOCKET)
-			CmdRx();
+		/*if (listenSock != INVALID_SOCKET)
+			CmdRx();*/
 	}
 }
 
@@ -1101,6 +1101,36 @@ void SetSampleRate(int id, int rate)
 			CmdRx();
 	}
 
+}
+
+PORT
+void SetDDCRate(int id, int rate)
+{
+	if (prn->rx[id].sampling_rate != rate)
+	{
+		prn->rx[id].sampling_rate = rate;
+		switch (rate)
+		{
+		case 48000:
+			prn->rx[id].sampling_rate = 48;
+			break;
+		case 96000:
+			prn->rx[id].sampling_rate = 96;
+			break;
+		case 192000:
+			prn->rx[id].sampling_rate = 192;
+			break;
+		case 384000:
+			prn->rx[id].sampling_rate = 384;
+			break;
+		case 768000:
+			prn->rx[id].sampling_rate = 768;
+			break;
+		case 1536000:
+			prn->rx[id].sampling_rate = 1536;
+			break;
+		}
+	}
 }
 
 PORT
@@ -1177,6 +1207,12 @@ void SetXVTREnable(int enable)
 		if (listenSock != INVALID_SOCKET)
 			CmdHighPriority();
 	}
+}
+
+PORT
+int getLEDs()
+{
+	return prn->hardware_LEDs;
 }
 
 PORT

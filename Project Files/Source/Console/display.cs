@@ -101,7 +101,7 @@ namespace Thetis
         #region Variable Declaration
 
         public const float CLEAR_FLAG = -999.999F;				// for resetting buffers
-        public const int BUFFER_SIZE = 4096;
+        public const int BUFFER_SIZE = 16384;
 
         public static Console console;
         public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs and dx spotter
@@ -10784,9 +10784,9 @@ namespace Thetis
             {
                 waterfall_data = new float[W];		// array of points to display
             }
-            float slope = 0.0F;						// samples to process per pixel
-            int num_samples = 0;					// number of samples to process
-            int start_sample_index = 0;				// index to begin looking at samples
+           // float slope = 0.0F;						// samples to process per pixel
+            //int num_samples = 0;					// number of samples to process
+            //int start_sample_index = 0;				// index to begin looking at samples
             int Low = 0;
             int High = 0;
             float local_max_y = float.MinValue;

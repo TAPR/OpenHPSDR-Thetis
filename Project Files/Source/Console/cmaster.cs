@@ -186,6 +186,11 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "SetADCSupply", CallingConvention = CallingConvention.Cdecl)]
         extern public static void SetADCSupply(int txid, int v);
 
+        // monitoring & debugging
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "getLEDs", CallingConvention = CallingConvention.Cdecl)]
+        extern public static int getLEDs();
+
         #endregion
 
         #region properties
@@ -230,9 +235,7 @@ namespace Thetis
             }
         }
 
-        #endregion
-
-        #region logic calls
+       
 
         // number of software receivers
         private static int cmRCVR = 5;  
@@ -247,6 +250,17 @@ namespace Thetis
         {
             get { return cmSubRCVR; }
         }
+
+        private static int ps_rate = 192000;
+        public static int PSrate
+        {
+            get { return ps_rate; }
+            set { ps_rate = value; }
+        }
+
+        #endregion
+
+        #region logic calls
 
         public static void CMCreateCMaster()
         {
@@ -285,7 +299,7 @@ namespace Thetis
             //      CMLoadRouterAll() which is called each time the receiver model changes.
             SetPSRxIdx(0, 0);   // txid = 0, all current models use Stream0 for RX feedback
             SetPSTxIdx(0, 1);   // txid = 0, all current models use Stream1 for TX feedback
-            puresignal.SetPSFeedbackRate(txch, 192000);
+            puresignal.SetPSFeedbackRate(txch, ps_rate);
             puresignal.SetPSHWPeak(txch, 0.2899);
 
             // setup transmitter display
@@ -319,6 +333,7 @@ namespace Thetis
                     case HPSDRModel.ANAN100D:
                     case HPSDRModel.ANAN200D:
                     case HPSDRModel.ORIONMKII:
+                    case HPSDRModel.ANAN7000D:
                     case HPSDRModel.ANAN8000D:
                         // This ANGELIA table is for test purposes and it routes Rx0 and Rx1 to RX1 and RX2, 
                         //      respectively, (as well as to PureSignal) when transmitting with PureSignal 
@@ -408,6 +423,7 @@ namespace Thetis
                     case HPSDRModel.ANAN100D:
                     case HPSDRModel.ANAN200D:
                     case HPSDRModel.ORIONMKII:
+                    case HPSDRModel.ANAN7000D:
                     case HPSDRModel.ANAN8000D:
                         // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
                         int[] Angelia_Function = new int[56] 

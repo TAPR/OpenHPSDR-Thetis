@@ -1,7 +1,7 @@
 /*
 *
 * Copyright (C) 2008 Bill Tracey, KD5TFD, bill@ewjt.com 
-* Copyright (C) 2010-2013  Doug Wigley
+* Copyright (C) 2010-2018  Doug Wigley
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -64,6 +64,9 @@ namespace Thetis
         public static bool Ext2OutOnTx = false;
         public static bool init_update = false;
         public static bool rx_out_override = false;
+        public static bool TRxAnt = false;
+
+        public static bool trx_ant_not_same { set; get; }
 
 		public void setRxAnt(Band band, byte ant) 
 		{ 
@@ -291,7 +294,11 @@ namespace Thetis
                 }
 
                 rx_out = rx_only_ant != 0 ? 1 : 0;
-                trx_ant = RxAnt[idx];
+
+                if (TRxAnt) trx_ant = TxAnt[idx];
+                else trx_ant = RxAnt[idx];
+                if (RxAnt[idx] != TxAnt[idx]) trx_ant_not_same = true;
+                else trx_ant_not_same = false;
             }
 
             if (rx_out_override && rx_out == 1)

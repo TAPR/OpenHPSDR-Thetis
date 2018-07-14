@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2015-2016 Warren Pratt, NR0V
+Copyright (C) 2015-2017 Warren Pratt, NR0V
 Copyright (C) 2015-2016 Doug Wigley, W5WC
 
 This program is free software; you can redistribute it and/or
@@ -38,35 +38,23 @@ typedef struct _ivac
 	int run;
 	int iq_type;					// 1 if using raw IQ data; 0 for audio
 	int stereo;						// 1 for stereo; 0 otherwise
-	//int pre_rate;					// sample rate before DSP
+	int iq_rate;
 	int mic_rate;
-	//int post_rate;					// sample rate after DSP
 	int audio_rate;
 	int txmon_rate;
 	int vac_rate;					// VAC sample rate
-	//int pre_size;					// buffer size before DSP
 	int mic_size;
 	int iq_size;
-	//int post_size;					// buffer size after DSP
 	int audio_size;
 	int txmon_size;
 	int vac_size;					// VAC buffer size
 	void *mixer;					// pointer to async audio mixer
-	void *resampPtrIn;
-	void *resampPtrOut;
 
-	double *res_in;
-	double *res_out;
+	void *rmatchIN;
+	void *rmatchOUT;
 
-	ringbuffer_t *rb_vacIN; 
-	ringbuffer_t *rb_vacOUT;
-
-	int in_resamp;					// 1 if need to resample input to VAC; 0 otherwise
-	int out_resamp;					// 1 if need to resample output from VAC; 0 otherwise
-	int reset;
-
-	CRITICAL_SECTION cs_vac;
-	CRITICAL_SECTION cs_vacw;
+	int INringsize;
+	int OUTringsize;
 
 	PaStreamParameters inParam, outParam;
 	PaStream *Stream;
@@ -86,12 +74,15 @@ typedef struct _ivac
 	int vac_combine_input;
 	double vac_preamp;
 	double vac_rx_scale;
+	int INforce;				// force var ratio for rmatchIN
+	double INfvar;				// var value when forced for rmatchIN
+	int OUTforce;				// force var ratio for rmatchOUT
+	double OUTfvar;				// var value when forced for rmatchOUT
 } ivac, *IVAC;
 
 void combinebuff (int n, double* a, double* combined);
 void scalebuff (int n, double* in, double k, double* out);
 void xvac_out(int id, int nsamples, double* buff);
-void SetRingBufferSize(int id);
 
 extern __declspec(dllexport) void *create_resampleV (int samplerate_in, int samplerate_out);
 extern __declspec(dllexport) void xresampleV (double *input, double *output, int numsamps, int *outsamps, void *ptr);
@@ -104,6 +95,7 @@ extern __declspec(dllexport) void create_ivac (
 	int run,
 	int iq_type,				// 1 if using raw IQ samples, 0 for audio
 	int stereo,					// 1 for stereo, 0 otherwise
+	int iq_rate,				// sample rate of RX I-Q data
 	int mic_rate,				// sample rate of data from VAC to TX MIC input
 	int audio_rate,				// sample rate of data from RCVR Audio data to VAC
 	int txmon_rate,				// sample rate of data from TX Monitor to VAC
@@ -117,7 +109,7 @@ extern __declspec(dllexport) void create_ivac (
 
 extern void SetIVACtxmonRate (int id, int rate);
 extern void SetIVACtxmonSize (int id, int size);
-extern __declspec(dllexport) void SetIVACiqSize (int id, int size);
+extern __declspec(dllexport) void SetIVACiqSizeAndRate (int id, int size, int rate);
 extern __declspec(dllexport) void SetIVACmicSize (int id, int size);
 extern __declspec(dllexport) void SetIVACmicRate (int id, int rate);
 extern __declspec(dllexport) void SetIVACaudioRate (int id, int rate);

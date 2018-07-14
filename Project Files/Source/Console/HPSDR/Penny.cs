@@ -50,10 +50,10 @@ namespace Thetis
 		}
 
 
-		private byte[] TXABitMasks = new byte[25]; 
-		private byte[] RXABitMasks = new byte[25];
-        private byte[] TXBBitMasks = new byte[25];
-        private byte[] RXBBitMasks = new byte[25]; 
+		private byte[] TXABitMasks = new byte[41]; //25
+		private byte[] RXABitMasks = new byte[41];
+        private byte[] TXBBitMasks = new byte[41];
+        private byte[] RXBBitMasks = new byte[41]; 
 
 
 		public void setBandABitMask(Band band, byte mask, bool tx) 
@@ -103,20 +103,21 @@ namespace Thetis
         public bool VFOTBX = false;
 		public void UpdateExtCtrl(Band band, Band bandb, bool tx) 
 		{
-			if (!tx && (int)band < 12)  // if !tx ignore given band and round off to nearest band based on freq 
+            /*
+			if (!tx && (int)band < 40)  // 12 if !tx ignore given band and round off to nearest band based on freq 
 			{ 
 				band = Alex.AntBandFromFreq();
 			}
 
-            if (!tx && (int)bandb < 12)
+            if (!tx && (int)bandb < 40)
             {
                 bandb = Alex.AntBandFromFreqB();
             }
-            
+            */
             int idx = (int)band - (int)Band.B160M;
             int idxb = (int)bandb - (int)Band.B160M;
 			int bits; 
-			if ( (idx < 0 || idx > 26) || (idxb < 0 || idxb > 26) )
+			if ( (idx < 0 || idx > 40) || (idxb < 0 || idxb > 40) ) //26
 			{ 
 				bits = 0; 
 			} 

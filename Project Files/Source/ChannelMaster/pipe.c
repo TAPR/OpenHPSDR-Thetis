@@ -98,6 +98,7 @@ void create_pipe()
 			0,									// run
 			0,									// iq_type
 			0,									// stereo
+			pcm->xcm_inrate[inid (0, i)],		// rx i-q rate
 			pcm->xcm_inrate[inid (1, 0)],		// mic rate
 			pcm->rcvr[i].ch_outrate,			// receiver audio rate
 			pcm->xmtr[0].ch_outrate,			// tx monitor rate

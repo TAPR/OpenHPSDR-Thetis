@@ -39,7 +39,7 @@ namespace Thetis
     {
         private CATParser parser;
         private CATCommands commands;
-        private MidiMessageManager midiManager = null;
+        private MidiMessageManager midiManager = null; 
 
 
         public Midi2CatCommands(Console c)
@@ -169,11 +169,14 @@ namespace Thetis
         {
             if (msg == 127)
             {
-                parser.nSet = 11;
-                parser.nGet = 0;
+                //parser.nSet = 11;
+                //parser.nGet = 0;
 
-                string FreqA = commands.ZZFA("");
-                commands.ZZFB(FreqA);
+                //string FreqA = commands.ZZFA("");
+                //commands.ZZFB(FreqA);
+
+                //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
+                Console.getConsole().CATVFOAtoB();
             }
         }
 
@@ -182,11 +185,14 @@ namespace Thetis
         {
             if (msg == 127)
             {
-                parser.nSet = 11;
-                parser.nGet = 0;
+                //parser.nSet = 11;
+                //parser.nGet = 0;
 
-                string FreqB = commands.ZZFB("");
-                commands.ZZFA(FreqB);
+                //string FreqB = commands.ZZFB("");
+                //commands.ZZFA(FreqB);
+
+                //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
+                Console.getConsole().CATVFOBtoA();
             }
         }
 
@@ -194,13 +200,16 @@ namespace Thetis
         {
             if (msg == 127)
             {
-                parser.nSet = 11;
-                parser.nGet = 0;
+                //parser.nSet = 11;
+                //parser.nGet = 0;
 
-                string FreqB = commands.ZZFB("");
-                string FreqA = commands.ZZFA("");
-                commands.ZZFA(FreqB);
-                commands.ZZFB(FreqA);
+                //string FreqB = commands.ZZFB("");
+                //string FreqA = commands.ZZFA("");
+                //commands.ZZFA(FreqB);
+                //commands.ZZFB(FreqA);
+
+                //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
+                Console.getConsole().CATVFOABSwap();
             }
         }
 
@@ -241,13 +250,19 @@ namespace Thetis
             return;
         }
 
+        bool IsBehringerCMD(MidiDevice device)
+        {
+            string deviceName = device.GetDeviceName();
+            if (deviceName.Contains("CMD")) return true;
+            else return false;
+        }
         public void RIT_inc(int msg, MidiDevice device)
         {
             parser.nSet = 2;
             parser.nGet = 0;
 
             string deviceName = device.GetDeviceName();
-            if (deviceName == "CMD PL-1" || deviceName == "CMD Micro")  //-W2PA special handling for Behringer wheel style knobs
+            if (IsBehringerCMD(device))  //-W2PA special handling for Behringer wheel style knobs
             {
                 if (msg == 127 || msg <= 1) //-W2PA for Behringer PL-1 type knob/wheel push button, to zero the setting
                 {
@@ -287,7 +302,7 @@ namespace Thetis
             int mode = Convert.ToInt16(commands.ZZMD(""));
 
             string deviceName = device.GetDeviceName();
-            if (deviceName == "CMD PL-1" || deviceName == "CMD Micro")  //-W2PA special handling for Behringer wheel style knobs
+            if (IsBehringerCMD(device))  //-W2PA special handling for Behringer wheel style knobs
             {
                 if ((msg == 127 || msg <= 1))  //-W2PA for Behringer PL-1 type knob/wheel push button, to zero the setting
                 {
@@ -359,7 +374,7 @@ namespace Thetis
             parser.nSet = 2;
             parser.nGet = 0;
 
-            if ((Convert.ToInt16(commands.ZZAC("")) < 22) && (msg == 127))
+            if ((Convert.ToInt16(commands.ZZAC("")) < 26) && (msg == 127))
             {
                 commands.ZZSU();
             }
@@ -723,6 +738,52 @@ namespace Thetis
             return CmdState.NoChange;
         }
 
+        public CmdState LockVFOAOnOff(int msg, MidiDevice device) 
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int VfoLockState = Convert.ToInt16(commands.ZZUX(""));
+
+                if (VfoLockState == 0)
+                {
+                    commands.ZZUX("1");
+                    return CmdState.On;
+                }
+                if (VfoLockState == 1)
+                {
+                    commands.ZZUX("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState LockVFOBOnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int VfoLockState = Convert.ToInt16(commands.ZZUY(""));
+
+                if (VfoLockState == 0)
+                {
+                    commands.ZZUY("1");
+                    return CmdState.On;
+                }
+                if (VfoLockState == 1)
+                {
+                    commands.ZZUY("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
         public CmdState RitOnOff(int msg, MidiDevice device)
         {
             if (msg == 127)
@@ -799,72 +860,78 @@ namespace Thetis
                     d = 0000001;
                     break;
                 case 1:
-                    d = 000010;
+                    d = 000002;
                     break;
                 case 2:
-                    d = 000025;
+                    d = 000010;
                     break;
                 case 3:
-                    d = 000050;
+                    d = 000025;
                     break;
                 case 4:
-                    d = 000100;
+                    d = 000050;
                     break;
                 case 5:
-                    d = 000250;
+                    d = 000100;
                     break;
                 case 6:
-                    d = 000500;
+                    d = 000250;
                     break;
                 case 7:
-                    d = 001000;
+                    d = 000500;
                     break;
                 case 8:
-                    d = 002500;
+                    d = 001000;
                     break;
                 case 9:
-                    d = 005000;
+                    d = 002000;
                     break;
                 case 10:
-                    d = 006250;
+                    d = 002500;
                     break;
                 case 11:
-                    d = 009000;
+                    d = 005000;
                     break;
                 case 12:
-                    d = 010000;
+                    d = 006250;
                     break;
                 case 13:
-                    d = 012500;
+                    d = 009000;
                     break;
                 case 14:
-                    d = 015000;
+                    d = 010000;
                     break;
                 case 15:
-                    d = 020000;
+                    d = 012500;
                     break;
                 case 16:
-                    d = 025000;
+                    d = 015000;
                     break;
                 case 17:
-                    d = 030000;
+                    d = 020000;
                     break;
                 case 18:
-                    d = 050000;
+                    d = 025000;
                     break;
                 case 19:
-                    d = 100000;
+                    d = 030000;
                     break;
                 case 20:
-                    d = 250000;
+                    d = 050000;
                     break;
                 case 21:
-                    d = 500000;
+                    d = 100000;
                     break;
                 case 22:
-                    d = 1000000;
+                    d = 250000;
                     break;
                 case 23:
+                    d = 500000;
+                    break;
+                case 24:
+                    d = 1000000;
+                    break;
+                case 25:
                     d = 10000000;
                     break;
             }
@@ -872,13 +939,82 @@ namespace Thetis
         }
 
 
+        //-W2PA This increments or decrements the number of MIDI messages that cause a single tune step increment
+        // It is useful when using coarse increments, such as 100kHz, and wanting more wheel rotation for each one
+        // so that tuning isn't so critical.
+        public void MidiMessagesPerTuneStepUp(int msg, MidiDevice device)
+        {
+            if (msg >= 126) Console.getConsole().CATMidiMessagesPerTuneStepUp();
+        }
+        public void MidiMessagesPerTuneStepDown(int msg, MidiDevice device) 
+        {
+            if (msg >= 126) Console.getConsole().CATMidiMessagesPerTuneStepDown();
+        }
+        public CmdState MidiMessagesPerTuneStepToggle(int msg, MidiDevice device) 
+        {
+            if (msg >= 126)
+            {
+                CmdState retState = CmdState.Off;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
 
+                if (mpts == Console.getConsole().MinMIDIMessagesPerTuneStep) retState = CmdState.On;  // switching to max
+                else if (mpts == Console.getConsole().MaxMIDIMessagesPerTuneStep) retState = CmdState.Off; // switching to min
+                else
+                {   // on the off chance the user has set the value to some intermediate value, force reset to min
+                    Console.getConsole().MidiMessagesPerTuneStep = Console.getConsole().MinMIDIMessagesPerTuneStep;
+                    return CmdState.Off;
+                }
+                // Do the toggle
+                Console.getConsole().CATMidiMessagesPerTuneStepToggle();
+                return retState;
+            }
+            else
+            {
+                return CmdState.NoChange;
+            }   
+        }
+
+        private int msgs_since_reversal = 0;  //-W2PA Used to keep track of rotation and apply MidiMessagesPerTuneStep from console
+        private int current_tuning_direction = 0;  // -1 = CCW, 1 = CW -- 0 is uninitialized value
 
         //-W2PA  Routine to implement MIDI wheel VFO tuning using the original code from Midi2Cat
         private void ProcessStdMIDIWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo)
         {
             int ico;
             if (vfo == "a") ico = Convert.ToInt16(commands.ZZRA("")); else ico = Convert.ToInt16(commands.ZZRB(""));
+
+            //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
+            // For testing:
+            // Console.getConsole().MidiMessagesPerTuneStep = 16;
+
+            if (current_tuning_direction == 0) // First time tuning
+            {
+                msgs_since_reversal = 0;
+                if (direction > 125) current_tuning_direction = 1;
+                else current_tuning_direction = -1;
+            }
+
+            if ((direction > 125 && current_tuning_direction == 1) ||
+                (direction < 3 && current_tuning_direction == -1))
+            {  // continuing in same direction
+                msgs_since_reversal++;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)
+                    return; // Not enough rotation to act
+                else
+                {   // ok to tune, reset the counter then go tune
+                    msgs_since_reversal = 0;
+                }
+            }
+            else // direction has reversed 
+            {
+                msgs_since_reversal = 1;
+                current_tuning_direction = -current_tuning_direction;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
+                    return;
+            }
+
             switch (mode)
             {
                 case 7: //DIGU
@@ -887,13 +1023,13 @@ namespace Thetis
                         {
                             int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
 
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 freq -= offsetDIGU;
                                 long x = SnapTune(freq, step, -1, RoundToStepSize) + offsetDIGU;
                                 if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 freq -= offsetDIGU;
                                 long x = SnapTune(freq, step, 1, RoundToStepSize) + offsetDIGU;
@@ -903,12 +1039,12 @@ namespace Thetis
                         }
                         else
                         {
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
@@ -922,13 +1058,13 @@ namespace Thetis
                         {
                             int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
 
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 freq += offsetDIGL;
                                 long x = SnapTune(freq, step, -1, RoundToStepSize) - offsetDIGL;
                                 if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 freq += offsetDIGL;
                                 long x = SnapTune(freq, step, 1, RoundToStepSize) - offsetDIGL;
@@ -938,12 +1074,12 @@ namespace Thetis
                         }
                         else
                         {
-                            if (direction == 127)
+                            if (direction == 127 || direction == 126)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                             }
-                            if (direction == 1)
+                            if (direction == 1 || direction == 2)
                             {
                                 if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
                                 else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
@@ -954,12 +1090,12 @@ namespace Thetis
                 default: //for all other modes
                     {
 
-                        if (direction == 127)
+                        if (direction == 127 || direction == 126)
                         {
                             if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                             else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
                         }
-                        if (direction == 1)
+                        if (direction == 1 || direction == 2)
                         {
                             if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
                             else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
@@ -975,8 +1111,40 @@ namespace Thetis
         {
             int stepMult = 1;
 
-            // Handle the PL-1 and Micro slightly different due to the different behavior of their large wheels
-            if (deviceName == "CMD PL-1")
+            //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
+            // For testing:
+            // Console.getConsole().MidiMessagesPerTuneStep = 16;
+
+            if (current_tuning_direction == 0) // First time tuning
+            {
+                msgs_since_reversal = 0;
+                if (direction > 64) current_tuning_direction = 1;
+                else current_tuning_direction = -1;
+            }
+            
+            if ((direction > 64 && current_tuning_direction == 1) ||
+                (direction < 64 && current_tuning_direction == -1)) 
+            {  // continuing in same direction
+                msgs_since_reversal++;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)
+                    return; // Not enough rotation to act
+                else
+                {   // ok to tune, reset the counter then go tune
+                    msgs_since_reversal = 0;
+                }
+            }
+            else // direction has reversed 
+            {
+                msgs_since_reversal = 1;
+                current_tuning_direction = -current_tuning_direction;
+                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
+                    return;                    
+            }
+
+                // Handle the PL-1 and Micro slightly different due to the different behavior of their large wheels
+                if (deviceName == "CMD PL-1")
             {
                 if ((direction <= 58 && direction >= 10) || (direction >= 70 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
                 {
@@ -995,7 +1163,26 @@ namespace Thetis
                     stepMult = 200;
                 }
             }
-            else if (deviceName == "CMD Micro")  // The Micro's large week needs more spinning to get to higher numbers than the PL-1, so start increasing earlier.
+            else if (deviceName == "CMD Micro")  // These wheels need more spinning to get to higher numbers than the PL-1, so start increasing earlier.
+            {
+                if ((direction <= 62 && direction >= 10) || (direction >= 66 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
+                {
+                    stepMult = 3;
+                }
+                if ((direction <= 61 && direction >= 10) || (direction >= 67 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
+                {
+                    stepMult = 7;
+                }
+                if ((direction <= 60 && direction >= 10) || (direction >= 68 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
+                {
+                    stepMult = 11;
+                }
+                if ((direction <= 58 && direction >= 10) || (direction >= 70 && direction <= 117)) //-W2PA Fastest spin of Behringer PL-1 wheel, multiply steps more
+                {
+                    stepMult = 200;
+                }
+            }
+            else if (deviceName.Contains("CMD"))  // Try handling all other Behringer controllers
             {
                 if ((direction <= 62 && direction >= 10) || (direction >= 66 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
                 {
@@ -1244,6 +1431,10 @@ namespace Thetis
             {
                 ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a", "CMD Micro");
             }
+            else if (devName.Contains("CMD"))
+            {
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a", "CMD");
+            }
             else
             {
                 ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a");  // Original handler
@@ -1417,6 +1608,10 @@ namespace Thetis
             {
                 ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b", "CMD Micro");
             }
+            else if (devName.Contains("CMD"))
+            {
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b", "CMD");
+            }
             else
             {
                 ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b");
@@ -1519,7 +1714,7 @@ namespace Thetis
             return CmdState.NoChange;
         }
 
-        public CmdState Rx2NoiseReductionOnOff(int msg, MidiDevice device)
+        public CmdState NoiseReduction2OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
         {
             if (msg == 127)
             {
@@ -1542,6 +1737,51 @@ namespace Thetis
             return CmdState.NoChange;
         }
 
+        public CmdState Rx2NoiseReductionOnOff(int msg, MidiDevice device)  //-W2PA Corrected to calling ZZNV instead of ZZNS as above
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNS(""));
+
+                if (NRState == 0)
+                {
+                    commands.ZZNV("1");
+                    return CmdState.On;
+                }
+                if (NRState == 1)
+                {
+                    commands.ZZNV("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState Rx2NoiseReduction2OnOff(int msg, MidiDevice device)  //-W2PA Added function to call ZZNW
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNS(""));
+
+                if (NRState == 0)
+                {
+                    commands.ZZNW("1");
+                    return CmdState.On;
+                }
+                if (NRState == 1)
+                {
+                    commands.ZZNW("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
         public CmdState Rx2PreAmpOnOff(int msg, MidiDevice device)
         {
             if (msg == 127)
@@ -2170,7 +2410,7 @@ namespace Thetis
         public void APFBandwidth(int msg, MidiDevice device)
         {
             parser.nGet = 0;
-            parser.nSet = 1;
+            parser.nSet = 3;
 
             try
             {
@@ -2184,11 +2424,11 @@ namespace Thetis
             }
         }
 
-        //-W2PA Added knob/slider control of APF Bandwidth
+        //-W2PA Added knob/slider control of APF Gain
         public void APFGain(int msg, MidiDevice device)
         {
             parser.nGet = 0;
-            parser.nSet = 1;
+            parser.nSet = 4;
 
             try
             {
@@ -2211,7 +2451,7 @@ namespace Thetis
             {
                 double agclevel;
                 string devName = device.GetDeviceName();
-                if (devName == "CMD PL-1" || devName == "CMD Micro")  //W2PA- Special handling for Behringer sliders
+                if (IsBehringerCMD(device))  //W2PA- Special handling for Behringer sliders
                 {
                     agclevel = (( (127 - msg) * 1.099) - 20);
                 }
@@ -2236,7 +2476,8 @@ namespace Thetis
         public void AGCLevel_inc(int msg, MidiDevice device)  //-W2PA Support for Behringer CMD PL-1 style wheel/knobs
         {
             parser.nGet = 0;
-            parser.nSet = 1;  //-W2PA changed to allow for 2, 3, 4 digits
+            parser.nSet = 4; 
+            parser.nAns = 4;
 
             try
             {
@@ -2254,7 +2495,7 @@ namespace Thetis
                 {
                     if (currAGC < agcMax) currAGC++;
                 }
-                commands.ZZAR(Convert.ToString(currAGC));
+                commands.ZZAR("+" + currAGC.ToString("000"));
 
                 double setAGC = Convert.ToDouble(currAGC);
 
@@ -2278,7 +2519,7 @@ namespace Thetis
             {
                 double agclevel;
                 string devName = device.GetDeviceName();
-                if (devName == "CMD PL-1" || devName == "CMD Micro")  //W2PA- Special handling for Behringer sliders
+                if (IsBehringerCMD(device))  //W2PA- Special handling for Behringer sliders
                 {
                     agclevel = (( (127 - msg) * 1.099) - 20);
                 }
@@ -2303,7 +2544,8 @@ namespace Thetis
         public void RX2AGCLevel_inc(int msg, MidiDevice device)  //-W2PA Support for Behringer CMD PL-1 wheel/knobs
         {
             parser.nGet = 0;
-            parser.nSet = 1;  //-W2PA changed to allow for 2, 3, 4 digits
+            parser.nSet = 4;  
+            parser.nAns = 4;
 
             try
             {
@@ -2321,7 +2563,7 @@ namespace Thetis
                 {
                     if (currAGC < agcMax) currAGC++;
                 }
-                commands.ZZAS(Convert.ToString(currAGC));
+                commands.ZZAS("+" + currAGC.ToString("000"));
 
                 double setAGC = Convert.ToDouble(currAGC);
 
@@ -2482,6 +2724,61 @@ namespace Thetis
             }
         }
 
+        public void DriveLevel_inc(int msg, MidiDevice device)  //-W2PA Support for Behringer CMD PL-1 style wheel/knobs
+        {
+            parser.nGet = 0;
+            parser.nSet = 3; 
+            parser.nAns = 4;
+
+            try
+            {
+                double drvMax = 100;
+                double drvMin = 0;
+                int currDrive = Convert.ToInt32(commands.ZZPC(""));
+
+                if (msg == 127 || msg == 0) return; //-W2PA Ignore knob click presses
+
+                if (msg < 64)
+                {
+                    if (currDrive > drvMin) currDrive--;
+                }
+                else if (msg > 64)
+                {
+                    if (currDrive < drvMax) currDrive++;
+                }
+                commands.ZZPC(currDrive.ToString("000"));
+
+                double setDrive = Convert.ToDouble(currDrive);
+
+                int nLED = Convert.ToInt32(15.0 * (setDrive - drvMin) / (drvMax - drvMin));
+                if (nLED < 1) nLED = 1;  //-W2PA Keep the last LED from going out.
+                if (nLED > 15) nLED = 15;
+
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+
+        //public void DriveLevel_incr(int msg, MidiDevice device)
+        //{
+        //    parser.nSet = 3;
+        //    parser.nGet = 0;
+        //    parser.nAns = 4;
+
+        //    try
+        //    {
+        //        double drive = msg * 0.787;
+        //        commands.ZZPC(drive.ToString("000"));
+        //        return;
+        //    }
+        //    catch
+        //    {
+        //        return;
+        //    }
+        //}
         public CmdState RXEQOnOff(int msg, MidiDevice device)
         {
             if (msg == 127)
@@ -3449,7 +3746,7 @@ namespace Thetis
             int tuningstep = 20;
 
             string devName = device.GetDeviceName();
-            if (devName == "CMD PL-1" || devName == "CMD Micro") //W2PA- Special handling for Behringer
+            if (IsBehringerCMD(device)) //W2PA- Special handling for Behringer
             {
                 //-W2PA Map to what it expects for the Hercules, as originally written
                 if (msg == 63) msg = 127;
@@ -3547,7 +3844,7 @@ namespace Thetis
             int tuningstep = 20;
 
             string deviceName = device.GetDeviceName();
-            if (deviceName == "CMD PL-1" || deviceName == "CMD Micro")  //-W2PA special handling for Behringer wheel style knobs
+            if (IsBehringerCMD(device))  //-W2PA special handling for Behringer wheel style knobs
             {
                 //-W2PA Map to what it expects for the Hercules, as originally written
                 if (msg == 63) msg = 127;

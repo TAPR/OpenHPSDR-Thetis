@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.InteropServices;
 
-    class ivac
+    unsafe class ivac
     {
         #region ivac method definitions
 
@@ -98,6 +98,16 @@
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACmox", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACmox(int id, int mox);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "getIVACdiags", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void getIVACdiags(int id, int type, int* underflows, int* overflows, double* var, int* ringsize);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "forceIVACvar", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void forceIVACvar(int id, int type, bool force, double fvar);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "resetIVACdiags", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void resetIVACdiags(int id, int type);
+
         #endregion
 
     }

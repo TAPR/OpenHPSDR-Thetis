@@ -168,6 +168,12 @@
     <ClInclude Include="cfcomp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rmatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="varsamp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="channel.c">
@@ -321,6 +327,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rmatch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="varsamp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

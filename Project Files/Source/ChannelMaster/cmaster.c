@@ -348,7 +348,7 @@ void SetXcmInrate (int in_id, int rate)	// 2014-12-18:  called for streams 0, 1,
 			// PIPE - set wave player (leave in C# since player is there)
 			// PIPE - set wave recorder (leave in C# since player is there)
 			if (rx == 0) SetSiphonInsize (rx, pcm->xcm_insize[in_id]);			// PIPE - set siphon for phase2 display, RX1 only
-			SetIVACiqSize (rx, pcm->xcm_insize[in_id]);							// PIPE - set vacOUT size for IQ data
+			SetIVACiqSizeAndRate (rx, pcm->xcm_insize[in_id], pcm->xcm_inrate[in_id]);	// PIPE - set vacOUT size and rate for IQ data
 			break;
 		case 1:  // transmitter
 			tx = txid (in_id);

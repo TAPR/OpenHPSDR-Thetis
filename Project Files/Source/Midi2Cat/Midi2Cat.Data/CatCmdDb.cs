@@ -75,7 +75,7 @@ namespace Midi2Cat.Data
         MultiRxOnOff = 10,
         [CatCommandAttribute("Vfo Sync On Off", ControlType.Button, true)]  
         VfoSyncOnOff = 11,
-        [CatCommandAttribute("Lock VFO On Off", ControlType.Button, true)]
+        [CatCommandAttribute("Toggle VFO Lock - A,both,off", ControlType.Button, true)]
         LockVFOOnOff = 12,
         [CatCommandAttribute("MOX On Off", ControlType.Button, true)]
         MOXOnOff = 13,
@@ -92,7 +92,7 @@ namespace Midi2Cat.Data
         [CatCommandAttribute("Noise Reduction 1 On Off", ControlType.Button, true)]  
         NoiseReductionOnOff = 19,
         [CatCommandAttribute("Noise Reduction 2 On Off", ControlType.Button, true)]  
-        Rx2NoiseReductionOnOff = 20,
+        NoiseReduction2OnOff = 20,  //-W2PA Renamed function to reflect actual meaning
         [CatCommandAttribute("Binaural On Off", ControlType.Button, true)]  
         BinauralOnOff = 21,
         [CatCommandAttribute("Rx1 Filter Wider", ControlType.Button)]
@@ -371,7 +371,7 @@ namespace Midi2Cat.Data
         VolumeVfoA_inc = 241,
         [CatCommandAttribute("Volume VfoB Incr", ControlType.Wheel)]
         VolumeVfoB_inc = 242,
-        [CatCommandAttribute("RX1 AGC Level Incr", ControlType.Wheel)]
+        [CatCommandAttribute("RX1 AGC Level Incr", ControlType.Wheel)] 
         AGCLevel_inc = 243,
         [CatCommandAttribute("RX2 AGC Level Incr", ControlType.Wheel)]
         RX2AGCLevel_inc = 244,
@@ -385,6 +385,22 @@ namespace Midi2Cat.Data
         APFBandwidth = 248,
         [CatCommandAttribute("Audio Peak Filter Gain", ControlType.Knob_or_Slider)]
         APFGain = 249,
+        [CatCommandAttribute("Rx2 Noise Reduction1 On Off", ControlType.Button, true)]
+        Rx2NoiseReductionOnOff = 250,
+        [CatCommandAttribute("Rx2 Noise Reduction2 On Off", ControlType.Button, true)]
+        Rx2NoiseReduction2OnOff = 251,
+        [CatCommandAttribute("Increase wheel rotation per VFO tune step", ControlType.Button)] 
+        MidiMessagesPerTuneStepUp = 252,
+        [CatCommandAttribute("Decrease wheel rotation per VFO tune step", ControlType.Button)]
+        MidiMessagesPerTuneStepDown = 253,
+        [CatCommandAttribute("VFO Wheel Sensitivity High/Low Toggle", ControlType.Button, true)]
+        MidiMessagesPerTuneStepToggle = 254,
+        [CatCommandAttribute("Drive Level Increment", ControlType.Wheel)]
+        DriveLevel_inc = 255,
+        [CatCommandAttribute("Lock VFO A", ControlType.Button, true)]
+        LockVFOAOnOff = 256,
+        [CatCommandAttribute("Lock VFO B", ControlType.Button, true)]
+        LockVFOBOnOff = 257,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }

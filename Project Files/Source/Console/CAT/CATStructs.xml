@@ -759,23 +759,23 @@
 	<catstruct code="ZZAT">
 		<desc>APF tune</desc>
 		<active>true</active>
-		<nsetparms>1</nsetparms>
+		<nsetparms>4</nsetparms>
 		<ngetparms>0</ngetparms>
-		<nansparms>1</nansparms>
+		<nansparms>4</nansparms>
     </catstruct>
 	<catstruct code="ZZAB">
 		<desc>APF bandwidth</desc>
 		<active>true</active>
-		<nsetparms>1</nsetparms>
+		<nsetparms>4</nsetparms>
 		<ngetparms>0</ngetparms>
-		<nansparms>1</nansparms>
+		<nansparms>4</nansparms>
     </catstruct>
 	<catstruct code="ZZAA">
 		<desc>APF gain</desc>
 		<active>true</active>
-		<nsetparms>1</nsetparms>
+		<nsetparms>4</nsetparms>
 		<ngetparms>0</ngetparms>
-		<nansparms>1</nansparms>
+		<nansparms>4</nansparms>
     </catstruct>
 	<catstruct code="ZZMD">
 		<desc>extended modes</desc>
@@ -896,6 +896,13 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
+  <catstruct code="ZZGU">
+    <desc>extended RX2 AGC constant</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
 	<catstruct code="ZZFI">
 		<desc>extended current filter name</desc>
 		<active>true</active>
@@ -959,7 +966,35 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
-	<catstruct code="ZZQR">
+  <catstruct code="ZZUS">
+    <desc>PS Single Cal activate </desc>
+    <active>true</active>
+    <nsetparms>-1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>0</nansparms>
+  </catstruct>
+  <catstruct code="ZZUT">
+    <desc>extended Two-tone test status</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
+  <catstruct code="ZZUX">
+    <desc>extended VFOA Lock status</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
+  <catstruct code="ZZUY">
+    <desc>extended VFOB Lock status</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
+  <catstruct code="ZZQR">
 		<desc>Quick Memory Restore</desc>
 		<active>true</active>
 		<nsetparms>0</nsetparms>
@@ -1183,7 +1218,35 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>4</nansparms>
 	</catstruct>
-	<catstruct code="ZZGE">
+  <catstruct code="ZZXH">
+    <desc>VOX Hang time</desc>
+    <active>true</active>
+    <nsetparms>4</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>4</nansparms>
+  </catstruct>
+  <catstruct code="ZZXN">
+    <desc>RX1 Combined Status</desc>
+    <active>true</active>
+    <nsetparms>-1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>4</nansparms>
+  </catstruct>
+  <catstruct code="ZZXO">
+    <desc>RX2 Combined Status</desc>
+    <active>true</active>
+    <nsetparms>-1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>4</nansparms>
+  </catstruct>
+  <catstruct code="ZZXV">
+    <desc>VFO Combined Status</desc>
+    <active>true</active>
+    <nsetparms>-1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>3</nansparms>
+  </catstruct>
+  <catstruct code="ZZGE">
 		<desc>Noise Gate Enable</desc>
 		<active>true</active>
 		<nsetparms>1</nsetparms>
@@ -1213,6 +1276,13 @@
 	</catstruct>
   <catstruct code="ZZCN">
     <desc>CTUN Enable</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
+  <catstruct code="ZZCO">
+    <desc>RX2 CTUN Enable</desc>
     <active>true</active>
     <nsetparms>1</nsetparms>
     <ngetparms>0</ngetparms>
@@ -1358,6 +1428,13 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
+  <catstruct code="ZZNU">
+    <desc>RX2 ANF status</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
 	<catstruct code="ZZPD">
 		<desc>Center Display Pan</desc>
 		<active>true</active>
@@ -2002,6 +2079,34 @@
     <ngetparms>-1</ngetparms>
     <nansparms>-1</nansparms>
   </catstruct>
+  <catstruct code="ZZAE">
+    <desc>Moves VFOA down nn Steps</desc>
+    <active>true</active>
+    <nsetparms>2</nsetparms>
+    <ngetparms>-1</ngetparms>
+    <nansparms>-1</nansparms>
+  </catstruct>
+  <catstruct code="ZZAF">
+    <desc>Moves VFOA up nn Steps</desc>
+    <active>true</active>
+    <nsetparms>2</nsetparms>
+    <ngetparms>-1</ngetparms>
+    <nansparms>-1</nansparms>
+  </catstruct>
+  <catstruct code="ZZBE">
+    <desc>Moves VFOB down nn Steps</desc>
+    <active>true</active>
+    <nsetparms>2</nsetparms>
+    <ngetparms>-1</ngetparms>
+    <nansparms>-1</nansparms>
+  </catstruct>
+  <catstruct code="ZZBF">
+    <desc>Moves VFOB up nn Steps</desc>
+    <active>true</active>
+    <nsetparms>2</nsetparms>
+    <ngetparms>-1</ngetparms>
+    <nansparms>-1</nansparms>
+  </catstruct> 
   <catstruct code="ZZBM">
     <desc>Moves VFO B down nn Tune Steps</desc>
     <active>true</active>

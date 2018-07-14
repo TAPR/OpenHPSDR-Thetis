@@ -73,7 +73,7 @@ namespace Thetis
                 if (psenabled)
                 {
                     // Set the system to supply feedback.
-                    console.UpdateReceivers(console.RX2Enabled);
+                    console.UpdateDDCs(console.RX2Enabled);
                     NetworkIO.SetPureSignal(1);
                     console.UpdateRXADCCtrl();
                     console.UpdateAAudioMixerStates();
@@ -83,7 +83,7 @@ namespace Thetis
                 else
                 {
                     // Set the system to turn-off feedback.
-                    console.UpdateReceivers(console.RX2Enabled);
+                    console.UpdateDDCs(console.RX2Enabled);
                     NetworkIO.SetPureSignal(0);
                     console.UpdateRXADCCtrl();
                     console.UpdateAAudioMixerStates();

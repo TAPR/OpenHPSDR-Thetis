@@ -717,6 +717,8 @@
             this.radBandGEN0 = new System.Windows.Forms.RadioButtonTS();
             this.udTXFilterLow = new System.Windows.Forms.NumericUpDownTS();
             this.udTXFilterHigh = new System.Windows.Forms.NumericUpDownTS();
+            this.chkRxAnt = new System.Windows.Forms.CheckBoxTS();
+            this.chkVFOBLock = new System.Windows.Forms.CheckBoxTS();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -994,6 +996,7 @@
             this.lblMultiSMeter = new System.Windows.Forms.LabelTS();
             this.lblTuneStep = new System.Windows.Forms.LabelTS();
             this.grpVFOBetween = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.lblDisplayModeTop = new System.Windows.Forms.LabelTS();
             this.lblDisplayModeBottom = new System.Windows.Forms.LabelTS();
             this.grpDisplaySplit = new System.Windows.Forms.GroupBoxTS();
@@ -3598,6 +3601,24 @@
             0});
             this.udTXFilterHigh.ValueChanged += new System.EventHandler(this.udTXFilterHigh_ValueChanged);
             // 
+            // chkRxAnt
+            // 
+            resources.ApplyResources(this.chkRxAnt, "chkRxAnt");
+            this.chkRxAnt.FlatAppearance.BorderSize = 0;
+            this.chkRxAnt.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkRxAnt.Name = "chkRxAnt";
+            this.toolTip1.SetToolTip(this.chkRxAnt, resources.GetString("chkRxAnt.ToolTip"));
+            this.chkRxAnt.CheckedChanged += new System.EventHandler(this.chkRxAnt_CheckedChanged);
+            // 
+            // chkVFOBLock
+            // 
+            resources.ApplyResources(this.chkVFOBLock, "chkVFOBLock");
+            this.chkVFOBLock.FlatAppearance.BorderSize = 0;
+            this.chkVFOBLock.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkVFOBLock.Name = "chkVFOBLock";
+            this.toolTip1.SetToolTip(this.chkVFOBLock, resources.GetString("chkVFOBLock.ToolTip"));
+            this.chkVFOBLock.CheckedChanged += new System.EventHandler(this.chkVFOBLock_CheckedChanged);
+            // 
             // picSquelch
             // 
             this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
@@ -5933,6 +5954,9 @@
             // grpVFOBetween
             // 
             this.grpVFOBetween.BackColor = System.Drawing.Color.Transparent;
+            this.grpVFOBetween.Controls.Add(this.labelTS1);
+            this.grpVFOBetween.Controls.Add(this.chkVFOBLock);
+            this.grpVFOBetween.Controls.Add(this.chkRxAnt);
             this.grpVFOBetween.Controls.Add(this.labelTS5);
             this.grpVFOBetween.Controls.Add(this.regBox1);
             this.grpVFOBetween.Controls.Add(this.regBox);
@@ -5949,6 +5973,12 @@
             resources.ApplyResources(this.grpVFOBetween, "grpVFOBetween");
             this.grpVFOBetween.Name = "grpVFOBetween";
             this.grpVFOBetween.TabStop = false;
+            // 
+            // labelTS1
+            // 
+            this.labelTS1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            resources.ApplyResources(this.labelTS1, "labelTS1");
+            this.labelTS1.Name = "labelTS1";
             // 
             // lblDisplayModeTop
             // 
@@ -6499,6 +6529,9 @@
         private LabelTS labelTS3;
         public NumericUpDownTS udTXFilterLow;
         public NumericUpDownTS udTXFilterHigh;
+        private CheckBoxTS chkRxAnt;
+        private LabelTS labelTS1;
+        private CheckBoxTS chkVFOBLock;
 
     }
 }

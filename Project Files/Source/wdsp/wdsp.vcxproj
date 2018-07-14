@@ -234,6 +234,7 @@
     <ClInclude Include="osctrl.h" />
     <ClInclude Include="patchpanel.h" />
     <ClInclude Include="resample.h" />
+    <ClInclude Include="rmatch.h" />
     <ClInclude Include="RXA.h" />
     <ClInclude Include="sender.h" />
     <ClInclude Include="shift.h" />
@@ -243,6 +244,7 @@
     <ClInclude Include="snb.h" />
     <ClInclude Include="TXA.h" />
     <ClInclude Include="utilities.h" />
+    <ClInclude Include="varsamp.h" />
     <ClInclude Include="wcpAGC.h" />
   </ItemGroup>
   <ItemGroup>
@@ -285,6 +287,7 @@
     <ClCompile Include="osctrl.c" />
     <ClCompile Include="patchpanel.c" />
     <ClCompile Include="resample.c" />
+    <ClCompile Include="rmatch.c" />
     <ClCompile Include="RXA.c" />
     <ClCompile Include="sender.c" />
     <ClCompile Include="shift.c" />
@@ -294,6 +297,7 @@
     <ClCompile Include="snb.c" />
     <ClCompile Include="TXA.c" />
     <ClCompile Include="utilities.c" />
+    <ClCompile Include="varsamp.c" />
     <ClCompile Include="version.c" />
     <ClCompile Include="wcpAGC.c" />
     <ClCompile Include="wisdom.c" />

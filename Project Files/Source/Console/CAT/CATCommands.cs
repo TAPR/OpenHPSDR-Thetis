@@ -34,6 +34,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Windows.Forms;                           
 
 namespace Thetis
 {
@@ -62,6 +63,10 @@ namespace Thetis
             set { verbose = value; }
         }
 
+        private int NCATInit = 500;
+        private int NCATs = 0;
+        private int NCATtime = 50;
+        public bool firstTimeCAT = true;
 
 		#endregion Variable Definitions
 
@@ -322,6 +327,11 @@ namespace Thetis
 		// needs work in the split area
 		public string IF()
 		{
+            if (NCATs < NCATInit)
+            {
+                Thread.Sleep(NCATtime);
+                NCATs++;
+            }
 			string rtn = "";
 			string rit = "0";
 			string xit = "0";
@@ -579,6 +589,11 @@ namespace Thetis
 		// Sets or reads the transceiver mode
 		public string MD(string s)
 		{
+            if (NCATs < NCATInit)
+            {
+                Thread.Sleep(NCATtime);
+                NCATs++;
+            }
 			if(s.Length == parser.nSet)
 			{
 				if(Convert.ToInt32(s) > 0 && Convert.ToInt32(s) <= 9)
@@ -1053,7 +1068,7 @@ namespace Thetis
                 n = Math.Min(100, n);
             }
 
-            if (s.Length >= parser.nSet)  //-W2PA changed to allow for 2, 3, 4 digits for Midi2Cat
+            if (s.Length == parser.nSet)
             {
                 console.APFGain = n;
                 return "";
@@ -1089,7 +1104,7 @@ namespace Thetis
                 n = Math.Min(150, n);
             }
 
-            if (s.Length >= parser.nSet)  //-W2PA changed to allow for 2, 3, 4 digits for Midi2Cat
+            if (s.Length == parser.nSet)
             {
                 console.APFBandwidth = n;
                 return "";
@@ -1118,7 +1133,7 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 step = Convert.ToInt32(s);
-                if (step >= 0 || step <= 14)
+                if (step >= 0 || step <= 25)
                 {
                     console.TuneStepIndex = step;
                     return "";
@@ -1142,7 +1157,7 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 step = Convert.ToInt32(s);
-                if (step >= 0 || step <= 14)
+                if (step >= 0 || step <= 25)
                 {
                     console.VFOAFreq = console.CATVFOA - Step2Freq(step);
                     return "";
@@ -1154,7 +1169,54 @@ namespace Thetis
                 return parser.Error1;
         }
 
-		// Sets or reads the SDR-1000 Audio Gain control
+        //Sets VFO A down nn Pre-set Tune Steps
+        public string ZZAE(string s)
+        {
+            int step = console.TuneStepIndex;
+            int numsteps = 0;
+            double stepFreq;
+                        
+            List<TuneStep> tune_list = console.TuneStepList;
+            stepFreq = tune_list[step].StepHz * 10e-7;
+            if (s.Length == parser.nSet)
+            {
+                numsteps = Convert.ToInt32(s);
+                if (numsteps >= 0 && step <= 99)
+                {
+                    console.VFOAFreq = console.CATVFOA - stepFreq * (double)numsteps;
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Sets VFO A up nn pre-set Steps
+        public string ZZAF(string s)
+        {
+            int step = console.TuneStepIndex;
+            int numsteps = 0;
+            double stepFreq;
+
+            List<TuneStep> tune_list = console.TuneStepList;
+            stepFreq = tune_list[step].StepHz * 10e-7;
+            if (s.Length == parser.nSet)
+            {
+                numsteps = Convert.ToInt32(s);
+                if (numsteps >= 0 && step <= 99)
+                {
+                    console.VFOAFreq = console.CATVFOA + stepFreq * (double)numsteps;
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else
+                return parser.Error1;
+        }
+		// Sets or reads the SDR-1000 Audio Gain control 
 		public string ZZAG(string s)
 		{
 			int af = 0;
@@ -1241,7 +1303,7 @@ namespace Thetis
 				n = Math.Min(120, n);
 			}
 
-            if (s.Length >= parser.nSet)  //-W2PA changed to allow for 2, 3, 4 digits for Midi2Cat
+            if (s.Length == parser.nSet)
 			{
 				console.RF = n;
 				return "";
@@ -1254,8 +1316,8 @@ namespace Thetis
 				else
 					sign = "-";
 				// we have to remove the leading zero and replace it with the sign.
-				return sign+AddLeadingZeros(Math.Abs(x)).Substring(1);
-			}
+                return sign + (AddLeadingZeros(Math.Abs(x))).Substring(1);
+            }
 			else
 			{
 				return parser.Error1;
@@ -1277,7 +1339,7 @@ namespace Thetis
                     n = Math.Min(120, n);
                 }
 
-            if (s.Length >= parser.nSet)  //-W2PA changed to allow for 2, 3, 4 digits for Midi2Cat
+            if (s.Length == parser.nSet)
                 {
                     console.RX2RF = n;
                     return "";
@@ -1310,7 +1372,7 @@ namespace Thetis
                 n = Math.Min(250, n);
             }
 
-            if (s.Length >= parser.nSet)  //-W2PA changed to allow for 2, 3, 4 digits for Midi2Cat
+            if (s.Length >= parser.nSet)
             {
                 console.APFFreq = n;
                 return "";
@@ -1373,6 +1435,53 @@ namespace Thetis
 			return "";
 		}
 
+        //Sets VFO B down nn Pre-set Tune Steps
+        public string ZZBE(string s)
+        {
+            int step = console.TuneStepIndex;
+            int numsteps = 0;
+            double stepFreq;
+
+            List<TuneStep> tune_list = console.TuneStepList;
+            stepFreq = tune_list[step].StepHz * 10e-7;
+            if (s.Length == parser.nSet)
+            {
+                numsteps = Convert.ToInt32(s);
+                if (numsteps >= 0 && step <= 99)
+                {
+                    console.VFOBFreq = console.CATVFOB - stepFreq * (double)numsteps;
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Sets VFO B up nn pre-set Steps
+        public string ZZBF(string s)
+        {
+            int step = console.TuneStepIndex;
+            int numsteps = 0;
+            double stepFreq;
+
+            List<TuneStep> tune_list = console.TuneStepList;
+            stepFreq = tune_list[step].StepHz * 10e-7;
+            if (s.Length == parser.nSet)
+            {
+                numsteps = Convert.ToInt32(s);
+                if (numsteps >= 0 && step <= 99)
+                {
+                    console.VFOBFreq = console.CATVFOB + stepFreq * (double)numsteps;
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else
+                return parser.Error1;
+        }
 		// Sets the Band Group (HF/VHF)
 		public string ZZBG(string s)
 		{
@@ -1450,7 +1559,7 @@ namespace Thetis
 		//Sets or reads the BCI Rejection button status
 		public string ZZBR(string s)
 		{
-			if(console.CurrentHPSDRModel == HPSDRModel.HPSDR)
+			if(console.CurrentModel == Model.HPSDR)
 			{
 				int sx = 0;
 
@@ -1697,7 +1806,35 @@ namespace Thetis
             else
                 return parser.Error1;
         }
-        
+
+        //Sets or reads CTUN for RX2
+        public string ZZCO(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                if (s == "1")
+                {
+                    console.CTuneRX2Display = true;
+                    return "";
+                }
+                else if (s == "0")
+                {
+                    console.CTuneRX2Display = false;
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.CTuneRX2Display)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+                return parser.Error1;
+        }
         // Sets or reads the compander button status
 		public string ZZCP(string s)
 		{
@@ -2498,6 +2635,7 @@ namespace Thetis
 
 			if(s.Length == parser.nSet)
 			{
+                console.SelectRX1VarFilter();  //-W2PA Transfer focus to VAR1                                                               
 				n = Convert.ToInt32(s);
 				n = Math.Min(9999, n);
 				n = Math.Max(-9999, n);
@@ -2533,6 +2671,7 @@ namespace Thetis
 
 			if(s.Length == parser.nSet)
 				{
+                    console.SelectRX1VarFilter();  //-W2PA Transfer focus to VAR1                                                             
 					n = Convert.ToInt32(s);
 					n = Math.Min(9999, n);
 					n = Math.Max(-9999, n);
@@ -2816,6 +2955,27 @@ namespace Thetis
 			}
 		}
 
+        // Sets or reads the RX2 AGC constant 
+        public string ZZGU(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                if ((Convert.ToInt32(s) > (int)AGCMode.FIRST && Convert.ToInt32(s) < (int)AGCMode.LAST))
+                    console.RX2AGCMode = (AGCMode)Convert.ToInt32(s);
+                else
+                    return parser.Error1;
+
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return ((int)console.RX2AGCMode).ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
 		// Sets or reads the Audio Buffer Size
 		public string ZZHA(string s)
 		{
@@ -3855,10 +4015,6 @@ namespace Thetis
                 parser.nAns = 3;
                 string newCh = AddLeadingZeros(nextN);
 
-                //console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, "", console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
-                //console.CurrentFMTXMode, console.FMTXOffsetMHz, console.radio.GetDSPTX(0).CTCSSFlag, console.radio.GetDSPTX(0).CTCSSFreqHz, console.PWR,
-                //(int)console.radio.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
-                //console.RX1FilterHigh, newCh + ":", console.radio.GetDSPRX(0, 0).RXAGCMode, console.RF));
 
                 console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, "", console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
  console.CurrentFMTXMode, console.FMTXOffsetMHz, console.radio.GetDSPTX(0).CTCSSFlag, console.radio.GetDSPTX(0).CTCSSFreqHz, console.PWR,
@@ -4143,6 +4299,23 @@ namespace Thetis
 			}
 		}
 
+        //Sets or reads the RX2 ANF button status
+        public string ZZNU(string s)
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                console.CATRX2ANF = Convert.ToInt32(s);
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.CATRX2ANF.ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
         // Sets or reads the Noise Reduction status
         public string ZZNV(string s)
         {
@@ -5797,6 +5970,42 @@ namespace Thetis
 
 		}
 
+        public string ZZUS()  //-W2PA  Initiate PS Single Cal
+        {
+            console.CATSingleCal();
+            return "";
+        }
+
+        public string ZZUT(string s)  //-W2PA  Toggle two tone test  
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                switch (s)
+                {
+                    case "0":
+                        console.CATTTTest = 0;
+                        break;
+                    case "1":
+                        console.CATTTTest = 1;
+
+                        break;
+                }
+
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.CATTTTest == 1)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
 
 		/// <summary>
 		/// Sets or reads the VAC RX Gain 
@@ -6141,27 +6350,106 @@ namespace Thetis
 		// Reads or sets the VFO Lock button status
 		public string ZZVL(string s)
 		{
-			if(s.Length == parser.nSet && (s == "0" || s == "1"))
-			{
-				if(s == "0")
-					console.CATVFOLock = false;
-				else if(s == "1")
-					console.CATVFOLock = true;
-				return "";
-			}
-			else if(s.Length == parser.nGet)
-			{
-				bool retval = console.CATVFOLock;
-				if(retval)
-					return "1";
-				else
-					return "0";
-			}
-			else
-			{
-				return parser.Error1;
-			}
-		}
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                switch (console.VFOLock)
+                {
+                    case CheckState.Unchecked:
+                        console.CATVFOLock = true;
+                        console.CATVFOBLock = false;
+                        console.VFOLock = CheckState.Checked;
+                        break;
+                    case CheckState.Checked:
+                        console.CATVFOLock = true;
+                        console.CATVFOBLock = true;
+                        console.VFOLock = CheckState.Indeterminate;
+                        break;
+                    case CheckState.Indeterminate:
+                        console.CATVFOLock = false;
+                        console.CATVFOBLock = false;
+                        console.VFOLock = CheckState.Unchecked;
+                        break;
+                }
+      
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.CATVFOLock || console.CATVFOBLock)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
+        //-W2PA  Out of alphabetical order a bit, but related to ZZVL above. 
+        //       Added two functions to individually lock VFO A and B.
+
+        public string ZZUX(string s)  //-W2PA  Lock VFOA  
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                switch (s)
+                {
+                    case "0":
+                        console.VFOALock = false;
+                        console.CATVFOLock = false;
+                        break;
+                    case "1":
+                        console.VFOALock = true;
+                        console.CATVFOLock = true;
+                        break;
+                }
+
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.VFOLock == CheckState.Checked || console.VFOALock == true || console.CATVFOLock)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
+        public string ZZUY(string s)  //-W2PA  Lock VFOB  
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                switch (s)
+                {
+                    case "0":
+                        console.VFOBLock = false;
+                        console.CATVFOBLock = false;
+                        break;
+                    case "1":
+                        console.VFOBLock = true;
+                        console.CATVFOBLock = true;
+                        break;
+                }
+
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.VFOBLock || console.VFOLock == CheckState.Indeterminate || console.CATVFOBLock)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
 
         // Reads or sets the VAC Driver
         public string ZZVM(string s)
@@ -6801,6 +7089,104 @@ namespace Thetis
 			}
 		}
 
+        //Reads or set the VOX Delay control
+        public string ZZXH(string s)
+        {
+            int n = 0;
+            double delaytime;
+
+            if (s != null && s != "")
+                n = Convert.ToInt32(s);
+            n = Math.Max(0, n);
+            n = Math.Min(4000, n);
+            delaytime = (double)n;
+            if (s.Length == parser.nSet)
+            {
+                console.VOXHangTime = delaytime;
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                n = (int)console.VOXHangTime;
+                return AddLeadingZeros(n);
+            }
+            else
+            {
+                return parser.Error1;
+            }
+
+        }
+
+        //Reads RX1 combined status
+        public string ZZXN(string s)
+        {
+            int n = 0;
+            int m_agc = 0;
+            int m_att = 0;
+            if (s.Length == parser.nGet)
+            {
+                m_agc = (int)console.RX1AGCMode;
+                m_agc = m_agc & 7;                  // strip to 3 bits
+                m_att = (int)console.CATPreamp;
+                m_att = (m_att & 7) << 3;           // 3 bits, moved left
+                n = m_agc + m_att;
+                if (console.CATSquelch != 0)
+                    n += (1 << 6);
+                if (console.CATNB1 != 0)
+                    n += (1 << 7);
+                if (console.CATNB2 != 0)
+                    n += (1 << 8);
+                if (console.CATNR != 0)
+                    n += (1 << 9);
+                if (console.CATNR2 != 0)
+                    n += (1 << 10);
+                if (console.CATSNB != 0)
+                    n += (1 << 11);
+                if (console.CATANF != 0)
+                    n += (1 << 12);
+                return AddLeadingZeros(n);
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
+        //Reads RX2 combined status
+        public string ZZXO(string s)
+        {
+            int n = 0;
+            int m_agc = 0;
+            int m_att = 0;
+            if (s.Length == parser.nGet)
+            {
+                m_agc = (int)console.RX2AGCMode;
+                m_agc = m_agc & 7;                  // strip to 3 bits
+                m_att = (int)console.RX2PreampMode;
+                m_att = (m_att & 7) << 3;           // 3 bits, moved left
+                n = m_agc + m_att;
+                if (console.CATSquelch2 == "1")
+                    n += (1 << 6);
+                if (console.CATRX2NB1 != 0)
+                    n += (1 << 7);
+                if (console.CATRX2NB2 != 0)
+                    n += (1 << 8);
+                if (console.CATRX2NR != 0)
+                    n += (1 << 9);
+                if (console.CATRX2NR2 != 0)
+                    n += (1 << 10);
+                if (console.CATRX2SNB != 0)
+                    n += (1 << 11);
+                if (console.CATRX2ANF != 0)
+                    n += (1 << 12);
+                return AddLeadingZeros(n);
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
 		//Sets or reads the XIT button status
 		public string ZZXS(string s)
 		{
@@ -6852,6 +7238,35 @@ namespace Thetis
 			}
 		}
 
+        //Reads VFO combined status
+        public string ZZXV(string s)
+        {
+            int n = 0;
+            if (s.Length == parser.nGet)
+            {
+                if (console.RITOn == true)
+                    n += 1;
+                if (console.VFOLock == CheckState.Checked || console.VFOALock == true || console.CATVFOLock)         // VFO A lock
+                    n += (1 << 1);
+                if (console.VFOBLock || console.VFOLock == CheckState.Indeterminate || console.CATVFOBLock)         // VFO B lock
+                    n += (1 << 2);
+                if (console.VFOSplit == true)
+                    n += (1 << 3);
+                if (console.CTuneDisplay == true)
+                    n += (1 << 4);
+                if (console.CTuneRX2Display == true)
+                    n += (1 << 5);
+                if ((console.CATPTT == true)||(console.MOX == true))
+                    n += (1 << 6);
+                if (console.TUN == true)
+                    n += (1 << 7);
+                return AddLeadingZeros(n);
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
         // Reads or sets the VAC2 Direct I/Q checkbox on the setup form
         public string ZZYA(string s)
         {

@@ -1,6 +1,6 @@
 /*
  * network.c
- * Copyright (C) 2015-2016 Doug Wigley (W5WC)
+ * Copyright (C) 2015-2018 Doug Wigley (W5WC)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -503,8 +503,8 @@ int ReadUDPFrame(unsigned char *bufp) {
 
 	switch (rc = ntohs(fromaddr.sin_port))
 	{
-	case 1025: // 60 bytes - High Priority C&C data
-		if (seqnum != (1 + prn->cc_seq_no))  {
+	case HPCCPort: //1025: // 62 bytes - High Priority C&C data
+		if (seqnum != (1 + prn->cc_seq_no) && seqnum != 0)  {
 			prn->cc_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx High Priority C&C: seq error this: %d last: %d\n", seqnum, prn->cc_seq_no);
@@ -512,11 +512,11 @@ int ReadUDPFrame(unsigned char *bufp) {
 		}
 
 		prn->cc_seq_no = seqnum;
-		memcpy(bufp, readbuf + 4, 60);
+		memcpy(bufp, readbuf + 4, 62);
 		break;
-	case 1026: // 1440 bytes - 16-bit mic samples (48ksps)
+	case  RxMicSampPort: //1026: // 1440 bytes - 16-bit mic samples (48ksps)
 		//mic_samples_buf++;
-		if (seqnum != (1 + prn->tx[0].mic_in_seq_no))  {
+		if (seqnum != (1 + prn->tx[0].mic_in_seq_no) && seqnum != 0)  {
 			prn->tx[0].mic_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Mic samples: seq error this: %d last: %d\n", seqnum, prn->tx[0].mic_in_seq_no);
@@ -526,7 +526,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 		prn->tx[0].mic_in_seq_no = seqnum;
 		memcpy(bufp, readbuf + 4, 1440);
 		break;
-	case 1027: // 1040 bytes - 16-bit raw ADC (default values)
+	case WB0Port: //1027: // 1040 bytes - 16-bit raw ADC (default values)
 	case 1028:
 	case 1029:
 	case 1030:
@@ -620,7 +620,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 	}
 	case 1035: // 1428 bytes - 24-bit DDC0 I/Q data
 		//rx_samples_buf++;
-		if (seqnum != (1 + prn->rx[0].rx_in_seq_no))  {
+		if (seqnum != (1 + prn->rx[0].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[0].rx_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx0 I/Q: seq error this: %d last: %d\n", seqnum, prn->rx[0].rx_in_seq_no);
@@ -631,7 +631,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
 	case 1036: // 1428 bytes - 24-bit DDC1 I/Q data
-		if (seqnum != (1 + prn->rx[1].rx_in_seq_no))  {
+		if (seqnum != (1 + prn->rx[1].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[1].rx_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx1 I/Q: seq error this: %d last: %d\n", seqnum, prn->rx[1].rx_in_seq_no);
@@ -643,7 +643,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 		break;
 	case 1037: // 1428 bytes - 24-bit DDC2 I/Q data
 		//rx_samples_buf++;
-		if (seqnum != (1 + prn->rx[2].rx_in_seq_no))  {
+		if (seqnum != (1 + prn->rx[2].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[2].rx_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx2 I/Q: seq error this: %d last: %d\n", seqnum, prn->rx[2].rx_in_seq_no);
@@ -654,7 +654,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
 	case 1038: // 1428 bytes - 24-bit DDC3 I/Q data
-		if (seqnum != (1 + prn->rx[3].rx_in_seq_no))  {
+		if (seqnum != (1 + prn->rx[3].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[3].rx_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx3 I/Q: seq error this: %d last: %d\n", seqnum, prn->rx[3].rx_in_seq_no);
@@ -665,7 +665,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
 	case 1039: // 1428 bytes - 24-bit DDC4 I/Q data
-		if (seqnum != (1 + prn->rx[4].rx_in_seq_no))  {
+		if (seqnum != (1 + prn->rx[4].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[4].rx_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx4 I/Q: seq error this: %d last: %d\n", seqnum, prn->rx[4].rx_in_seq_no);
@@ -676,7 +676,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
 	case 1040: // 1428 bytes - 24-bit DDC5 I/Q data
-		if (seqnum != (1 + prn->rx[5].rx_in_seq_no))  {
+		if (seqnum != (1 + prn->rx[5].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[5].rx_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx5 I/Q: seq error this: %d last: %d\n", seqnum, prn->rx[5].rx_in_seq_no);
@@ -687,7 +687,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
 	case 1041: // 1428 bytes - 24-bit DDC6 I/Q data
-		if (seqnum != (1 + prn->rx[6].rx_in_seq_no))  {
+		if (seqnum != (1 + prn->rx[6].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[6].rx_in_seq_err += 1;
 			//PrintTimeHack();
 			printf("- Rx6 I/Q: seq error this: %d last: %d\n", seqnum, prn->rx[6].rx_in_seq_no);
@@ -716,7 +716,7 @@ ReadThreadMainLoop() {
 		fflush(stdout);
 
 	while (io_keep_running != 0) {
-			DWORD retVal = WSAWaitForMultipleEvents(1, &prn->hDataEvent, FALSE, 1000, FALSE);
+		DWORD retVal = WSAWaitForMultipleEvents(1, &prn->hDataEvent, FALSE, prn->wdt ? 3000 : WSA_INFINITE, FALSE);
 			if ((retVal == WSA_WAIT_FAILED) || (retVal == WSA_WAIT_TIMEOUT))
 			{
 				HaveSync = 0; //send console LOS
@@ -769,7 +769,8 @@ ReadThreadMainLoop() {
 						prn->tx[0].exciter_power = prn->ReadBufp[2] << 8 | prn->ReadBufp[3];
 						prn->tx[0].fwd_power = prn->ReadBufp[10] << 8 | prn->ReadBufp[11];
 						prn->tx[0].rev_power = prn->ReadBufp[18] << 8 | prn->ReadBufp[19];
-
+						PeakFwdPower (prn->tx[0].fwd_power);
+						PeakRevPower (prn->tx[0].rev_power);
 						//Bytes 45,46  Supply Volts [15:0]          
 						prn->supply_volts = prn->ReadBufp[45] << 8 | prn->ReadBufp[46];
 
@@ -789,6 +790,8 @@ ReadThreadMainLoop() {
 						//          Bit [2] - User I/O (IO6) 1 = active, 0 = inactive
 						//          Bit [3] - User I/O (IO8) 1 = active, 0 = inactive
 						prn->user_io = prn->ReadBufp[55];
+
+						prn->hardware_LEDs = prn->ReadBufp[26] << 8 | prn->ReadBufp[27];
 
 						break;
 					case 1026: // 1440 bytes 16-bit mic samples
@@ -1055,6 +1058,7 @@ void CmdHighPriority() { // port 1027
 
 }
 
+PORT
 void CmdRx() { // port 1025
 
 	char packetbuf[BUFLEN];
@@ -1165,7 +1169,8 @@ void CmdRx() { // port 1025
 	// packetbuff[1443] = 1;	// FOR TESTING MUX MODE
 
 	// sendto port 1025
-	sendPacket(listenSock, packetbuf, BUFLEN, 1025);
+	if (listenSock != INVALID_SOCKET)
+		sendPacket(listenSock, packetbuf, BUFLEN, 1025);
 	// prn->run = 0;
 	// CmdHighPriority();
 	// prn->run = 1;

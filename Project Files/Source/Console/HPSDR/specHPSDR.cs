@@ -1,6 +1,6 @@
 ﻿/*
 *
-* Copyright (C) 2010-2013  Doug Wigley 
+* Copyright (C) 2010-2018  Doug Wigley 
 * 
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -495,7 +495,7 @@ namespace Thetis
                 case 1:     //complex fft
                     {
                         //fraction of the spectrum to clip off each side of each sub-span
-                        const double CLIP_FRACTION = 0.017;
+                        const double CLIP_FRACTION = 0.04;
 
                         //set overlap as needed to achieve the desired frame_rate
                         overlap = (int)Math.Max(0.0, Math.Ceiling(fft_size - (double)sample_rate / (double)frame_rate));
