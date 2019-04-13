@@ -11,6 +11,8 @@ Latest Release v2.6.4 April 13, 2019
 - transverter T/R relay bug fixed
 - added control for BYPS-EXT1-XVTR RX ANT for 7000DLE
 
+  * see "Release Notes for 2-6-4.docx" for detailed information.
+
 # 2.6.0 (2018-4-10)
 - added diagnostic LED array
 - divided open collector controls into 3 groups (HF-VHF-SWL)
