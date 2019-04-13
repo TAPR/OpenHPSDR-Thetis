@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2019 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -37,15 +37,15 @@ DELAY create_delay (int run, int size, double* in, double* out, int rate, double
 	a->tdelta = tdelta;
 	a->tdelay = tdelay;
 	a->L = (int)(0.5 + 1.0 / (a->tdelta * (double)a->rate));
+	a->adelta = 1.0 / (a->rate * a->L);
 	a->ft = 0.45 / (double)a->L;
 	a->ncoef = (int)(60.0 / a->ft);
 	a->ncoef = (a->ncoef / a->L + 1) * a->L;
 	a->cpp = a->ncoef / a->L;
-	a->phnum = (int)(0.5 + a->tdelay / a->tdelta);
+	a->phnum = (int)(0.5 + a->tdelay / a->adelta);
 	a->snum = a->phnum / a->L;
 	a->phnum %= a->L;
 	a->idx_in = 0;
-	a->adelta = 1.0 / (a->rate * a->L);
 	a->adelay = a->adelta * (a->snum * a->L + a->phnum);
 	a->h = fir_bandpass (a->ncoef,-a->ft, +a->ft, 1.0, 1, 0, (double)a->L);	
 	a->rsize = a->cpp + (WSDEL - 1);
@@ -82,11 +82,11 @@ void xdelay (DELAY a)
 			Itmp = 0.0;
 			Qtmp = 0.0;
 			if ((n = a->idx_in + a->snum) >= a->rsize) n -= a->rsize;
-			for (j = 0, k = 0; j < a->cpp; j++, k += a->L)
+			for (j = 0, k = a->L - 1 - a->phnum; j < a->cpp; j++, k+= a->L)
 			{
-				if ((idx = n - j) < 0) idx += a->rsize;
-				Itmp += a->ring[2 * idx + 0] * a->h[k + a->phnum];
-				Qtmp += a->ring[2 * idx + 1] * a->h[k + a->phnum];
+				if ((idx = n + j) >= a->rsize) idx -= a->rsize;
+				Itmp += a->ring[2 * idx + 0] * a->h[k];
+				Qtmp += a->ring[2 * idx + 1] * a->h[k];
 			}
 			a->out[2 * i + 0] = Itmp;
 			a->out[2 * i + 1] = Qtmp;
@@ -116,7 +116,7 @@ double SetDelayValue (DELAY a, double tdelay)
 	double adelay;
 	EnterCriticalSection (&a->cs_update);
 	a->tdelay = tdelay;
-	a->phnum = (int)(0.5 + a->tdelay / a->tdelta);
+	a->phnum = (int)(0.5 + a->tdelay / a->adelta);
 	a->snum = a->phnum / a->L;
 	a->phnum %= a->L;
 	a->adelay = a->adelta * (a->snum * a->L + a->phnum);

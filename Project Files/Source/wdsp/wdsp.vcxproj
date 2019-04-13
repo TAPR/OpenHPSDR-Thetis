@@ -206,6 +206,7 @@
     <ClInclude Include="cfir.h" />
     <ClInclude Include="compress.h" />
     <ClInclude Include="delay.h" />
+    <ClInclude Include="dexp.h" />
     <ClInclude Include="div.h" />
     <ClInclude Include="eer.h" />
     <ClInclude Include="emnr.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="fmmod.h" />
     <ClInclude Include="gain.h" />
     <ClInclude Include="gen.h" />
+    <ClInclude Include="icfir.h" />
     <ClInclude Include="iir.h" />
     <ClInclude Include="iobuffs.h" />
     <ClInclude Include="iqc.h" />
@@ -242,6 +244,7 @@
     <ClInclude Include="fmsq.h" />
     <ClInclude Include="slew.h" />
     <ClInclude Include="snb.h" />
+    <ClInclude Include="syncbuffs.h" />
     <ClInclude Include="TXA.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="varsamp.h" />
@@ -261,6 +264,7 @@
     <ClCompile Include="cfir.c" />
     <ClCompile Include="compress.c" />
     <ClCompile Include="delay.c" />
+    <ClCompile Include="dexp.c" />
     <ClCompile Include="div.c" />
     <ClCompile Include="eer.c" />
     <ClCompile Include="emnr.c" />
@@ -272,6 +276,7 @@
     <ClCompile Include="fmd.c" />
     <ClCompile Include="gain.c" />
     <ClCompile Include="gen.c" />
+    <ClCompile Include="icfir.c" />
     <ClCompile Include="iir.c" />
     <ClCompile Include="iqc.c" />
     <ClCompile Include="lmath.c" />
@@ -295,6 +300,7 @@
     <ClCompile Include="fmsq.c" />
     <ClCompile Include="slew.c" />
     <ClCompile Include="snb.c" />
+    <ClCompile Include="syncbuffs.c" />
     <ClCompile Include="TXA.c" />
     <ClCompile Include="utilities.c" />
     <ClCompile Include="varsamp.c" />

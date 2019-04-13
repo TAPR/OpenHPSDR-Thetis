@@ -282,7 +282,7 @@ namespace Thetis
             }
         }
 
-        private static bool display_duplex = false;
+        private static bool display_duplex = true;
         public static bool DisplayDuplex
         {
             get { return display_duplex; }
@@ -753,7 +753,7 @@ namespace Thetis
             }
         }
 
-        private static HPSDRModel current_hpsdr_model = HPSDRModel.HERMES;
+        private static HPSDRModel current_hpsdr_model = HPSDRModel.ANAN7000D;
         public static HPSDRModel CurrentHPSDRModel
         {
             get { return current_hpsdr_model; }
@@ -858,21 +858,21 @@ namespace Thetis
             set { scope_time = value; }
         }
 
-        private static int sample_rate_rx1 = 48000;
+        private static int sample_rate_rx1 = 384000;
         public static int SampleRateRX1
         {
             get { return sample_rate_rx1; }
             set { sample_rate_rx1 = value; }
         }
 
-        private static int sample_rate_rx2 = 48000;
+        private static int sample_rate_rx2 = 384000;
         public static int SampleRateRX2
         {
             get { return sample_rate_rx2; }
             set { sample_rate_rx2 = value; }
         }
 
-        private static int sample_rate_tx = 48000;
+        private static int sample_rate_tx = 192000;
         public static int SampleRateTX
         {
             get { return sample_rate_tx; }
@@ -922,7 +922,7 @@ namespace Thetis
             set { rx2_dsp_mode = value; }
         }
 
-        private static DisplayMode current_display_mode = DisplayMode.PANADAPTER;
+        private static DisplayMode current_display_mode = DisplayMode.PANAFALL;
         public static DisplayMode CurrentDisplayMode
         {
             get { return current_display_mode; }
@@ -1137,7 +1137,7 @@ namespace Thetis
             }
         }
 
-        private static int spectrum_grid_max = 0;
+        private static int spectrum_grid_max = -40;
         public static int SpectrumGridMax
         {
             get { return spectrum_grid_max; }
@@ -1149,7 +1149,7 @@ namespace Thetis
             }
         }
 
-        private static int spectrum_grid_min = -160;
+        private static int spectrum_grid_min = -140;
         public static int SpectrumGridMin
         {
             get { return spectrum_grid_min; }
@@ -1161,7 +1161,7 @@ namespace Thetis
             }
         }
 
-        private static int spectrum_grid_step = 10;
+        private static int spectrum_grid_step = 5;
         public static int SpectrumGridStep
         {
             get { return spectrum_grid_step; }
@@ -1172,7 +1172,7 @@ namespace Thetis
             }
         }
 
-        private static int rx2_spectrum_grid_max = 0;
+        private static int rx2_spectrum_grid_max = -40;
         public static int RX2SpectrumGridMax
         {
             get { return rx2_spectrum_grid_max; }
@@ -1183,7 +1183,7 @@ namespace Thetis
             }
         }
 
-        private static int rx2_spectrum_grid_min = -160;
+        private static int rx2_spectrum_grid_min = -140;
         public static int RX2SpectrumGridMin
         {
             get { return rx2_spectrum_grid_min; }
@@ -1194,7 +1194,7 @@ namespace Thetis
             }
         }
 
-        private static int rx2_spectrum_grid_step = 10;
+        private static int rx2_spectrum_grid_step = 5;
         public static int RX2SpectrumGridStep
         {
             get { return rx2_spectrum_grid_step; }
@@ -1205,7 +1205,7 @@ namespace Thetis
             }
         }
 
-        private static int tx_spectrum_grid_max = 30;
+        private static int tx_spectrum_grid_max = 20;
         public static int TXSpectrumGridMax
         {
             get { return tx_spectrum_grid_max; }
@@ -1216,7 +1216,7 @@ namespace Thetis
             }
         }
 
-        private static int tx_spectrum_grid_min = -100;
+        private static int tx_spectrum_grid_min = -80;
         public static int TXSpectrumGridMin
         {
             get { return tx_spectrum_grid_min; }
@@ -1227,7 +1227,7 @@ namespace Thetis
             }
         }
 
-        private static int tx_spectrum_grid_step = 10;
+        private static int tx_spectrum_grid_step = 5;
         public static int TXSpectrumGridStep
         {
             get { return tx_spectrum_grid_step; }
@@ -1235,6 +1235,26 @@ namespace Thetis
             {
                 tx_spectrum_grid_step = value;
                 refresh_panadapter_grid = true;
+            }
+        }
+
+        private static int tx_wf_amp_max = 30;
+        public static int TXWFAmpMax
+        {
+            get { return tx_wf_amp_max; }
+            set
+            {
+                tx_wf_amp_max = value;
+            }
+        }
+
+        private static int tx_wf_amp_min = -70;
+        public static int TXWFAmpMin
+        {
+            get { return tx_wf_amp_min; }
+            set
+            {
+                tx_wf_amp_min = value;
             }
         }
 
@@ -1525,7 +1545,7 @@ namespace Thetis
             }
         }
 
-        private static bool draw_tx_filter = false;
+        private static bool draw_tx_filter = true;
         public static bool DrawTXFilter
         {
             get { return draw_tx_filter; }
@@ -1687,7 +1707,7 @@ namespace Thetis
             }
         }
 
-        private static DisplayLabelAlignment tx_display_label_align = DisplayLabelAlignment.LEFT;
+        private static DisplayLabelAlignment tx_display_label_align = DisplayLabelAlignment.CENTER;
         public static DisplayLabelAlignment TXDisplayLabelAlign
         {
             get { return tx_display_label_align; }
@@ -7175,7 +7195,7 @@ namespace Thetis
         {
             // draw background
             // g.FillRectangle(display_background_brush, 0, bottom ? H : 0, W, H);
-
+            DisplayLabelAlignment label_align = display_label_align;
             bool local_mox = false;
             bool displayduplex = false;
             if (mox && rx == 1 && !tx_on_vfob) local_mox = true;
@@ -7195,8 +7215,8 @@ namespace Thetis
             int f_diff = 0;
             int sample_rate;
 
-            if ((CurrentDisplayMode == DisplayMode.PANAFALL && display_duplex) ||
-               (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
+            if ((CurrentDisplayMode == DisplayMode.PANAFALL ||
+               CurrentDisplayMode == DisplayMode.PANADAPTER) && display_duplex) displayduplex = true;
 
             if (local_mox && !displayduplex)// || (mox && tx_on_vfob))
             {
@@ -7207,7 +7227,7 @@ namespace Thetis
                 grid_step = tx_spectrum_grid_step;
                 sample_rate = sample_rate_tx;
                 g.FillRectangle(tx_display_background_brush, 0, bottom ? H : 0, W, H);
-
+                label_align = tx_display_label_align;
                 if (rx == 1 && !console.VFOBTX) f_diff = freq_diff;
                 else f_diff = rx2_freq_diff;
             }
@@ -7217,12 +7237,14 @@ namespace Thetis
                 {
                     Low = tx_display_low;
                     High = tx_display_high;
+                    label_align = tx_display_label_align;
                 }
                 else
                 {
                     Low = rx2_display_low;
                     High = rx2_display_high;
                 }
+
                 grid_max = rx2_spectrum_grid_max;
                 grid_min = rx2_spectrum_grid_min;
                 grid_step = rx2_spectrum_grid_step;
@@ -7240,6 +7262,7 @@ namespace Thetis
                     grid_min = tx_spectrum_grid_min;
                     grid_step = tx_spectrum_grid_step;
                     sample_rate = sample_rate_rx1;
+                    label_align = tx_display_label_align;
                 }
                 else
                 {
@@ -8354,7 +8377,7 @@ namespace Thetis
                         SizeF size = g.MeasureString(label, font9);
 
                         int x = 0;
-                        switch (display_label_align)
+                        switch (label_align)
                         {
                             case DisplayLabelAlignment.LEFT:
                                 x = xOffset + 3;
@@ -10218,16 +10241,10 @@ namespace Thetis
                 if (points == null || points.Length < W)
                     points = new Point[W];			// array of points to display
             }
-            //float slope = 0.0F;						// samples to process per pixel
-            //int num_samples = 0;					// number of samples to process
-            //int start_sample_index = 0;				// index to begin looking at samples
-            int Low = 0;// rx_display_low;
-            int High = 0;// rx_display_high;
-            // int yRange = spectrum_grid_max - spectrum_grid_min;
+
             float local_max_y = float.MinValue;
             bool local_mox = false;
             bool displayduplex = false;
-            int sample_rate;
 
             int grid_max = 0;
             int grid_min = 0;
@@ -10236,58 +10253,37 @@ namespace Thetis
             if (rx == 2 && tx_on_vfob && mox) local_mox = true;
             if (rx == 1 && tx_on_vfob && mox && !console.RX2Enabled) local_mox = true;
 
-            if ((CurrentDisplayMode == DisplayMode.PANAFALL /* && (console.NReceivers <= 2 && display_duplex)*/) ||
-                //(CurrentDisplayMode == DisplayMode.PANAFALL && console.NReceivers > 2) ||
-               (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
+            if ((CurrentDisplayMode == DisplayMode.PANAFALL ||               
+               CurrentDisplayMode == DisplayMode.PANADAPTER) && display_duplex) displayduplex = true;
 
             if (rx == 2)
             {
-                if (local_mox)// && tx_on_vfob)
+                if (local_mox)
                 {
-                    Low = tx_display_low;
-                    High = tx_display_high;
                     grid_max = tx_spectrum_grid_max;
                     grid_min = tx_spectrum_grid_min;
-                    sample_rate = sample_rate_tx;
                 }
                 else
                 {
-                    Low = rx2_display_low;
-                    High = rx2_display_high;
                     grid_max = rx2_spectrum_grid_max;
                     grid_min = rx2_spectrum_grid_min;
-                    sample_rate = sample_rate_rx2;
                 }
             }
             else
             {
-                if (local_mox)// && !displayduplex) // && !tx_on_vfob)
+                if (local_mox) // && !displayduplex) // && !tx_on_vfob)
                 {
-                    Low = tx_display_low;
-                    High = tx_display_high;
                     grid_max = tx_spectrum_grid_max;
                     grid_min = tx_spectrum_grid_min;
-                    sample_rate = sample_rate_tx;
                 }
                 else
                 {
-                    Low = rx_display_low;
-                    High = rx_display_high;
                     grid_max = spectrum_grid_max;
                     grid_min = spectrum_grid_min;
-                    sample_rate = sample_rate_rx1;
                 }
             }
 
-            if (rx1_dsp_mode == DSPMode.DRM)
-            {
-                Low += 12000;
-                High += 12000;
-            }
-
             int yRange = grid_max - grid_min;
-            int width = High - Low;
-
             if (rx == 1 && data_ready)
             {
                 if (!displayduplex && (local_mox || (mox && tx_on_vfob)) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
@@ -10320,99 +10316,18 @@ namespace Thetis
                 data_ready_bottom = false;
             }
 
-            //if (rx == 1 && average_on && local_mox && !displayduplex)
-            //{
-            //    console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);
-            //}
-            //else if (rx == 2 && rx2_avg_on && local_mox)
-            //    console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
-
-            //if (rx == 1 && peak_on && local_mox && !displayduplex)
-            //    UpdateDisplayPeak(rx1_peak_buffer, current_display_data);
-            //else
-            //    if (rx == 2 && rx2_peak_on && local_mox)
-            //        UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
-#if false            
-            if (rx == 1)
-            {
-              /*  start_sample_index = (BUFFER_SIZE >> 1) + (int)((Low * BUFFER_SIZE) / sample_rate);
-                 num_samples = (int)((BUFFER_SIZE * (High - Low)) / sample_rate);
-               // num_samples = (int)((High - Low) / (sample_rate * 3) * BUFFER_SIZE);
-                if (start_sample_index < 0) start_sample_index += 4096;
-                if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))
-                    num_samples = (BUFFER_SIZE - start_sample_index);
-
-                //Debug.WriteLine("start_sample_index: "+start_sample_index);
-                slope = (float)num_samples / (float)W; */
-            }
-            else
-            {
-                start_sample_index = (BUFFER_SIZE >> 1) + (int)((Low * BUFFER_SIZE) / sample_rate);
-                num_samples = (int)((BUFFER_SIZE * (High - Low)) / sample_rate);
-               // num_samples = (int)((High - Low) / (sample_rate * 3) * BUFFER_SIZE);
-                if (start_sample_index < 0) start_sample_index += 4096;
-                if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))
-                    num_samples = (BUFFER_SIZE - start_sample_index);
-
-                //Debug.WriteLine("start_sample_index: "+start_sample_index);
-                slope = (float)num_samples / (float)W;
-            }
-#endif
-
-            //if (local_mox && !displayduplex)// || rx1_dsp_mode == DSPMode.DRM)
-            //{
-            //    start_sample_index = (BUFFER_SIZE >> 1) + ((Low * BUFFER_SIZE) / sample_rate);
-            //    num_samples = (width * BUFFER_SIZE / sample_rate);
-            //    if (start_sample_index < 0) start_sample_index += 4096;
-            //    if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))
-            //        num_samples = (BUFFER_SIZE - start_sample_index);
-
-            //    //Debug.WriteLine("start_sample_index: "+start_sample_index);
-            //    slope = (float)num_samples / (float)W;
-            //}
-
             try
             {
-                Parallel.For(0, W, (i) => //for (int i = 0; i < W; i++)
+                for (int i = 0; i < W; i++)
                 {
                     float max = float.MinValue;
-                    //float dval = i * slope + start_sample_index;
-                    //int lindex = (int)Math.Floor(dval);
-                    //int rindex = (int)Math.Floor(dval + slope);
-
+                   
                     if (rx == 1)
                     {
-                        //if (local_mox && !displayduplex)// || rx1_dsp_mode == DSPMode.DRM)
-                        //{
-                        //    if (slope <= 1.0 || lindex == rindex)
-                        //    {
-                        //        max = current_display_data[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % 4096] * (dval - (float)lindex);
-                        //    }
-                        //    else
-                        //    {
-                        //        for (int j = lindex; j < rindex; j++)
-                        //            if (current_display_data[j % 4096] > max) max = current_display_data[j % 4096];
-                        //    }
-                        //}
-
-                        //else 
                         max = current_display_data[i];
                     }
-                    else if (rx == 2)
+                    else
                     {
-                        //if (local_mox)
-                        //{
-                        //    if (slope <= 1.0 || lindex == rindex)
-                        //    {
-                        //        max = current_display_data_bottom[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data_bottom[(lindex + 1) % 4096] * (dval - (float)lindex);
-                        //    }
-                        //    else
-                        //    {
-                        //        for (int j = lindex; j < rindex; j++)
-                        //            if (current_display_data_bottom[j % 4096] > max) max = current_display_data_bottom[j % 4096];
-                        //    }
-                        //}
-                        //else 
                         max = current_display_data_bottom[i];
                     }
 
@@ -10445,18 +10360,11 @@ namespace Thetis
                     }
 
                     points[i].X = i;
-                    points[i].Y = (int)(Math.Floor((grid_max - max) * H / yRange));
-                    /* if (points[i].Y < 0)
-                     {
-                        // Trace.WriteLine(i + " " + max.ToString("f2") + points[i].Y.ToString("f2"));
-                        // Trace.WriteLine(new_display_data[i].ToString("f2") + " " + current_display_data[i].ToString("f2"));
-
-                         points[i].Y = H;
-                     }*/
+                    points[i].Y = (int)(Math.Floor((grid_max - max) * H / yRange));                  
                     points[i].Y = Math.Min(points[i].Y, H);
 
                     if (bottom) points[i].Y += H;
-                });
+                }
             }
             catch (Exception ex)
             {
@@ -10476,10 +10384,10 @@ namespace Thetis
                         points[W].Y += H;
                         points[W + 1].Y += H;
                     }
-                    // data_line_pen.Color = Color.FromArgb(100, 255, 255, 255);
+
                     if (local_mox) g.FillPolygon(tx_data_line_fpen.Brush, points);
                     else g.FillPolygon(data_line_fpen.Brush, points);
-                    // g.FillPolygon(data_line_fpen.Brush, points, System.Drawing.Drawing2D.FillMode.Winding);
+
                     points[W] = points[W - 1];
                     points[W + 1] = points[W - 1];
                     data_line_pen.Color = data_line_color;
@@ -10496,218 +10404,7 @@ namespace Thetis
             {
                 // Trace.WriteLine(ex);
             }
-#if false
-            // draw notch zoom if enabled
-            if (tnf_zoom)
-            {
 
-                List<Notch> notches;
-                if (!bottom)
-                    notches = NotchList.NotchesInBW((double)vfoa_hz * 1e-6, Low, High);
-                else
-                    notches = NotchList.NotchesInBW((double)vfob_hz * 1e-6, Low, High);
-
-                Notch notch = null;
-                foreach (Notch n in notches)
-                {
-                    if (n.Details)
-                    {
-                        notch = n;
-                        break;
-                    }
-                }
-
-                if (notch != null &&
-                    ((bottom && notch.RX == 2) ||
-                    (!bottom && notch.RX == 1)))
-                {
-                    // draw zoom background
-                    if (bottom) g.FillRectangle(new SolidBrush(Color.FromArgb(230, 0, 0, 0)), 0, H, W, H / zoom_height);
-                    else g.FillRectangle(new SolidBrush(Color.FromArgb(230, 0, 0, 0)), 0, 0, W, H / zoom_height);
-
-
-                    // calculate data needed for zoomed notch
-                    long rf_freq = vfoa_hz;
-                    int rit = rit_hz;
-
-                    if (bottom)
-                    {
-                        rf_freq = vfob_hz;
-                    }
-
-                    if (bottom)
-                    {
-                        switch (rx2_dsp_mode)
-                        {
-                            case (DSPMode.CWL):
-                                rf_freq += cw_pitch;
-                                break;
-                            case (DSPMode.CWU):
-                                rf_freq -= cw_pitch;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        switch (rx1_dsp_mode)
-                        {
-                            case (DSPMode.CWL):
-                                rf_freq += cw_pitch;
-                                break;
-                            case (DSPMode.CWU):
-                                rf_freq -= cw_pitch;
-                                break;
-                        }
-                    }
-
-                    int zoomed_notch_center_freq = (int)(notch_zoom_start_freq * 1e6 - rf_freq - rit);
-
-                    int original_bw = High - Low;
-                    int zoom_bw = original_bw / 10;
-
-                    int low = zoomed_notch_center_freq - zoom_bw / 2;
-                    int high = zoomed_notch_center_freq + zoom_bw / 2;
-
-                    if (low < Low) // check left limit
-                    {
-                        low = Low;
-                        high = Low + zoom_bw;
-                    }
-                    else if (high > High) // check right limit
-                    {
-                        high = High;
-                        low = High - zoom_bw;
-                    }
-
-                    // decide colors to draw notch
-                    Color c1 = notch_on_color_zoomed;
-                    Color c2 = notch_highlight_color_zoomed;
-
-                    if (!tnf_active)
-                    {
-                        c1 = notch_off_color;
-                        c2 = Color.Black;
-                    }
-                    else if (notch.Permanent)
-                    {
-                        c1 = notch_perm_on_color;
-                        c2 = notch_perm_highlight_color;
-                    }
-
-                    int notch_zoom_left_x = (int)((float)(notch.Freq * 1e6 - rf_freq - notch.BW / 2 - low - rit) / (high - low) * W);
-                    int notch_zoom_right_x = (int)((float)(notch.Freq * 1e6 - rf_freq + notch.BW / 2 - low - rit) / (high - low) * W);
-
-                    if (notch_zoom_left_x == notch_zoom_right_x)
-                        notch_zoom_right_x = notch_zoom_left_x + 1;
-
-                    //draw zoomed notch bars
-                    if (!bottom)
-                        drawNotchBar(g, notch, notch_zoom_left_x, notch_zoom_right_x, 0, (int)(H / zoom_height), c1, c2);
-                    else
-                        drawNotchBar(g, notch, notch_zoom_left_x, notch_zoom_right_x, H, (int)(H / zoom_height), c1, c2);
-
-                    // draw data
-                    // start_sample_index = (BUFFER_SIZE >> 1) + (int)((low * BUFFER_SIZE) / sample_rate);
-                    // num_samples = (int)((high - low) * BUFFER_SIZE / sample_rate);
-                    // if (start_sample_index < 0) start_sample_index += 4096;
-                    // if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))
-                    //     num_samples = BUFFER_SIZE - start_sample_index;
-
-                    //Debug.WriteLine("start_sample_index: "+start_sample_index);
-                    // slope = (float)num_samples / (float)W;
-                    //int grid_max = spectrum_grid_min + (spectrum_grid_max - spectrum_grid_min) / 2;
-                    for (int i = 0; i < W; i++)
-                    {
-                        float max = float.MinValue;
-                        // float dval = i * slope + start_sample_index;
-                        // int lindex = (int)Math.Floor(dval);
-                        // int rindex = (int)Math.Floor(dval + slope);
-
-                        if (rx == 1)
-                        {
-                            max = current_display_data[i];
-                            /* if (slope <= 1.0 || lindex == rindex)
-                             {
-                                 max = current_display_data[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % 4096] * (dval - (float)lindex);
-                             }
-                             else
-                             {
-                                 for (int j = lindex; j < rindex; j++)
-                                     if (current_display_data[j % 4096] > max) max = current_display_data[j % 4096];
-                             } */
-                        }
-                        else if (rx == 2)
-                        {
-                            max = current_display_data_bottom[i];
-                            /* if (slope <= 1.0 || lindex == rindex)
-                             {
-                                 max = current_display_data_bottom[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data_bottom[(lindex + 1) % 4096] * (dval - (float)lindex);
-                             }
-                             else
-                             {
-                                 for (int j = lindex; j < rindex; j++)
-                                     if (current_display_data_bottom[j % 4096] > max) max = current_display_data_bottom[j % 4096];
-                             } */
-                        }
-
-                        /*   if (rx == 1) max += rx1_display_cal_offset;
-                           else if (rx == 2) max += rx2_display_cal_offset;
-
-                           if (!local_mox)
-                           {
-                               if (rx == 1) max += rx1_preamp_offset;
-                               else if (rx == 2) max += rx2_preamp_offset;
-                           } */
-
-                        if (rx == 1)
-                        {
-                            if (local_mox || (mox && tx_on_vfob)) max += tx_display_cal_offset;
-                            else max += rx1_display_cal_offset;
-                        }
-                        else if (rx == 2)
-                        {
-                            if (local_mox) max += tx_display_cal_offset;
-                            else max += rx2_display_cal_offset;
-                        }
-
-                        if (!local_mox)
-                        {
-                            if (rx == 1) max += rx1_preamp_offset;
-                            else if (rx == 2) max += rx2_preamp_offset;
-                        }
-
-                        if (max > local_max_y)
-                        {
-                            local_max_y = max;
-                            max_x = i;
-                        }
-
-                        points[i].X = i;
-                        points[i].Y = (int)(Math.Floor((grid_max - max) * H / zoom_height / yRange));    //used to be 6
-                        points[i].Y = Math.Min(points[i].Y, H);
-                        if (bottom) points[i].Y += H;
-                    }
-
-                    if (pan_fill)
-                    {
-                        points[W].X = W; points[W].Y = (int)(H / zoom_height);
-                        points[W + 1].X = 0; points[W + 1].Y = (int)(H / zoom_height);
-                        if (bottom)
-                        {
-                            points[W].Y += H;
-                            points[W + 1].Y += H;
-                        }
-                        data_line_pen.Color = Color.FromArgb(100, 255, 255, 255);
-                        g.FillPolygon(data_line_pen.Brush, points, System.Drawing.Drawing2D.FillMode.Alternate);
-                        points[W] = points[W - 1];
-                        points[W + 1] = points[W - 1];
-                        data_line_pen.Color = data_line_color;
-                        g.DrawLines(data_line_pen, points);
-                    }
-                    else g.DrawLines(data_line_pen, points);
-                }
-            }
-#endif
             points = null;
 
             // draw long cursor
@@ -10758,14 +10455,14 @@ namespace Thetis
             set { rx2_waterfall_agc = value; }
         }
 
-        private static int waterfall_update_period = 100; // in ms
+        private static int waterfall_update_period = 16; // in ms
         public static int WaterfallUpdatePeriod
         {
             get { return waterfall_update_period; }
             set { waterfall_update_period = value; }
         }
 
-        private static int rx2_waterfall_update_period = 100; // in ms
+        private static int rx2_waterfall_update_period = 16; // in ms
         public static int RX2WaterfallUpdatePeriod
         {
             get { return rx2_waterfall_update_period; }
@@ -10854,7 +10551,17 @@ namespace Thetis
                 high_threshold = waterfall_high_threshold;
                 sample_rate = sample_rate_rx1;
 
-                if (rx1_waterfall_agc)
+                if (local_mox)
+                    high_threshold = (float)TXWFAmpMax;
+                else
+                    high_threshold = waterfall_high_threshold;
+
+                if (local_mox)
+                {
+                    low_threshold = (float)TXWFAmpMin;
+                    waterfall_minimum = rx1_waterfall_minimum;
+                }
+                else if (rx1_waterfall_agc)
                 {
                     waterfall_minimum = rx1_waterfall_minimum;
                     low_threshold = RX1waterfallPreviousMinValue;

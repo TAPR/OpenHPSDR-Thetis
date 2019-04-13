@@ -353,7 +353,7 @@
             0});
             this.udPSPhnum.Location = new System.Drawing.Point(99, 115);
             this.udPSPhnum.Maximum = new decimal(new int[] {
-            100000,
+            25000000,
             0,
             0,
             0});
@@ -363,7 +363,7 @@
             0,
             0});
             this.udPSPhnum.Name = "udPSPhnum";
-            this.udPSPhnum.Size = new System.Drawing.Size(51, 20);
+            this.udPSPhnum.Size = new System.Drawing.Size(80, 20);
             this.udPSPhnum.TabIndex = 25;
             this.udPSPhnum.Value = new decimal(new int[] {
             150,

@@ -24,28 +24,28 @@
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACiqType", CallingConvention = CallingConvention.Cdecl)] // SetVACOutputIQ(int enabled)
         public static extern void SetIVACiqType(int id, int type);
 
-        // [DllImport("WDSP.dll", EntryPoint = "SetIVACmicRate", CallingConvention = CallingConvention.Cdecl)] // SetBlockSize(int size)
+        // [DllImport("wdsp.dll", EntryPoint = "SetIVACmicRate", CallingConvention = CallingConvention.Cdecl)] // SetBlockSize(int size)
         // public static extern void SetIVACmicRate(int id, int rate);
 
-        // [DllImport("WDSP.dll", EntryPoint = "SetIVACaudioRate", CallingConvention = CallingConvention.Cdecl)]
+        // [DllImport("wdsp.dll", EntryPoint = "SetIVACaudioRate", CallingConvention = CallingConvention.Cdecl)]
         // public static extern void SetIVACaudioRate(int id, int rate);
 
-        // [DllImport("WDSP.dll", EntryPoint = "SetIVACtxmonRate", CallingConvention = CallingConvention.Cdecl)]
+        // [DllImport("wdsp.dll", EntryPoint = "SetIVACtxmonRate", CallingConvention = CallingConvention.Cdecl)]
         // public static extern void SetIVACtxmonRate(int id, int rate);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACvacRate", CallingConvention = CallingConvention.Cdecl)] // SetBlockSizeVAC(int size)
         public static extern void SetIVACvacRate(int id, int rate);
 
-        // [DllImport("WDSP.dll", EntryPoint = "SetIVACmicSize", CallingConvention = CallingConvention.Cdecl)] // SetSampleRate1(int size)
+        // [DllImport("wdsp.dll", EntryPoint = "SetIVACmicSize", CallingConvention = CallingConvention.Cdecl)] // SetSampleRate1(int size)
         // public static extern void SetIVACmicSize(int id, int size);
 
-        // [DllImport("WDSP.dll", EntryPoint = "SetIVACiqSize", CallingConvention = CallingConvention.Cdecl)] // SetSampleRate1(int size)
+        // [DllImport("wdsp.dll", EntryPoint = "SetIVACiqSize", CallingConvention = CallingConvention.Cdecl)] // SetSampleRate1(int size)
         // public static extern void SetIVACiqSize(int id, int size);
 
-        // [DllImport("WDSP.dll", EntryPoint = "SetIVACaudioSize", CallingConvention = CallingConvention.Cdecl)]
+        // [DllImport("wdsp.dll", EntryPoint = "SetIVACaudioSize", CallingConvention = CallingConvention.Cdecl)]
         // public static extern void SetIVACaudioSize(int id, int size);
 
-        // [DllImport("WDSP.dll", EntryPoint = "SetIVACtxmonSize", CallingConvention = CallingConvention.Cdecl)]
+        // [DllImport("wdsp.dll", EntryPoint = "SetIVACtxmonSize", CallingConvention = CallingConvention.Cdecl)]
         // public static extern void SetIVACtxmonSize(int id, int size);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACvacSize", CallingConvention = CallingConvention.Cdecl)] // SetSampleRate2(int size)

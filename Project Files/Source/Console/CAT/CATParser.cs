@@ -707,11 +707,26 @@ namespace Thetis
 				case "ZZDA":
 					rtncmd = cmdlist.ZZDA(suffix);
 					break;
+                case "ZZDB":
+                    rtncmd = cmdlist.ZZDB(suffix);
+                    break;
+                case "ZZDC":
+                    rtncmd = cmdlist.ZZDC(suffix);
+                    break;
+                case "ZZDD":
+                    rtncmd = cmdlist.ZZDD(suffix);
+                    break;
                 case "ZZDE":
                     rtncmd = cmdlist.ZZDE(suffix);
                     break;
                 case "ZZDF":
                     rtncmd = cmdlist.ZZDF(suffix);
+                    break;
+                case "ZZDG":
+                    rtncmd = cmdlist.ZZDG(suffix);
+                    break;
+                case "ZZDH":
+                    rtncmd = cmdlist.ZZDH(suffix);
                     break;
 				case "ZZDM":
 					rtncmd = cmdlist.ZZDM(suffix);
@@ -898,6 +913,9 @@ namespace Thetis
 					break;
                 case "ZZME":
                     rtncmd = cmdlist.ZZME(suffix);
+                    break;
+                case "ZZMF":
+                    rtncmd = cmdlist.ZZMF(suffix);
                     break;
 				case "ZZMG":
 					rtncmd = cmdlist.ZZMG(suffix);
@@ -1102,6 +1120,12 @@ namespace Thetis
 					break;
                 case "ZZRV":
                     rtncmd = cmdlist.ZZRV();
+                    break;
+                case "ZZRX":
+                    rtncmd = cmdlist.ZZRX(suffix);
+                    break;
+                case "ZZRY":
+                    rtncmd = cmdlist.ZZRY(suffix);
                     break;
 				case "ZZSA":
 					rtncmd = cmdlist.ZZSA();
@@ -1364,6 +1388,9 @@ namespace Thetis
 				case "ZZXC":
 					rtncmd = cmdlist.ZZXC();
 					break;
+                case "ZZXD":
+                    rtncmd = cmdlist.ZZXD(suffix);
+                    break;
 				case "ZZXF":
 					rtncmd = cmdlist.ZZXF(suffix);
 					break;
@@ -1382,6 +1409,9 @@ namespace Thetis
 				case "ZZXT":
 					rtncmd = cmdlist.ZZXT(suffix);
 					break;
+                case "ZZXU":
+                    rtncmd = cmdlist.ZZXU(suffix);
+                    break;
                 case "ZZXV":
                     rtncmd = cmdlist.ZZXV(suffix);
                     break;

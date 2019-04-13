@@ -124,6 +124,7 @@ namespace Thetis
             
 			tbRXEQ_Scroll(this, EventArgs.Empty);
 			//tbTXEQ_Scroll(this, EventArgs.Empty);
+            rad10Band_CheckedChanged(this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -291,23 +292,23 @@ namespace Thetis
             // 
             // rad10Band
             // 
+            this.rad10Band.Checked = true;
             this.rad10Band.Image = null;
             this.rad10Band.Location = new System.Drawing.Point(144, 8);
             this.rad10Band.Name = "rad10Band";
             this.rad10Band.Size = new System.Drawing.Size(120, 24);
             this.rad10Band.TabIndex = 3;
+            this.rad10Band.TabStop = true;
             this.rad10Band.Text = "10-Band Equalizer";
             this.rad10Band.CheckedChanged += new System.EventHandler(this.rad10Band_CheckedChanged);
             // 
             // rad3Band
             // 
-            this.rad3Band.Checked = true;
             this.rad3Band.Image = null;
             this.rad3Band.Location = new System.Drawing.Point(16, 8);
             this.rad3Band.Name = "rad3Band";
             this.rad3Band.Size = new System.Drawing.Size(120, 24);
             this.rad3Band.TabIndex = 2;
-            this.rad3Band.TabStop = true;
             this.rad3Band.Text = "3-Band Equalizer";
             this.rad3Band.CheckedChanged += new System.EventHandler(this.rad3Band_CheckedChanged);
             // 
@@ -404,7 +405,6 @@ namespace Thetis
             this.tbRXEQ10.Size = new System.Drawing.Size(32, 128);
             this.tbRXEQ10.TabIndex = 124;
             this.tbRXEQ10.TickFrequency = 3;
-            this.tbRXEQ10.Visible = false;
             this.tbRXEQ10.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
             // 
             // lblRXEQ7
@@ -442,7 +442,6 @@ namespace Thetis
             this.tbRXEQ7.Size = new System.Drawing.Size(32, 128);
             this.tbRXEQ7.TabIndex = 118;
             this.tbRXEQ7.TickFrequency = 3;
-            this.tbRXEQ7.Visible = false;
             this.tbRXEQ7.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
             // 
             // tbRXEQ8
@@ -457,7 +456,6 @@ namespace Thetis
             this.tbRXEQ8.Size = new System.Drawing.Size(32, 128);
             this.tbRXEQ8.TabIndex = 119;
             this.tbRXEQ8.TickFrequency = 3;
-            this.tbRXEQ8.Visible = false;
             this.tbRXEQ8.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
             // 
             // tbRXEQ9
@@ -486,7 +484,6 @@ namespace Thetis
             this.tbRXEQ4.Size = new System.Drawing.Size(32, 128);
             this.tbRXEQ4.TabIndex = 112;
             this.tbRXEQ4.TickFrequency = 3;
-            this.tbRXEQ4.Visible = false;
             this.tbRXEQ4.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
             // 
             // tbRXEQ5
@@ -515,7 +512,6 @@ namespace Thetis
             this.tbRXEQ6.Size = new System.Drawing.Size(32, 128);
             this.tbRXEQ6.TabIndex = 114;
             this.tbRXEQ6.TickFrequency = 3;
-            this.tbRXEQ6.Visible = false;
             this.tbRXEQ6.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
             // 
             // lblRXEQ4
@@ -598,7 +594,6 @@ namespace Thetis
             this.tbRXEQ2.Size = new System.Drawing.Size(32, 128);
             this.tbRXEQ2.TabIndex = 5;
             this.tbRXEQ2.TickFrequency = 3;
-            this.tbRXEQ2.Visible = false;
             this.tbRXEQ2.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
             // 
             // tbRXEQ3
@@ -613,7 +608,6 @@ namespace Thetis
             this.tbRXEQ3.Size = new System.Drawing.Size(32, 128);
             this.tbRXEQ3.TabIndex = 6;
             this.tbRXEQ3.TickFrequency = 3;
-            this.tbRXEQ3.Visible = false;
             this.tbRXEQ3.Scroll += new System.EventHandler(this.tbRXEQ_Scroll);
             // 
             // lblRXEQ2

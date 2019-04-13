@@ -236,25 +236,25 @@ namespace Thetis
             }
         }
 
-        private static float vox_threshold = 0.001f;
-        public static float VOXThreshold
-        {
-            get { return vox_threshold; }
-            set
-            {
-                vox_threshold = value;
-                cmaster.CMSetTXAVoxThresh(0);
-            }
-        }
+        //private static float vox_threshold = 0.001f;
+        //public static float VOXThreshold
+        //{
+        //    get { return vox_threshold; }
+        //    set
+        //    {
+        //        vox_threshold = value;
+        //        cmaster.CMSetTXAVoxThresh(0);
+        //    }
+        //}
 
-        private static float vox_gain = 0.001f;
+        private static float vox_gain = 1.0f;
         public static float VOXGain
         {
             get { return vox_gain; }
             set
             {
                 vox_gain = value;
-                cmaster.CMSetTXAVoxThresh(0);
+                //cmaster.CMSetTXAVoxThresh(0);
             }
         }
 
@@ -449,14 +449,9 @@ namespace Thetis
         public static bool phase;
         public static bool scope;
 
-        public static WaveFileWriter wave_file_writer;
-        public static WaveFileWriter wave_file_writer2;
-        public static WaveFileReader1 wave_file_reader;
-        public static WaveFileReader1 wave_file_reader2;
         public static bool two_tone;
         public static bool high_pwr_am;
         public static bool testing;
-        private static bool localmox;
 
         private static bool vac_combine_input = false;
         public static bool VACCombineInput
@@ -558,6 +553,17 @@ namespace Thetis
 
         }
 
+        private static bool antivox_source_VAC = false;
+        public static bool AntiVOXSourceVAC
+        {
+            get { return antivox_source_VAC; }
+            set
+            {
+                antivox_source_VAC = value;
+                cmaster.CMSetAntiVoxSourceWhat();
+            }
+        }
+
         private static bool vac_enabled = false;
         public static bool VACEnabled
         {
@@ -565,6 +571,7 @@ namespace Thetis
             {
                 vac_enabled = value;
                 cmaster.CMSetTXAPanelGain1(WDSP.id(1, 0));
+                cmaster.CMSetAntiVoxSourceWhat();
                 if (console.PowerOn)
                 EnableVAC1(value);
             }
@@ -577,6 +584,7 @@ namespace Thetis
             set
             {
                 vac2_enabled = value;
+                cmaster.CMSetAntiVoxSourceWhat();
                 if (console.PowerOn)
                 EnableVAC2(value);
             }
@@ -1681,7 +1689,7 @@ namespace Thetis
 
         #region Scope Stuff
 
-        private static int scope_samples_per_pixel = 512;
+        private static int scope_samples_per_pixel = 10000;
 
         public static int ScopeSamplesPerPixel
         {

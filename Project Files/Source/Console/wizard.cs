@@ -346,11 +346,13 @@ namespace Thetis
             // radGenModelOrion
             // 
             this.radGenModelOrion.AutoSize = true;
+            this.radGenModelOrion.Checked = true;
             this.radGenModelOrion.Image = null;
             this.radGenModelOrion.Location = new System.Drawing.Point(19, 139);
             this.radGenModelOrion.Name = "radGenModelOrion";
             this.radGenModelOrion.Size = new System.Drawing.Size(84, 17);
             this.radGenModelOrion.TabIndex = 12;
+            this.radGenModelOrion.TabStop = true;
             this.radGenModelOrion.Text = "ANAN-200D";
             this.radGenModelOrion.UseVisualStyleBackColor = true;
             this.radGenModelOrion.CheckedChanged += new System.EventHandler(this.radGenModelOrion_CheckedChanged);
@@ -394,13 +396,11 @@ namespace Thetis
             // radGenModelHermes
             // 
             this.radGenModelHermes.AutoSize = true;
-            this.radGenModelHermes.Checked = true;
             this.radGenModelHermes.Image = null;
             this.radGenModelHermes.Location = new System.Drawing.Point(19, 37);
             this.radGenModelHermes.Name = "radGenModelHermes";
             this.radGenModelHermes.Size = new System.Drawing.Size(71, 17);
             this.radGenModelHermes.TabIndex = 8;
-            this.radGenModelHermes.TabStop = true;
             this.radGenModelHermes.Text = "HERMES";
             this.radGenModelHermes.UseVisualStyleBackColor = true;
             this.radGenModelHermes.CheckedChanged += new System.EventHandler(this.radGenModelHermes_CheckedChanged);

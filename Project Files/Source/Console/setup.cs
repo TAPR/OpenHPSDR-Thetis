@@ -91,8 +91,8 @@ namespace Thetis
             comboOptFilterWidthMode.Text = "Linear";
             //  comboAudioSampleRate1.SelectedIndex = 0;
             //  comboAudioSampleRateRX2.SelectedIndex = 0;
-            comboAudioSampleRate1.Text = "192000";
-            comboAudioSampleRateRX2.Text = "192000";
+            comboAudioSampleRate1.Text = "384000";
+            comboAudioSampleRateRX2.Text = "384000";
             comboAudioSampleRate2.Text = "48000";
             comboAudioSampleRate3.Text = "48000";
             comboAudioBuffer2.Text = "1024";
@@ -101,7 +101,7 @@ namespace Thetis
             comboDisplayLabelAlign.Text = "Auto";
             comboColorPalette.Text = "enhanced";
             comboRX2ColorPalette.Text = "enhanced";
-            comboTXLabelAlign.Text = "Auto";
+            comboTXLabelAlign.Text = "Cntr";
             comboDisplayDriver.Text = "GDI+";
             comboFRSRegion.Text = "United States";
 
@@ -129,8 +129,8 @@ namespace Thetis
             comboDSPDigRXFiltType.SelectedIndex = 0;
             comboDSPDigTXFiltType.SelectedIndex = 0;
 
-            comboDispWinType.Text = "Kaiser";
-            comboRX2DispWinType.Text = "Kaiser";
+            comboDispWinType.Text = "Hann";
+            comboRX2DispWinType.Text = "Hann";
             comboDispPanDetector.Text = "Peak";
             comboDispWFDetector.Text = "Peak";
             comboDispPanAveraging.Text = "Log Recursive";
@@ -141,18 +141,19 @@ namespace Thetis
             comboRX2DispWFAveraging.Text = "Log Recursive";
             comboTXDispPanDetector.Text = "Peak";
             comboTXDispPanAveraging.Text = "Log Recursive";
-            comboTXDispWinType.Text = "Kaiser";
+            comboTXDispWinType.Text = "Hann";
             comboTXDispWFDetector.Text = "Peak";
             comboTXDispWFAveraging.Text = "Log Recursive";
             comboKeyerConnKeyLine.SelectedIndex = 0;
             comboKeyerConnSecondary.SelectedIndex = 0;
             comboKeyerConnPTTLine.SelectedIndex = 0;
             comboKeyerConnPrimary.SelectedIndex = 0;
-            comboTXTUNMeter.SelectedIndex = 0;
+            //comboTXTUNMeter.SelectedIndex = 0;
+            comboTXTUNMeter.Text = "Fwr SWR";
             comboMeterType.Text = "Edge";
             if (comboCATPort.Items.Count > 0) comboCATPort.SelectedIndex = 0;
             if (comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
-            comboCATbaud.Text = "1200";
+            comboCATbaud.Text = "115200";
             comboCATparity.Text = "none";
             comboCATdatabits.Text = "8";
             comboCATstopbits.Text = "1";
@@ -161,21 +162,21 @@ namespace Thetis
 
             if (comboCAT2Port.Items.Count > 0) comboCAT2Port.SelectedIndex = 0;
             // if (comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
-            comboCAT2baud.Text = "1200";
+            comboCAT2baud.Text = "115200";
             comboCAT2parity.Text = "none";
             comboCAT2databits.Text = "8";
             comboCAT2stopbits.Text = "1";
 
             if (comboCAT3Port.Items.Count > 0) comboCAT3Port.SelectedIndex = 0;
             // if (comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
-            comboCAT3baud.Text = "1200";
+            comboCAT3baud.Text = "115200";
             comboCAT3parity.Text = "none";
             comboCAT3databits.Text = "8";
             comboCAT3stopbits.Text = "1";
 
             if (comboCAT4Port.Items.Count > 0) comboCAT4Port.SelectedIndex = 0;
             //  if (comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
-            comboCAT4baud.Text = "1200";
+            comboCAT4baud.Text = "115200";
             comboCAT4parity.Text = "none";
             comboCAT4databits.Text = "8";
             comboCAT4stopbits.Text = "1";
@@ -438,6 +439,8 @@ namespace Thetis
             udTXGridMax.Value = Display.TXSpectrumGridMax;
             udTXGridMin.Value = Display.TXSpectrumGridMin;
             udTXGridStep.Value = Display.TXSpectrumGridStep;
+            udTXWFAmpMax.Value = Display.TXWFAmpMax;
+            udTXWFAmpMin.Value = Display.TXWFAmpMin;
         }
 
         private void InitDSPTab()
@@ -1169,7 +1172,11 @@ namespace Thetis
             chkRX1WaterfallAGC_CheckedChanged(this, e);
             chkRX2WaterfallAGC_CheckedChanged(this, e);
             chkANAN8000DLEDisplayVoltsAmps_CheckedChanged(this, e);
-
+            udDisplayWaterfallUpdatePeriod_ValueChanged(this, e);
+            udRX2DisplayWaterfallUpdatePeriod_ValueChanged(this, e);
+            udDisplayWaterfallAvgTime_ValueChanged(this, e);
+            udRX2DisplayWaterfallAvgTime_ValueChanged(this, e);
+            comboTXLabelAlign_SelectedIndexChanged(this, e);
             // DSP Tab
             udLMSANF_ValueChanged(this, e);
             udLMSNR_ValueChanged(this, e);
@@ -1336,7 +1343,7 @@ namespace Thetis
             comboTXDispPanAveraging_SelectedIndexChanged(this, e);
             udTXDisplayAVGTime_ValueChanged(this, e);
             chkDispTXNormalize_CheckedChanged(this, e);
-            tbTXDisplayFFTSize_Scroll(this, e);
+           // tbTXDisplayFFTSize_Scroll(this, e);
             comboTXDispWFDetector_SelectedIndexChanged(this, e);
             comboTXDispWFAveraging_SelectedIndexChanged(this, e);
             udTXDisplayAVTime_ValueChanged(this, e);
@@ -1346,7 +1353,7 @@ namespace Thetis
             udDSPNBTransition_ValueChanged(this, e);
             udDSPNBLead_ValueChanged(this, e);
             udDSPNBLag_ValueChanged(this, e);
-
+            comboMeterType_SelectedIndexChanged(this, e);
             // RX2 tab
             chkRX2AutoMuteTX_CheckedChanged(this, e);
             udMoxDelay_ValueChanged(this, e);
@@ -1413,6 +1420,28 @@ namespace Thetis
             // IVAC
             chkVAC1_Force_CheckedChanged(this, e);
             chkVAC1_Force2_CheckedChanged(this, e);
+            chkVAC2onSplit_CheckedChanged(this, e);
+            chkAudioEnableVAC_CheckedChanged(this, e);
+            chkVAC2Enable_CheckedChanged(this, e);
+            // DEXP-VOX
+            chkVOXEnable_CheckedChanged(this, e);
+            chkDEXPEnable_CheckedChanged(this, e);
+            udDEXPAttack_ValueChanged(this, e);
+            udDEXPHold_ValueChanged(this, e);
+            udDEXPRelease_ValueChanged(this, e);
+            udDEXPThreshold_ValueChanged(this, e);
+            udDEXPExpansionRatio_ValueChanged(this, e);
+            udDEXPHysteresisRatio_ValueChanged(this, e);
+            udDEXPDetTau_ValueChanged(this, e);
+            chkSCFEnable_CheckedChanged(this, e);
+            udSCFLowCut_ValueChanged(this, e);
+            udSCFHighCut_ValueChanged(this, e);
+            chkDEXPLookAheadEnable_CheckedChanged(this, e);
+            udDEXPLookAhead_ValueChanged(this, e);
+            chkAntiVoxEnable_CheckedChanged(this, e);
+            udAntiVoxGain_ValueChanged(this, e);
+            udAntiVoxTau_ValueChanged(this, e);
+            chkAntiVoxSource_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -1489,7 +1518,7 @@ namespace Thetis
             return false;
         }
 
-        public void SaveTXProfileData() //W4TME
+        public void SaveTXProfileData()
         {
             if (profile_deleted == true)
             {
@@ -1546,17 +1575,23 @@ namespace Thetis
 
             dr["Power"] = console.PWR;
 
-            dr["Dexp_On"] = chkTXNoiseGateEnabled.Checked;
-            dr["Dexp_Threshold"] = (int)udTXNoiseGate.Value;
-            dr["Dexp_Attenuate"] = (int)udTXNoiseGateAttenuate.Value;
+            dr["VOX_On"] = chkVOXEnable.Checked;
+            dr["Dexp_On"] = chkDEXPEnable.Checked;
+            dr["Dexp_Threshold"] = (int)udDEXPThreshold.Value;
+            dr["Dexp_Attack"] = (int)udDEXPAttack.Value;
+            dr["VOX_HangTime"] = (int)udDEXPHold.Value;
+            dr["Dexp_Release"] = (int)udDEXPRelease.Value;
+            dr["Dexp_Attenuate"] = udDEXPExpansionRatio.Value;
+            dr["Dexp_Hysterisis"] = udDEXPHysteresisRatio.Value;
+            dr["Dexp_Tau"] = (int)udDEXPDetTau.Value;
+            dr["Dexp_SCF_On"] = chkSCFEnable.Checked;
+            dr["Dexp_SCF_Low"] = (int)udSCFLowCut.Value;
+            dr["Dexp_SCF_High"] = (int)udSCFHighCut.Value;
+            dr["Dexp_LookAhead_On"] = chkDEXPLookAheadEnable.Checked;
+            dr["Dexp_LookAhead"] = (int)udDEXPLookAhead.Value;
 
-            dr["VOX_On"] = chkTXVOXEnabled.Checked;
-            dr["VOX_Threshold"] = (int)udTXVOXThreshold.Value;
-            dr["VOX_HangTime"] = (int)udTXVOXHangTime.Value;
             dr["Tune_Power"] = (int)udTXTunePower.Value;
             dr["Tune_Meter_Type"] = (string)comboTXTUNMeter.Text;
-
-            // dr["TX_Limit_Slew"] = (bool)chkTXLimitSlew.Checked;
 
             dr["TX_AF_Level"] = console.TXAF;
 
@@ -1737,9 +1772,16 @@ namespace Thetis
                 }
             }
         }
+
+        public void UpdateTXDisplayFFT()
+        {
+             tbTXDisplayFFTSize_Scroll(this, EventArgs.Empty);
+        }
+
         #endregion
 
         #region Properties
+
 
         public FocusMasterMode FocusMasterMode
         {
@@ -2203,6 +2245,37 @@ namespace Thetis
             }
         }
 
+        public bool CFCEnabled 
+        {
+            get
+            {
+                return chkCFCEnable.Checked;
+            }
+            set
+            {
+                if (chkCFCEnable != null)
+                {
+                    chkCFCEnable.Checked = value;
+                    chkCFCEnable_CheckedChanged(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public bool PhaseRotEnabled
+        {
+            get
+            {
+                return chkPHROTEnable.Checked;
+            }
+            set
+            {
+                if (chkPHROTEnable != null)
+                {
+                    chkPHROTEnable.Checked = value;
+                    chkPHROTEnable_CheckedChanged(this, EventArgs.Empty);
+                }
+            }
+        }
         public string VACSampleRate
         {
             get
@@ -2337,29 +2410,16 @@ namespace Thetis
             }
         }
 
-        public int NoiseGate
-        {
-            get
-            {
-                if (udTXNoiseGate != null) return (int)udTXNoiseGate.Value;
-                else return -1;
-            }
-            set
-            {
-                if (udTXNoiseGate != null) udTXNoiseGate.Value = value;
-            }
-        }
-
         public int VOXSens
         {
             get
             {
-                if (udTXVOXThreshold != null) return (int)udTXVOXThreshold.Value;
+                if (udDEXPThreshold != null) return (int)udDEXPThreshold.Value;
                 else return -1;
             }
             set
             {
-                if (udTXVOXThreshold != null) udTXVOXThreshold.Value = value;
+                if (udDEXPThreshold != null) udDEXPThreshold.Value = value;
             }
         }
 
@@ -2367,12 +2427,14 @@ namespace Thetis
         {
             get
             {
-                if (chkTXNoiseGateEnabled != null) return chkTXNoiseGateEnabled.Checked;
+                if (chkDEXPEnable != null) return chkDEXPEnable.Checked;
+                //if (chkTXNoiseGateEnabled != null) return chkTXNoiseGateEnabled.Checked;
                 else return false;
             }
             set
             {
-                if (chkTXNoiseGateEnabled != null) chkTXNoiseGateEnabled.Checked = value;
+                if (chkDEXPEnable != null) chkDEXPEnable.Checked = value;
+                //if (chkTXNoiseGateEnabled != null) chkTXNoiseGateEnabled.Checked = value;
             }
         }
 
@@ -2699,12 +2761,26 @@ namespace Thetis
         {
             get
             {
-                if (chkTXVOXEnabled != null) return chkTXVOXEnabled.Checked;
+                if (chkVOXEnable != null) return chkVOXEnable.Checked;
+                //if (chkTXVOXEnabled != null) return chkTXVOXEnabled.Checked;
                 else return false;
             }
             set
             {
-                if (chkTXVOXEnabled != null) chkTXVOXEnabled.Checked = value;
+                if (chkVOXEnable != null) chkVOXEnable.Checked = value;
+                //if (chkTXVOXEnabled != null) chkTXVOXEnabled.Checked = value;
+            }
+        }
+        public int VOXHangTime
+        {
+            get
+            {
+                if (udDEXPHold != null) return (int)udDEXPHold.Value;
+                else return 125;
+            }
+            set
+            {
+                if (udDEXPHold != null) udDEXPHold.Value = value;
             }
         }
 
@@ -2762,6 +2838,10 @@ namespace Thetis
 
         public int AGCHangThreshold
         {
+            get
+            {
+                return tbDSPAGCHangThreshold.Value;
+            }
             set
             {
                 if (tbDSPAGCHangThreshold != null)
@@ -2829,7 +2909,7 @@ namespace Thetis
                 }
             }
         }
-
+        
         public int DisplayFFTSize
         {
             get { return (int)tbDisplayFFTSize.Value; }
@@ -4759,27 +4839,95 @@ namespace Thetis
         public float DisplayGridMin
         {
             get { return (float)udDisplayGridMin.Value; }
-            set { udDisplayGridMin.Value = (decimal)value; }
+            set 
+            {
+                if (udDisplayGridMin != null)
+                {
+                    if (value > (float)udDisplayGridMin.Maximum) value = (float)udDisplayGridMin.Maximum;
+                    if (value < (float)udDisplayGridMin.Minimum) value = (float)udDisplayGridMin.Minimum;
+                    udDisplayGridMin.Value = (decimal)value;
+                }
+            }
         }
 
         public float DisplayGridMax
         {
             get { return (float)udDisplayGridMax.Value; }
-            set { udDisplayGridMax.Value = (decimal)value; }
+            set
+            {
+                if (udDisplayGridMax != null)
+                {
+                    if (value > (float)udDisplayGridMax.Maximum) value = (float)udDisplayGridMax.Maximum;
+                    if (value < (float)udDisplayGridMax.Minimum) value = (float)udDisplayGridMax.Minimum;
+                    udDisplayGridMax.Value = (decimal)value;
+                }
+            }
         }
 
         public float RX2DisplayGridMin
         {
             get { return (float)udRX2DisplayGridMin.Value; }
-            set { udRX2DisplayGridMin.Value = (decimal)value; }
+            set
+            {
+                if (udRX2DisplayGridMin != null)
+                {
+                    if (value > (float)udRX2DisplayGridMin.Maximum) value = (float)udRX2DisplayGridMin.Maximum;
+                    if (value < (float)udRX2DisplayGridMin.Minimum) value = (float)udRX2DisplayGridMin.Minimum;
+                    udRX2DisplayGridMin.Value = (decimal)value;
+                }
+            }
         }
 
         public float RX2DisplayGridMax
         {
             get { return (float)udRX2DisplayGridMax.Value; }
-            set { udRX2DisplayGridMax.Value = (decimal)value; }
+            set
+            {
+                if (udRX2DisplayGridMax != null)
+                {
+                    if (value > (float)udRX2DisplayGridMax.Maximum) value = (float)udRX2DisplayGridMax.Maximum;
+                    if (value < (float)udRX2DisplayGridMax.Minimum) value = (float)udRX2DisplayGridMax.Minimum;
+                    udRX2DisplayGridMax.Value = (decimal)value;
+                }
+            }
         }
 
+        public float TXGridMax
+        {
+            get
+            {
+                if (udTXGridMax != null) return (float)udTXGridMax.Value;
+                else return -1;
+            }
+            set
+            {
+                if (udTXGridMax != null)
+                {
+                    if (value > (float)udTXGridMax.Maximum) value = (float)udTXGridMax.Maximum;
+                    if (value < (float)udTXGridMax.Minimum) value = (float)udTXGridMax.Minimum;
+                    udTXGridMax.Value = (decimal)value;
+                }
+            }
+        }
+
+        public float TXGridMin
+        {
+            get
+            {
+                if (udTXGridMin != null) return (float)udTXGridMin.Value;
+                else return -1;
+            }
+            set
+            {
+                if (udTXGridMin != null)
+                {
+                    if (value > (float)udTXGridMin.Maximum) value = (float)udTXGridMin.Maximum;
+                    if (value < (float)udTXGridMin.Minimum) value = (float)udTXGridMin.Minimum;
+                    udTXGridMin.Value = (decimal)value;
+                }
+            }
+        }
+        
         public float PA10W
         {
             get
@@ -5603,6 +5751,11 @@ namespace Thetis
 
             if (radGenModelANAN10E.Checked)
             {
+                // if it's a 10E, set RX2 sample_rate equal to RX1 rate
+                comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
+                comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
+                comboAudioSampleRateRX2.Enabled = false;
+                //
                 NetworkIO.fwVersionsChecked = false;
                 //console.CurrentModel = Model.HERMES;
                 console.CurrentHPSDRModel = HPSDRModel.ANAN10E;
@@ -5642,6 +5795,10 @@ namespace Thetis
                 console.RX2PreampPresent = false;
                 cmaster.SetADCSupply(0, 33);
                 NetworkIO.SetRxADC(1);
+            }
+            else
+            {
+                comboAudioSampleRateRX2.Enabled = true;
             }
 
             radGenModelHPSDR_or_Hermes_CheckedChanged(sender, e, true);
@@ -6617,7 +6774,6 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "BPF1";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz BPF";
                 chkDisableHPFonTX.Text = "BPF ByPass on TX";
-                panelAlexRXXVRTControl.Visible = false;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
@@ -7150,15 +7306,7 @@ namespace Thetis
                     comboAudioDriver2.SelectedIndex = 0;
             }
 
-            //bool power = console.PowerOn;
-            //if (power && val != old_val)
-            //{
-            //    console.PowerOn = false;
-            //    Thread.Sleep(100);
-            //}
-
             console.VACEnabled = val;
-            // if (power && val != old_val) console.PowerOn = true;
         }
 
         private void chkVAC2Enable_CheckedChanged(object sender, System.EventArgs e)
@@ -7173,15 +7321,7 @@ namespace Thetis
                     comboAudioDriver3.SelectedIndex = 0;
             }
 
-            //bool power = console.PowerOn;
-            //if (power && val != old_val)
-            //{
-            //    console.PowerOn = false;
-            //    Thread.Sleep(100);
-            //}
-
             console.VAC2Enabled = val;
-            // if (power && val != old_val) console.PowerOn = true;
         }
 
         private void comboAudioDriver2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -7394,7 +7534,7 @@ namespace Thetis
                 unsafe { cmaster.SetAAudioMixStates((void*)0, 0, 3, 0); }
 
                 // disable VAC
-                if (console.VACEnabled) Audio.EnableVAC1(false);
+                if (console.PowerOn && console.VACEnabled && !initializing) Audio.EnableVAC1(false);
 
                 // turn OFF the DDC(s) 
                 NetworkIO.EnableRx(0, 0);
@@ -7430,7 +7570,7 @@ namespace Thetis
                 }
 
                 // enable VAC
-                if (console.VACEnabled) Audio.EnableVAC1(true);
+                if (console.PowerOn && console.VACEnabled && !initializing) Audio.EnableVAC1(true);
 
                 // turn ON the DSP channels
                 int w_enable = 0;
@@ -7442,7 +7582,12 @@ namespace Thetis
                 double bin_width = (double)new_rate / (double)console.specRX.GetSpecRX(0).FFTSize;
                 lblDisplayBinWidth.Text = bin_width.ToString("N3");
             }
-
+            if (radGenModelANAN10E.Checked)
+            {
+                // if it's a 10E, set RX2 sample_rate equal to RX1 rate
+                comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
+                comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
+            }
         }
 
         private void comboAudioSampleRateRX2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -7459,7 +7604,7 @@ namespace Thetis
                 // remove the RX2 audio stream from the mix set
                 unsafe { cmaster.SetAAudioMixState((void*)0, 0, 2, false); }
                 // disable VAC
-                if (console.VAC2Enabled) Audio.EnableVAC2(false);
+                if (console.PowerOn && console.VAC2Enabled && !initializing) Audio.EnableVAC2(false);
                 // turn OFF the DDC for RX2; had to add rx2_enabled as a parameter to UpdateReceivers() to do this --- THIS IS S HACK.  BETTER WAY?
                 console.UpdateDDCs(false);
                 // wait for all inflight packets to arrive
@@ -7487,7 +7632,7 @@ namespace Thetis
                     unsafe { cmaster.SetAAudioMixState((void*)0, 0, 2, true); }
                 }
                 // enable VAC2
-                if (console.VAC2Enabled) Audio.EnableVAC2(true);
+                if (console.PowerOn && console.VAC2Enabled && !initializing) Audio.EnableVAC2(true);
                 // turn ON the DSP channel if it was ON before
                 int w_enable = 0;
                 if (was_enabled) w_enable = 1;
@@ -8012,7 +8157,7 @@ namespace Thetis
         {
             if (chk20dbMicBoost.Checked) udVOXGain_ValueChanged(this, e);
             console.MicBoost = chk20dbMicBoost.Checked;
-            udVOXGain.Enabled = chk20dbMicBoost.Checked;
+            //udVOXGain.Enabled = chk20dbMicBoost.Checked;
             //console.SetMicGain();
         }
 
@@ -8055,9 +8200,6 @@ namespace Thetis
 
         private void udDisplayGridMax_ValueChanged(object sender, System.EventArgs e)
         {
-            // if (udDisplayGridMax.Value <= udDisplayGridMin.Value)
-            //   udDisplayGridMax.Value = udDisplayGridMin.Value + 10;
-            // Display.SpectrumGridMax = (int)udDisplayGridMax.Value;
             UpdateDisplayGridBandInfo();
             switch (console.RX1Band)
             {
@@ -8738,6 +8880,20 @@ namespace Thetis
         private void udTXGridStep_ValueChanged(object sender, System.EventArgs e)
         {
             Display.TXSpectrumGridStep = (int)udTXGridStep.Value;
+        }
+
+        private void udTXWFAmpMax_ValueChanged(object sender, EventArgs e)
+        {
+            if (udTXWFAmpMax.Value <= udTXWFAmpMin.Value)
+                udTXWFAmpMax.Value = udTXWFAmpMin.Value + 10;
+            Display.TXWFAmpMax = (int)udTXWFAmpMax.Value;
+        }
+
+        private void udTXWFAmpMin_ValueChanged(object sender, EventArgs e)
+        {
+            if (udTXWFAmpMin.Value >= udTXWFAmpMax.Value)
+                udTXWFAmpMin.Value = udTXWFAmpMax.Value - 10;
+            Display.TXWFAmpMin = (int)udTXWFAmpMin.Value;
         }
 
         private void comboTXLabelAlign_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -9452,14 +9608,21 @@ namespace Thetis
             tbDSPALCHangThreshold.Value = (int)dr["ALC_HangThreshold"];
 
             console.PWR = (int)dr["Power"];
-            // W4TME_
-            chkTXNoiseGateEnabled.Checked = (bool)dr["Dexp_On"];
-            udTXNoiseGate.Value = (int)dr["Dexp_Threshold"];
-            udTXNoiseGateAttenuate.Value = (int)dr["Dexp_Attenuate"];
 
-            chkTXVOXEnabled.Checked = (bool)dr["VOX_On"];
-            udTXVOXThreshold.Value = (int)dr["VOX_Threshold"];
-            udTXVOXHangTime.Value = (int)dr["VOX_HangTime"];
+            chkVOXEnable.Checked = (bool)dr["VOX_On"];
+            chkDEXPEnable.Checked = (bool)dr["Dexp_On"];
+            udDEXPThreshold.Value = (int)dr["Dexp_Threshold"];
+            udDEXPAttack.Value = (int)dr["Dexp_Attack"];
+            udDEXPHold.Value = (int)dr["VOX_HangTime"];
+            udDEXPRelease.Value = (int)dr["Dexp_Release"];
+            udDEXPExpansionRatio.Value = (decimal)dr["Dexp_Attenuate"];
+            udDEXPHysteresisRatio.Value = (decimal)dr["Dexp_Hysterisis"];
+            udDEXPDetTau.Value = (int)dr["Dexp_Tau"];
+            chkSCFEnable.Checked = (bool)dr["Dexp_SCF_On"];
+            udSCFLowCut.Value = (int)dr["Dexp_SCF_Low"];
+            udSCFHighCut.Value = (int)dr["Dexp_SCF_High"];
+            chkDEXPLookAheadEnable.Checked = (bool)dr["Dexp_LookAhead_On"];
+            udDEXPLookAhead.Value = (int)dr["Dexp_LookAhead"];
 
             udTXTunePower.Value = (int)dr["Tune_Power"];
             comboTXTUNMeter.Text = (string)dr["Tune_Meter_Type"];
@@ -9626,14 +9789,20 @@ namespace Thetis
 
             dr["Power"] = console.PWR;
 
-            // W4TME
-            dr["Dexp_On"] = chkTXNoiseGateEnabled.Checked;
-            dr["Dexp_Threshold"] = (int)udTXNoiseGate.Value;
-            dr["Dexp_Attenuate"] = (int)udTXNoiseGateAttenuate.Value;
-
-            dr["VOX_On"] = chkTXVOXEnabled.Checked;
-            dr["VOX_Threshold"] = (int)udTXVOXThreshold.Value;
-            dr["VOX_HangTime"] = (int)udTXVOXHangTime.Value;
+            dr["VOX_On"] = chkVOXEnable.Checked;
+            dr["Dexp_On"] = chkDEXPEnable.Checked;
+            dr["Dexp_Threshold"] = (int)udDEXPThreshold.Value;
+            dr["Dexp_Attack"] = (int)udDEXPAttack.Value;
+            dr["VOX_HangTime"] = (int)udDEXPHold.Value;
+            dr["Dexp_Release"] = (int)udDEXPRelease.Value;
+            dr["Dexp_Attenuate"] = udDEXPExpansionRatio.Value;
+            dr["Dexp_Hysterisis"] = udDEXPHysteresisRatio.Value;
+            dr["Dexp_Tau"] = (int)udDEXPDetTau.Value;
+            dr["Dexp_SCF_On"] = chkSCFEnable.Checked;
+            dr["Dexp_SCF_Low"] = (int)udSCFLowCut.Value;
+            dr["Dexp_SCF_High"] = (int)udSCFHighCut.Value;
+            dr["Dexp_LookAhead_On"] = chkDEXPLookAheadEnable.Checked;
+            dr["Dexp_LookAhead"] = (int)udDEXPLookAhead.Value;
 
             dr["Tune_Power"] = (int)udTXTunePower.Value;
             dr["Tune_Meter_Type"] = (string)comboTXTUNMeter.Text;
@@ -9762,38 +9931,9 @@ namespace Thetis
             console.UpdateTXProfile(comboTXProfileName.Text);
         }
 
-        private void chkTXVOXEnabled_CheckedChanged(object sender, System.EventArgs e)
-        {
-            Audio.VOXEnabled = chkTXVOXEnabled.Checked;
-            console.VOXEnable = chkTXVOXEnabled.Checked;
-        }
-
-        private void udTXVOXThreshold_ValueChanged(object sender, System.EventArgs e)
-        {
-            Audio.VOXThreshold = (float)udTXVOXThreshold.Value / 10000.0f;
-            console.VOXSens = (int)udTXVOXThreshold.Value;
-        }
-
         private void udVOXGain_ValueChanged(object sender, System.EventArgs e)
         {
-            Audio.VOXGain = (float)udVOXGain.Value;// / 10000.0f;
-        }
-
-        private void udTXVOXHangTime_ValueChanged(object sender, System.EventArgs e)
-        {
-            console.VOXHangTime = (int)udTXVOXHangTime.Value;
-        }
-
-        private void udTXNoiseGate_ValueChanged(object sender, System.EventArgs e)
-        {
-            console.radio.GetDSPTX(0).TXSquelchThreshold = (float)udTXNoiseGate.Value;
-            console.NoiseGate = (int)udTXNoiseGate.Value;
-        }
-
-        private void chkTXNoiseGateEnabled_CheckedChanged(object sender, System.EventArgs e)
-        {
-            console.radio.GetDSPTX(0).TXSquelchOn = chkTXNoiseGateEnabled.Checked;
-            console.NoiseGateEnabled = chkTXNoiseGateEnabled.Checked;
+            //Audio.VOXGain = (float)udVOXGain.Value;// / 10000.0f;
         }
 
         private void udTXAF_ValueChanged(object sender, System.EventArgs e)
@@ -10545,6 +10685,10 @@ namespace Thetis
 
         public void initCATandPTTprops()
         {
+            //-W2PA MIDI wheel as VFO sensitivity adjustments
+            console.MaxMIDIMessagesPerTuneStep = Convert.ToInt32(udUpdatesPerStepMax.Value);
+            console.MinMIDIMessagesPerTuneStep = Convert.ToInt32(udUpdatesPerStepMin.Value);
+
             console.CATEnabled = chkCATEnable.Checked;
             if (comboCATPort.Text.StartsWith("COM"))
                 console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
@@ -12170,21 +12314,6 @@ namespace Thetis
             udTXAF.Value = udTXAF.Value;
         }
 
-        private void udTXVOXHangTime_LostFocus(object sender, EventArgs e)
-        {
-            udTXVOXHangTime.Value = udTXVOXHangTime.Value;
-        }
-
-        private void udTXVOXThreshold_LostFocus(object sender, EventArgs e)
-        {
-            udTXVOXThreshold.Value = udTXVOXThreshold.Value;
-        }
-
-        private void udTXNoiseGate_LostFocus(object sender, EventArgs e)
-        {
-            udTXNoiseGate.Value = udTXNoiseGate.Value;
-        }
-
         private void udTXTunePower_LostFocus(object sender, EventArgs e)
         {
             udTXTunePower.Value = udTXTunePower.Value;
@@ -12770,6 +12899,9 @@ namespace Thetis
                     case MeterTXMode.REVERSE_POWER:
                         comboTXTUNMeter.Text = "Ref Pwr";
                         break;
+                   // case MeterTXMode.SWR_POWER:
+                   //     comboTXTUNMeter.Text = "Fwd SWR";
+                   //     break;
                     case MeterTXMode.SWR:
                         comboTXTUNMeter.Text = "SWR";
                         break;
@@ -12790,6 +12922,9 @@ namespace Thetis
                 case "Ref Pwr":
                     console.TuneTXMeterMode = MeterTXMode.REVERSE_POWER;
                     break;
+              //  case "Fwd SWR" :
+              //      console.TuneTXMeterMode = MeterTXMode.SWR_POWER;
+              //      break;
                 case "SWR":
                     console.TuneTXMeterMode = MeterTXMode.SWR;
                     break;
@@ -13161,11 +13296,6 @@ namespace Thetis
         {
             clrbtnGridTXFilter_Changed(this, EventArgs.Empty);
             toolTip1.SetToolTip(tbTXFilterAlpha, tbTXFilterAlpha.Value.ToString());
-        }
-
-        private void udTXNoiseGateAttenuate_ValueChanged(object sender, System.EventArgs e)
-        {
-            console.radio.GetDSPTX(0).TXSquelchAttenuate = (float)udTXNoiseGateAttenuate.Value;
         }
 
         private void tbMultiRXFilterAlpha_Scroll(object sender, EventArgs e)
@@ -14571,6 +14701,7 @@ namespace Thetis
         {
             if (console.PowerOn && radGenModelHPSDR.Checked)
             {
+                grpVersion.Visible = true;
                 lblMercury2FWVer.Visible = console.RX2PreampPresent;
 
                 //try // this will take an exception in the conversion for Metis .. 
@@ -14602,39 +14733,40 @@ namespace Thetis
                                    lblSyncData.Text = "FrameSync: No"; 
                */
             }
+            else grpVersion.Visible = false;
 
-            if (console.PowerOn && radGenModelHermes.Checked)
-            {
-                // byte[] ver_bytes = new byte[1];
-                // JanusAudio.GetMetisCodeVersion(ver_bytes);
-                lblOzyFX2.Text = NetworkIO.FWCodeVersion.ToString("Hermes: 0\\.0");//ver_bytes[0].ToString("Hermes: 0\\.0");
-                lblOzyFWVer.Text = "";
-                lblMercuryFWVer.Text = "";
-                lblMercury2FWVer.Text = "";
-                lblPenelopeFWVer.Text = "";
-            }
+            //if (console.PowerOn && radGenModelHermes.Checked)
+            //{
+            //    // byte[] ver_bytes = new byte[1];
+            //    // JanusAudio.GetMetisCodeVersion(ver_bytes);
+            //    lblOzyFX2.Text = NetworkIO.FWCodeVersion.ToString("Hermes: 0\\.0");//ver_bytes[0].ToString("Hermes: 0\\.0");
+            //    lblOzyFWVer.Text = "";
+            //    lblMercuryFWVer.Text = "";
+            //    lblMercury2FWVer.Text = "";
+            //    lblPenelopeFWVer.Text = "";
+            //}
 
-            if (console.PowerOn && (radGenModelANAN10.Checked || radGenModelANAN10E.Checked || radGenModelANAN100.Checked || radGenModelANAN100D.Checked))
-            {
-                //byte[] ver_bytes = new byte[1];
-                //JanusAudio.GetMetisCodeVersion(ver_bytes);
-                lblOzyFX2.Text = NetworkIO.FWCodeVersion.ToString("ANAN: 0\\.0"); //ver_bytes[0].ToString("ANAN: 0\\.0");
-                lblOzyFWVer.Text = "";
-                lblMercuryFWVer.Text = "";
-                lblMercury2FWVer.Text = "";
-                lblPenelopeFWVer.Text = "";
-            }
+            //if (console.PowerOn && (radGenModelANAN10.Checked || radGenModelANAN10E.Checked || radGenModelANAN100.Checked || radGenModelANAN100D.Checked))
+            //{
+            //    //byte[] ver_bytes = new byte[1];
+            //    //JanusAudio.GetMetisCodeVersion(ver_bytes);
+            //    lblOzyFX2.Text = NetworkIO.FWCodeVersion.ToString("ANAN: 0\\.0"); //ver_bytes[0].ToString("ANAN: 0\\.0");
+            //    lblOzyFWVer.Text = "";
+            //    lblMercuryFWVer.Text = "";
+            //    lblMercury2FWVer.Text = "";
+            //    lblPenelopeFWVer.Text = "";
+            //}
 
-            if (console.PowerOn && radGenModelANAN200D.Checked)
-            {
-                //byte[] ver_bytes = new byte[1];
-                //JanusAudio.GetMetisCodeVersion(ver_bytes);
-                lblOzyFX2.Text = NetworkIO.FWCodeVersion.ToString("Orion: 0\\.0"); //ver_bytes[0].ToString("Orion: 0\\.0");
-                lblOzyFWVer.Text = "";
-                lblMercuryFWVer.Text = "";
-                lblMercury2FWVer.Text = "";
-                lblPenelopeFWVer.Text = "";
-            }
+            //if (console.PowerOn && radGenModelANAN200D.Checked)
+            //{
+            //    //byte[] ver_bytes = new byte[1];
+            //    //JanusAudio.GetMetisCodeVersion(ver_bytes);
+            //    lblOzyFX2.Text = NetworkIO.FWCodeVersion.ToString("Orion: 0\\.0"); //ver_bytes[0].ToString("Orion: 0\\.0");
+            //    lblOzyFWVer.Text = "";
+            //    lblMercuryFWVer.Text = "";
+            //    lblMercury2FWVer.Text = "";
+            //    lblPenelopeFWVer.Text = "";
+            //}
 
         }
 
@@ -16871,8 +17003,8 @@ namespace Thetis
             int wintype = comboDSPRxWindow.SelectedIndex;
             if (wintype < 0)
             {
-                wintype = 0;
-                comboDSPRxWindow.Text = "BH - 4";
+                wintype = 1;
+                comboDSPRxWindow.Text = "BH - 7";
             }
             console.radio.GetDSPRX(0, 0).RXBandpassWindow = wintype;
             console.radio.GetDSPRX(0, 1).RXBandpassWindow = wintype;
@@ -16884,8 +17016,8 @@ namespace Thetis
             int wintype = comboDSPTxWindow.SelectedIndex;
             if (wintype < 0)
             {
-                wintype = 0;
-                comboDSPTxWindow.Text = "BH - 4";
+                wintype = 1;
+                comboDSPTxWindow.Text = "BH - 7";
             }
             console.radio.GetDSPTX(0).TXBandpassWindow = wintype;
         }
@@ -18886,6 +19018,123 @@ namespace Thetis
             lblLED08.BackColor = LEDColor[7];
             lblLED09.BackColor = LEDColor[8];
             lblLED10.BackColor = LEDColor[9];
+        }
+
+        private void chkVAC2onSplit_CheckedChanged(object sender, EventArgs e)
+        {
+            console.VAC2onSplit = chkVAC2onSplit.Checked;
+		}
+
+        // DEXP-VOX
+
+        private void chkVOXEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            Audio.VOXEnabled = chkVOXEnable.Checked;
+            console.VOXEnable = chkVOXEnable.Checked;
+        }
+
+        private void chkDEXPEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPRun(0, chkDEXPEnable.Checked);
+            console.NoiseGateEnabled = chkDEXPEnable.Checked;
+        }
+
+        private void udDEXPAttack_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPAttackTime(0, (double)udDEXPAttack.Value / 1000.0);
+        }
+
+        private void udDEXPHold_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPHoldTime(0, (double)udDEXPHold.Value / 1000.0);
+        }
+
+        private void udDEXPRelease_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPReleaseTime(0, (double)udDEXPRelease.Value / 1000.0);
+        }
+
+        private void udDEXPThreshold_ValueChanged(object sender, EventArgs e)
+        {
+            //cmaster.SetDEXPAttackThreshold(0, Math.Pow(10.0, (double)udDEXPThreshold.Value / 20.0));
+            cmaster.CMSetTXAVoxThresh(0, Math.Pow(10.0, (double)udDEXPThreshold.Value / 20.0));
+            console.VOXSens = (int)udDEXPThreshold.Value;
+        }
+
+        private void udDEXPExpansionRatio_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPExpansionRatio(0, Math.Pow(10.0, (double)udDEXPExpansionRatio.Value / 20.0));
+        }
+
+        private void udDEXPHysteresisRatio_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPHysteresisRatio(0, Math.Pow(10.0, -(double)udDEXPHysteresisRatio.Value / 20.0));
+        }
+
+        private void udDEXPDetTau_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPDetectorTau(0, (double)udDEXPDetTau.Value / 1000.0);
+        }
+
+        private void chkSCFEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPRunSideChannelFilter(0, chkSCFEnable.Checked);
+        }
+
+        private void udSCFLowCut_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPLowCut(0, (double)udSCFLowCut.Value);
+        }
+
+        private void udSCFHighCut_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPHighCut(0, (double)udSCFHighCut.Value);
+        }
+
+        private void chkDEXPLookAheadEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPRunAudioDelay(0, chkDEXPLookAheadEnable.Checked);
+        }
+
+        private void udDEXPLookAhead_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetDEXPAudioDelay(0, (double)udDEXPLookAhead.Value / 1000.0);
+        }
+
+        private void udUpdatesPerStepMax_ValueChanged(object sender, EventArgs e)
+        {
+            decimal currMin = udUpdatesPerStepMin.Value;
+            decimal selectedMax = udUpdatesPerStepMax.Value;
+            if (selectedMax <= currMin) udUpdatesPerStepMin.Value = selectedMax - 1; // keep min and max sensible and separated by at least 1
+            console.MaxMIDIMessagesPerTuneStep = Convert.ToInt32(selectedMax);
+        }
+
+        private void udUpdatesPerStepMin_ValueChanged(object sender, EventArgs e)
+        {
+            decimal currMax = udUpdatesPerStepMax.Value;
+            decimal selectedMin = udUpdatesPerStepMin.Value;
+            if (selectedMin >= currMax) udUpdatesPerStepMax.Value = selectedMin + 1;  // keep min and max sensible and separated by at least 1
+            console.MinMIDIMessagesPerTuneStep = Convert.ToInt32(selectedMin);
+        }
+
+        private void chkAntiVoxEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            cmaster.SetAntiVOXRun(0, chkAntiVoxEnable.Checked);
+        }
+
+        private void udAntiVoxGain_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetAntiVOXGain(0, Math.Pow(10.0, (double)udAntiVoxGain.Value / 20.0));
+        }
+
+        private void udAntiVoxTau_ValueChanged(object sender, EventArgs e)
+        {
+            cmaster.SetAntiVOXDetectorTau(0, (double)udAntiVoxTau.Value / 1000.0);
+        }
+
+        private void chkAntiVoxSource_CheckedChanged(object sender, EventArgs e)
+        {
+            Audio.AntiVOXSourceVAC = chkAntiVoxSource.Checked;
         }
     }
 

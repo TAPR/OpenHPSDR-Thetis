@@ -189,12 +189,6 @@
       <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Microsoft.NET\Primary Interop Assemblies\adodb.dll</HintPath>
       <AssemblyFolderKey>hklm\primary interop assemblies</AssemblyFolderKey>
     </Reference>
-    <Reference Include="NAudio">
-      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.Lame">
-      <HintPath>..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -435,12 +429,6 @@
     <Compile Include="rxa.Designer.cs">
       <DependentUpon>rxa.cs</DependentUpon>
     </Compile>
-    <Compile Include="rxaControls.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="rxaControls.Designer.cs">
-      <DependentUpon>rxaControls.cs</DependentUpon>
-    </Compile>
     <Compile Include="setup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -584,9 +572,6 @@
     <EmbeddedResource Include="rxa.resx">
       <DependentUpon>rxa.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="rxaControls.resx">
-      <DependentUpon>rxaControls.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="setup.resx">
       <DependentUpon>setup.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -683,13 +668,11 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="PowerSDR_TemporaryKey.pfx" />
-    <None Include="Properties\app.manifest" />
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\WinFormsUI\WinFormsUI.csproj">
-      <Project>{c75532c4-765b-418e-b09b-46d36b2abdb1}</Project>
-      <Name>WinFormsUI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Midi2Cat\Midi2Cat.csproj">
       <Project>{66ade184-31ba-4f5b-8007-f39ef1b90f95}</Project>
       <Name>Midi2Cat</Name>

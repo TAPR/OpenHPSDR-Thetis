@@ -397,8 +397,8 @@ namespace Thetis
             }
         }
 
-        private DSPFilterType filter_type_dsp = DSPFilterType.Linear_Phase;
-        private DSPFilterType filter_type = DSPFilterType.Linear_Phase;
+        private DSPFilterType filter_type_dsp = DSPFilterType.Low_Latency;
+        private DSPFilterType filter_type = DSPFilterType.Low_Latency;
         public DSPFilterType FilterType
         {
             get { return filter_type; }
@@ -630,7 +630,7 @@ namespace Thetis
 			}
 		}
 
-		private int rx_eq_num_bands = 3;
+		private int rx_eq_num_bands = 10;
 		public int RXEQNumBands
 		{
 			get { return rx_eq_num_bands; }
@@ -1842,9 +1842,6 @@ namespace Thetis
 			TXLevelerMaxGain = tx_leveler_max_gain;
 			TXLevelerDecay = tx_leveler_decay;
 			TXLevelerOn = tx_leveler_on;
-			TXSquelchThreshold = tx_squelch_threshold;
-			TXSquelchAttenuate = tx_squelch_attenuate;
-			TXSquelchOn = tx_squelch_on;
 			TXCompandOn = tx_compand_on;
 			TXCompandLevel = tx_compand_level;
             TXOsctrlOn = tx_osctrl_on;
@@ -1924,8 +1921,8 @@ namespace Thetis
 			set { force = value; }
 		}
 
-		private int buffer_size_dsp = 128;
-		private int buffer_size = 128;
+		private int buffer_size_dsp = 64;
+		private int buffer_size = 64;
 		public int BufferSize
 		{
 			get { return buffer_size; }
@@ -1946,8 +1943,8 @@ namespace Thetis
 		}
 
 
-        private int filter_size_dsp = 2048;
-        private int filter_size = 2048;
+        private int filter_size_dsp = 4096;
+        private int filter_size = 4096;
         public int FilterSize
         {
             get { return filter_size; }
@@ -1965,8 +1962,8 @@ namespace Thetis
             }
         }
 
-        private DSPFilterType filter_type_dsp = DSPFilterType.Linear_Phase;
-        private DSPFilterType filter_type = DSPFilterType.Linear_Phase;
+        private DSPFilterType filter_type_dsp = DSPFilterType.Low_Latency;
+        private DSPFilterType filter_type = DSPFilterType.Low_Latency;
         public DSPFilterType FilterType
         {
             get { return filter_type; }
@@ -2329,8 +2326,8 @@ namespace Thetis
 		}
 
 
-		private int tx_leveler_decay_dsp = 500;
-		private int tx_leveler_decay = 500;
+		private int tx_leveler_decay_dsp = 100;
+		private int tx_leveler_decay = 100;
 		public int TXLevelerDecay
 		{
 			get { return tx_leveler_decay; }
@@ -2362,63 +2359,6 @@ namespace Thetis
 					{
                         WDSP.SetTXALevelerSt(WDSP.id(thread, 0), value);
 						tx_leveler_on_dsp = value;
-					}
-				}
-			}
-		}
-
-		private float tx_squelch_threshold_dsp = -40.0f;
-		private float tx_squelch_threshold = -40.0f;
-		public float TXSquelchThreshold
-		{
-			get { return tx_squelch_threshold; }
-			set
-			{
-				tx_squelch_threshold = value;
-				if(update)
-				{
-					if(value != tx_squelch_threshold_dsp || force)
-					{
-                        WDSP.SetTXAAMSQThreshold(WDSP.id(thread, 0), (double)value);
-						tx_squelch_threshold_dsp = value;
-					}
-				}
-			}
-		}
-
-		private float tx_squelch_attenuate_dsp = 80.0f;
-		private float tx_squelch_attenuate = 80.0f;
-		public float TXSquelchAttenuate
-		{
-			get { return tx_squelch_attenuate; }
-			set
-			{
-				tx_squelch_attenuate = value;
-				if(update)
-				{
-					if(value != tx_squelch_attenuate_dsp || force)
-					{
-                        WDSP.SetTXAAMSQMutedGain(WDSP.id(thread, 0), 20.0 * Math.Log10(1.0 - value / 100.0));
-						tx_squelch_attenuate_dsp = value;
-					}
-				}
-			}
-		}
-
-		private bool tx_squelch_on_dsp = false;
-		private bool tx_squelch_on = false;
-		public bool TXSquelchOn
-		{
-			get { return tx_squelch_on; }
-			set
-			{
-				tx_squelch_on = value;
-				if(update)
-				{
-					if(value != tx_squelch_on_dsp || force)
-					{
-                        WDSP.SetTXAAMSQRun(WDSP.id(thread, 0), value);
-						tx_squelch_on_dsp = value;
 					}
 				}
 			}

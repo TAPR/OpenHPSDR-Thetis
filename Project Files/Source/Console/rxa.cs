@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using WeifenLuo.WinFormsUI.Docking;
+//using WeifenLuo.WinFormsUI.Docking;
 
 namespace Thetis
 {
@@ -21,7 +21,7 @@ namespace Thetis
         private Size console_basis_size = new Size(100, 100);
         private Size gr_display_size_basis = new Size(100, 100);
         private Size pic_display_size_basis = new Size(100, 100);
-        rxaControls rxControls;
+       // rxaControls rxControls;
 
         public rxa(int i)
         {
@@ -40,10 +40,10 @@ namespace Thetis
             gr_display_size_basis = this.panelPanDisplay.Size;
             pic_display_size_basis = this.panDisplay.Size;
 
-            rxControls = new rxaControls(fwid);
-            dockPanel.ShowDocumentIcon = false;
+          //  rxControls = new rxaControls(fwid);
+            //dockPanel.ShowDocumentIcon = false;
             //dockPanel.Theme = vS2012LightTheme1;
-            rxControls.Show(dockPanel, DockState.DockRightAutoHide);
+          //  rxControls.Show(dockPanel, DockState.DockRightAutoHide);
             //int width = dockPanel.GetDockWindowSize(DockState.DockRight);
          }
 
@@ -190,12 +190,12 @@ namespace Thetis
 
         }
 
-        private void dockPanel_ActiveAutoHideContentChanged(object sender, EventArgs e)
-        {
-            if (dockPanel.ActiveAutoHideContent != null)
-            panDisplay.pauseDisplayThread = true;
-            else panDisplay.pauseDisplayThread = false;
-        }
+        //private void dockPanel_ActiveAutoHideContentChanged(object sender, EventArgs e)
+        //{
+        //    if (dockPanel.ActiveAutoHideContent != null)
+        //    panDisplay.pauseDisplayThread = true;
+        //    else panDisplay.pauseDisplayThread = false;
+        //}
 
     }
 }

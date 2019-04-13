@@ -1137,6 +1137,8 @@ namespace Thetis
             // 
             // chkXVTRRF15
             // 
+            this.chkXVTRRF15.Checked = true;
+            this.chkXVTRRF15.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF15.Enabled = false;
             this.chkXVTRRF15.Image = null;
             this.chkXVTRRF15.Location = new System.Drawing.Point(774, 408);
@@ -1147,6 +1149,8 @@ namespace Thetis
             // 
             // chkXVTRRF14
             // 
+            this.chkXVTRRF14.Checked = true;
+            this.chkXVTRRF14.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF14.Enabled = false;
             this.chkXVTRRF14.Image = null;
             this.chkXVTRRF14.Location = new System.Drawing.Point(774, 384);
@@ -1157,6 +1161,8 @@ namespace Thetis
             // 
             // chkXVTRRF13
             // 
+            this.chkXVTRRF13.Checked = true;
+            this.chkXVTRRF13.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF13.Enabled = false;
             this.chkXVTRRF13.Image = null;
             this.chkXVTRRF13.Location = new System.Drawing.Point(774, 360);
@@ -1167,6 +1173,8 @@ namespace Thetis
             // 
             // chkXVTRRF12
             // 
+            this.chkXVTRRF12.Checked = true;
+            this.chkXVTRRF12.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF12.Enabled = false;
             this.chkXVTRRF12.Image = null;
             this.chkXVTRRF12.Location = new System.Drawing.Point(774, 336);
@@ -1177,6 +1185,8 @@ namespace Thetis
             // 
             // chkXVTRRF11
             // 
+            this.chkXVTRRF11.Checked = true;
+            this.chkXVTRRF11.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF11.Enabled = false;
             this.chkXVTRRF11.Image = null;
             this.chkXVTRRF11.Location = new System.Drawing.Point(774, 312);
@@ -1187,6 +1197,8 @@ namespace Thetis
             // 
             // chkXVTRRF10
             // 
+            this.chkXVTRRF10.Checked = true;
+            this.chkXVTRRF10.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF10.Enabled = false;
             this.chkXVTRRF10.Image = null;
             this.chkXVTRRF10.Location = new System.Drawing.Point(774, 288);
@@ -1197,6 +1209,8 @@ namespace Thetis
             // 
             // chkXVTRRF9
             // 
+            this.chkXVTRRF9.Checked = true;
+            this.chkXVTRRF9.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF9.Enabled = false;
             this.chkXVTRRF9.Image = null;
             this.chkXVTRRF9.Location = new System.Drawing.Point(774, 264);
@@ -1207,6 +1221,8 @@ namespace Thetis
             // 
             // chkXVTRRF8
             // 
+            this.chkXVTRRF8.Checked = true;
+            this.chkXVTRRF8.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF8.Enabled = false;
             this.chkXVTRRF8.Image = null;
             this.chkXVTRRF8.Location = new System.Drawing.Point(774, 240);
@@ -1217,6 +1233,8 @@ namespace Thetis
             // 
             // chkXVTRRF7
             // 
+            this.chkXVTRRF7.Checked = true;
+            this.chkXVTRRF7.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF7.Enabled = false;
             this.chkXVTRRF7.Image = null;
             this.chkXVTRRF7.Location = new System.Drawing.Point(774, 216);
@@ -1227,6 +1245,8 @@ namespace Thetis
             // 
             // chkXVTRRF6
             // 
+            this.chkXVTRRF6.Checked = true;
+            this.chkXVTRRF6.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF6.Enabled = false;
             this.chkXVTRRF6.Image = null;
             this.chkXVTRRF6.Location = new System.Drawing.Point(774, 192);
@@ -1237,6 +1257,8 @@ namespace Thetis
             // 
             // chkXVTRRF5
             // 
+            this.chkXVTRRF5.Checked = true;
+            this.chkXVTRRF5.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF5.Enabled = false;
             this.chkXVTRRF5.Image = null;
             this.chkXVTRRF5.Location = new System.Drawing.Point(774, 168);
@@ -1247,6 +1269,8 @@ namespace Thetis
             // 
             // chkXVTRRF4
             // 
+            this.chkXVTRRF4.Checked = true;
+            this.chkXVTRRF4.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF4.Enabled = false;
             this.chkXVTRRF4.Image = null;
             this.chkXVTRRF4.Location = new System.Drawing.Point(774, 144);
@@ -1257,6 +1281,8 @@ namespace Thetis
             // 
             // chkXVTRRF3
             // 
+            this.chkXVTRRF3.Checked = true;
+            this.chkXVTRRF3.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF3.Enabled = false;
             this.chkXVTRRF3.Image = null;
             this.chkXVTRRF3.Location = new System.Drawing.Point(774, 120);
@@ -1267,6 +1293,8 @@ namespace Thetis
             // 
             // chkXVTRRF2
             // 
+            this.chkXVTRRF2.Checked = true;
+            this.chkXVTRRF2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF2.Enabled = false;
             this.chkXVTRRF2.Image = null;
             this.chkXVTRRF2.Location = new System.Drawing.Point(774, 96);
@@ -1277,6 +1305,8 @@ namespace Thetis
             // 
             // chkXVTRRF1
             // 
+            this.chkXVTRRF1.Checked = true;
+            this.chkXVTRRF1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF1.Enabled = false;
             this.chkXVTRRF1.Image = null;
             this.chkXVTRRF1.Location = new System.Drawing.Point(774, 72);
@@ -1287,6 +1317,8 @@ namespace Thetis
             // 
             // chkXVTRRF0
             // 
+            this.chkXVTRRF0.Checked = true;
+            this.chkXVTRRF0.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkXVTRRF0.Enabled = false;
             this.chkXVTRRF0.Image = null;
             this.chkXVTRRF0.Location = new System.Drawing.Point(774, 48);
@@ -4347,6 +4379,8 @@ namespace Thetis
             // 
             // chkDisablePA15
             // 
+            this.chkDisablePA15.Checked = true;
+            this.chkDisablePA15.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA15.Enabled = false;
             this.chkDisablePA15.Image = null;
             this.chkDisablePA15.Location = new System.Drawing.Point(820, 408);
@@ -4356,6 +4390,8 @@ namespace Thetis
             // 
             // chkDisablePA14
             // 
+            this.chkDisablePA14.Checked = true;
+            this.chkDisablePA14.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA14.Enabled = false;
             this.chkDisablePA14.Image = null;
             this.chkDisablePA14.Location = new System.Drawing.Point(820, 384);
@@ -4365,6 +4401,8 @@ namespace Thetis
             // 
             // chkDisablePA13
             // 
+            this.chkDisablePA13.Checked = true;
+            this.chkDisablePA13.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA13.Enabled = false;
             this.chkDisablePA13.Image = null;
             this.chkDisablePA13.Location = new System.Drawing.Point(820, 360);
@@ -4374,6 +4412,8 @@ namespace Thetis
             // 
             // chkDisablePA12
             // 
+            this.chkDisablePA12.Checked = true;
+            this.chkDisablePA12.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA12.Enabled = false;
             this.chkDisablePA12.Image = null;
             this.chkDisablePA12.Location = new System.Drawing.Point(820, 336);
@@ -4383,6 +4423,8 @@ namespace Thetis
             // 
             // chkDisablePA11
             // 
+            this.chkDisablePA11.Checked = true;
+            this.chkDisablePA11.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA11.Enabled = false;
             this.chkDisablePA11.Image = null;
             this.chkDisablePA11.Location = new System.Drawing.Point(820, 312);
@@ -4392,6 +4434,8 @@ namespace Thetis
             // 
             // chkDisablePA10
             // 
+            this.chkDisablePA10.Checked = true;
+            this.chkDisablePA10.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA10.Enabled = false;
             this.chkDisablePA10.Image = null;
             this.chkDisablePA10.Location = new System.Drawing.Point(820, 288);
@@ -4401,6 +4445,8 @@ namespace Thetis
             // 
             // chkDisablePA9
             // 
+            this.chkDisablePA9.Checked = true;
+            this.chkDisablePA9.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA9.Enabled = false;
             this.chkDisablePA9.Image = null;
             this.chkDisablePA9.Location = new System.Drawing.Point(820, 264);
@@ -4410,6 +4456,8 @@ namespace Thetis
             // 
             // chkDisablePA8
             // 
+            this.chkDisablePA8.Checked = true;
+            this.chkDisablePA8.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA8.Enabled = false;
             this.chkDisablePA8.Image = null;
             this.chkDisablePA8.Location = new System.Drawing.Point(820, 240);
@@ -4419,6 +4467,8 @@ namespace Thetis
             // 
             // chkDisablePA7
             // 
+            this.chkDisablePA7.Checked = true;
+            this.chkDisablePA7.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA7.Enabled = false;
             this.chkDisablePA7.Image = null;
             this.chkDisablePA7.Location = new System.Drawing.Point(820, 216);
@@ -4428,6 +4478,8 @@ namespace Thetis
             // 
             // chkDisablePA6
             // 
+            this.chkDisablePA6.Checked = true;
+            this.chkDisablePA6.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA6.Enabled = false;
             this.chkDisablePA6.Image = null;
             this.chkDisablePA6.Location = new System.Drawing.Point(820, 192);
@@ -4437,6 +4489,8 @@ namespace Thetis
             // 
             // chkDisablePA5
             // 
+            this.chkDisablePA5.Checked = true;
+            this.chkDisablePA5.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA5.Enabled = false;
             this.chkDisablePA5.Image = null;
             this.chkDisablePA5.Location = new System.Drawing.Point(820, 168);
@@ -4446,6 +4500,8 @@ namespace Thetis
             // 
             // chkDisablePA4
             // 
+            this.chkDisablePA4.Checked = true;
+            this.chkDisablePA4.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA4.Enabled = false;
             this.chkDisablePA4.Image = null;
             this.chkDisablePA4.Location = new System.Drawing.Point(820, 144);
@@ -4455,6 +4511,8 @@ namespace Thetis
             // 
             // chkDisablePA3
             // 
+            this.chkDisablePA3.Checked = true;
+            this.chkDisablePA3.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA3.Enabled = false;
             this.chkDisablePA3.Image = null;
             this.chkDisablePA3.Location = new System.Drawing.Point(820, 120);
@@ -4464,6 +4522,8 @@ namespace Thetis
             // 
             // chkDisablePA2
             // 
+            this.chkDisablePA2.Checked = true;
+            this.chkDisablePA2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA2.Enabled = false;
             this.chkDisablePA2.Image = null;
             this.chkDisablePA2.Location = new System.Drawing.Point(820, 96);
@@ -4473,6 +4533,8 @@ namespace Thetis
             // 
             // chkDisablePA1
             // 
+            this.chkDisablePA1.Checked = true;
+            this.chkDisablePA1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA1.Enabled = false;
             this.chkDisablePA1.Image = null;
             this.chkDisablePA1.Location = new System.Drawing.Point(820, 72);
@@ -4482,6 +4544,8 @@ namespace Thetis
             // 
             // chkDisablePA0
             // 
+            this.chkDisablePA0.Checked = true;
+            this.chkDisablePA0.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisablePA0.Enabled = false;
             this.chkDisablePA0.Image = null;
             this.chkDisablePA0.Location = new System.Drawing.Point(820, 48);

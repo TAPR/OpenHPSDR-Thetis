@@ -38,9 +38,9 @@ using System.Threading;
 using System.Windows.Forms;
 
 //reference Nuget Package NAudio.Lame
-using NAudio;
-using NAudio.Wave;
-using NAudio.Lame;
+//using NAudio;
+//using NAudio.Wave;
+//using NAudio.Lame;
 
 namespace Thetis
 {
@@ -644,8 +644,7 @@ namespace Thetis
 
             }
         } // RECPLAY3
-        
-        // private bool OpenWaveFile(string filename, bool rx2)
+
         private bool OpenWaveFile(string filename, int id)
 		{
 			RIFFChunk riff = null;
@@ -663,6 +662,7 @@ namespace Thetis
 			}
 
 			BinaryReader reader = null;
+
 			try
 			{
 				reader = new BinaryReader(File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read));
@@ -893,11 +893,11 @@ namespace Thetis
 			}
 			else
 			{
-				if(Audio.wave_file_reader != null)
-					Audio.wave_file_reader.Stop();
+                if (WaveThing.wave_file_reader[0] != null)
+                    WaveThing.wave_file_reader[0].Stop();
 
-                if (Audio.wave_file_reader2 != null)
-                    Audio.wave_file_reader2.Stop();
+                if (WaveThing.wave_file_reader[1] != null)
+                    WaveThing.wave_file_reader[1].Stop();
 
                 Thread.Sleep(50); // wait for files to close
 
@@ -1215,8 +1215,8 @@ namespace Thetis
 			}
 			else
 			{
-				if(Audio.wave_file_reader != null)
-					Audio.wave_file_reader.Stop();
+                if (WaveThing.wave_file_reader[0] != null)
+                    WaveThing.wave_file_reader[0].Stop();
 				chkQuickPlay.BackColor = SystemColors.Control;
 				console.QuickPlay = false;
 				console.MON = temp_mon;
@@ -1237,7 +1237,6 @@ namespace Thetis
         {
             if (chkQuickRec.Checked)
             {
-
                 temp_record = Audio.RecordRXPreProcessed;
                 quickmp3SR = waveOptionsForm.comboSampleRate.Text;
 
@@ -1303,11 +1302,11 @@ namespace Thetis
 
                     try
                     {
-                        using (var reader = new WaveFileReader(file_name)) // closes reader when done using
-                        using (var writer = new LameMP3FileWriter(quickmp3, reader.WaveFormat, LAMEPreset.VBR_90)) // closes writer when done using (90=90% quality variable bit rate)
-                        {
-                            reader.CopyTo(writer);
-                        }
+                        //using (var reader = new WaveFileReader(file_name)) // closes reader when done using
+                        //using (var writer = new LameMP3FileWriter(quickmp3, reader.WaveFormat, LAMEPreset.VBR_90)) // closes writer when done using (90=90% quality variable bit rate)
+                        //{
+                        //    reader.CopyTo(writer);
+                        //}
                     }
                     catch (Exception)
                     {
@@ -1426,7 +1425,7 @@ namespace Thetis
             } // txidboxts checked
             else// this is what signals the end of playback
             {
-                if (Audio.wave_file_reader != null) Audio.wave_file_reader.Stop();
+                if (WaveThing.wave_file_reader[0] != null) WaveThing.wave_file_reader[0].Stop();
 
                 TXIDBoxTS.BackColor = SystemColors.Control;
 
@@ -2741,6 +2740,8 @@ namespace Thetis
 		private byte[] io_buf;
 		private int io_buf_size;
 		private bool eof = false;
+        private int total_samps_written;
+        private int total_samps_read;
 
 		unsafe private void* rcvr_resamp_l, rcvr_resamp_r;
         unsafe private void* xmtr_resamp_l, xmtr_resamp_r;
@@ -2832,22 +2833,22 @@ namespace Thetis
 			t.Name = "Wave File Read Thread";
 			t.IsBackground = true;
 			t.Priority = ThreadPriority.Normal;
-
-			do
-			{
-				ReadBuffer(ref reader);
-			} while(rb_l.WriteSpace() > OUT_BLOCK && !eof);
+            total_samps_written = 0;
+            total_samps_read    = 0;
+            do
+            {
+                ReadBuffer(ref reader);
+            } while(rb_l.WriteSpace() > OUT_BLOCK && !eof);
 
 			t.Start();
 		}
 
 		private void ProcessBuffers()
 		{
-			while(playback == true)
-			{				
-				while (rb_l.WriteSpace() >= OUT_BLOCK && !eof)
+			while(playback == true)                             // while we didn't end-of-file the last time through, loop here
+			{				                                    //   'playback' also gets set 'false' if play button is UNchecked
+				while (rb_l.WriteSpace() >= OUT_BLOCK && !eof)  // while there's lots of writespace and we haven't ended the file, loop here
 				{
-					//Debug.WriteLine("loop 2");
 					ReadBuffer(ref reader);
 					if(playback == false)
 						goto end;
@@ -2856,13 +2857,13 @@ namespace Thetis
 				if(playback == false)
 					goto end;
 
-				Thread.Sleep(10);				
-			}
+				Thread.Sleep(10);                               // if we haven't ended the file, but, there was not lots of write space,
+			}	                                                //    wait a while and then try again via the outer loop
 
-		end:
+        end:
 			reader.Close();
-            Thread.Sleep(50);
-			wave_form.Next();
+            //Thread.Sleep(50);
+			//wave_form.Next();
 		}
 
 		private void ReadBuffer(ref BinaryReader reader)
@@ -2870,11 +2871,11 @@ namespace Thetis
 			
 			//Debug.WriteLine("ReadBuffer ("+rb_l.ReadSpace()+")");
 			int i=0, num_reads = IN_BLOCK;
-			int val = reader.Read(io_buf, 0, io_buf_size);
-
-			if(val < io_buf_size)
+			int val = reader.Read(io_buf, 0, io_buf_size);  // read byte data into 'io_buf'
+                                                            // note:  io_buf has been sized to hold IN_BLOCK L&R samples
+			if(val < io_buf_size)                           // 'if' there wasn't enough data to fill the buffer
 			{
-				eof = true;
+				eof = true;                                 // set the END-OF-FILE flag; this is the last time we need to call ReadBuffer(...)
 				switch(format)
 				{
 					case 1:		// ints
@@ -2887,15 +2888,15 @@ namespace Thetis
                                 num_reads = val / 6;
                                 break;
                             case 16:
-						num_reads = val / 4;
-						break;
+						        num_reads = val / 4;
+						        break;
                             case 8:
                                 num_reads = val / 2;
                                 break;
                         }
                         break;
 					case 3:		// floats
-						num_reads = val / 8;
+						num_reads = val / 8;                // 'num_reads' is the number of L&R samples read
 						break;
 				}
 			}
@@ -2945,25 +2946,25 @@ namespace Thetis
                         }
                         break;
 					case 3:		// floats
-						buf_l_in[i] = BitConverter.ToSingle(io_buf, i*8);
+						buf_l_in[i] = BitConverter.ToSingle(io_buf, i*8);       // put samples in 'float' buffers, buf_l_in[] and buf_r_in[]
 						buf_r_in[i] = BitConverter.ToSingle(io_buf, i*8+4);
 						break;
 				}
 			}
 
-			if(num_reads < IN_BLOCK)
+			if(num_reads < IN_BLOCK)                            //'if' there are not 'IN_BLOCK'samples
 			{
 				for(int j=i; j<IN_BLOCK; j++)
-					buf_l_in[j] = buf_r_in[j] = 0.0f;
+					buf_l_in[j] = buf_r_in[j] = 0.0f;           // pad to 'IN_BLOCK' samples with zeros
 
-				playback = false;
-				reader.Close();
+				playback = false;                               // set 'playback' to false; we've done our last read from this file
+				reader.Close();                                 // close the reader
 			}
 
 			int out_cnt = IN_BLOCK;
-            if (!Audio.MOX)
+            if (!Audio.MOX)                                     // 'true' means data is headed for a receiver channel
             {
-                if (sample_rate != rcvr_rate)
+                if (sample_rate != rcvr_rate)                   // 'if' we need to resample
                 {
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, rcvr_resamp_l);
@@ -2975,13 +2976,13 @@ namespace Thetis
                 }
                 else
                 {
-                    buf_l_in.CopyTo(buf_l_out, 0);
-                    buf_r_in.CopyTo(buf_r_out, 0);
+                    buf_l_in.CopyTo(buf_l_out, 0);              // whether we resample or not, data goes to 'buf_l_out[]' & 'buf_r_out[]'
+                    buf_r_in.CopyTo(buf_r_out, 0);              // we end up with 'out_cnt' samples
                 }
             }
-            else
+            else                                                // data is headed for the transmitter channel input
             {
-                if (sample_rate != xmtr_rate)
+                if (sample_rate != xmtr_rate)                   // 'if' we need to resample
                 {
                     fixed (float* in_ptr = &buf_l_in[0], out_ptr = &buf_l_out[0])
                         WDSP.xresampleFV(in_ptr, out_ptr, IN_BLOCK, &out_cnt, xmtr_resamp_l);
@@ -2993,15 +2994,20 @@ namespace Thetis
                 }
                 else
                 {
-                    buf_l_in.CopyTo(buf_l_out, 0);
-                    buf_r_in.CopyTo(buf_r_out, 0);
+                    buf_l_in.CopyTo(buf_l_out, 0);              // whether we resample or not, data goes to 'buf_l_out[]' & 'buf_r_out[]'
+                    buf_r_in.CopyTo(buf_r_out, 0);              // we end up with 'out_cnt' samples
                 }
             }
-			rb_l.Write(buf_l_out, out_cnt);
-			if(channels > 1) rb_r.Write(buf_r_out, out_cnt);
-			else rb_r.Write(buf_l_out, out_cnt);
+            //lock (ringLock)
+            {
+			    rb_l.Write(buf_l_out, out_cnt);                 // write the 'out_cnt' samples into the ring buffers 'rb_l' and 'rb_r'
+			    if(channels > 1) rb_r.Write(buf_r_out, out_cnt);
+			    else rb_r.Write(buf_l_out, out_cnt);
+                total_samps_written += out_cnt;                 // sum the total samples written to the ring(s)
+            }
 		}
-
+        
+        //private readonly object ringLock = new object();
 		unsafe public void GetPlayBuffer(float *left, float *right)
 		{
 			//Debug.WriteLine("GetPlayBuffer ("+rb_l.ReadSpace()+")");
@@ -3012,17 +3018,34 @@ namespace Thetis
             else            size = xmtr_size;
             if (count > size)
                 count = size;
-
-			rb_l.ReadPtr(left, count);
-			rb_r.ReadPtr(right, count);
+            //lock (ringLock)
+            {
+                rb_l.ReadPtr(left, count);
+                rb_r.ReadPtr(right, count);
+            }
             if (count < size)
 			{
                 for (int i = count; i < size; i++)
 					left[i] = right[i] = 0.0f;
 			}
+            total_samps_read += size;                           // sum the total samples read from the ring(s)
+            if (total_samps_read >= total_samps_written)        // check to see if we're done with playback
+            {
+                Thread t = new Thread(new ThreadStart(NextPlayback));
+                t.Name = "Wave File Next Playback";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Normal;
+                t.Start();
+            }
 		}
 
 		// FIXME: implement interleaved version of Get Play Buffer
+
+        private void NextPlayback()
+        {
+            Thread.Sleep(50);
+            wave_form.Next();
+        }
 		
 
 		public void Stop()

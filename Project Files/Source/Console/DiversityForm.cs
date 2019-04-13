@@ -1527,21 +1527,70 @@ namespace Thetis
                 else
                     radioButtonMerc2.Checked = true;
             }
+
+            get             // added 31/3/2018 G8NJJ to allow access by CAT commands
+            {
+                if (radioButtonMerc1.Checked == true)
+                    return true;
+                else
+                    return false;
+            }
         }
+
+
+
+        public int DiversityRXSource         // added 31/3/2018 G8NJJ to allow access by CAT commands
+        {
+            set
+            {
+                if (value == 0)
+                    radRxSourceRx1Rx2.Checked = true;
+                else if (value == 1)
+                    radRxSource1.Checked = true;
+                else
+                    radRxSource2.Checked = true;
+        }
+
+            get
+            {
+                if (radRxSourceRx1Rx2.Checked)
+                    return 0;
+                else if (radRxSource1.Checked)
+                    return 1;
+                else
+                    return 2;
+            }
+        }
+
 
         public decimal DiversityGain
         {
             set { udR1.Value = value; }
+            get { return udR1.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands
         }
 
         public decimal DiversityR2Gain
         {
             set { udR2.Value = value; }
+            get { return udR2.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands
         }
 
         public decimal DiversityPhase
         {
             set { udFineNull.Value = value; }
+            get { return udFineNull.Value; }        // added 31/3/2018 G8NJJ to allow access by CAT commands
+        }
+
+        public bool DiversityEnabled
+        {
+            set { chkEnableDiversity.Checked = value; }
+            get
+            {
+                if (chkEnableDiversity.Checked)
+                    return true;
+                else
+                    return false;
+            }
         }
 
         private void udCalib_ValueChanged(object sender, EventArgs e)

@@ -174,6 +174,15 @@
     <ClInclude Include="varsamp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="icfir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="syncbuffs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dexp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="channel.c">
@@ -333,6 +342,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="varsamp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="icfir.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="syncbuffs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dexp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

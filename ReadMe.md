@@ -1,5 +1,16 @@
 
-Latest Beta Release v2.6.0 April 10, 2018
+Latest Release v2.6.4 April 13, 2019
+
+# 2.6.4 (2019-4-13)
+- improved VOX/DEXP features and performance
+- QSK cabibility for the ANAN-200D, 7000DLE, and 8000DLE models
+- fixed VAC1 startup problem
+- fixed VAC2 resampler problem
+- added option to use VAC2 on split
+- improved TX-RX and RX-TX transistion on voice modes
+- transverter T/R relay bug fixed
+- added control for BYPS-EXT1-XVTR RX ANT for 7000DLE
+
 # 2.6.0 (2018-4-10)
 - added diagnostic LED array
 - divided open collector controls into 3 groups (HF-VHF-SWL)

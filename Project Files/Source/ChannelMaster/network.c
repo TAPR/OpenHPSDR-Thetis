@@ -154,13 +154,13 @@ int nativeInitMetis(char *netaddr, char *localaddr, int localport) {
 
 		fflush(stdout);
 
-		sndbufsize = 0xffff;
+		sndbufsize = 0xffff; // 0x10000;
 		rc = setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char *)&sndbufsize, sizeof(int));
 		if (rc == SOCKET_ERROR) {
 			printf("CreateSockets Warning: setsockopt SO_SNDBUF failed!\n");
 		}
 
-		sndbufsize = 0xffff;
+		sndbufsize = 0xffff; // 0xfa000;
 		rc = setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char *)&sndbufsize, sizeof(int));
 		if (rc == SOCKET_ERROR) {
 			printf("CreateSockets Warning: setsockopt SO_RCVBUF failed!\n");
@@ -769,8 +769,8 @@ ReadThreadMainLoop() {
 						prn->tx[0].exciter_power = prn->ReadBufp[2] << 8 | prn->ReadBufp[3];
 						prn->tx[0].fwd_power = prn->ReadBufp[10] << 8 | prn->ReadBufp[11];
 						prn->tx[0].rev_power = prn->ReadBufp[18] << 8 | prn->ReadBufp[19];
-						PeakFwdPower (prn->tx[0].fwd_power);
-						PeakRevPower (prn->tx[0].rev_power);
+						PeakFwdPower ((float)(prn->tx[0].fwd_power));
+						PeakRevPower ((float)(prn->tx[0].rev_power));
 						//Bytes 45,46  Supply Volts [15:0]          
 						prn->supply_volts = prn->ReadBufp[45] << 8 | prn->ReadBufp[46];
 
@@ -1024,7 +1024,7 @@ void CmdHighPriority() { // port 1027
 	packetbuf[345] = prn->tx[0].drive_level;
 
 	// Enable transverter T/R relay 8---DLE
-    packetbuf[1400] = (xvtr_enable << 1) & 0x02;
+    packetbuf[1400] = xvtr_enable & 0x01;
 
 	// Open Collector Ouputs
 	packetbuf[1401] = (prn->oc_output << 1) & 0xfe;

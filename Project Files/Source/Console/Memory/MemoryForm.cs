@@ -35,9 +35,9 @@ using System.Threading;
 using System.Windows.Forms;
 
 //reference Nuget Package NAudio.Lame
-using NAudio;
-using NAudio.Wave;
-using NAudio.Lame;
+//using NAudio;
+//using NAudio.Wave;
+//using NAudio.Lame;
 
 
 namespace Thetis
@@ -1398,9 +1398,9 @@ namespace Thetis
         // ke9ns add  NOT USED AT THE MOMENT
         public static void WaveToMP3(string waveFileName, string mp3FileName, int bitRate = 128)
         {
-            using (var reader = new WaveFileReader(waveFileName))
-            using (var writer = new LameMP3FileWriter(mp3FileName, reader.WaveFormat, LAMEPreset.VBR_90))
-                reader.CopyTo(writer);
+           // using (var reader = new WaveFileReader(waveFileName))
+           // using (var writer = new LameMP3FileWriter(mp3FileName, reader.WaveFormat, LAMEPreset.VBR_90))
+            //    reader.CopyTo(writer);
         }
 
         //=======================================================================================================================
@@ -1410,10 +1410,10 @@ namespace Thetis
         {
             try
             {
-                using (var reader = new WaveFileReader(WaveControl.scheduleName)) // closes reader when done using
-                using (var writer = new LameMP3FileWriter(WaveControl.scheduleName1, reader.WaveFormat, LAMEPreset.VBR_90)) // closes writer when done using
+               // using (var reader = new WaveFileReader(WaveControl.scheduleName)) // closes reader when done using
+               // using (var writer = new LameMP3FileWriter(WaveControl.scheduleName1, reader.WaveFormat, LAMEPreset.VBR_90)) // closes writer when done using
                 {
-                    reader.CopyTo(writer);
+                //    reader.CopyTo(writer);
                 }
             }
             catch(Exception)
@@ -1444,14 +1444,14 @@ namespace Thetis
         public static void ConvertWavStreamToMp3File(ref MemoryStream ms, string savetofilename)
         {
             //rewind to beginning of stream
-            ms.Seek(0, SeekOrigin.Begin);
+          //  ms.Seek(0, SeekOrigin.Begin);
 
-            using (var retMs = new MemoryStream())
-            using (var rdr = new WaveFileReader(ms))
-            using (var wtr = new LameMP3FileWriter(savetofilename, rdr.WaveFormat, LAMEPreset.VBR_90))
-            {
-                rdr.CopyTo(wtr);
-            }
+         //   using (var retMs = new MemoryStream())
+           // using (var rdr = new WaveFileReader(ms))
+           // using (var wtr = new LameMP3FileWriter(savetofilename, rdr.WaveFormat, LAMEPreset.VBR_90))
+          //  {
+           //     rdr.CopyTo(wtr);
+           // }
         }
     
 

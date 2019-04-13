@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2019 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@ warren@wpratt.com
 #ifndef _delay_h
 #define _delay_h
 
-#define WSDEL	65		// number of supported whole sample delays
+#define WSDEL	1025	// number of supported whole sample delays
 
 typedef struct _delay
 {

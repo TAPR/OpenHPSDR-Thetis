@@ -233,6 +233,12 @@ namespace Thetis
             console.PSState = false;
         }
 
+        //-W2PA Adds capability for CAT control via console
+        public void SingleCalrun()
+        {
+            btnPSCalibrate_Click(this, EventArgs.Empty); 
+        }
+
         private void btnPSReset_Click(object sender, EventArgs e)
         {
             console.ForcePureSignalAutoCalDisable();
@@ -637,76 +643,76 @@ namespace Thetis
     {
         #region DllImport - Main
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSRunCal", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSRunCal", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSRunCal(int channel, bool run);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSMox", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMox", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSMox(int channel, bool mox);
 
-        [DllImport("WDSP.dll", EntryPoint = "GetPSInfo", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "GetPSInfo", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetPSInfo(int channel, int* info);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSReset", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSReset", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSReset(int channel, int reset);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSMancal", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMancal", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSMancal(int channel, int mancal);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSAutomode", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSAutomode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSAutomode(int channel, int automode);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSTurnon", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSTurnon", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSTurnon(int channel, int turnon);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSControl", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSControl", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSControl(int channel, int reset, int mancal, int automode, int turnon);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSLoopDelay", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSLoopDelay", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSLoopDelay(int channel, double delay);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSMoxDelay", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMoxDelay", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSMoxDelay(int channel, double delay);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSTXDelay", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSTXDelay", CallingConvention = CallingConvention.Cdecl)]
         public static extern double SetPSTXDelay(int channel, double delay);
 
-        [DllImport("WDSP.dll", EntryPoint = "psccF", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "psccF", CallingConvention = CallingConvention.Cdecl)]
         public static extern void psccF(int channel, int size, float* Itxbuff, float* Qtxbuff, float* Irxbuff, float* Qrxbuff, bool mox, bool solidmox);
 
-        [DllImport("WDSP.dll", EntryPoint = "PSSaveCorr", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "PSSaveCorr", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PSSaveCorr(int channel, string filename);
 
-        [DllImport("WDSP.dll", EntryPoint = "PSRestoreCorr", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "PSRestoreCorr", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PSRestoreCorr(int channel, string filename);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSHWPeak", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSHWPeak", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSHWPeak(int channel, double peak);
 
-        [DllImport("WDSP.dll", EntryPoint = "GetPSHWPeak", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "GetPSHWPeak", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetPSHWPeak(int channel, double* peak);
 
-        [DllImport("WDSP.dll", EntryPoint = "GetPSMaxTX", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "GetPSMaxTX", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetPSMaxTX(int channel, double* maxtx);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSPtol", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSPtol", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSPtol(int channel, double ptol);
 
-        [DllImport("WDSP.dll", EntryPoint = "GetPSDisp", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "GetPSDisp", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetPSDisp(int channel, IntPtr x, IntPtr ym, IntPtr yc, IntPtr ys, IntPtr cm, IntPtr cc, IntPtr cs);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSFeedbackRate", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSFeedbackRate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSFeedbackRate(int channel, int rate);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSPinMode", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSPinMode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSPinMode(int channel, int pin);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSMapMode", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMapMode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSMapMode(int channel, int map);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSStabilize", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSStabilize", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSStabilize(int channel, int stbl);
 
-        [DllImport("WDSP.dll", EntryPoint = "SetPSIntsAndSpi", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "SetPSIntsAndSpi", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSIntsAndSpi(int channel, int ints, int spi);
 
         #endregion

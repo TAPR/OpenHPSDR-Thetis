@@ -1,4 +1,4 @@
-/*  amsq.h
+/*  amsq.c
 
 This file is part of a program that implements a Software-Defined Radio.
 
@@ -41,7 +41,7 @@ void compute_slews(AMSQ a)
 	theta = 0.0;
 	for (i = 0; i <= a->ntdown; i++)
 	{
-		a->cdown[i] = a->muted_gain + (1.0 - a->muted_gain) * 0.5 * (1 + cos (theta));
+		a->cdown[i] = a->muted_gain + (1.0 - a->muted_gain) * 0.5 * (1.0 + cos (theta));
 		theta += delta;
 	}
 }

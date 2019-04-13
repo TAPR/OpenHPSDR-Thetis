@@ -66,8 +66,9 @@ namespace Thetis
 			//
 			// Required for Windows Form Designer support
 			//
-			InitializeComponent();
-			comboSampleRate.Text = Audio.SampleRate1.ToString();
+            InitializeComponent();
+            if (comboSampleRate.Text == "") 
+			comboSampleRate.Text = "48000";
 			Common.RestoreForm(this, "WaveOptions", false);
 		}
 

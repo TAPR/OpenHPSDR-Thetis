@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013-2019 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -85,6 +85,8 @@ void WDSPwisdom (char* directory)
 			fftw_destroy_plan (tplan);
 			psize *= 2;
 		}
+		fprintf(stdout, "\nFFTW planning complete.\n");
+		fflush(stdout);
 		fftw_export_wisdom_to_filename(wisdom_file);
 		_aligned_free (fftout);
 		_aligned_free (fftin);

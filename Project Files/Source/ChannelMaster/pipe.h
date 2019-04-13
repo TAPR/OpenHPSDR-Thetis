@@ -44,6 +44,10 @@ typedef struct _pipe
 		void (__stdcall *xplaywave)(int state, double* data);					// WAV player
 		void (__stdcall *xrecordwave)(int state, int pos, double* data);		// WAV recorder
 	} rcvr[cmMAXrcvr];
+	struct // transmitter items
+	{
+		volatile long txvac;
+	} xmtr[cmMAXxmtr];
 	struct _spc0 // spc0 items
 	{
 		ANB panb;

@@ -60,10 +60,10 @@ namespace Thetis
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern int SetThreadAffinityMask(IntPtr hThread, IntPtr dwThreadAffinityMask);
 
-        [DllImport("WDSP.dll", EntryPoint = "NewCriticalSection", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "NewCriticalSection", CallingConvention = CallingConvention.Cdecl)]
         public static extern void* NewCriticalSection();
 
-        [DllImport("WDSP.dll", EntryPoint = "DestroyCriticalSection", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("wdsp.dll", EntryPoint = "DestroyCriticalSection", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DestroyCriticalSection(void* cs_ptr);
 
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl)]
