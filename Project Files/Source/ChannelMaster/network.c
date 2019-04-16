@@ -475,16 +475,16 @@ int ReadUDPFrame(unsigned char *bufp) {
 	unsigned char readbuf[1444];
 	struct sockaddr_in fromaddr;
 	int fromlen;
-	int rc;
+	int nrecv, inport;
 	unsigned int seqnum;
 	unsigned char *seqbytep = (unsigned char *)&seqnum;
 	fromlen = sizeof(fromaddr);
 
 	EnterCriticalSection(&prn->rcvpkt);
 
-	rc = recvfrom(listenSock, readbuf, sizeof(readbuf), 0, (SOCKADDR *)&fromaddr, &fromlen);
+	nrecv = recvfrom(listenSock, readbuf, sizeof(readbuf), 0, (SOCKADDR *)&fromaddr, &fromlen);
 
-	if (rc == -1)
+	if (nrecv == -1)
 	{
 		errno = WSAGetLastError();
 		if (errno == WSAEWOULDBLOCK || errno == WSAEMSGSIZE)
@@ -493,7 +493,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 			fflush(stdout);
 		}
 		LeaveCriticalSection(&prn->rcvpkt);
-		return rc;
+		return nrecv;
 	}
 
 	seqbytep[3] = readbuf[0];
@@ -501,9 +501,11 @@ int ReadUDPFrame(unsigned char *bufp) {
 	seqbytep[1] = readbuf[2];
 	seqbytep[0] = readbuf[3];
 
-	switch (rc = ntohs(fromaddr.sin_port))
+	switch (inport = ntohs(fromaddr.sin_port))
 	{
-	case HPCCPort: //1025: // 62 bytes - High Priority C&C data
+	case HPCCPort: //1025: // 60 bytes - High Priority C&C data
+		if (nrecv != 60) break; // check for malformed packet
+
 		if (seqnum != (1 + prn->cc_seq_no) && seqnum != 0)  {
 			prn->cc_seq_err += 1;
 			//PrintTimeHack();
@@ -512,9 +514,11 @@ int ReadUDPFrame(unsigned char *bufp) {
 		}
 
 		prn->cc_seq_no = seqnum;
-		memcpy(bufp, readbuf + 4, 62);
+		memcpy(bufp, readbuf + 4, 56);
 		break;
-	case  RxMicSampPort: //1026: // 1440 bytes - 16-bit mic samples (48ksps)
+	case  RxMicSampPort: //1026: // 132 bytes - 16-bit mic samples (48ksps)
+		if (nrecv != 132) break; // check for malformed packet
+
 		//mic_samples_buf++;
 		if (seqnum != (1 + prn->tx[0].mic_in_seq_no) && seqnum != 0)  {
 			prn->tx[0].mic_in_seq_err += 1;
@@ -524,9 +528,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 		}
 
 		prn->tx[0].mic_in_seq_no = seqnum;
-		memcpy(bufp, readbuf + 4, 1440);
+		memcpy(bufp, readbuf + 4, 128);
 		break;
-	case WB0Port: //1027: // 1040 bytes - 16-bit raw ADC (default values)
+	case WB0Port: //1027: // 1028 bytes - 16-bit raw ADC (default values)
 	case 1028:
 	case 1029:
 	case 1030:
@@ -535,7 +539,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 	case 1033:
 	case 1034:
 	{
-		int adc_id = rc - prn->wb_base_port;					// adc number
+		if (nrecv != 1028) break; // check for malformed packet
+
+		int adc_id = inport - prn->wb_base_port;					// adc number
 		int wb_spp = prn->wb_samples_per_packet;				// samples per packet
 		int wb_ppf = prn->wb_packets_per_frame;					// packets per frame
 		int disp_id = prn->wb_base_dispid + adc_id;				// display id
@@ -618,7 +624,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 
 		break;
 	}
-	case 1035: // 1428 bytes - 24-bit DDC0 I/Q data
+	case 1035: // 1444 bytes - 24-bit DDC0 I/Q data
+		if (nrecv != 1444) break; // check for malformed packet
+
 		//rx_samples_buf++;
 		if (seqnum != (1 + prn->rx[0].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[0].rx_in_seq_err += 1;
@@ -630,7 +638,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 		prn->rx[0].rx_in_seq_no = seqnum;
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
-	case 1036: // 1428 bytes - 24-bit DDC1 I/Q data
+	case 1036: // 1444 bytes - 24-bit DDC1 I/Q data
+		if (nrecv != 1444) break; // check for malformed packet
+
 		if (seqnum != (1 + prn->rx[1].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[1].rx_in_seq_err += 1;
 			//PrintTimeHack();
@@ -641,7 +651,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 		prn->rx[1].rx_in_seq_no = seqnum;
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
-	case 1037: // 1428 bytes - 24-bit DDC2 I/Q data
+	case 1037: // 1444 bytes - 24-bit DDC2 I/Q data
+		if (nrecv != 1444) break; // check for malformed packet
+
 		//rx_samples_buf++;
 		if (seqnum != (1 + prn->rx[2].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[2].rx_in_seq_err += 1;
@@ -653,7 +665,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 		prn->rx[2].rx_in_seq_no = seqnum;
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
-	case 1038: // 1428 bytes - 24-bit DDC3 I/Q data
+	case 1038: // 1444 bytes - 24-bit DDC3 I/Q data
+		if (nrecv != 1444) break; // check for malformed packet
+
 		if (seqnum != (1 + prn->rx[3].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[3].rx_in_seq_err += 1;
 			//PrintTimeHack();
@@ -664,7 +678,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 		prn->rx[3].rx_in_seq_no = seqnum;
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
-	case 1039: // 1428 bytes - 24-bit DDC4 I/Q data
+	case 1039: // 1444 bytes - 24-bit DDC4 I/Q data
+		if (nrecv != 1444) break; // check for malformed packet
+
 		if (seqnum != (1 + prn->rx[4].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[4].rx_in_seq_err += 1;
 			//PrintTimeHack();
@@ -675,7 +691,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 		prn->rx[4].rx_in_seq_no = seqnum;
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
-	case 1040: // 1428 bytes - 24-bit DDC5 I/Q data
+	case 1040: // 1444 bytes - 24-bit DDC5 I/Q data
+		if (nrecv != 1444) break; // check for malformed packet
+
 		if (seqnum != (1 + prn->rx[5].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[5].rx_in_seq_err += 1;
 			//PrintTimeHack();
@@ -686,7 +704,9 @@ int ReadUDPFrame(unsigned char *bufp) {
 		prn->rx[5].rx_in_seq_no = seqnum;
 		memcpy(bufp, readbuf + 16, 1428);
 		break;
-	case 1041: // 1428 bytes - 24-bit DDC6 I/Q data
+	case 1041: // 1444 bytes - 24-bit DDC6 I/Q data
+		if (nrecv != 1444) break; // check for malformed packet
+
 		if (seqnum != (1 + prn->rx[6].rx_in_seq_no) && seqnum != 0)  {
 			prn->rx[6].rx_in_seq_err += 1;
 			//PrintTimeHack();
@@ -701,7 +721,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 
 	LeaveCriticalSection(&prn->rcvpkt);
 
-	return rc;
+	return inport;
 }
 
 void

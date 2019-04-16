@@ -70,6 +70,17 @@ namespace Thetis
             if (comboSampleRate.Text == "") 
 			comboSampleRate.Text = "48000";
 			Common.RestoreForm(this, "WaveOptions", false);
+
+            radRXPreProcessed_CheckedChanged(this, System.EventArgs.Empty);
+            radRXPostProcessed_CheckedChanged(this, System.EventArgs.Empty);
+            radTXPreProcessed_CheckedChanged(this, System.EventArgs.Empty);
+            radTXPostProcessed_CheckedChanged(this, System.EventArgs.Empty);
+            radBitDepthIEEE_CheckedChanged(this, System.EventArgs.Empty);
+            radBitDepth32PCM_CheckedChanged(this, System.EventArgs.Empty);
+            radBitDepth24PCM_CheckedChanged(this, System.EventArgs.Empty);
+            radBitDepth16PCM_CheckedChanged(this, System.EventArgs.Empty);
+            radBitDepth8PCM_CheckedChanged(this, System.EventArgs.Empty);
+            chkWaveDither_CheckedChanged(this, System.EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -437,6 +448,7 @@ namespace Thetis
 		}
 
 		#endregion
+
 
         private void radBitDepthIEEE_CheckedChanged(object sender, System.EventArgs e)
         {

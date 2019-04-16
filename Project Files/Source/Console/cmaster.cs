@@ -1081,7 +1081,7 @@ namespace Thetis
             set { rxpre = value; }
         }
 
-        private bool txpre = false;
+        private bool txpre = true;
         public bool TxPre
         {
             get { return txpre; }

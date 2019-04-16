@@ -37802,6 +37802,9 @@ namespace Thetis
                     break;
             }
 
+            if (RX1DSPMode != DSPMode.CWL && RX1DSPMode != DSPMode.CWU)
+                non_qsk_agc = (AGCMode)comboAGC.SelectedIndex;
+
             if (comboAGC.Focused)
                 btnHidden.Focus();
         }
