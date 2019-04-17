@@ -37878,6 +37878,7 @@ namespace Thetis
 
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            this.Hide(); 
             Audio.callback_return = 2;
             CATEnabled = false;
 
@@ -37903,7 +37904,6 @@ namespace Thetis
 
             if (CWXForm != null) CWXForm.Close();
             if (SetupForm != null) SetupForm.SaveOptions();
-            this.Hide();  // putting it here seems to prevent leaving a dangling process in Windows
             if (EQForm != null) EQForm.Close();
             if (memoryForm != null) memoryForm.Close();
             if (diversityForm != null) diversityForm.Close();
