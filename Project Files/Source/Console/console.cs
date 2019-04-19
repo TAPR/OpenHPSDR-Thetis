@@ -38725,6 +38725,38 @@ namespace Thetis
             if (tx) mox = tx;
             double freq = 0.0;
 
+            if (tx)                          // change to TX mode
+            {
+                radModeCWL.Enabled = false;  //Disallow mode changes in transmit mode            
+                radModeCWU.Enabled = false;
+                radModeAM.Enabled = false;
+                radModeDIGL.Enabled = false;
+                radModeDIGU.Enabled = false;
+                radModeDRM.Enabled = false;
+                radModeDSB.Enabled = false;
+                radModeLSB.Enabled = false;
+                radModeUSB.Enabled = false;
+                radModeFMN.Enabled = false;
+                radModeSAM.Enabled = false;
+                radModeSPEC.Enabled = false;
+            }
+            else                            // change to RX mode
+            {
+                radModeCWL.Enabled = true;  //Re-enable mode changes in receive mode            
+                radModeCWU.Enabled = true;
+                radModeAM.Enabled = true;
+                radModeDIGL.Enabled = true;
+                radModeDIGU.Enabled = true;
+                radModeDRM.Enabled = true;
+                radModeDSB.Enabled = true;
+                radModeLSB.Enabled = true;
+                radModeUSB.Enabled = true;
+                radModeFMN.Enabled = true;
+                radModeSAM.Enabled = true;
+                radModeSPEC.Enabled = true;
+            }
+
+
             if (tx)
             {
                 /*t1.Stop();
@@ -38842,6 +38874,7 @@ namespace Thetis
                         freq -= (double)cw_pitch * 0.0000010;
                         break;
                 }
+
             }
             else
             {

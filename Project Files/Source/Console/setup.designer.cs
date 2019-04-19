@@ -1985,6 +1985,7 @@
             this.lblDSPNBThreshold = new System.Windows.Forms.LabelTS();
             this.tpDSPVOXDE = new System.Windows.Forms.TabPage();
             this.grpAntiVOX = new System.Windows.Forms.GroupBoxTS();
+            this.chkAntiVoxSource = new System.Windows.Forms.CheckBoxTS();
             this.udAntiVoxTau = new System.Windows.Forms.NumericUpDownTS();
             this.lblAntiVoxTau = new System.Windows.Forms.LabelTS();
             this.udAntiVoxGain = new System.Windows.Forms.NumericUpDownTS();
@@ -3222,7 +3223,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkAntiVoxSource = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -7763,7 +7763,7 @@
             this.udHWKeyDownDelay.TabIndex = 36;
             this.toolTip1.SetToolTip(this.udHWKeyDownDelay, "Sets the Delay period to wait after Key-Down before RF output in CW mode.");
             this.udHWKeyDownDelay.Value = new decimal(new int[] {
-            20,
+            7,
             0,
             0,
             0});
@@ -8199,7 +8199,7 @@
             this.udMoxDelay.TabIndex = 20;
             this.toolTip1.SetToolTip(this.udMoxDelay, "Sets the delay between carrier removal and PTT drops.");
             this.udMoxDelay.Value = new decimal(new int[] {
-            0,
+            15,
             0,
             0,
             0});
@@ -32127,6 +32127,18 @@
             this.grpAntiVOX.TabStop = false;
             this.grpAntiVOX.Text = "Anti-VOX";
             // 
+            // chkAntiVoxSource
+            // 
+            this.chkAntiVoxSource.AutoSize = true;
+            this.chkAntiVoxSource.Image = null;
+            this.chkAntiVoxSource.Location = new System.Drawing.Point(6, 41);
+            this.chkAntiVoxSource.Name = "chkAntiVoxSource";
+            this.chkAntiVoxSource.Size = new System.Drawing.Size(99, 17);
+            this.chkAntiVoxSource.TabIndex = 20;
+            this.chkAntiVoxSource.Text = "Use VAC Audio";
+            this.chkAntiVoxSource.UseVisualStyleBackColor = true;
+            this.chkAntiVoxSource.CheckedChanged += new System.EventHandler(this.chkAntiVoxSource_CheckedChanged);
+            // 
             // udAntiVoxTau
             // 
             this.udAntiVoxTau.Increment = new decimal(new int[] {
@@ -53584,18 +53596,6 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
-            // 
-            // chkAntiVoxSource
-            // 
-            this.chkAntiVoxSource.AutoSize = true;
-            this.chkAntiVoxSource.Image = null;
-            this.chkAntiVoxSource.Location = new System.Drawing.Point(6, 41);
-            this.chkAntiVoxSource.Name = "chkAntiVoxSource";
-            this.chkAntiVoxSource.Size = new System.Drawing.Size(99, 17);
-            this.chkAntiVoxSource.TabIndex = 20;
-            this.chkAntiVoxSource.Text = "Use VAC Audio";
-            this.chkAntiVoxSource.UseVisualStyleBackColor = true;
-            this.chkAntiVoxSource.CheckedChanged += new System.EventHandler(this.chkAntiVoxSource_CheckedChanged);
             // 
             // Setup
             // 
