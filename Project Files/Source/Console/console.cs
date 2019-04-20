@@ -2317,11 +2317,6 @@ namespace Thetis
             else NetworkIO.SetCWSidetoneVolume(0);
 
             RX1_band_change = RX1Band;
-            // Initialize for QSK those things normally triggered by inital MOX use, 
-            // which isn't used in Thetis in QSK mode, just in case we start-up in CW/QSK
-            chkMOX.Checked = true; 
-            chkMOX.Checked = false;
-
         }
 
         public void Init60mChannels()
@@ -24514,7 +24509,7 @@ namespace Thetis
 
         bool tx_dds_freq_updated = false;
         // uint tx_dds_freq_tw;
-        double tx_dds_freq_mhz = 7.1;
+        double tx_dds_freq_mhz = 14;
         private void UpdateTXDDSFreq()
         {
             // if (chkPower.Checked)// && tx_dds_freq_updated)
@@ -24559,7 +24554,7 @@ namespace Thetis
         }
 
         //private uint last_tw = 0;
-        private double fwc_dds_freq = 7.1;
+        private double fwc_dds_freq = 14;
         public double FWCDDSFreq
         {
             get { return fwc_dds_freq; }
@@ -24576,7 +24571,7 @@ namespace Thetis
             }
         }
 
-        private double rx2_dds_freq = 7.1;
+        private double rx2_dds_freq = 14;
         public double RX2DDSFreq
         {
             get { return rx2_dds_freq; }
@@ -24593,7 +24588,7 @@ namespace Thetis
             }
         }
 
-        private double dds_freq = 7.1;
+        private double dds_freq = 14;
         public double DDSFreq
         {
             get { return dds_freq; }
@@ -24603,7 +24598,7 @@ namespace Thetis
                 //Debug.WriteLine("dds_freq: "+dds_freq.ToString("f6"));
 
                 double vfoFreq = value, f = value;
-                double dsp_osc_freq = 0.0;
+               // double dsp_osc_freq = 0.0;
 
                 //calculate DDS Tuning Word
                 if (xvtr_present && f >= 144 && f <= 146)		// If transverter enabled compute 28MHz IF frequency
@@ -38742,18 +38737,21 @@ namespace Thetis
             }
             else                            // change to RX mode
             {
-                radModeCWL.Enabled = true;  //Re-enable mode changes in receive mode            
-                radModeCWU.Enabled = true;
-                radModeAM.Enabled = true;
-                radModeDIGL.Enabled = true;
-                radModeDIGU.Enabled = true;
-                radModeDRM.Enabled = true;
-                radModeDSB.Enabled = true;
-                radModeLSB.Enabled = true;
-                radModeUSB.Enabled = true;
-                radModeFMN.Enabled = true;
-                radModeSAM.Enabled = true;
-                radModeSPEC.Enabled = true;
+                if (!VFOALock)
+                {
+                    radModeCWL.Enabled = true;  //Re-enable mode changes in receive mode            
+                    radModeCWU.Enabled = true;
+                    radModeAM.Enabled = true;
+                    radModeDIGL.Enabled = true;
+                    radModeDIGU.Enabled = true;
+                    radModeDRM.Enabled = true;
+                    radModeDSB.Enabled = true;
+                    radModeLSB.Enabled = true;
+                    radModeUSB.Enabled = true;
+                    radModeFMN.Enabled = true;
+                    radModeSAM.Enabled = true;
+                    radModeSPEC.Enabled = true;
+                }
             }
 
 
