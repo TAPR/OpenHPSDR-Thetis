@@ -1,5 +1,14 @@
 
-Latest Release v2.6.4 April 13, 2019
+Latest Release v2.6.6 April 21, 2019
+# 2.6.6 (2019-4-21)
+- corrects issue with EU region using commas
+- corrects issue with having out of band frequency on startup
+- fixed transmit filter not being displayed when using split
+
+# 2.6.5 (2019-4-18)
+- corrected issue with console remaining open after exiting Thetis
+- fixed problem of program crashing when recording while transmitting
+- fixed problem with program crashing when receiving a bad packet
 
 # 2.6.4 (2019-4-13)
 - improved VOX/DEXP features and performance
