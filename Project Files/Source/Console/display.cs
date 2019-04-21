@@ -7422,8 +7422,10 @@ namespace Thetis
                     }
                     else
                     {
-                        filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfob_hz - vfoa_hz)) / width * W);
-                        filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfob_hz - vfoa_hz)) / width * W);
+                       // filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfob_hz - vfoa_hz)) / width * W);
+                       // filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfob_hz - vfoa_hz)) / width * W);
+                        filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
+                        filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
                     }
                 }
                 else
@@ -7447,7 +7449,7 @@ namespace Thetis
                     g.DrawLine(tx_filter_pen, filter_right_x, H + top, filter_right_x, H + H);	// draw tx filter overlay
                     g.DrawLine(tx_filter_pen, filter_right_x + 1, H + top, filter_right_x + 1, H + H);// draw tx filter overlay
                 }
-                else if (!tx_on_vfob)
+                else //if (!tx_on_vfob)
                 {
                     g.DrawLine(tx_filter_pen, filter_left_x, top, filter_left_x, H);		// draw tx filter overlay
                     g.DrawLine(tx_filter_pen, filter_left_x + 1, top, filter_left_x + 1, H);	// draw tx filter overlay
