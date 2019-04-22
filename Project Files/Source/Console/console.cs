@@ -44764,38 +44764,6 @@ namespace Thetis
             DSPMode old_mode = rx1_dsp_mode;
             bool old_sd = stereo_diversity;
 
-            // Manage QSK appropriately when switching modes --------------
-            if (new_mode != DSPMode.CWL && new_mode != DSPMode.CWU)  // Changing to a non-CW mode
-            {
-                // Although CWFWKeyer is mostly a deprecated flag, it's useful in the QSK-enabled firmware (1.7 or later) -W2PA
-                // It is used here solely to prevent keying in non-CW modes.
-                CWFWKeyer = false;  // Disallow the FW to key the rig except in CW modes
-                if (chkCWBreakInEnabled.Checked) NonCWModeBreakInDisabled = true;  // Disable break-in if not in a CW mode
-            }
-            else // Changing to a CW mode
-            {
-                CWFWKeyer = true;
-                NonCWModeBreakInDisabled = false; // Re-enable break-in if necessary
-            }
-
-            if ((new_mode != DSPMode.CWL && new_mode != DSPMode.CWU)
-                && (old_mode == DSPMode.CWL || old_mode == DSPMode.CWU)) // Changing to a non-CW mode from CW
-            {
-                if (QSKEnabled)
-                {
-                    chkQSK.Checked = false; // If QSK was on, turn it off to return to non-QSK settings
-                    qsk_in_CW = true; // But remember it was on in CW modes
-                }
-                else qsk_in_CW = false;
-            }
-
-            if ((new_mode == DSPMode.CWL || new_mode == DSPMode.CWU)
-                && (old_mode != DSPMode.CWL && old_mode != DSPMode.CWU)) // Changing to a CW mode from non-CW
-            {
-                if (qsk_in_CW) chkQSK.Checked = true;
-            }
-            // end of QSK-related code ---------------------------------------
-
             WDSP.SetChannelState(WDSP.id(0, 1), 0, 0);              // turn off the DSP channels
             WDSP.SetChannelState(WDSP.id(0, 0), 0, 1);
             Thread.Sleep(1);
@@ -45441,6 +45409,39 @@ namespace Thetis
             WDSP.SetChannelState(WDSP.id(0, 0), 1, 0);              // turn on the DSP channels
             if (radio.GetDSPRX(0, 1).Active)
                 WDSP.SetChannelState(WDSP.id(0, 1), 1, 0);
+
+            // Manage QSK appropriately when switching modes --------------
+            if (new_mode != DSPMode.CWL && new_mode != DSPMode.CWU)  // Changing to a non-CW mode
+            {
+                // Although CWFWKeyer is mostly a deprecated flag, it's useful in the QSK-enabled firmware (1.7 or later) -W2PA
+                // It is used here solely to prevent keying in non-CW modes.
+                CWFWKeyer = false;  // Disallow the FW to key the rig except in CW modes
+                if (chkCWBreakInEnabled.Checked) NonCWModeBreakInDisabled = true;  // Disable break-in if not in a CW mode
+            }
+            else // Changing to a CW mode
+            {
+                CWFWKeyer = true;
+                NonCWModeBreakInDisabled = false; // Re-enable break-in if necessary
+            }
+
+            if ((new_mode != DSPMode.CWL && new_mode != DSPMode.CWU)
+                && (old_mode == DSPMode.CWL || old_mode == DSPMode.CWU)) // Changing to a non-CW mode from CW
+            {
+                if (QSKEnabled)
+                {
+                    chkQSK.Checked = false; // If QSK was on, turn it off to return to non-QSK settings
+                    qsk_in_CW = true; // But remember it was on in CW modes
+                }
+                else qsk_in_CW = false;
+            }
+
+            if ((new_mode == DSPMode.CWL || new_mode == DSPMode.CWU)
+                && (old_mode != DSPMode.CWL && old_mode != DSPMode.CWU)) // Changing to a CW mode from non-CW
+            {
+                if (qsk_in_CW) chkQSK.Checked = true;
+            }
+            // end of QSK-related code ---------------------------------------
+
         }
 
         private void radModeButton_CheckedChanged(object sender, System.EventArgs e)
