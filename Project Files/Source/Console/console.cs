@@ -1507,7 +1507,10 @@ namespace Thetis
             foreach (string s in CmdLineArgs)
             {
                 if (s == "-autostart")
-                    chkPower.Checked = true;
+                {
+                    Thread autoStartThread = new Thread(new ThreadStart(AutoStart));
+                    autoStartThread.Start();
+                }
                 else if (s.StartsWith("-datapath:"))
                 {
                     string path = s.Substring(s.IndexOf(":") + 1);
@@ -1544,6 +1547,11 @@ namespace Thetis
                 MessageBox.Show("Please RE-START now.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
+        }
+        void AutoStart()
+        {
+            Thread.Sleep(2000);
+            chkPower.Checked = true;
         }
 
         void gmh_MouseUp()
