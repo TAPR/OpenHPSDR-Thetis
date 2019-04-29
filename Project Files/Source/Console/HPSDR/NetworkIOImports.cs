@@ -57,7 +57,7 @@ namespace Thetis
         public static extern void GetCodeVersion(byte[] addr_bytes);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetMetisBoardID(byte[] addr_bytes);
+        public static extern void GetBoardID(byte[] addr_bytes);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int StartAudioNative( PA19.PaStreamCallback cb);

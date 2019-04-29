@@ -35,7 +35,7 @@ namespace Thetis
     class TitleBar
     {
         public const string BUILD_NAME = "";
-        public const string BUILD_DATE = "(4/21/19)";
+        public const string BUILD_DATE = "(4/28/19)";
 
         public static string GetString()
         {

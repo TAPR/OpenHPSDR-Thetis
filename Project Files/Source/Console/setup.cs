@@ -12451,6 +12451,11 @@ namespace Thetis
             Display.ShowFreqOffset = chkShowFreqOffset.Checked;
         }
 
+        private void chkShowZeroLine_CheckedChanged(object sender, System.EventArgs e)
+        {
+            Display.ShowZeroLine = chkShowZeroLine.Checked;
+        }
+        
         private void clrbtnBandEdge_Changed(object sender, System.EventArgs e)
         {
             Display.BandEdgeColor = clrbtnBandEdge.Color;
@@ -14785,7 +14790,7 @@ namespace Thetis
             // lblMetisCodeVersion.Text = BitConverter.ToString(ver_bytes);
             //lblMetisCodeVersion.Text = ver_bytes[0].ToString("0\\.0");
             lblMetisCodeVersion.Text = NetworkIO.FWCodeVersion.ToString("0\\.0");
-            // JanusAudio.GetMetisBoardID(id_bytes);
+            // JanusAudio.GetBoardID(id_bytes);
             // lblMetisBoardID.Text = BitConverter.ToString(id_bytes);
             lblMetisBoardID.Text = NetworkIO.BoardID.ToString();
             return;
@@ -19031,12 +19036,14 @@ namespace Thetis
         {
             Audio.VOXEnabled = chkVOXEnable.Checked;
             console.VOXEnable = chkVOXEnable.Checked;
+            chkDEXPLookAheadEnable_CheckedChanged(this, EventArgs.Empty);
         }
 
         private void chkDEXPEnable_CheckedChanged(object sender, EventArgs e)
         {
             cmaster.SetDEXPRun(0, chkDEXPEnable.Checked);
             console.NoiseGateEnabled = chkDEXPEnable.Checked;
+            chkDEXPLookAheadEnable_CheckedChanged(this, EventArgs.Empty);
         }
 
         private void udDEXPAttack_ValueChanged(object sender, EventArgs e)
@@ -19093,7 +19100,8 @@ namespace Thetis
 
         private void chkDEXPLookAheadEnable_CheckedChanged(object sender, EventArgs e)
         {
-            cmaster.SetDEXPRunAudioDelay(0, chkDEXPLookAheadEnable.Checked);
+            bool enable = chkDEXPLookAheadEnable.Checked && (chkVOXEnable.Checked || chkDEXPEnable.Checked);
+            cmaster.SetDEXPRunAudioDelay(0, enable);
         }
 
         private void udDEXPLookAhead_ValueChanged(object sender, EventArgs e)

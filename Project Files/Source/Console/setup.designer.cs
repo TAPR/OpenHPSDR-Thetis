@@ -3223,6 +3223,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkShowZeroLine = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -48238,6 +48239,7 @@
             // 
             // grpAppPanadapter
             // 
+            this.grpAppPanadapter.Controls.Add(this.chkShowZeroLine);
             this.grpAppPanadapter.Controls.Add(this.tbGrayLineAlpha);
             this.grpAppPanadapter.Controls.Add(this.clrbtnGrayLine);
             this.grpAppPanadapter.Controls.Add(this.labelgrayline);
@@ -48301,7 +48303,7 @@
             this.chkGridControl.Checked = true;
             this.chkGridControl.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkGridControl.Image = null;
-            this.chkGridControl.Location = new System.Drawing.Point(6, 228);
+            this.chkGridControl.Location = new System.Drawing.Point(6, 210);
             this.chkGridControl.Name = "chkGridControl";
             this.chkGridControl.Size = new System.Drawing.Size(120, 16);
             this.chkGridControl.TabIndex = 83;
@@ -48336,7 +48338,7 @@
             // chkShowFreqOffset
             // 
             this.chkShowFreqOffset.Image = null;
-            this.chkShowFreqOffset.Location = new System.Drawing.Point(6, 250);
+            this.chkShowFreqOffset.Location = new System.Drawing.Point(6, 234);
             this.chkShowFreqOffset.Name = "chkShowFreqOffset";
             this.chkShowFreqOffset.Size = new System.Drawing.Size(120, 16);
             this.chkShowFreqOffset.TabIndex = 77;
@@ -53597,6 +53599,20 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkShowZeroLine
+            // 
+            this.chkShowZeroLine.AutoSize = true;
+            this.chkShowZeroLine.Checked = true;
+            this.chkShowZeroLine.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowZeroLine.Image = null;
+            this.chkShowZeroLine.Location = new System.Drawing.Point(6, 259);
+            this.chkShowZeroLine.Name = "chkShowZeroLine";
+            this.chkShowZeroLine.Size = new System.Drawing.Size(101, 17);
+            this.chkShowZeroLine.TabIndex = 84;
+            this.chkShowZeroLine.Text = "Show Zero Line";
+            this.chkShowZeroLine.UseVisualStyleBackColor = true;
+            this.chkShowZeroLine.CheckedChanged += new System.EventHandler(this.chkShowZeroLine_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -54572,6 +54588,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbBackgroundAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
             this.grpAppPanadapter.ResumeLayout(false);
+            this.grpAppPanadapter.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbGrayLineAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1FilterAlpha)).EndInit();
@@ -57927,5 +57944,6 @@
         private LabelTS lblAntiVoxGain;
         private CheckBoxTS chkAntiVoxEnable;
         private CheckBoxTS chkAntiVoxSource;
+        private CheckBoxTS chkShowZeroLine;
     }
 }
