@@ -387,6 +387,15 @@ namespace Thetis
             EthernetHostPort = hpsdrd[chosenDevice].localPort;
             NumRxs = hpsdrd[chosenDevice].numRxs;
 
+            if (BoardID == HPSDRHW.HermesII)
+            {
+                if (FWCodeVersion < 103)
+                {
+                    fwVersionMsg = "Invalid Firmware!\nRequires 10.3 or greater. ";
+                    return -101;                                                                                       
+                }
+            }
+
             rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort);
             return -rc;
         }

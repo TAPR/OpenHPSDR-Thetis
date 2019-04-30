@@ -18494,26 +18494,31 @@ namespace Thetis
         private void comboTXDispPanDetector_SelectedIndexChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).DetTypePan = comboTXDispPanDetector.SelectedIndex;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void comboTXDispPanAveraging_SelectedIndexChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).AverageMode = comboTXDispPanAveraging.SelectedIndex;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void udTXDisplayAVGTime_ValueChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).AvTau = 0.001 * (double)udTXDisplayAVGTime.Value;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void chkDispTXNormalize_CheckedChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).NormOneHzPan = chkDispTXNormalize.Checked;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void tbTXDisplayFFTSize_Scroll(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbTXDisplayFFTSize.Value))));
+            console.UpdateTXSpectrumDisplayVars(); 
             double bin_width = (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).SampleRate / (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize;
             lblTXDispBinWidth.Text = bin_width.ToString("N3");
             // Display.TXFFTSizeOffset = tbTXDisplayFFTSize.Value * 2;
@@ -18522,21 +18527,25 @@ namespace Thetis
         private void comboTXDispWinType_SelectedIndexChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).WindowType = comboTXDispWinType.SelectedIndex;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void comboTXDispWFDetector_SelectedIndexChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).DetTypeWF = comboTXDispWFDetector.SelectedIndex;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void comboTXDispWFAveraging_SelectedIndexChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).AverageModeWF = comboTXDispWFAveraging.SelectedIndex;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void udTXDisplayAVTime_ValueChanged(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).AvTauWF = 0.001 * (double)udTXDisplayAVTime.Value;
+            console.UpdateTXSpectrumDisplayVars();
         }
 
         private void chkBPF2Gnd_CheckedChanged(object sender, EventArgs e)
