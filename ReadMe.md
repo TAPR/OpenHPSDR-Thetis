@@ -1,5 +1,10 @@
 
-Latest Release v2.6.6 April 21, 2019
+Latest Release v2.6.7 April 29, 2019
+# 2.6.7 (2019-4-29)
+- fixed bug where the VOX/DEXP LookAhead feature was enabled when VOX/DEXP was not.
+- corrected compatiblity issue with the ANAN-10E. This requires new firmare to be flashed. v10.3
+- corrected the Spectrum and Histogram diplay during transmit
+
 # 2.6.6 (2019-4-21)
 - corrects issue with EU region using commas
 - corrects issue with having out of band frequency on startup

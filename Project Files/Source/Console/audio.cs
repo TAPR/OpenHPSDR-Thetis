@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2013  Doug Wigley
+// Copyright (C) 2010-2019  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,13 +27,6 @@
 //    USA
 //=================================================================
 
-
-//#define VAC_DEBUG
-//#define MINMAX
-//#define TIMER
-//#define INTERLEAVED
-//#define SPLIT_INTERLEAVED
-
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -55,14 +48,6 @@ namespace Thetis
         {
             DTTSP = 0,
             CW,
-            /*SINL_COSR,
-			SINL_SINR,			
-			SINL_NOR,
-			COSL_SINR,
-			NOL_SINR,
-			NOL_NOR,
-			PIPE,*/
-            //SWITCH,
         }
 
         public enum SignalSource
@@ -1360,7 +1345,6 @@ namespace Thetis
                 unsafe
                 {
                     int num_chan = 1;
-                    // ehr add for multirate iq to vac
                     int sample_rate = sample_rate2;
                     int block_size = block_size_vac;
                     double in_latency = vac1_latency_manual ? latency2 / 1000.0 : PA19.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
@@ -1373,7 +1357,6 @@ namespace Thetis
                         num_chan = 2;
                         sample_rate = sample_rate1;
                         block_size = block_size1;
-                        //latency = 250;
                     }
                     else if (vac_stereo) num_chan = 2;
                     VACRBReset = true;
@@ -1400,7 +1383,6 @@ namespace Thetis
                             "VAC Audio Stream Startup Error",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
-                        //return false;
                     }
                 }
             else
@@ -1419,7 +1401,6 @@ namespace Thetis
                 unsafe
                 {
                     int num_chan = 1;
-                    // ehr add for multirate iq to vac
                     int sample_rate = sample_rate3;
                     int block_size = block_size_vac2;
 
@@ -1433,10 +1414,9 @@ namespace Thetis
                         num_chan = 2;
                         sample_rate = sample_rate_rx2;
                         block_size = block_size_rx2;
-                        //latency = 250;
                     }
                     else if (vac2_stereo) num_chan = 2;
-                    // ehr end				
+			
                     VAC2RBReset = true;
 
                     ivac.SetIVAChostAPIindex(1, host3);
@@ -1462,7 +1442,6 @@ namespace Thetis
                             "VAC2 Audio Stream Startup Error",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
-                       // return false;
                     }
                 }
             else
@@ -1480,17 +1459,9 @@ namespace Thetis
             phase_buf_l = new float[2048];
             phase_buf_r = new float[2048];
 
-            //unsafe
-            //{
-            //    retval = StartAudio(ref callback3port); //,
-            //                       // (uint)block_size1,
-            //                       // sample_rate1);
-            //}
-
             rc = NetworkIO.initRadio();
             if (rc != 0)
             {
-                //System.Console.WriteLine("JanusAudio.StartAudio failed w/ rc: " + rc);
                 if (rc == -101) // firmware version error; 
                 {
                     string fw_err = NetworkIO.getFWVersionErrorMsg();
@@ -1498,171 +1469,24 @@ namespace Thetis
                     {
                         fw_err = "Bad Firmware levels";
                     }
-                    MessageBox.Show(fw_err, "HPSDR Error",
+                    MessageBox.Show(fw_err, "Firmware Error",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
                     return false;
                 }
                 else
                 {
-                    MessageBox.Show("Error starting HPSDR hardware, is it connected and powered?", "HPSDR Error",
+                    MessageBox.Show("Error starting SDR hardware, is it connected and powered?", "Network Error",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
                     return false;
                 }
             }
-
 
             int result = NetworkIO.StartAudioNative(callback3port);
-
             if (result == 0) retval = true;
 
-            //if (!retval)
                 return retval;
-
-            //if (vac_enabled)
-            //    unsafe
-            //    {
-            //        int num_chan = 1;
-            //        // ehr add for multirate iq to vac
-            //        int sample_rate = sample_rate2;
-            //        int block_size = block_size_vac;
-            //        double in_latency = vac1_latency_manual ? latency2/1000.0 : PA19.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
-            //        double out_latency = vac1_latency_manual_out ? latency2_out/1000.0 : PA19.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
-            //        double pa_in_latency = vac1_latency_pa_in_manual ? latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
-            //        double pa_out_latency = vac1_latency_pa_out_manual ? latency_pa_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
-
-            //        if (vac_output_iq)
-            //        {
-            //            num_chan = 2;
-            //            sample_rate = sample_rate1;
-            //            block_size = block_size1;
-            //            //latency = 250;
-            //        }
-            //        else if (vac_stereo) num_chan = 2;			
-            //        vac_rb_reset = true;
-
-            //        ivac.SetIVAChostAPIindex(0, host2);
-            //        ivac.SetIVACinputDEVindex(0, input_dev2);
-            //        ivac.SetIVACoutputDEVindex(0, output_dev2);
-            //        ivac.SetIVACnumChannels(0, num_chan);
-            //        ivac.SetIVACInLatency(0, in_latency);
-            //        ivac.SetIVACOutLatency(0, out_latency);
-            //        ivac.SetIVACPAInLatency(0, pa_in_latency);
-            //        ivac.SetIVACPAOutLatency(0, pa_out_latency);
-
-            //        try
-            //        {
-            //            retval = ivac.StartAudioIVAC(0) == 1;
-            //            if (retval && console.PowerOn)
-            //                ivac.SetIVACrun(0, 1);
-            //        }
-            //        catch (Exception)
-            //        {
-            //            MessageBox.Show("The program is having trouble starting the VAC audio streams.\n" +
-            //                "Please examine the VAC related settings on the Setup Form -> Audio Tab and try again.",
-            //                "VAC Audio Stream Startup Error",
-            //                MessageBoxButtons.OK,
-            //                MessageBoxIcon.Error);
-            //            return false;
-            //        }
-            //    }
-
-        //    if (vac2_enabled)
-        //        unsafe
-        //        {
-        //            int num_chan = 1;
-        //            // ehr add for multirate iq to vac
-        //            int sample_rate = sample_rate3;
-        //            int block_size = block_size_vac2;
-
-        //            double in_latency = vac2_latency_manual ? latency3/1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
-        //            double out_latency = vac2_latency_out_manual ? vac2_latency_out/1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
-        //            double pa_in_latency = vac2_latency_pa_in_manual ? vac2_latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
-        //            double pa_out_latency = vac2_latency_pa_out_manual ? vac2_latency_pa_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
-
-        //            if (vac2_output_iq)
-        //            {
-        //                num_chan = 2;
-        //                sample_rate = sample_rate_rx2;
-        //                block_size = block_size_rx2;
-        //                //latency = 250;
-        //            }
-        //            else if (vac2_stereo) num_chan = 2;
-        //            // ehr end				
-        //            vac2_rb_reset = true;
-
-        //            ivac.SetIVAChostAPIindex(1, host3);
-        //            ivac.SetIVACinputDEVindex(1, input_dev3);
-        //            ivac.SetIVACoutputDEVindex(1, output_dev3);
-        //            ivac.SetIVACnumChannels(1, num_chan);
-        //            ivac.SetIVACInLatency(1, in_latency);
-        //            ivac.SetIVACOutLatency(1, out_latency);
-        //            ivac.SetIVACPAInLatency(1, pa_in_latency);
-        //            ivac.SetIVACPAOutLatency(1, pa_out_latency);
-
-        //            try
-        //            {
-        //                retval = ivac.StartAudioIVAC(1) == 1;
-        //                if (retval && console.PowerOn)
-        //                    ivac.SetIVACrun(1, 1);
-
-        //            }
-        //            catch (Exception)
-        //            {
-        //                MessageBox.Show("The program is having trouble starting the VAC audio streams.\n" +
-        //                    "Please examine the VAC related settings on the Setup Form -> Audio Tab and try again.",
-        //                    "VAC2 Audio Stream Startup Error",
-        //                    MessageBoxButtons.OK,
-        //                    MessageBoxIcon.Error);
-        //                return false;
-        //            }
-        //        }
-
-           // return retval;
-        }
-
-        public static unsafe bool StartAudio(ref PA19.PaStreamCallback callback) //,
-                                              // uint block_size, double sample_rate)
-        {
-            // System.Console.WriteLine("using Ozy/Janus callback");
-            int rc;
-           // int no_send = 0;
-           // int sample_bits = 24;
-            //if (console.Force16bitIQ)
-           // {
-               // sample_bits = 16;
-            //}
-            //if (console.NoJanusSend)
-            //{
-            //    no_send = 1;
-            //}
-            rc = NetworkIO.StartAudio(/*(int)sample_rate, (int)block_size,*/ callback); //, sample_bits);
-            if (rc != 0)
-            {
-                //System.Console.WriteLine("JanusAudio.StartAudio failed w/ rc: " + rc);
-                if (rc == -101) // firmware version error; 
-                {
-                    string fw_err = NetworkIO.getFWVersionErrorMsg();
-                    if (fw_err == null)
-                    {
-                        fw_err = "Bad Firmware levels";
-                    }
-                    MessageBox.Show(fw_err, "HPSDR Error",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                    return false;
-                }
-                else
-                {
-                    MessageBox.Show("Error starting HPSDR hardware, is it connected and powered?", "HPSDR Error",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private static void PortAudioErrorMessageBox(int error)
@@ -1775,29 +1599,9 @@ namespace Thetis
 
         #region Scope2 Stuff
 
-        //private static int scope_samples_per_pixel = 512;
-        // public static int ScopeSamplesPerPixel
-        // {
-        //     get { return scope_samples_per_pixel; }
-        //     set { scope_samples_per_pixel = value; }
-        // }
-
-        //private static int scope_display_width = 704;
-        //public static int ScopeDisplayWidth
-        // {
-        //     get { return scope_display_width; }
-        //     set { scope_display_width = value; }
-        // }
-
         private static int scope2_sample_index;
         private static int scope2_pixel_index;
-        // private static float scope2_pixel_min = float.MaxValue;
         private static float scope2_pixel_max = float.MinValue;
-        // private static float[] scope2_min;
-        // public static float[] Scope2Min
-        // {
-        //     set { scope2_min = value; }
-        // }
         public static float[] scope2_max;
 
         public static float[] Scope2Max
@@ -1807,13 +1611,7 @@ namespace Thetis
 
         unsafe public static void DoScope2(float* buf, int frameCount)
         {
-            //  if (scope2_min == null || scope2_min.Length < scope_display_width)
-            //  {
-            //     if (Display.Scope2Min == null || Display.Scope2Min.Length < scope_display_width)
-            //         Display.Scope2Min = new float[scope_display_width];
-            //     scope2_min = Display.Scope2Min;
-            // }
-            if (scope2_max == null || scope2_max.Length < scope_display_width)
+             if (scope2_max == null || scope2_max.Length < scope_display_width)
             {
                 if (Display.Scope2Max == null || Display.Scope2Max.Length < scope_display_width)
                     Display.Scope2Max = new float[scope_display_width];
@@ -1822,21 +1620,13 @@ namespace Thetis
 
             for (int i = 0; i < frameCount; i++)
             {
-                // if (buf[i] < scope2_pixel_min) scope2_pixel_min = buf[i];
-                // if (buf[i] > scope2_pixel_max) scope2_pixel_max = buf[i];
-                // scope2_pixel_min = buf[i];
                 scope2_pixel_max = buf[i];
-
                 scope2_sample_index++;
                 if (scope2_sample_index >= scope_samples_per_pixel)
                 {
                     scope2_sample_index = 0;
-                    //  scope2_min[scope2_pixel_index] = scope2_pixel_min;
                     scope2_max[scope2_pixel_index] = scope2_pixel_max;
-
-                    //  scope2_pixel_min = float.MaxValue;
                     scope2_pixel_max = float.MinValue;
-
                     scope2_pixel_index++;
                     if (scope2_pixel_index >= scope_display_width)
                         scope2_pixel_index = 0;

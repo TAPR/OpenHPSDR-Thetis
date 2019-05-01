@@ -642,8 +642,8 @@ namespace Thetis
             int sclip = 0;
             int stitch = 1;
             max_w = fft_size + (int)Math.Min(KEEP_TIME * sample_rate, KEEP_TIME * fft_size * frame_rate);
-            Display.RXSpectrumDisplayLow = lower_freq;
-            Display.RXSpectrumDisplayHigh = upper_freq;
+            //Display.RXSpectrumDisplayLow = lower_freq;
+            //Display.RXSpectrumDisplayHigh = upper_freq;
   
             // set overlap as needed to achieve the desired frame rate
             overlap = (int)Math.Max(0.0, Math.Ceiling(fft_size - (double)sample_rate / (double)frame_rate));

@@ -200,7 +200,7 @@ void GetCodeVersion(unsigned char addr_bytes[]) {
 }
 
 PORT
-void GetMetisBoardID(char addr_bytes[]) {
+void GetBoardID(char addr_bytes[]) {
 	//memcpy(addr_bytes, MetisBoardID, 1); 
 	memcpy(addr_bytes, &(prn->discovery.BoardType), 1);
 }
@@ -505,7 +505,7 @@ int ReadUDPFrame(unsigned char *bufp) {
 	{
 	case HPCCPort: //1025: // 60 bytes - High Priority C&C data
 		if (nrecv != 60) break; // check for malformed packet
-
+	
 		if (seqnum != (1 + prn->cc_seq_no) && seqnum != 0)  {
 			prn->cc_seq_err += 1;
 			//PrintTimeHack();
@@ -531,13 +531,13 @@ int ReadUDPFrame(unsigned char *bufp) {
 		memcpy(bufp, readbuf + 4, 128);
 		break;
 	case WB0Port: //1027: // 1028 bytes - 16-bit raw ADC (default values)
-	case 1028:
-	case 1029:
-	case 1030:
-	case 1031:
-	case 1032:
-	case 1033:
-	case 1034:
+	//case 1028:
+	//case 1029:
+	//case 1030:
+	//case 1031:
+	//case 1032:
+	//case 1033:
+	//case 1034:
 	{
 		if (nrecv != 1028) break; // check for malformed packet
 
