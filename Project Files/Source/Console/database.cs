@@ -103,11 +103,23 @@ namespace Thetis
             Update();
         }
 
+        private static void checkForPrimaryKeys(string name)
+        {
+            DataColumn[] keys = new DataColumn[1];
+            keys[0] = ds.Tables[name].Columns["Key"];
+
+            if (ds.Tables[name].PrimaryKey != keys)
+            {
+                ds.Tables[name].PrimaryKey = keys;
+            }
+        }
         private static void AddFormTable(string name)
         {
             ds.Tables.Add(name);
             ds.Tables[name].Columns.Add("Key", typeof(string));
             ds.Tables[name].Columns.Add("Value", typeof(string));
+
+            checkForPrimaryKeys(name); //MW0LGE
         }
 
         private static void AddBandTextTable()
@@ -2785,13 +2797,17 @@ namespace Thetis
                                 "GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
             };
 
-            for (int i = 0; i < data.Length / 4; i++)
+            // MW0LGE
+            for (int i = 0; i < data.Length / 7; i++)
             {
                 DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 4 + 0];
-                dr["Mode"] = (string)data[i * 4 + 1];
-                dr["Filter"] = (string)data[i * 4 + 2];
-                dr["Freq"] = ((double)data[i * 4 + 3]).ToString("f6");
+                dr["BandName"] = (string)data[i * 7 + 0];
+                dr["Mode"] = (string)data[i * 7 + 1];
+                dr["Filter"] = (string)data[i * 7 + 2];
+                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+                dr["CTUN"] = ((bool)data[i * 7 + 4]);
+                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
                 ds.Tables["BandStack"].Rows.Add(dr);
             }
         }
@@ -8019,7 +8035,7 @@ namespace Thetis
         public static bool Init(Console thisConsole)
         {
             ds = new DataSet("Data");
-
+            
             if (File.Exists(file_name))
             {
                 try
@@ -8196,8 +8212,37 @@ namespace Thetis
             CTUN = (bool)((DataRow)rows[index])["CTUN"];
             ZoomFactor = (int)((double)((DataRow)rows[index])["ZoomFactor"]);
             CenterFreq = (double)((DataRow)rows[index])["CenterFreq"];
+
+            //mode = getDBString(((DataRow)rows[index])["Mode"]);
+            //filter = getDBString(((DataRow)rows[index])["Filter"]);
+            //freq = getDBDouble(((DataRow)rows[index])["Freq"]);
+            //CTUN = getDBBool(((DataRow)rows[index])["CTUN"]);
+            //ZoomFactor = (int)getDBDouble(((DataRow)rows[index])["ZoomFactor"]);
+            //CenterFreq = getDBDouble(((DataRow)rows[index])["CenterFreq"]);
+
             return true;
         }
+
+        //private static string getDBString(Object o, string def = "")
+        //{
+        //    if (o is System.DBNull) return def;
+        //    return (string)o;
+        //}
+        //private static int getDBInt(Object o, int def = 0)
+        //{
+        //    if (o is System.DBNull) return def;
+        //    return (int)o;
+        //}
+        //private static double getDBDouble(Object o, double def = 0)
+        //{
+        //    if (o is System.DBNull) return def;
+        //    return (double)o;
+        //}
+        //private static bool getDBBool(Object o, bool def = false)
+        //{
+        //    if (o is System.DBNull) return def;
+        //    return (bool)o;
+        //}
 
         public static void AddBandStack(string band, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
         {
@@ -8387,6 +8432,8 @@ namespace Thetis
             if (!ds.Tables.Contains(tableName))
                 AddFormTable(tableName);
 
+            checkForPrimaryKeys(tableName);
+
             foreach (string s in list)
             {
                 string[] vals = s.Split('/');
@@ -8398,19 +8445,39 @@ namespace Thetis
 
                 if (vals.Length <= 1) // skip it as no data was provided
                     continue;
+                
+                //DataRow[] rows = ds.Tables[tableName].Select("Key = '" + vals[0] + "'");
 
-                DataRow[] rows = ds.Tables[tableName].Select("Key = '" + vals[0] + "'");
-                if (rows.Length == 0)	// name is not in list
+                //MW0LGE converted to Rows.Find because it is insanely faster, needs a primary key though
+                DataRow r = null;
+                try
+                {
+                    r = ds.Tables[tableName].Rows.Find(vals[0]);
+                }
+                catch {
+                }
+                if (r != null)
+                {
+                    r[1] = vals[1];
+                }
+                else
                 {
                     DataRow newRow = ds.Tables[tableName].NewRow();
                     newRow[0] = vals[0];
                     newRow[1] = vals[1];
                     ds.Tables[tableName].Rows.Add(newRow);
                 }
-                else if (rows.Length == 1)
-                {
-                    rows[0][1] = vals[1];
-                }
+                //if (rows.Length == 0)	// name is not in list
+                //{
+                //    DataRow newRow = ds.Tables[tableName].NewRow();
+                //    newRow[0] = vals[0];
+                //    newRow[1] = vals[1];
+                //    ds.Tables[tableName].Rows.Add(newRow);
+                //}
+                //else if (rows.Length == 1)
+                //{
+                //    rows[0][1] = vals[1];
+                //}
             }
         }
 
@@ -8900,9 +8967,10 @@ namespace Thetis
 
                 case FRSRegion.Europe:
                 case FRSRegion.Italy_Plus:
+                case FRSRegion.Germany:
                     AddRegion1BandStack();
-                     AddBandStackSWL(); // ke9ns add
-                   ClearBandText();
+                    AddBandStackSWL(); // ke9ns add
+                    ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
                     AddRegion1BandText60m();
@@ -9139,6 +9207,63 @@ namespace Thetis
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
                     break;
+
+                // MW0LGE added region1,2,3
+                case FRSRegion.Region1:
+                    AddRegion1BandStack();
+                    AddBandStackSWL();
+                    ClearBandText();
+                    AddRegion1BandText160m();
+                    AddRegion1BandText80m();
+                    AddRegion1BandText60m();
+                    AddRegion1BandText40m();
+                    AddRegion1BandText30m();
+                    AddRegion1BandText20m();
+                    AddRegion1BandText17m();
+                    AddRegion1BandText15m();
+                    AddRegion1BandText12m();
+                    AddRegion1BandText10m();
+                    AddRegion1BandText6m();
+                    AddRegion1BandTextVHFplus();
+                    AddBandTextSWB();
+                    break;
+                case FRSRegion.Region2:
+                    AddRegion2BandStack();
+                    AddBandStackSWL();
+                    ClearBandText();
+                    //AddRegion2BandText160m();
+                    //AddRegion2BandText80m();
+                    //AddRegion2BandText60m();
+                    //AddRegion2BandText40m();
+                    //AddRegion2BandText30m();
+                    //AddRegion2BandText20m();
+                    //AddRegion2BandText17m();
+                    //AddRegion2BandText15m();
+                    //AddRegion2BandText12m();
+                    //AddRegion2BandText10m();
+                    //AddRegion2BandText6m();
+                    //AddRegion2BandTextVHFplus();
+                    AddBandTextSWB();
+                    break;
+                case FRSRegion.Region3:
+                    AddRegion3BandStack();
+                    AddBandStackSWL();
+                    ClearBandText();
+                    //AddRegion3BandText160m();
+                    //AddRegion3BandText80m();
+                    //AddRegion3BandText60m();
+                    //AddRegion3BandText40m();
+                    //AddRegion3BandText30m();
+                    //AddRegion3BandText20m();
+                    //AddRegion3BandText17m();
+                    //AddRegion3BandText15m();
+                    //AddRegion3BandText12m();
+                    //AddRegion3BandText10m();
+                    //AddRegion3BandText6m();
+                    //AddRegion3BandTextVHFplus();
+                    AddBandTextSWB();
+                    break;
+
             }
 
             CheckBandTextValid();

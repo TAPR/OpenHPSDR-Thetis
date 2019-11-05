@@ -61,6 +61,8 @@ namespace Thetis
         private static string path;
         private const string pic_file_ext = ".png";
 
+        private static Console m_objConsole;
+
         private static string app_data_path = "";
         public static string AppDataPath
         {
@@ -70,6 +72,11 @@ namespace Thetis
         #endregion
 
         #region Main
+        public static void SetConsole(Console objConsole)
+        {
+            m_objConsole = objConsole;
+        }
+
         /// <summary>
         /// Saves a forms appearance including properties of the form and its controls to xml.
         /// </summary>
@@ -1520,7 +1527,15 @@ namespace Thetis
 
         private static void SetBackgroundImage(Control c)
         {
-            c.BackgroundImage = File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) ? Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) : null;
+            Image objImg = File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) ? Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) : null;
+            if (c.Name.Equals("picDisplay")) // special case
+            {
+                m_objConsole.PicDisplayBackgroundImage = objImg;
+            }
+            else
+            {
+                c.BackgroundImage = objImg;
+            }
         }
 
         #endregion

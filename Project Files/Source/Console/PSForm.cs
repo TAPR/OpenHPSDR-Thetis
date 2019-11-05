@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -20,8 +21,8 @@ namespace Thetis
         public PSForm(Console c)
         {
             InitializeComponent();
+            console = c;    // MW0LGE moved above restore, so that we actaully have console when control events fire because of restore form
             Common.RestoreForm(this, "PureSignal", false);
-            console = c;
         }
 
         #endregion
@@ -123,6 +124,22 @@ namespace Thetis
             set
             {
                 autoattenuate = value;
+                if (autoattenuate)
+                {
+                    console.ATTOnTX = autoattenuate;
+                }
+                else
+                {
+                    // restore setting direct from setupform
+                    if (console.SetupForm != null)
+                    {
+                        console.ATTOnTX = console.SetupForm.ATTOnTXChecked;
+                    }
+                    else
+                    {
+                        console.ATTOnTX = autoattenuate;
+                    }
+                }
             }
         }
 
@@ -300,7 +317,6 @@ namespace Thetis
                 restoreON = true;
             }
         }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (this.TopMost != topmost) 
@@ -466,13 +482,14 @@ namespace Thetis
         {
             bool newcal = (puresignal.Info[5] != oldCalCount2);
             oldCalCount2 = puresignal.Info[5];
-            if (autoattenuate && !console.ATTOnTX) console.ATTOnTX = true;
+            //if (autoattenuate && !console.ATTOnTX) console.ATTOnTX = true;//MW0LGE moved into 0 state
             switch (aastate)
             {
                 case 0: // monitor
                     if (autoattenuate && newcal
                         && (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0)))
                     {
+                        if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
                         aastate = 1;
                         double ddB;
                         if (puresignal.Info[4] <= 256)
@@ -522,7 +539,7 @@ namespace Thetis
 
         private void chkPSAutoAttenuate_CheckedChanged(object sender, EventArgs e)
         {
-            autoattenuate = chkPSAutoAttenuate.Checked;
+            AutoAttenuate = chkPSAutoAttenuate.Checked; //MW0LGE use property
         }
 
         private void checkLoopback_CheckedChanged(object sender, EventArgs e)

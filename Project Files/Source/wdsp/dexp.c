@@ -131,13 +131,13 @@ void calc_dexp (DEXP a)
 	a->ndecay = (int)(a->tdecay * a->rate);
 	a->cattack = (double *)malloc0((a->nattack + 1) * sizeof(double));
 	a->cdecay = (double *)malloc0((a->ndecay + 1) * sizeof(double));
+	a->low_gain = 1.0 / a->exp_ratio;
 	calc_slews(a);
 	// control
 	a->state = 0;
 	a->count = 0;
 	a->hold_thresh = a->hysteresis_ratio * a->attack_thresh;	// hysteresis ratio < 1.0
 	a->nhold = (int)(a->thold * a->rate);
-	a->low_gain = 1.0 / a->exp_ratio;
 	// vox
 	a->vox_count = (int)(a->audelay * a->rate);
 	// audio delay
@@ -342,7 +342,7 @@ void xdexp (int id)
 
 			break;
 		case DEXP_ATTACK:
-			gain = a->low_gain + (1.0 - a->low_gain) * a->cattack[a->nattack - a->count];
+			gain = a->cattack[a->nattack - a->count];
 			a->audbuffer[2 * i + 0] = a->delsig[2 * i + 0] * gain;
 			a->audbuffer[2 * i + 1] = a->delsig[2 * i + 1] * gain;
 			if (a->count-- == 0)
@@ -369,7 +369,7 @@ void xdexp (int id)
 			}
 			break;
 		case DEXP_DECAY:
-			gain = a->low_gain + (1.0 - a->low_gain) * a->cdecay[a->ndecay - a->count];
+			gain = a->cdecay[a->ndecay - a->count];
 			a->audbuffer[2 * i + 0] = a->delsig[2 * i + 0] * gain;
 			a->audbuffer[2 * i + 1] = a->delsig[2 * i + 1] * gain;
 			if (a->count-- == 0)

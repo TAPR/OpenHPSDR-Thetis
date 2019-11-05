@@ -124,7 +124,7 @@ namespace Thetis
             // 
             // textBox1
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox1.BackColor = System.Drawing.Color.LightYellow;
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
@@ -259,11 +259,18 @@ namespace Thetis
             string bigmessage2 = null; // each memory string
             string bigmessage3 = null; // each lock or unlock
 
-            for (iii = 0; iii < 41; iii++)
+            bool bFound = false; //MW0LGE
+
+            for (iii = 0; iii < band_list.Length; iii++)
             {
-                if (band_list[iii] == console.last_band) break; // this is the current band_list index 
+                if (band_list[iii] == console.last_band)
+                {
+                    bFound = true;
+                    break; // this is the current band_list index 
+                }
             }
 
+            if (!bFound) return; // MW0LGE error case if console.last_band not in the band list, previously would out of bounds, as iii would be over end of array
 
             for (int ii = 0; ii < console.band_stacks[iii]; ii++)
             {

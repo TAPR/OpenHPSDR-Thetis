@@ -323,9 +323,9 @@
             this.labelTS7.Image = null;
             this.labelTS7.Location = new System.Drawing.Point(18, 66);
             this.labelTS7.Name = "labelTS7";
-            this.labelTS7.Size = new System.Drawing.Size(77, 13);
+            this.labelTS7.Size = new System.Drawing.Size(79, 13);
             this.labelTS7.TabIndex = 11;
-            this.labelTS7.Text = "Xmin (degrees)";
+            this.labelTS7.Text = "Xmin (seconds)";
             // 
             // manual_xmin
             // 

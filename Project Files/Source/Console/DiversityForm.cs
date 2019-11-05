@@ -1562,6 +1562,25 @@ namespace Thetis
             }
         }
 
+        // added 6/8/2019 G8NJJ to allow access by Andromeda. Sets the appropriate gain.
+        public decimal CATDiversityGain
+        {
+            set
+            {
+                if(radioButtonMerc1.Checked)
+                    udR2.Value = value;
+                else
+                    udR1.Value = value;
+            }
+            get
+            {
+                if (radioButtonMerc1.Checked)
+                    return udR2.Value;
+                else
+                    return udR1.Value;
+            }
+        }
+
 
         public decimal DiversityGain
         {

@@ -1,5 +1,8 @@
 
-Latest Release v2.6.7 April 29, 2019
+Latest Release v2.6.8 April 29, 2019
+# 2.6.8 (2019-5-7)
+- RxAntTxAnt remembers its last state between sessions
+
 # 2.6.7 (2019-4-29)
 - fixed bug where the VOX/DEXP LookAhead feature was enabled when VOX/DEXP was not.
 - corrected compatiblity issue with the ANAN-10E. This requires new firmare to be flashed. v10.3

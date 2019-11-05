@@ -59,7 +59,6 @@
         private System.Windows.Forms.Timer timer_cpu_meter;
         private System.Windows.Forms.LabelTS lblFilterHigh;
         private System.Windows.Forms.LabelTS lblFilterLow;
-        private System.Windows.Forms.LabelTS lblMultiSMeter;
         private System.Windows.Forms.PictureBox picMultiMeterDigital;
         private System.Windows.Forms.CheckBoxTS chkSquelch;
         private System.Windows.Forms.Timer timer_peak_text;
@@ -199,7 +198,6 @@
         private System.Windows.Forms.CheckBoxTS chkRX2NR;
         private System.Windows.Forms.PictureBox picRX2Meter;
         private System.Windows.Forms.TextBoxTS txtRX2Meter;
-        private System.Windows.Forms.LabelTS lblRX2Meter;
         public CheckBoxTS chkRX2Preamp;
         private System.Windows.Forms.LabelTS lblRX2RF;
         private System.Windows.Forms.PictureBox picSquelch;
@@ -493,11 +491,30 @@
         private LabelTS lblRX2APF;
         private ToolStripMenuItem wBToolStripMenuItem;
         private ToolStripMenuItem pIToolStripMenuItem;
-        public PictureBox picWaterfall;
         public ToolStripMenuItem spotterMenu;
         private TextBoxTS txtDisplayOrionMKIIPAVolts;
         private TextBoxTS txtDisplayOrionMKIIPAAmps;
         private TextBoxTS txtDisplayOrionMKIIBlank;
+        // G8NJJ
+        private LabelTS lblVFOSyncLabel;
+        private LabelTS lblNRLabel;
+        private LabelTS lblNBLabel;
+        private LabelTS lblSNBLabel;
+        private LabelTS lblANFLabel;
+        private LabelTS lblRX2NRLabel;
+        private LabelTS lblRX2NBLabel;
+        private LabelTS lblRX2SNBLabel;
+        private LabelTS lblRX2ANFLabel;
+        private PanelTS panelButtonBar;
+        private ButtonTS btnAndrBar7;
+        private ButtonTS btnAndrBar6;
+        private ButtonTS btnAndrBar5;
+        private ButtonTS btnAndrBar4;
+        private ButtonTS btnAndrBar3;
+        private ButtonTS btnAndrBar2;
+        private ButtonTS btnAndrBar1;
+        private ButtonTS btnAndrBar8;
+
 
         #endregion
 
@@ -720,6 +737,7 @@
             this.chkRxAnt = new System.Windows.Forms.CheckBoxTS();
             this.chkVFOBLock = new System.Windows.Forms.CheckBoxTS();
             this.chkQSK = new System.Windows.Forms.CheckBoxTS();
+            this.comboAMTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -750,6 +768,8 @@
             this.topControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bandControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modeControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.andromedaTopControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.andromedaButtonBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NR2ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -848,8 +868,20 @@
             this.RAtoolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BPFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BPF1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BPF2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timerNotchZoom = new System.Windows.Forms.Timer(this.components);
             this.picRX2Squelch = new System.Windows.Forms.PictureBox();
+            this.panelButtonBar = new System.Windows.Forms.PanelTS();
+            this.btnAndrBar8 = new System.Windows.Forms.ButtonTS();
+            this.btnAndrBar7 = new System.Windows.Forms.ButtonTS();
+            this.btnAndrBar6 = new System.Windows.Forms.ButtonTS();
+            this.btnAndrBar5 = new System.Windows.Forms.ButtonTS();
+            this.btnAndrBar4 = new System.Windows.Forms.ButtonTS();
+            this.btnAndrBar3 = new System.Windows.Forms.ButtonTS();
+            this.btnAndrBar2 = new System.Windows.Forms.ButtonTS();
+            this.btnAndrBar1 = new System.Windows.Forms.ButtonTS();
             this.panelFilter = new System.Windows.Forms.PanelTS();
             this.radFilter1 = new System.Windows.Forms.RadioButtonTS();
             this.lblFilterHigh = new System.Windows.Forms.LabelTS();
@@ -871,6 +903,33 @@
             this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.panelOptions = new System.Windows.Forms.PanelTS();
+            this.panelVFOLabels = new System.Windows.Forms.PanelTS();
+            this.lblStepValue = new System.Windows.Forms.LabelTS();
+            this.lblStep = new System.Windows.Forms.LabelTS();
+            this.lblVFOSplit = new System.Windows.Forms.LabelTS();
+            this.lblXITValue = new System.Windows.Forms.LabelTS();
+            this.lblRITValue = new System.Windows.Forms.LabelTS();
+            this.lblRITLabel = new System.Windows.Forms.LabelTS();
+            this.lblXITLabel = new System.Windows.Forms.LabelTS();
+            this.lblVFOSyncLabel = new System.Windows.Forms.LabelTS();
+            this.panelVFOALabels = new System.Windows.Forms.PanelTS();
+            this.lblLockLabel = new System.Windows.Forms.LabelTS();
+            this.lblAGCLabel = new System.Windows.Forms.LabelTS();
+            this.lblAttenLabel = new System.Windows.Forms.LabelTS();
+            this.lblANFLabel = new System.Windows.Forms.LabelTS();
+            this.lblSNBLabel = new System.Windows.Forms.LabelTS();
+            this.lblNBLabel = new System.Windows.Forms.LabelTS();
+            this.lblNRLabel = new System.Windows.Forms.LabelTS();
+            this.lblCtunLabel = new System.Windows.Forms.LabelTS();
+            this.panelVFOBLabels = new System.Windows.Forms.PanelTS();
+            this.lblRX2AttenLabel = new System.Windows.Forms.LabelTS();
+            this.lblRX2LockLabel = new System.Windows.Forms.LabelTS();
+            this.lblRX2AGCLabel = new System.Windows.Forms.LabelTS();
+            this.lblRX2CtunLabel = new System.Windows.Forms.LabelTS();
+            this.lblRX2NRLabel = new System.Windows.Forms.LabelTS();
+            this.lblRX2NBLabel = new System.Windows.Forms.LabelTS();
+            this.lblRX2SNBLabel = new System.Windows.Forms.LabelTS();
+            this.lblRX2ANFLabel = new System.Windows.Forms.LabelTS();
             this.panelRX2Power = new System.Windows.Forms.PanelTS();
             this.lblRX2Band = new System.Windows.Forms.LabelTS();
             this.lblRX2Preamp = new System.Windows.Forms.LabelTS();
@@ -958,7 +1017,6 @@
             this.txtDisplayPeakFreq = new System.Windows.Forms.TextBoxTS();
             this.lblDisplayPan = new System.Windows.Forms.LabelTS();
             this.picDisplay = new System.Windows.Forms.PictureBox();
-            this.picWaterfall = new System.Windows.Forms.PictureBox();
             this.txtDisplayCursorPower = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayCursorFreq = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayOrionMKIIPAAmps = new System.Windows.Forms.TextBoxTS();
@@ -969,6 +1027,8 @@
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.txtVFOAFreq = new System.Windows.Forms.TextBoxTS();
             this.grpVFOA = new System.Windows.Forms.GroupBoxTS();
+            this.panelVFOAHover = new System.Windows.Forms.Panel();
+            this.lblModeBigLabel = new System.Windows.Forms.LabelTS();
             this.lblRX1APF = new System.Windows.Forms.LabelTS();
             this.lblRX1MuteVFOA = new System.Windows.Forms.LabelTS();
             this.lblFilterLabel = new System.Windows.Forms.LabelTS();
@@ -976,10 +1036,10 @@
             this.txtVFOALSD = new System.Windows.Forms.TextBoxTS();
             this.txtVFOAMSD = new System.Windows.Forms.TextBoxTS();
             this.panelVFOASubHover = new System.Windows.Forms.Panel();
-            this.panelVFOAHover = new System.Windows.Forms.Panel();
             this.txtVFOABand = new System.Windows.Forms.TextBoxTS();
             this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.grpVFOB = new System.Windows.Forms.GroupBoxTS();
+            this.lblRX2ModeBigLabel = new System.Windows.Forms.LabelTS();
             this.lblRX2APF = new System.Windows.Forms.LabelTS();
             this.panelVFOBHover = new System.Windows.Forms.Panel();
             this.txtVFOBBand = new System.Windows.Forms.TextBoxTS();
@@ -994,7 +1054,6 @@
             this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
             this.picMultiMeterDigital = new System.Windows.Forms.PictureBox();
             this.txtMultiText = new System.Windows.Forms.TextBoxTS();
-            this.lblMultiSMeter = new System.Windows.Forms.LabelTS();
             this.lblTuneStep = new System.Windows.Forms.LabelTS();
             this.grpVFOBetween = new System.Windows.Forms.GroupBoxTS();
             this.labelTS1 = new System.Windows.Forms.LabelTS();
@@ -1004,7 +1063,6 @@
             this.grpRX2Meter = new System.Windows.Forms.GroupBoxTS();
             this.picRX2Meter = new System.Windows.Forms.PictureBox();
             this.txtRX2Meter = new System.Windows.Forms.TextBoxTS();
-            this.lblRX2Meter = new System.Windows.Forms.LabelTS();
             this.panelBandVHF = new System.Windows.Forms.PanelTS();
             this.radBandVHF13 = new System.Windows.Forms.RadioButtonTS();
             this.radBandVHF12 = new System.Windows.Forms.RadioButtonTS();
@@ -1031,6 +1089,10 @@
             this.lblFMMic = new System.Windows.Forms.LabelTS();
             this.panelBandGEN = new System.Windows.Forms.PanelTS();
             this.btnBandHF1 = new System.Windows.Forms.ButtonTS();
+            this.panelMeterLabels = new System.Windows.Forms.PanelTS();
+            this.lblTXMeter = new System.Windows.Forms.LabelTS();
+            this.lblRXMeter = new System.Windows.Forms.LabelTS();
+            this.grpMultimeterMenus = new System.Windows.Forms.GroupBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
@@ -1072,11 +1134,15 @@
             this.contextMenuStripNotch.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
+            this.panelButtonBar.SuspendLayout();
             this.panelFilter.SuspendLayout();
             this.panelRX2RF.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
             this.panelRX2DSP.SuspendLayout();
             this.panelOptions.SuspendLayout();
+            this.panelVFOLabels.SuspendLayout();
+            this.panelVFOALabels.SuspendLayout();
+            this.panelVFOBLabels.SuspendLayout();
             this.panelRX2Power.SuspendLayout();
             this.panelPower.SuspendLayout();
             this.panelModeSpecificCW.SuspendLayout();
@@ -1105,7 +1171,6 @@
             this.grpDIGSampleRate.SuspendLayout();
             this.panelDisplay.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDisplay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picWaterfall)).BeginInit();
             this.panelMode.SuspendLayout();
             this.panelBandHF.SuspendLayout();
             this.grpVFOA.SuspendLayout();
@@ -1121,6 +1186,8 @@
             this.panelModeSpecificFM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).BeginInit();
             this.panelBandGEN.SuspendLayout();
+            this.panelMeterLabels.SuspendLayout();
+            this.grpMultimeterMenus.SuspendLayout();
             this.SuspendLayout();
             // 
             // timer_cpu_meter
@@ -1793,7 +1860,8 @@
             this.comboRX2DisplayMode.Items.AddRange(new object[] {
             resources.GetString("comboRX2DisplayMode.Items"),
             resources.GetString("comboRX2DisplayMode.Items1"),
-            resources.GetString("comboRX2DisplayMode.Items2")});
+            resources.GetString("comboRX2DisplayMode.Items2"),
+            resources.GetString("comboRX2DisplayMode.Items3")});
             this.comboRX2DisplayMode.Name = "comboRX2DisplayMode";
             this.toolTip1.SetToolTip(this.comboRX2DisplayMode, resources.GetString("comboRX2DisplayMode.ToolTip"));
             this.comboRX2DisplayMode.SelectedIndexChanged += new System.EventHandler(this.comboRX2DisplayMode_SelectedIndexChanged);
@@ -2811,6 +2879,7 @@
             this.toolTip1.SetToolTip(this.ptbPanMainRX, resources.GetString("ptbPanMainRX.ToolTip"));
             this.ptbPanMainRX.Value = 50;
             this.ptbPanMainRX.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPanMainRX_Scroll);
+            this.ptbPanMainRX.DoubleClick += new System.EventHandler(this.ptbPanMainRX_DoubleClick);
             // 
             // ptbPanSubRX
             // 
@@ -2826,6 +2895,7 @@
             this.toolTip1.SetToolTip(this.ptbPanSubRX, resources.GetString("ptbPanSubRX.ToolTip"));
             this.ptbPanSubRX.Value = 50;
             this.ptbPanSubRX.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPanSubRX_Scroll);
+            this.ptbPanSubRX.DoubleClick += new System.EventHandler(this.ptbPanSubRX_DoubleClick);
             // 
             // ptbRX2Gain
             // 
@@ -2856,6 +2926,7 @@
             this.toolTip1.SetToolTip(this.ptbRX2Pan, resources.GetString("ptbRX2Pan.ToolTip"));
             this.ptbRX2Pan.Value = 50;
             this.ptbRX2Pan.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Pan_Scroll);
+            this.ptbRX2Pan.DoubleClick += new System.EventHandler(this.ptbRX2Pan_DoubleClick);
             // 
             // ptbRX0Gain
             // 
@@ -3175,7 +3246,6 @@
             // 
             this.btnTNFAdd.FlatAppearance.BorderSize = 0;
             resources.ApplyResources(this.btnTNFAdd, "btnTNFAdd");
-            this.btnTNFAdd.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.btnTNFAdd.Name = "btnTNFAdd";
             this.toolTip1.SetToolTip(this.btnTNFAdd, resources.GetString("btnTNFAdd.ToolTip"));
             this.btnTNFAdd.Click += new System.EventHandler(this.btnTNFAdd_Click);
@@ -3637,6 +3707,17 @@
             this.toolTip1.SetToolTip(this.chkQSK, resources.GetString("chkQSK.ToolTip"));
             this.chkQSK.CheckedChanged += new System.EventHandler(this.chkQSK_CheckedChanged);
             // 
+            // comboAMTXProfile
+            // 
+            this.comboAMTXProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.comboAMTXProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAMTXProfile.DropDownWidth = 96;
+            this.comboAMTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            resources.ApplyResources(this.comboAMTXProfile, "comboAMTXProfile");
+            this.comboAMTXProfile.Name = "comboAMTXProfile";
+            this.toolTip1.SetToolTip(this.comboAMTXProfile, resources.GetString("comboAMTXProfile.ToolTip"));
+            this.comboAMTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboAMTXProfile_SelectedIndexChanged);
+            // 
             // picSquelch
             // 
             this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
@@ -3652,6 +3733,7 @@
             // 
             // contextMenuStripFilterRX1
             // 
+            this.contextMenuStripFilterRX1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStripFilterRX1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemRX1FilterConfigure,
             this.toolStripMenuItemRX1FilterReset});
@@ -3672,6 +3754,7 @@
             // 
             // contextMenuStripFilterRX2
             // 
+            this.contextMenuStripFilterRX2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStripFilterRX2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemRX2FilterConfigure,
             this.toolStripMenuItemRX2FilterReset});
@@ -3696,6 +3779,7 @@
             // 
             // contextMenuStripNotch
             // 
+            this.contextMenuStripNotch.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStripNotch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripNotchDelete,
             this.toolStripNotchRemember,
@@ -3744,6 +3828,7 @@
             // menuStrip1
             // 
             this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setupToolStripMenuItem,
             this.memoryToolStripMenuItem,
@@ -3763,7 +3848,8 @@
             this.linearityToolStripMenuItem,
             this.RAtoolStripMenuItem,
             this.wBToolStripMenuItem,
-            this.pIToolStripMenuItem});
+            this.pIToolStripMenuItem,
+            this.BPFToolStripMenuItem});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
@@ -3835,7 +3921,9 @@
             this.displayControlsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.topControlsToolStripMenuItem,
             this.bandControlsToolStripMenuItem,
-            this.modeControlsToolStripMenuItem});
+            this.modeControlsToolStripMenuItem,
+            this.andromedaTopControlsToolStripMenuItem,
+            this.andromedaButtonBarToolStripMenuItem});
             this.displayControlsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.displayControlsToolStripMenuItem.Name = "displayControlsToolStripMenuItem";
             resources.ApplyResources(this.displayControlsToolStripMenuItem, "displayControlsToolStripMenuItem");
@@ -3858,6 +3946,18 @@
             this.modeControlsToolStripMenuItem.Name = "modeControlsToolStripMenuItem";
             resources.ApplyResources(this.modeControlsToolStripMenuItem, "modeControlsToolStripMenuItem");
             this.modeControlsToolStripMenuItem.Click += new System.EventHandler(this.mnuShowModeControls_Click);
+            // 
+            // andromedaTopControlsToolStripMenuItem
+            // 
+            this.andromedaTopControlsToolStripMenuItem.Name = "andromedaTopControlsToolStripMenuItem";
+            resources.ApplyResources(this.andromedaTopControlsToolStripMenuItem, "andromedaTopControlsToolStripMenuItem");
+            this.andromedaTopControlsToolStripMenuItem.Click += new System.EventHandler(this.AndromedaTopControlsToolStripMenuItem_Click);
+            // 
+            // andromedaButtonBarToolStripMenuItem
+            // 
+            this.andromedaButtonBarToolStripMenuItem.Name = "andromedaButtonBarToolStripMenuItem";
+            resources.ApplyResources(this.andromedaButtonBarToolStripMenuItem, "andromedaButtonBarToolStripMenuItem");
+            this.andromedaButtonBarToolStripMenuItem.Click += new System.EventHandler(this.AndromedaButtonBarToolStripMenuItem_Click);
             // 
             // dSPToolStripMenuItem
             // 
@@ -4545,6 +4645,28 @@
             resources.ApplyResources(this.pIToolStripMenuItem, "pIToolStripMenuItem");
             this.pIToolStripMenuItem.Click += new System.EventHandler(this.pIToolStripMenuItem_Click);
             // 
+            // BPFToolStripMenuItem
+            // 
+            this.BPFToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.BPF1ToolStripMenuItem,
+            this.BPF2ToolStripMenuItem});
+            this.BPFToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.BPFToolStripMenuItem.Name = "BPFToolStripMenuItem";
+            resources.ApplyResources(this.BPFToolStripMenuItem, "BPFToolStripMenuItem");
+            // 
+            // BPF1ToolStripMenuItem
+            // 
+            this.BPF1ToolStripMenuItem.Name = "BPF1ToolStripMenuItem";
+            resources.ApplyResources(this.BPF1ToolStripMenuItem, "BPF1ToolStripMenuItem");
+            this.BPF1ToolStripMenuItem.Click += new System.EventHandler(this.BPF1ToolStripMenuItem_Click);
+            // 
+            // BPF2ToolStripMenuItem
+            // 
+            this.BPF2ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.BPF2ToolStripMenuItem.Name = "BPF2ToolStripMenuItem";
+            resources.ApplyResources(this.BPF2ToolStripMenuItem, "BPF2ToolStripMenuItem");
+            this.BPF2ToolStripMenuItem.Click += new System.EventHandler(this.BPF2ToolStripMenuItem_Click);
+            // 
             // timerNotchZoom
             // 
             this.timerNotchZoom.Interval = 1000;
@@ -4556,6 +4678,84 @@
             resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
             this.picRX2Squelch.Name = "picRX2Squelch";
             this.picRX2Squelch.TabStop = false;
+            // 
+            // panelButtonBar
+            // 
+            resources.ApplyResources(this.panelButtonBar, "panelButtonBar");
+            this.panelButtonBar.Controls.Add(this.btnAndrBar8);
+            this.panelButtonBar.Controls.Add(this.btnAndrBar7);
+            this.panelButtonBar.Controls.Add(this.btnAndrBar6);
+            this.panelButtonBar.Controls.Add(this.btnAndrBar5);
+            this.panelButtonBar.Controls.Add(this.btnAndrBar4);
+            this.panelButtonBar.Controls.Add(this.btnAndrBar3);
+            this.panelButtonBar.Controls.Add(this.btnAndrBar2);
+            this.panelButtonBar.Controls.Add(this.btnAndrBar1);
+            this.panelButtonBar.Name = "panelButtonBar";
+            this.panelButtonBar.Layout += new System.Windows.Forms.LayoutEventHandler(this.panelButtonBar_Layout);
+            // 
+            // btnAndrBar8
+            // 
+            this.btnAndrBar8.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar8, "btnAndrBar8");
+            this.btnAndrBar8.Name = "btnAndrBar8";
+            this.btnAndrBar8.UseVisualStyleBackColor = false;
+            this.btnAndrBar8.Click += new System.EventHandler(this.btnAndrBar8_Click);
+            // 
+            // btnAndrBar7
+            // 
+            this.btnAndrBar7.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar7, "btnAndrBar7");
+            this.btnAndrBar7.Name = "btnAndrBar7";
+            this.btnAndrBar7.UseVisualStyleBackColor = false;
+            this.btnAndrBar7.Click += new System.EventHandler(this.btnAndrBar7_Click);
+            // 
+            // btnAndrBar6
+            // 
+            this.btnAndrBar6.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar6, "btnAndrBar6");
+            this.btnAndrBar6.Name = "btnAndrBar6";
+            this.btnAndrBar6.UseVisualStyleBackColor = false;
+            this.btnAndrBar6.Click += new System.EventHandler(this.btnAndrBar6_Click);
+            // 
+            // btnAndrBar5
+            // 
+            this.btnAndrBar5.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar5, "btnAndrBar5");
+            this.btnAndrBar5.Name = "btnAndrBar5";
+            this.btnAndrBar5.UseVisualStyleBackColor = false;
+            this.btnAndrBar5.Click += new System.EventHandler(this.btnAndrBar5_Click);
+            // 
+            // btnAndrBar4
+            // 
+            this.btnAndrBar4.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar4, "btnAndrBar4");
+            this.btnAndrBar4.Name = "btnAndrBar4";
+            this.btnAndrBar4.UseVisualStyleBackColor = false;
+            this.btnAndrBar4.Click += new System.EventHandler(this.btnAndrBar4_Click);
+            // 
+            // btnAndrBar3
+            // 
+            this.btnAndrBar3.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar3, "btnAndrBar3");
+            this.btnAndrBar3.Name = "btnAndrBar3";
+            this.btnAndrBar3.UseVisualStyleBackColor = false;
+            this.btnAndrBar3.Click += new System.EventHandler(this.btnAndrBar3_Click);
+            // 
+            // btnAndrBar2
+            // 
+            this.btnAndrBar2.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar2, "btnAndrBar2");
+            this.btnAndrBar2.Name = "btnAndrBar2";
+            this.btnAndrBar2.UseVisualStyleBackColor = false;
+            this.btnAndrBar2.Click += new System.EventHandler(this.btnAndrBar2_Click);
+            // 
+            // btnAndrBar1
+            // 
+            this.btnAndrBar1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            resources.ApplyResources(this.btnAndrBar1, "btnAndrBar1");
+            this.btnAndrBar1.Name = "btnAndrBar1";
+            this.btnAndrBar1.UseVisualStyleBackColor = false;
+            this.btnAndrBar1.Click += new System.EventHandler(this.btnAndrBar1_Click);
             // 
             // panelFilter
             // 
@@ -4758,6 +4958,206 @@
             this.panelOptions.Controls.Add(this.comboTuneMode);
             this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelOptions.Name = "panelOptions";
+            // 
+            // panelVFOLabels
+            // 
+            resources.ApplyResources(this.panelVFOLabels, "panelVFOLabels");
+            this.panelVFOLabels.BackColor = System.Drawing.Color.Transparent;
+            this.panelVFOLabels.Controls.Add(this.lblStepValue);
+            this.panelVFOLabels.Controls.Add(this.lblStep);
+            this.panelVFOLabels.Controls.Add(this.lblVFOSplit);
+            this.panelVFOLabels.Controls.Add(this.lblXITValue);
+            this.panelVFOLabels.Controls.Add(this.lblRITValue);
+            this.panelVFOLabels.Controls.Add(this.lblRITLabel);
+            this.panelVFOLabels.Controls.Add(this.lblXITLabel);
+            this.panelVFOLabels.Controls.Add(this.lblVFOSyncLabel);
+            this.panelVFOLabels.Name = "panelVFOLabels";
+            // 
+            // lblStepValue
+            // 
+            this.lblStepValue.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.lblStepValue, "lblStepValue");
+            this.lblStepValue.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblStepValue.Name = "lblStepValue";
+            // 
+            // lblStep
+            // 
+            this.lblStep.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblStep, "lblStep");
+            this.lblStep.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblStep.Name = "lblStep";
+            // 
+            // lblVFOSplit
+            // 
+            this.lblVFOSplit.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblVFOSplit, "lblVFOSplit");
+            this.lblVFOSplit.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblVFOSplit.Name = "lblVFOSplit";
+            // 
+            // lblXITValue
+            // 
+            this.lblXITValue.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.lblXITValue, "lblXITValue");
+            this.lblXITValue.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblXITValue.Name = "lblXITValue";
+            // 
+            // lblRITValue
+            // 
+            this.lblRITValue.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.lblRITValue, "lblRITValue");
+            this.lblRITValue.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblRITValue.Name = "lblRITValue";
+            // 
+            // lblRITLabel
+            // 
+            resources.ApplyResources(this.lblRITLabel, "lblRITLabel");
+            this.lblRITLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblRITLabel.Name = "lblRITLabel";
+            // 
+            // lblXITLabel
+            // 
+            resources.ApplyResources(this.lblXITLabel, "lblXITLabel");
+            this.lblXITLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblXITLabel.Name = "lblXITLabel";
+            // 
+            // lblVFOSyncLabel
+            // 
+            this.lblVFOSyncLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblVFOSyncLabel, "lblVFOSyncLabel");
+            this.lblVFOSyncLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblVFOSyncLabel.Name = "lblVFOSyncLabel";
+            // 
+            // panelVFOALabels
+            // 
+            resources.ApplyResources(this.panelVFOALabels, "panelVFOALabels");
+            this.panelVFOALabels.BackColor = System.Drawing.Color.Transparent;
+            this.panelVFOALabels.Controls.Add(this.lblLockLabel);
+            this.panelVFOALabels.Controls.Add(this.lblAGCLabel);
+            this.panelVFOALabels.Controls.Add(this.lblAttenLabel);
+            this.panelVFOALabels.Controls.Add(this.lblANFLabel);
+            this.panelVFOALabels.Controls.Add(this.lblSNBLabel);
+            this.panelVFOALabels.Controls.Add(this.lblNBLabel);
+            this.panelVFOALabels.Controls.Add(this.lblNRLabel);
+            this.panelVFOALabels.Controls.Add(this.lblCtunLabel);
+            this.panelVFOALabels.Name = "panelVFOALabels";
+            // 
+            // lblLockLabel
+            // 
+            resources.ApplyResources(this.lblLockLabel, "lblLockLabel");
+            this.lblLockLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblLockLabel.Name = "lblLockLabel";
+            // 
+            // lblAGCLabel
+            // 
+            resources.ApplyResources(this.lblAGCLabel, "lblAGCLabel");
+            this.lblAGCLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblAGCLabel.Name = "lblAGCLabel";
+            // 
+            // lblAttenLabel
+            // 
+            resources.ApplyResources(this.lblAttenLabel, "lblAttenLabel");
+            this.lblAttenLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblAttenLabel.Name = "lblAttenLabel";
+            // 
+            // lblANFLabel
+            // 
+            this.lblANFLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblANFLabel, "lblANFLabel");
+            this.lblANFLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblANFLabel.Name = "lblANFLabel";
+            // 
+            // lblSNBLabel
+            // 
+            this.lblSNBLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblSNBLabel, "lblSNBLabel");
+            this.lblSNBLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblSNBLabel.Name = "lblSNBLabel";
+            // 
+            // lblNBLabel
+            // 
+            this.lblNBLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblNBLabel, "lblNBLabel");
+            this.lblNBLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblNBLabel.Name = "lblNBLabel";
+            // 
+            // lblNRLabel
+            // 
+            this.lblNRLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblNRLabel, "lblNRLabel");
+            this.lblNRLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblNRLabel.Name = "lblNRLabel";
+            // 
+            // lblCtunLabel
+            // 
+            resources.ApplyResources(this.lblCtunLabel, "lblCtunLabel");
+            this.lblCtunLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblCtunLabel.Name = "lblCtunLabel";
+            // 
+            // panelVFOBLabels
+            // 
+            resources.ApplyResources(this.panelVFOBLabels, "panelVFOBLabels");
+            this.panelVFOBLabels.BackColor = System.Drawing.Color.Transparent;
+            this.panelVFOBLabels.Controls.Add(this.lblRX2AttenLabel);
+            this.panelVFOBLabels.Controls.Add(this.lblRX2LockLabel);
+            this.panelVFOBLabels.Controls.Add(this.lblRX2AGCLabel);
+            this.panelVFOBLabels.Controls.Add(this.lblRX2CtunLabel);
+            this.panelVFOBLabels.Controls.Add(this.lblRX2NRLabel);
+            this.panelVFOBLabels.Controls.Add(this.lblRX2NBLabel);
+            this.panelVFOBLabels.Controls.Add(this.lblRX2SNBLabel);
+            this.panelVFOBLabels.Controls.Add(this.lblRX2ANFLabel);
+            this.panelVFOBLabels.Name = "panelVFOBLabels";
+            // 
+            // lblRX2AttenLabel
+            // 
+            resources.ApplyResources(this.lblRX2AttenLabel, "lblRX2AttenLabel");
+            this.lblRX2AttenLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRX2AttenLabel.Name = "lblRX2AttenLabel";
+            // 
+            // lblRX2LockLabel
+            // 
+            resources.ApplyResources(this.lblRX2LockLabel, "lblRX2LockLabel");
+            this.lblRX2LockLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblRX2LockLabel.Name = "lblRX2LockLabel";
+            // 
+            // lblRX2AGCLabel
+            // 
+            resources.ApplyResources(this.lblRX2AGCLabel, "lblRX2AGCLabel");
+            this.lblRX2AGCLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRX2AGCLabel.Name = "lblRX2AGCLabel";
+            // 
+            // lblRX2CtunLabel
+            // 
+            resources.ApplyResources(this.lblRX2CtunLabel, "lblRX2CtunLabel");
+            this.lblRX2CtunLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblRX2CtunLabel.Name = "lblRX2CtunLabel";
+            // 
+            // lblRX2NRLabel
+            // 
+            this.lblRX2NRLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblRX2NRLabel, "lblRX2NRLabel");
+            this.lblRX2NRLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRX2NRLabel.Name = "lblRX2NRLabel";
+            // 
+            // lblRX2NBLabel
+            // 
+            this.lblRX2NBLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblRX2NBLabel, "lblRX2NBLabel");
+            this.lblRX2NBLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRX2NBLabel.Name = "lblRX2NBLabel";
+            // 
+            // lblRX2SNBLabel
+            // 
+            this.lblRX2SNBLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblRX2SNBLabel, "lblRX2SNBLabel");
+            this.lblRX2SNBLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRX2SNBLabel.Name = "lblRX2SNBLabel";
+            // 
+            // lblRX2ANFLabel
+            // 
+            this.lblRX2ANFLabel.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblRX2ANFLabel, "lblRX2ANFLabel");
+            this.lblRX2ANFLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRX2ANFLabel.Name = "lblRX2ANFLabel";
             // 
             // panelRX2Power
             // 
@@ -5154,6 +5554,7 @@
             this.txtCPUMeter.ForeColor = System.Drawing.Color.White;
             this.txtCPUMeter.Name = "txtCPUMeter";
             this.txtCPUMeter.ReadOnly = true;
+            this.txtCPUMeter.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DateTime_MouseDown);
             // 
             // panelDateTime
             // 
@@ -5163,6 +5564,7 @@
             this.panelDateTime.Controls.Add(this.txtDate);
             this.panelDateTime.Controls.Add(this.txtCPUMeter);
             this.panelDateTime.Name = "panelDateTime";
+            this.panelDateTime.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DateTime_MouseDown);
             // 
             // txtTime
             // 
@@ -5280,6 +5682,7 @@
             this.panelModeSpecificPhone.Controls.Add(this.chkVOX);
             this.panelModeSpecificPhone.Controls.Add(this.chkNoiseGate);
             this.panelModeSpecificPhone.Controls.Add(this.lblCPUMeter);
+            this.panelModeSpecificPhone.Controls.Add(this.comboAMTXProfile);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
             // 
             // labelTS4
@@ -5505,7 +5908,6 @@
             this.panelDisplay.Controls.Add(this.txtDisplayPeakFreq);
             this.panelDisplay.Controls.Add(this.lblDisplayPan);
             this.panelDisplay.Controls.Add(this.picDisplay);
-            this.panelDisplay.Controls.Add(this.picWaterfall);
             this.panelDisplay.Controls.Add(this.txtDisplayCursorPower);
             this.panelDisplay.Controls.Add(this.txtDisplayCursorFreq);
             this.panelDisplay.Controls.Add(this.txtDisplayOrionMKIIPAAmps);
@@ -5581,15 +5983,6 @@
             this.picDisplay.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseMove);
             this.picDisplay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseUp);
             this.picDisplay.Resize += new System.EventHandler(this.picDisplay_Resize);
-            // 
-            // picWaterfall
-            // 
-            this.picWaterfall.BackColor = System.Drawing.Color.Black;
-            this.picWaterfall.Cursor = System.Windows.Forms.Cursors.Cross;
-            resources.ApplyResources(this.picWaterfall, "picWaterfall");
-            this.picWaterfall.Name = "picWaterfall";
-            this.picWaterfall.TabStop = false;
-            this.picWaterfall.Resize += new System.EventHandler(this.picWaterfall_Resize);
             // 
             // txtDisplayCursorPower
             // 
@@ -5708,6 +6101,8 @@
             // grpVFOA
             // 
             this.grpVFOA.BackColor = System.Drawing.Color.Transparent;
+            this.grpVFOA.Controls.Add(this.panelVFOAHover);
+            this.grpVFOA.Controls.Add(this.lblModeBigLabel);
             this.grpVFOA.Controls.Add(this.lblRX1APF);
             this.grpVFOA.Controls.Add(this.lblRX1MuteVFOA);
             this.grpVFOA.Controls.Add(this.lblFilterLabel);
@@ -5716,7 +6111,6 @@
             this.grpVFOA.Controls.Add(this.txtVFOAMSD);
             this.grpVFOA.Controls.Add(this.chkVFOATX);
             this.grpVFOA.Controls.Add(this.panelVFOASubHover);
-            this.grpVFOA.Controls.Add(this.panelVFOAHover);
             this.grpVFOA.Controls.Add(this.txtVFOABand);
             this.grpVFOA.Controls.Add(this.txtVFOAFreq);
             this.grpVFOA.Controls.Add(this.btnHidden);
@@ -5724,6 +6118,22 @@
             this.grpVFOA.ForeColor = System.Drawing.Color.Red;
             this.grpVFOA.Name = "grpVFOA";
             this.grpVFOA.TabStop = false;
+            // 
+            // panelVFOAHover
+            // 
+            this.panelVFOAHover.BackColor = System.Drawing.Color.Black;
+            this.panelVFOAHover.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.panelVFOAHover, "panelVFOAHover");
+            this.panelVFOAHover.Name = "panelVFOAHover";
+            this.panelVFOAHover.Paint += new System.Windows.Forms.PaintEventHandler(this.panelVFOAHover_Paint);
+            this.panelVFOAHover.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelVFOAHover_MouseMove);
+            // 
+            // lblModeBigLabel
+            // 
+            resources.ApplyResources(this.lblModeBigLabel, "lblModeBigLabel");
+            this.lblModeBigLabel.BackColor = System.Drawing.Color.Black;
+            this.lblModeBigLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblModeBigLabel.Name = "lblModeBigLabel";
             // 
             // lblRX1APF
             // 
@@ -5785,15 +6195,6 @@
             this.panelVFOASubHover.Paint += new System.Windows.Forms.PaintEventHandler(this.panelVFOASubHover_Paint);
             this.panelVFOASubHover.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelVFOASubHover_MouseMove);
             // 
-            // panelVFOAHover
-            // 
-            this.panelVFOAHover.BackColor = System.Drawing.Color.Black;
-            this.panelVFOAHover.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.panelVFOAHover, "panelVFOAHover");
-            this.panelVFOAHover.Name = "panelVFOAHover";
-            this.panelVFOAHover.Paint += new System.Windows.Forms.PaintEventHandler(this.panelVFOAHover_Paint);
-            this.panelVFOAHover.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelVFOAHover_MouseMove);
-            // 
             // txtVFOABand
             // 
             this.txtVFOABand.BackColor = System.Drawing.Color.Black;
@@ -5815,6 +6216,7 @@
             // grpVFOB
             // 
             this.grpVFOB.BackColor = System.Drawing.Color.Transparent;
+            this.grpVFOB.Controls.Add(this.lblRX2ModeBigLabel);
             this.grpVFOB.Controls.Add(this.lblRX2APF);
             this.grpVFOB.Controls.Add(this.chkVFOBTX);
             this.grpVFOB.Controls.Add(this.panelVFOBHover);
@@ -5830,6 +6232,13 @@
             this.grpVFOB.ForeColor = System.Drawing.Color.White;
             this.grpVFOB.Name = "grpVFOB";
             this.grpVFOB.TabStop = false;
+            // 
+            // lblRX2ModeBigLabel
+            // 
+            resources.ApplyResources(this.lblRX2ModeBigLabel, "lblRX2ModeBigLabel");
+            this.lblRX2ModeBigLabel.BackColor = System.Drawing.Color.Black;
+            this.lblRX2ModeBigLabel.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRX2ModeBigLabel.Name = "lblRX2ModeBigLabel";
             // 
             // lblRX2APF
             // 
@@ -5929,10 +6338,7 @@
             // 
             this.grpMultimeter.BackColor = System.Drawing.Color.Transparent;
             this.grpMultimeter.Controls.Add(this.picMultiMeterDigital);
-            this.grpMultimeter.Controls.Add(this.comboMeterTXMode);
-            this.grpMultimeter.Controls.Add(this.comboMeterRXMode);
             this.grpMultimeter.Controls.Add(this.txtMultiText);
-            this.grpMultimeter.Controls.Add(this.lblMultiSMeter);
             this.grpMultimeter.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.grpMultimeter, "grpMultimeter");
             this.grpMultimeter.Name = "grpMultimeter";
@@ -5941,8 +6347,8 @@
             // picMultiMeterDigital
             // 
             this.picMultiMeterDigital.BackColor = System.Drawing.Color.Black;
-            this.picMultiMeterDigital.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             resources.ApplyResources(this.picMultiMeterDigital, "picMultiMeterDigital");
+            this.picMultiMeterDigital.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.picMultiMeterDigital.Name = "picMultiMeterDigital";
             this.picMultiMeterDigital.TabStop = false;
             this.picMultiMeterDigital.Paint += new System.Windows.Forms.PaintEventHandler(this.picMultiMeterDigital_Paint);
@@ -5955,14 +6361,8 @@
             this.txtMultiText.ForeColor = System.Drawing.Color.Yellow;
             this.txtMultiText.Name = "txtMultiText";
             this.txtMultiText.ReadOnly = true;
+            this.txtMultiText.Click += new System.EventHandler(this.txtMultiText_Click);
             this.txtMultiText.GotFocus += new System.EventHandler(this.HideFocus);
-            // 
-            // lblMultiSMeter
-            // 
-            this.lblMultiSMeter.BackColor = System.Drawing.Color.Transparent;
-            this.lblMultiSMeter.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.lblMultiSMeter, "lblMultiSMeter");
-            this.lblMultiSMeter.Name = "lblMultiSMeter";
             // 
             // lblTuneStep
             // 
@@ -6026,7 +6426,6 @@
             this.grpRX2Meter.Controls.Add(this.picRX2Meter);
             this.grpRX2Meter.Controls.Add(this.comboRX2MeterMode);
             this.grpRX2Meter.Controls.Add(this.txtRX2Meter);
-            this.grpRX2Meter.Controls.Add(this.lblRX2Meter);
             this.grpRX2Meter.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.grpRX2Meter, "grpRX2Meter");
             this.grpRX2Meter.Name = "grpRX2Meter";
@@ -6035,8 +6434,8 @@
             // picRX2Meter
             // 
             this.picRX2Meter.BackColor = System.Drawing.Color.Black;
-            this.picRX2Meter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             resources.ApplyResources(this.picRX2Meter, "picRX2Meter");
+            this.picRX2Meter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.picRX2Meter.Name = "picRX2Meter";
             this.picRX2Meter.TabStop = false;
             this.picRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Meter_Paint);
@@ -6049,13 +6448,7 @@
             this.txtRX2Meter.ForeColor = System.Drawing.Color.Yellow;
             this.txtRX2Meter.Name = "txtRX2Meter";
             this.txtRX2Meter.ReadOnly = true;
-            // 
-            // lblRX2Meter
-            // 
-            this.lblRX2Meter.BackColor = System.Drawing.Color.Transparent;
-            this.lblRX2Meter.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.lblRX2Meter, "lblRX2Meter");
-            this.lblRX2Meter.Name = "lblRX2Meter";
+            this.txtRX2Meter.Click += new System.EventHandler(this.txtRX2Meter_Click);
             // 
             // panelBandVHF
             // 
@@ -6360,11 +6753,43 @@
             this.btnBandHF1.Name = "btnBandHF1";
             this.btnBandHF1.Click += new System.EventHandler(this.btnBandHF_Click);
             // 
+            // panelMeterLabels
+            // 
+            resources.ApplyResources(this.panelMeterLabels, "panelMeterLabels");
+            this.panelMeterLabels.BackColor = System.Drawing.Color.Transparent;
+            this.panelMeterLabels.Controls.Add(this.lblTXMeter);
+            this.panelMeterLabels.Controls.Add(this.lblRXMeter);
+            this.panelMeterLabels.Name = "panelMeterLabels";
+            // 
+            // lblTXMeter
+            // 
+            this.lblTXMeter.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblTXMeter, "lblTXMeter");
+            this.lblTXMeter.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblTXMeter.Name = "lblTXMeter";
+            // 
+            // lblRXMeter
+            // 
+            this.lblRXMeter.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblRXMeter, "lblRXMeter");
+            this.lblRXMeter.ForeColor = System.Drawing.Color.DarkOrange;
+            this.lblRXMeter.Name = "lblRXMeter";
+            // 
+            // grpMultimeterMenus
+            // 
+            this.grpMultimeterMenus.BackColor = System.Drawing.Color.Transparent;
+            this.grpMultimeterMenus.Controls.Add(this.comboMeterTXMode);
+            this.grpMultimeterMenus.Controls.Add(this.comboMeterRXMode);
+            resources.ApplyResources(this.grpMultimeterMenus, "grpMultimeterMenus");
+            this.grpMultimeterMenus.Name = "grpMultimeterMenus";
+            this.grpMultimeterMenus.TabStop = false;
+            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.grpMultimeter);
             this.Controls.Add(this.panelFilter);
             this.Controls.Add(this.panelRX2RF);
             this.Controls.Add(this.picRX2Squelch);
@@ -6388,7 +6813,7 @@
             this.Controls.Add(this.grpRX2Meter);
             this.Controls.Add(this.grpDisplaySplit);
             this.Controls.Add(this.grpVFOBetween);
-            this.Controls.Add(this.grpMultimeter);
+            this.Controls.Add(this.panelModeSpecificCW);
             this.Controls.Add(this.grpVFOA);
             this.Controls.Add(this.picSquelch);
             this.Controls.Add(this.grpVFOB);
@@ -6405,7 +6830,12 @@
             this.Controls.Add(this.panelModeSpecificPhone);
             this.Controls.Add(this.panelModeSpecificFM);
             this.Controls.Add(this.panelModeSpecificDigital);
-            this.Controls.Add(this.panelModeSpecificCW);
+            this.Controls.Add(this.panelMeterLabels);
+            this.Controls.Add(this.panelButtonBar);
+            this.Controls.Add(this.panelVFOBLabels);
+            this.Controls.Add(this.grpMultimeterMenus);
+            this.Controls.Add(this.panelVFOLabels);
+            this.Controls.Add(this.panelVFOALabels);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Console";
@@ -6457,11 +6887,17 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
+            this.panelButtonBar.ResumeLayout(false);
             this.panelFilter.ResumeLayout(false);
             this.panelRX2RF.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
             this.panelRX2DSP.ResumeLayout(false);
             this.panelOptions.ResumeLayout(false);
+            this.panelVFOLabels.ResumeLayout(false);
+            this.panelVFOALabels.ResumeLayout(false);
+            this.panelVFOALabels.PerformLayout();
+            this.panelVFOBLabels.ResumeLayout(false);
+            this.panelVFOBLabels.PerformLayout();
             this.panelRX2Power.ResumeLayout(false);
             this.panelPower.ResumeLayout(false);
             this.panelModeSpecificCW.ResumeLayout(false);
@@ -6494,7 +6930,6 @@
             this.panelDisplay.ResumeLayout(false);
             this.panelDisplay.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDisplay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picWaterfall)).EndInit();
             this.panelMode.ResumeLayout(false);
             this.panelBandHF.ResumeLayout(false);
             this.grpVFOA.ResumeLayout(false);
@@ -6515,6 +6950,8 @@
             this.panelModeSpecificFM.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).EndInit();
             this.panelBandGEN.ResumeLayout(false);
+            this.panelMeterLabels.ResumeLayout(false);
+            this.grpMultimeterMenus.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -6552,5 +6989,35 @@
         private LabelTS labelTS1;
         private CheckBoxTS chkVFOBLock;
         private CheckBoxTS chkQSK;
+        private PanelTS panelVFOALabels;
+        private PanelTS panelVFOBLabels;
+        private PanelTS panelVFOLabels;
+        private LabelTS lblRITLabel;
+        private LabelTS lblXITLabel;
+        private LabelTS lblAGCLabel;
+        private LabelTS lblAttenLabel;
+        private LabelTS lblCtunLabel;
+        private LabelTS lblRX2AttenLabel;
+        private LabelTS lblRX2AGCLabel;
+        private LabelTS lblRX2CtunLabel;
+        private LabelTS lblModeBigLabel;
+        private LabelTS lblRX2ModeBigLabel;
+        private LabelTS lblRX2LockLabel;
+        private LabelTS lblLockLabel;
+        private LabelTS lblXITValue;
+        private LabelTS lblRITValue;
+        private LabelTS lblVFOSplit;
+        private LabelTS lblStepValue;
+        private LabelTS lblStep;
+        private PanelTS panelMeterLabels;
+        private LabelTS lblTXMeter;
+        private LabelTS lblRXMeter;
+        public ToolStripMenuItem andromedaTopControlsToolStripMenuItem;
+        public ToolStripMenuItem andromedaButtonBarToolStripMenuItem;
+        private GroupBoxTS grpMultimeterMenus;
+        private ToolStripMenuItem BPFToolStripMenuItem;
+        private ToolStripMenuItem BPF1ToolStripMenuItem;
+        private ToolStripMenuItem BPF2ToolStripMenuItem;
+        private ComboBoxTS comboAMTXProfile;
     }
 }

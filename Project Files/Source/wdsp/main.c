@@ -28,6 +28,11 @@ warren@wpratt.com
 
 void main (void *pargs)
 {
+	DWORD taskIndex = 0;
+	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
+	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
+	else SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+
 	int channel = (int)pargs;
 	while (_InterlockedAnd (&ch[channel].run, 1))
 	{

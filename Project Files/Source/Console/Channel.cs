@@ -55,6 +55,15 @@ namespace Thetis
             set { bw = value; }
         }
 
+        public double Low {
+            get { return freq - ((bw * 1e-6) / 2); }
+            set {}
+        }
+        public double High {
+            get { return freq + ((bw * 1e-6) / 2); }
+            set {}
+        }
+
         /// <summary>
         /// Creates a channel object
         /// </summary>
@@ -63,7 +72,7 @@ namespace Thetis
         public Channel(double f, int bandwidth)
         {
             freq = f;
-            bw = bandwidth;            
+            bw = bandwidth;
         }
 
         public Channel(double f, int bandwidth, bool perm, int dep)

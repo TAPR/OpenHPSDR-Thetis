@@ -1334,8 +1334,8 @@ namespace Thetis
                     
                     if (c.InBW((rf_freq + Low) * 1e-6, (rf_freq + High) * 1e-6)) // is channel visible?
                     {
-                        bool on_channel = console.RX1IsOn60mChannel(c); // only true if you are on channel and are in an acceptable mode
-                        if (rx == 2) on_channel = console.RX2IsOn60mChannel(c);
+                        bool on_channel = console.RX1IsIn60mChannel(c); // only true if you are on channel and are in an acceptable mode
+                        if (rx == 2) on_channel = console.RX2IsIn60mChannel(c);
 
                         DSPMode mode = rx_dsp_mode;
                         switch (mode)

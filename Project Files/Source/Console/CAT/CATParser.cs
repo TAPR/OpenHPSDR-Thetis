@@ -1424,10 +1424,31 @@ namespace Thetis
                 case "ZZYC":
                     rtncmd = cmdlist.ZZYC(suffix);
                     break;
-				case "ZZZB":
+                case "ZZYR":
+                    rtncmd = cmdlist.ZZYR(suffix);
+                    break;
+                case "ZZZB":
 					rtncmd = cmdlist.ZZZB();
 					break;
-				case "ZZZZ":
+                case "ZZZD":
+                    rtncmd = cmdlist.ZZZD(suffix);
+                    break;
+                case "ZZZE":
+                    rtncmd = cmdlist.ZZZE(suffix);
+                    break;
+                case "ZZZH":
+                    rtncmd = cmdlist.ZZZH(suffix);
+                    break;
+                case "ZZZP":
+                    rtncmd = cmdlist.ZZZP(suffix);
+                    break;
+                case "ZZZS":
+                    rtncmd = cmdlist.ZZZS(suffix);
+                    break;
+                case "ZZZU":
+                    rtncmd = cmdlist.ZZZU(suffix);
+                    break;
+                case "ZZZZ":
 					rtncmd = cmdlist.ZZZZ();
 					break;
 			}

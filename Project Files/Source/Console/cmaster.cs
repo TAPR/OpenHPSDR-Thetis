@@ -867,6 +867,9 @@ namespace Thetis
             if (wideband[adc] == null || wideband[adc].IsDisposed)
                 create_wb(adc);
             wideband[adc].Show();
+
+            if (wideband[adc].WindowState == FormWindowState.Minimized) wideband[adc].WindowState = FormWindowState.Normal; //MW0LGE
+
             return wideband[adc];
         }
 

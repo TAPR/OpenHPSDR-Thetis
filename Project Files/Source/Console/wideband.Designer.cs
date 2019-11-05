@@ -199,8 +199,10 @@
             this.wbdisplay.DisplayLabelAlign = Thetis.DisplayLabelAlignment.LEFT;
             this.wbdisplay.DisplayLineWidth = 1F;
             this.wbdisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.wbdisplay.FFTSize = 16384; //65536; // 131072; //262144; // 16384;
+            this.wbdisplay.FFTSize = 16384;
             this.wbdisplay.FilterRect = new System.Drawing.Rectangle(0, 0, 0, 0);
+            this.wbdisplay.FrameRate = 15;
+            this.wbdisplay.FrameSize = "32";
             this.wbdisplay.FREQ = 0D;
             this.wbdisplay.FreqDiff = 0;
             this.wbdisplay.FreqRulerPosition = 1F;
@@ -256,6 +258,7 @@
             this.wbdisplay.TabStop = false;
             this.wbdisplay.Target = null;
             this.wbdisplay.TopSize = 0;
+            this.wbdisplay.UpdateRate = "15";
             this.wbdisplay.VFOASub = ((long)(0));
             this.wbdisplay.VFOHz = ((long)(10000000));
             this.wbdisplay.WaterfallAGC = false;

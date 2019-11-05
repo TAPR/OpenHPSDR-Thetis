@@ -404,7 +404,7 @@ namespace Thetis
             // 
             this.SWLbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SWLbutton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.SWLbutton.Location = new System.Drawing.Point(615, 304);
+            this.SWLbutton.Location = new System.Drawing.Point(615, 227);
             this.SWLbutton.Name = "SWLbutton";
             this.SWLbutton.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton.TabIndex = 2;
@@ -417,7 +417,7 @@ namespace Thetis
             // 
             this.SSBbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SSBbutton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.SSBbutton.Location = new System.Drawing.Point(12, 403);
+            this.SSBbutton.Location = new System.Drawing.Point(12, 326);
             this.SSBbutton.Name = "SSBbutton";
             this.SSBbutton.Size = new System.Drawing.Size(75, 23);
             this.SSBbutton.TabIndex = 1;
@@ -441,7 +441,7 @@ namespace Thetis
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(759, 121);
+            this.textBox1.Size = new System.Drawing.Size(759, 44);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
@@ -451,7 +451,7 @@ namespace Thetis
             // 
             this.nodeBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nodeBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nodeBox1.Location = new System.Drawing.Point(658, 302);
+            this.nodeBox1.Location = new System.Drawing.Point(658, 225);
             this.nodeBox1.MaxLength = 50;
             this.nodeBox1.Name = "nodeBox1";
             this.nodeBox1.Size = new System.Drawing.Size(84, 22);
@@ -478,7 +478,7 @@ namespace Thetis
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(682, 406);
+            this.callBox.Location = new System.Drawing.Point(682, 329);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
             this.callBox.Size = new System.Drawing.Size(87, 22);
@@ -493,7 +493,7 @@ namespace Thetis
             // 
             this.portBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.portBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.portBox2.Location = new System.Drawing.Point(696, 304);
+            this.portBox2.Location = new System.Drawing.Point(696, 227);
             this.portBox2.MaxLength = 7;
             this.portBox2.Name = "portBox2";
             this.portBox2.Size = new System.Drawing.Size(56, 22);
@@ -509,7 +509,7 @@ namespace Thetis
             // 
             this.statusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBox.Location = new System.Drawing.Point(13, 274);
+            this.statusBox.Location = new System.Drawing.Point(13, 197);
             this.statusBox.Name = "statusBox";
             this.statusBox.Size = new System.Drawing.Size(156, 22);
             this.statusBox.TabIndex = 11;
@@ -522,7 +522,7 @@ namespace Thetis
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.button1.Location = new System.Drawing.Point(101, 405);
+            this.button1.Location = new System.Drawing.Point(101, 328);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(68, 23);
             this.button1.TabIndex = 3;
@@ -536,7 +536,7 @@ namespace Thetis
             // 
             this.statusBoxSWL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBoxSWL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBoxSWL.Location = new System.Drawing.Point(614, 276);
+            this.statusBoxSWL.Location = new System.Drawing.Point(614, 199);
             this.statusBoxSWL.Name = "statusBoxSWL";
             this.statusBoxSWL.Size = new System.Drawing.Size(156, 22);
             this.statusBoxSWL.TabIndex = 16;
@@ -548,7 +548,7 @@ namespace Thetis
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 257);
+            this.label1.Location = new System.Drawing.Point(13, 180);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 13);
             this.label1.TabIndex = 17;
@@ -558,7 +558,7 @@ namespace Thetis
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(612, 260);
+            this.label2.Location = new System.Drawing.Point(612, 183);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 13);
             this.label2.TabIndex = 18;
@@ -568,7 +568,7 @@ namespace Thetis
             // 
             this.btnTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnTrack.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnTrack.Location = new System.Drawing.Point(258, 358);
+            this.btnTrack.Location = new System.Drawing.Point(258, 281);
             this.btnTrack.Name = "btnTrack";
             this.btnTrack.Size = new System.Drawing.Size(75, 23);
             this.btnTrack.TabIndex = 62;
@@ -581,7 +581,7 @@ namespace Thetis
             // 
             this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(687, 304);
+            this.nameBox.Location = new System.Drawing.Point(687, 227);
             this.nameBox.MaxLength = 20;
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(46, 22);
@@ -677,7 +677,7 @@ namespace Thetis
             // 
             this.SWLbutton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SWLbutton2.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.SWLbutton2.Location = new System.Drawing.Point(696, 304);
+            this.SWLbutton2.Location = new System.Drawing.Point(696, 227);
             this.SWLbutton2.Name = "SWLbutton2";
             this.SWLbutton2.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton2.TabIndex = 76;
@@ -690,7 +690,7 @@ namespace Thetis
             // 
             this.btnBeacon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnBeacon.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnBeacon.Location = new System.Drawing.Point(192, 403);
+            this.btnBeacon.Location = new System.Drawing.Point(192, 326);
             this.btnBeacon.Name = "btnBeacon";
             this.btnBeacon.Size = new System.Drawing.Size(75, 23);
             this.btnBeacon.TabIndex = 85;
@@ -703,7 +703,7 @@ namespace Thetis
             // 
             this.btnTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnTime.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnTime.Location = new System.Drawing.Point(511, 262);
+            this.btnTime.Location = new System.Drawing.Point(511, 185);
             this.btnTime.Name = "btnTime";
             this.btnTime.Size = new System.Drawing.Size(75, 23);
             this.btnTime.TabIndex = 89;
@@ -716,7 +716,7 @@ namespace Thetis
             // 
             this.checkBoxTone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxTone.AutoSize = true;
-            this.checkBoxTone.Location = new System.Drawing.Point(559, 315);
+            this.checkBoxTone.Location = new System.Drawing.Point(559, 238);
             this.checkBoxTone.Name = "checkBoxTone";
             this.checkBoxTone.Size = new System.Drawing.Size(46, 17);
             this.checkBoxTone.TabIndex = 93;
@@ -731,7 +731,7 @@ namespace Thetis
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox2.Enabled = false;
             this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(559, 335);
+            this.textBox2.Location = new System.Drawing.Point(559, 258);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(37, 20);
             this.textBox2.TabIndex = 94;
@@ -743,7 +743,7 @@ namespace Thetis
             // 
             this.chkBoxContour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxContour.Image = null;
-            this.chkBoxContour.Location = new System.Drawing.Point(343, 331);
+            this.chkBoxContour.Location = new System.Drawing.Point(343, 254);
             this.chkBoxContour.Name = "chkBoxContour";
             this.chkBoxContour.Size = new System.Drawing.Size(70, 24);
             this.chkBoxContour.TabIndex = 98;
@@ -755,7 +755,7 @@ namespace Thetis
             // 
             this.tbPanPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbPanPower.AutoSize = false;
-            this.tbPanPower.Location = new System.Drawing.Point(339, 379);
+            this.tbPanPower.Location = new System.Drawing.Point(339, 302);
             this.tbPanPower.Maximum = 1500;
             this.tbPanPower.Minimum = 1;
             this.tbPanPower.Name = "tbPanPower";
@@ -772,7 +772,7 @@ namespace Thetis
             // 
             this.chkBoxAnt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxAnt.Image = null;
-            this.chkBoxAnt.Location = new System.Drawing.Point(343, 355);
+            this.chkBoxAnt.Location = new System.Drawing.Point(343, 278);
             this.chkBoxAnt.Name = "chkBoxAnt";
             this.chkBoxAnt.Size = new System.Drawing.Size(55, 24);
             this.chkBoxAnt.TabIndex = 96;
@@ -788,7 +788,7 @@ namespace Thetis
             this.chkBoxDIG.Checked = true;
             this.chkBoxDIG.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxDIG.Image = null;
-            this.chkBoxDIG.Location = new System.Drawing.Point(182, 332);
+            this.chkBoxDIG.Location = new System.Drawing.Point(182, 255);
             this.chkBoxDIG.Name = "chkBoxDIG";
             this.chkBoxDIG.Size = new System.Drawing.Size(85, 24);
             this.chkBoxDIG.TabIndex = 70;
@@ -799,7 +799,7 @@ namespace Thetis
             // 
             this.checkBoxMUF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxMUF.Image = null;
-            this.checkBoxMUF.Location = new System.Drawing.Point(273, 328);
+            this.checkBoxMUF.Location = new System.Drawing.Point(273, 251);
             this.checkBoxMUF.Name = "checkBoxMUF";
             this.checkBoxMUF.Size = new System.Drawing.Size(75, 24);
             this.checkBoxMUF.TabIndex = 95;
@@ -817,7 +817,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udDisplayWWV.Location = new System.Drawing.Point(511, 312);
+            this.udDisplayWWV.Location = new System.Drawing.Point(511, 235);
             this.udDisplayWWV.Maximum = new decimal(new int[] {
             4,
             0,
@@ -844,7 +844,7 @@ namespace Thetis
             // 
             this.checkBoxWWV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxWWV.Image = null;
-            this.checkBoxWWV.Location = new System.Drawing.Point(511, 291);
+            this.checkBoxWWV.Location = new System.Drawing.Point(511, 214);
             this.checkBoxWWV.Name = "checkBoxWWV";
             this.checkBoxWWV.Size = new System.Drawing.Size(98, 24);
             this.checkBoxWWV.TabIndex = 90;
@@ -860,7 +860,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.numericUpDownTS1.Location = new System.Drawing.Point(417, 406);
+            this.numericUpDownTS1.Location = new System.Drawing.Point(417, 329);
             this.numericUpDownTS1.Maximum = new decimal(new int[] {
             5,
             0,
@@ -887,7 +887,7 @@ namespace Thetis
             // 
             this.BoxBFScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BoxBFScan.Image = null;
-            this.BoxBFScan.Location = new System.Drawing.Point(343, 403);
+            this.BoxBFScan.Location = new System.Drawing.Point(343, 326);
             this.BoxBFScan.Name = "BoxBFScan";
             this.BoxBFScan.Size = new System.Drawing.Size(87, 24);
             this.BoxBFScan.TabIndex = 87;
@@ -899,7 +899,7 @@ namespace Thetis
             // 
             this.BoxBScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BoxBScan.Image = null;
-            this.BoxBScan.Location = new System.Drawing.Point(273, 404);
+            this.BoxBScan.Location = new System.Drawing.Point(273, 327);
             this.BoxBScan.Name = "BoxBScan";
             this.BoxBScan.Size = new System.Drawing.Size(81, 24);
             this.BoxBScan.TabIndex = 86;
@@ -913,7 +913,7 @@ namespace Thetis
             // 
             this.chkBoxBeam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxBeam.Image = null;
-            this.chkBoxBeam.Location = new System.Drawing.Point(417, 355);
+            this.chkBoxBeam.Location = new System.Drawing.Point(417, 278);
             this.chkBoxBeam.Name = "chkBoxBeam";
             this.chkBoxBeam.Size = new System.Drawing.Size(88, 24);
             this.chkBoxBeam.TabIndex = 83;
@@ -930,7 +930,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udDisplayLong.Location = new System.Drawing.Point(614, 407);
+            this.udDisplayLong.Location = new System.Drawing.Point(614, 330);
             this.udDisplayLong.Maximum = new decimal(new int[] {
             180,
             0,
@@ -963,7 +963,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udDisplayLat.Location = new System.Drawing.Point(538, 407);
+            this.udDisplayLat.Location = new System.Drawing.Point(538, 330);
             this.udDisplayLat.Maximum = new decimal(new int[] {
             90,
             0,
@@ -991,7 +991,7 @@ namespace Thetis
             // 
             this.chkBoxMem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxMem.Image = null;
-            this.chkBoxMem.Location = new System.Drawing.Point(417, 377);
+            this.chkBoxMem.Location = new System.Drawing.Point(417, 300);
             this.chkBoxMem.Name = "chkBoxMem";
             this.chkBoxMem.Size = new System.Drawing.Size(123, 24);
             this.chkBoxMem.TabIndex = 74;
@@ -1004,7 +1004,7 @@ namespace Thetis
             // 
             this.chkBoxPan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxPan.Image = null;
-            this.chkBoxPan.Location = new System.Drawing.Point(417, 332);
+            this.chkBoxPan.Location = new System.Drawing.Point(417, 255);
             this.chkBoxPan.Name = "chkBoxPan";
             this.chkBoxPan.Size = new System.Drawing.Size(100, 24);
             this.chkBoxPan.TabIndex = 71;
@@ -1018,7 +1018,7 @@ namespace Thetis
             this.chkBoxSSB.Checked = true;
             this.chkBoxSSB.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxSSB.Image = null;
-            this.chkBoxSSB.Location = new System.Drawing.Point(182, 302);
+            this.chkBoxSSB.Location = new System.Drawing.Point(182, 225);
             this.chkBoxSSB.Name = "chkBoxSSB";
             this.chkBoxSSB.Size = new System.Drawing.Size(85, 24);
             this.chkBoxSSB.TabIndex = 69;
@@ -1031,7 +1031,7 @@ namespace Thetis
             this.chkBoxCW.Checked = true;
             this.chkBoxCW.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxCW.Image = null;
-            this.chkBoxCW.Location = new System.Drawing.Point(182, 274);
+            this.chkBoxCW.Location = new System.Drawing.Point(182, 197);
             this.chkBoxCW.Name = "chkBoxCW";
             this.chkBoxCW.Size = new System.Drawing.Size(85, 24);
             this.chkBoxCW.TabIndex = 68;
@@ -1044,7 +1044,7 @@ namespace Thetis
             this.chkMapBand.Checked = true;
             this.chkMapBand.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapBand.Image = null;
-            this.chkMapBand.Location = new System.Drawing.Point(417, 309);
+            this.chkMapBand.Location = new System.Drawing.Point(417, 232);
             this.chkMapBand.Name = "chkMapBand";
             this.chkMapBand.Size = new System.Drawing.Size(113, 24);
             this.chkMapBand.TabIndex = 67;
@@ -1056,7 +1056,7 @@ namespace Thetis
             // 
             this.chkMapCountry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkMapCountry.Image = null;
-            this.chkMapCountry.Location = new System.Drawing.Point(417, 263);
+            this.chkMapCountry.Location = new System.Drawing.Point(417, 186);
             this.chkMapCountry.Name = "chkMapCountry";
             this.chkMapCountry.Size = new System.Drawing.Size(88, 22);
             this.chkMapCountry.TabIndex = 66;
@@ -1070,7 +1070,7 @@ namespace Thetis
             this.chkMapCall.Checked = true;
             this.chkMapCall.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapCall.Image = null;
-            this.chkMapCall.Location = new System.Drawing.Point(417, 286);
+            this.chkMapCall.Location = new System.Drawing.Point(417, 209);
             this.chkMapCall.Name = "chkMapCall";
             this.chkMapCall.Size = new System.Drawing.Size(88, 24);
             this.chkMapCall.TabIndex = 65;
@@ -1084,7 +1084,7 @@ namespace Thetis
             this.chkPanMode.Checked = true;
             this.chkPanMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPanMode.Image = null;
-            this.chkPanMode.Location = new System.Drawing.Point(273, 305);
+            this.chkPanMode.Location = new System.Drawing.Point(273, 228);
             this.chkPanMode.Name = "chkPanMode";
             this.chkPanMode.Size = new System.Drawing.Size(148, 23);
             this.chkPanMode.TabIndex = 63;
@@ -1099,7 +1099,7 @@ namespace Thetis
             this.chkGrayLine.Checked = true;
             this.chkGrayLine.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkGrayLine.Image = null;
-            this.chkGrayLine.Location = new System.Drawing.Point(273, 286);
+            this.chkGrayLine.Location = new System.Drawing.Point(273, 209);
             this.chkGrayLine.Name = "chkGrayLine";
             this.chkGrayLine.Size = new System.Drawing.Size(105, 17);
             this.chkGrayLine.TabIndex = 61;
@@ -1114,7 +1114,7 @@ namespace Thetis
             this.chkSUN.Checked = true;
             this.chkSUN.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSUN.Image = null;
-            this.chkSUN.Location = new System.Drawing.Point(273, 261);
+            this.chkSUN.Location = new System.Drawing.Point(273, 184);
             this.chkSUN.Name = "chkSUN";
             this.chkSUN.Size = new System.Drawing.Size(92, 24);
             this.chkSUN.TabIndex = 60;
@@ -1127,7 +1127,7 @@ namespace Thetis
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(537, 385);
+            this.label3.Location = new System.Drawing.Point(537, 308);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(139, 13);
             this.label3.TabIndex = 81;
@@ -1137,7 +1137,7 @@ namespace Thetis
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(693, 385);
+            this.label4.Location = new System.Drawing.Point(693, 308);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(71, 13);
             this.label4.TabIndex = 82;
@@ -1147,7 +1147,7 @@ namespace Thetis
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(541, 366);
+            this.label5.Location = new System.Drawing.Point(541, 289);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(227, 13);
             this.label5.TabIndex = 84;
@@ -1168,7 +1168,7 @@ namespace Thetis
             // 
             this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxWrld.Image = null;
-            this.chkBoxWrld.Location = new System.Drawing.Point(11, 355);
+            this.chkBoxWrld.Location = new System.Drawing.Point(11, 278);
             this.chkBoxWrld.Name = "chkBoxWrld";
             this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
             this.chkBoxWrld.TabIndex = 78;
@@ -1179,7 +1179,7 @@ namespace Thetis
             // 
             this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxNA.Image = null;
-            this.chkBoxNA.Location = new System.Drawing.Point(12, 328);
+            this.chkBoxNA.Location = new System.Drawing.Point(12, 251);
             this.chkBoxNA.Name = "chkBoxNA";
             this.chkBoxNA.Size = new System.Drawing.Size(175, 35);
             this.chkBoxNA.TabIndex = 77;
@@ -1190,7 +1190,7 @@ namespace Thetis
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(668, 333);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(668, 256);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(103, 24);
             this.chkAlwaysOnTop.TabIndex = 58;
@@ -1203,7 +1203,7 @@ namespace Thetis
             this.chkDXMode.Checked = true;
             this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(682, 406);
+            this.chkDXMode.Location = new System.Drawing.Point(682, 329);
             this.chkDXMode.Name = "chkDXMode";
             this.chkDXMode.Size = new System.Drawing.Size(91, 24);
             this.chkDXMode.TabIndex = 59;
@@ -1214,7 +1214,7 @@ namespace Thetis
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(784, 438);
+            this.ClientSize = new System.Drawing.Size(784, 361);
             this.Controls.Add(this.chkBoxContour);
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.tbPanPower);
@@ -4742,10 +4742,10 @@ namespace Thetis
         //=========================================================================================
         private void chkSUN_CheckedChanged(object sender, EventArgs e)
         {
-
+            
             if ((chkSUN.Checked == false) && (chkGrayLine.Checked == false))
             {
-                if (Skin1 != null) console.picDisplay.BackgroundImage = Skin1; // put back original image
+                if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
             }
             if (SP_Active != 0 ) 
             {
@@ -4753,17 +4753,17 @@ namespace Thetis
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
 
-                    if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                    if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
 
                     if (MAP == null)
                     {
-                        if (Console.DXR == 0)
-                        console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
-                        else console.picDisplay.BackgroundImage = Image.FromStream(Map_image2);
+                        if (Console.DisplaySpot)
+                            console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
+                        else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
 
                     }
-                    else console.picDisplay.BackgroundImage = MAP;
+                    else console.PicDisplayBackgroundImage = MAP;
  
                 } // SUN or GRAY LINE checked
 
@@ -4780,7 +4780,7 @@ namespace Thetis
         {
             if ((chkSUN.Checked == false) && (chkGrayLine.Checked == false))
             {
-                if (Skin1 != null) console.picDisplay.BackgroundImage = Skin1; // put back original image
+                if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
             }
 
             if ( SP_Active != 0) 
@@ -4788,17 +4788,17 @@ namespace Thetis
               
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
-                    if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                    if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
 
                     if (MAP == null)
                     {
-                        if (Console.DXR == 0)  console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
-                        else console.picDisplay.BackgroundImage = Image.FromStream(Map_image2);
+                        if (Console.DisplaySpot) console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
+                        else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
 
-                      //  console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                        //  console.SetPicDisplayBackgroundImage(Image.FromStream(Map_image));
                     }
-                    else console.picDisplay.BackgroundImage = MAP;
+                    else console.PicDisplayBackgroundImage = MAP;
       
                 } // only do if SUN or GRAY LINE checked
 
@@ -4839,17 +4839,16 @@ namespace Thetis
                 
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
-
-                    if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                    if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
 
                     if (MAP == null)
                     {
-                        if (Console.DXR == 0)   console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
-                        else console.picDisplay.BackgroundImage = Image.FromStream(Map_image2);
-                        //  console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                        if (Console.DisplaySpot) console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
+                        else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
+                        //  console.SetPicDisplayBackgroundImage(Image.FromStream(Map_image));
                     }
-                    else console.picDisplay.BackgroundImage = MAP;
+                    else console.PicDisplayBackgroundImage = MAP;
 
                 }
 
@@ -4886,7 +4885,7 @@ namespace Thetis
      
                 textBox1.Text += "Click to turn off GrayLine Sun Tracking\r\n";
              
-                if (Skin1 != null) console.picDisplay.BackgroundImage = Skin1; // put back original image
+                if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
 
             } // turn Tracking  off
 
@@ -5575,7 +5574,7 @@ namespace Thetis
                         //-------------------------------------------------------------------------------------------------
                         //-------------------------------------------------------------------------------------------------
 
-                        if ((Console.DXR == 0))  MAP = new Bitmap(Map_image); // load up Map image
+                        if ((Console.DisplaySpot))  MAP = new Bitmap(Map_image); // load up Map image
                         else MAP = new Bitmap(Map_image2); // load up Map image
 
                         Graphics g = Graphics.FromImage(MAP);
@@ -6301,7 +6300,7 @@ namespace Thetis
                         // update MAP background
 
                         console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;           // put image back onto picDisplay background image
-                        console.picDisplay.BackgroundImage = MAP;                                  // MAP.Save("test.bmp");  save modified map_image to actual file on hard drive
+                        console.PicDisplayBackgroundImage = MAP;                                  // MAP.Save("test.bmp");  save modified map_image to actual file on hard drive
 
 
                         beacon4 = false; // reset the beacon scanner flag (you just updated the map)
@@ -7103,16 +7102,16 @@ namespace Thetis
                     if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                     {
 
-                        if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                         console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                        if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
 
                         if (MAP == null)
                         {
-                            if (Console.DXR == 0) console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
-                            else console.picDisplay.BackgroundImage = Image.FromStream(Map_image2);
-                            //  console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                            if (Console.DisplaySpot) console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
+                            else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
+                            //  console.SetPicDisplayBackgroundImage(Image.FromStream(Map_image));
                         }
-                        else console.picDisplay.BackgroundImage = MAP;
+                        else console.PicDisplayBackgroundImage = MAP;
 
                     }
 
@@ -7324,7 +7323,7 @@ namespace Thetis
 
                     textBox1.Text += "Click to turn off GrayLine Sun Tracking\r\n";
 
-                    if (Skin1 != null) console.picDisplay.BackgroundImage = Skin1; // put back original image
+                    if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
 
                 } // map was off so turn back off after doen with beacon
 
@@ -7455,10 +7454,10 @@ namespace Thetis
 
 
             beacon66 = console.BlockSize1;          // get blocksize (must be 2048 during wwv bcd read)
-            oldSR = console.SampleRate1;            // get SR
+            oldSR = console.SampleRateRX1;            // get SR
 
 
-            GoertzelCoef(600.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
+            GoertzelCoef(600.0, console.SampleRateRX1);  // comes up with the Coeff values for the freq and sample rate used
 
             //-----------------------------------------------------------------------
             //-----------------------------------------------------------------------
@@ -7526,7 +7525,7 @@ namespace Thetis
                     if (BoxBScan.Checked == true) // fast 3 minute complete scan (5 freq over 18 periods)
                     {
 
-                        if (console.SampleRate1 == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
+                        if (console.SampleRateRX1 == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
                         {
                          //   console.SetupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
                          //   if (console.BlockSize1 != 2048) console.BlockSize1 = 2048;  // need the largest buffer size for the Tone detection to work.
@@ -7555,7 +7554,7 @@ namespace Thetis
                     else if (BoxBFScan.Checked == true) // Long slow 15 minute complete scan (1 freq over 18 periods, 5 times)
                     {
 
-                        if (console.SampleRate1 == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
+                        if (console.SampleRateRX1 == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
                         {
                          //   console.SetupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
                          //   if (console.BlockSize1 != 2048) console.BlockSize1 = 2048;  // need the largest buffer size for the Tone detection to work.
@@ -8337,7 +8336,7 @@ namespace Thetis
          //   beacon55 = console.CATPreamp;
 
 
-            oldSR = console.SampleRate1;            // get SR
+            oldSR = console.SampleRateRX1;            // get SR
 
             if (checkBoxTone.Checked == true)    // this would allow you to select the signal strength based detection instead of Pitch(tone) based detection. For experimenting
             {
@@ -8365,7 +8364,7 @@ namespace Thetis
             Debug.WriteLine("WWV>>0");
 
             // SETUP UP TONE DETECTION TO CATCH SUB-CARRIER
-            GoertzelCoef(100.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
+            GoertzelCoef(100.0, console.SampleRateRX1);  // comes up with the Coeff values for the freq and sample rate used
 
 
             // SET MODE, THEN 
@@ -8549,15 +8548,15 @@ namespace Thetis
             ST.Stop();
             Debug.WriteLine("WWV>>3");
 
-            Debug.WriteLine("WWV>> Highest BCD Mag: " + BCDSignalON + " , SR:" + console.SampleRate1 + " , Buffer size: " + console.BlockSize1);
+            Debug.WriteLine("WWV>> Highest BCD Mag: " + BCDSignalON + " , SR:" + console.SampleRateRX1 + " , Buffer size: " + console.BlockSize1);
 
             if (WWVPitch == false)  // signal strength based detected
             {
-                textBox1.Text += "WWV BCD Data stream : " + BCDSignalON + "dBm , Carrier: " + CarrierSignal + " dBm, SR:" + console.SampleRate1 + " , Buffer size: " + console.BlockSize1 + "\r\n";
+                textBox1.Text += "WWV BCD Data stream : " + BCDSignalON + "dBm , Carrier: " + CarrierSignal + " dBm, SR:" + console.SampleRateRX1 + " , Buffer size: " + console.BlockSize1 + "\r\n";
             }
             else
             {
-                textBox1.Text += "WWV BCD Data stream MAG: " + BCDSignalON + " , SR:" + console.SampleRate1 + " , Buffer size: " + console.BlockSize1 + "\r\n";
+                textBox1.Text += "WWV BCD Data stream MAG: " + BCDSignalON + " , SR:" + console.SampleRateRX1 + " , Buffer size: " + console.BlockSize1 + "\r\n";
 
             }
 

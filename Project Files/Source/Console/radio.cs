@@ -3248,9 +3248,83 @@ namespace Thetis
         {
             get { return list; }
         }
+
+        //MW0LGE return a notch that matches
+        public static MNotch GetFirstNotchThatMatches(double freqHz, double fwidth, bool bActive)
+        {
+            MNotch notch = null;
+
+            foreach (MNotch n in list)
+            {
+                if (n.FCenter==freqHz && n.FWidth==fwidth && n.Active==bActive)
+                {
+                    notch = n;
+                    break;
+                }
+            }
+
+            return notch;
+        }
+        //MW0LGE check if notch close by
+        public static bool NotchNearFreq(double freqHz, int deltaHz)
+        {
+            foreach (MNotch n in list)
+            {
+                if (Math.Abs(freqHz - n.FCenter) < deltaHz) return true;
+            }
+
+            return false;
+        }
+
+        //MW0LGE return list of notches in given bandwidth
+        //notch is included if filter width is enough to be within the BW
+        public static List<MNotch> NotchesInBW(double centreBWFreqHz, int lowHz, int highHz)
+        {
+            List<MNotch> l = new List<MNotch>();
+            double min = centreBWFreqHz + lowHz;
+            double max = centreBWFreqHz + highHz;
+
+            foreach (MNotch n in list)
+            {
+                if (((n.FCenter + n.FWidth/2) >= min) && ((n.FCenter - n.FWidth/2) <= max))
+                    l.Add(n);
+            }
+
+            return l;
+        }
+
+        //MW0LGE return first notch found that surrounds a given frequency in the given bandwidth        
+        public static MNotch NotchThatSurroundsFrequencyInBW(double centreBWFreqHz, int lowHz, int highHz, double freqHz, int nPadWidth = 0)
+        {
+            MNotch notch = null;
+            List<MNotch> l = NotchesInBW(centreBWFreqHz, lowHz, highHz);
+
+            if (l.Count > 0)
+            {
+                foreach (MNotch n in l)
+                {
+                    double dLf = n.FCenter - n.FWidth / 2;
+                    double dHf = n.FCenter + n.FWidth / 2;
+
+                    if(n.FWidth<(nPadWidth*2))
+                    {
+                        dLf -= nPadWidth;
+                        dHf += nPadWidth;
+                    }
+
+                    if (freqHz >= dLf && freqHz <= dHf)
+                    {
+                        notch = n;
+                        break;
+                    }
+                }
+            }
+
+            return notch;
+        }
     }
 
-    class MNotch : IComparable
+    public class MNotch : IComparable
     {
         private double fcenter = 0.0;
         public double FCenter

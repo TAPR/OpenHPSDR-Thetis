@@ -32,6 +32,9 @@ namespace Thetis
         private void wideband_Resize(object sender, EventArgs e)
         {
             wbdisplay.pauseDisplayThread = true;
+
+            if (this.WindowState == FormWindowState.Minimized) return; // MW0LGE pause the display thread and return
+
             // System.Threading.Thread.Sleep(100);
             wbdisplay.Init();
             wbdisplay.UpdateGraphicsBuffer();
@@ -43,6 +46,7 @@ namespace Thetis
         {
             wbdisplay.Cancel_Display();
             NetworkIO.SetWBEnable(0, 0);
+            Console.getConsole().wbClosing();
             this.Hide();
             e.Cancel = true;
             SaveWideBand();

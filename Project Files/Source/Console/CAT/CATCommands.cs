@@ -2,7 +2,7 @@
 // CATCommands.cs
 //=================================================================
 // Copyright (C) 2005  Bob Tracy
-//
+//C:\Users\laure\Documents\software\github\Thetis\thetis\Project Files\Source\Console\CAT\CATCommands.cs
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -512,19 +512,6 @@ namespace Thetis
 		//Sends text data to CWX for conversion to Morse
 		public string KY(string s)
 		{
-			// Make sure we have an instance of the form
-			if(console.CWXForm == null || console.CWXForm.IsDisposed)
-			{
-				try
-				{
-					console.CWXForm = new CWX(console);
-				}
-				catch
-				{
-					return parser.Error1;
-				}
-			}
-
 			// Make sure we are in a cw mode.
 			switch(console.RX1DSPMode)
 			{
@@ -1609,6 +1596,7 @@ namespace Thetis
                 else if (s.Length == parser.nSet)
                 {
                     console.RX2Band = String2Band(s);
+                    console.SetupBand(s); // MW0LGE force the band to be setup, TODO CHECK if this is actually needed
                     return "";
                 }
                 else
@@ -2645,7 +2633,7 @@ namespace Thetis
 				else
 					s = s.Insert(5, separator);
 
-                if (!isMidi)
+                if (!isMidi && console.CATChangesCenterFreq) // MW0LGE changed to take into consideration the flag
                 console.UpdateCenterFreq = true;
 				console.VFOAFreq = double.Parse(s);
 				return "";
@@ -2689,8 +2677,8 @@ namespace Thetis
 				else
 					s = s.Insert(5, separator);
 
-                if (!isMidi2)
-                console.UpdateRX2CenterFreq = true;
+                if (!isMidi2 && console.CATChangesCenterFreq) // MW0LGE changed to take into consideration the flag
+                    console.UpdateRX2CenterFreq = true;
 				console.VFOBFreq = double.Parse(s);
 				return "";
 			}
@@ -3448,18 +3436,7 @@ namespace Thetis
             if (s != "0" && s.Length > 0)
             {
                 qn = Convert.ToInt32(s);
-                // Make sure we have an instance of the form
-                if (console.CWXForm == null || console.CWXForm.IsDisposed)
-                {
-                    try
-                    {
-                        console.CWXForm = new CWX(console);
-                    }
-                    catch
-                    {
-                        return parser.Error1;
-                    }
-                }
+
                 if (qn > 0 || qn < 10)
                 {
                     console.CWXForm.StartQueue = qn;
@@ -3476,18 +3453,6 @@ namespace Thetis
 		public string ZZKS(string s)
 		{
 			int cws = 0;
-			// Make sure we have an instance of the form
-			if(console.CWXForm == null || console.CWXForm.IsDisposed)
-			{
-				try
-				{
-					console.CWXForm = new CWX(console);
-				}
-				catch
-				{
-					return parser.Error1;
-				}
-			}
 
 			if(s.Length == parser.nSet)
 			{
@@ -3509,20 +3474,6 @@ namespace Thetis
 		//Sends text to CWX for conversion to Morse
 		public string ZZKY(string s)
 		{
-			// Make sure we have an instance of the form
-			if(console.CWXForm == null || console.CWXForm.IsDisposed)
-			{
-				try
-				{
-					console.CWXForm = new CWX(console);
-				}
-				catch
-				{
-					return parser.Error1;
-				}
-			}
-
-
 			if(s.Length == parser.nSet)
 			{
 
@@ -3626,6 +3577,12 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 console.PanMainRX = n;
+                if (n == 50)
+                    console.TitleBarEncoderString = "RX1 Stereo Balance = MID";
+                else if (n < 50)
+                    console.TitleBarEncoderString = "RX1 Stereo Balance = left " + 2*(50-n) + "%";
+                else
+                    console.TitleBarEncoderString = "RX1 Stereo Balance = right " + 2 * (n - 50) + "%";
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -3651,6 +3608,7 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 console.RX1Gain = n;
+                console.TitleBarEncoderString = "sub RX Gain = " + n + "%";
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -3676,6 +3634,12 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 console.PanSubRX = n;
+                if (n == 50)
+                    console.TitleBarEncoderString = "sub-RX Stereo Balance = MID";
+                else if (n < 50)
+                    console.TitleBarEncoderString = "sub-RX Stereo Balance = left " + 2 * (50 - n) + "%";
+                else
+                    console.TitleBarEncoderString = "sub-RX Stereo Balance = right " + 2 * (n - 50) + "%";
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -3727,6 +3691,12 @@ namespace Thetis
                 if (s.Length == parser.nSet)
                 {
                     console.RX2Pan = n;
+                    if (n == 50)
+                        console.TitleBarEncoderString = "RX2 Stereo Balance = MID";
+                    else if (n < 50)
+                        console.TitleBarEncoderString = "RX2 Stereo Balance = left " + 2 * (50 - n) + "%";
+                    else
+                        console.TitleBarEncoderString = "RX2 Stereo Balance = right " + 2 * (n - 50) + "%";
                     return "";
                 }
                 else if (s.Length == parser.nGet)
@@ -3966,10 +3936,105 @@ namespace Thetis
                 return parser.Error1;
         }
 
+        //Andromeda front panel VFO encoder down
+        //write only
+        public string ZZZD(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                int Steps = Convert.ToInt32(s);
+                console.HandleFrontPanelVFOEncoderStep(-Steps);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Andromeda front panel VFO encoder up
+        //write only
+        public string ZZZU(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                int Steps = Convert.ToInt32(s);
+                console.HandleFrontPanelVFOEncoderStep(Steps);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Andromeda front panel h/w version
+        //write only
+        public string ZZZH(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                int Version = Convert.ToInt32(s);
+                console.HandleFrontPanelHWVersion(Version);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Andromeda front panel s/w version
+        //write only
+        public string ZZZS(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                int Version = Convert.ToInt32(s);
+                console.HandleFrontPanelSWVersion(Version);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Andromeda front panel encoder step
+        //write only
+        public string ZZZE(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                int Encoder = Convert.ToInt32(s);
+                int Step = Encoder % 10;                // bottom digit
+                Encoder = Encoder / 10;                 // top 2 digits
+                if ((Encoder >= 1) && (Encoder <= 20))
+                console.HandleFrontPanelEncoderStep(Encoder-1, Step);
+                else if ((Encoder >= 51) && (Encoder <= 70))
+                    console.HandleFrontPanelEncoderStep(Encoder - 51, -Step);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
+        //Andromeda front panel pushbutton press
+        //write only
+        public string ZZZP(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                int Button = Convert.ToInt32(s);
+                bool State = false;
+                bool LongPress = false;
+                if ((Button % 10) == 1)
+                    State = true;
+                else if ((Button % 10) == 2)
+                    LongPress = true;
+                Button = Button / 10;           // 1-99
+                console.HandleFrontPanelButtonPress(Button-1, State, LongPress);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
 
 
-		//Sets or reads the Mic gain control
-		public string ZZMG(string s)
+        //Sets or reads the Mic gain control
+        public string ZZMG(string s)
 		{
 			int n=0;
             string sign;
@@ -4896,6 +4961,7 @@ namespace Thetis
                 level = Math.Max(0, level);			// lower bound
                 level = Math.Min(1000, level);		    // upper bound
                 console.Pan = level;
+                console.TitleBarEncoderString = "Display pan =" + level/10 + "%";
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -5024,6 +5090,7 @@ namespace Thetis
                 level = Math.Max(10, level);			// lower bound
                 level = Math.Min(240, level);		    // upper bound
                 console.Zoom = level;
+                console.TitleBarEncoderString = "Display zoom =" + Convert.ToInt32(level/2.4) + "%";
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -7664,7 +7731,24 @@ namespace Thetis
             }
 
         }
-        
+        // Sets or reads the Rx1/RX2 radio button in collapsed mode
+        public string ZZYR(string s)
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                console.CATRX1RX2RadioButton = Convert.ToInt32(s);
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.CATRX1RX2RadioButton.ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
         public string ZZZB()
 		{
 			if(console.CATDisplayAvg == 1)

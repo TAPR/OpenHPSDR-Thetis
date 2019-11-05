@@ -1,0 +1,17 @@
+D:\CODE\Thetis-master\Project Files\Source\RawInput\bin\x86\Debug\RawInput.dll
+D:\CODE\Thetis-master\Project Files\Source\RawInput\bin\x86\Debug\RawInput.pdb
+D:\CODE\Thetis-master\Project Files\Source\RawInput\obj\x86\Debug\RawInput.csprojAssemblyReference.cache
+D:\CODE\Thetis-master\Project Files\Source\RawInput\obj\x86\Debug\RawInput.csproj.CoreCompileInputs.cache
+D:\CODE\Thetis-master\Project Files\Source\RawInput\obj\x86\Debug\RawInput.dll
+D:\CODE\Thetis-master\Project Files\Source\RawInput\obj\x86\Debug\RawInput.pdb
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.6.8\Project Files\Source\RawInput\bin\x86\Debug\RawInput.dll
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.6.8\Project Files\Source\RawInput\bin\x86\Debug\RawInput.pdb
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.6.8\Project Files\Source\RawInput\obj\x86\Debug\RawInput.csprojAssemblyReference.cache
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.6.8\Project Files\Source\RawInput\obj\x86\Debug\RawInput.csproj.CoreCompileInputs.cache
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.6.8\Project Files\Source\RawInput\obj\x86\Debug\RawInput.dll
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.6.8\Project Files\Source\RawInput\obj\x86\Debug\RawInput.pdb
+D:\OpenHPSDR\GitHub\W5WC\Thetis\Project Files\Source\RawInput\bin\x86\Debug\RawInput.dll
+D:\OpenHPSDR\GitHub\W5WC\Thetis\Project Files\Source\RawInput\bin\x86\Debug\RawInput.pdb
+D:\OpenHPSDR\GitHub\W5WC\Thetis\Project Files\Source\RawInput\obj\x86\Debug\RawInput.csprojAssemblyReference.cache
+D:\OpenHPSDR\GitHub\W5WC\Thetis\Project Files\Source\RawInput\obj\x86\Debug\RawInput.dll
+D:\OpenHPSDR\GitHub\W5WC\Thetis\Project Files\Source\RawInput\obj\x86\Debug\RawInput.pdb

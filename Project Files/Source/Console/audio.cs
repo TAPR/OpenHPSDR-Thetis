@@ -1405,9 +1405,9 @@ namespace Thetis
                     int block_size = block_size_vac2;
 
                     double in_latency = vac2_latency_manual ? latency3/1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
-                    double out_latency = vac2_latency_manual ? latency3/1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
+                    double out_latency = vac2_latency_out_manual ? vac2_latency_out/1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
                     double pa_in_latency = vac2_latency_pa_in_manual ? vac2_latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
-                    double pa_out_latency = vac2_latency_pa_in_manual ? vac2_latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
+                    double pa_out_latency = vac2_latency_pa_out_manual ? vac2_latency_pa_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
 
                     if (vac2_output_iq)
                     {
@@ -1564,7 +1564,9 @@ namespace Thetis
 
             for (int i = 0; i < frameCount; i++)
             {
-                if (Display.CurrentDisplayMode == DisplayMode.SCOPE)
+                if (Display.CurrentDisplayMode == DisplayMode.SCOPE || //MW0LGE added all other scope modes
+                    Display.CurrentDisplayMode == DisplayMode.PANASCOPE || 
+                    Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
                 {
                     if (buf[i] < scope_pixel_min)
                         scope_pixel_min = buf[i];
@@ -1601,17 +1603,28 @@ namespace Thetis
 
         private static int scope2_sample_index;
         private static int scope2_pixel_index;
+        private static float scope2_pixel_min = float.MaxValue;
         private static float scope2_pixel_max = float.MinValue;
         public static float[] scope2_max;
+        private static float[] scope2_min;
 
         public static float[] Scope2Max
         {
             set { scope2_max = value; }
         }
+        public static float[] Scope2Min {
+            set { scope2_min = value; }
+        }
 
         unsafe public static void DoScope2(float* buf, int frameCount)
         {
-             if (scope2_max == null || scope2_max.Length < scope_display_width)
+            if (scope2_min == null || scope2_min.Length < scope_display_width)
+            {
+                if (Display.Scope2Min == null || Display.Scope2Min.Length < scope_display_width)
+                    Display.Scope2Min = new float[scope_display_width];
+                scope2_min = Display.Scope2Min;
+            }
+            if (scope2_max == null || scope2_max.Length < scope_display_width)
             {
                 if (Display.Scope2Max == null || Display.Scope2Max.Length < scope_display_width)
                     Display.Scope2Max = new float[scope_display_width];
@@ -1620,19 +1633,62 @@ namespace Thetis
 
             for (int i = 0; i < frameCount; i++)
             {
-                scope2_pixel_max = buf[i];
+                if (Display.CurrentDisplayMode == DisplayMode.SCOPE || //MW0LGE added all other scope modes
+                    Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
+                    Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
+                {
+                    if (buf[i] < scope2_pixel_min)
+                        scope2_pixel_min = buf[i];
+                    if (buf[i] > scope2_pixel_max)
+                        scope2_pixel_max = buf[i];
+                }
+                else
+                {
+                    scope2_pixel_min = buf[i];
+                    scope2_pixel_max = buf[i];
+                }
+
+
                 scope2_sample_index++;
                 if (scope2_sample_index >= scope_samples_per_pixel)
                 {
                     scope2_sample_index = 0;
-                    scope2_max[scope2_pixel_index] = scope2_pixel_max;
+                    scope2_min[scope_pixel_index] = scope2_pixel_min;
+                    scope2_max[scope_pixel_index] = scope2_pixel_max;
+
+                    scope2_pixel_min = float.MaxValue;
                     scope2_pixel_max = float.MinValue;
+
                     scope2_pixel_index++;
                     if (scope2_pixel_index >= scope_display_width)
                         scope2_pixel_index = 0;
                 }
             }
         }
+        //unsafe public static void DoScope2(float* buf, int frameCount)
+        //{
+        //     if (scope2_max == null || scope2_max.Length < scope_display_width)
+        //    {
+        //        if (Display.Scope2Max == null || Display.Scope2Max.Length < scope_display_width)
+        //            Display.Scope2Max = new float[scope_display_width];
+        //        scope2_max = Display.Scope2Max;
+        //    }
+
+        //    for (int i = 0; i < frameCount; i++)
+        //    {
+        //        scope2_pixel_max = buf[i];
+        //        scope2_sample_index++;
+        //        if (scope2_sample_index >= scope_samples_per_pixel)
+        //        {
+        //            scope2_sample_index = 0;
+        //            scope2_max[scope2_pixel_index] = scope2_pixel_max;
+        //            scope2_pixel_max = float.MinValue;
+        //            scope2_pixel_index++;
+        //            if (scope2_pixel_index >= scope_display_width)
+        //                scope2_pixel_index = 0;
+        //        }
+        //    }
+        //}
 
         #endregion
 

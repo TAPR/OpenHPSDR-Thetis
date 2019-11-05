@@ -534,7 +534,7 @@ void rxscheck (int rints, double* tvec, double* coef, int* info)
 	for (i = 0; i < 4 * rints; i++)
 		if (isnan (coef[i])) *info |= 0x0001;
 	for (i = 0; i < rints; i++)
-		if ((coef[4 * i + 0] == 0.0) && (coef[4 * i + 1] = 0.0) && (coef[4 * i + 2] == 0.0) && (coef[4 * i + 3] == 0.0))
+		if ((coef[4 * i + 0] == 0.0) && (coef[4 * i + 1] == 0.0) && (coef[4 * i + 2] == 0.0) && (coef[4 * i + 3] == 0.0))
 			*info |= 0x0002;
 	for (i = 0; i < rints; i++)
 	{

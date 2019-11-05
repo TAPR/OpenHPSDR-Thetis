@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2018  Doug Wigley
+// Copyright (C) 2010-2019  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,6 +44,7 @@ namespace Thetis
     using System.IO;
     using System.IO.Ports;
     using Midi2Cat;
+    using RawInput_dll;
 
     public partial class Setup : Form
     {
@@ -64,6 +65,7 @@ namespace Thetis
             FlexProfilerInstalled = false;
             InitializeComponent();
             console = c;
+            Skin.SetConsole(c); //MW0LGE
             openFileDialog1.InitialDirectory = console.AppDataPath;
 
 #if(!DEBUG)
@@ -71,6 +73,8 @@ namespace Thetis
             comboGeneralProcessPriority.Items.Remove("Below Normal");
 #endif
             initializing = true;
+
+            labelSavingLoading.Visible = false;// MW0LGE gets shown/hidden by save/cancel/apply
 
             // GetMixerDevices();
             GetHosts();
@@ -84,7 +88,6 @@ namespace Thetis
 
             RefreshCOMPortLists();
 
-            RefreshSkinList();
             InitAudioTab();
             CurrentModel = Model.HERMES;
             comboGeneralProcessPriority.Text = "Normal";
@@ -181,11 +184,17 @@ namespace Thetis
             comboCAT4databits.Text = "8";
             comboCAT4stopbits.Text = "1";
 
+            if (comboAndromedaCATPort.Items.Count > 0) comboAndromedaCATPort.SelectedIndex = 0;
+
             // comboFRSRegion.Text = "United States";
 
             //fillMetisIPAddrCombo();  /* must happen before GetOptions is called */ 
 
+            RefreshSkinList(); //moved down the initialisation order, so we at least know if we are gdi or dx, only build the list
+
             GetOptions();
+
+            selectSkin();
 
             if (comboDSPPhoneRXBuf.SelectedIndex < 0 || comboDSPPhoneRXBuf.SelectedIndex >= comboDSPPhoneRXBuf.Items.Count)
                 comboDSPPhoneRXBuf.SelectedIndex = comboDSPPhoneRXBuf.Items.Count - 1;
@@ -242,6 +251,18 @@ namespace Thetis
                 }
             }
 
+            if (comboAndromedaCATPort.SelectedIndex < 0)
+            {
+                if (comboAndromedaCATPort.Items.Count > 0)
+                    comboAndromedaCATPort.SelectedIndex = 0;
+                else
+                {
+                    chkEnableAndromeda.Checked = false;
+                    chkEnableAndromeda.Enabled = false;
+                }
+            }
+
+
             cmboSigGenRXMode.Text = "Radio";
             cmboSigGenTXMode.Text = "Radio";
 
@@ -258,10 +279,13 @@ namespace Thetis
             initializing = false;
             udDisplayScopeTime_ValueChanged(this, EventArgs.Empty);
 
-            if (comboTXProfileName.SelectedIndex < 0 &&
-                comboTXProfileName.Items.Count > 0)
-                comboTXProfileName.SelectedIndex = 0;
-            current_profile = comboTXProfileName.Text;
+            //MW0LGE now done in GetOptions
+            //if (comboTXProfileName.SelectedIndex < 0 &&
+            //    comboTXProfileName.Items.Count > 0)
+            //    comboTXProfileName.SelectedIndex = 0;
+            ////current_profile = comboTXProfileName.Text;
+            //if (loadTXProfile(comboTXProfileName.Text)) current_profile = comboTXProfileName.Text;
+            //else current_profile = "";
 
             if (chkCATEnable.Checked)
             {
@@ -283,6 +307,11 @@ namespace Thetis
                 chkCAT4Enable_CheckedChanged(this, EventArgs.Empty);
             }
 
+            if (chkEnableAndromeda.Checked)
+            {
+                ChkEnableAndromeda_CheckedChanged(this, EventArgs.Empty);
+            }
+
             if (chkCATPTTEnabled.Checked)
             {
                 chkCATPTTEnabled_CheckedChanged(this, EventArgs.Empty);
@@ -298,9 +327,9 @@ namespace Thetis
             EventArgs e = EventArgs.Empty;
             //comboGeneralLPTAddr_LostFocus(this, e);
             //udDDSCorrection_ValueChanged(this, e);
-           // udDSPCWPitch_ValueChanged(this, e);
-           // udTXFilterHigh_ValueChanged(this, e);
-           // udTXFilterLow_ValueChanged(this, e);
+            // udDSPCWPitch_ValueChanged(this, e);
+            // udTXFilterHigh_ValueChanged(this, e);
+            // udTXFilterLow_ValueChanged(this, e);
             tbRX1FilterAlpha_Scroll(this, e);
             tbTXFilterAlpha_Scroll(this, e);
             tbBackgroundAlpha_Scroll(this, e);
@@ -319,6 +348,7 @@ namespace Thetis
             chkAlexPresent_CheckedChanged(this, e);
             chkApolloPresent_CheckedChanged(this, e);
             chkAlexAntCtrl_CheckedChanged(this, e);
+            TbDataFillAlpha_Scroll(this, e);
 
             for (int i = 0; i < 2; i++)
                 for (int j = 0; j < 2; j++)
@@ -358,7 +388,6 @@ namespace Thetis
                 AllowFreqBroadcast = true;
             else
                 AllowFreqBroadcast = false;
-
         }
 #if false
         protected override void Dispose(bool disposing)
@@ -384,6 +413,10 @@ namespace Thetis
         {
             chkGeneralRXOnly.Checked = console.RXOnly;
             chkGeneralDisablePTT.Checked = console.DisablePTT;
+            chkWheelTunesOutsideSpectral.Checked = console.WheelTunesOutsideSpectral; //MW0LGE
+            chkAlsoUseSpecificMouseWheel.Checked = console.AlsoUseSpecificMouseWheel; //MW0LGE
+            chkZoomShiftModifier.Checked = console.ZoomShiftModifier; //MW0LGE
+            chkExtended.Checked = console.Extended; //MW0LGE
         }
 
         private void InitAudioTab()
@@ -441,6 +474,27 @@ namespace Thetis
             udTXGridStep.Value = Display.TXSpectrumGridStep;
             udTXWFAmpMax.Value = Display.TXWFAmpMax;
             udTXWFAmpMin.Value = Display.TXWFAmpMin;
+
+            // MW0LGE in the case where we dont have a setting in the db, this fuction (initdisplaytab) is called, use console instead
+            SetMultiMeterMode(console.MMMeasureMode);
+
+            comboDisplayThreadPriority.SelectedIndex = (int)console.DisplayThreadPriority; // MW0LGE
+        }
+
+        public void SetMultiMeterMode(MultiMeterMeasureMode mode)
+        {
+            switch (mode)
+            {
+                case MultiMeterMeasureMode.SMeter:
+                    radSReading.Checked = true;
+                    break;
+                case MultiMeterMeasureMode.DBM:
+                    radDBM.Checked = true;
+                    break;
+                case MultiMeterMeasureMode.UV:
+                    radUV.Checked = true;
+                    break;
+            }
         }
 
         private void InitDSPTab()
@@ -504,6 +558,13 @@ namespace Thetis
             clrbtnZeroLine.Color = Display.GridZeroColor;
             clrbtnText.Color = Display.GridTextColor;
             clrbtnDataLine.Color = Display.DataLineColor;
+            clrbtnDataFill.Color = Display.DataFillColor;  //MW0LGE
+            chkDisablePicDisplayBackgroundImage.Checked = console.DisableBackgroundImage;  //MW0LGE
+            chkShowRXFilterOnWaterfall.Checked = Display.ShowRXFilterOnWaterfall; //MW0LGE
+            chkShowTXFilterOnWaterfall.Checked = Display.ShowTXFilterOnWaterfall; //MW0LGE
+            chkShowRXZeroLineOnWaterfall.Checked = Display.ShowRXZeroLineOnWaterfall; //MW0LGE
+            chkShowTXZeroLineOnWaterfall.Checked = Display.ShowTXZeroLineOnWaterfall; //MW0LGE
+            chkShowTXFilterOnRXWaterfall.Checked = Display.ShowTXFilterOnRXWaterfall; //MW0LGE
             clrbtnFilter.Color = Display.DisplayFilterColor;
             clrbtnMeterLeft.Color = console.MeterLeftColor;
             clrbtnMeterRight.Color = console.MeterRightColor;
@@ -522,6 +583,30 @@ namespace Thetis
         // ======================================================
         // Misc Routines
         // ======================================================
+
+        public void PerformDelayedInitalistion()
+        {
+            EventArgs e = EventArgs.Empty;
+
+            chkDisable6mLNAonTX_CheckedChanged(this, e);
+            chkDisable6mLNAonRX_CheckedChanged(this, e);
+            chkDisableHPFonTX_CheckedChanged(this, e);
+
+            chkLPFBypass_CheckedChanged(this, e);
+
+            chkAlex1_5BPHPF_CheckedChanged(this, e);
+            chkAlex6_5BPHPF_CheckedChanged(this, e);
+            chkAlex9_5BPHPF_CheckedChanged(this, e);
+            chkAlex13BPHPF_CheckedChanged(this, e);
+            chkAlex20BPHPF_CheckedChanged(this, e);
+            chkAlex6BPHPF_CheckedChanged(this, e);
+            chkAlex21_5BPHPF_CheckedChanged(this, e);
+            chkAlex26_5BPHPF_CheckedChanged(this, e);
+            chkAlex29_5BPHPF_CheckedChanged(this, e);
+            chkAlex213BPHPF_CheckedChanged(this, e);
+            chkAlex220BPHPF_CheckedChanged(this, e);
+            chkAlex26BPHPF_CheckedChanged(this, e);
+        }
 
         private void RefreshCOMPortLists()
         {
@@ -557,11 +642,14 @@ namespace Thetis
             comboCATPTTPort.Items.Add("None");
             comboCATPTTPort.Items.Add("CAT");
             comboCATPTTPort.Items.AddRange(com_ports);
+
+            comboAndromedaCATPort.Items.Clear();
+            comboAndromedaCATPort.Items.Add("None");
+            comboAndromedaCATPort.Items.AddRange(com_ports);
         }
 
         private void RefreshSkinList()
         {
-            string skin = comboAppSkin.Text;
             comboAppSkin.Items.Clear();
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                     "\\OpenHPSDR\\Skins";
@@ -592,6 +680,10 @@ namespace Thetis
                     MessageBoxIcon.Error);
                 return;
             }
+        }
+        private void selectSkin()
+        {
+            string skin = comboAppSkin.Text;
 
             if (skin == "")
             {
@@ -605,10 +697,10 @@ namespace Thetis
                     comboAppSkin.Text = "OpenHPSDR-Gray"; //"OpenHPSDR-Gray";
             }
             else if (comboAppSkin.Items.Contains(skin))
-                     comboAppSkin.Text = skin;
+                comboAppSkin.Text = skin;
             else comboAppSkin.Text = "IK3VIG Special";
         }
-
+    
         private void GetHosts()
         {
             // comboAudioDriver1.Items.Clear();
@@ -661,6 +753,23 @@ namespace Thetis
                 comboAudioOutput3.Items.Add(p);
         }
 
+        private void controlList2(Control c, ref Dictionary<string, Control> a)
+        {
+            if (c.Controls.Count > 0)
+            {
+                foreach (Control c2 in c.Controls)
+                    controlList2(c2, ref a);
+            }
+
+            if (c.GetType() == typeof(CheckBoxTS) || c.GetType() == typeof(CheckBox) ||
+                c.GetType() == typeof(ComboBoxTS) || c.GetType() == typeof(ComboBox) ||
+                c.GetType() == typeof(NumericUpDownTS) || c.GetType() == typeof(NumericUpDown) ||
+                c.GetType() == typeof(RadioButtonTS) || c.GetType() == typeof(RadioButton) ||
+                c.GetType() == typeof(TextBoxTS) || c.GetType() == typeof(TextBox) ||
+                c.GetType() == typeof(TrackBarTS) || c.GetType() == typeof(TrackBar) ||
+                c.GetType() == typeof(ColorButton))
+                a.Add(c.Name, c);
+        }
         private void ControlList(Control c, ref ArrayList a)
         {
             if (c.Controls.Count > 0)
@@ -681,8 +790,29 @@ namespace Thetis
 
         private static bool saving = false;
 
+        ////MW0LGE
+        //public bool CompleteAnyExistingSave()
+        //{
+        //    if (!saving) return true;
+        //    // we must be in middle of save already
+        //    // perhaps started by a thread
+        //    // we should hang here until it is done
+        //    // should we time out? wait for 15 secs;
+
+        //    int n=0;
+        //    while(saving && n<14)
+        //    {
+        //        Debug.Print("SETUP: WAITING FOR EXISTING SAVE TO COMPLETE");
+        //        Thread.Sleep(1000);
+        //        n++;
+        //    }
+
+        //    return !saving;
+        //}
+
         public void SaveOptions()
         {
+            //Debug.Print("START - SaveOptions");
             // Automatically saves all control settings to the database in the tab
             // pages on this form of the following types: CheckBoxTS, ComboBoxTS,
             // NumericUpDownTS, RadioButtonTS, TextBox, and TrackBar (slider)
@@ -727,19 +857,137 @@ namespace Thetis
                     Debug.WriteLine(c.Name + " needs to be converted to a Thread Safe control.");
 #endif
             }
-
             DB.SaveVars("Options", ref a);		// save the values to the DB
             saving = false;
+
+            //Debug.Print("END - SaveOptions");
+        }
+
+        private void getOptions2()
+        {
+            //MW0LGE moved to dictionary, as control names are unique, and does away with old loop through every control to find the one we want
+            Dictionary<string, Control> controls = new Dictionary<string, Control>();
+
+            controlList2(this, ref controls);
+
+            ArrayList a = DB.GetVars("Options");
+            a.Sort();
+
+            if (a.Count < controls.Count)		// some control values are not in the database
+            {								// so set all of them to the defaults
+                InitGeneralTab();
+                InitAudioTab();
+                InitDSPTab();
+                InitDisplayTab();
+                InitKeyboardTab();
+                InitAppearanceTab();
+            }
+
+            foreach(string s in a)
+            {
+                string[] vals = s.Split('/');
+                if (vals.Length > 2)
+                {
+                    for (int i = 2; i < vals.Length; i++)
+                        vals[1] += "/" + vals[i];
+                }
+
+                string name = vals[0];
+                string val = vals[1];
+                
+                if (controls.ContainsKey(name))
+                {
+                    Control cc = controls[name];
+
+                    if (cc.GetType() == typeof(CheckBoxTS))          // the control is a CheckBoxTS
+                    {
+                        CheckBoxTS c = (CheckBoxTS)cc;
+                        c.Checked = bool.Parse(val);
+                    }
+                    else if (cc.GetType() == typeof(ComboBoxTS))     // the control is a ComboBoxTS
+                    {
+                        ComboBoxTS c = (ComboBoxTS)cc;
+                        if (c.Items.Count > 0 && c.Items[0].GetType() == typeof(string))
+                        {
+                            c.Text = val;
+                        }
+                        else
+                        {
+                            foreach (object o in c.Items)
+                            {
+                                if (o.ToString() == val)
+                                    c.Text = val;   // restore value
+                            }
+                        }
+                    }
+                    else if (cc.GetType() == typeof(NumericUpDownTS))    // the control is a NumericUpDownTS
+                    {
+                        NumericUpDownTS c = (NumericUpDownTS)cc;
+                        decimal num = decimal.Parse(val);
+
+                        if (num > c.Maximum) num = c.Maximum;       // check endpoints
+                        else if (num < c.Minimum) num = c.Minimum;
+                        c.Value = num;			// restore value
+                    }
+                    else if (cc.GetType() == typeof(RadioButtonTS))  // the control is a RadioButtonTS
+                    {
+                        RadioButtonTS c = (RadioButtonTS)cc;
+                        c.Checked = bool.Parse(val);	// restore value
+                    }
+                    else if (cc.GetType() == typeof(TextBoxTS))      // the control is a TextBox
+                    {
+                        TextBoxTS c = (TextBoxTS)cc;
+                        c.Text = val;	// restore value
+                    }
+                    else if (cc.GetType() == typeof(TrackBarTS))     // the control is a TrackBar (slider)
+                    {
+                        TrackBarTS c = (TrackBarTS)cc;
+                        c.Value = Int32.Parse(val);
+                    }
+                    else if (cc.GetType() == typeof(ColorButton))
+                    {
+                        string[] colors = val.Split('.');
+                        if (colors.Length == 4)
+                        {
+                            int R, G, B, A;
+                            R = Int32.Parse(colors[0]);
+                            G = Int32.Parse(colors[1]);
+                            B = Int32.Parse(colors[2]);
+                            A = Int32.Parse(colors[3]);
+
+                            ColorButton c = (ColorButton)cc;
+                            c.Color = Color.FromArgb(A, R, G, B);
+                            c.Automatic = "";
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("Control not found: " + name);
+                }
+            }
+
+            //MW0LGE We have overwritten controls with data that might not match the current profile
+            //load in current profile
+            if (comboTXProfileName.SelectedIndex < 0 &&
+                comboTXProfileName.Items.Count > 0)
+                comboTXProfileName.SelectedIndex = 0;
+
+            if (loadTXProfile(comboTXProfileName.Text)) current_profile = comboTXProfileName.Text;
+            else current_profile = "";
         }
 
         public void GetOptions()
         {
+            getOptions2(); //MW0LGE
+            return;
+
+            /*
             // Automatically restores all controls from the database in the
             // tab pages on this form of the following types: CheckBoxTS, ComboBoxTS,
             // NumericUpDownTS, RadioButtonTS, TextBox, and TrackBar (slider)
 
             // get list of live controls
-            //ArrayList temp = new ArrayList();
             ArrayList temp = new ArrayList();		// list of all first level controls
             ControlList(this, ref temp);
 
@@ -754,7 +1002,6 @@ namespace Thetis
             //ArrayList controls = new ArrayList();	// list of controls to restore
             foreach (Control c in temp)
             {
-
                 if (c.GetType() == typeof(CheckBoxTS))			// the control is a CheckBoxTS
                     checkbox_list.Add(c);
                 else if (c.GetType() == typeof(ComboBoxTS))		// the control is a ComboBoxTS
@@ -938,6 +1185,16 @@ namespace Thetis
 
             foreach (ColorButton c in colorbutton_list)
                 c.Automatic = "";
+
+            //MW0LGE We have overwritten controls with data that might not match the current profile
+            //load in current profile
+            if (comboTXProfileName.SelectedIndex < 0 &&
+                comboTXProfileName.Items.Count > 0)
+                comboTXProfileName.SelectedIndex = 0;
+
+            if (loadTXProfile(comboTXProfileName.Text)) current_profile = comboTXProfileName.Text;
+            else current_profile = "";
+            */
         }
 
         private string KeyToString(Keys k)
@@ -1106,6 +1363,10 @@ namespace Thetis
             radOrionMicTip_CheckedChanged(this, e);
             radOrionBiasOn_CheckedChanged(this, e);
             chkNetworkWDT_CheckedChanged(this, e);
+            //NAVigation-general
+            ChkAlsoUseSpecificMouseWheel_CheckedChanged(this, e);
+            chkClickTuneFilter_CheckedChanged(this, e);
+            chkShowCTHLine_CheckedChanged(this, e);
 
             // Audio Tab
             comboAudioBuffer2_SelectedIndexChanged(this, e);
@@ -1177,6 +1438,8 @@ namespace Thetis
             udDisplayWaterfallAvgTime_ValueChanged(this, e);
             udRX2DisplayWaterfallAvgTime_ValueChanged(this, e);
             comboTXLabelAlign_SelectedIndexChanged(this, e);
+            ChkWaterfallUseRX1SpectrumMinMax_CheckedChanged(this, e); //MW0LGE
+            ChkWaterfallUseRX2SpectrumMinMax_CheckedChanged(this, e); //MW0LGE
             // DSP Tab
             udLMSANF_ValueChanged(this, e);
             udLMSNR_ValueChanged(this, e);
@@ -1273,6 +1536,9 @@ namespace Thetis
             udTXAMCarrierLevel_ValueChanged(this, e);
             chkLimitExtAmpOnOverload_CheckedChanged(this, e);
             chkBPF2Gnd_CheckedChanged(this, e);
+            chkSaveTXProfileOnExit_CheckedChanged(this, e); //MW0LGE
+            ForceTXProfileUpdate();//MW0LGE
+
             // Keyboard Tab
             comboKBTuneUp1_SelectedIndexChanged(this, e);
             comboKBTuneUp2_SelectedIndexChanged(this, e);
@@ -1316,6 +1582,7 @@ namespace Thetis
             clrbtnGridTXFilter_Changed(this, e);
             clrbtnText_Changed(this, e);
             clrbtnDataLine_Changed(this, e);
+            clrbtnDataFill_Changed(this, e);//MW0LGE
             udDisplayLineWidth_ValueChanged(this, e);
             udTXLineWidth_ValueChanged(this, e);
             clrbtnTXDataLine_Changed(this, e);
@@ -1354,10 +1621,16 @@ namespace Thetis
             udDSPNBLead_ValueChanged(this, e);
             udDSPNBLag_ValueChanged(this, e);
             comboMeterType_SelectedIndexChanged(this, e);
+
+            comboAppSkin_SelectedIndexChanged(this, e); // MW0LGE
+            chkDisablePicDisplayBackgroundImage_CheckedChanged(this, e);//MW0LGE
+
             // RX2 tab
             chkRX2AutoMuteTX_CheckedChanged(this, e);
             udMoxDelay_ValueChanged(this, e);
             udCWKeyUpDelay_ValueChanged(this, e);
+
+            // PS 
             console.psform.ForcePS();
 
             // APF
@@ -1390,6 +1663,8 @@ namespace Thetis
             udDSPRX2DollyF1_ValueChanged(this, e);
             // CAT
             comboFocusMasterMode_SelectedIndexChanged(this, e);
+            chkRecenterOnZZFx_CheckedChanged(this, e); //MW0LGE
+
             // SNB
             udDSPSNBThresh1_ValueChanged(this, e);
             udDSPSNBThresh2_ValueChanged(this, e);
@@ -1610,7 +1885,7 @@ namespace Thetis
             dr["VAC1_IQ_Correct"] = (bool)chkAudioCorrectIQ.Checked;
             dr["VAC1_PTT_OverRide"] = (bool)chkVACAllowBypass.Checked;
             dr["VAC1_Combine_Input_Channels"] = (bool)chkVACCombine.Checked;
-            dr["VAC1_Latency_On"] = true;
+            dr["VAC1_Latency_On"] = (bool)chkAudioLatencyManual2.Checked; // MW0LGE true;
             dr["VAC1_Latency_Duration"] = (int)udAudioLatency2.Value;
 
             dr["VAC2_On"] = (bool)chkVAC2Enable.Checked;
@@ -1623,7 +1898,7 @@ namespace Thetis
             dr["VAC2_IQ_Output"] = (bool)chkVAC2DirectIQ.Checked;
             dr["VAC2_IQ_Correct"] = (bool)chkVAC2DirectIQCal.Checked;
             dr["VAC2_Combine_Input_Channels"] = (bool)chkVAC2Combine.Checked;
-            dr["VAC2_Latency_On"] = true;
+            dr["VAC2_Latency_On"] = (bool)chkVAC2LatencyManual.Checked; // MW0LGE true;
             dr["VAC2_Latency_Duration"] = (int)udVAC2Latency.Value;
 
             dr["Phone_RX_DSP_Buffer"] = (string)comboDSPPhoneRXBuf.Text;
@@ -1750,6 +2025,22 @@ namespace Thetis
                     case Band.B10M: txtDisplayGridBandLevel.Text = "10 meters"; break;
                     case Band.B6M: txtDisplayGridBandLevel.Text = "6 meters"; break;
                     case Band.WWV: txtDisplayGridBandLevel.Text = "WWV"; break;
+                    // MW0LGE all this block added
+                    case Band.BLMF: txtDisplayGridBandLevel.Text = "LW/MW bands"; break; // ke9ns add
+                    case Band.B120M: txtDisplayGridBandLevel.Text = "120 meters"; break;
+                    case Band.B90M: txtDisplayGridBandLevel.Text = "90 meters"; break;
+                    case Band.B61M: txtDisplayGridBandLevel.Text = "60 meters"; break;
+                    case Band.B49M: txtDisplayGridBandLevel.Text = "49 meters"; break;
+                    case Band.B41M: txtDisplayGridBandLevel.Text = "41 meters"; break;
+                    case Band.B31M: txtDisplayGridBandLevel.Text = "31 meters"; break;
+                    case Band.B25M: txtDisplayGridBandLevel.Text = "25 meters"; break;
+                    case Band.B22M: txtDisplayGridBandLevel.Text = "22 meters"; break;
+                    case Band.B19M: txtDisplayGridBandLevel.Text = "19 meters"; break;
+                    case Band.B16M: txtDisplayGridBandLevel.Text = "16 meters"; break;
+                    case Band.B14M: txtDisplayGridBandLevel.Text = "14 meters"; break;
+                    case Band.B13M: txtDisplayGridBandLevel.Text = "13 meters"; break;
+                    case Band.B11M: txtDisplayGridBandLevel.Text = "11 meters"; break;
+                    // - end lge
                     case Band.GEN: txtDisplayGridBandLevel.Text = "General"; break;
                     default: txtDisplayGridBandLevel.Text = "2M & VHF+"; break;
                 }
@@ -2100,6 +2391,19 @@ namespace Thetis
             set
             {
                 if (chkCAT4Enable != null) chkCAT4Enable.Checked = value;
+            }
+        }
+
+        public bool AndromedaCATEnabled
+        {
+            get
+            {
+                if (chkEnableAndromeda != null) return chkEnableAndromeda.Checked;
+                else return false;
+            }
+            set
+            {
+                if (chkEnableAndromeda != null) chkEnableAndromeda.Checked = value;
             }
         }
 
@@ -5588,6 +5892,15 @@ namespace Thetis
 
 
 
+        // added G8NJJ for Andromeda
+        public string AndromedaVersionNumber
+        {
+            get { return lblAndromedaVersion.Text; }
+            set { lblAndromedaVersion.Text = value; }
+        }
+
+
+
         #endregion
 
         #region General Tab Event Handlers
@@ -7152,7 +7465,7 @@ namespace Thetis
         private void comboGeneralProcessPriority_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             Process p = Process.GetCurrentProcess();
-
+            
             if (comboGeneralProcessPriority.Text == "Real Time" &&
                 comboGeneralProcessPriority.Focused)
             {
@@ -7520,7 +7833,7 @@ namespace Thetis
         {
             if (comboAudioSampleRate1.SelectedIndex < 0) return;
 
-            int old_rate = console.SampleRate1;
+            int old_rate = console.SampleRateRX1;
             int new_rate = Int32.Parse(comboAudioSampleRate1.Text);
             bool was_enabled = true;
             if (new_rate != old_rate || initializing)
@@ -7549,7 +7862,7 @@ namespace Thetis
                 // in the property SampleRate1:
                 //    (1) the new samplerate will be sent to the DDC
                 //    (2) SetXcmInrate() is called by Audio.SampleRate1 which is called by console.SampleRate1
-                console.SampleRate1 = new_rate;
+                console.SampleRateRX1 = new_rate;
 
                 // set the corresponding new buffer size
                 int new_size = cmaster.GetBuffSize(new_rate);
@@ -8191,9 +8504,10 @@ namespace Thetis
         private void udDisplayFPS_ValueChanged(object sender, System.EventArgs e)
         {
             console.DisplayFPS = (int)udDisplayFPS.Value;
-            console.specRX.GetSpecRX(0).FrameRate = (int)udDisplayFPS.Value;
-            console.specRX.GetSpecRX(1).FrameRate = (int)udDisplayFPS.Value;
-            console.specRX.GetSpecRX(cmaster.inid(1, 0)).FrameRate = (int)udDisplayFPS.Value;
+            //MW0LGE movedto console
+            //console.specRX.GetSpecRX(0).FrameRate = (int)udDisplayFPS.Value;
+            //console.specRX.GetSpecRX(1).FrameRate = (int)udDisplayFPS.Value;
+            //console.specRX.GetSpecRX(cmaster.inid(1, 0)).FrameRate = (int)udDisplayFPS.Value;
 
             udDisplayAVGTime_ValueChanged(this, EventArgs.Empty);
         }
@@ -8268,6 +8582,7 @@ namespace Thetis
             // if (udDisplayGridMin.Value >= udDisplayGridMax.Value)
             //   udDisplayGridMin.Value = udDisplayGridMax.Value - 10;
             // Display.SpectrumGridMin = (int)udDisplayGridMin.Value;
+
             UpdateDisplayGridBandInfo();
             switch (console.RX1Band)
             {
@@ -8328,7 +8643,7 @@ namespace Thetis
                     Display.SpectrumGridMin = (int)console.DisplayGridMinXVTR;
                     break;
             }
-
+            console.UpdateDisplayGridLevelMinValues(); //MW0LGE
         }
 
         private void udDisplayGridStep_ValueChanged(object sender, System.EventArgs e)
@@ -8341,6 +8656,7 @@ namespace Thetis
             // if (udRX2DisplayGridMax.Value <= udRX2DisplayGridMin.Value)
             //    udRX2DisplayGridMax.Value = udRX2DisplayGridMin.Value + 10;
             // Display.RX2SpectrumGridMax = (int)udRX2DisplayGridMax.Value;
+
             UpdateDisplayGridBandInfo();
             switch (console.RX2Band)
             {
@@ -8401,6 +8717,8 @@ namespace Thetis
                     Display.RX2SpectrumGridMax = (int)console.RX2DisplayGridMaxXVTR;
                     break;
             }
+
+            console.UpdateDisplayGridLevelMaxValues(); //MW0LGE
         }
 
         private void udRX2DisplayGridMin_ValueChanged(object sender, System.EventArgs e)
@@ -8513,7 +8831,7 @@ namespace Thetis
             console.UpdateTXSpectrumDisplayVars();
             double display_time = 1 / (double)udDisplayFPS.Value;
             int buffersToAvg = (int)((float)udDisplayAVGTime.Value * 0.001 / display_time);
-            Display.DisplayAvgBlocks = (int)Math.Max(2, buffersToAvg);
+            // Display.DisplayAvgBlocks = (int)Math.Max(2, buffersToAvg);  //MW0LGE not needed
         }
 
         private void udRX2DisplayAVGTime_ValueChanged(object sender, System.EventArgs e)
@@ -9521,39 +9839,10 @@ namespace Thetis
             console.TXTunePower = chkTXTunePower.Checked;
         }
 
-        private string current_profile = "";
-        private void comboTXProfileName_SelectedIndexChanged(object sender, System.EventArgs e)
+        private bool loadTXProfile(String sProfileName)
         {
-            if (comboTXProfileName.SelectedIndex < 0 || initializing)
-                return;
-
-            if (chkAutoSaveTXProfile.Checked)
-            {
-                SaveTXProfileData();
-            }
-            else
-            {
-                if (CheckTXProfileChanged() && comboTXProfileName.Focused)
-                {
-                    DialogResult result = MessageBox.Show("The current profile has changed.  " +
-                        "Would you like to save the current profile?",
-                        "Save Current Profile?",
-                        MessageBoxButtons.YesNoCancel,
-                        MessageBoxIcon.Question);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        btnTXProfileSave_Click(this, EventArgs.Empty);
-                        //return;
-                    }
-                    else if (result == DialogResult.Cancel)
-                        return;
-                }
-            }
-
-            console.TXProfile = comboTXProfileName.Text;
             DataRow[] rows = DB.ds.Tables["TxProfile"].Select(
-                "'" + comboTXProfileName.Text + "' = Name");
+                "'" + sProfileName + "' = Name");
 
             if (rows.Length != 1)
             {
@@ -9561,8 +9850,10 @@ namespace Thetis
                     "Database error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                return;
+                return false;
             }
+
+            console.TXProfile = sProfileName;
 
             DataRow dr = rows[0];
             int[] eq = null;
@@ -9582,6 +9873,9 @@ namespace Thetis
 
             udTXFilterLow.Value = Math.Min(Math.Max((int)dr["FilterLow"], udTXFilterLow.Minimum), udTXFilterLow.Maximum);
             udTXFilterHigh.Value = Math.Min(Math.Max((int)dr["FilterHigh"], udTXFilterHigh.Minimum), udTXFilterHigh.Maximum);
+
+            console.TXFilterLow = (int)udTXFilterLow.Value;
+            console.TXFilterHigh = (int)udTXFilterHigh.Value;
 
             console.DX = (bool)dr["DXOn"];
             console.DXLevel = (int)dr["DXLevel"];
@@ -9607,7 +9901,8 @@ namespace Thetis
             udDSPALCHangTime.Value = (int)dr["ALC_Hang"];
             tbDSPALCHangThreshold.Value = (int)dr["ALC_HangThreshold"];
 
-            console.PWR = (int)dr["Power"];
+            //console.PWR = (int)dr["Power"];  // MW0LGE power is stored per band, leaving this in will prevent the power per band from being recalled
+                                                // leaving in save incase we want to use this at some point
 
             chkVOXEnable.Checked = (bool)dr["VOX_On"];
             chkDEXPEnable.Checked = (bool)dr["Dexp_On"];
@@ -9624,8 +9919,8 @@ namespace Thetis
             chkDEXPLookAheadEnable.Checked = (bool)dr["Dexp_LookAhead_On"];
             udDEXPLookAhead.Value = (int)dr["Dexp_LookAhead"];
 
-            udTXTunePower.Value = (int)dr["Tune_Power"];
-            comboTXTUNMeter.Text = (string)dr["Tune_Meter_Type"];
+            //udTXTunePower.Value = (int)dr["Tune_Power"];  //MW0LGE not applied here anymore, leave in save incase we want to use it
+            //comboTXTUNMeter.Text = (string)dr["Tune_Meter_Type"];  //MW0LGE
 
             // chkTXLimitSlew.Checked = (bool)dr["TX_Limit_Slew"];
 
@@ -9713,7 +10008,46 @@ namespace Thetis
 
             CFCCOMPEQ = cfceq;
 
-            current_profile = comboTXProfileName.Text;
+            return true;
+        }
+
+        public void ForceTXProfileUpdate()
+        {
+            comboTXProfileName_SelectedIndexChanged(this, EventArgs.Empty);
+        }
+
+        private string current_profile = "";
+        private void comboTXProfileName_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            if (comboTXProfileName.SelectedIndex < 0 || initializing)
+                return;
+
+            if (chkAutoSaveTXProfile.Checked)
+            {
+                SaveTXProfileData();
+            }
+            else
+            {
+                if (CheckTXProfileChanged() && comboTXProfileName.Focused)
+                {
+                    DialogResult result = MessageBox.Show("The current profile has changed.  " +
+                        "Would you like to save the current profile?",
+                        "Save Current Profile?",
+                        MessageBoxButtons.YesNoCancel,
+                        MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        btnTXProfileSave_Click(this, EventArgs.Empty);
+                        //return;
+                    }
+                    else if (result == DialogResult.Cancel)
+                        return;
+                }
+            }
+
+            if (loadTXProfile(comboTXProfileName.Text)) current_profile = comboTXProfileName.Text;
+            else current_profile = "";
         }
 
         private void btnTXProfileSave_Click(object sender, System.EventArgs e)
@@ -9969,30 +10303,37 @@ namespace Thetis
         private void chkShowTopControls_CheckedChanged(object sender, EventArgs e)
         {
             console.ShowTopControls = chkShowTopControls.Checked;
-            console.topControlsToolStripMenuItem.Checked = chkShowTopControls.Checked;
-            console.bandToolStripMenuItem.Visible = !chkShowBandControls.Checked;
-
-            if (console.CollapsedDisplay)
-                console.CollapseDisplay();
+            // G8NJJ: all logic moved to the console properties code
         }
 
         private void chkShowBandControls_CheckedChanged(object sender, EventArgs e)
         {
             console.ShowBandControls = chkShowBandControls.Checked;
-            console.bandControlsToolStripMenuItem.Checked = chkShowBandControls.Checked;
-            console.modeToolStripMenuItem.Visible = !chkShowModeControls.Checked;
-
-            if (console.CollapsedDisplay)
-                console.CollapseDisplay();
+            // G8NJJ: all logic moved to the console properties code
         }
 
         private void chkModeControls_CheckedChanged(object sender, EventArgs e)
         {
             console.ShowModeControls = chkShowModeControls.Checked;
-            console.modeControlsToolStripMenuItem.Checked = chkShowModeControls.Checked;
+            // G8NJJ: all logic moved to the console properties code
+        }
 
-            if (console.CollapsedDisplay)
-                console.CollapseDisplay();
+        //
+        // G8NJJ: setup control to select an Andromeda top bar when display is collapsed
+        //
+        private void chkShowAndromedaTop_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ShowAndromedaTopControls = chkShowAndromedaTop.Checked;
+            // G8NJJ: all logic moved to the console properties code
+        }
+
+        //
+        // G8NJJ: setup control to select an Andromeda top bar when display is collapsed
+        //
+        private void chkShowAndromedaBar_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ShowAndromedaButtonBar = chkShowAndromedaBar.Checked;
+            // G8NJJ: all logic moved to the console properties code
         }
 
 
@@ -10751,6 +11092,12 @@ namespace Thetis
             console.CAT4DataBits = int.Parse((string)comboCAT4databits.SelectedItem);
             console.CAT4StopBits = SDRSerialPort.StringToStopBits((string)comboCAT4stopbits.SelectedItem);
             console.CAT4Enabled = chkCAT4Enable.Checked;
+
+            console.AndromedaCATEnabled = chkEnableAndromeda.Checked;
+            if (comboAndromedaCATPort.Text.StartsWith("COM"))
+                console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            console.AndromedaCATEnabled = chkEnableAndromeda.Checked;
+
         }
 
         // called in error cases to set the dialiog vars from 
@@ -10813,6 +11160,16 @@ namespace Thetis
             // port = "COM" + console.CATPTTBitBangPort.ToString();
             // if (comboCATPTTPort.Items.Contains(port))
             //   comboCATPTTPort.Text = port;
+        }
+
+        public void copyAndromedaCATPropsToDialogVars()
+        {
+            chkEnableAndromeda.Checked = console.AndromedaCATEnabled;
+            string port = "COM" + console.AndromedaCATPort.ToString();
+            if (comboAndromedaCATPort.Items.Contains(port))
+                comboAndromedaCATPort.Text = port;
+
+            // wjt fixme -- need to hand baudrate, parity, data, stop -- see initCATandPTTprops
         }
 
         private void chkCATEnable_CheckedChanged(object sender, System.EventArgs e)
@@ -11076,6 +11433,82 @@ namespace Thetis
             }
         }
 
+		private void ChkEnableAndromeda_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (comboAndromedaCATPort.Text == "" || !comboAndromedaCATPort.Text.StartsWith("COM"))
+            {
+                if (chkEnableAndromeda.Focused)
+                {
+                    if (chkEnableAndromeda.Focused && chkEnableAndromeda.Checked)
+                    {
+                        MessageBox.Show("The CAT port \"" + comboAndromedaCATPort.Text + "\" is not a valid port.\n" +
+                            "Please select another port.");
+                        chkEnableAndromeda.Checked = false;
+                    }
+                }
+                return;
+            }
+
+            // make sure we're not using the same comm port as the bit banger
+            if (chkEnableAndromeda.Checked && console.PTTBitBangEnabled &&
+                (comboAndromedaCATPort.Text == comboCATPTTPort.Text))
+            {
+                MessageBox.Show("Andromeda CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                chkEnableAndromeda.Checked = false;
+            }
+
+            // if enabled, disable changing of serial port
+            bool enable_sub_fields = !chkEnableAndromeda.Checked;
+            comboAndromedaCATPort.Enabled = enable_sub_fields;
+
+            enableCAT_HardwareFields(enable_sub_fields);
+
+            if (chkEnableAndromeda.Checked)
+            {
+                try
+                {
+                    console.AndromedaCATEnabled = true;
+                }
+                catch (Exception ex)
+                {
+                    console.AndromedaCATEnabled = false;
+                    chkEnableAndromeda.Checked = false;
+                    MessageBox.Show("Could not initialize Andromeda control.  Exception was:\n\n " + ex.Message +
+                        "\n\nAndromeda control has been disabled.", "Error Initializing Andromeda control",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                if (comboKeyerConnSecondary.Text == "CAT" && chkCATEnable.Focused)
+                {
+                    MessageBox.Show("The Secondary Keyer option has been changed to None since CAT has been disabled.",
+                        "CAT Disabled",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    comboKeyerConnSecondary.Text = "None";
+                }
+
+                if (comboCATPTTPort.Text == "CAT" && chkCATEnable.Focused)
+                {
+                    MessageBox.Show("The PTT Control Port option has been changed to None since CAT has been disabled.",
+                        "CAT Disabled",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    chkCATPTT_RTS.Checked = false;
+                    chkCATPTT_DTR.Checked = false;
+                    comboCATPTTPort.Text = "None";
+                }
+
+                console.AndromedaCATEnabled = false;
+            }
+
+        }
+
         private void enableCAT_HardwareFields(bool enable)
         {
             comboCATbaud.Enabled = enable;
@@ -11285,6 +11718,24 @@ namespace Thetis
 
             if (comboCAT4Port.Text.StartsWith("COM"))
                 console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+        }
+
+        private void ComboAndromedaCATPort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboAndromedaCATPort.Text == "None")
+            {
+                if (chkEnableAndromeda.Checked)
+                {
+                    if (comboAndromedaCATPort.Focused)
+                        chkEnableAndromeda.Checked = false;
+                }
+
+                chkEnableAndromeda.Enabled = false;
+            }
+            else chkEnableAndromeda.Enabled = true;
+
+            if (comboAndromedaCATPort.Text.StartsWith("COM"))
+                console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
         }
 
         private void comboCATPTTPort_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -11773,50 +12224,136 @@ namespace Thetis
         // Display Tab Event Handlers
         // ======================================================
 
-        private void btnOK_Click(object sender, System.EventArgs e)
+        private void setButtonState(bool bSaving, bool bLoading)
         {
-            console.SetFocusMaster(true);
-            if (saving)
+            if (m_bIgnoreButtonState) return; // not used after this is true, which is set in console_closing
+
+            // prevent users from cancel when saving etc
+            // give some feedback that save or load is occuring
+            
+            bool bEnabled = !(bSaving || bLoading);
+
+            // disable/enable anything that can save/load settings
+            btnOK.Enabled = bEnabled;
+            btnApply.Enabled = bEnabled;
+            btnCancel.Enabled = bEnabled;
+            btnResetDB.Enabled = bEnabled;
+            btnImportDB.Enabled = bEnabled;
+            comboFRSRegion.Enabled = bEnabled;
+            comboTXProfileName.Enabled = bEnabled;
+            btnTXProfileSave.Enabled = bEnabled;
+            btnTXProfileDelete.Enabled = bEnabled;
+            btnTXProfileDefImport.Enabled = bEnabled;
+
+            if (bLoading)
             {
-                this.Hide();
+                labelSavingLoading.Text = "LOADING";
+                labelSavingLoading.Visible = true;
+            }
+            else if (bSaving)
+            {
+                labelSavingLoading.Text = "SAVING";
+                labelSavingLoading.Visible = true;
             }
             else
             {
-                Thread t = new Thread(new ThreadStart(SaveOptions));
-                t.Name = "Save Options Thread";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Lowest;
-                t.Start();
-                this.Hide();
+                labelSavingLoading.Text = "";
+                labelSavingLoading.Visible = false;
             }
+            labelSavingLoading.Refresh();
+        }
+
+        private Thread m_objSaveLoadThread = null;
+        public Thread SaveLoadThread {
+            get { return m_objSaveLoadThread; }
+            set {                 
+            }
+        }
+        private bool m_bIgnoreButtonState = false;
+        public bool IgnoreButtonState {
+            get { return m_bIgnoreButtonState; }
+            set { m_bIgnoreButtonState = value;  }
+        }
+        public void WaitForSaveLoad()
+        {
+            if (m_objSaveLoadThread != null && m_objSaveLoadThread.IsAlive) m_objSaveLoadThread.Join();
+        }
+
+        private void btnOK_Click(object sender, System.EventArgs e)
+        {
+            setButtonState(true, false);
+
+            console.SetFocusMaster(true);
+            //if (saving)
+            //{
+            //    this.Hide();
+            //}
+            //else
+            //{
+            WaitForSaveLoad();
+            m_objSaveLoadThread = null;
+
+            m_objSaveLoadThread = new Thread(new ThreadStart(PreSaveOptions));
+            m_objSaveLoadThread.Name = "Save Options Thread";
+            m_objSaveLoadThread.IsBackground = true;
+            m_objSaveLoadThread.Priority = ThreadPriority.Lowest;
+            m_objSaveLoadThread.Start();
+            this.Hide();
+            //}
 
         }
 
         private void btnCancel_Click(object sender, System.EventArgs e)
         {
+            setButtonState(false, true);
+
             console.SetFocusMaster(true);
-            Thread t = new Thread(new ThreadStart(GetOptions));
-            t.Name = "Save Options Thread";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Lowest;
-            t.Start();
+
+            WaitForSaveLoad();
+            m_objSaveLoadThread = null;
+
+            m_objSaveLoadThread = new Thread(new ThreadStart(PreGetOptions));
+            m_objSaveLoadThread.Name = "Get Options Thread";
+            m_objSaveLoadThread.IsBackground = true;
+            m_objSaveLoadThread.Priority = ThreadPriority.Lowest;
+            m_objSaveLoadThread.Start();
             this.Hide();
         }
 
         private void btnApply_Click(object sender, System.EventArgs e)
         {
-            Thread t = new Thread(new ThreadStart(ApplyOptions));
-            t.Name = "Save Options Thread";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Normal;
-            t.Start();
+            setButtonState(true, false);
+
+            WaitForSaveLoad();
+            m_objSaveLoadThread = null;
+
+            m_objSaveLoadThread = new Thread(new ThreadStart(ApplyOptions));
+            m_objSaveLoadThread.Name = "Apply Options Thread";
+            m_objSaveLoadThread.IsBackground = true;
+            m_objSaveLoadThread.Priority = ThreadPriority.Normal;
+            m_objSaveLoadThread.Start();
         }
 
+        private void PreGetOptions()
+        {            
+            GetOptions();
+
+            setButtonState(false, false);
+        }
+        private void PreSaveOptions()
+        {
+            //if (saving) return;
+            SaveOptions();
+
+            setButtonState(false, false);
+        }
         private void ApplyOptions()
         {
-            if (saving) return;
+            //if (saving) return;
             SaveOptions();
             DB.Update();
+            
+            setButtonState(false, false);
         }
 
         private void udGeneralLPTDelay_ValueChanged(object sender, System.EventArgs e)
@@ -12707,10 +13244,10 @@ namespace Thetis
 
         private void udDisplayWaterfallAvgTime_ValueChanged(object sender, System.EventArgs e)
         {
-            double buffer_time = (double)console.BlockSize1 / (double)console.SampleRate1;
-            int buffersToAvg = (int)((float)udDisplayWaterfallAvgTime.Value * 0.001 / buffer_time);
-            buffersToAvg = Math.Max(2, buffersToAvg);
-            Display.WaterfallAvgBlocks = buffersToAvg;
+            //double buffer_time = (double)console.BlockSize1 / (double)console.SampleRateRX1;
+            //int buffersToAvg = (int)((float)udDisplayWaterfallAvgTime.Value * 0.001 / buffer_time);
+            //buffersToAvg = Math.Max(2, buffersToAvg);
+            //Display.WaterfallAvgBlocks = buffersToAvg;
         }
 
         private void udDisplayWaterfallUpdatePeriod_ValueChanged(object sender, System.EventArgs e)
@@ -12720,10 +13257,10 @@ namespace Thetis
 
         private void udRX2DisplayWaterfallAvgTime_ValueChanged(object sender, System.EventArgs e)
         {
-            double buffer_time = (double)console.BlockSize2 / (double)console.SampleRateRX2;
-            int buffersToAvg = (int)((float)udRX2DisplayWaterfallAvgTime.Value * 0.001 / buffer_time);
-            buffersToAvg = Math.Max(2, buffersToAvg);
-            Display.RX2WaterfallAvgBlocks = buffersToAvg;
+            //double buffer_time = (double)console.BlockSize2 / (double)console.SampleRateRX2;
+            //int buffersToAvg = (int)((float)udRX2DisplayWaterfallAvgTime.Value * 0.001 / buffer_time);
+            //buffersToAvg = Math.Max(2, buffersToAvg);
+            //Display.RX2WaterfallAvgBlocks = buffersToAvg;
         }
 
         private void udRX2DisplayWaterfallUpdatePeriod_ValueChanged(object sender, System.EventArgs e)
@@ -12903,10 +13440,10 @@ namespace Thetis
                         break;
                     case MeterTXMode.REVERSE_POWER:
                         comboTXTUNMeter.Text = "Ref Pwr";
+                        break;                        
+                   case MeterTXMode.SWR_POWER: // MW0LGE re-added 
+                        comboTXTUNMeter.Text = "Fwd SWR";
                         break;
-                   // case MeterTXMode.SWR_POWER:
-                   //     comboTXTUNMeter.Text = "Fwd SWR";
-                   //     break;
                     case MeterTXMode.SWR:
                         comboTXTUNMeter.Text = "SWR";
                         break;
@@ -12927,9 +13464,9 @@ namespace Thetis
                 case "Ref Pwr":
                     console.TuneTXMeterMode = MeterTXMode.REVERSE_POWER;
                     break;
-              //  case "Fwd SWR" :
-              //      console.TuneTXMeterMode = MeterTXMode.SWR_POWER;
-              //      break;
+                case "Fwd SWR": //MW0LGE re-added
+                    console.TuneTXMeterMode = MeterTXMode.SWR_POWER;
+                    break;
                 case "SWR":
                     console.TuneTXMeterMode = MeterTXMode.SWR;
                     break;
@@ -13242,6 +13779,8 @@ namespace Thetis
 
         private void comboAppSkin_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;  // prevents call on getoptions, need to force call after options loaded MW0LGE 
+
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                     "\\OpenHPSDR\\Skins\\";
 
@@ -14927,27 +15466,27 @@ namespace Thetis
             {
                 case "Australia":
                     region = FRSRegion.Australia;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Europe":
                     region = FRSRegion.Europe;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "India":
                     region = FRSRegion.India;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Italy":
                     region = FRSRegion.Italy_Plus;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Spain":
                     region = FRSRegion.Spain;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Japan":
                     region = FRSRegion.Japan;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "United Kingdom":
                     region = FRSRegion.UK;
@@ -14956,72 +15495,91 @@ namespace Thetis
                     break;
                 case "United States":
                     region = FRSRegion.US;
+                    //console.Extended = false;
                     // Display.Init();
                     break;
                 case "Norway":
                     region = FRSRegion.Norway;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Denmark":
                     region = FRSRegion.Denmark;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Latvia":
                     region = FRSRegion.Latvia;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Slovakia":
                     region = FRSRegion.Slovakia;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Bulgaria":
                     region = FRSRegion.Bulgaria;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Greece":
                     region = FRSRegion.Greece;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Hungary":
                     region = FRSRegion.Hungary;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Netherlands":
                     region = FRSRegion.Netherlands;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "France":
                     region = FRSRegion.France;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Israel":
                     region = FRSRegion.Israel;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Russia":
                     region = FRSRegion.Russia;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
                 case "Sweden":
                     region = FRSRegion.Sweden;
-                    console.Extended = false;
+                    //console.Extended = false;
                     break;
-                case "Extended":
-                    console.Extended = true;
+                case "Region1":
+                    region = FRSRegion.Region1;
+                    break;
+                case "Region2":
+                    region = FRSRegion.Region2;
+                    break;
+                case "Region3":
+                    region = FRSRegion.Region3;
+                    break;
+                case "Germany":
+                    region = FRSRegion.Germany;
                     break;
             }
             if (console.CurrentRegion != region)
                 console.CurrentRegion = region;
 
-            if (!console.initializing) DB.UpdateRegion(console.CurrentRegion);
-            if (console.CurrentRegion == FRSRegion.UK)
+            if (!console.initializing)
             {
-                console.band_60m_register = 11;
-                console.Init60mChannels();
+                setButtonState(true, false);  // MW0LGE this causes an update of the whole DB, so disable buttons while happening
+                DB.UpdateRegion(console.CurrentRegion);
+                setButtonState(false, false);
             }
-            if (console.CurrentRegion == FRSRegion.US)
+            //if (console.CurrentRegion == FRSRegion.UK)
+            //{
+            //    console.band_60m_register = 11;
+            //    console.Init60mChannels();
+            //}
+            //if (console.CurrentRegion == FRSRegion.US)
+            //{
+            //    console.band_60m_register = 5;
+            //    console.Init60mChannels();
+            //}
+            if (console.CurrentRegion == FRSRegion.UK || console.CurrentRegion == FRSRegion.US)
             {
-                console.band_60m_register = 5;
                 console.Init60mChannels();
             }
         }
@@ -15124,11 +15682,6 @@ namespace Thetis
             {
                 Audio.SourceScale = Math.Pow(10.0, (double)udTwoToneLevel.Value / 20.0);
             }
-        }
-
-        private void chkSMeter_CheckedChanged(object sender, EventArgs e)
-        {
-            console.SMeter = chkSMeter.Checked;
         }
 
         private void clrbtnGridFine_Changed(object sender, EventArgs e)
@@ -16090,19 +16643,36 @@ namespace Thetis
 
         private void chkDisable6mLNAonTX_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Disable6mLNAonTX = chkDisable6mLNAonTX.Checked;
         }
 
         private void chkDisable6mLNAonRX_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Disable6mLNAonRX = chkDisable6mLNAonRX.Checked;
         }
 
         private void chkDisableHPFonTX_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.DisableHPFonTX = chkDisableHPFonTX.Checked;
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();
+        }
+
+        public bool AlexHPFBypass
+        {
+            get
+            {
+                if (chkAlexHPFBypass != null) return chkAlexHPFBypass.Checked;
+                else return false;
+
+            }
+            set
+            {
+                if (chkAlexHPFBypass != null) chkAlexHPFBypass.Checked = value;
+            }
         }
 
         private void chkAlexHPFBypass_CheckedChanged(object sender, EventArgs e)
@@ -16110,6 +16680,20 @@ namespace Thetis
             console.AlexHPFBypass = chkAlexHPFBypass.Checked;
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();
+        }
+
+        public bool Alex2HPFBypass
+        {
+            get
+            {
+                if (chkAlex2HPFBypass != null) return chkAlex2HPFBypass.Checked;
+                else return false;
+
+            }
+            set
+            {
+                if (chkAlex2HPFBypass != null) chkAlex2HPFBypass.Checked = value;
+            }
         }
 
         private void chkAlex2HPFBypass_CheckedChanged(object sender, EventArgs e)
@@ -16199,6 +16783,10 @@ namespace Thetis
             console.SWRProtection = chkSWRProtection.Checked;
         }
 
+        public bool ATTOnTXChecked {
+            get { return chkATTOnTX.Checked; }
+            set { }
+        }
         private void chkATTOnTX_CheckedChanged(object sender, EventArgs e)
         {
             console.ATTOnTX = chkATTOnTX.Checked;
@@ -16206,61 +16794,73 @@ namespace Thetis
 
         private void chkAlex1_5BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex1_5BPHPFBypass = chkAlex1_5BPHPF.Checked;
         }
 
         private void chkAlex6_5BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex6_5BPHPFBypass = chkAlex6_5BPHPF.Checked;
         }
 
         private void chkAlex9_5BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex9_5BPHPFBypass = chkAlex9_5BPHPF.Checked;
         }
 
         private void chkAlex13BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex13BPHPFBypass = chkAlex13BPHPF.Checked;
         }
 
         private void chkAlex20BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex20BPHPFBypass = chkAlex20BPHPF.Checked;
         }
 
         private void chkAlex6BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex6BPHPFBypass = chkAlex6BPHPF.Checked;
         }
 
         private void chkAlex21_5BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex21_5BPHPFBypass = chkAlex21_5BPHPF.Checked;
         }
 
         private void chkAlex26_5BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex26_5BPHPFBypass = chkAlex26_5BPHPF.Checked;
         }
 
         private void chkAlex29_5BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex29_5BPHPFBypass = chkAlex29_5BPHPF.Checked;
         }
 
         private void chkAlex213BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex213BPHPFBypass = chkAlex213BPHPF.Checked;
         }
 
         private void chkAlex220BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex220BPHPFBypass = chkAlex220BPHPF.Checked;
         }
 
         private void chkAlex26BPHPF_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.Alex26BPHPFBypass = chkAlex26BPHPF.Checked;
         }
 
@@ -17795,6 +18395,14 @@ namespace Thetis
             comboCATPTTPort.Items.Add("CAT");
             comboCATPTTPort.Items.AddRange(com_ports);
         }
+        private void ComboAndromedaCATPort_Click(object sender, EventArgs e)
+        {
+            string[] com_ports = SerialPort.GetPortNames();
+            comboAndromedaCATPort.Items.Clear();
+            comboAndromedaCATPort.Items.Add("None");
+            comboAndromedaCATPort.Items.AddRange(com_ports);
+        }
+
 
         private void chkDSPCESSB_CheckedChanged(object sender, EventArgs e)
         {
@@ -18174,6 +18782,14 @@ namespace Thetis
             }
         }
 
+        public bool NotchAdminBusy
+        {
+            // returns true if in middle of edit or add MW0LGE
+            get{
+                return AddActive | EditActive;
+            }
+        }
+
         // store the values from an Add or Edit operation
         private void btnMNFEnter_Click(object sender, EventArgs e)
         {
@@ -18208,6 +18824,8 @@ namespace Thetis
             chkMNFActive.Enabled = false;
             btnMNFAdd.Enabled = true;
             btnMNFEdit.Enabled = true;
+
+            SaveNotchesToDatabase(); // aligns notch db with what has actually happened MW0LGE
         }
 
         // cancel the Add or Edit operation
@@ -18308,12 +18926,15 @@ namespace Thetis
                 udMNFWidth.Value = 0;
                 chkMNFActive.Checked = true;
                 btnMNFDelete.Enabled = false;
+                btnMNFEdit.Enabled = false; //MW0LGE
             }
             // set the Maximum for the 'Notch' control
             if (numnotches > 0)
                 udMNFNotch.Maximum = numnotches - 1;
             else
                 udMNFNotch.Maximum = 0;
+
+            SaveNotchesToDatabase(); // aligns notch db with what has actually happened MW0LGE
         }
 
         private void udMNFNotch_ValueChanged(object sender, EventArgs e)
@@ -18373,23 +18994,9 @@ namespace Thetis
             }
         }
 
-        unsafe public void RestoreNotchesFromDatabase()
+        unsafe public void UpdateNotchDisplay()
         {
-            // HERE:  Read the number of notches, 'numnotches' from the database
-            for (int i = 0; i < MNotchDB.List.Count; i++)
-            {
-                double fcenter = 0.0, fwidth = 0.0;
-                bool active = false;
-
-                // HERE:  READ VALUES OF fcenter, fwidth, and active FOR NOTCH[i] FROM THE DATABASE
-                fcenter = MNotchDB.List[i].FCenter;
-                fwidth = MNotchDB.List[i].FWidth;
-                active = MNotchDB.List[i].Active;
-
-                WDSP.RXANBPAddNotch(WDSP.id(0, 0), i, fcenter, fwidth, active);
-                WDSP.RXANBPAddNotch(WDSP.id(0, 1), i, fcenter, fwidth, active);
-                WDSP.RXANBPAddNotch(WDSP.id(2, 0), i, fcenter, fwidth, active);
-            }
+            // sets max limits, and selects first notch if one exists
             numnotches = MNotchDB.List.Count;
             udMNFNotch.Value = 0;
             udMNFNotch.Maximum = 0;
@@ -18407,7 +19014,38 @@ namespace Thetis
                     chkMNFActive.Checked = false;
 
                 btnMNFDelete.Enabled = true;
+                btnMNFEdit.Enabled = true; //MW0LGE
             }
+            else
+            {
+                // MW0LGE added because udMNFFreq could be set to some value even though no MNotchDB entries
+                // this caused by generic form save, saving out the control value
+                udMNFFreq.Value = 0;
+                udMNFWidth.Value = 0;
+                btnMNFDelete.Enabled = false;
+                btnMNFEdit.Enabled = false;
+            }
+        }
+
+        unsafe public void RestoreNotchesFromDatabase()
+        {
+            // HERE:  Read the number of notches, 'numnotches' from the database
+            for (int i = 0; i < MNotchDB.List.Count; i++)
+            {
+                double fcenter = 0.0, fwidth = 0.0;
+                bool active = false;
+
+                // HERE:  READ VALUES OF fcenter, fwidth, and active FOR NOTCH[i] FROM THE DATABASE
+                fcenter = MNotchDB.List[i].FCenter;
+                fwidth = MNotchDB.List[i].FWidth;
+                active = MNotchDB.List[i].Active;
+
+                WDSP.RXANBPAddNotch(WDSP.id(0, 0), i, fcenter, fwidth, active);
+                WDSP.RXANBPAddNotch(WDSP.id(0, 1), i, fcenter, fwidth, active);
+                WDSP.RXANBPAddNotch(WDSP.id(2, 0), i, fcenter, fwidth, active);
+            }
+
+            UpdateNotchDisplay(); // sets max limits, and selects first notch if one exists MW0LGE
         }
 
         #endregion
@@ -18969,6 +19607,7 @@ namespace Thetis
 
         private void chkLPFBypass_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.LPFBypass = chkLPFBypass.Checked;
         }
 
@@ -19014,6 +19653,13 @@ namespace Thetis
 
         private void timer_LED_Mirror_Tick(object sender, EventArgs e)
         {
+            if (!lblLED01.Visible) //MW0LGE who cares if we cant see it?
+            {
+                timer_LED_Mirror.Interval = 500; // slow down
+                return;
+            }
+            timer_LED_Mirror.Interval = 10;
+
             int LED_data = 0;
             LED_data = cmaster.getLEDs();
             Color[] LEDColor = new Color[10];
@@ -19153,6 +19799,298 @@ namespace Thetis
         {
             Audio.AntiVOXSourceVAC = chkAntiVoxSource.Checked;
         }
+
+        private void chkITSync_CheckedChanged(object sender, EventArgs e)
+        {
+            console.RITXITSync = chkITSync.Checked;
+        }
+
+        ///
+        ///MW0LGE
+        ///
+        private void chkDisablePicDisplayBackgroundImage_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return; // ignore until we force call this after init MW0LGE
+            console.DisableBackgroundImage = chkDisablePicDisplayBackgroundImage.Checked;
+        }
+
+        private void clrbtnDataFill_Changed(object sender, EventArgs e)
+        {
+            Display.DataFillColor = Color.FromArgb(tbDataFillAlpha.Value, clrbtnDataFill.Color);
+        }
+
+        private void TbDataFillAlpha_Scroll(object sender, EventArgs e)
+        {
+            toolTip1.SetToolTip(tbDataFillAlpha, tbDataFillAlpha.Value.ToString());
+            clrbtnDataFill_Changed(this, EventArgs.Empty);
+        }
+
+        private void chkWheelTunesOutsideSpectral_CheckedChanged(object sender, EventArgs e)
+        {
+            console.WheelTunesOutsideSpectral = chkWheelTunesOutsideSpectral.Checked;
+        }
+        
+        private void ComboHIDMouseWheel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(!(comboHIDMouseWheel.SelectedItem is HIDComboItem)) return;
+
+            HIDComboItem objItem = comboHIDMouseWheel.SelectedItem as HIDComboItem;
+
+            if (objItem != null)
+            {
+                console.SpecificMouseDeviceID = objItem.DeviceID;
+                console.SpecificMouseDeviceHandle = objItem.DeviceHandle;
+                lblDeviceHID.Text = objItem.DeviceID;
+                txtDeviceHID_hidden.Text = objItem.DeviceID; // this control will be saved out
+            }
+        }
+
+        #region RawInput WIP
+        ///--- RAWINPUT WIP
+        private void ChkGlobalListenForMouseWheel_CheckedChanged(object sender, EventArgs e)
+        {
+            console.GlobalListenForMouseWheel = chkGlobalListenForMouseWheel.Checked;
+        }
+
+        private void ChkWheelOnlyAdjustsVFO_CheckedChanged(object sender, EventArgs e)
+        {
+            console.WheelOnlyAdjustsVFO = chkWheelOnlyAdjustsVFO.Checked;
+        }
+
+        private void setupHIDControls(bool bEnabled)
+        {
+            comboHIDMouseWheel.Enabled = bEnabled;
+            lblDeviceHID.Enabled = bEnabled;
+            chkGlobalListenForMouseWheel.Enabled = bEnabled;
+            chkWheelOnlyAdjustsVFO.Enabled = bEnabled;
+            lblWheelActive.Enabled = bEnabled;
+        }
+
+        private void ChkAlsoUseSpecificMouseWheel_CheckedChanged(object sender, EventArgs e)
+        {
+            console.AlsoUseSpecificMouseWheel = chkAlsoUseSpecificMouseWheel.Checked;
+
+            setupHIDControls(console.AlsoUseSpecificMouseWheel);
+        }
+
+        public void UpdateRawInputMouseDevices(Dictionary<IntPtr, MouseEvent> mouseDevices)
+        {            
+            comboHIDMouseWheel.Items.Clear();
+
+            foreach (KeyValuePair<IntPtr, MouseEvent> entry in mouseDevices)
+            {
+                MouseEvent me = entry.Value;
+
+                HIDComboItem objItem = new HIDComboItem(me.Name, me.DeviceHandle, me.DeviceName);
+                int nIndex = comboHIDMouseWheel.Items.Add(objItem);
+
+                if(me.DeviceName == txtDeviceHID_hidden.Text) comboHIDMouseWheel.SelectedIndex = nIndex;
+            }
+        }
+
+        public void WheelChangeNotify()
+        {
+            lblWheelActive.BackColor = Color.Green;
+            timer_RawInputMouseWheel.Stop();
+            timer_RawInputMouseWheel.Start();
+        }
+
+        private class HIDComboItem : object
+        {
+            protected String m_sName;
+            protected IntPtr m_nValue;
+            protected String m_sID;
+
+            public HIDComboItem(String sName, IntPtr nValue, String sID)
+            {
+                m_sName = sName;
+                m_nValue = nValue;
+                m_sID = sID;
+            }
+            public override string ToString()
+            {
+                return m_sName;
+            }
+
+            public IntPtr DeviceHandle
+            {
+                get {
+                    return m_nValue;
+                }
+                private set {
+
+                }
+            }
+            public String DeviceID {
+                get {
+                    return m_sID;
+                }
+                private set {
+
+                }
+            }
+        }
+
+        private void Timer_RawInputMouseWheel_Tick(object sender, EventArgs e)
+        {
+            timer_RawInputMouseWheel.Stop();
+            lblWheelActive.BackColor = Color.Red;
+        }
+
+        private void TxtDeviceHID_hidden_TextChanged(object sender, EventArgs e)
+        {
+            //if (me.DeviceName == txtDeviceHID_hidden.Text) comboHIDMouseWheel.SelectedIndex = nIndex;
+            foreach (HIDComboItem item in comboHIDMouseWheel.Items)
+            {
+                if (item.DeviceID == txtDeviceHID_hidden.Text)
+                {
+                    comboHIDMouseWheel.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+        #endregion
+
+        private void ChkShowRXFilterOnWaterfall_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowRXFilterOnWaterfall = chkShowRXFilterOnWaterfall.Checked;
+        }
+
+        private void ChkShowTXFilterOnWaterfall_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowTXFilterOnWaterfall = chkShowTXFilterOnWaterfall.Checked;
+        }
+
+        private void ChkShowRXZeroLineOnWaterfall_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowRXZeroLineOnWaterfall = chkShowRXZeroLineOnWaterfall.Checked;
+        }
+
+        private void ChkShowTXZeroLineOnWaterfall_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowTXZeroLineOnWaterfall = chkShowTXZeroLineOnWaterfall.Checked;
+        }
+
+        private void ChkShowTXFilterOnRXWaterfall_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowTXFilterOnRXWaterfall = chkShowTXFilterOnRXWaterfall.Checked;
+        }
+
+        private void ChkZoomShiftModifier_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ZoomShiftModifier = chkZoomShiftModifier.Checked;
+            chkReverseShiftZoomModifier.Enabled = chkZoomShiftModifier.Checked;
+        }
+
+        private void ChkReverseShiftZoomModifier_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ZoomShiftModifierReverse = chkReverseShiftZoomModifier.Checked;
+        }
+
+        private void ChkExtended_CheckedChanged(object sender, EventArgs e)
+        {
+            console.Extended = chkExtended.Checked;
+        }
+
+        private void ChkWaterfallUseRX1SpectrumMinMax_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkWaterfallUseRX1SpectrumMinMax.Checked)
+            {
+                chkRX1WaterfallAGC.Enabled = false;
+                udDisplayWaterfallLowLevel.Enabled = false;
+                udDisplayWaterfallHighLevel.Enabled = false;
+            }
+            else
+            {
+                chkRX1WaterfallAGC.Enabled = true;
+                udDisplayWaterfallLowLevel.Enabled = !chkRX1WaterfallAGC.Checked;
+                udDisplayWaterfallHighLevel.Enabled = true;
+            }
+
+            console.WaterfallUseRX1SpectrumMinMax = chkWaterfallUseRX1SpectrumMinMax.Checked;
+        }
+
+        private void ChkWaterfallUseRX2SpectrumMinMax_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkWaterfallUseRX2SpectrumMinMax.Checked)
+            {
+                chkRX2WaterfallAGC.Enabled = false;
+                udRX2DisplayWaterfallLowLevel.Enabled = false;
+                udRX2DisplayWaterfallHighLevel.Enabled = false;
+            }
+            else
+            {
+                chkRX2WaterfallAGC.Enabled = true;
+                udRX2DisplayWaterfallLowLevel.Enabled = !chkRX2WaterfallAGC.Checked;
+                udRX2DisplayWaterfallHighLevel.Enabled = true;
+            }
+
+            console.WaterfallUseRX2SpectrumMinMax = chkWaterfallUseRX2SpectrumMinMax.Checked;
+        }
+
+        private void chkRecenterOnZZFx_CheckedChanged(object sender, EventArgs e)
+        {
+            console.CATChangesCenterFreq = chkRecenterOnZZFx.Checked;
+        }
+
+        private void udDisplayPhasePtSize_ValueChanged(object sender, EventArgs e)
+        {
+            Display.PhasePointSize = (int)udDisplayPhasePtSize.Value;
+        }
+
+        private void chkShowFPS_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowFPS = chkShowFPS.Checked;
+        }
+
+        private void chkSmallModeFilteronVFOs_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ShowSmallModeFilterOnVFOs = chkSmallModeFilteronVFOs.Checked;
+        }
+
+        private void comboDisplayThreadPriority_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Below Normal
+            //Normal
+            //Above Normal
+            //High
+
+            //ThreadPriority.Lowest         0
+            //ThreadPriority.BelowNormal    1
+            //ThreadPriority.Normal         2
+            //ThreadPriority.AboveNormal    3
+            //ThreadPriority.Highest        4
+
+            if (comboDisplayThreadPriority.SelectedIndex < 0) return; // ignore 0 or not selected
+
+            console.DisplayThreadPriority = (ThreadPriority)comboDisplayThreadPriority.SelectedIndex;
+        }
+
+        private void btnShowSeqLog_Click(object sender, EventArgs e)
+        {
+            console.ShowSEQLog();
+        }
+
+        private void radSReading_CheckedChanged(object sender, EventArgs e)
+        {
+            console.MMMeasureMode = MultiMeterMeasureMode.SMeter;
+        }
+
+        private void radDBM_CheckedChanged(object sender, EventArgs e)
+        {
+            console.MMMeasureMode = MultiMeterMeasureMode.DBM;
+        }
+
+        private void radUV_CheckedChanged(object sender, EventArgs e)
+        {
+            console.MMMeasureMode = MultiMeterMeasureMode.UV;
+        }
+
+        private void chkAntiAlias_CheckedChanged(object sender, EventArgs e)
+        {
+            console.AntiAlias = chkAntiAlias.Checked;
+        }
+        //--
     }
 
     #region PADeviceInfo Helper Class

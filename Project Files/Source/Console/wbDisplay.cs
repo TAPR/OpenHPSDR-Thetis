@@ -81,12 +81,12 @@ namespace Thetis
         private Point[] points = null;
 
         //waterfall
-        private int waterfall_counter;
-        private Bitmap waterfall_bmp = null;					// saved waterfall picture for display
+        //private int waterfall_counter;
+        //private Bitmap waterfall_bmp = null;					// saved waterfall picture for display
         //  private Bitmap waterfall_bmp2 = null;
         // private Bitmap panadapter_bmp;
 
-        private float[] waterfall_data;
+        //private float[] waterfall_data;
 
         private Task draw_display_task;					// draws the main display 
         private Bitmap wbDisplay_buffer;
@@ -2175,1087 +2175,1087 @@ namespace Thetis
             set { waterfall_update_period = value; }
         }
 
-        private readonly HiPerfTimer timer_waterfall = new HiPerfTimer();
-        //  private readonly HiPerfTimer timer_waterfall2 = new HiPerfTimer();
-        private float waterfallPreviousMinValue = 0.0f;
-        unsafe private bool DrawWaterfall(Graphics g, int rx)
-        {
-            int W = waterfallRect.Width;
-            int H = waterfallRect.Height;
-
-            // if (grid_control) DrawWaterfallGrid(ref g, rx, bottom);
-
-            if (waterfall_data == null || waterfall_data.Length < W)
-            {
-                waterfall_data = new float[W];		// array of points to display
-            }
-            float slope = 0.0F;						// samples to process per pixel
-            int num_samples = 0;					// number of samples to process
-            int start_sample_index = 0;				// index to begin looking at samples
-            int Low = 0;
-            int High = 0;
-            float local_max_y = float.MinValue;
-            bool local_mox = false;
-            //if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
-            //if (rx == 2 && tx_on_vfob && mox) local_mox = true;
-            float local_min_y_w3sz = float.MaxValue;  //added by w3sz
-            float display_min_w3sz = float.MaxValue; //added by w3sz
-            float display_max_w3sz = float.MinValue; //added by w3sz
-            float min_y_w3sz = float.MaxValue;  //w3sz
-            int R = 0, G = 0, B = 0;
-            int grid_max = 0;
-            int grid_min = 0;
-            bool displayduplex = false;
-            float low_threshold = 0.0f;
-            float high_threshold = 0.0f;
-            float waterfall_minimum = 0.0f;
-            float rx1_waterfall_minimum = 0.0f;
-            //  float rx2_waterfall_minimum = 0.0f;
-            ColorSheme cSheme = ColorSheme.enhanced;
-            Color low_color = Color.Black;
-            Color mid_color = Color.Red;
-            Color high_color = Color.Blue;
-
-            if ((CurrentDisplayMode == DisplayMode.PANAFALL && (nreceivers <= 2 && display_duplex)) ||
-                (CurrentDisplayMode == DisplayMode.PANAFALL && nreceivers > 2) ||
-               (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
-
-            cSheme = color_sheme;
-            low_color = waterfall_low_color;
-            mid_color = waterfall_mid_color;
-            high_color = waterfall_high_color;
-            Low = low_freq;
-            High = high_freq;
-            grid_max = spectrum_grid_max;
-            grid_min = spectrum_grid_min;
-            high_threshold = waterfall_high_threshold;
-
-            if (waterfall_agc)
-            {
-                waterfall_minimum = rx1_waterfall_minimum;
-                low_threshold = waterfallPreviousMinValue;
-            }
-            else
-                low_threshold = waterfall_low_threshold;
-
-            if (console.PowerOn)
-            {
-                if (rx_dsp_mode == DSPMode.DRM) //||
-                // (rx_dsp_mode == DSPMode.DRM && rx == 2))
-                {
-                    Low += 12000;
-                    High += 12000;
-                }
-
-                if (data_ready)
-                {
-                    if (!displayduplex && local_mox && (rx_dsp_mode == DSPMode.CWL || rx_dsp_mode == DSPMode.CWU))
-                    {
-                        for (int i = 0; i < current_display_data.Length; i++)
-                            current_display_data[i] = -200.0f;
-                    }
-                    else
-                    {
-                        fixed (void* rptr = &new_display_data[0])
-                        fixed (void* wptr = &current_display_data[0])
-                            Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));
-
-                    }
-                    data_ready = false;
-                }
-
-                //if (average_on && local_mox && !displayduplex)
-                //    console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);               
-
-                //if (peak_on && local_mox && !displayduplex)
-                //    UpdateDisplayPeak(rx1_peak_buffer, current_display_data);
-
-                int duration = 0;
-                timer_waterfall.Stop();
-                duration = (int)timer_waterfall.DurationMsec;
-
-                if (duration > waterfall_update_period || duration < 0)
-                {
-                    timer_waterfall.Start();
-                    num_samples = (High - Low);
-                    start_sample_index = (BUFFER_SIZE >> 1) + ((Low * BUFFER_SIZE) / sample_rate);
-                    num_samples = ((High - Low) * BUFFER_SIZE / sample_rate);
-                    if (start_sample_index < 0) start_sample_index += 4096;
-                    if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))
-                        num_samples = BUFFER_SIZE - start_sample_index;
-
-                    slope = (float)num_samples / (float)W;
-
-                    for (int i = 0; i < W; i++)
-                    {
-                        float max = float.MinValue;
-                        float dval = i * slope + start_sample_index;
-                        int lindex = (int)Math.Floor(dval);
-                        int rindex = (int)Math.Floor(dval + slope);
-
-                        // if (rx == 1)
-                        // {
-                        if (local_mox && !displayduplex)
-                        {
-                            if (slope <= 1.0 || lindex == rindex)
-                            {
-                                max = current_display_data[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % 4096] * (dval - (float)lindex);
-                            }
-                            else
-                            {
-                                for (int j = lindex; j < rindex; j++)
-                                    if (current_display_data[j % 4096] > max) max = current_display_data[j % 4096];
-                            }
-                        }
-                        else
-                            max = current_display_data[i];
-
-                        max += rx_display_cal_offset;
-
-                        max += (preamp_offset - alex_preamp_offset);
-
-                        if (max > local_max_y)
-                        {
-                            local_max_y = max;
-                            max_x = i;
-                        }
-
-                        //below added by w3sz
-                        if (max < local_min_y_w3sz)
-                        {
-                            local_min_y_w3sz = max;
-                        }
-                        //end of addition by w3sz
-
-                        waterfall_data[i] = max;
-                    }
-
-                    max_y = local_max_y;
-                    min_y_w3sz = local_min_y_w3sz;
-
-                    BitmapData bitmapData;
-                    bitmapData = waterfall_bmp.LockBits(
-                        new Rectangle(0, 0, waterfall_bmp.Width, waterfall_bmp.Height),
-                        ImageLockMode.ReadWrite,
-                        waterfall_bmp.PixelFormat);
-
-                    int pixel_size = 3;
-                    byte* row = null;
-
-                    // first scroll image
-                    int total_size = bitmapData.Stride * bitmapData.Height;		// find buffer size
-                    Win32.memcpy(new IntPtr((int)bitmapData.Scan0 + bitmapData.Stride).ToPointer(),
-                        bitmapData.Scan0.ToPointer(),
-                        total_size - bitmapData.Stride);
-
-                    row = (byte*)bitmapData.Scan0;
-
-                    //int i = 0;
-                    switch (cSheme)
-                    {
-                        case (ColorSheme.original):
-                            {
-                                // draw new data
-                                for (int i = 0; i < W; i++)	// for each pixel in the new line
-                                {
-                                    //int R, G, B;		// variables to save Red, Green and Blue component values
-
-                                    if (waterfall_data[i] <= low_threshold)		// if less than low threshold, just use low color
-                                    {
-                                        R = low_color.R;
-                                        G = low_color.G;
-                                        B = low_color.B;
-                                    }
-                                    else if (waterfall_data[i] >= high_threshold)// if more than high threshold, just use high color
-                                    {
-                                        R = high_color.R;
-                                        G = high_color.G;
-                                        B = high_color.B;
-                                    }
-                                    else // use a color between high and low
-                                    {
-                                        float percent = (waterfall_data[i] - low_threshold) / (high_threshold - low_threshold);
-                                        if (percent <= 0.5)	// use a gradient between low and mid colors
-                                        {
-                                            percent *= 2;
-
-                                            R = (int)((1 - percent) * low_color.R + percent * mid_color.R);
-                                            G = (int)((1 - percent) * low_color.G + percent * mid_color.G);
-                                            B = (int)((1 - percent) * low_color.B + percent * mid_color.B);
-                                        }
-                                        else				// use a gradient between mid and high colors
-                                        {
-                                            percent = (float)(percent - 0.5) * 2;
-
-                                            R = (int)((1 - percent) * mid_color.R + percent * high_color.R);
-                                            G = (int)((1 - percent) * mid_color.G + percent * high_color.G);
-                                            B = (int)((1 - percent) * mid_color.B + percent * high_color.B);
-                                        }
-                                    }
-                                    // set pixel color
-                                    row[i * pixel_size + 0] = (byte)B;	// set color in memory
-                                    row[i * pixel_size + 1] = (byte)G;
-                                    row[i * pixel_size + 2] = (byte)R;
-                                }
-                            }
-                            //waterfall_data[i] = (float)i/W*(high_threshold - low_threshold) + low_threshold;
-                            break;
-
-                        case (ColorSheme.enhanced):
-                            {
-                                // draw new data
-                                for (int i = 0; i < W; i++)	// for each pixel in the new line
-                                {
-                                    if (waterfall_data[i] <= low_threshold)
-                                    {
-                                        R = low_color.R;
-                                        G = low_color.G;
-                                        B = low_color.B;
-                                    }
-                                    else if (waterfall_data[i] >= high_threshold)
-                                    {
-                                        R = 192;
-                                        G = 124;
-                                        B = 255;
-                                    }
-                                    else // value is between low and high
-                                    {
-                                        float range = high_threshold - low_threshold;
-                                        float offset = waterfall_data[i] - low_threshold;
-                                        float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
-
-                                        if (overall_percent < (float)2 / 9) // background to blue
-                                        {
-                                            float local_percent = overall_percent / ((float)2 / 9);
-                                            R = (int)((1.0 - local_percent) * low_color.R);
-                                            G = (int)((1.0 - local_percent) * low_color.G);
-                                            B = (int)(low_color.B + local_percent * (255 - low_color.B));
-                                        }
-                                        else if (overall_percent < (float)3 / 9) // blue to blue-green
-                                        {
-                                            float local_percent = (overall_percent - (float)2 / 9) / ((float)1 / 9);
-                                            R = 0;
-                                            G = (int)(local_percent * 255);
-                                            B = 255;
-                                        }
-                                        else if (overall_percent < (float)4 / 9) // blue-green to green
-                                        {
-                                            float local_percent = (overall_percent - (float)3 / 9) / ((float)1 / 9);
-                                            R = 0;
-                                            G = 255;
-                                            B = (int)((1.0 - local_percent) * 255);
-                                        }
-                                        else if (overall_percent < (float)5 / 9) // green to red-green
-                                        {
-                                            float local_percent = (overall_percent - (float)4 / 9) / ((float)1 / 9);
-                                            R = (int)(local_percent * 255);
-                                            G = 255;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)7 / 9) // red-green to red
-                                        {
-                                            float local_percent = (overall_percent - (float)5 / 9) / ((float)2 / 9);
-                                            R = 255;
-                                            G = (int)((1.0 - local_percent) * 255);
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)8 / 9) // red to red-blue
-                                        {
-                                            float local_percent = (overall_percent - (float)7 / 9) / ((float)1 / 9);
-                                            R = 255;
-                                            G = 0;
-                                            B = (int)(local_percent * 255);
-                                        }
-                                        else // red-blue to purple end
-                                        {
-                                            float local_percent = (overall_percent - (float)8 / 9) / ((float)1 / 9);
-                                            R = (int)((0.75 + 0.25 * (1.0 - local_percent)) * 255);
-                                            G = (int)(local_percent * 255 * 0.5);
-                                            B = 255;
-                                        }
-                                    }
-
-                                    if (waterfall_minimum > waterfall_data[i]) //wfagc
-                                        waterfall_minimum = waterfall_data[i];
-
-                                    // set pixel color
-                                    row[i * pixel_size + 0] = (byte)B;	// set color in memory
-                                    row[i * pixel_size + 1] = (byte)G;
-                                    row[i * pixel_size + 2] = (byte)R;
-                                }
-                            }
-                            break;
-
-                        case (ColorSheme.SPECTRAN):
-                            {
-                                // draw new data
-                                for (int i = 0; i < W; i++)	// for each pixel in the new line
-                                {
-                                    if (waterfall_data[i] <= low_threshold)
-                                    {
-                                        R = 0;
-                                        G = 0;
-                                        B = 0;
-                                    }
-                                    else if (waterfall_data[i] >= WaterfallHighThreshold) // white
-                                    {
-                                        R = 240;
-                                        G = 240;
-                                        B = 240;
-                                    }
-                                    else // value is between low and high
-                                    {
-                                        float range = WaterfallHighThreshold - low_threshold;
-                                        float offset = waterfall_data[i] - low_threshold;
-                                        float local_percent = ((100.0f * offset) / range);
-
-                                        if (local_percent < 5.0f)
-                                        {
-                                            R = G = 0;
-                                            B = (int)local_percent * 5;
-                                        }
-                                        else if (local_percent < 11.0f)
-                                        {
-                                            R = G = 0;
-                                            B = (int)local_percent * 5;
-                                        }
-                                        else if (local_percent < 22.0f)
-                                        {
-                                            R = G = 0;
-                                            B = (int)local_percent * 5;
-                                        }
-                                        else if (local_percent < 44.0f)
-                                        {
-                                            R = G = 0;
-                                            B = (int)local_percent * 5;
-                                        }
-                                        else if (local_percent < 51.0f)
-                                        {
-                                            R = G = 0;
-                                            B = (int)local_percent * 5;
-                                        }
-                                        else if (local_percent < 66.0f)
-                                        {
-                                            R = G = (int)(local_percent - 50) * 2;
-                                            B = 255;
-                                        }
-                                        else if (local_percent < 77.0f)
-                                        {
-                                            R = G = (int)(local_percent - 50) * 3;
-                                            B = 255;
-                                        }
-                                        else if (local_percent < 88.0f)
-                                        {
-                                            R = G = (int)(local_percent - 50) * 4;
-                                            B = 255;
-                                        }
-                                        else if (local_percent < 99.0f)
-                                        {
-                                            R = G = (int)(local_percent - 50) * 5;
-                                            B = 255;
-                                        }
-                                    }
-
-                                    if (waterfall_minimum > waterfall_data[i]) //wfagc
-                                        waterfall_minimum = waterfall_data[i];
-
-                                    // set pixel color
-                                    row[i * pixel_size + 0] = (byte)B;	// set color in memory
-                                    row[i * pixel_size + 1] = (byte)G;
-                                    row[i * pixel_size + 2] = (byte)R;
-                                }
-                            }
-                            break;
-
-                        case (ColorSheme.BLACKWHITE):
-                            {
-                                // draw new data
-                                for (int i = 0; i < W; i++)	// for each pixel in the new line
-                                {
-                                    if (waterfall_data[i] <= low_threshold)
-                                    {
-                                        R = 0;
-                                        G = 0;
-                                        B = 0;
-                                    }
-                                    else if (waterfall_data[i] >= WaterfallHighThreshold) // white
-                                    {
-                                        R = 255;
-                                        G = 255;
-                                        B = 255;
-                                    }
-                                    else // value is between low and high
-                                    {
-                                        float range = WaterfallHighThreshold - low_threshold;
-                                        float offset = waterfall_data[i] - low_threshold;
-                                        float local_percent = ((100.0f * offset) / range);
-                                        R = (int)((local_percent / 100) * 255);
-                                        G = R;
-                                        B = R;
-                                    }
-
-                                    if (waterfall_minimum > waterfall_data[i]) //wfagc
-                                        waterfall_minimum = waterfall_data[i];
-
-                                    // set pixel color
-                                    row[i * pixel_size + 0] = (byte)B;	// set color in memory
-                                    row[i * pixel_size + 1] = (byte)G;
-                                    row[i * pixel_size + 2] = (byte)R;
-                                }
-                            }
-                            break;
-
-                        case (ColorSheme.LinLog):
-                            {
-                                for (int i = 0; i < W; i++)	// for each pixel in the new line
-                                {
-                                    if (waterfall_data[i] <= low_threshold)
-                                    {
-                                        R = 0;
-                                        G = 0;
-                                        B = 0;
-                                    }
-                                    else if (waterfall_data[i] >= high_threshold)
-                                    {
-                                        R = 252;
-                                        G = 252;
-                                        B = 252;
-                                    }
-                                    else // value is between low and high
-                                    {
-                                        float range = high_threshold - low_threshold;
-                                        float offset = waterfall_data[i] - low_threshold + LinLogCor;
-                                        float spec_bits = 1024;
-                                        float overall_percent = (spec_bits * offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
-                                        float log_fract = (float)(Math.Log10(spec_bits));
-                                        if (overall_percent == 0)
-                                        {
-                                            overall_percent = (float)0.001;
-                                        }
-                                        overall_percent = (float)(Math.Log10(overall_percent));
-
-                                        if (overall_percent < log_fract / 23)
-                                        {
-                                            //			float local_percent = overall_percent / ((float)1/23);
-                                            R = 0;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)2 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
-                                            R = 32;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)3 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
-                                            R = 64;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)4 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
-                                            R = 96;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)5 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
-                                            R = 104;
-                                            G = 40;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)6 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
-                                            R = 112;
-                                            G = 60;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)7 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
-                                            R = 116;
-                                            G = 88;
-                                            B = 0;
-                                        }
-
-
-                                        else if (overall_percent < (float)8 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
-                                            R = 92;
-                                            G = 112;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)9 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
-                                            R = 80;
-                                            G = 132;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)10 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
-                                            R = 20;
-                                            G = 140;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)11 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 160;
-                                            B = 40;
-                                        }
-                                        else if (overall_percent < (float)12 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 160;
-                                            B = 120;
-                                        }
-
-                                        else if (overall_percent < (float)13 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 140;
-                                            B = 148;
-                                        }
-                                        else if (overall_percent < (float)14 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 132;
-                                            B = 192;
-                                        }
-                                        else if (overall_percent < (float)15 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 112;
-                                            B = 200;
-                                        }
-                                        else if (overall_percent < (float)16 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 88;
-                                            B = 208;
-                                        }
-                                        else if (overall_percent < (float)17 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 60;
-                                            B = 232;
-                                        }
-                                        else if (overall_percent < (float)18 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 40;
-                                            B = 252;
-                                        }
-                                        else if (overall_percent < (float)19 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
-                                            R = 80;
-                                            G = 80;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent < (float)20 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
-                                            R = 124;
-                                            G = 124;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent < (float)21 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
-                                            R = 172;
-                                            G = 172;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent >= (float)21 * log_fract / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
-                                            R = 252;
-                                            G = 252;
-                                            B = 252;
-                                        }
-                                        else
-                                        {
-                                            R = 0;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                    }
-
-                                    if (waterfall_minimum > waterfall_data[i]) //wfagc
-                                        waterfall_minimum = waterfall_data[i];
-
-                                    // set pixel color changed by w3sz
-
-                                    row[i * pixel_size + 0] = (byte)R;	// set color in memory
-                                    row[i * pixel_size + 1] = (byte)G;
-                                    row[i * pixel_size + 2] = (byte)B;
-                                }
-                            }
-                            break;
-
-                        //  now Linrad palette without log
-
-                        case (ColorSheme.LinRad):
-                            {
-                                for (int i = 0; i < W; i++)	// for each pixel in the new line
-                                {
-                                    if (waterfall_data[i] <= low_threshold)
-                                    {
-                                        R = 0;
-                                        G = 0;
-                                        B = 0;
-                                    }
-                                    else if (waterfall_data[i] >= high_threshold)
-                                    {
-                                        R = 252;
-                                        G = 252;
-                                        B = 252;
-                                    }
-                                    else // value is between low and high
-                                    {
-                                        float range = high_threshold - low_threshold;
-                                        float offset = waterfall_data[i] - low_threshold + LinCor;
-                                        float overall_percent = (offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
-
-
-                                        if (overall_percent < (float)1 / 23)
-                                        {
-                                            //			float local_percent = overall_percent / ((float)1/23);
-                                            R = 0;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)2 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
-                                            R = 32;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)3 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
-                                            R = 64;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)4 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
-                                            R = 96;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)5 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
-                                            R = 104;
-                                            G = 40;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)6 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
-                                            R = 112;
-                                            G = 60;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)7 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
-                                            R = 116;
-                                            G = 88;
-                                            B = 0;
-                                        }
-
-
-                                        else if (overall_percent < (float)8 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
-                                            R = 92;
-                                            G = 112;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)9 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
-                                            R = 80;
-                                            G = 132;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)10 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
-                                            R = 20;
-                                            G = 140;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)11 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 160;
-                                            B = 40;
-                                        }
-                                        else if (overall_percent < (float)12 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 160;
-                                            B = 120;
-                                        }
-
-                                        else if (overall_percent < (float)13 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 140;
-                                            B = 148;
-                                        }
-                                        else if (overall_percent < (float)14 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 132;
-                                            B = 192;
-                                        }
-                                        else if (overall_percent < (float)15 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 112;
-                                            B = 200;
-                                        }
-                                        else if (overall_percent < (float)16 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 88;
-                                            B = 208;
-                                        }
-                                        else if (overall_percent < (float)17 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 60;
-                                            B = 232;
-                                        }
-                                        else if (overall_percent < (float)18 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 40;
-                                            B = 252;
-                                        }
-                                        else if (overall_percent < (float)19 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
-                                            R = 80;
-                                            G = 80;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent < (float)20 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
-                                            R = 124;
-                                            G = 124;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent < (float)21 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
-                                            R = 172;
-                                            G = 172;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent >= (float)21 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
-                                            R = 252;
-                                            G = 252;
-                                            B = 252;
-                                        }
-                                        else
-                                        {
-                                            R = 0;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                    }
-
-                                    if (waterfall_minimum > waterfall_data[i]) //wfagc
-                                        waterfall_minimum = waterfall_data[i];
-
-                                    // set pixel color changed by w3sz
-                                    row[i * pixel_size + 0] = (byte)R;	// set color in memory
-                                    row[i * pixel_size + 1] = (byte)G;
-                                    row[i * pixel_size + 2] = (byte)B;
-                                }
-                            }
-                            break;
-
-                        //  now Linrad palette without log
-
-                        case (ColorSheme.LinAuto):
-                            {
-                                for (int i = 0; i < W; i++)	// for each pixel in the new line
-                                {
-                                    display_min_w3sz = min_y_w3sz - 5; //w3sz for histogram equilization
-                                    display_max_w3sz = max_y; //w3sz for histogram equalization
-                                    //	if (i == (W - 1))
-                                    //	{
-                                    //		System.Console.WriteLine("Low is" + low_threshold + "   " + display_min_w3sz);
-                                    //	
-                                    //		System.Console.WriteLine("High is" + high_threshold + "   " + max_y);
-                                    //}	
-
-                                    if (waterfall_data[i] <= display_min_w3sz)
-                                    {
-                                        R = 0;
-                                        G = 0;
-                                        B = 0;
-                                    }
-                                    else if (waterfall_data[i] >= display_max_w3sz)
-                                    {
-                                        R = 252;
-                                        G = 252;
-                                        B = 252;
-                                    }
-                                    else // value is between low and high
-                                    {
-                                        float range = display_max_w3sz - display_min_w3sz;
-                                        float offset = waterfall_data[i] - display_min_w3sz; // + GlobalClass.LinCor;
-                                        float overall_percent = (offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
-
-
-                                        if (overall_percent < (float)1 / 23)
-                                        {
-                                            //			float local_percent = overall_percent / ((float)1/23);
-                                            R = 0;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)2 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
-                                            R = 32;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)3 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
-                                            R = 64;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)4 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
-                                            R = 96;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)5 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
-                                            R = 104;
-                                            G = 40;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)6 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
-                                            R = 112;
-                                            G = 60;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)7 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
-                                            R = 116;
-                                            G = 88;
-                                            B = 0;
-                                        }
-
-
-                                        else if (overall_percent < (float)8 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
-                                            R = 92;
-                                            G = 112;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)9 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
-                                            R = 80;
-                                            G = 132;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)10 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
-                                            R = 20;
-                                            G = 140;
-                                            B = 0;
-                                        }
-                                        else if (overall_percent < (float)11 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 160;
-                                            B = 40;
-                                        }
-                                        else if (overall_percent < (float)12 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 160;
-                                            B = 120;
-                                        }
-
-                                        else if (overall_percent < (float)13 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 140;
-                                            B = 148;
-                                        }
-                                        else if (overall_percent < (float)14 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 132;
-                                            B = 192;
-                                        }
-                                        else if (overall_percent < (float)15 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 112;
-                                            B = 200;
-                                        }
-                                        else if (overall_percent < (float)16 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 88;
-                                            B = 208;
-                                        }
-                                        else if (overall_percent < (float)17 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 60;
-                                            B = 232;
-                                        }
-                                        else if (overall_percent < (float)18 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
-                                            R = 0;
-                                            G = 40;
-                                            B = 252;
-                                        }
-                                        else if (overall_percent < (float)19 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
-                                            R = 80;
-                                            G = 80;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent < (float)20 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
-                                            R = 124;
-                                            G = 124;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent < (float)21 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
-                                            R = 172;
-                                            G = 172;
-                                            B = 252;
-                                        }
-
-                                        else if (overall_percent >= (float)21 / 23)
-                                        {
-                                            //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
-                                            R = 252;
-                                            G = 252;
-                                            B = 252;
-                                        }
-                                        else
-                                        {
-                                            R = 0;
-                                            G = 0;
-                                            B = 0;
-                                        }
-                                    }
-
-                                    // set pixel color changed by w3sz
-                                    row[i * pixel_size + 0] = (byte)R;	// set color in memory
-                                    row[i * pixel_size + 1] = (byte)G;
-                                    row[i * pixel_size + 2] = (byte)B;
-                                }
-                            }
-                            break;
-                    }
-
-                    waterfall_bmp.UnlockBits(bitmapData);
-
-                    // if (rx == 1)
-                    waterfallPreviousMinValue = (((waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
-                    // else
-                    //  RX2waterfallPreviousMinValue = ((RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
-                }
-
-                g.DrawImageUnscaled(waterfall_bmp, 0, waterfallRect.Top);	// draw the image on the background	
-            }
-            waterfall_counter++;
-
-            // draw long cursor
-            if (current_click_tune_mode != ClickTuneMode.Off)
-            {
-                Pen p = current_click_tune_mode == ClickTuneMode.VFOA ? grid_text_pen : Pens.Red;
-
-                if (display_cursor_y <= H)
-                {
-                    g.DrawLine(p, display_cursor_x, 0, display_cursor_x, H);
-                    if (ShowCTHLine) g.DrawLine(p, 0, display_cursor_y, W, display_cursor_y);
-                }
-
-            }
-
-            return true;
-        }
+        //private readonly HiPerfTimer timer_waterfall = new HiPerfTimer();
+        ////  private readonly HiPerfTimer timer_waterfall2 = new HiPerfTimer();
+        //private float waterfallPreviousMinValue = 0.0f;
+        //unsafe private bool DrawWaterfall(Graphics g, int rx)
+        //{
+        //    int W = waterfallRect.Width;
+        //    int H = waterfallRect.Height;
+
+        //    // if (grid_control) DrawWaterfallGrid(ref g, rx, bottom);
+
+        //    if (waterfall_data == null || waterfall_data.Length < W)
+        //    {
+        //        waterfall_data = new float[W];		// array of points to display
+        //    }
+        //    float slope = 0.0F;						// samples to process per pixel
+        //    int num_samples = 0;					// number of samples to process
+        //    int start_sample_index = 0;				// index to begin looking at samples
+        //    int Low = 0;
+        //    int High = 0;
+        //    float local_max_y = float.MinValue;
+        //    bool local_mox = false;
+        //    //if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
+        //    //if (rx == 2 && tx_on_vfob && mox) local_mox = true;
+        //    float local_min_y_w3sz = float.MaxValue;  //added by w3sz
+        //    float display_min_w3sz = float.MaxValue; //added by w3sz
+        //    float display_max_w3sz = float.MinValue; //added by w3sz
+        //    float min_y_w3sz = float.MaxValue;  //w3sz
+        //    int R = 0, G = 0, B = 0;
+        //    int grid_max = 0;
+        //    int grid_min = 0;
+        //    bool displayduplex = false;
+        //    float low_threshold = 0.0f;
+        //    float high_threshold = 0.0f;
+        //    float waterfall_minimum = 0.0f;
+        //    float rx1_waterfall_minimum = 0.0f;
+        //    //  float rx2_waterfall_minimum = 0.0f;
+        //    ColorSheme cSheme = ColorSheme.enhanced;
+        //    Color low_color = Color.Black;
+        //    Color mid_color = Color.Red;
+        //    Color high_color = Color.Blue;
+
+        //    if ((CurrentDisplayMode == DisplayMode.PANAFALL && (nreceivers <= 2 && display_duplex)) ||
+        //        (CurrentDisplayMode == DisplayMode.PANAFALL && nreceivers > 2) ||
+        //       (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
+
+        //    cSheme = color_sheme;
+        //    low_color = waterfall_low_color;
+        //    mid_color = waterfall_mid_color;
+        //    high_color = waterfall_high_color;
+        //    Low = low_freq;
+        //    High = high_freq;
+        //    grid_max = spectrum_grid_max;
+        //    grid_min = spectrum_grid_min;
+        //    high_threshold = waterfall_high_threshold;
+
+        //    if (waterfall_agc)
+        //    {
+        //        waterfall_minimum = rx1_waterfall_minimum;
+        //        low_threshold = waterfallPreviousMinValue;
+        //    }
+        //    else
+        //        low_threshold = waterfall_low_threshold;
+
+        //    if (console.PowerOn)
+        //    {
+        //        if (rx_dsp_mode == DSPMode.DRM) //||
+        //        // (rx_dsp_mode == DSPMode.DRM && rx == 2))
+        //        {
+        //            Low += 12000;
+        //            High += 12000;
+        //        }
+
+        //        if (data_ready)
+        //        {
+        //            if (!displayduplex && local_mox && (rx_dsp_mode == DSPMode.CWL || rx_dsp_mode == DSPMode.CWU))
+        //            {
+        //                for (int i = 0; i < current_display_data.Length; i++)
+        //                    current_display_data[i] = -200.0f;
+        //            }
+        //            else
+        //            {
+        //                fixed (void* rptr = &new_display_data[0])
+        //                fixed (void* wptr = &current_display_data[0])
+        //                    Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));
+
+        //            }
+        //            data_ready = false;
+        //        }
+
+        //        //if (average_on && local_mox && !displayduplex)
+        //        //    console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);               
+
+        //        //if (peak_on && local_mox && !displayduplex)
+        //        //    UpdateDisplayPeak(rx1_peak_buffer, current_display_data);
+
+        //        int duration = 0;
+        //        timer_waterfall.Stop();
+        //        duration = (int)timer_waterfall.DurationMsec;
+
+        //        if (duration > waterfall_update_period || duration < 0)
+        //        {
+        //            timer_waterfall.Start();
+        //            num_samples = (High - Low);
+        //            start_sample_index = (BUFFER_SIZE >> 1) + ((Low * BUFFER_SIZE) / sample_rate);
+        //            num_samples = ((High - Low) * BUFFER_SIZE / sample_rate);
+        //            if (start_sample_index < 0) start_sample_index += 4096;
+        //            if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))
+        //                num_samples = BUFFER_SIZE - start_sample_index;
+
+        //            slope = (float)num_samples / (float)W;
+
+        //            for (int i = 0; i < W; i++)
+        //            {
+        //                float max = float.MinValue;
+        //                float dval = i * slope + start_sample_index;
+        //                int lindex = (int)Math.Floor(dval);
+        //                int rindex = (int)Math.Floor(dval + slope);
+
+        //                // if (rx == 1)
+        //                // {
+        //                if (local_mox && !displayduplex)
+        //                {
+        //                    if (slope <= 1.0 || lindex == rindex)
+        //                    {
+        //                        max = current_display_data[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % 4096] * (dval - (float)lindex);
+        //                    }
+        //                    else
+        //                    {
+        //                        for (int j = lindex; j < rindex; j++)
+        //                            if (current_display_data[j % 4096] > max) max = current_display_data[j % 4096];
+        //                    }
+        //                }
+        //                else
+        //                    max = current_display_data[i];
+
+        //                max += rx_display_cal_offset;
+
+        //                max += (preamp_offset - alex_preamp_offset);
+
+        //                if (max > local_max_y)
+        //                {
+        //                    local_max_y = max;
+        //                    max_x = i;
+        //                }
+
+        //                //below added by w3sz
+        //                if (max < local_min_y_w3sz)
+        //                {
+        //                    local_min_y_w3sz = max;
+        //                }
+        //                //end of addition by w3sz
+
+        //                waterfall_data[i] = max;
+        //            }
+
+        //            max_y = local_max_y;
+        //            min_y_w3sz = local_min_y_w3sz;
+
+        //            BitmapData bitmapData;
+        //            bitmapData = waterfall_bmp.LockBits(
+        //                new Rectangle(0, 0, waterfall_bmp.Width, waterfall_bmp.Height),
+        //                ImageLockMode.ReadWrite,
+        //                waterfall_bmp.PixelFormat);
+
+        //            int pixel_size = 3;
+        //            byte* row = null;
+
+        //            // first scroll image
+        //            int total_size = bitmapData.Stride * bitmapData.Height;		// find buffer size
+        //            Win32.memcpy(new IntPtr((int)bitmapData.Scan0 + bitmapData.Stride).ToPointer(),
+        //                bitmapData.Scan0.ToPointer(),
+        //                total_size - bitmapData.Stride);
+
+        //            row = (byte*)bitmapData.Scan0;
+
+        //            //int i = 0;
+        //            switch (cSheme)
+        //            {
+        //                case (ColorSheme.original):
+        //                    {
+        //                        // draw new data
+        //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
+        //                        {
+        //                            //int R, G, B;		// variables to save Red, Green and Blue component values
+
+        //                            if (waterfall_data[i] <= low_threshold)		// if less than low threshold, just use low color
+        //                            {
+        //                                R = low_color.R;
+        //                                G = low_color.G;
+        //                                B = low_color.B;
+        //                            }
+        //                            else if (waterfall_data[i] >= high_threshold)// if more than high threshold, just use high color
+        //                            {
+        //                                R = high_color.R;
+        //                                G = high_color.G;
+        //                                B = high_color.B;
+        //                            }
+        //                            else // use a color between high and low
+        //                            {
+        //                                float percent = (waterfall_data[i] - low_threshold) / (high_threshold - low_threshold);
+        //                                if (percent <= 0.5)	// use a gradient between low and mid colors
+        //                                {
+        //                                    percent *= 2;
+
+        //                                    R = (int)((1 - percent) * low_color.R + percent * mid_color.R);
+        //                                    G = (int)((1 - percent) * low_color.G + percent * mid_color.G);
+        //                                    B = (int)((1 - percent) * low_color.B + percent * mid_color.B);
+        //                                }
+        //                                else				// use a gradient between mid and high colors
+        //                                {
+        //                                    percent = (float)(percent - 0.5) * 2;
+
+        //                                    R = (int)((1 - percent) * mid_color.R + percent * high_color.R);
+        //                                    G = (int)((1 - percent) * mid_color.G + percent * high_color.G);
+        //                                    B = (int)((1 - percent) * mid_color.B + percent * high_color.B);
+        //                                }
+        //                            }
+        //                            // set pixel color
+        //                            row[i * pixel_size + 0] = (byte)B;	// set color in memory
+        //                            row[i * pixel_size + 1] = (byte)G;
+        //                            row[i * pixel_size + 2] = (byte)R;
+        //                        }
+        //                    }
+        //                    //waterfall_data[i] = (float)i/W*(high_threshold - low_threshold) + low_threshold;
+        //                    break;
+
+        //                case (ColorSheme.enhanced):
+        //                    {
+        //                        // draw new data
+        //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
+        //                        {
+        //                            if (waterfall_data[i] <= low_threshold)
+        //                            {
+        //                                R = low_color.R;
+        //                                G = low_color.G;
+        //                                B = low_color.B;
+        //                            }
+        //                            else if (waterfall_data[i] >= high_threshold)
+        //                            {
+        //                                R = 192;
+        //                                G = 124;
+        //                                B = 255;
+        //                            }
+        //                            else // value is between low and high
+        //                            {
+        //                                float range = high_threshold - low_threshold;
+        //                                float offset = waterfall_data[i] - low_threshold;
+        //                                float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+        //                                if (overall_percent < (float)2 / 9) // background to blue
+        //                                {
+        //                                    float local_percent = overall_percent / ((float)2 / 9);
+        //                                    R = (int)((1.0 - local_percent) * low_color.R);
+        //                                    G = (int)((1.0 - local_percent) * low_color.G);
+        //                                    B = (int)(low_color.B + local_percent * (255 - low_color.B));
+        //                                }
+        //                                else if (overall_percent < (float)3 / 9) // blue to blue-green
+        //                                {
+        //                                    float local_percent = (overall_percent - (float)2 / 9) / ((float)1 / 9);
+        //                                    R = 0;
+        //                                    G = (int)(local_percent * 255);
+        //                                    B = 255;
+        //                                }
+        //                                else if (overall_percent < (float)4 / 9) // blue-green to green
+        //                                {
+        //                                    float local_percent = (overall_percent - (float)3 / 9) / ((float)1 / 9);
+        //                                    R = 0;
+        //                                    G = 255;
+        //                                    B = (int)((1.0 - local_percent) * 255);
+        //                                }
+        //                                else if (overall_percent < (float)5 / 9) // green to red-green
+        //                                {
+        //                                    float local_percent = (overall_percent - (float)4 / 9) / ((float)1 / 9);
+        //                                    R = (int)(local_percent * 255);
+        //                                    G = 255;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)7 / 9) // red-green to red
+        //                                {
+        //                                    float local_percent = (overall_percent - (float)5 / 9) / ((float)2 / 9);
+        //                                    R = 255;
+        //                                    G = (int)((1.0 - local_percent) * 255);
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)8 / 9) // red to red-blue
+        //                                {
+        //                                    float local_percent = (overall_percent - (float)7 / 9) / ((float)1 / 9);
+        //                                    R = 255;
+        //                                    G = 0;
+        //                                    B = (int)(local_percent * 255);
+        //                                }
+        //                                else // red-blue to purple end
+        //                                {
+        //                                    float local_percent = (overall_percent - (float)8 / 9) / ((float)1 / 9);
+        //                                    R = (int)((0.75 + 0.25 * (1.0 - local_percent)) * 255);
+        //                                    G = (int)(local_percent * 255 * 0.5);
+        //                                    B = 255;
+        //                                }
+        //                            }
+
+        //                            if (waterfall_minimum > waterfall_data[i]) //wfagc
+        //                                waterfall_minimum = waterfall_data[i];
+
+        //                            // set pixel color
+        //                            row[i * pixel_size + 0] = (byte)B;	// set color in memory
+        //                            row[i * pixel_size + 1] = (byte)G;
+        //                            row[i * pixel_size + 2] = (byte)R;
+        //                        }
+        //                    }
+        //                    break;
+
+        //                case (ColorSheme.SPECTRAN):
+        //                    {
+        //                        // draw new data
+        //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
+        //                        {
+        //                            if (waterfall_data[i] <= low_threshold)
+        //                            {
+        //                                R = 0;
+        //                                G = 0;
+        //                                B = 0;
+        //                            }
+        //                            else if (waterfall_data[i] >= WaterfallHighThreshold) // white
+        //                            {
+        //                                R = 240;
+        //                                G = 240;
+        //                                B = 240;
+        //                            }
+        //                            else // value is between low and high
+        //                            {
+        //                                float range = WaterfallHighThreshold - low_threshold;
+        //                                float offset = waterfall_data[i] - low_threshold;
+        //                                float local_percent = ((100.0f * offset) / range);
+
+        //                                if (local_percent < 5.0f)
+        //                                {
+        //                                    R = G = 0;
+        //                                    B = (int)local_percent * 5;
+        //                                }
+        //                                else if (local_percent < 11.0f)
+        //                                {
+        //                                    R = G = 0;
+        //                                    B = (int)local_percent * 5;
+        //                                }
+        //                                else if (local_percent < 22.0f)
+        //                                {
+        //                                    R = G = 0;
+        //                                    B = (int)local_percent * 5;
+        //                                }
+        //                                else if (local_percent < 44.0f)
+        //                                {
+        //                                    R = G = 0;
+        //                                    B = (int)local_percent * 5;
+        //                                }
+        //                                else if (local_percent < 51.0f)
+        //                                {
+        //                                    R = G = 0;
+        //                                    B = (int)local_percent * 5;
+        //                                }
+        //                                else if (local_percent < 66.0f)
+        //                                {
+        //                                    R = G = (int)(local_percent - 50) * 2;
+        //                                    B = 255;
+        //                                }
+        //                                else if (local_percent < 77.0f)
+        //                                {
+        //                                    R = G = (int)(local_percent - 50) * 3;
+        //                                    B = 255;
+        //                                }
+        //                                else if (local_percent < 88.0f)
+        //                                {
+        //                                    R = G = (int)(local_percent - 50) * 4;
+        //                                    B = 255;
+        //                                }
+        //                                else if (local_percent < 99.0f)
+        //                                {
+        //                                    R = G = (int)(local_percent - 50) * 5;
+        //                                    B = 255;
+        //                                }
+        //                            }
+
+        //                            if (waterfall_minimum > waterfall_data[i]) //wfagc
+        //                                waterfall_minimum = waterfall_data[i];
+
+        //                            // set pixel color
+        //                            row[i * pixel_size + 0] = (byte)B;	// set color in memory
+        //                            row[i * pixel_size + 1] = (byte)G;
+        //                            row[i * pixel_size + 2] = (byte)R;
+        //                        }
+        //                    }
+        //                    break;
+
+        //                case (ColorSheme.BLACKWHITE):
+        //                    {
+        //                        // draw new data
+        //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
+        //                        {
+        //                            if (waterfall_data[i] <= low_threshold)
+        //                            {
+        //                                R = 0;
+        //                                G = 0;
+        //                                B = 0;
+        //                            }
+        //                            else if (waterfall_data[i] >= WaterfallHighThreshold) // white
+        //                            {
+        //                                R = 255;
+        //                                G = 255;
+        //                                B = 255;
+        //                            }
+        //                            else // value is between low and high
+        //                            {
+        //                                float range = WaterfallHighThreshold - low_threshold;
+        //                                float offset = waterfall_data[i] - low_threshold;
+        //                                float local_percent = ((100.0f * offset) / range);
+        //                                R = (int)((local_percent / 100) * 255);
+        //                                G = R;
+        //                                B = R;
+        //                            }
+
+        //                            if (waterfall_minimum > waterfall_data[i]) //wfagc
+        //                                waterfall_minimum = waterfall_data[i];
+
+        //                            // set pixel color
+        //                            row[i * pixel_size + 0] = (byte)B;	// set color in memory
+        //                            row[i * pixel_size + 1] = (byte)G;
+        //                            row[i * pixel_size + 2] = (byte)R;
+        //                        }
+        //                    }
+        //                    break;
+
+        //                case (ColorSheme.LinLog):
+        //                    {
+        //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
+        //                        {
+        //                            if (waterfall_data[i] <= low_threshold)
+        //                            {
+        //                                R = 0;
+        //                                G = 0;
+        //                                B = 0;
+        //                            }
+        //                            else if (waterfall_data[i] >= high_threshold)
+        //                            {
+        //                                R = 252;
+        //                                G = 252;
+        //                                B = 252;
+        //                            }
+        //                            else // value is between low and high
+        //                            {
+        //                                float range = high_threshold - low_threshold;
+        //                                float offset = waterfall_data[i] - low_threshold + LinLogCor;
+        //                                float spec_bits = 1024;
+        //                                float overall_percent = (spec_bits * offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+        //                                float log_fract = (float)(Math.Log10(spec_bits));
+        //                                if (overall_percent == 0)
+        //                                {
+        //                                    overall_percent = (float)0.001;
+        //                                }
+        //                                overall_percent = (float)(Math.Log10(overall_percent));
+
+        //                                if (overall_percent < log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = overall_percent / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)2 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
+        //                                    R = 32;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)3 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
+        //                                    R = 64;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)4 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
+        //                                    R = 96;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)5 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
+        //                                    R = 104;
+        //                                    G = 40;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)6 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
+        //                                    R = 112;
+        //                                    G = 60;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)7 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
+        //                                    R = 116;
+        //                                    G = 88;
+        //                                    B = 0;
+        //                                }
+
+
+        //                                else if (overall_percent < (float)8 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
+        //                                    R = 92;
+        //                                    G = 112;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)9 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
+        //                                    R = 80;
+        //                                    G = 132;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)10 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
+        //                                    R = 20;
+        //                                    G = 140;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)11 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 160;
+        //                                    B = 40;
+        //                                }
+        //                                else if (overall_percent < (float)12 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 160;
+        //                                    B = 120;
+        //                                }
+
+        //                                else if (overall_percent < (float)13 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 140;
+        //                                    B = 148;
+        //                                }
+        //                                else if (overall_percent < (float)14 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 132;
+        //                                    B = 192;
+        //                                }
+        //                                else if (overall_percent < (float)15 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 112;
+        //                                    B = 200;
+        //                                }
+        //                                else if (overall_percent < (float)16 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 88;
+        //                                    B = 208;
+        //                                }
+        //                                else if (overall_percent < (float)17 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 60;
+        //                                    B = 232;
+        //                                }
+        //                                else if (overall_percent < (float)18 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 40;
+        //                                    B = 252;
+        //                                }
+        //                                else if (overall_percent < (float)19 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
+        //                                    R = 80;
+        //                                    G = 80;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent < (float)20 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
+        //                                    R = 124;
+        //                                    G = 124;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent < (float)21 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
+        //                                    R = 172;
+        //                                    G = 172;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent >= (float)21 * log_fract / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
+        //                                    R = 252;
+        //                                    G = 252;
+        //                                    B = 252;
+        //                                }
+        //                                else
+        //                                {
+        //                                    R = 0;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                            }
+
+        //                            if (waterfall_minimum > waterfall_data[i]) //wfagc
+        //                                waterfall_minimum = waterfall_data[i];
+
+        //                            // set pixel color changed by w3sz
+
+        //                            row[i * pixel_size + 0] = (byte)R;	// set color in memory
+        //                            row[i * pixel_size + 1] = (byte)G;
+        //                            row[i * pixel_size + 2] = (byte)B;
+        //                        }
+        //                    }
+        //                    break;
+
+        //                //  now Linrad palette without log
+
+        //                case (ColorSheme.LinRad):
+        //                    {
+        //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
+        //                        {
+        //                            if (waterfall_data[i] <= low_threshold)
+        //                            {
+        //                                R = 0;
+        //                                G = 0;
+        //                                B = 0;
+        //                            }
+        //                            else if (waterfall_data[i] >= high_threshold)
+        //                            {
+        //                                R = 252;
+        //                                G = 252;
+        //                                B = 252;
+        //                            }
+        //                            else // value is between low and high
+        //                            {
+        //                                float range = high_threshold - low_threshold;
+        //                                float offset = waterfall_data[i] - low_threshold + LinCor;
+        //                                float overall_percent = (offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+
+        //                                if (overall_percent < (float)1 / 23)
+        //                                {
+        //                                    //			float local_percent = overall_percent / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)2 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
+        //                                    R = 32;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)3 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
+        //                                    R = 64;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)4 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
+        //                                    R = 96;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)5 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
+        //                                    R = 104;
+        //                                    G = 40;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)6 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
+        //                                    R = 112;
+        //                                    G = 60;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)7 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
+        //                                    R = 116;
+        //                                    G = 88;
+        //                                    B = 0;
+        //                                }
+
+
+        //                                else if (overall_percent < (float)8 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
+        //                                    R = 92;
+        //                                    G = 112;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)9 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
+        //                                    R = 80;
+        //                                    G = 132;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)10 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
+        //                                    R = 20;
+        //                                    G = 140;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)11 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 160;
+        //                                    B = 40;
+        //                                }
+        //                                else if (overall_percent < (float)12 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 160;
+        //                                    B = 120;
+        //                                }
+
+        //                                else if (overall_percent < (float)13 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 140;
+        //                                    B = 148;
+        //                                }
+        //                                else if (overall_percent < (float)14 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 132;
+        //                                    B = 192;
+        //                                }
+        //                                else if (overall_percent < (float)15 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 112;
+        //                                    B = 200;
+        //                                }
+        //                                else if (overall_percent < (float)16 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 88;
+        //                                    B = 208;
+        //                                }
+        //                                else if (overall_percent < (float)17 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 60;
+        //                                    B = 232;
+        //                                }
+        //                                else if (overall_percent < (float)18 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 40;
+        //                                    B = 252;
+        //                                }
+        //                                else if (overall_percent < (float)19 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
+        //                                    R = 80;
+        //                                    G = 80;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent < (float)20 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
+        //                                    R = 124;
+        //                                    G = 124;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent < (float)21 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
+        //                                    R = 172;
+        //                                    G = 172;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent >= (float)21 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
+        //                                    R = 252;
+        //                                    G = 252;
+        //                                    B = 252;
+        //                                }
+        //                                else
+        //                                {
+        //                                    R = 0;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                            }
+
+        //                            if (waterfall_minimum > waterfall_data[i]) //wfagc
+        //                                waterfall_minimum = waterfall_data[i];
+
+        //                            // set pixel color changed by w3sz
+        //                            row[i * pixel_size + 0] = (byte)R;	// set color in memory
+        //                            row[i * pixel_size + 1] = (byte)G;
+        //                            row[i * pixel_size + 2] = (byte)B;
+        //                        }
+        //                    }
+        //                    break;
+
+        //                //  now Linrad palette without log
+
+        //                case (ColorSheme.LinAuto):
+        //                    {
+        //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
+        //                        {
+        //                            display_min_w3sz = min_y_w3sz - 5; //w3sz for histogram equilization
+        //                            display_max_w3sz = max_y; //w3sz for histogram equalization
+        //                            //	if (i == (W - 1))
+        //                            //	{
+        //                            //		System.Console.WriteLine("Low is" + low_threshold + "   " + display_min_w3sz);
+        //                            //	
+        //                            //		System.Console.WriteLine("High is" + high_threshold + "   " + max_y);
+        //                            //}	
+
+        //                            if (waterfall_data[i] <= display_min_w3sz)
+        //                            {
+        //                                R = 0;
+        //                                G = 0;
+        //                                B = 0;
+        //                            }
+        //                            else if (waterfall_data[i] >= display_max_w3sz)
+        //                            {
+        //                                R = 252;
+        //                                G = 252;
+        //                                B = 252;
+        //                            }
+        //                            else // value is between low and high
+        //                            {
+        //                                float range = display_max_w3sz - display_min_w3sz;
+        //                                float offset = waterfall_data[i] - display_min_w3sz; // + GlobalClass.LinCor;
+        //                                float overall_percent = (offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+
+        //                                if (overall_percent < (float)1 / 23)
+        //                                {
+        //                                    //			float local_percent = overall_percent / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)2 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
+        //                                    R = 32;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)3 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
+        //                                    R = 64;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)4 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
+        //                                    R = 96;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)5 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
+        //                                    R = 104;
+        //                                    G = 40;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)6 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
+        //                                    R = 112;
+        //                                    G = 60;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)7 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
+        //                                    R = 116;
+        //                                    G = 88;
+        //                                    B = 0;
+        //                                }
+
+
+        //                                else if (overall_percent < (float)8 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
+        //                                    R = 92;
+        //                                    G = 112;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)9 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
+        //                                    R = 80;
+        //                                    G = 132;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)10 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
+        //                                    R = 20;
+        //                                    G = 140;
+        //                                    B = 0;
+        //                                }
+        //                                else if (overall_percent < (float)11 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 160;
+        //                                    B = 40;
+        //                                }
+        //                                else if (overall_percent < (float)12 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 160;
+        //                                    B = 120;
+        //                                }
+
+        //                                else if (overall_percent < (float)13 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 140;
+        //                                    B = 148;
+        //                                }
+        //                                else if (overall_percent < (float)14 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 132;
+        //                                    B = 192;
+        //                                }
+        //                                else if (overall_percent < (float)15 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 112;
+        //                                    B = 200;
+        //                                }
+        //                                else if (overall_percent < (float)16 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 88;
+        //                                    B = 208;
+        //                                }
+        //                                else if (overall_percent < (float)17 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 60;
+        //                                    B = 232;
+        //                                }
+        //                                else if (overall_percent < (float)18 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
+        //                                    R = 0;
+        //                                    G = 40;
+        //                                    B = 252;
+        //                                }
+        //                                else if (overall_percent < (float)19 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
+        //                                    R = 80;
+        //                                    G = 80;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent < (float)20 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
+        //                                    R = 124;
+        //                                    G = 124;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent < (float)21 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
+        //                                    R = 172;
+        //                                    G = 172;
+        //                                    B = 252;
+        //                                }
+
+        //                                else if (overall_percent >= (float)21 / 23)
+        //                                {
+        //                                    //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
+        //                                    R = 252;
+        //                                    G = 252;
+        //                                    B = 252;
+        //                                }
+        //                                else
+        //                                {
+        //                                    R = 0;
+        //                                    G = 0;
+        //                                    B = 0;
+        //                                }
+        //                            }
+
+        //                            // set pixel color changed by w3sz
+        //                            row[i * pixel_size + 0] = (byte)R;	// set color in memory
+        //                            row[i * pixel_size + 1] = (byte)G;
+        //                            row[i * pixel_size + 2] = (byte)B;
+        //                        }
+        //                    }
+        //                    break;
+        //            }
+
+        //            waterfall_bmp.UnlockBits(bitmapData);
+
+        //            // if (rx == 1)
+        //            waterfallPreviousMinValue = (((waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
+        //            // else
+        //            //  RX2waterfallPreviousMinValue = ((RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
+        //        }
+
+        //        g.DrawImageUnscaled(waterfall_bmp, 0, waterfallRect.Top);	// draw the image on the background	
+        //    }
+        //    waterfall_counter++;
+
+        //    // draw long cursor
+        //    if (current_click_tune_mode != ClickTuneMode.Off)
+        //    {
+        //        Pen p = current_click_tune_mode == ClickTuneMode.VFOA ? grid_text_pen : Pens.Red;
+
+        //        if (display_cursor_y <= H)
+        //        {
+        //            g.DrawLine(p, display_cursor_x, 0, display_cursor_x, H);
+        //            if (ShowCTHLine) g.DrawLine(p, 0, display_cursor_y, W, display_cursor_y);
+        //        }
+
+        //    }
+
+        //    return true;
+        //}
 
         //public void ResetRX1DisplayAverage()
         //{
@@ -3296,8 +3296,7 @@ namespace Thetis
         }
 
         private Rectangle waterfallRect;
-        public Rectangle WaterfallRect
-        {
+        public Rectangle WaterfallRect {
             get { return waterfallRect; }
             set { waterfallRect = value; }
         }
@@ -3310,8 +3309,7 @@ namespace Thetis
         }
 
         private Rectangle secScaleWaterfallRect;
-        public Rectangle SecScalePanRect
-        {
+        public Rectangle SecScalePanRect {
             get { return secScaleWaterfallRect; }
             set { secScaleWaterfallRect = value; }
         }
@@ -3339,11 +3337,11 @@ namespace Thetis
                     width,
                     freqScalePanRect.Top - displayTop);
 
-            waterfallRect = new Rectangle(
-                    freqScalePanRect.Left,
-                    freqScalePanRect.Top + freqScalePanRect.Height,
-                    freqScalePanRect.Width,
-                    height - freqScalePanRect.Top - freqScalePanRect.Height);
+            //waterfallRect = new Rectangle(
+            //        freqScalePanRect.Left,
+            //        freqScalePanRect.Top + freqScalePanRect.Height,
+            //        freqScalePanRect.Width,
+            //        height - freqScalePanRect.Top - freqScalePanRect.Height);
 
             dBmScalePanRect = new Rectangle(
                     panRect.Right - 35,
@@ -3351,14 +3349,14 @@ namespace Thetis
                     35,
                     panRect.Height);
 
-            secScaleWaterfallRect = new Rectangle(
-                    waterfallRect.Left,
-                    freqScalePanRect.Top + freqScalePanRect.Height,
-                    45,
-                    waterfallRect.Height);
+            //secScaleWaterfallRect = new Rectangle(
+            //        waterfallRect.Left,
+            //        freqScalePanRect.Top + freqScalePanRect.Height,
+            //        45,
+            //        waterfallRect.Height);
 
-            if (waterfallRect.Height == 0) waterfallRect.Height = 1;
-            waterfall_bmp = new Bitmap(waterfallRect.Width, waterfallRect.Height, PixelFormat.Format24bppRgb);	// initialize waterfall display
+            //if (waterfallRect.Height == 0) waterfallRect.Height = 1;
+            //waterfall_bmp = new Bitmap(waterfallRect.Width, waterfallRect.Height, PixelFormat.Format24bppRgb);	// initialize waterfall display
             // panadapter_bmp = new Bitmap(panRect.Width, panRect.Height, PixelFormat.Format24bppRgb);	// initialize waterfall display
         }
 
@@ -3442,8 +3440,11 @@ namespace Thetis
 
         public void UpdateGraphicsBuffer()
         {
-            wbDisplay_buffer = new Bitmap(this.Width, this.Height);
-            this.Image = wbDisplay_buffer;
+            int w, h;
+            w = Math.Max(1, this.Width);
+            h = Math.Max(1, this.Height);
+
+            wbDisplay_buffer = new Bitmap(w, h); 
         }
 
         private CancellationTokenSource cancelTokenSource;
@@ -3459,6 +3460,8 @@ namespace Thetis
            // Halted = true;
 
         }
+
+        private object m_objBufferLock = new object();
 
         private Thread draw_display_thread;
         public void StartDisplay(int rx)
@@ -3479,24 +3482,23 @@ namespace Thetis
 
             draw_display_task = Task.Factory.StartNew(() =>
             {
-                while (!cancelTokenSource.IsCancellationRequested)
+                while (cancelTokenSource != null && !cancelTokenSource.IsCancellationRequested)
                 {
 
                     RunDisplay(rx); // get pixels
 
                     if (!pauseDisplayThread)
                     {
-
                         using (Graphics grSrc = Graphics.FromImage(wbDisplay_buffer))
                         {
                             grSrc.Clear(Color.Transparent);
                             if (DrawWideBand(grSrc, rx))
                             {
-                               this.Invoke(new Action(() =>
-                                  {
-                                this.Image = wbDisplay_buffer;
-                                this.Refresh();
-                                 }));
+                                this.Invoke(new Action(() =>
+                                    {
+                                        this.Image = wbDisplay_buffer;
+                                        this.Refresh();
+                                    }));
                             }
                         }
                     }
@@ -3527,7 +3529,8 @@ namespace Thetis
                     this.DataReady = true;
                 }
 
-                Thread.Sleep(70);
+            //Thread.Sleep(70);
+            Thread.Sleep(16);
 
             //    if (!pauseDisplayThread)
             //    {

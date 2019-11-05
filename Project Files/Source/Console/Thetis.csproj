@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -27,7 +27,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ManifestCertificateThumbprint>AEF2072BFD4E1723668C4A72938E707A73AAFB8B</ManifestCertificateThumbprint>
     <ManifestKeyFile>PowerSDR_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>false</GenerateManifests>
@@ -75,6 +75,9 @@
     <ErrorReport>prompt</ErrorReport>
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\bin\Release\</OutputPath>
@@ -99,6 +102,9 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -111,6 +117,8 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>..\Live Analysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\bin\x86\Release\</OutputPath>
@@ -121,6 +129,8 @@
     <FileAlignment>4096</FileAlignment>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>..\Live Analysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|AnyCPU'">
     <OutputPath>bin\Interleaved\</OutputPath>
@@ -133,6 +143,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|x86'">
     <OutputPath>..\..\bin\Release\</OutputPath>
@@ -145,6 +158,8 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>..\Live Analysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -157,7 +172,9 @@
     <PlatformTarget>x64</PlatformTarget>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>..\..\bin\x64\Release\</OutputPath>
@@ -168,7 +185,9 @@
     <FileAlignment>4096</FileAlignment>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|x64'">
     <OutputPath>bin\x64\Interleaved\</OutputPath>
@@ -179,19 +198,35 @@
     <FileAlignment>4096</FileAlignment>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ADODB">
-      <Name>adodb</Name>
-      <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Microsoft.NET\Primary Interop Assemblies\adodb.dll</HintPath>
-      <AssemblyFolderKey>hklm\primary interop assemblies</AssemblyFolderKey>
+    <Reference Include="SharpDX">
+      <HintPath>..\..\lib\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Desktop">
+      <HintPath>..\..\lib\SharpDX\SharpDX.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1">
+      <HintPath>..\..\lib\SharpDX\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\..\lib\SharpDX\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>..\..\lib\SharpDX\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics">
+      <HintPath>..\..\lib\SharpDX\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -201,7 +236,6 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -209,13 +243,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <COMReference Include="stdole">
-      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-    </COMReference>
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
@@ -225,8 +252,35 @@
     <Compile Include="AmpView.Designer.cs">
       <DependentUpon>AmpView.cs</DependentUpon>
     </Compile>
+    <Compile Include="BandButtonsPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Channel.cs" />
     <Compile Include="cmaster.cs" />
+    <Compile Include="displaysettingsform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterButtonsPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmNotchPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmNotchPopup.designer.cs">
+      <DependentUpon>frmNotchPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSeqLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSeqLog.designer.cs">
+      <DependentUpon>frmSeqLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShutdownForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShutdownForm.Designer.cs">
+      <DependentUpon>ShutdownForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="KE9N\conrec.cs" />
     <Compile Include="console.Designer.cs">
       <DependentUpon>console.cs</DependentUpon>
@@ -376,6 +430,12 @@
     <Compile Include="Memory\MemoryList.cs" />
     <Compile Include="Memory\MemoryRecord.cs" />
     <Compile Include="Midi2CatCommands.cs" />
+    <Compile Include="ModeButtonsPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModeDependentSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="notch.cs" />
     <Compile Include="notchlist.cs" />
     <Compile Include="HPSDR\Penny.cs" />
@@ -436,6 +496,9 @@
       <DependentUpon>setup.cs</DependentUpon>
     </Compile>
     <Compile Include="Skin.cs" />
+    <Compile Include="SliderSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="SortableBindingList.cs" />
     <Compile Include="splash.cs">
       <SubType>Form</SubType>
@@ -449,6 +512,9 @@
     <Compile Include="ThreadedBindingList.cs" />
     <Compile Include="titlebar.cs" />
     <Compile Include="TuneStep.cs" />
+    <Compile Include="vfosettingspopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="wave.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -473,9 +539,27 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="displaysettingsform.resx">
+      <DependentUpon>displaysettingsform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterButtonsPopup.resx">
+      <DependentUpon>FilterButtonsPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmNotchPopup.resx">
+      <DependentUpon>frmNotchPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSeqLog.resx">
+      <DependentUpon>frmSeqLog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="KE9N\scan.resx">
       <SubType>Designer</SubType>
       <DependentUpon>scan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModeButtonsPopup.resx">
+      <DependentUpon>ModeButtonsPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModeDependentSettingsForm.resx">
+      <DependentUpon>ModeDependentSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\picD1orig.png" />
     <Content Include="Resources\picD2.png" />
@@ -576,6 +660,12 @@
       <DependentUpon>setup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ShutdownForm.resx">
+      <DependentUpon>ShutdownForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SliderSettingsForm.resx">
+      <DependentUpon>SliderSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="splash.resx">
       <DependentUpon>splash.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -586,6 +676,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KE9N\spot_options.resx">
       <DependentUpon>spot_options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="vfosettingspopup.resx">
+      <DependentUpon>vfosettingspopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="wave.resx">
       <DependentUpon>wave.cs</DependentUpon>
@@ -610,9 +703,7 @@
     <EmbeddedResource Include="images\flex-3000.jpg" />
     <Content Include="hpsdr5-64.ico" />
     <Content Include="images\hpsdr.jpg" />
-    <Content Include="images\hpsdr5.png" />
     <Content Include="images\openhpsdr4_splash.png" />
-    <Content Include="images\openhpsdr_splash.png" />
     <Content Include="images\PowerSDR.ico" />
     <EmbeddedResource Include="Resources\swiss.ttf" />
     <EmbeddedResource Include="Resources\swissb.ttf" />
@@ -677,6 +768,10 @@
       <Project>{66ade184-31ba-4f5b-8007-f39ef1b90f95}</Project>
       <Name>Midi2Cat</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RawInput\RawInput.csproj">
+      <Project>{4143d085-38cf-4640-bb05-2fdffaf94d76}</Project>
+      <Name>RawInput</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -688,6 +783,7 @@ copy /Y "$(SolutionDir)\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDi
 copy /Y "$(SolutionDir)\..\lib\fftw_$(PlatformName)\libfftw3f-3.dll" "$(ProjectDir)$(OutDir)";
 copy /Y "$(SolutionDir)\..\lib\wdsp_resources\calculus" "$(ProjectDir)$(OutDir)";
 copy /Y "$(SolutionDir)\..\lib\wdsp_resources\PureSignal.pdf" "$(ProjectDir)$(OutDir)";
-copy /Y "$(SolutionDir)\..\lib\wdsp_resources\Midi2Cat_Instructions_V3.pdf" "$(ProjectDir)$(OutDir)";</PostBuildEvent>
+copy /Y "$(SolutionDir)\..\lib\wdsp_resources\Midi2Cat_Instructions_V3.pdf" "$(ProjectDir)$(OutDir)";
+copy /Y "$(SolutionDir)\..\lib\wdsp_resources\BehringerMods_Midi2Cat_v2.pdf" "$(ProjectDir)$(OutDir)";</PostBuildEvent>
   </PropertyGroup>
 </Project>

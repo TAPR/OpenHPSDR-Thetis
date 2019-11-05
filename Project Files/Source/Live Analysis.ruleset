@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="MyRules" Description="My Rules" ToolsVersion="16.0">
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.Features" RuleNamespace="Microsoft.CodeAnalysis.Features">
+    <Rule Id="IDE0067" Action="None" />
+    <Rule Id="IDE0068" Action="None" />
+    <Rule Id="IDE0069" Action="None" />
+  </Rules>
+</RuleSet>

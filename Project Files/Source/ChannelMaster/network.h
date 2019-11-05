@@ -37,6 +37,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define MAX_SYNC_RX             (2)
 #define CACHE_ALIGN __declspec (align(16))
 
+#define MAX_IN_SEQ_LOG			(40)
+#define MAX_IN_SEQ_SNAPSHOTS	(20)
+
+typedef struct _seqLogSnapshot {
+	struct _seqLogSnapshot* next;
+	struct _seqLogSnapshot* previous;
+
+	int rx_in_seq_snapshot[MAX_IN_SEQ_LOG];
+} _seqLogSnapshot_t;
+
 typedef struct CACHE_ALIGN _radionet
 {
 	double* RxReadBufp;
@@ -125,7 +135,7 @@ typedef struct CACHE_ALIGN _radionet
 			    break_in          : 1; // bit 07
 			};
 		};
-#pragma pack(pop, 1)
+#pragma pack(pop)
 	}cw;
 
 	struct _mic
@@ -146,7 +156,7 @@ typedef struct CACHE_ALIGN _radionet
 				unsigned char           : 1; // bit 07
 			};
 		};
-#pragma pack(pop, 1)
+#pragma pack(pop)
 		int spp;							// I-samples per network packet
 	} mic;
 
@@ -166,6 +176,15 @@ typedef struct CACHE_ALIGN _radionet
 		unsigned _int64 time_stamp;
 		unsigned int bits_per_sample;
 		int spp;							// IQ-samples per network packet
+
+		//MW0LGE logging
+		int rx_in_seq_delta[MAX_IN_SEQ_LOG];	// ring buffer that contains a delta expected frame number vs recevied frame number
+		unsigned int rx_in_seq_delta_index;		// next slot to use in ring
+		_seqLogSnapshot_t* snapshots_head;		// simple linked list of snapshots of this ring buffer when a seq error occurs
+		_seqLogSnapshot_t* snapshots_tail;		// simple linked list of snapshots of this ring buffer when a seq error occurs
+		int snapshot_length;					// len of this snapshot list (used to limit)
+		_seqLogSnapshot_t* snapshot;			// used by netInterface to work through the list each call
+		//--
 	} rx[MAX_RX_STREAMS];
 
 	struct _tx
@@ -261,7 +280,7 @@ typedef struct _rbpfilter // radio band pass filter
 		};
 	};
 }rbpfilter, *RBPFILTER;
-#pragma pack(pop, 1)
+#pragma pack(pop)
 RBPFILTER prbpfilter;
 
 #pragma pack(push, 1)
@@ -292,7 +311,7 @@ typedef struct _rbpfilter2 // radio band pass filter
 		};
 	};
 }rbpfilter2, *RBPFILTER2;
-#pragma pack(pop, 1)
+#pragma pack(pop)
 RBPFILTER2 prbpfilter2;
 
 extern __declspec(dllexport) void create_rnet();
@@ -310,11 +329,11 @@ void PrintTimeHack();
 void PeakFwdPower(float fwd);
 void PeakRevPower(float rev);
 
-void InitWinsock();
-void CreateRIOSocket();
-void Bind(SOCKET s, const unsigned short port);
-void PostRIORecvs(const DWORD recvBufferSize, const DWORD pendingRecvs);
-void InitializeRIO(SOCKET s);
+//void InitWinsock();
+//void CreateRIOSocket();
+//void Bind(SOCKET s, const unsigned short port);
+//void PostRIORecvs(const DWORD recvBufferSize, const DWORD pendingRecvs);
+//void InitializeRIO(SOCKET s);
 
 // IOThread rountines
 int IOThreadStop(void);
@@ -457,3 +476,5 @@ enum HPSDRHW
 	Orion = 4,    // ANAN-200D
 	OrionMKII = 5 // ANAN-7000DLE/8000DLE
 };
+
+

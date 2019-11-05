@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-//
+// Copyright (C) 2010-2019  Doug Wigley
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -27,10 +27,13 @@
 //=================================================================
 
 using System;
+using System.Runtime.InteropServices;
 using System.Collections;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -38,6 +41,10 @@ namespace Thetis
 {
 	public class Splash : System.Windows.Forms.Form
 	{
+        //MW0LGE
+        [DllImport("user32.dll")]
+        static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
+
 		#region Variable Declarations
 
 		// Threading
@@ -117,10 +124,11 @@ namespace Thetis
             // 
             // pnlStatus
             // 
-            this.pnlStatus.BackColor = System.Drawing.Color.Transparent;
-            this.pnlStatus.Location = new System.Drawing.Point(42, 260);
+            this.pnlStatus.BackColor = System.Drawing.Color.White;
+            this.pnlStatus.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pnlStatus.Location = new System.Drawing.Point(42, 259);
             this.pnlStatus.Name = "pnlStatus";
-            this.pnlStatus.Size = new System.Drawing.Size(300, 20);
+            this.pnlStatus.Size = new System.Drawing.Size(300, 17);
             this.pnlStatus.TabIndex = 2;
             this.pnlStatus.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlStatus_Paint);
             // 
@@ -143,11 +151,11 @@ namespace Thetis
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
-            this.lblStatus.ForeColor = System.Drawing.Color.White;
+            this.lblStatus.ForeColor = System.Drawing.Color.Black;
             this.lblStatus.Image = null;
-            this.lblStatus.Location = new System.Drawing.Point(-6, 149);
+            this.lblStatus.Location = new System.Drawing.Point(-1, 9);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(400, 16);
+            this.lblStatus.Size = new System.Drawing.Size(397, 16);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Status";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -378,12 +386,30 @@ namespace Thetis
 				if( this.Opacity > 0 )
 					this.Opacity += m_dblOpacityIncrement;
 				else
-				{
-					StoreIncrements();
-					this.Close();
-				}
-			}
-			if( m_bFirstLaunch == false && m_dblLastCompletionFraction 
+                {
+                    StoreIncrements();
+                    this.Close();
+
+                    //MW0LGE interesting, but removed
+                    //// for -autostart option we run a task here and wait for CPU usage < 75%
+                    //TimeSpan ttime;
+                    //TimeSpan ttimeDiff;
+                    //var t = Task.Run(async delegate
+                    //{
+                    //    Process process = Process.GetCurrentProcess();
+                    //    do
+                    //    {
+                    //        ttime = process.TotalProcessorTime;
+                    //        await Task.Delay(500);
+                    //        TimeSpan ttime2 = process.TotalProcessorTime;
+                    //        ttimeDiff = ttime2.Subtract(ttime);
+                    //    } while (ttimeDiff.TotalMilliseconds > 400);
+                    //    Console.setPowerOn();
+                    //});
+
+                }
+            }
+            if ( m_bFirstLaunch == false && m_dblLastCompletionFraction 
 				< m_dblCompletionFraction )
 			{
 				m_dblLastCompletionFraction += m_dblPBIncrementPerTimerInterval;
@@ -395,7 +421,11 @@ namespace Thetis
 				if( width > 0 && height > 0 )
 				{
 					m_rProgress = new Rectangle( x, y, width, height);
-					pnlStatus.Invalidate(m_rProgress);
+                    //MW0LGE pnlStatus.Invalidate(m_rProgress);
+                    // this call supresses background draw, which was causing the flicker
+                    // annoying that c# invalidate does not have this option.
+                    if(pnlStatus!=null && !pnlStatus.IsDisposed)InvalidateRect(pnlStatus.Handle, IntPtr.Zero, false);
+
 					int iSecondsLeft = 1 + (int)(TIMER_INTERVAL * 
 						((1.0 - m_dblLastCompletionFraction)/
 						m_dblPBIncrementPerTimerInterval)) / 1000;
@@ -404,7 +434,6 @@ namespace Thetis
 					else
 						lblTimeRemaining.Text = string.Format( "{0} seconds", 
 							iSecondsLeft);
-
 				}
 			}
 		}

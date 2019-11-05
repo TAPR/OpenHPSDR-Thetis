@@ -211,7 +211,7 @@ namespace Thetis
         public static int initRadio()
         {
             int rc;
-            System.Console.WriteLine("Static IP: " + Console.getConsole().HPSDRNetworkIPAddr);
+           // System.Console.WriteLine("Static IP: " + Console.getConsole().HPSDRNetworkIPAddr);
             int adapterIndex = adapterSelected - 1;
             IPAddress[] addr = null;
             bool cleanup = false;

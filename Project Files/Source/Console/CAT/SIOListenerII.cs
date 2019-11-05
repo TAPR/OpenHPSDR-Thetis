@@ -1009,5 +1009,177 @@ namespace Thetis
         #endregion Events
     }
 
+    public class SIO5ListenerII
+    {
+        #region Constructor
+
+        public SIO5ListenerII(Console c)
+        {
+            console = c;
+            console.Activated += new EventHandler(console_Activated);
+            console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
+            parser = new CATParser(console);
+
+            //event handler for Serial RX Events
+            SDRSerialPort5.serial_rx_event += new SerialRXEventHandler(SerialRX5EventHandler);
+
+            if (console.AndromedaCATEnabled)  // if CAT is on fire it up 
+            {
+                try
+                {
+                    enableCAT5();
+                }
+                catch (Exception ex)
+                {
+                    // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
+                    //  seems ugly to me (wjt) 
+                    console.AndromedaCATEnabled = false;
+                    if (console.SetupForm != null)
+                    {
+                        console.SetupForm.copyAndromedaCATPropsToDialogVars(); // need to make sure the props on the setup page get reset 
+                    }
+                    MessageBox.Show("Could not initialize Andromeda CAT control.  Exception was:\n\n " + ex.Message +
+                        "\n\nCAT control has been disabled.", "Error Initializing CAT control",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+
+        public void enableCAT5()
+        {
+            lock (this)
+            {
+                if (cat5_enabled) return; // nothing to do already enabled 
+                cat5_enabled = true;
+            }
+            int port_num = console.AndromedaCATPort;
+            SIO5 = new SDRSerialPort5(port_num);
+            SIO5.setCommParms(9600, Parity.None, 8, StopBits.One);
+
+            Initialize();
+        }
+
+        // typically called when the end user has disabled CAT control through a UI element ... this 
+        // closes the serial port and neutralized the listeners we have in place
+
+        public void disableCAT5()
+        {
+            lock (this)
+            {
+                if (!cat5_enabled) return;
+                cat5_enabled = false;
+            }
+
+            if (SIO5 != null)
+            {
+                SIO5.Destroy();
+                SIO5 = null;
+            }
+            Fpass = true; // reset init flag 
+            return;
+        }
+
+        #endregion Constructor
+
+        #region Variables
+
+        public SDRSerialPort5 SIO5;
+
+        Console console;
+        ASCIIEncoding AE = new ASCIIEncoding();
+        private bool Fpass = true;
+        private bool cat5_enabled = false;
+
+        //		private System.Timers.Timer SIOMonitor;
+        CATParser parser;
+        //		private int SIOMonitorCount = 0;
+
+        #endregion variables
+
+        #region Methods
+
+        // Called when the console is activated for the first time.  
+        private void Initialize()
+        {
+            if (Fpass)
+            {
+                SIO5.Create();
+                Fpass = false;
+            }
+        }
+
+        #endregion Methods
+
+        #region Events
+
+        private void console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (SIO5 != null)
+            {
+                SIO5.Destroy();
+            }
+        }
+
+        private void console_Activated(object sender, EventArgs e)
+        {
+            if (console.AndromedaCATEnabled)
+            {
+                // Initialize();   // wjt enable CAT calls Initialize 
+                enableCAT5();
+            }
+        }
+
+        StringBuilder CommBuffer = new StringBuilder();//"";				//holds incoming serial data from the port
+        private void SerialRX5EventHandler(object source, SerialRXEvent e)
+        {
+            //			SIOMonitor.Interval = 5000;		// set the timer for 5 seconds
+            //			SIOMonitor.Enabled = true;		// start or restart the timer
+
+            //double T0 = 0.00;
+            //double T1 = 0.00;
+            //int bufferLen = 0;
+
+            CommBuffer.Append(e.buffer);                                		// put the data in the string
+            if (parser != null)													// is the parser instantiated
+            {
+                //bufferLen = CommBuffer.Length;
+                try
+                {
+                    Regex rex = new Regex(".*?;");										//accept any string ending in ;
+                    string answer;
+                    uint result;
+
+                    for (Match m = rex.Match(CommBuffer.ToString()); m.Success; m = m.NextMatch())	//loop thru the buffer and find matches
+                    {
+                        //testTimer1.Start();
+                        answer = parser.Get(m.Value);                                   //send the match to the parser
+                        //testTimer1.Stop();
+                        //T0 = testTimer1.DurationMsec;
+                        //testTimer2.Start();
+                        if (answer.Length > 0)
+                            result = SIO5.put(answer);                           		//send the answer to the serial port
+                        //testTimer2.Stop();
+                        //T1 = testTimer2.DurationMsec;
+                        CommBuffer = CommBuffer.Replace(m.Value, "", 0, m.Length);                   //remove the match from the buffer
+                        //Debug.WriteLine("Parser decode time for "+m.Value.ToString()+":  "+T0.ToString()+ "ms");
+                        //Debug.WriteLine("SIO3 send answer time:  " + T1.ToString() + "ms");
+                        //Debug.WriteLine("CommBuffer Length:  " + bufferLen.ToString());
+                        //if (bufferLen > 100)
+                        //Debug.WriteLine("Buffer contents:  "+CommBuffer.ToString());
+                    }
+                }
+                catch (Exception)
+                {
+                    //Add ex name to exception above to enable
+                    //Debug.WriteLine("RX Event:  "+ex.Message);
+                    //Debug.WriteLine("RX Event:  "+ex.StackTrace);
+                }
+            }
+        }
+
+        #endregion Events
+    }
+
 }
 

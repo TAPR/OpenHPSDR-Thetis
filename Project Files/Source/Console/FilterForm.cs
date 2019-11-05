@@ -642,16 +642,16 @@ namespace Thetis
 
 		private int HzToPixel(float freq)
 		{
-			int	low = (int)(-10000*console.SampleRate1/48000.0);
-			int	high = (int)(10000*console.SampleRate1/48000.0);
+			int	low = (int)(-10000*console.SampleRateRX1/48000.0);
+			int	high = (int)(10000*console.SampleRateRX1/48000.0);
 
 			return picDisplay.Width/2+(int)(freq/(high-low)*picDisplay.Width);
 		}
 
 		private float PixelToHz(float x)
 		{
-			int low = (int)(-10000*console.SampleRate1/48000.0);
-			int high = (int)(10000*console.SampleRate1/48000.0);
+			int low = (int)(-10000*console.SampleRateRX1/48000.0);
+			int high = (int)(10000*console.SampleRateRX1/48000.0);
 			
 			return (float)(low + ((double)x*(high - low)/picDisplay.Width));
 		}

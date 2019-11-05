@@ -123,7 +123,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new Size AutoScrollMargin
+		public new System.Drawing.Size AutoScrollMargin
 		{
 			get { return base.AutoScrollMargin; }
 			set
@@ -134,7 +134,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new Size AutoScrollMinSize
+		public new System.Drawing.Size AutoScrollMinSize
 		{
 			get { return base.AutoScrollMinSize; }
 			set
@@ -145,7 +145,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new Point AutoScrollPosition
+		public new System.Drawing.Point AutoScrollPosition
 		{
 			get { return base.AutoScrollPosition; }
 			set
@@ -236,7 +236,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new Size ClientSize
+		public new System.Drawing.Size ClientSize
 		{
 			get { return base.ClientSize; }
 			set
@@ -402,7 +402,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new Point Location
+		public new System.Drawing.Point Location
 		{
 			get { return base.Location; }
 			set
@@ -501,7 +501,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new Size Size
+		public new System.Drawing.Size Size
 		{
 			get { return base.Size; }
 			set
@@ -675,17 +675,17 @@ namespace System.Windows.Forms
 			else return base.CreateGraphics();
 		}
 
-		public new virtual ObjRef CreateObjRef(Type requestedType)
-		{
-			if(base.InvokeRequired)
-			{
-				IAsyncResult result = this.BeginInvoke(
-					new UI.CtrlRetFunc(UI.CallMarshalByRefObjectCreateObjRef),
-					new object[] { this, new object[] { requestedType }});
-				return (ObjRef)this.EndInvoke(result);
-			}
-			else return base.CreateObjRef(requestedType);
-		}
+		//public new virtual ObjRef CreateObjRef(Type requestedType)
+		//{
+		//	if(base.InvokeRequired)
+		//	{
+		//		IAsyncResult result = this.BeginInvoke(
+		//			new UI.CtrlRetFunc(UI.CallMarshalByRefObjectCreateObjRef),
+		//			new object[] { this, new object[] { requestedType }});
+		//		return (ObjRef)this.EndInvoke(result);
+		//	}
+		//	else return base.CreateObjRef(requestedType);
+		//}
 
 		public new virtual void Dispose()
 		{
@@ -749,7 +749,7 @@ namespace System.Windows.Forms
 			else return base.Focus();
 		}
 
-		public new Control GetChildAtPoint(Point pt)
+		public new Control GetChildAtPoint(System.Drawing.Point pt)
 		{
 			if(base.InvokeRequired)
 			{
@@ -918,26 +918,26 @@ namespace System.Windows.Forms
 			else base.PerformLayout(affectedControl, affectedProperty);
 		}
 
-		public new Point PointToClient(Point p)
+		public new System.Drawing.Point PointToClient(System.Drawing.Point p)
 		{
 			if(base.InvokeRequired)
 			{
 				IAsyncResult result = this.BeginInvoke(
 					new UI.CtrlRetFunc(UI.CallControlPointToClient),
 					new object[] { this, new object[] {p}});
-				return (Point)this.EndInvoke(result);
+				return (System.Drawing.Point)this.EndInvoke(result);
 			}
 			else return base.PointToClient(p);
 		}
 
-		public new Point PointToScreen(Point p)
+		public new System.Drawing.Point PointToScreen(System.Drawing.Point p)
 		{
 			if(base.InvokeRequired)
 			{
 				IAsyncResult result = this.BeginInvoke(
 					new UI.CtrlRetFunc(UI.CallControlPointToScreen),
 					new object[] { this, new object[] {p}});
-				return (Point)this.EndInvoke(result);
+				return (System.Drawing.Point)this.EndInvoke(result);
 			}
 			else return base.PointToScreen(p);
 		}
