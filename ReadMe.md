@@ -1,7 +1,7 @@
 
-Latest Release v2.6.8 April 29, 2019
-# 2.6.8 (2019-5-7)
-- RxAntTxAnt remembers its last state between sessions
+Latest Release v2.6.8 November 3, 2019
+# 2.6.8 (2019-10-3)
+See [ Thetis Change Log ](https://github.com/TAPR/OpenHPSDR-Thetis/blob/master/Thetis%20v2.6.8%20Change%20Log.pdf) for more details.
 
 # 2.6.7 (2019-4-29)
 - fixed bug where the VOX/DEXP LookAhead feature was enabled when VOX/DEXP was not.
