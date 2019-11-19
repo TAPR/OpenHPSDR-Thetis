@@ -75,9 +75,6 @@
     <ClInclude Include="obbuffs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="packetbuff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aamix.c">
@@ -141,9 +138,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="obbuffs.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="packetbuff.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

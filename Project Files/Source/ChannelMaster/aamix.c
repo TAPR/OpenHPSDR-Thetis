@@ -31,6 +31,11 @@ __declspec (align (16)) AAMIX paamix[MAX_EXT_AAMIX];		// array of pointers for A
 
 void mix_main (void *pargs)
 {
+	DWORD taskIndex = 0;
+	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
+	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
+	else SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+
 	AAMIX a = (AAMIX) pargs;
 	
 	while (_InterlockedAnd (&a->run, 1))
@@ -46,7 +51,7 @@ void mix_main (void *pargs)
 void start_mixthread (AAMIX a)
 {
 	HANDLE handle = (HANDLE) _beginthread(mix_main, 0, (void *)a);
-	SetThreadPriority (handle, THREAD_PRIORITY_HIGHEST);
+	//SetThreadPriority (handle, THREAD_PRIORITY_HIGHEST);
 }
 
 enum _slew

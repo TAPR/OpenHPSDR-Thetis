@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2014 Warren Pratt, NR0V
+Copyright (C) 2014-2019 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ warren@wpratt.com
 #include "sync.h"
 #include "txgain.h"
 #include "vox.h"
+#include "aamix.h"
 
 typedef struct _cmaster
 {
@@ -84,6 +85,7 @@ typedef struct _cmaster
 		TXGAIN pgain;												// gain block, for Penelope power control & amp protect
 		EER peer;													// eer block
 		ILV pilv;													// interleave for EER
+		AAMIX pavoxmix;												// anti-vox mixer
 	} xmtr[cmMAXxmtr];
 
 } cmaster, *CMASTER;

@@ -113,6 +113,7 @@ extern void SetAAudioMixOutputPointer(void* ptr, int id, void (*Outbound)(int id
 
 extern __declspec (dllexport) void SetAAudioMixVolume (void* ptr, int id, double volume);
 extern __declspec (dllexport) void SetAAudioMixState (void* ptr, int id, int stream, int state);
+extern __declspec (dllexport) void SetAAudioMixStates (void* ptr, int id, int streams, int states);
 extern __declspec (dllexport) void SetAAudioMixWhat (void* ptr, int id, int stream, int state);
 extern void SetAAudioRingInsize (void* ptr, int id, int size);
 extern void SetAAudioRingOutsize (void* ptr, int id, int size);

@@ -49,6 +49,7 @@ typedef struct _ivac
 	int txmon_size;
 	int vac_size;					// VAC buffer size
 	void *mixer;					// pointer to async audio mixer
+	double* bitbucket;				// dump for un-needed resampler output
 
 	void *rmatchIN;
 	void *rmatchOUT;
@@ -88,7 +89,7 @@ extern __declspec(dllexport) void *create_resampleV (int samplerate_in, int samp
 extern __declspec(dllexport) void xresampleV (double *input, double *output, int numsamps, int *outsamps, void *ptr);
 extern __declspec(dllexport) void destroy_resampleV (/*ResSt*/ void * resst);
 extern __declspec(dllexport) void destroy_ivac (int id);
-extern __declspec(dllexport) void xvacIN(int id, double* in_tx);
+extern __declspec(dllexport) void xvacIN(int id, double* in_tx, int bypass);
 extern __declspec(dllexport) void xvacOUT(int id, int stream, double* data);
 extern __declspec(dllexport) void create_ivac (
 	int id,
