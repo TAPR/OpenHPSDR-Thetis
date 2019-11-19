@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2014-2019 Warren Pratt, NR0V
+Copyright (C) 2014 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -112,63 +112,20 @@ void destroy_rcvr()
 void create_xmtr()
 {
 	int i, j, rc;
-	int avoxmix_inrates[cmMAXrcvr * cmMAXSubRcvr];	// anti-vox mixer inrates
-	for (i = 0; i < pcm->cmRCVR; i++)
-			for (j = 0; j < pcm->cmSubRCVR; j++)
-				avoxmix_inrates[pcm->cmSubRCVR * i + j] = pcm->rcvr[i].ch_outrate;	
 	for (i = 0; i < pcm->cmXMTR; i++)
 	{
 		int in_id = inid (1, i);
 		// output buffers (two because of EER)
 		for (j = 0; j < 2; j++)
 			pcm->xmtr[i].out[j] = (double *) malloc0 (getbuffsize (pcm->cmMAXTxOutRate) * sizeof (complex));
-		// dexp - vox
-		create_dexp (
-			i,									// transmitter id, txid
-			0,									// dexp initially set to OFF
+		//vox
+		pcm->xmtr[i].pvox = create_vox (
+			i,									// id
+			0,									// run
 			pcm->xcm_insize[in_id],				// input buffer size
 			pcm->in[in_id],						// input buffer
-			pcm->in[in_id],						// output buffer 
-			pcm->xcm_inrate[in_id],				// sample-rate 
-			0.01,								// detector smoothing time-constant 
-			0.025,								// attack time 
-			0.100,								// release time 
-			1.000,								// hold time
-			4.000,								// expansion ratio 
-			0.750,								// hysteresis ratio
-			0.050,								// attack threshold 
-			256,								// 256 taps for side-channel filter
-			0,									// BH-4 window for side-channel filter
-			1000.0,								// low-cut for side-channel filter
-			2000.0,								// high-cut for side-channel filter 
-			0,									// side-channel filter initially set to OFF
-			1,									// VOX initially set to ON
-			1,									// audio delay initially set to ON
-			0.060,								// audio delay set to 60ms
-			pcm->xmtr[i].pushvox,				// pointer to VOX callback
-			0,									// anti-vox 'run' flag
-			pcm->audio_outsize,					// anti-vox data buffer size (complex samples)
-			pcm->audio_outrate,					// anti-vox data sample-rate
-			0.01,								// anti-vox gain
-			0.01);								// anti-vox smoothing time-constant
-		// anti-vox mixer
-		pcm->xmtr[i].pavoxmix = (AAMIX) create_aamix (
-			-1,									// no id, return a pointer
-			i,									// outbound id to use when calling dexp-vox
-			pcm->audio_outsize,					// aamix ring_insize (after aamix resamplers)
-			pcm->audio_outsize,					// outsize (use audio size)
-			pcm->cmRCVR * pcm->cmSubRCVR,		// maximum number of inputs
-			0,									// 'active' inputs (data must flow for each)
-			(1<<(pcm->cmRCVR*pcm->cmSubRCVR))-1,// inputs to currently mix ('what' variable)
-			1.0,								// volume
-			4096,								// ring buffer size
-			avoxmix_inrates,					// sample rates of input streams
-			pcm->audio_outrate,					// audio output sample rate (use audio rate)
-			SendAntiVOXData,					// pointer to call sending output to Anti-VOX
-			0.000,								// tdelayup
-			0.000,								// tslewup
-			0.000,								// tdelaydown
-			0.000);								// tslewdown
+			0,									// mode
+			0.001);								// threshold
 		// dsp channel
 		OpenChannel(
 			chid (in_id, 0),					// channel number
@@ -179,8 +136,8 @@ void create_xmtr()
 			pcm->xmtr[i].ch_outrate,			// output sample rate
 			1,									// channel type
 			0,									// initial state
-			0.000,								// tdelayup
-			0.010,								// tslewup
+			0.010,								// tdelayup
+			0.025,								// tslewup
 			0.000,								// tdelaydown
 			0.010,								// tslewdown
 			1);									// block until output is available
@@ -239,8 +196,7 @@ void destroy_xmtr()
 		destroy_txgain (pcm->xmtr[i].pgain);
 		DestroyAnalyzer (inid (1, i));
 		CloseChannel (chid (inid (1, i), 0));
-		destroy_aamix ((void *)(pcm->xmtr[i].pavoxmix), -1);
-		destroy_dexp (i);
+		destroy_vox (pcm->xmtr[i].pvox);
 		for (j = 0; j < 2; j++)
 			_aligned_free (pcm->xmtr[i].out[j]);
 	}
@@ -313,7 +269,7 @@ void xcmaster (int stream)
 	EnterCriticalSection (&pcm->update[stream]);
 	switch (stype (stream))
 	{
-	int rx, tx, j, k;
+	int rx, tx, j;
 
 	case 0:  // standard receiver
 		rx = rxid (stream);
@@ -326,18 +282,14 @@ void xcmaster (int stream)
 			fexchange0 (chid (stream, j), pcm->in[stream], pcm->rcvr[rx].audio[j], &error);		// dsp
 		xpipe (stream, 1, pcm->rcvr[rx].audio);
 		for (j = 0; j < pcm->cmSubRCVR; j++)
-		{
 			xMixAudio (0, 0, chid (stream, j), pcm->rcvr[rx].audio[j]);							// mix audio
-			for (k = 0; k < pcm->cmXMTR; k++)
-				xMixAudio (pcm->xmtr[k].pavoxmix, -1, chid (stream, j), pcm->rcvr[rx].audio[j]);// send audio to anti-vox mixer(s)
-		}
 		// if (rx == 0) WriteAudio(30.0, 48000, 64, pcm->rcvr[0].audio[0], 3);
 		break;
 
 	case 1:  // standard transmitter
 		tx = txid (stream);
 		xpipe (stream, 0, pcm->in);
-		xdexp (tx);																				// vox-dexp
+		xvox (pcm->xmtr[tx].pvox);																// vox
 		fexchange0 (chid (stream, 0), pcm->in[stream], pcm->xmtr[tx].out[0], &error);			// dsp
 		xpipe (stream, 1, pcm->xmtr[tx].out);
 		// Spectrum0 (1, stream, 0, 0, pcm->xmtr[tx].out[0]);									// panadapter
@@ -402,9 +354,7 @@ void SetXcmInrate (int in_id, int rate)	// 2014-12-18:  called for streams 0, 1,
 			tx = txid (in_id);
 			SetInputSamplerate (chid (in_id, 0), rate);							// dsp channel input rate
 			SetInputBuffsize (chid (in_id, 0), pcm->xcm_insize[in_id]);			// dsp channel input size
-			//SetTXAVoxSize (tx, pcm->xcm_insize[in_id]);							// VOX size
-			SetDEXPSize (tx, pcm->xcm_insize[in_id]);							// vox-dexp size
-			SetDEXPRate (tx, rate);												// vox-dexp rate
+			SetTXAVoxSize (tx, pcm->xcm_insize[in_id]);							// VOX size
 			// PIPE - set wave player, rcvr0 (leave in C# since player is there)
 			// PIPE - set wave player, rcvr1 (leave in C# since player is there)
 			// PIPE - set wave recorder, rcvr0 (leave in C# since recorder is there)
@@ -489,18 +439,4 @@ void SetXmtrChannelOutrate (int xmtr_id, int rate, int state)	// 2014-11-24:  Ca
 	SetIVACtxmonSize (1, size);												// set vacOUT1 size for tx monitor
 	// PIPE - set Wave Recorder (leave in C# since recorder is there)
 	LeaveCriticalSection (&pcm->update[in_id]);
-}
-
-PORT
-void SetAntiVOXSourceStates (int txid, int streams, int states)
-{
-	void* a = (void *)pcm->xmtr[txid].pavoxmix;
-	SetAAudioMixStates (a, -1, streams, states);
-}
-
-PORT
-void SetAntiVOXSourceWhat (int txid, int stream, int state)
-{
-	void* a = (void *)pcm->xmtr[txid].pavoxmix;
-	SetAAudioMixWhat (a, -1, stream, state);
 }

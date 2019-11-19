@@ -155,14 +155,8 @@ int getOOO() { // OOO == Out Of Order packet
 		result += 8;
 	if (prn->rx[3].rx_in_seq_err > 0) // DDC3 I/Q data
 		result += 16;
-	if (prn->rx[4].rx_in_seq_err > 0) // DDC4 I/Q data
-		result += 32;
-	if (prn->rx[5].rx_in_seq_err > 0) // DDC5 I/Q data
-		result += 64;
-	if (prn->rx[6].rx_in_seq_err > 0) // DDC6 I/Q data
-		result += 128;
 	if (prn->tx[0].mic_in_seq_err > 0) // mic_in data
-		result += 256;
+		result += 32;
 
 
 	if (result > 0)
@@ -175,32 +169,10 @@ int getOOO() { // OOO == Out Of Order packet
 		prn->rx[1].rx_in_seq_err = 0;
 		prn->rx[2].rx_in_seq_err = 0;
 		prn->rx[3].rx_in_seq_err = 0;
-		prn->rx[4].rx_in_seq_err = 0;
-		prn->rx[5].rx_in_seq_err = 0;
-		prn->rx[6].rx_in_seq_err = 0;
 		prn->tx[0].mic_in_seq_err = 0;
 	}
 
 	return result;
-}
-
-PORT
-int getSeqInDeltaStart(int rx) {
-	prn->rx[rx].snapshot = prn->rx[rx].snapshots_head;
-	return prn->rx[rx].snapshot != NULL;
-}
-
-PORT
-int getSeqInDelta(int rx, int deltas[]) {
-	if (prn->rx[rx].snapshot != NULL)
-	{
-		memcpy(deltas, prn->rx[rx].snapshot->rx_in_seq_snapshot, sizeof(int) * MAX_IN_SEQ_LOG);
-
-		prn->rx[rx].snapshot = prn->rx[rx].snapshot->next;
-
-		return 1;
-	}
-	return 0;
 }
 
 PORT
@@ -1248,160 +1220,133 @@ void create_rnet() {
 	int i;
 
 	prn = (RADIONET)malloc(sizeof(radionet));
-	if (prn) {
-		prn->RxReadBufp = (double*)calloc(1, 2 * sizeof(double) * 240);
-		prn->TxReadBufp = (double*)calloc(1, 2 * sizeof(double) * 720);
-		prn->ReadBufp = (unsigned char*)calloc(1, sizeof(unsigned char) * 1444);
-		//prn->ReadBufp = (char *)calloc(1, sizeof(char) * 1444);
-		prn->OutBufp = (char*)calloc(1, sizeof(char) * 1440);
-		//prn->readbuf = prn->ReadBufp;
-		prn->rx_base_port = 1035;
-		prn->run = 0;
-		prn->wdt = 0;
-		prn->sendHighPriority = 1;
-		prn->num_adc = 1;
-		prn->num_dac = 1;
-		prn->ptt_in = 0;
-		prn->dot_in = 0;
-		prn->dash_in = 0;
-		prn->cc_seq_no = 0;
-		prn->cc_seq_err = 0;
+	prn->RxReadBufp = (double *)calloc(1, 2 * sizeof(double) * 240);
+	prn->TxReadBufp = (double *)calloc(1, 2 * sizeof(double) * 720);
+	prn->ReadBufp = (unsigned char *)calloc(1, sizeof(unsigned char) * 1444);
+	//prn->ReadBufp = (char *)calloc(1, sizeof(char) * 1444);
+	prn->OutBufp = (char *)calloc(1, sizeof(char) * 1440);
+	//prn->readbuf = prn->ReadBufp;
+	prn->rx_base_port = 1035;
+	prn->run = 0;
+	prn->wdt = 0;
+	prn->sendHighPriority = 1;
+	prn->num_adc = 1;
+	prn->num_dac = 1;
+	prn->ptt_in = 0;
+	prn->dot_in = 0;
+	prn->dash_in = 0;
+	prn->cc_seq_no = 0;
+	prn->cc_seq_err = 0;
 
-		prn->cw.mode_control = 0;
-		prn->cw.sidetone_level = 0;
-		prn->cw.sidetone_freq = 0;
-		prn->cw.keyer_speed = 0;
-		prn->cw.keyer_weight = 0;
-		prn->cw.hang_delay = 0;
-		prn->cw.rf_delay = 0;
+	prn->cw.mode_control = 0;
+	prn->cw.sidetone_level = 0;
+	prn->cw.sidetone_freq = 0;
+	prn->cw.keyer_speed = 0;
+	prn->cw.keyer_weight = 0;
+	prn->cw.hang_delay = 0;
+	prn->cw.rf_delay = 0;
 
-		prn->mic.mic_control = 0;
-		prn->mic.line_in_gain = 0;
-		prn->mic.spp = 64; // 64;	720;					// I-samples per packet
+	prn->mic.mic_control = 0;
+	prn->mic.line_in_gain = 0;
+	prn->mic.spp = 64; // 64;	720;					// I-samples per packet
 
-		for (i = 0; i < 2; i++)
-			prn->syncrxbuff[i] = (double*)calloc(1, 2 * sizeof(double) * 120);
+	for (i = 0; i < 2; i++)
+		prn->syncrxbuff[i] = (double *)calloc(1, 2 * sizeof(double) * 120);
 
-		prn->wb_base_port = 1027;
-		prn->wb_base_dispid = 32;
-		prn->wb_enable = 0;
-		prn->wb_samples_per_packet = 512;
-		prn->wb_sample_size = 16;
-		prn->wb_update_rate = 70;
-		prn->wb_packets_per_frame = 32;
-		for (i = 0; i < MAX_ADC; i++) {
-			prn->adc[i].id = i;
-			prn->adc[i].rx_step_attn = 0;
-			prn->adc[i].tx_step_attn = 31;
-			prn->adc[i].adc_overload = 0;
-			prn->adc[i].dither = 0;
-			prn->adc[i].random = 0;
-			prn->adc[i].wb_seqnum = 0;
-			prn->adc[i].wb_state = 0;
-			prn->adc[i].wb_buff = (double*)malloc0(1024 * sizeof(double));
-		}
-
-		for (i = 0; i < MAX_RX_STREAMS; i++) {
-			prn->rx[i].id = i;
-			prn->rx[i].rx_adc = 0;
-			prn->rx[i].frequency = 0;
-			prn->rx[i].enable = 0;
-			prn->rx[i].sync = 0;
-			prn->rx[i].sampling_rate = 48;
-			prn->rx[i].bit_depth = 24;
-			prn->rx[i].preamp = 0;
-			prn->rx[i].rx_in_seq_no = 0;
-			prn->rx[i].rx_out_seq_no = 0;
-			prn->rx[i].rx_in_seq_err = 0;
-			prn->rx[i].time_stamp = 0;
-			prn->rx[i].bits_per_sample = 0;
-			prn->rx[i].spp = 238;				// IQ-samples per packet
-
-			//MW0LGE
-			prn->rx[i].rx_in_seq_delta_index = 0;
-			for (int ii = 0; ii < MAX_IN_SEQ_LOG; ii++) {
-				prn->rx[i].rx_in_seq_delta[ii] = 0;
-			}
-			prn->rx[i].snapshots_head = NULL;
-			prn->rx[i].snapshots_tail = NULL;
-			prn->rx[i].snapshot_length = 0;
-		}
-
-		for (i = 0; i < MAX_TX_STREAMS; i++) {
-			prn->tx[i].id = i;
-			prn->tx[i].frequency = 0;
-			prn->tx[i].sampling_rate = 192;
-			prn->tx[i].cwx = 0;
-			prn->tx[i].dash = 0;
-			prn->tx[i].dot = 0;
-			prn->tx[i].ptt_out = 0;
-			prn->tx[i].drive_level = 0;
-			prn->tx[i].phase_shift = 0;
-			prn->tx[i].epwm_max = 0;
-			prn->tx[i].epwm_min = 0;
-			prn->tx[i].pa = 0;
-			prn->tx[i].mic_in_seq_no = 0;
-			prn->tx[i].mic_in_seq_err = 0;
-			prn->tx[i].mic_out_seq_no = 0;
-			prn->tx[i].spp = 240;				// IQ-samples per packet
-		}
-
-		for (i = 0; i < MAX_AUDIO_STREAMS; i++)
-		{
-			prn->audio[i].spp = 64; // 64;	360;			// LR-samples per packet
-		}
-
-		prn->puresignal_run = 0;
-
-		for (i = 0; i < 6; i++)
-			prn->discovery.MACAddr[i] = 0;
-		prn->discovery.BoardType = 0;
-		prn->discovery.protocolVersion = 0;
-		prn->discovery.fwCodeVersion = 0;
-		prn->discovery.MercuryVersion_0 = 0;
-		prn->discovery.MercuryVersion_1 = 0;
-		prn->discovery.MercuryVersion_2 = 0;
-		prn->discovery.MercuryVersion_3 = 0;
-		prn->discovery.PennyVersion = 0;
-		prn->discovery.MetisVersion = 0;
-		prn->discovery.numRxs = 0;
-
-		prbpfilter = (RBPFILTER)malloc0(sizeof(rbpfilter));
-		prbpfilter->bpfilter = 0;
-		prbpfilter->enable = 1;
-
-		prbpfilter2 = (RBPFILTER2)malloc0(sizeof(rbpfilter2));
-		prbpfilter2->bpfilter = 0;
-		prbpfilter2->enable = 2;
-
-		prn->hReadThreadMain = NULL;
-		prn->hReadThreadInitSem = NULL;
-		prn->hKeepAliveThread = NULL;
-		prn->hTimer = NULL;
-
-		create_obbuffs(0, 1, 2048, prn->audio[0].spp);	// last parameter is number of samples per packet
-		create_obbuffs(1, 1, 2048, prn->tx[0].spp);
-		(void)InitializeCriticalSectionAndSpinCount(&prn->udpOUT, 2500);
-		(void)InitializeCriticalSectionAndSpinCount(&prn->rcvpkt, 2500);
-		(void)InitializeCriticalSectionAndSpinCount(&prn->sndpkt, 2500);
-		SendpOutbound(OutBound);
+	prn->wb_base_port = 1027;
+	prn->wb_base_dispid = 32;
+	prn->wb_enable = 0;
+	prn->wb_samples_per_packet = 512;
+	prn->wb_sample_size = 16;
+	prn->wb_update_rate = 70;
+	prn->wb_packets_per_frame = 32;
+	for (i = 0; i < MAX_ADC; i++) {
+		prn->adc[i].id = i;
+		prn->adc[i].rx_step_attn = 0;
+		prn->adc[i].tx_step_attn = 31;
+		prn->adc[i].adc_overload = 0;
+		prn->adc[i].dither = 0;
+		prn->adc[i].random = 0;
+		prn->adc[i].wb_seqnum = 0;
+		prn->adc[i].wb_state = 0;
+		prn->adc[i].wb_buff = (double *)malloc0(1024 * sizeof(double));
 	}
-}
 
-PORT
-void clearSnapshots()
-{
-	int i;
 	for (i = 0; i < MAX_RX_STREAMS; i++) {
-		while (prn->rx[i].snapshots_head != NULL)
-		{
-			_seqLogSnapshot_t* tmp = prn->rx[i].snapshots_head;
-			prn->rx[i].snapshots_head = tmp->next;
-			free(tmp);
-		}
-		prn->rx[i].snapshot_length = 0;
-		prn->rx[i].snapshots_tail = NULL;
+		prn->rx[i].id = i;
+		prn->rx[i].rx_adc = 0;
+		prn->rx[i].frequency = 0;
+		prn->rx[i].enable = 0;
+		prn->rx[i].sync = 0;
+		prn->rx[i].sampling_rate = 48;
+		prn->rx[i].bit_depth = 24;
+		prn->rx[i].preamp = 0;
+		prn->rx[i].rx_in_seq_no = 0;
+		prn->rx[i].rx_out_seq_no = 0;
+		prn->rx[i].rx_in_seq_err = 0;
+		prn->rx[i].time_stamp = 0;
+		prn->rx[i].bits_per_sample = 0;
+		prn->rx[i].spp = 238;				// IQ-samples per packet
 	}
+
+	for (i = 0; i < MAX_TX_STREAMS; i++) {
+		prn->tx[i].id = i;
+		prn->tx[i].frequency = 0;
+		prn->tx[i].sampling_rate = 192;
+		prn->tx[i].cwx = 0;
+		prn->tx[i].dash = 0;
+		prn->tx[i].dot = 0;
+		prn->tx[i].ptt_out = 0;
+		prn->tx[i].drive_level = 0;
+		prn->tx[i].phase_shift = 0;
+		prn->tx[i].epwm_max = 0;
+		prn->tx[i].epwm_min = 0;
+		prn->tx[i].pa = 0;
+		prn->tx[i].mic_in_seq_no = 0;
+		prn->tx[i].mic_in_seq_err = 0;
+		prn->tx[i].mic_out_seq_no = 0;
+		prn->tx[i].spp = 240;				// IQ-samples per packet
+	}
+
+	for (i = 0; i < MAX_AUDIO_STREAMS; i++)
+	{
+		prn->audio[i].spp = 64; // 64;	360;			// LR-samples per packet
+	}
+
+	prn->puresignal_run = 0;
+
+	for (i = 0; i < 6; i++)
+		prn->discovery.MACAddr[i] = 0;
+	prn->discovery.BoardType = 0;
+	prn->discovery.protocolVersion = 0;
+	prn->discovery.fwCodeVersion = 0;
+	prn->discovery.MercuryVersion_0 = 0;
+	prn->discovery.MercuryVersion_1 = 0;
+	prn->discovery.MercuryVersion_2 = 0;
+	prn->discovery.MercuryVersion_3 = 0;
+	prn->discovery.PennyVersion = 0;
+	prn->discovery.MetisVersion = 0;
+	prn->discovery.numRxs = 0;
+
+	prbpfilter = (RBPFILTER)malloc0(sizeof(rbpfilter));
+	prbpfilter->bpfilter = 0;
+	prbpfilter->enable = 1;
+
+	prbpfilter2 = (RBPFILTER2)malloc0(sizeof(rbpfilter2));
+	prbpfilter2->bpfilter = 0;
+	prbpfilter2->enable = 2;
+
+	prn->hReadThreadMain = NULL;
+	prn->hReadThreadInitSem = NULL;
+	prn->hKeepAliveThread = NULL;
+	prn->hTimer = NULL;
+
+	create_obbuffs(0, 1, 2048, prn->audio[0].spp);	// last parameter is number of samples per packet
+	create_obbuffs(1, 1, 2048, prn->tx[0].spp);
+	InitializeCriticalSectionAndSpinCount(&prn->udpOUT, 2500);
+	InitializeCriticalSectionAndSpinCount(&prn->rcvpkt, 2500);
+	InitializeCriticalSectionAndSpinCount(&prn->sndpkt, 2500);
+	SendpOutbound(OutBound);
 }
 
 PORT
@@ -1420,9 +1365,6 @@ void destroy_rnet() {
 	free(prn->TxReadBufp);
 	free(prn->RxReadBufp);
 	free(prn->ReadBufp);
-	//MW0LGE
-	clearSnapshots();
-	//
 	free(prn);
 	_aligned_free(prbpfilter);
 	_aligned_free(prbpfilter2);

@@ -185,8 +185,8 @@ void xpipe (int stream, int pos, double** buffs)
 			(*pip.rcvr[1].xplaywave)(1, buff);						// wav player 1
 			(*pip.rcvr[0].xrecordwave)(1, 0, buff);					// wav recorder 0
 			(*pip.rcvr[1].xrecordwave)(1, 0, buff);					// wav recorder 1
-			if (pip.xmtr[0].txvac == 0)  { xvacIN(0, buff, 0);  xvacIN(1, buff, 1); }
-			if (pip.xmtr[0].txvac == 1)  { xvacIN(1, buff, 0);  xvacIN(0, buff, 1); }
+			xvacIN(0, buff);										// data from VAC 0
+			xvacIN(1, buff);										// data from VAC 1
 			break;
 		case 1: // IQ data
 			(*pip.rcvr[0].xscope)(1, buffs[0]);						// scope
@@ -251,10 +251,4 @@ PORT
 void SetTopPan3Run (int run)
 {
 	_InterlockedExchange (&pip.rcvr[0].top_pan3_run, run);
-}
-
-PORT
-void SetTXVAC (int txid, int txvac)
-{
-	_InterlockedExchange (&pip.xmtr[txid].txvac, txvac);
 }

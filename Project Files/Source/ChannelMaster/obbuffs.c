@@ -37,7 +37,7 @@ struct _obpointers
 void start_obthread (int id)
 {
 	HANDLE handle = (HANDLE) _beginthread(ob_main, 0, (void *)id);
-	//SetThreadPriority(handle, THREAD_PRIORITY_HIGHEST);
+	SetThreadPriority(handle, THREAD_PRIORITY_HIGHEST);
 }
 
 void create_obbuffs (int id, int accept, int max_insize, int outsize)
@@ -151,11 +151,6 @@ void obdata (int id, double* out)
 
 void ob_main (void *pargs)
 {
-	DWORD taskIndex = 0;
-	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
-	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
-	else SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
-
 	int id = (int)pargs;
 	OBB a = obp.pdbuff[id];
 	

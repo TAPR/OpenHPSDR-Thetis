@@ -29,7 +29,6 @@ warren@wpratt.com
 #include <intrin.h>
 #include <math.h>
 #include <time.h>
-#include <avrt.h>
 
 #include "aamix.h"
 #include "amix.h"

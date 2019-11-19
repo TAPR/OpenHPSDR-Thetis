@@ -3,6 +3,9 @@ Project Files/build
 Project Files/Source/Console/obj
 Project Files/Source/Midi2Cat/obj
 Project Files/Source/Midi2Cat/bin
+Project Files/Source/RawInput/obj
+Project Files/Source/RawInput/bin
 Project Files/Source/*.suo
 Project Files/Source/*.sdf
 Project Files/lib/WinFormsUI/obj
+Project Files/Source/.vs
