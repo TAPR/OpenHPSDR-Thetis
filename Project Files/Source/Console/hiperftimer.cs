@@ -46,7 +46,7 @@ namespace Thetis
 		private static extern bool QueryPerformanceFrequency(
 			out long lpFrequency);
 
-		private long startTime, stopTime;
+		private long startTime, stopTime, elapsedTime;
 		private long freq;
 
 		// Constructor
@@ -54,8 +54,9 @@ namespace Thetis
 		{
 			startTime = 0;
 			stopTime  = 0;
+            elapsedTime = 0;
 
-			if (QueryPerformanceFrequency(out freq) == false)
+            if (QueryPerformanceFrequency(out freq) == false)
 			{
 				// high-performance counter not supported
 				throw new Exception();
@@ -94,7 +95,26 @@ namespace Thetis
 			}
 		}
 
-		public long GetFreq()
+        public double Elapsed {
+            get {
+                QueryPerformanceCounter(out elapsedTime);
+                return (double)(elapsedTime - startTime) / (double)freq;
+            }
+        }
+
+        public void Reset()
+        {
+            Start();
+        }
+
+        public double ElapsedMsec {
+            get {
+                QueryPerformanceCounter(out elapsedTime);
+                return (1000.0) * (double)((elapsedTime - startTime)) / (double)freq;
+            }
+        }
+
+        public long GetFreq()
 		{
 			long freq = 0;
 			QueryPerformanceFrequency(out freq);

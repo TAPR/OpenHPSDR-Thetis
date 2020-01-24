@@ -74,8 +74,8 @@ namespace Thetis
 		private System.Windows.Forms.TextBoxTS txtCurrentFile;
 		private System.Windows.Forms.LabelTS lblCurrentlyPlaying;
 		private System.Windows.Forms.CheckBoxTS checkBoxLoop;
-		private System.Windows.Forms.MainMenu mainMenu1;
-		private System.Windows.Forms.MenuItem mnuWaveOptions;
+		private System.Windows.Forms.MenuStrip mainMenu1;
+		private System.Windows.Forms.ToolStripMenuItem mnuWaveOptions;
 		private System.Windows.Forms.NumericUpDownTS udPreamp;
 		private System.Windows.Forms.GroupBoxTS groupBoxTS1;
 		private System.Windows.Forms.CheckBoxTS chkQuickRec;
@@ -143,8 +143,8 @@ namespace Thetis
             this.btnAdd = new System.Windows.Forms.ButtonTS();
             this.lstPlaylist = new System.Windows.Forms.ListBox();
             this.btnRemove = new System.Windows.Forms.ButtonTS();
-            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
-            this.mnuWaveOptions = new System.Windows.Forms.MenuItem();
+            this.mainMenu1 = new System.Windows.Forms.MenuStrip();
+            this.mnuWaveOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.createBoxTS = new System.Windows.Forms.CheckBoxTS();
             this.TXIDBoxTS = new System.Windows.Forms.CheckBoxTS();
@@ -172,6 +172,7 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.udPreamp)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.grpPlayback.SuspendLayout();
+            this.mainMenu1.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -254,12 +255,11 @@ namespace Thetis
             // 
             // mainMenu1
             // 
-            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.mainMenu1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuWaveOptions});
             // 
             // mnuWaveOptions
             // 
-            this.mnuWaveOptions.Index = 0;
             this.mnuWaveOptions.Text = "Options";
             this.mnuWaveOptions.Click += new System.EventHandler(this.mnuWaveOptions_Click);
             // 
@@ -542,7 +542,7 @@ namespace Thetis
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.grpPlayback);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Menu = this.mainMenu1;
+            this.MainMenuStrip = this.mainMenu1;
             this.Name = "WaveControl";
             this.Text = "Wave File Controls";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.WaveControl_Closing);
@@ -553,6 +553,8 @@ namespace Thetis
             this.groupBox2.ResumeLayout(false);
             this.grpPlayback.ResumeLayout(false);
             this.grpPlayback.PerformLayout();
+            this.mainMenu1.ResumeLayout(false);
+            this.mainMenu1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -657,7 +659,7 @@ namespace Thetis
 					"Bad Filename",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
-				file_list.RemoveAt(currently_playing);
+				if(currently_playing>=0) file_list.RemoveAt(currently_playing); // MW0LGE fix -1 error
 				return false;
 			}
 
@@ -867,6 +869,7 @@ namespace Thetis
 			UpdatePlaylist();
 		}
 
+        private bool temp_vacbypass_play=false;
 		private void checkBoxPlay_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(checkBoxPlay.Checked)
@@ -890,6 +893,12 @@ namespace Thetis
 				txtCurrentFile.Text = (string)lstPlaylist.Items[currently_playing];
 				checkBoxPlay.BackColor = console.ButtonSelectedColor;
 				checkBoxPause.Enabled = true;
+
+                if (console.BypassVACWhenPlayingRecording)
+                {
+                    temp_vacbypass_play = Audio.VACBypass;  //MW0LGE
+                    Audio.VACBypass = true;                 //MW0LGE
+                }
 			}
 			else
 			{
@@ -906,6 +915,10 @@ namespace Thetis
 				txtCurrentFile.Text = "";
 				checkBoxPlay.BackColor = SystemColors.Control;
 
+                if (console.BypassVACWhenPlayingRecording)
+                {
+                    Audio.VACBypass = temp_vacbypass_play;  //MW0LGE
+                }
 			}
             Audio.WavePlayback = checkBoxPlay.Checked;
 			console.WavePlayback = checkBoxPlay.Checked;			
@@ -1163,6 +1176,7 @@ namespace Thetis
         private bool temp_txeq = false;
 		private bool temp_cpdr = false;
 		private bool temp_dx = false;
+        private bool temp_vacbypass = false; //MW0LGE
         public static int QAC = 0; // ke9ns add
  
 		private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
@@ -1203,15 +1217,26 @@ namespace Thetis
 				
 				temp_mon = console.MON;
 				console.MON = true;
+
+                if (console.BypassVACWhenPlayingRecording)
+                {
+                    temp_vacbypass = Audio.VACBypass;   //MW0LGE
+                    Audio.VACBypass = true; //MW0LGE
+                }
+
 				if(!OpenWaveFile(file_name, 0))
 				{
 					chkQuickPlay.Checked = false;
 					console.MON = temp_mon;
 					Audio.RecordTXPreProcessed = temp_play; //return to original state
 					console.TXEQ = temp_txeq;               // set TX Eq back to original state
+                    console.CPDR = temp_cpdr; //MW0LGE
+                    console.DX = temp_dx; //MW0LGE
+                    if (console.BypassVACWhenPlayingRecording) Audio.VACBypass = temp_vacbypass; //MW0LGE
 					return;
 				}			
 				chkQuickPlay.BackColor = console.ButtonSelectedColor;
+                
 			}
 			else
 			{
@@ -1224,6 +1249,10 @@ namespace Thetis
 				console.TXEQ = temp_txeq;               // set TX Eq back to original state
 				console.CPDR = temp_cpdr;
 				console.DX = temp_dx;
+                if (console.BypassVACWhenPlayingRecording)
+                {
+                    Audio.VACBypass = temp_vacbypass; //MW0LGE
+                }
 			}
             Audio.WavePlayback = chkQuickPlay.Checked;
 			console.WavePlayback = chkQuickPlay.Checked;			
@@ -1479,10 +1508,12 @@ namespace Thetis
 
                 if ((console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))  // check if we need to create a new wave file or use the old one.
                 {
-                    Thread t = new Thread(new ThreadStart(CreateWaterfallID));
-                    t.Name = "Create Waterfall ID wave file Thread";
-                    t.IsBackground = true;
-                    t.Priority = ThreadPriority.Normal;
+                    Thread t = new Thread(new ThreadStart(CreateWaterfallID))
+                    {
+                        Name = "Create Waterfall ID wave file Thread",
+                        IsBackground = true,
+                        Priority = ThreadPriority.Normal
+                    };
                     t.Start();
                 } // console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))
                 else
@@ -2372,11 +2403,13 @@ namespace Thetis
 
 			filename = file;
 
-			Thread t = new Thread(new ThreadStart(ProcessRecordBuffers));
-			t.Name = "Wave File Write Thread";
-			t.IsBackground = true;
-			t.Priority = ThreadPriority.Normal;
-			t.Start();
+            Thread t = new Thread(new ThreadStart(ProcessRecordBuffers))
+            {
+                Name = "Wave File Write Thread",
+                IsBackground = true,
+                Priority = ThreadPriority.Normal
+            };
+            t.Start();
 		}
 
 		private void ProcessRecordBuffers()
@@ -2829,10 +2862,12 @@ namespace Thetis
 			playback = true;
 			reader = binread;
 
-			Thread t = new Thread(new ThreadStart(ProcessBuffers));
-			t.Name = "Wave File Read Thread";
-			t.IsBackground = true;
-			t.Priority = ThreadPriority.Normal;
+            Thread t = new Thread(new ThreadStart(ProcessBuffers))
+            {
+                Name = "Wave File Read Thread",
+                IsBackground = true,
+                Priority = ThreadPriority.Normal
+            };
             total_samps_written = 0;
             total_samps_read    = 0;
             do
@@ -3031,10 +3066,12 @@ namespace Thetis
             total_samps_read += size;                           // sum the total samples read from the ring(s)
             if (total_samps_read >= total_samps_written)        // check to see if we're done with playback
             {
-                Thread t = new Thread(new ThreadStart(NextPlayback));
-                t.Name = "Wave File Next Playback";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
+                Thread t = new Thread(new ThreadStart(NextPlayback))
+                {
+                    Name = "Wave File Next Playback",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal
+                };
                 t.Start();
             }
 		}

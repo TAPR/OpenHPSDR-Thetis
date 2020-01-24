@@ -45,19 +45,19 @@ namespace Thetis
 		private string prefix;
 		private string suffix;
 		private string extension;
-		private char[] term = new char[1]{';'};
+		private readonly char[] term = new char[1]{';'};
 		public int nSet;
 		public int nGet;
 		public int nAns;
 		public bool IsActive;
 		private XmlDocument doc;
-		private CATCommands cmdlist;
-		private Console console;
+		private readonly CATCommands cmdlist;
+		private readonly Console console;
 		public string Error1 = "?;";
 		public string Error2 = "E;";
 		public string Error3 = "O;";
 		private bool IsExtended;
-		private ASCIIEncoding AE = new ASCIIEncoding();
+		private readonly ASCIIEncoding AE = new ASCIIEncoding();
 
         private bool verbose = false;
         public bool Verbose
@@ -1043,7 +1043,13 @@ namespace Thetis
                 case "ZZOW":
                     rtncmd = cmdlist.ZZOW(suffix);
                     break;
-				case "ZZPA":
+                case "ZZOX":
+                    rtncmd = cmdlist.ZZOX(suffix);
+                    break;
+                case "ZZOZ":
+                    rtncmd = cmdlist.ZZOZ(suffix);
+                    break;
+                case "ZZPA":
 					rtncmd = cmdlist.ZZPA(suffix);
 					break;
                 case "ZZPB":
@@ -1076,7 +1082,10 @@ namespace Thetis
 				case "ZZPZ":
 					rtncmd = cmdlist.ZZPZ(suffix);
 					break;
-				case "ZZQM":
+                case "ZZQK":
+                    rtncmd = cmdlist.ZZQK(suffix);
+                    break;
+                case "ZZQM":
 					rtncmd = cmdlist.ZZQM();
 					break;
 				case "ZZQR":
@@ -1427,6 +1436,9 @@ namespace Thetis
                 case "ZZYR":
                     rtncmd = cmdlist.ZZYR(suffix);
                     break;
+                case "ZZZA":
+                    rtncmd = cmdlist.ZZZA(suffix);
+                    break;
                 case "ZZZB":
 					rtncmd = cmdlist.ZZZB();
 					break;
@@ -1435,9 +1447,6 @@ namespace Thetis
                     break;
                 case "ZZZE":
                     rtncmd = cmdlist.ZZZE(suffix);
-                    break;
-                case "ZZZH":
-                    rtncmd = cmdlist.ZZZH(suffix);
                     break;
                 case "ZZZP":
                     rtncmd = cmdlist.ZZZP(suffix);

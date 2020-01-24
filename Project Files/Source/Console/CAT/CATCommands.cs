@@ -2,7 +2,6 @@
 // CATCommands.cs
 //=================================================================
 // Copyright (C) 2005  Bob Tracy
-//C:\Users\laure\Documents\software\github\Thetis\thetis\Project Files\Source\Console\CAT\CATCommands.cs
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -27,7 +26,6 @@ Added extended CAT commands for APF funtions - May 2017.
 
 
 using System;
-using System.Reflection;
 using System.Diagnostics;
 using System.Threading;
 using System.Text;
@@ -45,27 +43,18 @@ namespace Thetis
 	{
 		#region Variable Definitions
 
-		private Console console;
-		private CATParser parser;
-		private string separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+		private readonly Console console;
+		private readonly CATParser parser;
+		private readonly string separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 		private Band[] BandList;
 		private int LastBandIndex;
-		private ASCIIEncoding AE = new ASCIIEncoding();
+		private readonly ASCIIEncoding AE = new ASCIIEncoding();
 		private string lastFR = "0";
 		private string lastFT = "0";
-
-		//		public static Mutex CATmut = new Mutex();
-
-        private bool verbose = false;
-        public bool Verbose
-        {
-            get { return verbose; }
-            set { verbose = value; }
-        }
-
-        private int NCATInit = 500;
+        public bool Verbose { get; set; } = false;
+		private readonly int NCATInit = 500;
         private int NCATs = 0;
-        private int NCATtime = 50;
+        private readonly int NCATtime = 50;
         public bool firstTimeCAT = true;
 
 		#endregion Variable Definitions
@@ -1120,8 +1109,8 @@ namespace Thetis
         //Sets or reads the console step size (also see zzst(read only)
         public string ZZAC(string s)
         {
-            int step = 0;
-            if (s.Length == parser.nSet)
+			int step;
+			if (s.Length == parser.nSet)
             {
                 step = Convert.ToInt32(s);
                 if (step >= 0 || step <= 25)
@@ -1144,7 +1133,7 @@ namespace Thetis
         //Sets VFO A down nn Tune Steps
         public string ZZAD(string s)
         {
-            int step = 0;
+            int step;
             if (s.Length == parser.nSet)
             {
                 step = Convert.ToInt32(s);
@@ -1433,7 +1422,7 @@ namespace Thetis
         public string ZZBE(string s)
         {
             int step = console.TuneStepIndex;
-            int numsteps = 0;
+            int numsteps;
             double stepFreq;
 
             List<TuneStep> tune_list = console.TuneStepList;
@@ -1457,7 +1446,7 @@ namespace Thetis
         public string ZZBF(string s)
         {
             int step = console.TuneStepIndex;
-            int numsteps = 0;
+            int numsteps;
             double stepFreq;
 
             List<TuneStep> tune_list = console.TuneStepList;
@@ -1515,7 +1504,7 @@ namespace Thetis
         //Sets VFO B down nn Tune Steps
         public string ZZBM(string s)
         {
-            int step = 0;
+            int step;
             if (s.Length == parser.nSet)
             {
                 step = Convert.ToInt32(s);
@@ -1534,7 +1523,7 @@ namespace Thetis
         //Sets VFO B up nn Tune Steps
         public string ZZBP(string s)
         {
-            int step = 0;
+            int step;
             if (s.Length == parser.nSet)
             {
                 step = Convert.ToInt32(s);
@@ -1621,31 +1610,25 @@ namespace Thetis
 		// Sets or reads the CW Break In Enabled checkbox
 		public string ZZCB(string s)
 		{
-			if(s.Length == parser.nSet && (s == "0" || s == "1"))
-			{
-				if(s == "1")
-					console.BreakInEnabled = true;
-				else
-					console.BreakInEnabled = false;
-				return "";
-			}
-			else if(s.Length == parser.nGet)
-			{
-				if(console.BreakInEnabled)
-					return "1";
-				else
-					return "0";
-			}
-			else
-			{
-				return parser.Error1;
-			}
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                console.CATBreakIn = Convert.ToInt32(s);
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.CATBreakIn.ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
 
-		}
+        }
 
 
-		// Sets or reads the CW Break In Delay
-		public string ZZCD(string s)
+        // Sets or reads the CW Break In Delay
+        public string ZZCD(string s)
 		{
 			int n = 0;
 
@@ -2624,9 +2607,9 @@ namespace Thetis
 				{
 					int f = int.Parse(s);
 					if(console.RX1DSPMode == DSPMode.DIGU)
-						f = f - Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
+						f -= Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
 					else if(console.RX1DSPMode == DSPMode.DIGL)
-						f = f + Convert.ToInt32(console.SetupForm.RttyOffsetLow);
+						f += Convert.ToInt32(console.SetupForm.RttyOffsetLow);
 					s = AddLeadingZeros(f);
 					s = s.Insert(5, separator);
 				}
@@ -2634,7 +2617,7 @@ namespace Thetis
 					s = s.Insert(5, separator);
 
                 if (!isMidi && console.CATChangesCenterFreq) // MW0LGE changed to take into consideration the flag
-                console.UpdateCenterFreq = true;
+                    console.UpdateCenterFreq = true;
 				console.VFOAFreq = double.Parse(s);
 				return "";
 			}
@@ -2645,9 +2628,9 @@ namespace Thetis
 				{
                     int f = Convert.ToInt32(Math.Round(console.CATVFOA, 6) * 1e6);
 					if(console.RX1DSPMode == DSPMode.DIGU)
-						f = f + Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
+						f += Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
 					else if(console.RX1DSPMode == DSPMode.DIGL)
-						f = f - Convert.ToInt32(console.SetupForm.RttyOffsetLow);
+						f -= Convert.ToInt32(console.SetupForm.RttyOffsetLow);
 					return AddLeadingZeros(f);
 				}
 				else
@@ -2668,9 +2651,9 @@ namespace Thetis
 				{
 					int f = int.Parse(s);
 					if(console.RX1DSPMode == DSPMode.DIGU)
-						f = f - Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
+						f -= Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
 					else if(console.RX1DSPMode == DSPMode.DIGL)
-						f = f + Convert.ToInt32(console.SetupForm.RttyOffsetLow);
+						f += Convert.ToInt32(console.SetupForm.RttyOffsetLow);
 					s = AddLeadingZeros(f);
 					s = s.Insert(5, separator);
 				}
@@ -2689,9 +2672,9 @@ namespace Thetis
 				{
                     int f = Convert.ToInt32(Math.Round(console.CATVFOB, 6) * 1e6);
 					if(console.RX1DSPMode == DSPMode.DIGU)
-						f = f + Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
+						f += Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
 					else if(console.RX1DSPMode == DSPMode.DIGL)
-						f = f - Convert.ToInt32(console.SetupForm.RttyOffsetLow);
+						f -= Convert.ToInt32(console.SetupForm.RttyOffsetLow);
 					return AddLeadingZeros(f);
 				}
 				else
@@ -3964,19 +3947,6 @@ namespace Thetis
                 return parser.Error1;
         }
 
-        //Andromeda front panel h/w version
-        //write only
-        public string ZZZH(string s)
-        {
-            if (s.Length == parser.nSet)
-            {
-                int Version = Convert.ToInt32(s);
-                console.HandleFrontPanelHWVersion(Version);
-                return "";
-            }
-            else
-                return parser.Error1;
-        }
 
         //Andromeda front panel s/w version
         //write only
@@ -3985,7 +3955,7 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 int Version = Convert.ToInt32(s);
-                console.HandleFrontPanelSWVersion(Version);
+                console.HandleAttachedHardwareID = Version;
                 return "";
             }
             else
@@ -4000,7 +3970,7 @@ namespace Thetis
             {
                 int Encoder = Convert.ToInt32(s);
                 int Step = Encoder % 10;                // bottom digit
-                Encoder = Encoder / 10;                 // top 2 digits
+                Encoder /= 10;                 // top 2 digits
                 if ((Encoder >= 1) && (Encoder <= 20))
                 console.HandleFrontPanelEncoderStep(Encoder-1, Step);
                 else if ((Encoder >= 51) && (Encoder <= 70))
@@ -4024,14 +3994,63 @@ namespace Thetis
                     State = true;
                 else if ((Button % 10) == 2)
                     LongPress = true;
-                Button = Button / 10;           // 1-99
+                Button /= 10;           // 1-99
                 console.HandleFrontPanelButtonPress(Button-1, State, LongPress);
                 return "";
             }
             else
                 return parser.Error1;
         }
+        //CATHandleAriesTuneMessage
+        //Ganymeda amplifier trip state
+        //write only
+        public string ZZZA(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                int Version = Convert.ToInt32(s);
+                console.CATHandleAmplifierTripMessage(Version);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
 
+        //
+        //ARIES ATU tune state message
+        //write only
+        public string ZZOX(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                bool Tuned = false;
+                int Version = Convert.ToInt32(s);
+                if (Version == 1)
+                    Tuned = true;
+                console.CATHandleAriesTuneMessage(Tuned);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
+
+        //
+        //ARIES ATU erase state message
+        //write only
+        public string ZZOZ(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                bool Erased = false;
+                int Version = Convert.ToInt32(s);
+                if (Version == 1)
+                    Erased = true;
+                console.CATHandleAriesEraseMessage(Erased);
+                return "";
+            }
+            else
+                return parser.Error1;
+        }
 
         //Sets or reads the Mic gain control
         public string ZZMG(string s)
@@ -4312,28 +4331,30 @@ namespace Thetis
                 try
                 {
                     MemoryRecord oldrec = GetChannelRecord(s);
-                    MemoryRecord newrec = new MemoryRecord();
-                    newrec.Group = oldrec.Group;
-                    newrec.RXFreq = console.VFOAFreq;
-                    newrec.Name = oldrec.Name;
-                    newrec.DSPMode = console.RX1DSPMode;
-                    newrec.Scan = oldrec.Scan;
-                    newrec.TuneStep = console.TuneStepList[console.TuneStepIndex].Name;
-                    newrec.RPTR = console.CurrentFMTXMode;
-                    newrec.RPTROffset = console.FMTXOffsetMHz;
-                    newrec.CTCSSOn = console.radio.GetDSPTX(0).CTCSSFlag;
-                    newrec.CTCSSFreq = console.radio.GetDSPTX(0).CTCSSFreqHz;
-                    newrec.Power = console.PWR;
-                    newrec.Deviation = (int)console.radio.GetDSPTX(0).TXFMDeviation;
-                    newrec.Split = console.VFOSplit;
-                    newrec.TXFreq = console.TXFreq;
-                    newrec.RXFilter = console.RX1Filter;
-                    newrec.RXFilterLow = console.RX1FilterLow;
-                    newrec.RXFilterHigh = console.RX1FilterHigh;
-                    newrec.Comments = oldrec.Comments;
-                    newrec.AGCMode = console.radio.GetDSPRX(0, 0).RXAGCMode;
-                    newrec.AGCT = console.RF;
-                    console.MemoryList.List.Remove(oldrec);
+					MemoryRecord newrec = new MemoryRecord
+					{
+						Group = oldrec.Group,
+						RXFreq = console.VFOAFreq,
+						Name = oldrec.Name,
+						DSPMode = console.RX1DSPMode,
+						Scan = oldrec.Scan,
+						TuneStep = console.TuneStepList[console.TuneStepIndex].Name,
+						RPTR = console.CurrentFMTXMode,
+						RPTROffset = console.FMTXOffsetMHz,
+						CTCSSOn = console.radio.GetDSPTX(0).CTCSSFlag,
+						CTCSSFreq = console.radio.GetDSPTX(0).CTCSSFreqHz,
+						Power = console.PWR,
+						Deviation = (int)console.radio.GetDSPTX(0).TXFMDeviation,
+						Split = console.VFOSplit,
+						TXFreq = console.TXFreq,
+						RXFilter = console.RX1Filter,
+						RXFilterLow = console.RX1FilterLow,
+						RXFilterHigh = console.RX1FilterHigh,
+						Comments = oldrec.Comments,
+						AGCMode = console.radio.GetDSPRX(0, 0).RXAGCMode,
+						AGCT = console.RF
+					};
+					console.MemoryList.List.Remove(oldrec);
                     console.MemoryList.List.Add(newrec);
                     return "";
                 }
@@ -5123,8 +5144,28 @@ namespace Thetis
 
 		}
 
-		// Reads the Quick Memory Save value
-		public string ZZQM()
+
+        // Sets or reads the CW Break-In for Semi/QSK modes
+        public string ZZQK(string s)
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                console.CATQSKBreakIn = Convert.ToInt32(s);
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.CATQSKBreakIn.ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+
+        }
+
+        // Reads the Quick Memory Save value
+        public string ZZQM()
 		{
 			return StrVFOFreq("C");
 		}
@@ -5462,14 +5503,13 @@ namespace Thetis
 			else
 				return parser.Error1;		}
 
-        //Reads the primary input voltate
+        //Reads the primary input voltage
         public string ZZRV()
         {
             if (console.CurrentHPSDRModel != HPSDRModel.HPSDR)
             {
                 int val = 0;
                 decimal volts = 0.0m;
-                //FWC.ReadPAADC(2, out val);
                 volts = (decimal)val / 4096m * 2.5m * 11m;
                 return Decimal.Round(volts, 1).ToString();
             }
@@ -5718,7 +5758,7 @@ namespace Thetis
 
 		}
 
-		// Sets or reads the SDR-1000 Squelch contorl
+		// Sets or reads the SDR-1000 Squelch control
 		public string ZZSQ(string s)
 		{
 			int level = 0;
@@ -5733,7 +5773,7 @@ namespace Thetis
                 {
 				level = Math.Max(0, level);			// lower bound
                     level = Math.Min(100, level);		// upper bound
-                    level = level * -1;
+                    level *= -1;
                 }
                 else
                 {
@@ -5766,17 +5806,17 @@ namespace Thetis
 		{
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{
-				if(s == "1")
-					console.SpurReduction = true;
-				else
-					console.SpurReduction = false;
+				//if(s == "1")
+				//	console.SpurReduction = true;
+				//else
+				//	console.SpurReduction = false;
 				return "";
 			}
 			else if(s.Length == parser.nGet)
 			{
-				if(console.SpurReduction)
-					return "1";
-				else
+				//if(console.SpurReduction)
+				//	return "1";
+				//else
 					return "0";
 			}
 			else
@@ -5864,7 +5904,7 @@ namespace Thetis
                     {
                         level = Math.Max(0, level);			// lower bound
                         level = Math.Min(100, level);		// upper bound
-                        level = level * -1;
+                        level *= -1;
                     }
                     else
                     {
@@ -7484,7 +7524,7 @@ namespace Thetis
             if (s.Length == parser.nGet)
             {
                 m_agc = (int)console.RX1AGCMode;
-                m_agc = m_agc & 7;                  // strip to 3 bits
+                m_agc &= 7;                  // strip to 3 bits
                 m_att = (int)console.CATPreamp;
                 m_att = (m_att & 7) << 3;           // 3 bits, moved left
                 n = m_agc + m_att;
@@ -7519,7 +7559,7 @@ namespace Thetis
             if (s.Length == parser.nGet)
             {
                 m_agc = (int)console.RX2AGCMode;
-                m_agc = m_agc & 7;                  // strip to 3 bits
+                m_agc &= 7;                  // strip to 3 bits
                 m_att = (int)console.RX2PreampMode;
                 m_att = (m_att & 7) << 3;           // 3 bits, moved left
                 n = m_agc + m_att;
@@ -9027,7 +9067,7 @@ namespace Thetis
 						console.RX1FilterLow = -freq/2;
 						// subtract the SL value from the lower half of the bandwidth
 						offset = Code2Frequency(c, "SL");
-						console.RX1FilterLow = console.RX1FilterLow + offset;			
+						console.RX1FilterLow += offset;			
 					}
 					break;
 			}

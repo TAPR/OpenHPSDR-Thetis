@@ -185,22 +185,28 @@ int getOOO() { // OOO == Out Of Order packet
 }
 
 PORT
-int getSeqInDeltaStart(int rx) {
-	prn->rx[rx].snapshot = prn->rx[rx].snapshots_head;
-	return prn->rx[rx].snapshot != NULL;
-}
+int getSeqInDelta(int nInit, int rx, int deltas[], char* dateTimeStamp, size_t *received_seqnum, size_t *last_seqnum) {
+	int nRet = 0;
 
-PORT
-int getSeqInDelta(int rx, int deltas[]) {
-	if (prn->rx[rx].snapshot != NULL)
-	{
+	EnterCriticalSection(&prn->seqErrors);
+	
+	if (nInit == 1) prn->rx[rx].snapshot = prn->rx[rx].snapshots_head;
+
+	if (prn->rx[rx].snapshot != NULL) {
 		memcpy(deltas, prn->rx[rx].snapshot->rx_in_seq_snapshot, sizeof(int) * MAX_IN_SEQ_LOG);
+		memcpy(dateTimeStamp, prn->rx[rx].snapshot->dateTimeStamp, sizeof(char) * 24);
+
+		*received_seqnum = prn->rx[rx].snapshot->received_seqnum;
+		*last_seqnum = prn->rx[rx].snapshot->last_seqnum;
 
 		prn->rx[rx].snapshot = prn->rx[rx].snapshot->next;
 
-		return 1;
+		nRet = 1;
 	}
-	return 0;
+
+	LeaveCriticalSection(&prn->seqErrors);
+
+	return nRet;
 }
 
 PORT
@@ -513,7 +519,9 @@ void SetAlexHPFBits(int bits) {
 PORT
 void DisablePA(int bit) {
 	if (prn->tx[0].pa != bit) {
-		prn->tx[0].pa = bit;
+		prn->tx[0].pa = bit;		
+		if (listenSock != INVALID_SOCKET)
+			CmdGeneral();
 	}
 	return;
 }
@@ -1238,6 +1246,17 @@ void SetXVTREnable(int enable)
 }
 
 PORT
+void ATU_Tune(int tune)
+{
+	if (atu_tune != tune)
+	{
+		atu_tune = tune;
+		if (listenSock != INVALID_SOCKET)
+			CmdHighPriority();
+	}
+}
+
+PORT
 int getLEDs()
 {
 	return prn->hardware_LEDs;
@@ -1325,6 +1344,7 @@ void create_rnet() {
 			prn->rx[i].snapshots_head = NULL;
 			prn->rx[i].snapshots_tail = NULL;
 			prn->rx[i].snapshot_length = 0;
+			prn->rx[i].snapshot = NULL;
 		}
 
 		for (i = 0; i < MAX_TX_STREAMS; i++) {
@@ -1384,6 +1404,9 @@ void create_rnet() {
 		(void)InitializeCriticalSectionAndSpinCount(&prn->udpOUT, 2500);
 		(void)InitializeCriticalSectionAndSpinCount(&prn->rcvpkt, 2500);
 		(void)InitializeCriticalSectionAndSpinCount(&prn->sndpkt, 2500);
+
+		(void)InitializeCriticalSectionAndSpinCount(&prn->seqErrors, 0); //MW0LGE
+
 		SendpOutbound(OutBound);
 	}
 }
@@ -1391,6 +1414,7 @@ void create_rnet() {
 PORT
 void clearSnapshots()
 {
+	EnterCriticalSection(&prn->seqErrors);
 	int i;
 	for (i = 0; i < MAX_RX_STREAMS; i++) {
 		while (prn->rx[i].snapshots_head != NULL)
@@ -1402,6 +1426,7 @@ void clearSnapshots()
 		prn->rx[i].snapshot_length = 0;
 		prn->rx[i].snapshots_tail = NULL;
 	}
+	LeaveCriticalSection(&prn->seqErrors);
 }
 
 PORT
@@ -1422,6 +1447,7 @@ void destroy_rnet() {
 	free(prn->ReadBufp);
 	//MW0LGE
 	clearSnapshots();
+	DeleteCriticalSection(&prn->seqErrors);
 	//
 	free(prn);
 	_aligned_free(prbpfilter);

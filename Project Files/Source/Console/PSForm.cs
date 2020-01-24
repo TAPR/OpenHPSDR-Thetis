@@ -43,7 +43,7 @@ namespace Thetis
         public static AmpView ampv = null;
         public static Thread ampvThread = null;
 
-        private int oldCalCount2 = 0;
+        //private int oldCalCount2 = 0;
         private int save_autoON = 0;
         private int save_singlecalON = 0;
         private int deltadB = 0;
@@ -317,75 +317,61 @@ namespace Thetis
                 restoreON = true;
             }
         }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (this.TopMost != topmost) 
-                this.TopMost  = topmost;
-            if(autocal_enabled)
-                console.TxtLeftForeColor = Color.FromArgb(0, 255, 0);
             puresignal.getinfo(txachannel);
-            lblPSInfo0.Text = puresignal.Info[0].ToString();
-            lblPSInfo1.Text = puresignal.Info[1].ToString();
-            lblPSInfo2.Text = puresignal.Info[2].ToString();
-            lblPSInfo3.Text = puresignal.Info[3].ToString();
-            lblPSInfo5.Text = puresignal.Info[5].ToString();
-            lblPSInfo6.Text = puresignal.Info[6].ToString();
-            lblPSInfo13.Text = puresignal.Info[13].ToString();
 
-            if (puresignal.Info[14] == 1)
+            if (puresignal.HasInfoChanged)
             {
-                if (puresignal.Info[4] > 90)
-                    lblPSInfoCO.BackColor = Color.FromArgb(0, 255, 0);
+                lblPSInfo0.Text = puresignal.Info[0].ToString();
+                lblPSInfo1.Text = puresignal.Info[1].ToString();
+                lblPSInfo2.Text = puresignal.Info[2].ToString();
+                lblPSInfo3.Text = puresignal.Info[3].ToString();
+                lblPSfb2.Text = puresignal.Info[4].ToString();
+                lblPSInfo5.Text = puresignal.Info[5].ToString();
+                lblPSInfo6.Text = puresignal.Info[6].ToString();
+                lblPSInfo13.Text = puresignal.Info[13].ToString();
+                lblPSInfo15.Text = puresignal.Info[15].ToString();
+            }
+
+            if (autocal_enabled) console.TxtLeftForeColor = Color.Lime; 
+
+            if (puresignal.CorrectionsBeingApplied)
+            {
+                btnPSSave.Enabled = true;
+                if (puresignal.Correcting)
+                {
+                    lblPSInfoCO.BackColor = Color.Lime;
+                    if (autocal_enabled) console.TxtRightBackColor = Color.Lime;
+                }
                 else
-                    lblPSInfoCO.BackColor = Color.FromArgb(255, 255, 0);
-                if (autocal_enabled)
-                    if (puresignal.Info[4] > 90)
-                        console.TxtRightBackColor = Color.FromArgb(0, 255, 0);
-                    else
-                        console.TxtRightBackColor = Color.FromArgb(255, 255, 0);
-                btnPSSave.Enabled = true;                           // enable Save capability
-                btnPSSave.BackColor = SystemColors.Control;
+                {
+                    lblPSInfoCO.BackColor = Color.Yellow;
+                    if (autocal_enabled) console.TxtRightBackColor = Color.Yellow;
+                }
             }
             else
             {
+                btnPSSave.Enabled = false;
                 lblPSInfoCO.BackColor = Color.Black;
-                if (autocal_enabled)
-                    console.TxtRightBackColor = Color.Black;
-                btnPSSave.Enabled = false;
-                btnPSSave.Enabled = false;
-                btnPSSave.BackColor = SystemColors.ButtonShadow;
+                if (autocal_enabled) console.TxtRightBackColor = Color.Black;
             }
-            lblPSInfo15.Text = puresignal.Info[15].ToString();
 
-            if (puresignal.Info[5] != oldCalCount)
+            if (puresignal.CalibrationAttemptsChanged)
             {
-                oldCalCount = puresignal.Info[5];
-
-                if (puresignal.Info[4] > 181)
-                {
-                    red = 0; green = 0; blue = 255;
-                }
-                else if (puresignal.Info[4] > 128)
-                {
-                    red = 000; green = 255; blue = 000;
-                }
-                else if (puresignal.Info[4] > 90)
-                {
-                    red = 255; green = 255; blue = 000;
-                }
-                else
-                {
-                    red = 255; green = 000; blue = 000;
-                }
+                lblPSInfoFB.BackColor = puresignal.FeedbackColourLevel;
+                if (autocal_enabled) console.TxtCenterBackColor = lblPSInfoFB.BackColor;
             }
-            red = Math.Max(0, red - 5);
-            green = Math.Max(0, green - 5);
-            blue = Math.Max(0, blue - 5);
-            Color FBColor = Color.FromArgb(red, green, blue);
-            lblPSInfoFB.BackColor = FBColor;
-            if (autocal_enabled) 
-                console.TxtCenterBackColor = FBColor;
-            lblPSfb2.Text = puresignal.Info[4].ToString();
+            else
+            {
+                //fade away
+                int r = Math.Max(0, lblPSInfoFB.BackColor.R - 5);
+                int g = Math.Max(0, lblPSInfoFB.BackColor.G - 5);
+                int b = Math.Max(0, lblPSInfoFB.BackColor.B - 5);
+                lblPSInfoFB.BackColor = Color.FromArgb(r, g, b);
+                if (autocal_enabled) console.TxtCenterBackColor = lblPSInfoFB.BackColor;
+            }
 
             fixed (double* ptr = &GetPSpeakval)
                 puresignal.GetPSMaxTX(txachannel, ptr);
@@ -435,7 +421,7 @@ namespace Thetis
                         cmdstate = 7;
                     else if (autoON)
                         cmdstate = 1;
-                    else if (puresignal.Info[14] == 1)
+                    else if (puresignal.CorrectionsBeingApplied)
                         cmdstate = 5;
                     break;
                 case 5:     // Stay-ON
@@ -462,7 +448,7 @@ namespace Thetis
                         cmdstate = 1;
                     else if (singlecalON)
                         cmdstate = 3;
-                    else if (puresignal.Info[14] == 0 && puresignal.Info[15] == 0)
+                    else if (!puresignal.CorrectionsBeingApplied && puresignal.State == puresignal.EngineState.LRESET)
                         cmdstate = 0;
                     break;
                 case 7:     // Initiate Restored Correction
@@ -471,30 +457,186 @@ namespace Thetis
                     if (!PSEnabled) PSEnabled = true;
                     btnPSCalibrate.BackColor = SystemColors.Control;
                     restoreON = false;
-                    if (puresignal.Info[15]==8)
+                    if (puresignal.State == puresignal.EngineState.LSTAYON)
                         cmdstate = 5;
                     break;
             }
+
+            //if (this.TopMost != topmost) 
+            //    this.TopMost  = topmost;
+            //if(autocal_enabled)
+            //    console.TxtLeftForeColor = Color.FromArgb(0, 255, 0);
+            //puresignal.getinfo(txachannel);
+            //lblPSInfo0.Text = puresignal.Info[0].ToString();
+            //lblPSInfo1.Text = puresignal.Info[1].ToString();
+            //lblPSInfo2.Text = puresignal.Info[2].ToString();
+            //lblPSInfo3.Text = puresignal.Info[3].ToString();
+            //lblPSInfo5.Text = puresignal.Info[5].ToString();
+            //lblPSInfo6.Text = puresignal.Info[6].ToString();
+            //lblPSInfo13.Text = puresignal.Info[13].ToString();
+
+            //if (puresignal.Info[14] == 1)
+            //{
+            //    if (puresignal.Info[4] > 90)
+            //        lblPSInfoCO.BackColor = Color.FromArgb(0, 255, 0);
+            //    else
+            //        lblPSInfoCO.BackColor = Color.FromArgb(255, 255, 0);
+            //    if (autocal_enabled)
+            //        if (puresignal.Info[4] > 90)
+            //            console.TxtRightBackColor = Color.FromArgb(0, 255, 0);
+            //        else
+            //            console.TxtRightBackColor = Color.FromArgb(255, 255, 0);
+            //    btnPSSave.Enabled = true;                           // enable Save capability
+            //    btnPSSave.BackColor = SystemColors.Control;
+            //}
+            //else
+            //{
+            //    lblPSInfoCO.BackColor = Color.Black;
+            //    if (autocal_enabled)
+            //        console.TxtRightBackColor = Color.Black;
+            //    btnPSSave.Enabled = false;
+            //    btnPSSave.Enabled = false;
+            //    btnPSSave.BackColor = SystemColors.ButtonShadow;
+            //}
+            //lblPSInfo15.Text = puresignal.Info[15].ToString();
+
+            //if (puresignal.Info[5] != oldCalCount)
+            //{
+            //    oldCalCount = puresignal.Info[5];
+
+            //    if (puresignal.Info[4] > 181)
+            //    {
+            //        red = 0; green = 0; blue = 255;
+            //    }
+            //    else if (puresignal.Info[4] > 128)
+            //    {
+            //        red = 000; green = 255; blue = 000;
+            //    }
+            //    else if (puresignal.Info[4] > 90)
+            //    {
+            //        red = 255; green = 255; blue = 000;
+            //    }
+            //    else
+            //    {
+            //        red = 255; green = 000; blue = 000;
+            //    }
+            //}
+            //red = Math.Max(0, red - 5);
+            //green = Math.Max(0, green - 5);
+            //blue = Math.Max(0, blue - 5);
+            //Color FBColor = Color.FromArgb(red, green, blue);
+            //lblPSInfoFB.BackColor = FBColor;
+            //if (autocal_enabled)
+            //    console.TxtCenterBackColor = FBColor;
+            //lblPSfb2.Text = puresignal.Info[4].ToString();
+
+
+            //fixed (double* ptr = &GetPSpeakval)
+            //    puresignal.GetPSMaxTX(txachannel, ptr);
+            //GetPSpeak.Text = GetPSpeakval.ToString();
+
+            //// Command State-Machine
+            //switch (cmdstate)
+            //{
+            //    case 0:     // OFF
+            //        puresignal.SetPSControl(txachannel, 1, 0, 0, 0);
+            //        if (PSEnabled) PSEnabled = false;
+            //        btnPSCalibrate.BackColor = SystemColors.Control;
+            //        if (restoreON)
+            //            cmdstate = 7;
+            //        else if (autoON)
+            //            cmdstate = 1;
+            //        else if (singlecalON)
+            //            cmdstate = 3;
+            //        OFF = false;
+            //        break;
+            //    case 1:     // Turn-ON Auto-Calibrate Mode
+            //        puresignal.SetPSControl(txachannel, 1, 0, 1, 0);
+            //        if (!PSEnabled) PSEnabled = true;
+            //        btnPSCalibrate.BackColor = SystemColors.Control;
+            //        cmdstate = 2;
+            //        break;
+            //    case 2:     // Auto-Calibrate Mode
+            //        if (OFF)
+            //            cmdstate = 6;
+            //        else if (restoreON)
+            //            cmdstate = 7;
+            //        else if (singlecalON)
+            //            cmdstate = 3;
+            //        break;
+            //    case 3:     // Turn-ON Single-Calibrate Mode
+            //        autoON = false;
+            //        puresignal.SetPSControl(txachannel, 1, 1, 0, 0);
+            //        if (!PSEnabled) PSEnabled = true;
+            //        btnPSCalibrate.BackColor = Color.FromArgb(gcolor);
+            //        cmdstate = 4;
+            //        break;
+            //    case 4:     // Single-Calibrate Mode
+            //        singlecalON = false;
+            //        if (OFF)
+            //            cmdstate = 6;
+            //        else if (restoreON)
+            //            cmdstate = 7;
+            //        else if (autoON)
+            //            cmdstate = 1;
+            //        else if (puresignal.Info[14] == 1)
+            //            cmdstate = 5;
+            //        break;
+            //    case 5:     // Stay-ON
+            //        if (PSEnabled) PSEnabled = false;
+            //        btnPSCalibrate.BackColor = SystemColors.Control;
+            //        if (OFF)
+            //            cmdstate = 6;
+            //        else if (restoreON)
+            //            cmdstate = 7;
+            //        else if (autoON)
+            //            cmdstate = 1;
+            //        else if (singlecalON)
+            //            cmdstate = 3;
+            //        break;
+            //    case 6:     // Turn-OFF
+            //        autoON = false;
+            //        puresignal.SetPSControl(txachannel, 1, 0, 0, 0);
+            //        if (!PSEnabled) PSEnabled = true;
+            //        btnPSCalibrate.BackColor = SystemColors.Control;
+            //        OFF = false;
+            //        if (restoreON)
+            //            cmdstate = 7;
+            //        else if (autoON)
+            //            cmdstate = 1;
+            //        else if (singlecalON)
+            //            cmdstate = 3;
+            //        else if (puresignal.Info[14] == 0 && puresignal.Info[15] == 0)
+            //            cmdstate = 0;
+            //        break;
+            //    case 7:     // Initiate Restored Correction
+            //        autoON = false;
+            //        puresignal.SetPSControl(txachannel, 0, 0, 0, 1);
+            //        if (!PSEnabled) PSEnabled = true;
+            //        btnPSCalibrate.BackColor = SystemColors.Control;
+            //        restoreON = false;
+            //        if (puresignal.Info[15]==8)
+            //            cmdstate = 5;
+            //        break;
+            //}
 
         }
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            bool newcal = (puresignal.Info[5] != oldCalCount2);
-            oldCalCount2 = puresignal.Info[5];
             //if (autoattenuate && !console.ATTOnTX) console.ATTOnTX = true;//MW0LGE moved into 0 state
             switch (aastate)
             {
                 case 0: // monitor
-                    if (autoattenuate && newcal
-                        && (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0)))
+                    if (autoattenuate && puresignal.CalibrationAttemptsChanged
+                        && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX))
                     {
                         if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
                         aastate = 1;
                         double ddB;
-                        if (puresignal.Info[4] <= 256)
+                        if (puresignal.IsFeedbackLevelOK)
                         {
-                            ddB = 20.0 * Math.Log10((double)puresignal.Info[4] / 152.293);
+                            ddB = 20.0 * Math.Log10((double)puresignal.FeedbackLevel / 152.293);
                             if (Double.IsNaN(ddB)) ddB = 31.1;
                             if (ddB < -100.0) ddB = -100.0;
                             if (ddB > +100.0) ddB = +100.0;
@@ -503,9 +645,9 @@ namespace Thetis
                             ddB = 31.1;
                         deltadB = Convert.ToInt32(ddB);
                         if (cmdstate == 2) save_autoON = 1;
-                        else               save_autoON = 0;
+                        else save_autoON = 0;
                         if (cmdstate == 4) save_singlecalON = 1;
-                        else               save_singlecalON = 0;
+                        else save_singlecalON = 0;
                         puresignal.SetPSControl(txachannel, 1, 0, 0, 0);
                     }
                     break;
@@ -521,6 +663,48 @@ namespace Thetis
                     puresignal.SetPSControl(txachannel, 0, save_singlecalON, save_autoON, 0);
                     break;
             }
+
+            //bool newcal = (puresignal.Info[5] != oldCalCount2);
+            //oldCalCount2 = puresignal.Info[5];
+            ////if (autoattenuate && !console.ATTOnTX) console.ATTOnTX = true;//MW0LGE moved into 0 state
+            //switch (aastate)
+            //{
+            //    case 0: // monitor
+            //        if (autoattenuate && newcal
+            //            && (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0)))
+            //        {
+            //            if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
+            //            aastate = 1;
+            //            double ddB;
+            //            if (puresignal.Info[4] <= 256)
+            //            {
+            //                ddB = 20.0 * Math.Log10((double)puresignal.Info[4] / 152.293);
+            //                if (Double.IsNaN(ddB)) ddB = 31.1;
+            //                if (ddB < -100.0) ddB = -100.0;
+            //                if (ddB > +100.0) ddB = +100.0;
+            //            }
+            //            else
+            //                ddB = 31.1;
+            //            deltadB = Convert.ToInt32(ddB);
+            //            if (cmdstate == 2) save_autoON = 1;
+            //            else               save_autoON = 0;
+            //            if (cmdstate == 4) save_singlecalON = 1;
+            //            else               save_singlecalON = 0;
+            //            puresignal.SetPSControl(txachannel, 1, 0, 0, 0);
+            //        }
+            //        break;
+            //    case 1: // set new value
+            //        aastate = 2;
+            //        if ((console.SetupForm.ATTOnTX + deltadB) > 0)
+            //            console.SetupForm.ATTOnTX += deltadB;
+            //        else
+            //            console.SetupForm.ATTOnTX = 0;
+            //        break;
+            //    case 2: // restore operation
+            //        aastate = 0;
+            //        puresignal.SetPSControl(txachannel, 0, save_singlecalON, save_autoON, 0);
+            //        break;
+            //}
         }
 
         private void PSpeak_TextChanged(object sender, EventArgs e)
@@ -620,6 +804,8 @@ namespace Thetis
         private void chkPSOnTop_CheckedChanged(object sender, EventArgs e)
         {
             topmost = chkPSOnTop.Checked;
+
+            this.TopMost = topmost; //MW0LGE
         }
 
         #endregion
@@ -737,12 +923,85 @@ namespace Thetis
         #region public methods
 
         public static int[] Info = new int[16];
+        private static int[] oldInfo = new int[16];
         public static void getinfo(int txachannel)
         {
+            //make copy of old, used in HasInfoChanged & CalibrationAttemptsChanged MW0LGE
+            fixed (void* dest = &oldInfo[0])
+            fixed (void* src = &Info[0])
+                Win32.memcpy(dest, src, 16 * sizeof(int));
+
             fixed (int* ptr = &(Info[0]))
                 GetPSInfo(txachannel, ptr);
         }
-
+        //MW0LGE
+        public static bool HasInfoChanged 
+        {
+            get {
+                bool bChange = false;
+                for (int n = 0; n < 16; n++)
+                {
+                    if (Info[n] != oldInfo[n])
+                    {
+                        bChange = true;
+                        break;
+                    }
+                }
+                return bChange;
+            }
+            set { }
+        }
+        public static bool CalibrationAttemptsChanged {
+            get { return Info[5] != oldInfo[5]; }
+            set { }
+        }
+        public static bool CorrectionsBeingApplied {
+            get { return Info[14] == 1; }
+            set { }
+        }
+        public static bool Correcting {
+            get { return Info[4] > 90; }
+            set { }
+        }
+        public static bool NeedToRecalibrate(int nCurrentATTonTX) {
+             return (Info[4] > 181 || (Info[4] <= 128 && nCurrentATTonTX > 0));            
+        }
+        public static bool IsFeedbackLevelOK {
+            get { return Info[4] <= 256; }
+            set { }
+        }
+        public static int FeedbackLevel {
+            get { return Info[4]; }
+            set { }
+        }
+        public static Color FeedbackColourLevel {
+            get {
+                if (Info[4] > 181) return Color.Blue;
+                else if (Info[4] > 128) return Color.Lime;
+                else if (Info[4] > 90) return Color.Yellow;
+                else return Color.Red;
+            }
+            set { }
+        }
+        // info[15] is engine state (from calcc.c)
+        public enum EngineState
+        {
+            LRESET = 0,
+            LWAIT,
+            LMOXDELAY,
+            LSETUP,
+            LCOLLECT,
+            MOXCHECK,
+            LCALC,
+            LDELAY,
+            LSTAYON,
+            LTURNON
+        };
+        public static EngineState State {
+            get { return (EngineState)Info[15]; }
+            set { }
+        }
+        //--
         #endregion
     }
 }

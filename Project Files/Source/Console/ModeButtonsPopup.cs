@@ -1,8 +1,8 @@
 ﻿//=================================================================
 // ModeButtonsPopup.cs
 //=================================================================
-// PowerSDR is a C# implementation of a Software Defined Radio.
-// Copyright (C) 2004-2009  FlexRadio Systems
+// Thetis is a C# implementation of a Software Defined Radio.
+// Copyright (C) 2019  Laurence Barker, G8NJJ
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -18,23 +18,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
-// You may contact us via email at: sales@flex-radio.com.
-// Paper mail may be sent to: 
-//    FlexRadio Systems
-//    8900 Marybank Dr.
-//    Austin, TX 78750
-//    USA
-//=================================================================using System;
+// The author can be reached by email at  
+//
+// laurence@nicklebyhouse.co.uk
+//=================================================================
 
 namespace Thetis
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Drawing;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
 
     /// <summary>

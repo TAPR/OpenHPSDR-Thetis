@@ -1,7 +1,7 @@
 /*
 *
 * Copyright (C) 2008 Bill Tracey, KD5TFD, bill@ewjt.com 
-* Copyright (C) 2010-2018  Doug Wigley
+* Copyright (C) 2010-2020  Doug Wigley
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -20,8 +20,6 @@
 // this module contains code to support the Alex Filter and Antenna Selection board 
 // 
 // 
-using System;
-using System.Threading;
 
 namespace Thetis
 {
@@ -297,8 +295,11 @@ namespace Thetis
 
                 if (TRxAnt) trx_ant = TxAnt[idx];
                 else trx_ant = RxAnt[idx];
-                if (RxAnt[idx] != TxAnt[idx]) trx_ant_not_same = true;
-                else trx_ant_not_same = false;
+				if (RxAnt[idx] != TxAnt[idx])
+				{
+					trx_ant_not_same = true;
+				}
+				else trx_ant_not_same = false;
             }
 
             if (rx_out_override && rx_out == 1)

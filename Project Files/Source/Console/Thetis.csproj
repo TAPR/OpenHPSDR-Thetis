@@ -118,7 +118,7 @@
     <ErrorReport>prompt</ErrorReport>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>..\Live Analysis.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\bin\x86\Release\</OutputPath>
@@ -130,7 +130,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>..\Live Analysis.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|AnyCPU'">
     <OutputPath>bin\Interleaved\</OutputPath>
@@ -159,7 +159,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>..\Live Analysis.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -252,14 +252,22 @@
     <Compile Include="AmpView.Designer.cs">
       <DependentUpon>AmpView.cs</DependentUpon>
     </Compile>
+    <Compile Include="AndromedaEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="BandButtonsPopup.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="BasicAudio.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="cmaster.cs" />
     <Compile Include="displaysettingsform.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dumpcap.cs" />
     <Compile Include="FilterButtonsPopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -275,6 +283,11 @@
     <Compile Include="frmSeqLog.designer.cs">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ShutdownForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -288,9 +301,6 @@
     <Compile Include="CW\CWInput.cs" />
     <Compile Include="GlobalMouseHandler.cs" />
     <Compile Include="HPSDR\Alex.cs" />
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="audio.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -460,11 +470,6 @@
     <Compile Include="progress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="PSForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -539,6 +544,18 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
+    <None Include="Resources\play.png" />
+    <None Include="Resources\timer_on.png" />
+    <None Include="Resources\timer.png" />
+    <None Include="Resources\screen4.png" />
+    <None Include="Resources\screen3.png" />
+    <None Include="Resources\screen2.png" />
+    <None Include="Resources\screen.png" />
+    <None Include="Resources\warning4.png" />
+    <None Include="Resources\zap.png" />
+    <EmbeddedResource Include="AndromedaEditForm.resx">
+      <DependentUpon>AndromedaEditForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="displaysettingsform.resx">
       <DependentUpon>displaysettingsform.cs</DependentUpon>
     </EmbeddedResource>
@@ -562,7 +579,8 @@
       <DependentUpon>ModeDependentSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\picD1orig.png" />
-    <Content Include="Resources\picD2.png" />
+    <None Include="Resources\cpu.png" />
+    <EmbeddedResource Include="Resources\picD2.png" />
     <EmbeddedResource Include="Resources\star.png" />
     <EmbeddedResource Include="KE9N\HttpServer\template.html" />
     <EmbeddedResource Include="KE9N\stack.resx">
@@ -643,8 +661,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="PSForm.resx">
       <DependentUpon>PSForm.cs</DependentUpon>

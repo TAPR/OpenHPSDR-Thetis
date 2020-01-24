@@ -97,10 +97,12 @@ namespace Thetis
          
             Console.m_terminated = false;
 
-            Thread t = new Thread(new ThreadStart(TCPSERVER));
-            t.Name = "TCP SERVER THREAD";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Normal;
+            Thread t = new Thread(new ThreadStart(TCPSERVER))
+            {
+                Name = "TCP SERVER THREAD",
+                IsBackground = true,
+                Priority = ThreadPriority.Normal
+            };
             t.Start();
 
         } // httpserver()

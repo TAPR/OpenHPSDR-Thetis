@@ -264,14 +264,14 @@ namespace Thetis
 
 
             //-------------------------------------------------------------------
-            Thread t = new Thread(new ThreadStart(SCHEDULER));
-
-            t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-            t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-            t.Name = "Scheduler Thread";
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.BelowNormal;
+            Thread t = new Thread(new ThreadStart(SCHEDULER))
+            {
+                CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                Name = "Scheduler Thread",
+                IsBackground = true,
+                Priority = ThreadPriority.BelowNormal
+            };
             t.Start();
 
 
@@ -1051,14 +1051,14 @@ namespace Thetis
 
                             console.RECPOST1 = true; // restore SR back to original
 
-                            Thread t1 = new Thread(new ThreadStart(TOMP3));
-
-                            t1.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                            t1.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-                            t1.Name = "mp3 Thread";
-                            t1.IsBackground = true;
-                            t1.Priority = ThreadPriority.Normal;
+                            Thread t1 = new Thread(new ThreadStart(TOMP3))
+                            {
+                                CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                                CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                                Name = "mp3 Thread",
+                                IsBackground = true,
+                                Priority = ThreadPriority.Normal
+                            };
                             t1.Start();
 
                             if (poweroff == 1) // power was off when recording started, so turn power off when done

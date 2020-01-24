@@ -1379,7 +1379,14 @@
 		<ngetparms>-1</ngetparms>
 		<nansparms>-1</nansparms>
 	</catstruct>
-	<catstruct code="ZZQS">
+  <catstruct code="ZZQK">
+    <desc>Enable QSK Break In</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
+  <catstruct code="ZZQS">
 		<desc>Quick Memory Save</desc>
 		<active>true</active>
 		<nsetparms>0</nsetparms>
@@ -2723,6 +2730,27 @@
     <ngetparms>0</ngetparms>
     <nansparms>1</nansparms>
   </catstruct>
+  <catstruct code="ZZOX">
+    <desc>Aries ATU match state</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>-1</ngetparms>
+    <nansparms>-1</nansparms>
+  </catstruct>
+  <catstruct code="ZZOZ">
+    <desc>Aries ATU solution erase response</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>-1</ngetparms>
+    <nansparms>-1</nansparms>
+  </catstruct>
+  <catstruct code="ZZZA">
+    <desc>ganymede amplifier trip state</desc>
+    <active>true</active>
+    <nsetparms>2</nsetparms>
+    <ngetparms>-1</ngetparms>
+    <nansparms>-1</nansparms>
+  </catstruct>
   <catstruct code="ZZZD">
     <desc>front panel VFO encoder Down</desc>
     <active>true</active>
@@ -2737,17 +2765,10 @@
     <ngetparms>-1</ngetparms>
     <nansparms>-1</nansparms>
   </catstruct>
-  <catstruct code="ZZZH">
-    <desc>front panel h/w version</desc>
-    <active>true</active>
-    <nsetparms>2</nsetparms>
-    <ngetparms>-1</ngetparms>
-    <nansparms>-1</nansparms>
-  </catstruct>
   <catstruct code="ZZZS">
     <desc>front panel s/w version</desc>
     <active>true</active>
-    <nsetparms>3</nsetparms>
+    <nsetparms>7</nsetparms>
     <ngetparms>-1</ngetparms>
     <nansparms>-1</nansparms>
   </catstruct>

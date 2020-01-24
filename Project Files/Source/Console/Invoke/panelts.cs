@@ -238,14 +238,14 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new ContextMenu ContextMenu
+		public new ContextMenuStrip ContextMenuStrip
 		{
-			get { return base.ContextMenu; }
+			get { return base.ContextMenuStrip; }
 			set
 			{
 				if(base.InvokeRequired)
-					this.Invoke(new UI.SetCtrlDel(UI.SetControlContextMenu), new object[] {this, value});
-				else base.ContextMenu = value;
+					this.Invoke(new UI.SetCtrlDel(UI.SetControlContextMenuStrip), new object[] {this, value});
+				else base.ContextMenuStrip = value;
 			}
 		}
 

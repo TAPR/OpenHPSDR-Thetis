@@ -2335,6 +2335,52 @@ namespace Thetis
             }
         }
 
+        public CmdState CWBreakIn(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int CWBreakIn = Convert.ToInt16(commands.ZZCB(""));
+
+                if (CWBreakIn == 0)
+                {
+                    commands.ZZCB("1");
+                    return CmdState.On;
+                }
+                if (CWBreakIn == 1)
+                {
+                    commands.ZZCB("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState CWQSK(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int CWQSK = Convert.ToInt16(commands.ZZQK(""));
+
+                if (CWQSK == 0)
+                {
+                    commands.ZZQK("1");
+                    return CmdState.On;
+                }
+                if (CWQSK == 1)
+                {
+                    commands.ZZQK("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
         public void CWSpeed(int msg, MidiDevice device)
         {
             parser.nGet = 0;

@@ -134,9 +134,9 @@ namespace Thetis
 
         // Timer identifier.
         private int timerID;
-        private MainMenu mainMenu1;
-        public MenuItem mnuSpotOptions;
         public CheckBoxTS chkBoxContour;
+        private MenuStrip mainMenu1;
+        public ToolStripMenuItem mnuSpotOptions;
         private TimeProc timeProcPeriodic;
 
         // ke9ns run this to kill the prior timer and start a new timer 
@@ -331,12 +331,12 @@ namespace Thetis
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpotControl));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.SWLbutton = new System.Windows.Forms.Button();
             this.SSBbutton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -385,12 +385,12 @@ namespace Thetis
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
-            this.mnuSpotOptions = new System.Windows.Forms.MenuItem();
             this.chkBoxWrld = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxNA = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
+            this.mainMenu1 = new System.Windows.Forms.MenuStrip();
+            this.mnuSpotOptions = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbPanPower)).BeginInit();
@@ -398,13 +398,14 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLong)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLat)).BeginInit();
+            this.mainMenu1.SuspendLayout();
             this.SuspendLayout();
             // 
             // SWLbutton
             // 
             this.SWLbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SWLbutton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.SWLbutton.Location = new System.Drawing.Point(615, 227);
+            this.SWLbutton.Location = new System.Drawing.Point(615, 248);
             this.SWLbutton.Name = "SWLbutton";
             this.SWLbutton.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton.TabIndex = 2;
@@ -417,7 +418,7 @@ namespace Thetis
             // 
             this.SSBbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SSBbutton.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.SSBbutton.Location = new System.Drawing.Point(12, 326);
+            this.SSBbutton.Location = new System.Drawing.Point(12, 347);
             this.SSBbutton.Name = "SSBbutton";
             this.SSBbutton.Size = new System.Drawing.Size(75, 23);
             this.SSBbutton.TabIndex = 1;
@@ -435,7 +436,7 @@ namespace Thetis
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.HideSelection = false;
-            this.textBox1.Location = new System.Drawing.Point(12, 126);
+            this.textBox1.Location = new System.Drawing.Point(12, 146);
             this.textBox1.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.textBox1.MaxLength = 10000000;
             this.textBox1.Multiline = true;
@@ -451,7 +452,7 @@ namespace Thetis
             // 
             this.nodeBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nodeBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nodeBox1.Location = new System.Drawing.Point(658, 225);
+            this.nodeBox1.Location = new System.Drawing.Point(658, 246);
             this.nodeBox1.MaxLength = 50;
             this.nodeBox1.Name = "nodeBox1";
             this.nodeBox1.Size = new System.Drawing.Size(84, 22);
@@ -466,7 +467,7 @@ namespace Thetis
             // textBox3
             // 
             this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(287, 7);
+            this.textBox3.Location = new System.Drawing.Point(287, 27);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(484, 113);
@@ -478,7 +479,7 @@ namespace Thetis
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(682, 329);
+            this.callBox.Location = new System.Drawing.Point(682, 350);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
             this.callBox.Size = new System.Drawing.Size(87, 22);
@@ -493,7 +494,7 @@ namespace Thetis
             // 
             this.portBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.portBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.portBox2.Location = new System.Drawing.Point(696, 227);
+            this.portBox2.Location = new System.Drawing.Point(696, 248);
             this.portBox2.MaxLength = 7;
             this.portBox2.Name = "portBox2";
             this.portBox2.Size = new System.Drawing.Size(56, 22);
@@ -509,7 +510,7 @@ namespace Thetis
             // 
             this.statusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBox.Location = new System.Drawing.Point(13, 197);
+            this.statusBox.Location = new System.Drawing.Point(13, 218);
             this.statusBox.Name = "statusBox";
             this.statusBox.Size = new System.Drawing.Size(156, 22);
             this.statusBox.TabIndex = 11;
@@ -522,7 +523,7 @@ namespace Thetis
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.button1.Location = new System.Drawing.Point(101, 328);
+            this.button1.Location = new System.Drawing.Point(101, 349);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(68, 23);
             this.button1.TabIndex = 3;
@@ -536,7 +537,7 @@ namespace Thetis
             // 
             this.statusBoxSWL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBoxSWL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBoxSWL.Location = new System.Drawing.Point(614, 199);
+            this.statusBoxSWL.Location = new System.Drawing.Point(614, 220);
             this.statusBoxSWL.Name = "statusBoxSWL";
             this.statusBoxSWL.Size = new System.Drawing.Size(156, 22);
             this.statusBoxSWL.TabIndex = 16;
@@ -548,7 +549,7 @@ namespace Thetis
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 180);
+            this.label1.Location = new System.Drawing.Point(13, 201);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 13);
             this.label1.TabIndex = 17;
@@ -558,7 +559,7 @@ namespace Thetis
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(612, 183);
+            this.label2.Location = new System.Drawing.Point(612, 204);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 13);
             this.label2.TabIndex = 18;
@@ -568,7 +569,7 @@ namespace Thetis
             // 
             this.btnTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnTrack.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnTrack.Location = new System.Drawing.Point(258, 281);
+            this.btnTrack.Location = new System.Drawing.Point(258, 302);
             this.btnTrack.Name = "btnTrack";
             this.btnTrack.Size = new System.Drawing.Size(75, 23);
             this.btnTrack.TabIndex = 62;
@@ -581,7 +582,7 @@ namespace Thetis
             // 
             this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(687, 227);
+            this.nameBox.Location = new System.Drawing.Point(687, 248);
             this.nameBox.MaxLength = 20;
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(46, 22);
@@ -598,34 +599,34 @@ namespace Thetis
             this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 7);
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle8;
+            this.dataGridView1.Location = new System.Drawing.Point(11, 27);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridView1.Size = new System.Drawing.Size(269, 113);
             this.dataGridView1.TabIndex = 72;
             this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
@@ -640,34 +641,34 @@ namespace Thetis
             this.dataGridView2.AllowUserToResizeColumns = false;
             this.dataGridView2.AllowUserToResizeRows = false;
             this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle5;
-            this.dataGridView2.Location = new System.Drawing.Point(479, 154);
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle11;
+            this.dataGridView2.Location = new System.Drawing.Point(479, 174);
             this.dataGridView2.MultiSelect = false;
             this.dataGridView2.Name = "dataGridView2";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.dataGridView2.Size = new System.Drawing.Size(254, 94);
             this.dataGridView2.TabIndex = 75;
             this.toolTip1.SetToolTip(this.dataGridView2, "memories");
@@ -677,7 +678,7 @@ namespace Thetis
             // 
             this.SWLbutton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SWLbutton2.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.SWLbutton2.Location = new System.Drawing.Point(696, 227);
+            this.SWLbutton2.Location = new System.Drawing.Point(696, 248);
             this.SWLbutton2.Name = "SWLbutton2";
             this.SWLbutton2.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton2.TabIndex = 76;
@@ -690,7 +691,7 @@ namespace Thetis
             // 
             this.btnBeacon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnBeacon.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnBeacon.Location = new System.Drawing.Point(192, 326);
+            this.btnBeacon.Location = new System.Drawing.Point(192, 347);
             this.btnBeacon.Name = "btnBeacon";
             this.btnBeacon.Size = new System.Drawing.Size(75, 23);
             this.btnBeacon.TabIndex = 85;
@@ -703,7 +704,7 @@ namespace Thetis
             // 
             this.btnTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnTime.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnTime.Location = new System.Drawing.Point(511, 185);
+            this.btnTime.Location = new System.Drawing.Point(511, 206);
             this.btnTime.Name = "btnTime";
             this.btnTime.Size = new System.Drawing.Size(75, 23);
             this.btnTime.TabIndex = 89;
@@ -716,7 +717,7 @@ namespace Thetis
             // 
             this.checkBoxTone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxTone.AutoSize = true;
-            this.checkBoxTone.Location = new System.Drawing.Point(559, 238);
+            this.checkBoxTone.Location = new System.Drawing.Point(559, 259);
             this.checkBoxTone.Name = "checkBoxTone";
             this.checkBoxTone.Size = new System.Drawing.Size(46, 17);
             this.checkBoxTone.TabIndex = 93;
@@ -731,7 +732,7 @@ namespace Thetis
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox2.Enabled = false;
             this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(559, 258);
+            this.textBox2.Location = new System.Drawing.Point(559, 279);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(37, 20);
             this.textBox2.TabIndex = 94;
@@ -743,7 +744,7 @@ namespace Thetis
             // 
             this.chkBoxContour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxContour.Image = null;
-            this.chkBoxContour.Location = new System.Drawing.Point(343, 254);
+            this.chkBoxContour.Location = new System.Drawing.Point(343, 275);
             this.chkBoxContour.Name = "chkBoxContour";
             this.chkBoxContour.Size = new System.Drawing.Size(70, 24);
             this.chkBoxContour.TabIndex = 98;
@@ -755,7 +756,7 @@ namespace Thetis
             // 
             this.tbPanPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbPanPower.AutoSize = false;
-            this.tbPanPower.Location = new System.Drawing.Point(339, 302);
+            this.tbPanPower.Location = new System.Drawing.Point(339, 323);
             this.tbPanPower.Maximum = 1500;
             this.tbPanPower.Minimum = 1;
             this.tbPanPower.Name = "tbPanPower";
@@ -772,7 +773,7 @@ namespace Thetis
             // 
             this.chkBoxAnt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxAnt.Image = null;
-            this.chkBoxAnt.Location = new System.Drawing.Point(343, 278);
+            this.chkBoxAnt.Location = new System.Drawing.Point(343, 299);
             this.chkBoxAnt.Name = "chkBoxAnt";
             this.chkBoxAnt.Size = new System.Drawing.Size(55, 24);
             this.chkBoxAnt.TabIndex = 96;
@@ -788,7 +789,7 @@ namespace Thetis
             this.chkBoxDIG.Checked = true;
             this.chkBoxDIG.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxDIG.Image = null;
-            this.chkBoxDIG.Location = new System.Drawing.Point(182, 255);
+            this.chkBoxDIG.Location = new System.Drawing.Point(182, 276);
             this.chkBoxDIG.Name = "chkBoxDIG";
             this.chkBoxDIG.Size = new System.Drawing.Size(85, 24);
             this.chkBoxDIG.TabIndex = 70;
@@ -799,7 +800,7 @@ namespace Thetis
             // 
             this.checkBoxMUF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxMUF.Image = null;
-            this.checkBoxMUF.Location = new System.Drawing.Point(273, 251);
+            this.checkBoxMUF.Location = new System.Drawing.Point(273, 272);
             this.checkBoxMUF.Name = "checkBoxMUF";
             this.checkBoxMUF.Size = new System.Drawing.Size(75, 24);
             this.checkBoxMUF.TabIndex = 95;
@@ -817,7 +818,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udDisplayWWV.Location = new System.Drawing.Point(511, 235);
+            this.udDisplayWWV.Location = new System.Drawing.Point(511, 256);
             this.udDisplayWWV.Maximum = new decimal(new int[] {
             4,
             0,
@@ -844,7 +845,7 @@ namespace Thetis
             // 
             this.checkBoxWWV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxWWV.Image = null;
-            this.checkBoxWWV.Location = new System.Drawing.Point(511, 214);
+            this.checkBoxWWV.Location = new System.Drawing.Point(511, 235);
             this.checkBoxWWV.Name = "checkBoxWWV";
             this.checkBoxWWV.Size = new System.Drawing.Size(98, 24);
             this.checkBoxWWV.TabIndex = 90;
@@ -860,7 +861,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.numericUpDownTS1.Location = new System.Drawing.Point(417, 329);
+            this.numericUpDownTS1.Location = new System.Drawing.Point(417, 350);
             this.numericUpDownTS1.Maximum = new decimal(new int[] {
             5,
             0,
@@ -887,7 +888,7 @@ namespace Thetis
             // 
             this.BoxBFScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BoxBFScan.Image = null;
-            this.BoxBFScan.Location = new System.Drawing.Point(343, 326);
+            this.BoxBFScan.Location = new System.Drawing.Point(343, 347);
             this.BoxBFScan.Name = "BoxBFScan";
             this.BoxBFScan.Size = new System.Drawing.Size(87, 24);
             this.BoxBFScan.TabIndex = 87;
@@ -899,7 +900,7 @@ namespace Thetis
             // 
             this.BoxBScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BoxBScan.Image = null;
-            this.BoxBScan.Location = new System.Drawing.Point(273, 327);
+            this.BoxBScan.Location = new System.Drawing.Point(273, 348);
             this.BoxBScan.Name = "BoxBScan";
             this.BoxBScan.Size = new System.Drawing.Size(81, 24);
             this.BoxBScan.TabIndex = 86;
@@ -913,7 +914,7 @@ namespace Thetis
             // 
             this.chkBoxBeam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxBeam.Image = null;
-            this.chkBoxBeam.Location = new System.Drawing.Point(417, 278);
+            this.chkBoxBeam.Location = new System.Drawing.Point(417, 299);
             this.chkBoxBeam.Name = "chkBoxBeam";
             this.chkBoxBeam.Size = new System.Drawing.Size(88, 24);
             this.chkBoxBeam.TabIndex = 83;
@@ -930,7 +931,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udDisplayLong.Location = new System.Drawing.Point(614, 330);
+            this.udDisplayLong.Location = new System.Drawing.Point(614, 351);
             this.udDisplayLong.Maximum = new decimal(new int[] {
             180,
             0,
@@ -963,7 +964,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udDisplayLat.Location = new System.Drawing.Point(538, 330);
+            this.udDisplayLat.Location = new System.Drawing.Point(538, 351);
             this.udDisplayLat.Maximum = new decimal(new int[] {
             90,
             0,
@@ -991,7 +992,7 @@ namespace Thetis
             // 
             this.chkBoxMem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxMem.Image = null;
-            this.chkBoxMem.Location = new System.Drawing.Point(417, 300);
+            this.chkBoxMem.Location = new System.Drawing.Point(417, 321);
             this.chkBoxMem.Name = "chkBoxMem";
             this.chkBoxMem.Size = new System.Drawing.Size(123, 24);
             this.chkBoxMem.TabIndex = 74;
@@ -1004,7 +1005,7 @@ namespace Thetis
             // 
             this.chkBoxPan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxPan.Image = null;
-            this.chkBoxPan.Location = new System.Drawing.Point(417, 255);
+            this.chkBoxPan.Location = new System.Drawing.Point(417, 276);
             this.chkBoxPan.Name = "chkBoxPan";
             this.chkBoxPan.Size = new System.Drawing.Size(100, 24);
             this.chkBoxPan.TabIndex = 71;
@@ -1018,7 +1019,7 @@ namespace Thetis
             this.chkBoxSSB.Checked = true;
             this.chkBoxSSB.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxSSB.Image = null;
-            this.chkBoxSSB.Location = new System.Drawing.Point(182, 225);
+            this.chkBoxSSB.Location = new System.Drawing.Point(182, 246);
             this.chkBoxSSB.Name = "chkBoxSSB";
             this.chkBoxSSB.Size = new System.Drawing.Size(85, 24);
             this.chkBoxSSB.TabIndex = 69;
@@ -1031,7 +1032,7 @@ namespace Thetis
             this.chkBoxCW.Checked = true;
             this.chkBoxCW.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxCW.Image = null;
-            this.chkBoxCW.Location = new System.Drawing.Point(182, 197);
+            this.chkBoxCW.Location = new System.Drawing.Point(182, 218);
             this.chkBoxCW.Name = "chkBoxCW";
             this.chkBoxCW.Size = new System.Drawing.Size(85, 24);
             this.chkBoxCW.TabIndex = 68;
@@ -1044,7 +1045,7 @@ namespace Thetis
             this.chkMapBand.Checked = true;
             this.chkMapBand.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapBand.Image = null;
-            this.chkMapBand.Location = new System.Drawing.Point(417, 232);
+            this.chkMapBand.Location = new System.Drawing.Point(417, 253);
             this.chkMapBand.Name = "chkMapBand";
             this.chkMapBand.Size = new System.Drawing.Size(113, 24);
             this.chkMapBand.TabIndex = 67;
@@ -1056,7 +1057,7 @@ namespace Thetis
             // 
             this.chkMapCountry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkMapCountry.Image = null;
-            this.chkMapCountry.Location = new System.Drawing.Point(417, 186);
+            this.chkMapCountry.Location = new System.Drawing.Point(417, 207);
             this.chkMapCountry.Name = "chkMapCountry";
             this.chkMapCountry.Size = new System.Drawing.Size(88, 22);
             this.chkMapCountry.TabIndex = 66;
@@ -1070,7 +1071,7 @@ namespace Thetis
             this.chkMapCall.Checked = true;
             this.chkMapCall.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapCall.Image = null;
-            this.chkMapCall.Location = new System.Drawing.Point(417, 209);
+            this.chkMapCall.Location = new System.Drawing.Point(417, 230);
             this.chkMapCall.Name = "chkMapCall";
             this.chkMapCall.Size = new System.Drawing.Size(88, 24);
             this.chkMapCall.TabIndex = 65;
@@ -1084,7 +1085,7 @@ namespace Thetis
             this.chkPanMode.Checked = true;
             this.chkPanMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPanMode.Image = null;
-            this.chkPanMode.Location = new System.Drawing.Point(273, 228);
+            this.chkPanMode.Location = new System.Drawing.Point(273, 249);
             this.chkPanMode.Name = "chkPanMode";
             this.chkPanMode.Size = new System.Drawing.Size(148, 23);
             this.chkPanMode.TabIndex = 63;
@@ -1099,7 +1100,7 @@ namespace Thetis
             this.chkGrayLine.Checked = true;
             this.chkGrayLine.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkGrayLine.Image = null;
-            this.chkGrayLine.Location = new System.Drawing.Point(273, 209);
+            this.chkGrayLine.Location = new System.Drawing.Point(273, 230);
             this.chkGrayLine.Name = "chkGrayLine";
             this.chkGrayLine.Size = new System.Drawing.Size(105, 17);
             this.chkGrayLine.TabIndex = 61;
@@ -1114,7 +1115,7 @@ namespace Thetis
             this.chkSUN.Checked = true;
             this.chkSUN.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSUN.Image = null;
-            this.chkSUN.Location = new System.Drawing.Point(273, 184);
+            this.chkSUN.Location = new System.Drawing.Point(273, 205);
             this.chkSUN.Name = "chkSUN";
             this.chkSUN.Size = new System.Drawing.Size(92, 24);
             this.chkSUN.TabIndex = 60;
@@ -1127,7 +1128,7 @@ namespace Thetis
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(537, 308);
+            this.label3.Location = new System.Drawing.Point(537, 329);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(139, 13);
             this.label3.TabIndex = 81;
@@ -1137,7 +1138,7 @@ namespace Thetis
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(693, 308);
+            this.label4.Location = new System.Drawing.Point(693, 329);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(71, 13);
             this.label4.TabIndex = 82;
@@ -1147,28 +1148,17 @@ namespace Thetis
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(541, 289);
+            this.label5.Location = new System.Drawing.Point(541, 310);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(227, 13);
             this.label5.TabIndex = 84;
             this.label5.Text = "Setup->CAT Control->DDUtil , for Rotor Control";
             // 
-            // mainMenu1
-            // 
-            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.mnuSpotOptions});
-            // 
-            // mnuSpotOptions
-            // 
-            this.mnuSpotOptions.Index = 0;
-            this.mnuSpotOptions.Text = "VOACAP Override";
-            this.mnuSpotOptions.Click += new System.EventHandler(this.mnuSpotOptions_Click);
-            // 
             // chkBoxWrld
             // 
             this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxWrld.Image = null;
-            this.chkBoxWrld.Location = new System.Drawing.Point(11, 278);
+            this.chkBoxWrld.Location = new System.Drawing.Point(11, 299);
             this.chkBoxWrld.Name = "chkBoxWrld";
             this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
             this.chkBoxWrld.TabIndex = 78;
@@ -1179,7 +1169,7 @@ namespace Thetis
             // 
             this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxNA.Image = null;
-            this.chkBoxNA.Location = new System.Drawing.Point(12, 251);
+            this.chkBoxNA.Location = new System.Drawing.Point(12, 272);
             this.chkBoxNA.Name = "chkBoxNA";
             this.chkBoxNA.Size = new System.Drawing.Size(175, 35);
             this.chkBoxNA.TabIndex = 77;
@@ -1190,7 +1180,7 @@ namespace Thetis
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(668, 256);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(668, 277);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(103, 24);
             this.chkAlwaysOnTop.TabIndex = 58;
@@ -1203,7 +1193,7 @@ namespace Thetis
             this.chkDXMode.Checked = true;
             this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(682, 329);
+            this.chkDXMode.Location = new System.Drawing.Point(682, 350);
             this.chkDXMode.Name = "chkDXMode";
             this.chkDXMode.Size = new System.Drawing.Size(91, 24);
             this.chkDXMode.TabIndex = 59;
@@ -1211,10 +1201,27 @@ namespace Thetis
             this.chkDXMode.UseVisualStyleBackColor = true;
             this.chkDXMode.Visible = false;
             // 
+            // mainMenu1
+            // 
+            this.mainMenu1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuSpotOptions});
+            this.mainMenu1.Location = new System.Drawing.Point(0, 0);
+            this.mainMenu1.Name = "mainMenu1";
+            this.mainMenu1.Size = new System.Drawing.Size(784, 24);
+            this.mainMenu1.TabIndex = 99;
+            this.mainMenu1.Text = "menuStrip1";
+            // 
+            // mnuSpotOptions
+            // 
+            this.mnuSpotOptions.Name = "mnuSpotOptions";
+            this.mnuSpotOptions.Size = new System.Drawing.Size(106, 20);
+            this.mnuSpotOptions.Text = "VOCAP Override";
+            this.mnuSpotOptions.Click += new System.EventHandler(this.mnuSpotOptions_Click);
+            // 
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(784, 361);
+            this.ClientSize = new System.Drawing.Size(784, 382);
             this.Controls.Add(this.chkBoxContour);
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.tbPanPower);
@@ -1266,9 +1273,10 @@ namespace Thetis
             this.Controls.Add(this.SSBbutton);
             this.Controls.Add(this.chkDXMode);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.mainMenu1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.mainMenu1;
             this.MaximumSize = new System.Drawing.Size(800, 1000);
-            this.Menu = this.mainMenu1;
             this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "SpotControl";
             this.Text = "DX / SWL Spotter";
@@ -1282,6 +1290,8 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLong)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLat)).EndInit();
+            this.mainMenu1.ResumeLayout(false);
+            this.mainMenu1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1450,14 +1460,15 @@ namespace Thetis
                 //    Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
                 //   Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
 
-                Thread t = new Thread(new ThreadStart(SWLSPOTTER));
+                Thread t = new Thread(new ThreadStart(SWLSPOTTER))
+                {
+                    CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
 
-                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-                t.Name = "SWL Spotter Thread";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
+                    Name = "SWL Spotter Thread",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal
+                };
                 t.Start();
 
                 //  while (t.IsAlive)
@@ -2208,18 +2219,17 @@ namespace Thetis
 
                 Debug.WriteLine("DX SPOTTER ON start THREAD");
 
-                Thread t = new Thread(new ThreadStart(SPOTTER));
-
-                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-
+                Thread t = new Thread(new ThreadStart(SPOTTER))
+                {
+                    CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    Name = "Spotter Thread",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal // normal
+                };
                 SP_Active = 1;
-                t.Name = "Spotter Thread";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal; // normal
                 t.Start();
-
+ 
                 textBox1.Text = "Clicked to Open DX Spider \r\n";
 
             }
@@ -4825,8 +4835,8 @@ namespace Thetis
             if (SP5_Active == 0)  // if OFF then turn ON
             {
 
-                if (chkPanMode.Checked == true) Display.map = 1; // special panafall mode (80 - 20)
-                else Display.map = 0;
+                if (chkPanMode.Checked == true) Display.SpecialPanafall = true; // special panafall mode (80 - 20)
+                else Display.SpecialPanafall = false;
 
                 btnTrack.Text = "Track ON";
 
@@ -4853,17 +4863,15 @@ namespace Thetis
                 }
 
 
-                Thread t = new Thread(new ThreadStart(TrackSun));  // turn on track map (sun, grayline, voacap, or beacon)
-
-                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-
+                Thread t = new Thread(new ThreadStart(TrackSun))
+                {
+                    CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    Name = "Track Thread",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal
+                };  // turn on track map (sun, grayline, voacap, or beacon)
                 SP5_Active = 1; // turn on track map (sun, grayline, voacap, or beacon)
-
-                t.Name = "Track Thread";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
                 t.Start();
 
                 textBox1.Text = "Clicked to Turn on GrayLine Sun Tracker\r\n";
@@ -4874,7 +4882,7 @@ namespace Thetis
 
                 SP5_Active = 0;                     // turn off tracking
 
-                Display.map = 0;                    // tell display program to got back to standard panafall mode
+                Display.SpecialPanafall = false;                    // tell display program to got back to standard panafall mode
 
                 if (chkPanMode.Checked == true) Display.CurrentDisplayMode = LastDisplayMode;
                
@@ -6334,14 +6342,14 @@ namespace Thetis
                 if (chkPanMode.Checked == true)
                 {
 
-                    Display.map = 1;
+                    Display.SpecialPanafall = true;
                     Display.CurrentDisplayMode = DisplayMode.PANAFALL;
 
 
                 }
                 else if (chkPanMode.Checked == false) // turn off special pan and put back original display mode
                 {
-                    Display.map = 0;
+                    Display.SpecialPanafall = false;
                     Display.CurrentDisplayMode = LastDisplayMode;
                 }
             }
@@ -7087,8 +7095,8 @@ namespace Thetis
                 {
                     Debug.WriteLine(">>>>>>>>BEACON: turn on mapping");
 
-                    if (chkPanMode.Checked == true) Display.map = 1;
-                    else Display.map = 0;
+                    if (chkPanMode.Checked == true) Display.SpecialPanafall = true;
+                    else Display.SpecialPanafall = false;
 
                 //    btnTrack.Text = "Track ON";
 
@@ -7115,18 +7123,17 @@ namespace Thetis
 
                     }
 
-                    Thread t = new Thread(new ThreadStart(TrackSun)); // turn on track map (sun, grayline, voacap, or beacon)
-
-                    t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                    t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-
+                    Thread t = new Thread(new ThreadStart(TrackSun))
+                    {
+                        CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                        CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                        Name = "Track Thread",
+                        IsBackground = true,
+                        Priority = ThreadPriority.Normal
+                    }; // turn on track map (sun, grayline, voacap, or beacon)
                     SP5_Active = 1; // turn on track map (sun, grayline, voacap, or beacon)
-                    t.Name = "Track Thread";
-                    t.IsBackground = true;
-                    t.Priority = ThreadPriority.Normal;
                     t.Start();
-
+ 
                     textBox1.Text = "Clicked to Turn on GrayLine Sun Tracker\r\n";
 
                     Debug.WriteLine(">>>>>>>>BEACON:  mapping turned on");
@@ -7268,15 +7275,15 @@ namespace Thetis
                 //-----------------------------------------------------
                 // THREAD START UP FOR CHECKING TIME SLOT
 
-                Thread t = new Thread(new ThreadStart(BeaconSlot)); // show beacons (turn on tracking map)
-
-                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
+                Thread t = new Thread(new ThreadStart(BeaconSlot))
+                {
+                    CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    Name = "Beacon slot tracking",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal
+                }; // show beacons (turn on tracking map)
                 SP5_Active = 1; // turn on track map (sun, grayline, voacap, or beacon)
-                t.Name = "Beacon slot tracking";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
                 t.Start();
 
                 textBox1.Text = "Clicked on Beacon Tracking\r\n";
@@ -7312,7 +7319,7 @@ namespace Thetis
 
                     SP5_Active = 0;                     // turn off tracking
 
-                    Display.map = 0;                    // tell display program to got back to standard panafall mode
+                    Display.SpecialPanafall = false;                    // tell display program to got back to standard panafall mode
 
                     if (chkPanMode.Checked == true) Display.CurrentDisplayMode = LastDisplayMode;
 
@@ -8222,19 +8229,17 @@ namespace Thetis
                 if (WTime == false)
                 {
 
-                    textBox1.Text = "Will Attempt to read"; 
+                    textBox1.Text = "Will Attempt to read";
 
-                    Thread t = new Thread(new ThreadStart(WWVTime));
-
-                    t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                    t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
+                    Thread t = new Thread(new ThreadStart(WWVTime))
+                    {
+                        CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                        CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                        Name = "WWV Time Sync",
+                        IsBackground = true,
+                        Priority = ThreadPriority.AboveNormal
+                    };
                     WTime = true;   // enabled (let display know to get a Floor dbm
-
-                   
-                    t.Name = "WWV Time Sync";
-                    t.IsBackground = true;
-                    t.Priority = ThreadPriority.AboveNormal;
                     t.Start();
 
                     textBox1.Text += " Radio Station WWV !\r\n";
@@ -8252,18 +8257,16 @@ namespace Thetis
             }
             else
             {
-              
-                Thread t = new Thread(new ThreadStart(SetInternetTime));  // get internet NIST time
 
-                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-                WTime = true;   // enabled (let display know to get a Floor dbm
-
-               
-                t.Name = "NIST Time Sync";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
+                Thread t = new Thread(new ThreadStart(SetInternetTime))
+                {
+                    CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    Name = "NIST Time Sync",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal
+                };  // get internet NIST time
+                WTime = true;   // enabled (let display know to get a Floor dbm              
                 t.Start();
 
             }
@@ -9417,17 +9420,15 @@ VOACHECK_TOP:
 
                 VOARUN = true;                     // dont allow this to trigger until its finished
 
-                Thread t = new Thread(new ThreadStart(VOACAP));
-
-                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
-                t.Name = "VOACAP Thread";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
-                t.Start();
-
-            
+                Thread t = new Thread(new ThreadStart(VOACAP))
+                {
+                    CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
+                    Name = "VOACAP Thread",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal
+                };
+                t.Start();      
             }
 
 

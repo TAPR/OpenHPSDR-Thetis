@@ -41,7 +41,6 @@ namespace Thetis
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.GroupBoxTS grpPlayback;
         private System.Windows.Forms.GroupBox grpPlaylist;
-        private System.Windows.Forms.MainMenu mainMenu1;
         private Button button1;
         private Button button2;
         private Button button3;
@@ -488,12 +487,12 @@ namespace Thetis
 
                 // see console routine  if (rx1_band != old_band || initializing) for setting low and high settings
 
-                Thread t = new Thread(new ThreadStart(SCANNER));
-
-          
-                t.Name = "Scanner Thread";
-                t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
+                Thread t = new Thread(new ThreadStart(SCANNER))
+                {
+                    Name = "Scanner Thread",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Normal
+                };
                 t.Start();
 
                 Trace.WriteLine("good    ");

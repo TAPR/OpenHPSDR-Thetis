@@ -155,9 +155,9 @@ namespace System.Windows.Forms
 			c.ClientSize = (System.Drawing.Size)val;
 		}
 
-		public static void SetControlContextMenu(Control c, object val)
+		public static void SetControlContextMenuStrip(Control c, object val)
 		{
-			c.ContextMenu = (ContextMenu)val;
+			c.ContextMenuStrip = (ContextMenuStrip)val;
 		}
 
 		public static void SetControlCursor(Control c, object val)

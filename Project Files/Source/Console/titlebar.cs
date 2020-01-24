@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2012  FlexRadio Systems 
-// Copyright (C) 2010-2019  Doug Wigley
+// Copyright (C) 2010-2020  Doug Wigley
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -26,7 +26,6 @@
 //    USA
 //=================================================================
 
-using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -35,25 +34,35 @@ namespace Thetis
     class TitleBar
     {
         public const string BUILD_NAME = "";
-        public const string BUILD_DATE = "(11/3/19)";
+        public const string BUILD_DATE = "(1/24/20)";
 
         public static string GetString()
         {
             string version = GetVerNum();
             string s = "Thetis";
-           // if (BUILD_NAME != "") s += " " + BUILD_NAME;
+
             s += " v" + version;
             if (BUILD_DATE != "") s += " " + BUILD_DATE;
+            if (BUILD_NAME != "") s += " " + BUILD_NAME;
 
             return s;
         }
 
-        // returns the PowerSDR version number in "a.b.c" format
+        // returns the Thetis version number in "a.b.c" format
+        private static string m_sVersionNumber = "";
         public static string GetVerNum()
         {
+            //MW0LGE build version number string once and return that
+            // if called again. Issue reported by NJ2US where assembly.Location
+            // passed into GetVersionInfo failed. Perhaps because norton or something
+            // moved the file after it was accessed. The version isn't going to
+            // change anyway, so obtaining it once is fine.
+            if (m_sVersionNumber != "") return m_sVersionNumber;
+
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
+            m_sVersionNumber = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
+            return m_sVersionNumber;
         }
     }
 }

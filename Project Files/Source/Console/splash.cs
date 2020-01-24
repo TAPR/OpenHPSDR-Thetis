@@ -188,9 +188,11 @@ namespace Thetis
 			// Make sure it is only launched once.
 			if( ms_frmSplash != null )
 				return;
-			ms_oThread = new Thread( new ThreadStart(ShowForm));
-			ms_oThread.IsBackground = true;
-			ms_oThread.Name = "Splash Screen Thread";
+			ms_oThread = new Thread(new ThreadStart(ShowForm))
+			{
+				IsBackground = true,
+				Name = "Splash Screen Thread"
+			};
 			ms_oThread.Start();
 		}
 

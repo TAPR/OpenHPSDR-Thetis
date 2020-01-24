@@ -45,6 +45,9 @@ typedef struct _seqLogSnapshot {
 	struct _seqLogSnapshot* previous;
 
 	int rx_in_seq_snapshot[MAX_IN_SEQ_LOG];
+	char dateTimeStamp[24];
+	unsigned int received_seqnum;
+	unsigned int last_seqnum;
 } _seqLogSnapshot_t;
 
 typedef struct CACHE_ALIGN _radionet
@@ -81,6 +84,7 @@ typedef struct CACHE_ALIGN _radionet
 	CRITICAL_SECTION udpOUT;
 	CRITICAL_SECTION rcvpkt;
 	CRITICAL_SECTION sndpkt;
+	CRITICAL_SECTION seqErrors;
 	WSAEVENT hDataEvent;
 	WSANETWORKEVENTS wsaProcessEvents;
 
@@ -179,11 +183,11 @@ typedef struct CACHE_ALIGN _radionet
 
 		//MW0LGE logging
 		int rx_in_seq_delta[MAX_IN_SEQ_LOG];	// ring buffer that contains a delta expected frame number vs recevied frame number
-		unsigned int rx_in_seq_delta_index;		// next slot to use in ring
+		int rx_in_seq_delta_index;		// next slot to use in ring
 		_seqLogSnapshot_t* snapshots_head;		// simple linked list of snapshots of this ring buffer when a seq error occurs
 		_seqLogSnapshot_t* snapshots_tail;		// simple linked list of snapshots of this ring buffer when a seq error occurs
 		int snapshot_length;					// len of this snapshot list (used to limit)
-		_seqLogSnapshot_t* snapshot;			// used by netInterface to work through the list each call
+		_seqLogSnapshot_t* snapshot;			// used by netInterface to work through the list each call;
 		//--
 	} rx[MAX_RX_STREAMS];
 
@@ -406,6 +410,7 @@ int UserOut1;
 int UserOut2;
 int UserOut3;
 int xvtr_enable;
+int atu_tune; // controls J16 pin 10 on Orion MKII board
 
 //unsigned char AlexManEnable;
 //unsigned char AlexEnabled;

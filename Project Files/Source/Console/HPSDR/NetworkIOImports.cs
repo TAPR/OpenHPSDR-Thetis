@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Thetis
 {
@@ -39,13 +40,10 @@ namespace Thetis
         public static extern void CmdRx();
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int getOOO();
+        public static extern int getOOO();     
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool getSeqInDeltaStart(int rx);        
-
-        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool getSeqInDelta(int rx, int[] deltas);
+        public static extern bool getSeqInDelta(bool bInit, int rx, int[] deltas, StringBuilder dateTimeStamp, out uint received_seqnum, out uint last_seqnum);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void clearSnapshots();
@@ -319,6 +317,9 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetADC_cntrl2();
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ATU_Tune(int tune);
 
 
     }

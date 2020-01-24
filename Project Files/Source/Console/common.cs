@@ -26,14 +26,15 @@
 //    USA
 //=================================================================
 
-    using System;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Windows.Forms;
-    using System.Linq;
-    using System.IO.Ports;
+using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.Collections;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Linq;
+using System.IO.Ports;
+using System.IO;
 
 namespace Thetis
 {
@@ -425,5 +426,65 @@ namespace Thetis
                 ((byte)(rev >> 8)).ToString() + "." +
                 ((byte)(rev >> 0)).ToString();
         }
-	}
+
+        private static string m_sLogPath = "";
+        public static void SetLogPath(string sPath)
+        {
+            m_sLogPath = sPath;
+        }
+        public static void LogString(string entry)
+        {
+            // MW0LGE very simple logger
+            if (m_sLogPath == "") return;
+            if (entry == "") return;
+
+            try
+            {
+                using (StreamWriter w = File.AppendText(m_sLogPath + "\\ErrorLog.txt"))
+                {
+                    //using block will auto close stream
+                    w.Write("\r\nEntry : ");
+                    w.WriteLine($"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}");
+                    w.WriteLine(entry);
+                    w.WriteLine("-------------------------------");
+                }
+            }
+            catch
+            {
+
+            }
+        }
+        public static void LogException(Exception e)
+        {
+            // MW0LGE very simple logger
+            if (m_sLogPath == "") return;
+            if (e == null) return;
+
+            try
+            {
+                using (StreamWriter w = File.AppendText(m_sLogPath + "\\ErrorLog.txt"))
+                {
+                    //using block will auto close stream
+                    w.Write("\r\nEntry : ");
+                    w.WriteLine($"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}");
+                    w.WriteLine(e.Message);
+                    if (e.StackTrace != "")
+                    {
+#if DEBUG
+                        StackTrace st = new StackTrace(e, true);
+                        StackFrame sf = st.GetFrames().Last();
+                        w.WriteLine("File : " + sf.GetFileName() + " ... line : " + sf.GetFileLineNumber().ToString());
+#endif
+                        w.WriteLine("---------stacktrace------------");
+                        w.WriteLine(e.StackTrace);
+                    }
+                    w.WriteLine("-------------------------------");
+                }
+            }
+            catch
+            {
+
+            }
+        }
+    }
 }

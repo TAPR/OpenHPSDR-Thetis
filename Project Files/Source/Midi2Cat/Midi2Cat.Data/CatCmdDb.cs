@@ -308,7 +308,11 @@ namespace Midi2Cat.Data
         [CatCommandAttribute("Multi Step Vfo A", ControlType.Wheel)]
         MultiStepVfoA = 110,
         [CatCommandAttribute("RIT", ControlType.Knob_or_Slider)]
-        RIT = 201,
+        RIT = 201,       
+        [CatCommandAttribute("Manual or Semi Break-In", ControlType.Button, true)]
+        CWBreakIn = 111,
+        [CatCommandAttribute("Semi or QSK Break-In", ControlType.Button, true)]
+        CWQSK = 112,
         [CatCommandAttribute("XIT", ControlType.Knob_or_Slider)]
         XIT = 202,
         [CatCommandAttribute("Filter Shift", ControlType.Knob_or_Slider)]

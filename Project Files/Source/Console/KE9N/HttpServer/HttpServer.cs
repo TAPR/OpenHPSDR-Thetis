@@ -38,11 +38,13 @@ namespace Thetis
                 Debug.WriteLine("7exception" + e);
                 return;
             }
-            
-            Thread thread = new Thread(loop);
-            thread.Name = "TCP SERVER THREAD";
-            thread.IsBackground = true;
-            thread.Priority = ThreadPriority.Normal;
+
+            Thread thread = new Thread(loop)
+            {
+                Name = "TCP SERVER THREAD",
+                IsBackground = true,
+                Priority = ThreadPriority.Normal
+            };
             thread.Start();
         }
 

@@ -56,7 +56,6 @@ namespace Thetis
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.GroupBoxTS grpPlayback;
         private System.Windows.Forms.GroupBox grpPlaylist;
-        private System.Windows.Forms.MainMenu mainMenu1;
         private TextBox textBox3;
         private CheckBoxTS chkAlwaysOnTop;
         public TextBox textBox1;

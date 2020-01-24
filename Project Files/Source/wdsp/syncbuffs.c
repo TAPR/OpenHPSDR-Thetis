@@ -72,6 +72,7 @@ void destroy_syncbuffs (SYNCB a)
 	InterlockedBitTestAndReset(&a->run, 0);			// set a trap for the syncb thread
 	ReleaseSemaphore(a->Sem_BuffReady, 1, 0);		// be sure the syncb thread can pass WaitForSingleObject in syncb_main()									// 
 	LeaveCriticalSection (&a->csOUT);				// let the thread pass to the trap in syncbdata()
+	LeaveCriticalSection (&a->csIN);				
 	Sleep (2);										// wait for the syncb thread to die
 	DeleteCriticalSection (&a->csOUT);
 	DeleteCriticalSection (&a->csIN);

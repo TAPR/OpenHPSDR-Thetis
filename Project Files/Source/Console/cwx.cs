@@ -434,11 +434,13 @@ namespace Thetis
         }
 
         private void notesButton_Click(object sender, System.EventArgs e)
-        {            
-            Thread t = new Thread(new ThreadStart(help));
-            t.Name = "help thread";
-            t.IsBackground = true;					// if app closes, kill this thread
-            t.Priority = ThreadPriority.Normal;
+        {
+            Thread t = new Thread(new ThreadStart(help))
+            {
+                Name = "help thread",
+                IsBackground = true,                    // if app closes, kill this thread
+                Priority = ThreadPriority.Normal
+            };
             t.Start();
         }
 
@@ -754,22 +756,28 @@ namespace Thetis
 
             stopThreads = false;
 
-            Thread keyFifoThread = new Thread(new ThreadStart(keyboardFifo));
-            keyFifoThread.Name = "keyboard fifo pop thread";
-            keyFifoThread.IsBackground = true;					// if app closes, kill this thread
-            keyFifoThread.Priority = ThreadPriority.Normal;
+            Thread keyFifoThread = new Thread(new ThreadStart(keyboardFifo))
+            {
+                Name = "keyboard fifo pop thread",
+                IsBackground = true,                    // if app closes, kill this thread
+                Priority = ThreadPriority.Normal
+            };
             keyFifoThread.Start();
 
-            Thread keyDisplayThread = new Thread(new ThreadStart(keyboardDisplay));
-            keyDisplayThread.Name = "keyboard edit box handler thread";
-            keyDisplayThread.IsBackground = true;					// if app closes, kill this thread
-            keyDisplayThread.Priority = ThreadPriority.Normal;
+            Thread keyDisplayThread = new Thread(new ThreadStart(keyboardDisplay))
+            {
+                Name = "keyboard edit box handler thread",
+                IsBackground = true,                    // if app closes, kill this thread
+                Priority = ThreadPriority.Normal
+            };
             keyDisplayThread.Start();
 
-            Thread CATReadThread = new Thread(new ThreadStart(SendBufferMessage));
-            CATReadThread.Name = "CAT Read Thread";
-            CATReadThread.IsBackground = true;
-            CATReadThread.Priority = ThreadPriority.Highest;
+            Thread CATReadThread = new Thread(new ThreadStart(SendBufferMessage))
+            {
+                Name = "CAT Read Thread",
+                IsBackground = true,
+                Priority = ThreadPriority.Highest
+            };
             CATReadThread.Start();
 
             //			ttdel = 50;

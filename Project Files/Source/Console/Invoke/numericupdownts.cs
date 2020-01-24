@@ -248,14 +248,14 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new ContextMenu ContextMenu
+		public new ContextMenuStrip ContextMenuStrip
 		{
-			get { return base.ContextMenu; }
+			get { return base.ContextMenuStrip; }
 			set
 			{
 				if(base.InvokeRequired)
-					this.Invoke(new UI.SetCtrlDel(UI.SetControlContextMenu), new object[] {this, value});
-				else base.ContextMenu = value;
+					this.Invoke(new UI.SetCtrlDel(UI.SetControlContextMenuStrip), new object[] {this, value});
+				else base.ContextMenuStrip = value;
 			}
 		}
 
@@ -1176,12 +1176,12 @@ namespace System.Windows.Forms
 
 		public override void UpButton()
 		{
-			if(base.InvokeRequired)
-				this.Invoke(new MethodInvoker(base.UpButton));
-			else base.UpButton();
-		}
+            if(base.InvokeRequired)
+                this.Invoke(new MethodInvoker(base.UpButton));
+            else base.UpButton();
+        }
 
-		public new void Update()
+        public new void Update()
 		{
 			if(base.InvokeRequired)
 				this.Invoke(new MethodInvoker(base.Update));

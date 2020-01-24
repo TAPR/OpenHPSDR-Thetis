@@ -1009,6 +1009,7 @@ namespace Thetis
         #endregion Events
     }
 
+    //SIO5ListenerII is used for Andromeda front panel communication
     public class SIO5ListenerII
     {
         #region Constructor
@@ -1159,6 +1160,354 @@ namespace Thetis
                         //testTimer2.Start();
                         if (answer.Length > 0)
                             result = SIO5.put(answer);                           		//send the answer to the serial port
+                        //testTimer2.Stop();
+                        //T1 = testTimer2.DurationMsec;
+                        CommBuffer = CommBuffer.Replace(m.Value, "", 0, m.Length);                   //remove the match from the buffer
+                        //Debug.WriteLine("Parser decode time for "+m.Value.ToString()+":  "+T0.ToString()+ "ms");
+                        //Debug.WriteLine("SIO3 send answer time:  " + T1.ToString() + "ms");
+                        //Debug.WriteLine("CommBuffer Length:  " + bufferLen.ToString());
+                        //if (bufferLen > 100)
+                        //Debug.WriteLine("Buffer contents:  "+CommBuffer.ToString());
+                    }
+                }
+                catch (Exception)
+                {
+                    //Add ex name to exception above to enable
+                    //Debug.WriteLine("RX Event:  "+ex.Message);
+                    //Debug.WriteLine("RX Event:  "+ex.StackTrace);
+                }
+            }
+        }
+
+        #endregion Events
+    }
+
+
+    //SIO6ListenerII is used for Aries ATU communication
+    public class SIO6ListenerII
+    {
+        #region Constructor
+
+        public SIO6ListenerII(Console c)
+        {
+            console = c;
+            console.Activated += new EventHandler(console_Activated);
+            console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
+            parser = new CATParser(console);
+
+            //event handler for Serial RX Events
+            SDRSerialPort6.serial_rx_event += new SerialRXEventHandler(SerialRX6EventHandler);
+
+            if (console.AriesCATEnabled)  // if CAT is on fire it up 
+            {
+                try
+                {
+                    enableCAT6();
+                }
+                catch (Exception ex)
+                {
+                    // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
+                    //  seems ugly to me (wjt) 
+                    console.AriesCATEnabled = false;
+                    if (console.SetupForm != null)
+                    {
+                        console.SetupForm.copyAriesCATPropsToDialogVars(); // need to make sure the props on the setup page get reset 
+                    }
+                    MessageBox.Show("Could not initialize Aries CAT control.  Exception was:\n\n " + ex.Message +
+                        "\n\nCAT control has been disabled.", "Error Initializing CAT control",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+
+        public void enableCAT6()
+        {
+            lock (this)
+            {
+                if (cat6_enabled) return; // nothing to do already enabled 
+                cat6_enabled = true;
+            }
+            int port_num = console.AriesCATPort;
+            SIO6 = new SDRSerialPort6(port_num);
+            SIO6.setCommParms(9600, Parity.None, 8, StopBits.One);
+
+            Initialize();
+        }
+
+        // typically called when the end user has disabled CAT control through a UI element ... this 
+        // closes the serial port and neutralized the listeners we have in place
+
+        public void disableCAT6()
+        {
+            lock (this)
+            {
+                if (!cat6_enabled) return;
+                cat6_enabled = false;
+            }
+
+            if (SIO6 != null)
+            {
+                SIO6.Destroy();
+                SIO6 = null;
+            }
+            Fpass = true; // reset init flag 
+            return;
+        }
+
+        #endregion Constructor
+
+        #region Variables
+
+        public SDRSerialPort6 SIO6;
+
+        Console console;
+        ASCIIEncoding AE = new ASCIIEncoding();
+        private bool Fpass = true;
+        private bool cat6_enabled = false;
+
+        //		private System.Timers.Timer SIOMonitor;
+        CATParser parser;
+        //		private int SIOMonitorCount = 0;
+
+        #endregion variables
+
+        #region Methods
+
+        // Called when the console is activated for the first time.  
+        private void Initialize()
+        {
+            if (Fpass)
+            {
+                SIO6.Create();
+                Fpass = false;
+            }
+        }
+
+        #endregion Methods
+
+        #region Events
+
+        private void console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (SIO6 != null)
+            {
+                SIO6.Destroy();
+            }
+        }
+
+        private void console_Activated(object sender, EventArgs e)
+        {
+            if (console.AriesCATEnabled)
+            {
+                // Initialize();   // wjt enable CAT calls Initialize 
+                enableCAT6();
+            }
+        }
+
+        StringBuilder CommBuffer = new StringBuilder();//"";				//holds incoming serial data from the port
+        private void SerialRX6EventHandler(object source, SerialRXEvent e)
+        {
+            //			SIOMonitor.Interval = 5000;		// set the timer for 5 seconds
+            //			SIOMonitor.Enabled = true;		// start or restart the timer
+
+            //double T0 = 0.00;
+            //double T1 = 0.00;
+            //int bufferLen = 0;
+
+            CommBuffer.Append(e.buffer);                                		// put the data in the string
+            if (parser != null)													// is the parser instantiated
+            {
+                //bufferLen = CommBuffer.Length;
+                try
+                {
+                    Regex rex = new Regex(".*?;");										//accept any string ending in ;
+                    string answer;
+                    uint result;
+
+                    for (Match m = rex.Match(CommBuffer.ToString()); m.Success; m = m.NextMatch())	//loop thru the buffer and find matches
+                    {
+                        //testTimer1.Start();
+                        answer = parser.Get(m.Value);                                   //send the match to the parser
+                        //testTimer1.Stop();
+                        //T0 = testTimer1.DurationMsec;
+                        //testTimer2.Start();
+                        if (answer.Length > 0)
+                            result = SIO6.put(answer);                           		//send the answer to the serial port
+                        //testTimer2.Stop();
+                        //T1 = testTimer2.DurationMsec;
+                        CommBuffer = CommBuffer.Replace(m.Value, "", 0, m.Length);                   //remove the match from the buffer
+                        //Debug.WriteLine("Parser decode time for "+m.Value.ToString()+":  "+T0.ToString()+ "ms");
+                        //Debug.WriteLine("SIO3 send answer time:  " + T1.ToString() + "ms");
+                        //Debug.WriteLine("CommBuffer Length:  " + bufferLen.ToString());
+                        //if (bufferLen > 100)
+                        //Debug.WriteLine("Buffer contents:  "+CommBuffer.ToString());
+                    }
+                }
+                catch (Exception)
+                {
+                    //Add ex name to exception above to enable
+                    //Debug.WriteLine("RX Event:  "+ex.Message);
+                    //Debug.WriteLine("RX Event:  "+ex.StackTrace);
+                }
+            }
+        }
+
+        #endregion Events
+    }
+
+
+    //SIO7ListenerII is used for Ganymede 500W PA communication
+    public class SIO7ListenerII
+    {
+        #region Constructor
+
+        public SIO7ListenerII(Console c)
+        {
+            console = c;
+            console.Activated += new EventHandler(console_Activated);
+            console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
+            parser = new CATParser(console);
+
+            //event handler for Serial RX Events
+            SDRSerialPort7.serial_rx_event += new SerialRXEventHandler(SerialRX7EventHandler);
+
+            if (console.GanymedeCATEnabled)  // if CAT is on fire it up 
+            {
+                try
+                {
+                    enableCAT7();
+                }
+                catch (Exception ex)
+                {
+                    // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
+                    //  seems ugly to me (wjt) 
+                    console.GanymedeCATEnabled = false;
+                    if (console.SetupForm != null)
+                    {
+                        console.SetupForm.copyGanymedeCATPropsToDialogVars(); // need to make sure the props on the setup page get reset 
+                    }
+                    MessageBox.Show("Could not initialize Ganymede CAT control.  Exception was:\n\n " + ex.Message +
+                        "\n\nCAT control has been disabled.", "Error Initializing CAT control",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+
+        public void enableCAT7()
+        {
+            lock (this)
+            {
+                if (cat7_enabled) return; // nothing to do already enabled 
+                cat7_enabled = true;
+            }
+            int port_num = console.GanymedeCATPort;
+            SIO7 = new SDRSerialPort7(port_num);
+            SIO7.setCommParms(9600, Parity.None, 8, StopBits.One);
+
+            Initialize();
+        }
+
+        // typically called when the end user has disabled CAT control through a UI element ... this 
+        // closes the serial port and neutralized the listeners we have in place
+
+        public void disableCAT7()
+        {
+            lock (this)
+            {
+                if (!cat7_enabled) return;
+                cat7_enabled = false;
+            }
+
+            if (SIO7 != null)
+            {
+                SIO7.Destroy();
+                SIO7 = null;
+            }
+            Fpass = true; // reset init flag 
+            return;
+        }
+
+        #endregion Constructor
+
+        #region Variables
+
+        public SDRSerialPort7 SIO7;
+
+        Console console;
+        ASCIIEncoding AE = new ASCIIEncoding();
+        private bool Fpass = true;
+        private bool cat7_enabled = false;
+
+        //		private System.Timers.Timer SIOMonitor;
+        CATParser parser;
+        //		private int SIOMonitorCount = 0;
+
+        #endregion variables
+
+        #region Methods
+
+        // Called when the console is activated for the first time.  
+        private void Initialize()
+        {
+            if (Fpass)
+            {
+                SIO7.Create();
+                Fpass = false;
+            }
+        }
+
+        #endregion Methods
+
+        #region Events
+
+        private void console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (SIO7 != null)
+            {
+                SIO7.Destroy();
+            }
+        }
+
+        private void console_Activated(object sender, EventArgs e)
+        {
+            if (console.GanymedeCATEnabled)
+            {
+                // Initialize();   // wjt enable CAT calls Initialize 
+                enableCAT7();
+            }
+        }
+
+        StringBuilder CommBuffer = new StringBuilder();//"";				//holds incoming serial data from the port
+        private void SerialRX7EventHandler(object source, SerialRXEvent e)
+        {
+            //			SIOMonitor.Interval = 5000;		// set the timer for 5 seconds
+            //			SIOMonitor.Enabled = true;		// start or restart the timer
+
+            //double T0 = 0.00;
+            //double T1 = 0.00;
+            //int bufferLen = 0;
+
+            CommBuffer.Append(e.buffer);                                		// put the data in the string
+            if (parser != null)													// is the parser instantiated
+            {
+                //bufferLen = CommBuffer.Length;
+                try
+                {
+                    Regex rex = new Regex(".*?;");										//accept any string ending in ;
+                    string answer;
+                    uint result;
+
+                    for (Match m = rex.Match(CommBuffer.ToString()); m.Success; m = m.NextMatch())	//loop thru the buffer and find matches
+                    {
+                        //testTimer1.Start();
+                        answer = parser.Get(m.Value);                                   //send the match to the parser
+                        //testTimer1.Stop();
+                        //T0 = testTimer1.DurationMsec;
+                        //testTimer2.Start();
+                        if (answer.Length > 0)
+                            result = SIO7.put(answer);                           		//send the answer to the serial port
                         //testTimer2.Stop();
                         //T1 = testTimer2.DurationMsec;
                         CommBuffer = CommBuffer.Replace(m.Value, "", 0, m.Length);                   //remove the match from the buffer
