@@ -9701,7 +9701,7 @@ namespace Thetis
                     console.CurrentBreakInMode = BreakIn.Manual;
                     break;
                 case CheckState.Indeterminate:
-                    if ((console.CurrentHPSDRHardware == HPSDRHW.OrionMKII) && 
+                    if ((console.CurrentHPSDRHardware == HPSDRHW.Orion || console.CurrentHPSDRHardware == HPSDRHW.OrionMKII) && 
                         (NetworkIO.FWCodeVersion >= 17) &&
                         !Alex.trx_ant_not_same)
                     {
