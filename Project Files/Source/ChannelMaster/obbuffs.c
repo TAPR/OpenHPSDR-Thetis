@@ -68,6 +68,7 @@ void create_obbuffs (int id, int accept, int max_insize, int outsize)
 void destroy_obbuffs (int id)
 {
 	OBB a = obp.pcbuff[id];
+	if (obp.pcbuff[0] == NULL) return;
 	InterlockedBitTestAndReset(&a->accept, 0);
 	EnterCriticalSection (&a->csIN);
 	EnterCriticalSection (&a->csOUT);
@@ -95,7 +96,7 @@ void flush_obbuffs (int id)
 }
 
 PORT
-void OutBound (int id, int nsamples, double* in)	
+void OutBound (int id, int nsamples, double* in)
 {
 	int n;
 	int first, second;
@@ -166,7 +167,7 @@ void ob_main (void *pargs)
 		LeaveCriticalSection (&a->csOUT);
 		obdata (id, a->out);
 		sendOutbound(id, a->out);
-		// if (id == 0) WriteAudio(30.0, 48000, 360, a->out, 3);
+		// if (id == 0) WriteAudio(15.0, 48000, 126, a->out, 3);
 	}
 	_endthread();
 }

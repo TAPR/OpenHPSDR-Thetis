@@ -53,7 +53,7 @@ namespace Thetis
                     // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
                     //  seems ugly to me (wjt) 
                     console.CATEnabled = false;
-                    if (console.SetupForm != null)
+                    if (!console.IsSetupFormNull)
                     {
                         console.SetupForm.copyCATPropsToDialogVars(); // need to make sure the props on the setup page get reset 
                     }
@@ -346,7 +346,7 @@ namespace Thetis
                     // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
                     //  seems ugly to me (wjt) 
                     console.CAT2Enabled = false;
-                    if (console.SetupForm != null)
+                    if (!console.IsSetupFormNull)
                     {
                         console.SetupForm.copyCAT2PropsToDialogVars(); // need to make sure the props on the setup page get reset 
                     }
@@ -578,7 +578,7 @@ namespace Thetis
                     // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
                     //  seems ugly to me (wjt) 
                     console.CAT3Enabled = false;
-                    if (console.SetupForm != null)
+                    if (!console.IsSetupFormNull)
                     {
                         console.SetupForm.copyCAT3PropsToDialogVars(); // need to make sure the props on the setup page get reset 
                     }
@@ -806,7 +806,7 @@ namespace Thetis
                        // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
                        //  seems ugly to me (wjt) 
                        console.CAT4Enabled = false;
-                       if (console.SetupForm != null)
+                       if (!console.IsSetupFormNull)
                        {
                            console.SetupForm.copyCAT4PropsToDialogVars(); // need to make sure the props on the setup page get reset 
                        }
@@ -1035,7 +1035,7 @@ namespace Thetis
                     // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
                     //  seems ugly to me (wjt) 
                     console.AndromedaCATEnabled = false;
-                    if (console.SetupForm != null)
+                    if (!console.IsSetupFormNull)
                     {
                         console.SetupForm.copyAndromedaCATPropsToDialogVars(); // need to make sure the props on the setup page get reset 
                     }
@@ -1209,7 +1209,7 @@ namespace Thetis
                     // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
                     //  seems ugly to me (wjt) 
                     console.AriesCATEnabled = false;
-                    if (console.SetupForm != null)
+                    if (!console.IsSetupFormNull)
                     {
                         console.SetupForm.copyAriesCATPropsToDialogVars(); // need to make sure the props on the setup page get reset 
                     }
@@ -1383,7 +1383,7 @@ namespace Thetis
                     // fixme??? how cool is to to pop a msg box from an exception handler in a constructor ?? 
                     //  seems ugly to me (wjt) 
                     console.GanymedeCATEnabled = false;
-                    if (console.SetupForm != null)
+                    if (!console.IsSetupFormNull)
                     {
                         console.SetupForm.copyGanymedeCATPropsToDialogVars(); // need to make sure the props on the setup page get reset 
                     }

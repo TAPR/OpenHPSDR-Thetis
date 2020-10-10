@@ -103,6 +103,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Multifunction {
+            get {
+                object obj = ResourceManager.GetObject("Multifunction", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap picD1 {
             get {
                 object obj = ResourceManager.GetObject("picD1", resourceCulture);
@@ -146,6 +156,16 @@ namespace Thetis.Properties {
         internal static System.Drawing.Bitmap play {
             get {
                 object obj = ResourceManager.GetObject("play", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RXAnt {
+            get {
+                object obj = ResourceManager.GetObject("RXAnt", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -486,8 +506,7 @@ namespace Thetis.Properties {
         ///     padding-top: 10px;
         ///     margin-right: 10px;
         ///   }
-        ///   .freqPanel {    
-        ///     backg [rest of string was truncated]&quot;;.
+        ///   .f [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template {
             get {
@@ -511,6 +530,16 @@ namespace Thetis.Properties {
         internal static System.Drawing.Bitmap timer_on {
             get {
                 object obj = ResourceManager.GetObject("timer_on", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap txant {
+            get {
+                object obj = ResourceManager.GetObject("txant", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

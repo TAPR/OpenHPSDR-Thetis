@@ -1,7 +1,7 @@
 /*
 *
 * Copyright (C) 2006 Bill Tracey, KD5TFD, bill@ewjt.com 
-* Copyright (C) 2010-2016  Doug Wigley
+* Copyright (C) 2010-2020  Doug Wigley
 * 
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,6 @@ namespace Thetis
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading;
-    using System.Runtime.InteropServices;
-    using System.Diagnostics;
     using System.Net;
     using System.Net.Sockets;
     using System.Net.NetworkInformation;
@@ -33,135 +30,10 @@ namespace Thetis
     {
         public NetworkIO()
         {
-            //
-            // TODO: Add constructor logic here
-            //
         }
 
 
         public static bool isFirmwareLoaded = false;
-
-        //private static void dummy_to_remove_warning() // added to remove fallacious warning about variable never being used
-        //{
-        //    isFirmwareLoaded = isFirmwareLoaded;
-        //}
-
-        // get ozy firmware version string - 8 bytes.  returns 
-        // null for error 
-        //private static string getOzyFirmwareString()
-        //{
-        //    IntPtr oz_h = OzyOpen();
-
-        //    if (oz_h == (IntPtr)0)
-        //    {
-        //        return null;
-        //    }
-        //    IntPtr usb_h = JanusAudio.OzyHandleToRealHandle(oz_h);
-        //    if (usb_h == (IntPtr)0)
-        //    {
-        //        JanusAudio.OzyClose(oz_h);
-        //        return null;
-        //    }
-
-        //    byte[] buf = new byte[8];
-        //    // int rc = WriteControlMsg(usb_h, 
-        //    //OzySDR1kControl.VRT_VENDOR_IN, //0xC0
-        //    // OzySDR1kControl.VRQ_SDR1K_CTL, //0x0d
-        //    // OzySDR1kControl.SDR1KCTRL_READ_VERSION, // 0x7
-        //    // 0, buf, buf.Length, 1000); 
-
-        //    int rc = GetOzyID(usb_h, buf, buf.Length);
-
-        //    // System.Console.WriteLine("read version rc: " + rc); 
-
-        //    string result = null;
-
-        //    if (rc == 8)    // got length we expected 
-        //    {
-        //        char[] cbuf = new char[8];
-        //        for (int i = 0; i < 8; i++)
-        //        {
-        //            cbuf[i] = (char)(buf[i]);
-        //        }
-        //        result = new string(cbuf);
-        //        System.Console.WriteLine("version: >" + result + "<");
-        //    }
-        //    JanusAudio.OzyClose(oz_h);
-        //    return result;
-        //}
-
-        public static string setC1Opts(string opt)
-        {
-            int bits;
-            int off_mask = 0xff;
-            int on_mask = 0;
-
-            string result = null;
-
-            switch (opt)
-            {
-                case "--Atlas10MHz":
-                    off_mask = 0xf3;  // 11110011
-                    on_mask = 0;       // 10 meg atlas == 00xx
-                    result = "Atlas10";
-                    break;
-
-                case "--Penny10MHz":
-                    off_mask = 0xf3;  // 11110011
-                    on_mask = 0x4;      // 10 meg penny == 01xx 
-                    result = "Penny10";
-                    break;
-
-                case "--Mercury10Mhz":
-                    off_mask = 0xf3;  // 11110011
-                    on_mask = 0x8;      // 10 meg merc == 10xx 
-                    result = "Merc10";
-                    break;
-
-                case "--Mercury125MHz":
-                    off_mask = 0xef;     // 11101111
-                    on_mask = 0x10;
-                    result = "Merc125";
-                    break;
-
-                case "--CfgPenny":
-                    off_mask = 0x9f;     // 10011111
-                    on_mask = 0x20;
-                    result = "CfgPenny";
-                    break;
-
-                case "--CfgMercury":
-                    off_mask = 0x9f;     // 10011111
-                    on_mask = 0x40;
-                    result = "CfgMerc";
-                    break;
-
-                case "--CfgBoth":
-                    off_mask = 0x9f;     // 10011111
-                    on_mask = 0x60;
-                    result = "CfgBoth";
-                    break;
-
-                case "--PennyMic":
-                    off_mask = 0x7f;     // 01111111
-                    on_mask = 0x80;
-                    result = "PennyMic";
-                    break;
-            }
-
-            bits = GetC1Bits();
-            bits &= off_mask;
-            bits |= on_mask;
-            SetC1Bits(bits);
-            return result;
-        }
-
-        private static string fx2_fw_version = "n/a";
-
-        public static string getFX2FirmwareVersionString()
-        {
-            return fx2_fw_version;
-        }
 
         private static float swr_protect = 1.0f;
         public static float SWRProtect
@@ -196,16 +68,19 @@ namespace Thetis
         static byte[] data = new byte[1444];
         const int DiscoveryPort = 1024;
         const int LocalPort = 0;
-        public static bool enableStaticIP = false;
-        public static uint static_host_network = 0;
-        public static bool FastConnect = false;
-        public static HPSDRHW BoardID = HPSDRHW.Hermes;
-        public static byte FWCodeVersion = 0;
-        public static string EthernetHostIPAddress = "";
-        public static int EthernetHostPort = 0;
-        public static string HpSdrHwIpAddress = "";
-        public static string HpSdrHwMacAddress = "";
-        public static byte NumRxs = 0;
+        public static bool enableStaticIP { get; set; } = false;
+        public static uint static_host_network { get; set; } = 0;
+        public static bool FastConnect { get; set; } = false;
+        public static HPSDRHW BoardID { get; set; } = HPSDRHW.Hermes;
+        public static byte FWCodeVersion { get; set; } = 0;
+        public static string EthernetHostIPAddress { get; set; } = "";
+        public static int EthernetHostPort { get; set; } = 0;
+        public static string HpSdrHwIpAddress { get; set; } = "";
+        public static string HpSdrHwMacAddress { get; set; } = "";
+        public static byte NumRxs { get; set; } = 0;
+        public static RadioProtocol CurrentRadioProtocol { get; set; } = RadioProtocol.ETH;
+        public static RadioProtocol RadioProtocolSelected { get; set; } = RadioProtocol.ETH;
+
         private const int IP_SUCCESS = 0;
         private const short VERSION = 2;
         public static int initRadio()
@@ -396,22 +271,8 @@ namespace Thetis
                 }
             }
 
-            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort);
+            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol);
             return -rc;
-        }
-
-        public static int initOzy()
-        {
-            Console c = Console.getConsole();
-
-            if (c != null)
-            {
-                return initRadio();
-            }
-
-            /* else */
-            isFirmwareLoaded = true;
-            return 0;
         }
 
         public static bool fwVersionsChecked = false;
@@ -431,276 +292,20 @@ namespace Thetis
         private static bool fwVersionsGood()
         {
             return true;
-
-            // bool result = true;
-            // Console c = Console.getConsole();
-            // int penny_ver = 0;
-            // int mercury_ver = 0;
-            //// byte[] metis_ver = new byte[1];
-            // byte metis_ver = 0;
-            // int mercury2_ver = 0;
-
-            //// if (c.CurrentHPSDRModel == HPSDRModel.ANAN100D) c.RX2PreampPresent = true;
-            // if (forceFWGood == true || c.CurrentModel == Model.HERMES)
-            // {
-            //     System.Console.WriteLine("Firmware ver check forced good!");
-            //     return true;
-            // }
-
-            // if (c != null && c.HPSDRisMetis)
-            // {
-            //     GetCodeVersion(metis_ver);
-
-            //     if (c.PowerOn)
-            //     {
-            //         byte metis_vernum = metis_ver;
-            //         mercury_ver = getMercuryFWVersion();
-
-            //         if (c.PennyPresent || c.PennyLanePresent)
-            //         {
-            //             do
-            //             {
-            //                 // Thread.Sleep(500);
-            //                 penny_ver = getPenelopeFWVersion();
-            //                 if (penny_ver < 16 || penny_ver > 80)
-            //                 {
-            //                     Thread.Sleep(500);
-            //                     penny_ver = getPenelopeFWVersion();
-            //                     if (penny_ver > 0) break;
-            //                     penny_ver = getPenelopeFWVersion();
-            //                     if (penny_ver == 0) break;
-            //                 }
-            //             }
-            //             while (penny_ver <= 15);
-            //         }
-
-            //         switch (metis_vernum)
-            //         {
-            //             case 16:
-            //             case 17:
-            //                 if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 16)) ||
-            //                     (c != null && c.MercuryPresent && (mercury_ver != 31 && mercury_ver != 71)))
-            //                 {
-            //                     result = false;
-            //                     c.SetupForm.alex_fw_good = false;
-            //                 }
-            //                 break;
-            //             case 18:
-            //                 if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 17)) ||
-            //                     (c != null && c.MercuryPresent && (mercury_ver != 32)))
-            //                 {
-            //                     result = false;
-            //                     c.SetupForm.alex_fw_good = false;
-            //                 }
-            //                 break;
-            //             case 19:
-            //             case 20:
-            //             case 21:
-            //             case 22:
-            //             case 23:
-            //             case 24:
-            //             case 25:
-            //                 if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 17)) ||
-            //                     (c != null && c.MercuryPresent && (mercury_ver != 33)))
-            //                 {
-            //                     result = false;
-            //                     c.SetupForm.alex_fw_good = false;
-            //                 }
-            //                 break;
-            //             case 26:
-            //             case 27:
-            //             case 28:
-            //             case 29:
-            //             case 30:
-            //                 if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 18)) ||
-            //                     (c != null && c.MercuryPresent && (mercury_ver != 34)))
-            //                 {
-            //                     result = false;
-            //                     c.SetupForm.alex_fw_good = false;
-            //                 }
-            //                 break;
-            //             default:
-            //                 // fwVersionMsg = "Invalid Firmware Level.\nPowerSDR requires Mercury v3.1\nYou have version: " + mercury_ver.ToString("0\\.0");
-            //                 result = false;
-            //                 c.SetupForm.alex_fw_good = false;
-            //                 break;
-            //         }
-
-            //         mercury2_ver = getMercury2FWVersion();
-            //         if (mercury2_ver == 0)
-            //         {
-            //             Thread.Sleep(300);
-            //             mercury2_ver = getMercury2FWVersion();
-            //         }
-            //         if (mercury2_ver < 32 || mercury2_ver == 127) //check if physical rx2 present
-            //             c.RX2PreampPresent = false;
-            //         else
-            //             c.RX2PreampPresent = true;
-
-            //         if (c.SetupForm.FirmwareBypass == true) result = true;
-
-            //         if (!result)
-            //             fwVersionMsg = "Invalid Firmware.\nYou have Metis: " + metis_ver.ToString("0\\.0") +
-            //                                            "\nMercury:" + mercury_ver.ToString("0\\.0") +
-            //                                            "\nPenny:" + penny_ver.ToString("0\\.0");
-            //     }
-            //     return result;
-            // }
-
-            //string fx2_version_string = getFX2FirmwareVersionString();
-            ////int merc_ver = 0;
-            //int ozy_ver = 0;
-            //// int merc2_ver = 0;
-            ////System.Console.WriteLine("fx2: " + fx2_version_string); 
-            ////System.Console.WriteLine("ozy: " + ozy_ver); 
-            ////System.Console.WriteLine("merc: " + merc_ver); 
-            ////System.Console.WriteLine("penny: " + penny_ver); 
-            ////  c.SetI2CSpeed();
-            //// Thread.Sleep(100);
-
-            //if (fx2_version_string.CompareTo("20090524") >= 0)
-            //{
-            //    //   do
-            //    for (int i = 0; i < 5; i++)
-            //    {
-            //        ozy_ver = getOzyFWVersion();
-            //        if (ozy_ver > 17) break;
-            //        Thread.Sleep(100);
-            //    }
-            //    //  while (ozy_ver < 12);
-            //    // Thread.Sleep(2000);
-            //    if (c.MercuryPresent)
-            //    {
-            //        //  do
-            //        //  for (int i = 0; i < 2; i++)
-            //        {
-            //            mercury_ver = getMercuryFWVersion();
-            //            // if (mercury_ver > 0) break;
-            //            Thread.Sleep(100);
-            //        }
-            //        mercury_ver = getMercuryFWVersion();
-            //        mercury2_ver = getMercury2FWVersion();
-            //    }
-
-            //    if (c.PennyPresent || c.PennyLanePresent)
-            //    {
-            //        do
-            //        {
-            //            // Thread.Sleep(500);
-            //            penny_ver = getPenelopeFWVersion();
-            //            if (penny_ver < 11)
-            //            {
-            //                Thread.Sleep(500);
-            //                penny_ver = getPenelopeFWVersion();
-            //                if (penny_ver > 0) break;
-            //                penny_ver = getPenelopeFWVersion();
-            //                if (penny_ver == 0) break;
-            //            }
-            //        }
-            //        while (penny_ver <= 10);
-            //    }
-            //    switch (ozy_ver)
-            //    {
-            //        case 18:
-            //            // if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 13)) ||
-            //            //      (c != null && c.MercuryPresent && (mercury_ver != 29)))
-            //            {
-            //                result = false;
-            //                c.SetupForm.alex_fw_good = false;
-            //            }
-            //            break;
-            //        case 19:
-            //            // if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 14)) ||
-            //            //      (c != null && c.MercuryPresent && (mercury_ver != 29)))
-            //            {
-            //                result = false;
-            //                c.SetupForm.alex_fw_good = false;
-            //            }
-            //            break;
-            //        case 20:
-            //            // if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 15)) ||
-            //            //    (c != null && c.MercuryPresent && (mercury_ver != 30)))
-            //            {
-            //                result = false;
-            //                c.SetupForm.alex_fw_good = false;
-            //            }
-            //            break;
-            //        case 21:
-            //            if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 16)) ||
-            //                (c != null && c.MercuryPresent && (mercury_ver != 31)))
-            //            {
-            //                result = false;
-            //                c.SetupForm.alex_fw_good = false;
-            //            }
-            //            break;
-            //        case 22:
-            //            if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 17)) ||
-            //                (c != null && c.MercuryPresent && (mercury_ver != 32 && mercury_ver != 33)))
-            //            {
-            //                result = false;
-            //                c.SetupForm.alex_fw_good = false;
-            //            }
-            //            break;
-            //        case 23:
-            //        case 24:
-            //            if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 17)) ||
-            //                (c != null && c.MercuryPresent && (mercury_ver != 33)))
-            //            {
-            //                result = false;
-            //                c.SetupForm.alex_fw_good = false;
-            //            }
-            //            break;
-            //        case 25:
-            //        case 26:
-            //        case 27:
-            //        case 28:
-            //            if ((c != null && (c.PennyPresent || c.PennyLanePresent) && (penny_ver != 18)) ||
-            //               (c != null && c.MercuryPresent && (mercury_ver != 34)))
-            //            {
-            //                result = false;
-            //                c.SetupForm.alex_fw_good = false;
-            //            }
-            //            break;
-            //        default:
-            //            result = false;
-            //            c.SetupForm.alex_fw_good = false;
-            //            break;
-            //    }
-
-            //    mercury2_ver = getMercury2FWVersion();
-            //    if (mercury2_ver == 0)
-            //    {
-            //        Thread.Sleep(300);
-            //        mercury2_ver = getMercury2FWVersion();
-            //    }
-            //    if (mercury2_ver < 32 || mercury2_ver == 127) //check if physical rx2 present
-            //        c.RX2PreampPresent = false;
-            //    else
-            //        c.RX2PreampPresent = true;
-
-            //    if (c.SetupForm.FirmwareBypass == true) result = true;
-
-            //    if (!result)
-            //        fwVersionMsg = "Invalid Firmware.\nYou have Ozy: " + ozy_ver.ToString("0\\.0") +
-            //                                               "\nMercury: " + mercury_ver.ToString("0\\.0") +
-            //                                                 "\nPenny: " + penny_ver.ToString("0\\.0");
-            //}
-            // return result;
         }
 
         // returns -101 for firmware version error 
-        unsafe public static int StartAudio(/*int sample_rate, int samples_per_block,*/ PA19.PaStreamCallback cb) //, int sample_bits)
+        unsafe public static int StartAudio()
         {
             if (initRadio() != 0)
             {
                 return 1;
             }
 
-            int result = StartAudioNative(/*sample_rate, samples_per_block ,*/ cb); //, sample_bits);
+            int result = StartAudioNative();
 
             if (result == 0 && !fwVersionsChecked)
             {
-               // Thread.Sleep(100); // wait for frames 
                 if (!fwVersionsGood())
                 {
                     result = -101;
@@ -757,14 +362,14 @@ namespace Thetis
             int f_freq;
             f_freq = (int)((f * 1e6) * freq_correction_factor);
             if (f_freq >= 0)
-                // SetVFOfreq(id, f_freq, tx);                  // sending freq to firmware
-                SetVFOfreq(id, Freq2PW(f_freq), tx);            // sending phaseword to firmware
+                if(CurrentRadioProtocol == RadioProtocol.USB)
+                   SetVFOfreq(id, f_freq, tx);                  // sending freq Hz to firmware
+                   else SetVFOfreq(id, Freq2PW(f_freq), tx);   // sending phaseword to firmware
         }
 
         public static int Freq2PW(int freq)                     // freq to phaseword conversion
         {
-            long pw = 0;
-            pw = ((long)Math.Pow(2, 32) * freq / 122880000);
+            long pw = (long)Math.Pow(2, 32) * freq / 122880000;
             return (int)pw;
         }
 
@@ -840,71 +445,7 @@ namespace Thetis
                 foundNics.Add(netInterface);
             }
 
-            /*
-                        foreach (NetworkInterface adapter in nics)
-                        {
-                            IPInterfaceProperties properties = adapter.GetIPProperties();
-
-                            // if it's not 'up' (operational), ignore it.  (Dan Quigley, 13 Aug 2011)
-                            if (adapter.OperationalStatus != OperationalStatus.Up)
-                                continue;
-
-                            // if it's a loopback interface, ignore it!
-                            if (adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback)
-                                continue;
-
-                            // get rid of non-ethernet addresses
-                            if ((adapter.NetworkInterfaceType != NetworkInterfaceType.Ethernet) && (adapter.NetworkInterfaceType != NetworkInterfaceType.GigabitEthernet))
-                                continue;
-
-                            System.Console.WriteLine("");      // a blank line
-                            System.Console.WriteLine(adapter.Description);
-                            System.Console.WriteLine(String.Empty.PadLeft(adapter.Description.Length, '='));
-                            System.Console.WriteLine("  Interface type .......................... : {0}", adapter.NetworkInterfaceType);
-                            System.Console.WriteLine("  Physical Address ........................ : {0}", adapter.GetPhysicalAddress().ToString());
-                            System.Console.WriteLine("  Is receive only.......................... : {0}", adapter.IsReceiveOnly);
-                            System.Console.WriteLine("  Multicast................................ : {0}", adapter.SupportsMulticast);
-                            System.Console.WriteLine("  Speed    ................................ : {0}", adapter.Speed);
-
-                            // list unicast addresses
-                            UnicastIPAddressInformationCollection c = properties.UnicastAddresses;
-                            foreach (UnicastIPAddressInformation a in c)
-                            {
-                                IPAddress addr = a.Address;
-                                System.Console.WriteLine("  Unicast Addr ............................ : {0}", addr.ToString());
-                                IPAddress mask = a.IPv4Mask;
-                                System.Console.WriteLine("  Unicast Mask ............................ : {0}", (mask == null ? "null" : mask.ToString()));
-
-                                NicProperties np = new NicProperties();
-                                np.ipv4Address = a.Address;
-                                np.ipv4Mask = a.IPv4Mask;
-
-                                nicProperties.Add(np);
-                            }
-
-                            // list multicast addresses
-                            MulticastIPAddressInformationCollection m = properties.MulticastAddresses;
-                            foreach (MulticastIPAddressInformation a in m)
-                            {
-                                IPAddress addr = a.Address;
-                                System.Console.WriteLine("  Multicast Addr .......................... : {0}", addr.ToString());
-                            }
-
-                            // if the length of the network adapter name is > 31 characters then trim it, if shorter then pad to 31.
-                            // Need to use fixed width font - Courier New
-                            string speed = "  " + (adapter.Speed / 1000000).ToString() + "T";
-                            if (adapter.Description.Length > 31)
-                            {
-                                Network_interfaces += adapterNumber++.ToString() + ". " + adapter.Description.Remove(31) + speed + "\n";
-                            }
-                            else
-                            {
-                                Network_interfaces += adapterNumber++.ToString() + ". " + adapter.Description.PadRight(31, ' ') + speed + "\n";
-                            }
-
-                            foundNics.Add(adapter);
-                        }
-            */
+ 
             System.Console.WriteLine(Network_interfaces);
 
             // display number of adapters on Setup form
@@ -954,11 +495,17 @@ namespace Thetis
 
         private static bool Discovery(ref List<HPSDRDevice> hpsdrdList, IPEndPoint iep, IPAddress targetIP)
         {
-            // set up HPSDR Metis discovery packet
+            // set up HPSDR discovery packet
             string MAC;
-            byte[] DiscoveryPacket = new byte[60];
-            Array.Clear(DiscoveryPacket, 0, DiscoveryPacket.Length);
-            DiscoveryPacket[4] = 0x02;
+            byte[] DiscoveryPacketP1 = new byte[63];
+            Array.Clear(DiscoveryPacketP1, 0, DiscoveryPacketP1.Length);
+            DiscoveryPacketP1[0] = 0xef;
+            DiscoveryPacketP1[1] = 0xfe;
+            DiscoveryPacketP1[2] = 0x02;
+            byte[] DiscoveryPacketP2 = new byte[60];
+            Array.Clear(DiscoveryPacketP2, 0, DiscoveryPacketP2.Length);
+            DiscoveryPacketP2[4] = 0x02;
+
             bool radio_found = false;            // true when we find a radio
             bool static_ip_ok = true;
             int time_out = 0;
@@ -968,7 +515,7 @@ namespace Thetis
 
             // need this so we can Broadcast on the socket
             IPEndPoint broadcast;// = new IPEndPoint(IPAddress.Broadcast, DiscoveryPort);
-            string receivedIP = "";   // the IP address Metis obtains; assigned, from DHCP or APIPA (169.254.x.y)
+            string receivedIP;   // the IP address Metis obtains; assigned, from DHCP or APIPA (169.254.x.y)
 
             IPAddress hostPortIPAddress = iep.Address;
             IPAddress hostPortMask = IPAddress.Broadcast;
@@ -992,10 +539,12 @@ namespace Thetis
                     broadcast = new IPEndPoint(targetIP, DiscoveryPort);
                 else
                     // try directed broadcast address
-                    broadcast = new IPEndPoint(IPAddressExtensions.GetBroadcastAddress(hostPortIPAddress, hostPortMask), DiscoveryPort);
-                   // try global broadcast address last resort
-                   // broadcast = new IPEndPoint(IPAddress.Broadcast, DiscoveryPort);
-                socket.SendTo(DiscoveryPacket, broadcast);
+                    broadcast = new IPEndPoint(IPAddressExtensions.GetBroadcastAddress(hostPortIPAddress, hostPortMask), DiscoveryPort);                
+
+                if (RadioProtocolSelected == RadioProtocol.Auto || RadioProtocolSelected == RadioProtocol.USB)
+                    socket.SendTo(DiscoveryPacketP1, broadcast);
+                if (RadioProtocolSelected == RadioProtocol.Auto || RadioProtocolSelected == RadioProtocol.ETH)
+                    socket.SendTo(DiscoveryPacketP2, broadcast);
 
                 // now listen on send port for any radio
                 System.Console.WriteLine("Ready to receive.... ");
@@ -1026,23 +575,42 @@ namespace Thetis
                         string[] words = junk.Split(':');
                         System.Console.Write(words[1]);
 
-                        // get Metis MAC address from the payload
+                        // get MAC address from the payload
                         byte[] mac = { 0, 0, 0, 0, 0, 0 };
                         Array.Copy(data, 5, mac, 0, 6);
                         MAC = BitConverter.ToString(mac);
 
                         // check for HPSDR frame ID and type 2 (not currently streaming data, which also means 'not yet in use')
-                        // changed to filter a proper discovery packet from the radio, even if alreay in use!  This prevents the need to power-cycle the radio.
-
-                        if ((data[0] == 0x0) &&
-                            (data[1] == 0x0) &&
-                            (data[2] == 0x0) &&
-                            (data[3] == 0x0) &&
-                            (data[4] == 0x2))
+                        // changed to filter a proper discovery packet from the radio, even if already in use!  This prevents the need to power-cycle the radio.
+                        if (((data[0] == 0xef) && // Protocol-USB (P1) Busy 
+                             (data[1] == 0xfe) &&
+                             (data[2] == 0x3)) ||
+                            ((data[0] == 0x0) &&  // Protocol-ETH (P2) Busy
+                             (data[1] == 0x0) &&
+                             (data[2] == 0x0) &&
+                             (data[3] == 0x0) &&
+                             (data[4] == 0x3)))
                         {
+                            System.Console.WriteLine("Radio Busy");
+                            return false;
+                        }
+
+                        if (((data[0] == 0xef) && // Protocol-USB (P1)
+                             (data[1] == 0xfe) &&
+                             (data[2] == 0x2)) || 
+                            ((data[0] == 0x0) &&  // Protocol-ETH (P2)
+                             (data[1] == 0x0) &&
+                             (data[2] == 0x0) &&
+                             (data[3] == 0x0) &&
+                             (data[4] == 0x2)))
+                        {
+                            if (data[2] == 0x2) CurrentRadioProtocol = RadioProtocol.USB;
+                            else CurrentRadioProtocol = RadioProtocol.ETH;
+                            freqCorrectionChanged();
+
                             System.Console.WriteLine("\nFound a radio on the network.  Checking whether it qualifies");
 
-                            // get Metis IP address from the IPEndPoint passed to ReceiveFrom.
+                            // get IP address from the IPEndPoint passed to ReceiveFrom.
                             IPEndPoint ripep = (IPEndPoint)remoteEP;
                             IPAddress receivedIPAddr = ripep.Address;
                             receivedIP = receivedIPAddr.ToString();
@@ -1051,36 +619,62 @@ namespace Thetis
 
                             System.Console.WriteLine("IP from IP Header = " + receivedIP);
                             System.Console.WriteLine("MAC address from payload = " + MAC);
+
                             if (!SameSubnet(receivedIPAddr, hostPortIPAddress, hostPortMask))
                             {
                                 // device is NOT on the subnet that this port actually services.  Do NOT add to list!
                                 System.Console.WriteLine("Not on subnet of host adapter! Adapter IP {0}, Adapter mask {1}",
                                     hostPortIPAddress.ToString(), hostPortMask.ToString());
-                            }
-                           // else if (receivedIPAddr.Equals(hostPortIPAddress))
-                           // {
-                             //   System.Console.WriteLine("Rejected: contains same IP address as the host adapter; not from a Metis/Hermes/Griffin");
-                            //}
+                            }                         
                             else if (MAC.Equals("00-00-00-00-00-00"))
                             {
                                 System.Console.WriteLine("Rejected: contains bogus MAC address of all-zeroes");
                             }
                             else
                             {
-                                HPSDRDevice hpsdrd = new HPSDRDevice();
-                                hpsdrd.IPAddress = receivedIP;
-                                hpsdrd.MACAddress = MAC;
-                                hpsdrd.deviceType = (HPSDRHW)data[11];
-                                hpsdrd.codeVersion = data[13];
-                                hpsdrd.hostPortIPAddress = hostPortIPAddress;
-                                hpsdrd.localPort = localEndPoint.Port;
-                                hpsdrd.MercuryVersion_0 = data[14];
-                                hpsdrd.MercuryVersion_1 = data[15];
-                                hpsdrd.MercuryVersion_2 = data[16];
-                                hpsdrd.MercuryVersion_3 = data[17];
-                                hpsdrd.PennyVersion = data[18];
-                                hpsdrd.MetisVersion = data[19];
-                                hpsdrd.numRxs = data[20];
+                                HPSDRDevice hpsdrd = new HPSDRDevice
+                                {
+                                    IPAddress = receivedIP,
+                                    MACAddress = MAC,
+                                    deviceType = CurrentRadioProtocol == RadioProtocol.USB ? (HPSDRHW)data[10] : (HPSDRHW)data[11],
+                                    codeVersion = CurrentRadioProtocol == RadioProtocol.USB ? data[9] : data[13],
+                                    hostPortIPAddress = hostPortIPAddress,
+                                    localPort = localEndPoint.Port,
+                                    MercuryVersion_0 = data[14],
+                                    MercuryVersion_1 = data[15],
+                                    MercuryVersion_2 = data[16],
+                                    MercuryVersion_3 = data[17],
+                                    PennyVersion = data[18],
+                                    MetisVersion = data[19],
+                                    numRxs = data[20],
+                                    protocol = CurrentRadioProtocol
+                                };
+
+                                // Map P1 device types to P2
+                                if (CurrentRadioProtocol == RadioProtocol.USB)
+                                {
+                                    switch(data[10])
+                                    {
+                                        case 0:
+                                            hpsdrd.deviceType = HPSDRHW.Atlas;
+                                            break;
+                                        case 1:
+                                            hpsdrd.deviceType = HPSDRHW.Hermes;
+                                            break;
+                                        case 2:
+                                            hpsdrd.deviceType = HPSDRHW.HermesII;
+                                            break;
+                                        case 4:
+                                            hpsdrd.deviceType = HPSDRHW.Angelia;
+                                            break;
+                                        case 5:
+                                            hpsdrd.deviceType = HPSDRHW.Orion;
+                                            break;
+                                        case 10:
+                                            hpsdrd.deviceType = HPSDRHW.OrionMKII;
+                                            break;
+                                    }
+                                }
 
                                 if (targetIP != null)
                                 {
@@ -1101,7 +695,7 @@ namespace Thetis
                     }
                     else
                     {
-                        System.Console.WriteLine("No data  from Port = ");
+                        System.Console.WriteLine("No data from Port = ");
                         if ((++time_out) > 5)
                         {
                             System.Console.WriteLine("Time out!");
@@ -1201,10 +795,10 @@ namespace Thetis
 
     public class HPSDRDevice
     {
-        public HPSDRHW deviceType;      // which type of device (currently Metis or Hermes)
+        public HPSDRHW deviceType;      // which type of device 
         public byte codeVersion;        // reported code version type
-        public string IPAddress;        // currently, an IPV4 address
-        public string MACAddress;       // a physical (MAC) address
+        public string IPAddress;        // IPV4 address
+        public string MACAddress;       // physical (MAC) address
         public IPAddress hostPortIPAddress;
         public int localPort;
         public byte MercuryVersion_0;
@@ -1214,6 +808,7 @@ namespace Thetis
         public byte PennyVersion;
         public byte MetisVersion;
         public byte numRxs;
+        public RadioProtocol protocol;
     }
 
     public class NicProperties

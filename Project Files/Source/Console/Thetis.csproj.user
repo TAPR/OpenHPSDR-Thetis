@@ -14,6 +14,7 @@
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
     <EnableSecurityDebugging>false</EnableSecurityDebugging>
     <ErrorReportUrlHistory />
+    <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <StartWorkingDirectory>

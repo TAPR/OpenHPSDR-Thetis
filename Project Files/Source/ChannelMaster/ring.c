@@ -34,7 +34,7 @@ warren@wpratt.com
 ************************************************************************************************/
 
 ringbuffer_t *
-ringbuffer_create (size_t sz)
+ringbuffer_create (int sz)
 {
 	int power_of_two;
 	ringbuffer_t *rb;
@@ -67,7 +67,7 @@ ringbuffer_free (ringbuffer_t * rb)
 }
 
 void
-ringbuffer_reset_size (ringbuffer_t * rb, size_t sz)
+ringbuffer_reset_size (ringbuffer_t * rb, int sz)
 {
     rb->size = sz;
     rb->size_mask = rb->size;
@@ -87,7 +87,7 @@ ringbuffer_reset (ringbuffer_t * rb)
 }
 
 void
-ringbuffer_clear (ringbuffer_t * rb, size_t sz)
+ringbuffer_clear (ringbuffer_t * rb, int sz)
 {
 	double *zero = (double *) malloc (sz * sizeof(double));
 
@@ -97,16 +97,16 @@ ringbuffer_clear (ringbuffer_t * rb, size_t sz)
 }
 
 void
-ringbuffer_restart (ringbuffer_t * rb, size_t sz)
+ringbuffer_restart (ringbuffer_t * rb, int sz)
 {
 	ringbuffer_reset (rb);
     ringbuffer_clear(rb, sz);
 }
 
-size_t
+int
 ringbuffer_read_space (const ringbuffer_t * rb)
 {
-	size_t w, r;
+	int w, r;
 	int	wf;
 
 	w = rb->write_ptr;
@@ -122,10 +122,10 @@ ringbuffer_read_space (const ringbuffer_t * rb)
 	}
 }
 
-size_t
+int
 ringbuffer_write_space (const ringbuffer_t * rb)
 {
-	size_t w, r;
+	int w, r;
 	int	wf;
 
 	w = rb->write_ptr;
@@ -141,13 +141,13 @@ ringbuffer_write_space (const ringbuffer_t * rb)
 	}
 }
 
-size_t
-ringbuffer_write (ringbuffer_t * rb, const double *src, size_t cnt)
+int
+ringbuffer_write (ringbuffer_t * rb, const double *src, int cnt)
 {
-	size_t free_cnt;
-	size_t cnt2;
-	size_t to_write;
-	size_t n1, n2;
+	int free_cnt;
+	int cnt2;
+	int to_write;
+	int n1, n2;
 
 	if ((free_cnt = ringbuffer_write_space (rb)) == 0) {
 		return 0;
@@ -178,13 +178,13 @@ ringbuffer_write (ringbuffer_t * rb, const double *src, size_t cnt)
 	return to_write;
 }
 
-size_t
-ringbuffer_read (ringbuffer_t * rb, double *dest, size_t cnt)
+int
+ringbuffer_read (ringbuffer_t * rb, double *dest, int cnt)
 {
-	size_t free_cnt;
-	size_t cnt2;
-	size_t to_read;
-	size_t n1, n2;
+	int free_cnt;
+	int cnt2;
+	int to_read;
+	int n1, n2;
 
 	if ((free_cnt = ringbuffer_read_space (rb)) == 0) {
 		return 0;

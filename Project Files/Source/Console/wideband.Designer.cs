@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(wideband));
             this.contextMenuStripWideBand = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.canceltoolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -281,6 +282,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(801, 302);
             this.Controls.Add(this.panelwbDisplay);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "wideband";
             this.Text = "wideband";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.wideband_FormClosing);

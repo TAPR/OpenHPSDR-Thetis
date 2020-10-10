@@ -3684,7 +3684,7 @@ namespace Thetis
                                 if (gridminmaxadjust)
                                 {                                  
                                     int delta_y = e.Y - grid_minmax_drag_start_point.Y;
-                                    double delta_db = (delta_y / 10) * 5;
+                                    double delta_db = ((double)delta_y / 10) * 5;
                                     decimal val = grid_minmax_max_y;
                                     val += (decimal)delta_db;
                                     decimal min_val = grid_minmax_min_y;
@@ -3700,7 +3700,7 @@ namespace Thetis
                                 if (gridmaxadjust)
                                 {                                  
                                     int delta_y = e.Y - grid_minmax_drag_start_point.Y;
-                                    double delta_db = (delta_y / 10) * 5;
+                                    double delta_db = ((double)delta_y / 10) * 5;
                                     decimal val = grid_minmax_max_y;
                                     val += (decimal)delta_db;
 

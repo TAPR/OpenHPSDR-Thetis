@@ -28,9 +28,6 @@ by Chris Codella, W2PA, April 2017.  Indicated by //-W2PA comment lines.
 using Midi2Cat;
 using Midi2Cat.Data; 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Midi2Cat.IO; //-W2PA Necessary for changes to support Behringer PL-1 (and others)
 
 namespace Thetis
@@ -39,11 +36,12 @@ namespace Thetis
     {
         private CATParser parser;
         private CATCommands commands;
-        private MidiMessageManager midiManager = null; 
-
+        private MidiMessageManager midiManager = null;
+        private Console console;
 
         public Midi2CatCommands(Console c)
         {
+            console = c;
             midiManager = new MidiMessageManager(this, c.AppDataPath + "midi2cat.xml");
             parser = new CATParser(c);
             commands = new CATCommands(c, parser);
@@ -176,7 +174,7 @@ namespace Thetis
                 //commands.ZZFB(FreqA);
 
                 //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
-                Console.getConsole().CATVFOAtoB();
+                console.CATVFOAtoB();
             }
         }
 
@@ -192,7 +190,7 @@ namespace Thetis
                 //commands.ZZFA(FreqB);
 
                 //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
-                Console.getConsole().CATVFOBtoA();
+                console.CATVFOBtoA();
             }
         }
 
@@ -209,7 +207,7 @@ namespace Thetis
                 //commands.ZZFB(FreqA);
 
                 //-W2PA This makes the function match its equivalent console function (e.g. mode gets copied)
-                Console.getConsole().CATVFOABSwap();
+                console.CATVFOABSwap();
             }
         }
 
@@ -838,6 +836,163 @@ namespace Thetis
             return;
         }
 
+        public CmdState DiversityFormOpen(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int OpenDivsityForm = Convert.ToInt16(commands.ZZDF(""));
+
+                if (OpenDivsityForm == 0)
+                {
+                    commands.ZZDF("1");
+                    return CmdState.On;
+                }
+                if (OpenDivsityForm == 1)
+                {
+                    commands.ZZDF("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState DiversityEnable(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int EnableDiversity = Convert.ToInt16(commands.ZZDE(""));
+
+                if (EnableDiversity == 0)
+                {
+                    commands.ZZDE("1");
+                    return CmdState.On;
+                }
+                if (EnableDiversity == 1)
+                {
+                    commands.ZZDE("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public void DiversityPhase(int msg, MidiDevice device) 
+        {
+            parser.nGet = 0;
+            parser.nSet = 6;
+            parser.nAns = 6;
+
+            try
+            {
+                double phaseMax = 18000;
+                double phaseMin = -18000;
+                int currPhase = Convert.ToInt32(commands.ZZDD(""));
+
+                if ((msg < 64) & (msg >= 0))
+                {
+                    if (currPhase > phaseMin) currPhase -= 500;
+                }
+                else if ((msg >= 64) & (msg <= 127))
+                {
+                    if (currPhase < phaseMax) currPhase += 500;
+                }
+                if (currPhase >= 18000) currPhase -= 36000;
+                else if (currPhase <= -18000) currPhase += 36000;
+                commands.ZZDD(currPhase.ToString("+00000;-00000;000000"));              
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        public void DiversityGain(int msg, MidiDevice device)
+        {
+            parser.nGet = 0;
+            parser.nSet = 4;
+            parser.nAns = 4;
+
+            try
+            {
+                double gainMax = 1000;
+                double gainMin = 0;
+                int currGain = Convert.ToInt32(commands.ZZDG(""));
+
+                if (currGain > 1000) currGain = 1000;
+                if (currGain < 0) currGain = 0;
+                if ((msg < 64) & (msg >= 0))
+                {
+                    if (currGain > gainMin) currGain -= 10;
+                }
+                else if ((msg >= 64) & (msg <= 127))
+                {
+                    if (currGain < gainMax) currGain += 10;
+                }
+                commands.ZZDG(currGain.ToString("0000"));
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        public CmdState DiversityReference(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int currReference = Convert.ToInt16(commands.ZZDB(""));
+
+                if (currReference == 0)
+                {
+                    commands.ZZDB("1");
+                    return CmdState.On;
+                }
+                if (currReference == 1)
+                {
+                    commands.ZZDB("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public CmdState DiversitySource(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int Source = Convert.ToInt16(commands.ZZDH(""));
+
+                if (Source == 0)
+                {
+                    commands.ZZDH("1");
+                    return CmdState.On;
+                }
+                if (Source == 1)
+                {
+                    commands.ZZDH("2");
+                    return CmdState.Off;
+                }
+                if (Source == 2)
+                {
+                    commands.ZZDH("0");
+                    return CmdState.On;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
         //public void ChangeFreqVfoA(int msg, MidiDevice device)
         //{
         //    if (msg == 127)
@@ -944,28 +1099,28 @@ namespace Thetis
         // so that tuning isn't so critical.
         public void MidiMessagesPerTuneStepUp(int msg, MidiDevice device)
         {
-            if (msg >= 126) Console.getConsole().CATMidiMessagesPerTuneStepUp();
+            if (msg >= 126) console.CATMidiMessagesPerTuneStepUp();
         }
         public void MidiMessagesPerTuneStepDown(int msg, MidiDevice device) 
         {
-            if (msg >= 126) Console.getConsole().CATMidiMessagesPerTuneStepDown();
+            if (msg >= 126) console.CATMidiMessagesPerTuneStepDown();
         }
         public CmdState MidiMessagesPerTuneStepToggle(int msg, MidiDevice device) 
         {
             if (msg >= 126)
             {
                 CmdState retState = CmdState.Off;
-                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                int mpts = console.MidiMessagesPerTuneStep;
 
-                if (mpts == Console.getConsole().MinMIDIMessagesPerTuneStep) retState = CmdState.On;  // switching to max
-                else if (mpts == Console.getConsole().MaxMIDIMessagesPerTuneStep) retState = CmdState.Off; // switching to min
+                if (mpts == console.MinMIDIMessagesPerTuneStep) retState = CmdState.On;  // switching to max
+                else if (mpts == console.MaxMIDIMessagesPerTuneStep) retState = CmdState.Off; // switching to min
                 else
                 {   // on the off chance the user has set the value to some intermediate value, force reset to min
-                    Console.getConsole().MidiMessagesPerTuneStep = Console.getConsole().MinMIDIMessagesPerTuneStep;
+                    console.MidiMessagesPerTuneStep = console.MinMIDIMessagesPerTuneStep;
                     return CmdState.Off;
                 }
                 // Do the toggle
-                Console.getConsole().CATMidiMessagesPerTuneStepToggle();
+                console.CATMidiMessagesPerTuneStepToggle();
                 return retState;
             }
             else
@@ -998,7 +1153,7 @@ namespace Thetis
                 (direction < 3 && current_tuning_direction == -1))
             {  // continuing in same direction
                 msgs_since_reversal++;
-                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                int mpts = console.MidiMessagesPerTuneStep;
                 if (msgs_since_reversal < mpts)
                     return; // Not enough rotation to act
                 else
@@ -1010,7 +1165,7 @@ namespace Thetis
             {
                 msgs_since_reversal = 1;
                 current_tuning_direction = -current_tuning_direction;
-                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                int mpts = console.MidiMessagesPerTuneStep;
                 if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
                     return;
             }
@@ -1019,7 +1174,7 @@ namespace Thetis
             {
                 case 7: //DIGU
                     {
-                        if (ico == 1) //elminate CAT Offset for DIGU in case selected
+                        if (ico == 1) //eliminate CAT Offset for DIGU in case selected
                         {
                             int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
 
@@ -1126,7 +1281,7 @@ namespace Thetis
                 (direction < 64 && current_tuning_direction == -1)) 
             {  // continuing in same direction
                 msgs_since_reversal++;
-                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                int mpts = console.MidiMessagesPerTuneStep;
                 if (msgs_since_reversal < mpts)
                     return; // Not enough rotation to act
                 else
@@ -1138,7 +1293,7 @@ namespace Thetis
             {
                 msgs_since_reversal = 1;
                 current_tuning_direction = -current_tuning_direction;
-                int mpts = Console.getConsole().MidiMessagesPerTuneStep;
+                int mpts = console.MidiMessagesPerTuneStep;
                 if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
                     return;                    
             }

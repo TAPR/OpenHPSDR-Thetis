@@ -1157,14 +1157,14 @@ namespace Thetis
 
         private void Update_control_settings()
         {
-            bool_HPSDR = console.SetupForm.RadGenModelHPSDR;
-            bool_HERMES = console.SetupForm.RadGenModelHermes;
+            bool_HPSDR = console.CurrentHPSDRModel == HPSDRModel.HPSDR;
+            bool_HERMES = console.CurrentHPSDRModel == HPSDRModel.HERMES;
             bool_disable_BYPASS = console.SetupForm.ChkDisableRXOut;                                    // ALEX reg bit 11, also used as primary indicator of whether PA24 or PA15/16 is present
-            bool_ANAN_10E = console.SetupForm.RadGenModelANAN10;                                        // covers both 10/10E
-            bool_ANAN_100_PA_rev15 = (console.SetupForm.RadGenModelANAN100 & !bool_disable_BYPASS);     // covers 100/100B w/PA_rev15/16
-            bool_ANAN_100_PA_rev24 = (console.SetupForm.RadGenModelANAN100 & bool_disable_BYPASS);      // covers 100/100B w/PA_rev24
-            bool_ANAN_100D_PA_rev15 = (console.SetupForm.RadGenModelANAN100D & !bool_disable_BYPASS);   // covers 100D/200D w/PA_rev15/16
-            bool_ANAN_100D_PA_rev24 = (console.SetupForm.RadGenModelANAN100D & bool_disable_BYPASS);    // covers 100D/200D w/PA_rev24
+            bool_ANAN_10E = console.CurrentHPSDRModel == HPSDRModel.ANAN10 || console.CurrentHPSDRModel == HPSDRModel.ANAN10E;                                           // covers both 10/10E
+            bool_ANAN_100_PA_rev15 = ((console.CurrentHPSDRModel == HPSDRModel.ANAN100 || console.CurrentHPSDRModel == HPSDRModel.ANAN100B) & !bool_disable_BYPASS);     // covers 100/100B w/PA_rev15/16
+            bool_ANAN_100_PA_rev24 = ((console.CurrentHPSDRModel == HPSDRModel.ANAN100 || console.CurrentHPSDRModel == HPSDRModel.ANAN100B) & bool_disable_BYPASS);      // covers 100/100B w/PA_rev24
+            bool_ANAN_100D_PA_rev15 = ((console.CurrentHPSDRModel == HPSDRModel.ANAN100D || console.CurrentHPSDRModel == HPSDRModel.ANAN200D) & !bool_disable_BYPASS);   // covers 100D/200D w/PA_rev15/16
+            bool_ANAN_100D_PA_rev24 = ((console.CurrentHPSDRModel == HPSDRModel.ANAN100D || console.CurrentHPSDRModel == HPSDRModel.ANAN200D) & bool_disable_BYPASS);    // covers 100D/200D w/PA_rev24
 
             bool_rx = rb_rx.Checked;                                                            // Rx/Tx local control for display
 

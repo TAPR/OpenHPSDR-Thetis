@@ -76,7 +76,7 @@ namespace Thetis
                     // Set the system to supply feedback.
                     console.UpdateDDCs(console.RX2Enabled);
                     NetworkIO.SetPureSignal(1);
-                    console.UpdateRXADCCtrl();
+                    //console.UpdateRXADCCtrl();
                     console.UpdateAAudioMixerStates();
                     unsafe { cmaster.LoadRouterControlBit((void*)0, 0, 0, 1); }
                     console.radio.GetDSPTX(0).PSRunCal = true;
@@ -86,7 +86,7 @@ namespace Thetis
                     // Set the system to turn-off feedback.
                     console.UpdateDDCs(console.RX2Enabled);
                     NetworkIO.SetPureSignal(0);
-                    console.UpdateRXADCCtrl();
+                    //console.UpdateRXADCCtrl();
                     console.UpdateAAudioMixerStates();
                     unsafe { cmaster.LoadRouterControlBit((void*)0, 0, 0, 0); }
                     console.radio.GetDSPTX(0).PSRunCal = false;
@@ -131,7 +131,7 @@ namespace Thetis
                 else
                 {
                     // restore setting direct from setupform
-                    if (console.SetupForm != null)
+                    if (!console.IsSetupFormNull)
                     {
                         console.ATTOnTX = console.SetupForm.ATTOnTXChecked;
                     }
@@ -192,6 +192,16 @@ namespace Thetis
             set
             {
                 spi = value;
+            }
+        }
+
+        private string psdefpeak = "0.2899";
+        public string PSdefpeak
+        {
+            set 
+            { 
+                psdefpeak = value;
+                PSpeak.Text = value;
             }
         }
 
@@ -320,7 +330,7 @@ namespace Thetis
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            puresignal.getinfo(txachannel);
+            puresignal.GetInfo(txachannel);
 
             if (puresignal.HasInfoChanged)
             {
@@ -376,7 +386,7 @@ namespace Thetis
             fixed (double* ptr = &GetPSpeakval)
                 puresignal.GetPSMaxTX(txachannel, ptr);
             GetPSpeak.Text = GetPSpeakval.ToString();
-
+          
             // Command State-Machine
             switch (cmdstate)
             {
@@ -651,7 +661,7 @@ namespace Thetis
                         puresignal.SetPSControl(txachannel, 1, 0, 0, 0);
                     }
                     break;
-                case 1: // set new value
+                case 1: // set new values
                     aastate = 2;
                     if ((console.SetupForm.ATTOnTX + deltadB) > 0)
                         console.SetupForm.ATTOnTX += deltadB;
@@ -663,48 +673,6 @@ namespace Thetis
                     puresignal.SetPSControl(txachannel, 0, save_singlecalON, save_autoON, 0);
                     break;
             }
-
-            //bool newcal = (puresignal.Info[5] != oldCalCount2);
-            //oldCalCount2 = puresignal.Info[5];
-            ////if (autoattenuate && !console.ATTOnTX) console.ATTOnTX = true;//MW0LGE moved into 0 state
-            //switch (aastate)
-            //{
-            //    case 0: // monitor
-            //        if (autoattenuate && newcal
-            //            && (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0)))
-            //        {
-            //            if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
-            //            aastate = 1;
-            //            double ddB;
-            //            if (puresignal.Info[4] <= 256)
-            //            {
-            //                ddB = 20.0 * Math.Log10((double)puresignal.Info[4] / 152.293);
-            //                if (Double.IsNaN(ddB)) ddB = 31.1;
-            //                if (ddB < -100.0) ddB = -100.0;
-            //                if (ddB > +100.0) ddB = +100.0;
-            //            }
-            //            else
-            //                ddB = 31.1;
-            //            deltadB = Convert.ToInt32(ddB);
-            //            if (cmdstate == 2) save_autoON = 1;
-            //            else               save_autoON = 0;
-            //            if (cmdstate == 4) save_singlecalON = 1;
-            //            else               save_singlecalON = 0;
-            //            puresignal.SetPSControl(txachannel, 1, 0, 0, 0);
-            //        }
-            //        break;
-            //    case 1: // set new value
-            //        aastate = 2;
-            //        if ((console.SetupForm.ATTOnTX + deltadB) > 0)
-            //            console.SetupForm.ATTOnTX += deltadB;
-            //        else
-            //            console.SetupForm.ATTOnTX = 0;
-            //        break;
-            //    case 2: // restore operation
-            //        aastate = 0;
-            //        puresignal.SetPSControl(txachannel, 0, save_singlecalON, save_autoON, 0);
-            //        break;
-            //}
         }
 
         private void PSpeak_TextChanged(object sender, EventArgs e)
@@ -921,10 +889,9 @@ namespace Thetis
         #endregion
 
         #region public methods
-
         public static int[] Info = new int[16];
         private static int[] oldInfo = new int[16];
-        public static void getinfo(int txachannel)
+        public static void GetInfo(int txachannel)
         {
             //make copy of old, used in HasInfoChanged & CalibrationAttemptsChanged MW0LGE
             fixed (void* dest = &oldInfo[0])
@@ -933,8 +900,7 @@ namespace Thetis
 
             fixed (int* ptr = &(Info[0]))
                 GetPSInfo(txachannel, ptr);
-        }
-        //MW0LGE
+        }       
         public static bool HasInfoChanged 
         {
             get {
@@ -949,39 +915,36 @@ namespace Thetis
                 }
                 return bChange;
             }
-            set { }
         }
         public static bool CalibrationAttemptsChanged {
             get { return Info[5] != oldInfo[5]; }
-            set { }
         }
         public static bool CorrectionsBeingApplied {
             get { return Info[14] == 1; }
-            set { }
+        }
+        public static int CalibrationCount {
+            get { return Info[5]; }
         }
         public static bool Correcting {
-            get { return Info[4] > 90; }
-            set { }
+            get { return FeedbackLevel > 90; }
         }
         public static bool NeedToRecalibrate(int nCurrentATTonTX) {
-             return (Info[4] > 181 || (Info[4] <= 128 && nCurrentATTonTX > 0));            
+            //note: for reference (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0))
+             return (FeedbackLevel > 181 || (FeedbackLevel <= 128 && nCurrentATTonTX > 0));            
         }
         public static bool IsFeedbackLevelOK {
-            get { return Info[4] <= 256; }
-            set { }
+            get { return FeedbackLevel <= 256; }
         }
         public static int FeedbackLevel {
             get { return Info[4]; }
-            set { }
         }
         public static Color FeedbackColourLevel {
             get {
-                if (Info[4] > 181) return Color.Blue;
-                else if (Info[4] > 128) return Color.Lime;
-                else if (Info[4] > 90) return Color.Yellow;
+                if (FeedbackLevel > 181) return Color.Blue;
+                else if (FeedbackLevel > 128) return Color.Lime;
+                else if (FeedbackLevel > 90) return Color.Yellow;
                 else return Color.Red;
             }
-            set { }
         }
         // info[15] is engine state (from calcc.c)
         public enum EngineState
@@ -999,7 +962,6 @@ namespace Thetis
         };
         public static EngineState State {
             get { return (EngineState)Info[15]; }
-            set { }
         }
         //--
         #endregion

@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2015  Doug Wigley
+// Copyright (C) 2010-2020  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,8 +31,6 @@ namespace Thetis
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Reflection;
     using System.Threading;
 
     #region Radio Class 
@@ -44,8 +42,9 @@ namespace Thetis
 		private RadioDSPRX[][] dsp_rx;
 		private RadioDSPTX[] dsp_tx;
 
-		public Radio()
+		public Radio(string datapath)
 		{
+            RadioDSP.AppDataPath = datapath;
 			RadioDSP.CreateDSP();
             Thread.Sleep(100);
 
@@ -80,19 +79,13 @@ namespace Thetis
 
 	public class RadioDSP
 	{
-		//public static void SyncStatic()
-		//{
-			//RadioDSP.SampleRate = RadioDSP.SampleRate;
-		//}
-
 		#region Static Properties and Routines
 
 		public static void CreateDSP()
 		{
-            String app_data_path = "";
-            app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                //+ "\\FlexRadio Systems\\PowerSDR mRX\\wisdom";
-                + "\\OpenHPSDR\\Thetis\\";
+            //String app_data_path = "";
+            //app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+            //    + "\\OpenHPSDR\\Thetis\\";
             WDSP.WDSPwisdom(app_data_path);
             cmaster.CMCreateCMaster();            
 		}
@@ -152,14 +145,20 @@ namespace Thetis
 			}		
 		}
 
-		#endregion
-	}
+        private static string app_data_path = "";
+        public static string AppDataPath
+        {
+            set { app_data_path = value; }
+        }
 
-	#endregion
+        #endregion
+    }
 
-	#region RadioDSPRX Class
+    #endregion
 
-	public class RadioDSPRX
+    #region RadioDSPRX Class
+
+    public class RadioDSPRX
 	{
 		private uint thread;
 		private uint subrx;
@@ -250,9 +249,6 @@ namespace Thetis
 
 		private void SyncAll()
 		{
-			//BufferSize = buffer_size;
-			//SetRXCorrectIQW(rx_correct_iq_w_real, rx_correct_iq_w_imag);
-			//AudioSize = audio_size;			// wcp
 			DSPMode = dsp_mode;
             FilterSize = filter_size;
             FilterType = filter_type;
@@ -323,10 +319,6 @@ namespace Thetis
             RXANR2AERun = rx_nr2_ae_run;
             RXANR2Run = rx_nr2_run;
             RXANR2Position = rx_nr2_position;
-
-            // for (uint i = 0; i < 9; i++)
-            //     SetNotchOn(i, notch_on[i]);
-
         }
 
 		#region Non-Static Properties & Routines
@@ -415,29 +407,6 @@ namespace Thetis
                 }
             }
         }
-
-        //private int audio_size_dsp = 1024;        // wcp
-        //private int audio_size = 1024;
-        //public int AudioSize
-        //{
-        //    get { return audio_size; }
-        //    set
-        //    {
-        //        audio_size = value;
-        //        if(update)
-        //        {
-        //            if(value != audio_size_dsp || force)
-        //            {
-        //                WDSP.SetInputBuffsize(WDSP.id(thread, subrx), value);
-        //               // WDSP.SetInputBuffsize(WDSP.id(0, 1), value);
-        //               // WDSP.SetInputBuffsize(WDSP.id(2, 0), value);
-        //               // WDSP.SetInputBuffsize(WDSP.id(2, 1), value);
-        //               // WDSP.SetInputBuffsize(WDSP.id(1, 0), value);
-        //                audio_size_dsp = value;
-        //            }
-        //        }
-        //    }
-        //}
 
 		private DSPMode dsp_mode_dsp = DSPMode.USB;
 		private DSPMode dsp_mode = DSPMode.USB;
@@ -1116,8 +1085,6 @@ namespace Thetis
 				{
 					if(value != spectrum_pre_filter_dsp || force)
 					{
-						//Debug.WriteLine(thread+" "+subrx+" SpectrumPreFilter: "+value);
-						//DttSP.SetPWSmode(thread, subrx, value);       // NOT USED
 						spectrum_pre_filter_dsp = value;
 					}
 				}
@@ -1215,7 +1182,6 @@ namespace Thetis
             {
                 if (b != notch_on_dsp[index] || force)
                 {
-                    //DttSP.SetRXManualNotchEnable(thread, subrx, index, b);    // NOT USED
                     notch_on_dsp[index] = b;
                 }
             }
@@ -1235,8 +1201,7 @@ namespace Thetis
             {
                 if (freq != notch_freq_dsp[index] || force)
                 {
-                    //DttSP.SetRXManualNotchFreq(thread, subrx, index, freq);   // NOT USED
-                    notch_freq_dsp[index] = freq;
+                     notch_freq_dsp[index] = freq;
                 }
             }
         }
@@ -1260,8 +1225,7 @@ namespace Thetis
             {
                 if (bw != notch_bw_dsp[index] || force)
                 {
-                    //DttSP.SetRXManualNotchBW(thread, subrx, index, bw);       // NOT USED
-                    notch_bw_dsp[index] = bw;
+                     notch_bw_dsp[index] = bw;
                 }
             }
         }
@@ -2137,11 +2101,6 @@ namespace Thetis
 					tx_eq3[i] = value[i];
 				if(update)
 				{
-                    //unsafe
-                    //{
-                    //    fixed (int* ptr = &(tx_eq3[0]))
-                    //        WDSP.SetTXAGrphEQ(WDSP.id(thread, 0), ptr);
-                    //}
 						for(int i=0; i<tx_eq3_dsp.Length && i<value.Length; i++)
 							tx_eq3_dsp[i] = value[i];
 				}
@@ -2159,13 +2118,8 @@ namespace Thetis
 					tx_eq10[i] = value[i];
 				if(update)
 				{
-                    //unsafe
-                    //{
-                    //    fixed (int* ptr = &(tx_eq10[0]))
-                    //        WDSP.SetTXAGrphEQ10(WDSP.id(thread, 0), ptr);
-                    //}
-						for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
-							tx_eq10_dsp[i] = value[i];
+					for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
+						tx_eq10_dsp[i] = value[i];
 				}
 			}
 		}
@@ -2201,7 +2155,6 @@ namespace Thetis
 				{
 					if(value != notch_160_dsp || force)
 					{
-						//DttSP.SetNotch160(thread, value);     // NOT USED
 						notch_160_dsp = value;
 					}
 				}
@@ -3366,15 +3319,8 @@ namespace Thetis
 
             bool active;
             string a;
-            //if (index2 != -1)
-            //{
-            //    active = bool.Parse(s.Substring(index + 5, index2 - (index + 5)));               
-            //}
-            //else
-            // {
             a = s.Substring(index + 7);
             active = bool.Parse(s.Substring(index + 7));
-            // }
 
             return new MNotch(freq, width, active);
         }

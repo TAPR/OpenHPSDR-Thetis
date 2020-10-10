@@ -80,6 +80,7 @@ namespace Thetis
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModeDependentSettingsForm));
             this.btnClose = new System.Windows.Forms.ButtonTS();
             this.SuspendLayout();
             // 
@@ -101,6 +102,7 @@ namespace Thetis
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
             this.ClientSize = new System.Drawing.Size(354, 191);
             this.Controls.Add(this.btnClose);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ModeDependentSettingsForm";
             this.Text = "ModeDependentSettingsForm";
             this.TopMost = true;
@@ -109,12 +111,6 @@ namespace Thetis
 
         }
 
-        #endregion
-
-        #region Properties
-        #endregion
-
-        #region Event Handlers
         #endregion
 
         private void BtnClose_Click(object sender, EventArgs e)

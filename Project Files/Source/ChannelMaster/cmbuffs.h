@@ -56,7 +56,7 @@ extern void destroy_cmbuffs (int id);
 
 extern void flush_cmbuffs (int id);
 
-extern __declspec (dllexport) void Inbound (int id, int nsamples, double* in);	
+extern __declspec (dllexport) void Inbound (int id, int nsamples, double* in);
 
 extern void cmdata (int id, double* out);
 

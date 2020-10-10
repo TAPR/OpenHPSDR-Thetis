@@ -1,9 +1,9 @@
 //=================================================================
 // display.cs
 //=================================================================
-// PowerSDR is a C# implementation of a Software Defined Radio.
+// Thetis is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2019  Doug Wigley (W5WC)
+// Copyright (C) 2010-2020  Doug Wigley (W5WC)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,24 +39,16 @@ namespace Thetis
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Drawing.Drawing2D;
-    //using System.Diagnostics;
-    //using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Runtime.InteropServices;
     using System.Buffers;
-    //using System.Text;
 
-    //
     using SharpDX;
     using SharpDX.Direct2D1;
     using SharpDX.Direct3D;
     using SharpDX.Direct3D11;
     using SharpDX.DXGI;
-    //using SharpDX.Windows;
-    //using SharpDX.Mathematics;
-
-    //
     // fix clashes with sharpdx
     using Bitmap = System.Drawing.Bitmap;
     using Rectangle = System.Drawing.Rectangle;
@@ -69,13 +61,9 @@ namespace Thetis
     // SharpDX clashes
     using AlphaMode = SharpDX.Direct2D1.AlphaMode;
     using Device = SharpDX.Direct3D11.Device;
-    //using Factory = SharpDX.DXGI.Factory;
-    //using SDXColor = SharpDX.Color;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
-    //
-
-
+    
     class Display
     {
         #region Variable Declaration
@@ -94,14 +82,6 @@ namespace Thetis
         public static float[] current_display_data;				// Buffer used to store the current data for the display
         public static float[] new_display_data_bottom;
         public static float[] current_display_data_bottom;
-
-        //public static float[] peakHold_data;
-        //public static float[] peakHold_data_bottom;
-        //public static float[] peakHold_time;
-        //public static float[] peakHold_time_bottom;
-
-        //public static float[] new_scope_data;
-        //public static float[] current_scope_data;
 
         public static float[] rx1_average_buffer;					// Averaged display data buffer
         public static float[] rx2_average_buffer;
@@ -883,54 +863,6 @@ namespace Thetis
             set { waterfall_data_ready = value; }
         }
 
-        //public static float display_avg_mult_old = 1 - (float)1 / 5;
-        //public static float display_avg_mult_new = (float)1 / 5;
-        //private static int display_avg_num_blocks = 5;
-        //public static int DisplayAvgBlocks {
-        //    get { return display_avg_num_blocks; }
-        //    set {
-        //        display_avg_num_blocks = value;
-        //        display_avg_mult_old = 1 - (float)1 / display_avg_num_blocks;
-        //        display_avg_mult_new = (float)1 / display_avg_num_blocks;
-        //    }
-        //}
-
-        //public static float rx2_display_avg_mult_old = 1 - (float)1 / 5;
-        //public static float rx2_display_avg_mult_new = (float)1 / 5;
-        //private static int rx2_display_avg_num_blocks = 5;
-        //public static int RX2DisplayAvgBlocks {
-        //    get { return rx2_display_avg_num_blocks; }
-        //    set {
-        //        rx2_display_avg_num_blocks = value;
-        //        rx2_display_avg_mult_old = 1 - (float)1 / rx2_display_avg_num_blocks;
-        //        rx2_display_avg_mult_new = (float)1 / rx2_display_avg_num_blocks;
-        //    }
-        //}
-
-        //public static float waterfall_avg_mult_old = 1 - (float)1 / 18;
-        //public static float waterfall_avg_mult_new = (float)1 / 18;
-        //private static int waterfall_avg_num_blocks = 18;
-        //public static int WaterfallAvgBlocks {
-        //    get { return waterfall_avg_num_blocks; }
-        //    set {
-        //        waterfall_avg_num_blocks = value;
-        //        waterfall_avg_mult_old = 1 - (float)1 / waterfall_avg_num_blocks;
-        //        waterfall_avg_mult_new = (float)1 / waterfall_avg_num_blocks;
-        //    }
-        //}
-
-        //public static float rx2_waterfall_avg_mult_old = 1 - (float)1 / 18;
-        //public static float rx2_waterfall_avg_mult_new = (float)1 / 18;
-        //private static int rx2_waterfall_avg_num_blocks = 18;
-        //public static int RX2WaterfallAvgBlocks {
-        //    get { return rx2_waterfall_avg_num_blocks; }
-        //    set {
-        //        rx2_waterfall_avg_num_blocks = value;
-        //        rx2_waterfall_avg_mult_old = 1 - (float)1 / rx2_waterfall_avg_num_blocks;
-        //        rx2_waterfall_avg_mult_new = (float)1 / rx2_waterfall_avg_num_blocks;
-        //    }
-        //}
-
         private static int spectrum_grid_max = -40;
         public static int SpectrumGridMax {
             get { return spectrum_grid_max; }
@@ -1592,11 +1524,6 @@ namespace Thetis
             if (new_waterfall_data_bottom != null) m_objFloatPool.Return(new_waterfall_data_bottom);
             if (current_waterfall_data_bottom != null) m_objFloatPool.Return(current_waterfall_data_bottom);
 
-            //if (peakHold_data != null) m_objFloatPool.Return(peakHold_data);
-            //if (peakHold_data_bottom != null) m_objFloatPool.Return(peakHold_data_bottom);
-            //if (peakHold_time != null) m_objFloatPool.Return(peakHold_time);
-            //if (peakHold_time_bottom != null) m_objFloatPool.Return(peakHold_time_bottom);
-
             // cant be W width, as more info can be stored in these, for example scope data
             new_display_data = m_objFloatPool.Rent(BUFFER_SIZE);
             current_display_data = m_objFloatPool.Rent(BUFFER_SIZE);
@@ -1608,11 +1535,6 @@ namespace Thetis
             new_waterfall_data_bottom = m_objFloatPool.Rent(W);
             current_waterfall_data_bottom = m_objFloatPool.Rent(W);
 
-            //peakHold_data = m_objFloatPool.Rent(BUFFER_SIZE);
-            //peakHold_data_bottom = m_objFloatPool.Rent(BUFFER_SIZE);
-            //peakHold_time = m_objFloatPool.Rent(BUFFER_SIZE);
-            //peakHold_time_bottom = m_objFloatPool.Rent(BUFFER_SIZE);
-
             Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
             {
                 new_display_data[i] = -200.0f;
@@ -1623,11 +1545,6 @@ namespace Thetis
                 current_waterfall_data[i] = -200.0f;
                 new_waterfall_data_bottom[i] = -200.0f;
                 current_waterfall_data_bottom[i] = -200.0f;
-
-                //peakHold_data[i] = float.MaxValue;
-                //peakHold_data_bottom[i] = float.MaxValue;
-                //peakHold_time[i] = 1; //s
-                //peakHold_time_bottom[i] = 1; //s
             });
         }
 
@@ -1746,26 +1663,6 @@ namespace Thetis
                             DrawPanadapter(e.Graphics, 0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
                             DrawWaterfall(e.Graphics, PanafallSplitBarPos, displayTargetWidth, displayTargetHeight - m_nRX1DisplayHeight, 1, true);
                             split_display = false;
-                            /*if (map == 1) // ke9ns add  if in special map viewing panafall mode
-                            {
-
-                                K9 = 7;             //special panafall mode for sun/grayline tracking mode
-                                K11 = 0;
-
-                                DrawPanadapter(e.Graphics, W, 5 * H / 6, 1, false);    //     in pure panadapter mode: update = DrawPanadapter(e.Graphics, W, H, 1, false);
-                                DrawWaterfall(e.Graphics, W, 5 * H / 6, 1, true);        // bottom half RX2 is not on
-                                split_display = false;
-                            }
-                            else
-                            {
-                                K9 = 3;
-                                K11 = 0;
-
-                                split_display = true; // use wide vertgrid because your saying split
-                                DrawPanadapter(e.Graphics, W, H / 2, 1, false); //top half 
-                                DrawWaterfall(e.Graphics, W, H / 2, 1, true); // bottom half RX2 is not on
-                            split_display = false;
-                            }*/ //MW0LGE - rx2
                             break;
                         case DisplayMode.PANASCOPE:
                             K9 = 4;
@@ -1837,41 +1734,6 @@ namespace Thetis
                             K9 = 5;
                             //K11 = 5;
 
-                            /*switch (current_display_mode_bottom)  // ke9ns check RX2 to see what to do with both RX1 and RX2
-                            {
-                                case DisplayMode.PANADAPTER:
-                                    K10 = 2;
-                                    DrawPanadapter(e.Graphics, W, H / 3, 1, false); // RX1 panadapter top 1/3
-                                    DrawWaterfall(e.Graphics, W, H / 3, 1, true);     // RX1 waterfall middle 1/3
-                                    DrawPanadapter(e.Graphics, W, 2 * H / 3, 2, true); // RX2  bottom 1/3
-                                    break;
-
-                                case DisplayMode.WATERFALL:
-                                    K10 = 1;
-                                    DrawPanadapter(e.Graphics, W, H / 3, 1, false); // RX1 panadapter top 1/3
-                                    DrawWaterfall(e.Graphics, W, H / 3, 1, true);     // RX1 waterfall middle 1/3
-                                    DrawWaterfall(e.Graphics, W, 2 * H / 3, 2, true);  // RX2 bottom 1/3
-                                    break;
-                                case DisplayMode.PANAFALL:   // ke9ns pan (KE9NS ADDED CODE)  rx2 panafall with RX1 panafall as well
-                                    K10 = 5;
-                                    DrawPanadapter(e.Graphics, W, H / 4, 1, false); // RX1 panadapter top 1/4
-                                    DrawWaterfall(e.Graphics, W, H / 4, 1, true);     // RX1 waterfall middle 1/4
-                                    DrawPanadapter(e.Graphics, W, 2 * H / 4, 2, true);
-                                    DrawWaterfall(e.Graphics, W, 3 * H / 4, 2, true);
-                                    break;
-
-                        case DisplayMode.OFF:
-                                    K10 = 0;
-                                    DrawOffBackground(e.Graphics, W, H / 2, true);
-                                    K9 = 3;
-                                    K11 = 0;
-                                    split_display = true; // use wide vertgrid because your saying split
-                                    DrawPanadapter(e.Graphics, W, H / 2, 1, false); //top half 
-                                    DrawWaterfall(e.Graphics, W, H / 2, 1, true); // bottom half RX2 is not on
-                                    split_display = false;
-                                    break; // rx2 off
-
-                            } // switch (current_display_mode_bottom) */  // MW0LGE - rx2
                             m_nRX1DisplayHeight = displayTargetHeight / 4;
                             DrawPanadapter(e.Graphics, 0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);// MW0LGE - rx2
                             DrawWaterfall(e.Graphics, m_nRX1DisplayHeight, displayTargetWidth, m_nRX1DisplayHeight, 1, true);// MW0LGE - rx2
@@ -2905,38 +2767,6 @@ namespace Thetis
                 }
             }
 
-            //if (!local_mox /* && !tx_on_vfob */ && draw_tx_cw_freq &&
-            //    (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
-            //{
-            //    int pitch = cw_pitch;
-            //    if (rx1_dsp_mode == DSPMode.CWL)
-            //        pitch = -cw_pitch;
-
-            //    int cw_line_x;
-            //    if (!split_enabled)
-            //        cw_line_x = (int)((float)(pitch - Low - f_diff + xit_hz - rit_hz) / width * W);
-            //    else
-            //        cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-
-            //    g.DrawLine(tx_filter_pen, cw_line_x, nVerticalShift + top, cw_line_x, nVerticalShift + H); //MW0LGE
-            //}
-
-            //if (!local_mox && tx_on_vfob && draw_tx_cw_freq &&
-            //    (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
-            //{
-            //    int pitch = cw_pitch;
-            //    if (rx2_dsp_mode == DSPMode.CWL)
-            //        pitch = -cw_pitch;
-
-            //    int cw_line_x;
-            //    if (!split_enabled)
-            //        cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz) / width * W);
-            //    else
-            //        cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-
-            //    g.DrawLine(tx_filter_pen, cw_line_x, nVerticalShift + top, cw_line_x, nVerticalShift + H); //MW0LGE
-            //}
-
             // draw 60m channels if in view - not on the waterfall //MW0LGE
             if (!bIsWaterfall && (console.CurrentRegion == FRSRegion.US || console.CurrentRegion == FRSRegion.UK))
             {
@@ -2975,30 +2805,6 @@ namespace Thetis
 
                         // offset for CW Pitch to align display
                         rf_freq += cwSideToneShift;
-                        //if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2))
-                        //{
-                        //    switch (rx2_dsp_mode)
-                        //    {
-                        //        case (DSPMode.CWL):
-                        //            rf_freq += cw_pitch;
-                        //            break;
-                        //        case (DSPMode.CWU):
-                        //            rf_freq -= cw_pitch;
-                        //            break;
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    switch (rx1_dsp_mode)
-                        //    {
-                        //        case (DSPMode.CWL):
-                        //            rf_freq += cw_pitch;
-                        //            break;
-                        //        case (DSPMode.CWU):
-                        //            rf_freq -= cw_pitch;
-                        //            break;
-                        //    }
-                        //}
 
                         int chan_left_x = (int)((float)(c.Freq * 1e6 - rf_freq - c.BW / 2 - Low - rit) / width * W);
                         int chan_right_x = (int)((float)(c.Freq * 1e6 - rf_freq + c.BW / 2 - Low - rit) / width * W);
@@ -3033,32 +2839,7 @@ namespace Thetis
                 }
 
                 rf_freq += cwSideToneShift;
-                //if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2))
-                //{
-                //    rf_freq = vfob_hz;
-                //    switch (rx2_dsp_mode)
-                //    {
-                //        case (DSPMode.CWL):
-                //            rf_freq += cw_pitch;
-                //            break;
-                //        case (DSPMode.CWU):
-                //            rf_freq -= cw_pitch;
-                //            break;
-                //    }
-                //}
-                //else
-                //{
-                //    switch (rx1_dsp_mode)
-                //    {
-                //        case (DSPMode.CWL):
-                //            rf_freq += cw_pitch;
-                //            break;
-                //        case (DSPMode.CWU):
-                //            rf_freq -= cw_pitch;
-                //            break;
-                //    }
-                //}
-
+ 
                 Pen p;
                 Brush b;
                 Brush t;
@@ -3197,39 +2978,6 @@ namespace Thetis
                 }
             }
 
-            //// Draw a Zero Beat line on CW filter
-            //if (!local_mox && show_cwzero_line &&
-            //    (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
-            //{
-            //    int pitch = cw_pitch;
-            //    if (rx1_dsp_mode == DSPMode.CWL)
-            //        pitch = -cw_pitch;
-
-            //    int cw_line_x1;
-            //    if (!split_enabled)
-            //        cw_line_x1 = (int)((float)(pitch - Low - f_diff) / width * W);
-            //    else
-            //        cw_line_x1 = (int)((float)(pitch - Low + (vfoa_sub_hz - vfoa_hz)) / width * W);
-
-            //    g.DrawLine(cw_zero_pen, cw_line_x1, top, cw_line_x1, H);
-            //}
-
-            //if (!local_mox && show_cwzero_line &&
-            //    (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
-            //{
-            //    int pitch = cw_pitch;
-            //    if (rx2_dsp_mode == DSPMode.CWL)
-            //        pitch = -cw_pitch;
-
-            //    int cw_line_x1;
-            //    if (!split_enabled)
-            //        cw_line_x1 = (int)((float)(pitch - Low - f_diff) / width * W);
-            //    else
-            //        cw_line_x1 = (int)((float)(pitch - Low + (vfoa_sub_hz - vfoa_hz)) / width * W);
-
-            //    g.DrawLine(tx_filter_pen, cw_line_x1, H + top, cw_line_x1, H + H);
-            //}
-
             //      MW0LGE
             if (local_mox)
                 center_line_x = (int)((float)(-f_diff - Low + xit_hz) / width * W); // locked 0 line
@@ -3353,36 +3101,7 @@ namespace Thetis
 
             //MW0LGE - TODO CHECK
             vfo += cwSideToneShift;
-            //if (rx == 1)
-            //{
-            //    switch (rx1_dsp_mode)
-            //    {
-            //        case DSPMode.CWL:
-            //            vfo += cw_pitch;
-            //            break;
-            //        case DSPMode.CWU:
-            //            vfo -= cw_pitch;
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //}
-            //else // if(rx==2)
-            //{
-            //    switch (rx2_dsp_mode)
-            //    {
-            //        case DSPMode.CWL:
-            //            vfo += cw_pitch;
-            //            break;
-            //        case DSPMode.CWU:
-            //            vfo -= cw_pitch;
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //}
-            //--
-
+ 
             long vfo_round = ((long)(vfo / freq_step_size)) * freq_step_size;
             long vfo_delta = (long)(vfo - vfo_round);
 
@@ -3550,49 +3269,6 @@ namespace Thetis
 
             if (grid_control && !bIsWaterfall)
             {
-                // Draw horizontal lines
-                //int nLeft = 0;
-                //int nRight = 0;
-                //int nW = (int)g.MeasureString("-", font9).Width + 12;
-
-                //switch (label_align)//MW0LGE display_label_align)
-                //{
-                //    case DisplayLabelAlignment.LEFT:
-                //        nLeft = 0;
-                //        nRight = nW;
-                //        break;
-                //    case DisplayLabelAlignment.CENTER:
-
-                //        if (rx == 1 && (rx1_dsp_mode == DSPMode.USB || rx1_dsp_mode == DSPMode.DIGU || rx1_dsp_mode == DSPMode.CWU))
-                //        {
-                //            nLeft = center_line_x - nW;
-                //            nRight = nLeft + nW;
-                //        }
-                //        else if (rx == 2 && (rx2_dsp_mode == DSPMode.USB || rx2_dsp_mode == DSPMode.DIGU || rx2_dsp_mode == DSPMode.CWU))
-                //        {
-                //            nLeft = center_line_x - nW;
-                //            nRight = nLeft + nW;
-                //        }
-                //        else
-                //        {
-                //            nLeft = center_line_x;
-                //            nRight = nLeft + nW;
-                //        }
-                //        break;
-                //    case DisplayLabelAlignment.RIGHT:
-                //        nLeft = W - nW;
-                //        nRight = W;
-                //        break;
-                //    case DisplayLabelAlignment.AUTO:
-                //        nLeft = 0;
-                //        nRight = nW;
-                //        break;
-                //    case DisplayLabelAlignment.OFF:
-                //        nLeft = W;
-                //        nRight = W + nW;
-                //        break;
-                //}
-
                 for (int i = 1; i < h_steps; i++)
                 {
                     int xOffset = 0;
@@ -3861,11 +3537,6 @@ namespace Thetis
                                 break;
                         }
 
-                        //if (console.RX2Enabled && CurrentDisplayMode == DisplayMode.PANAFALL)
-                        //    rx1_agcknee_y_value = rx1_agcknee_y_value / 4;
-                        //else if (console.RX2Enabled || split_display)
-                        //    rx1_agcknee_y_value = rx1_agcknee_y_value / 2;
-
                         rx1_agcknee_y_value += nVerticalShift;
 
                         // show agc line
@@ -3943,10 +3614,11 @@ namespace Thetis
                                     {
                                         p.DashStyle = DashStyle.Dot;
 
-                                        if (current_display_mode_bottom == DisplayMode.PANAFALL)
-                                            g.DrawLine(p, x3_rx2_hang, rx2_agc_hang_y + 2 * H, x2_rx2_hang, rx2_agc_hang_y + 2 * H);
-                                        else
-                                            g.DrawLine(p, x3_rx2_hang, rx2_agc_hang_y + H, x2_rx2_hang, rx2_agc_hang_y + H);
+                                        //MW0LGE 06/02/20 fix no draw of lines on RX2
+                                        //if (current_display_mode_bottom == DisplayMode.PANAFALL)
+                                        g.DrawLine(p, x3_rx2_hang, rx2_agc_hang_y/* + 2 * H*/, x2_rx2_hang, rx2_agc_hang_y/* + 2 * H*/);
+                                        //else
+                                        //    g.DrawLine(p, x3_rx2_hang, rx2_agc_hang_y + H, x2_rx2_hang, rx2_agc_hang_y + H);
 
                                         g.DrawString("-H", pana_font, pana_text_brush, AGCRX2Hang.X + AGCRX2Hang.Width, AGCRX2Hang.Y - (AGCRX2Hang.Height / 2));
                                     }
@@ -3977,10 +3649,11 @@ namespace Thetis
                             {
                                 p.DashStyle = DashStyle.Dot;
 
-                                if (current_display_mode_bottom == DisplayMode.PANAFALL)
-                                    g.DrawLine(p, x1_rx2_gain, rx2_agcknee_y_value + 2 * H, x2_rx2_gain, rx2_agcknee_y_value + 2 * H);
-                                else
-                                    g.DrawLine(p, x1_rx2_gain, rx2_agcknee_y_value + H, x2_rx2_gain, rx2_agcknee_y_value + H);
+                                //MW0LGE 06/02/20 fix no draw of lines on RX2
+                                //if (current_display_mode_bottom == DisplayMode.PANAFALL)
+                                g.DrawLine(p, x1_rx2_gain, rx2_agcknee_y_value/* + 2 * H*/, x2_rx2_gain, rx2_agcknee_y_value/* + 2 * H*/);
+                                //else
+                                    //g.DrawLine(p, x1_rx2_gain, rx2_agcknee_y_value + H, x2_rx2_gain, rx2_agcknee_y_value + H);
 
                                 g.DrawString(rx2_agc, pana_font, pana_text_brush, AGCRX2Knee.X + AGCRX2Knee.Width, AGCRX2Knee.Y - (AGCRX2Knee.Height / 2));
                             }

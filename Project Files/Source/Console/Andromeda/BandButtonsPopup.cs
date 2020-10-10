@@ -1,7 +1,7 @@
 ﻿//=================================================================
 // BandButtonsPopup.cs
 //=================================================================
-/// Thetis is a C# implementation of a Software Defined Radio.
+// Thetis is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2019  Laurence Barker, G8NJJ
 //
 // This program is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ namespace Thetis
     ///  Band setting popup form.
     /// </summary>
 
-    public class BandButtonsPopup : System.Windows.Forms.Form
+    public class BandButtonsPopup : Form
     {
         #region Variable Declaration
         private Console console;
@@ -93,6 +93,7 @@ namespace Thetis
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BandButtonsPopup));
             this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.radBtn15 = new System.Windows.Forms.RadioButtonTS();
             this.radBtn14 = new System.Windows.Forms.RadioButtonTS();
@@ -397,6 +398,7 @@ namespace Thetis
             this.ClientSize = new System.Drawing.Size(466, 326);
             this.Controls.Add(this.groupBoxTS1);
             this.Controls.Add(this.btnClose);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BandButtonsPopup";
             this.Text = "Select Operating Band";
             this.TopMost = true;

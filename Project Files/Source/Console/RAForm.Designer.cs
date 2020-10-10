@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RAForm));
             this.RA_timer = new System.Windows.Forms.Timer(this.components);
             this.picRAGraph = new System.Windows.Forms.PictureBox();
             this.openFileDialog3 = new System.Windows.Forms.OpenFileDialog();
@@ -830,6 +831,7 @@
             this.Controls.Add(this.groupBoxTS1);
             this.Controls.Add(this.groupBox2);
             this.ForeColor = System.Drawing.SystemColors.Control;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "RAForm";
             this.Text = "Radio Astromony data collection utility   v1.3 (16 Feb 2016)";

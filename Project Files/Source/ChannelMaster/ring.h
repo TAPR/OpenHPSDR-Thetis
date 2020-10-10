@@ -30,22 +30,22 @@ warren@wpratt.com
 
 typedef struct _ringbuffer {
     double	*buf;
-    volatile size_t write_ptr;
-    volatile size_t read_ptr;
+    volatile int write_ptr;
+    volatile int read_ptr;
 	volatile int	write_flag; //W4WMT added flag to distinguish between full/empty when pointers are equal
-    size_t	 size;
-    size_t  size_mask;
+    int	 size;
+    int  size_mask;
 }
 ringbuffer_t ;
 
-extern ringbuffer_t *ringbuffer_create(size_t sz);
-extern size_t ringbuffer_read_space(const ringbuffer_t *rb);
-extern size_t ringbuffer_write_space(const ringbuffer_t *rb);
+extern ringbuffer_t *ringbuffer_create(int sz);
+extern int ringbuffer_read_space(const ringbuffer_t *rb);
+extern int ringbuffer_write_space(const ringbuffer_t *rb);
 extern void ringbuffer_free(ringbuffer_t *rb);
-extern size_t ringbuffer_read(ringbuffer_t *rb, double *dest, size_t cnt);
-extern size_t ringbuffer_write(ringbuffer_t *rb, const double *src, size_t cnt);
-extern void ringbuffer_reset_size (ringbuffer_t * rb, size_t sz);
-extern void ringbuffer_restart (ringbuffer_t * rb, size_t sz);
+extern int ringbuffer_read(ringbuffer_t *rb, double *dest, int cnt);
+extern int ringbuffer_write(ringbuffer_t *rb, const double *src, int cnt);
+extern void ringbuffer_reset_size (ringbuffer_t * rb, int sz);
+extern void ringbuffer_restart (ringbuffer_t * rb, int sz);
 extern void ringbuffer_free(ringbuffer_t *rb);
 extern void ringbuffer_reset(ringbuffer_t *rb);
 

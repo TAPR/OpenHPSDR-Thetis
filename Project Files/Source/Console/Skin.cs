@@ -117,7 +117,17 @@ namespace Thetis
             path = p + "\\" + name;
             Skin.name = name;
 
-            f.BackgroundImage = File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) ? Image.FromFile(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) : null;
+           // f.BackgroundImage = File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) ? Image.FromFile(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) : null;
+
+            if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext))
+            {
+                f.BackgroundImage = Image.FromFile(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+            }
+            else if (File.Exists(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext))
+            {
+                f.BackgroundImage = Image.FromFile(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+            }
+            else f.BackgroundImage = null;
 
             foreach (Control c in f.Controls) // load in images
                 ReadImages(c);
@@ -652,11 +662,16 @@ namespace Thetis
             ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
 
             // load images into image list property
-            string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+           // string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
             for (int i = 0; i < 8; i++)
             {
-                if (File.Exists(s + i.ToString() + pic_file_ext))
-                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(s + i.ToString() + pic_file_ext));
+                if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
+                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
+                else
+                {
+                    if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
+                        ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
+                }
             }
             EventHandler handler = new EventHandler(Button_StateChanged);
             ctrl.Click -= handler; // remove handlers first to ensure they don't get added multiple times
@@ -831,11 +846,16 @@ namespace Thetis
             ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
 
             // load images into image list property
-            string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+            //string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
             for(int i=0; i<8; i++)
             {
-                if (File.Exists(s + i.ToString() + pic_file_ext))
-                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(s + i.ToString() + pic_file_ext));
+                if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
+                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
+                else
+                {
+                    if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
+                        ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
+                }
             }
             EventHandler handler = new EventHandler(CheckBox_StateChanged);
             ctrl.CheckedChanged -= handler; // remove handlers first to ensure they don't get added multiple times
@@ -1210,11 +1230,13 @@ namespace Thetis
             ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
 
             // load images into image list property
-            string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+           // string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
             for (int i = 0; i < 8; i++)
             {
-                if (File.Exists(s + i.ToString() + pic_file_ext))
-                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(s + i.ToString() + pic_file_ext));
+                if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
+                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
+                else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
+                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
                 else
                 {
                     if (ctrl.ImageList.Images.ContainsKey(((ImageState)i).ToString()))
@@ -1395,12 +1417,33 @@ namespace Thetis
         private static void SetupPrettyTrackBarImages(PrettyTrackBar ctrl)
         {
             // load images
-            string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
-            if (File.Exists(s + "back" + pic_file_ext))
-                ctrl.BackgroundImage = Image.FromFile(s + "back" + pic_file_ext);
+           // string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+
+            if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext))
+            {
+                ctrl.BackgroundImage = Image.FromFile(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
+            }
+            else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext))
+            {
+                ctrl.BackgroundImage = Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
+            }
             else ctrl.BackgroundImage = null;
 
-            ctrl.HeadImage = File.Exists(s + "head" + pic_file_ext) ? Image.FromFile(s + "head" + pic_file_ext) : null;
+            //             if (File.Exists(s + "back" + pic_file_ext))
+            //                 ctrl.BackgroundImage = Image.FromFile(s + "back" + pic_file_ext);
+            //             else ctrl.BackgroundImage = null;
+
+            if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext))
+            {
+                ctrl.HeadImage = Image.FromFile(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
+            }
+            else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext))
+            {             
+                ctrl.HeadImage = Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
+            }
+            else ctrl.HeadImage = null;
+
+           // ctrl.HeadImage = File.Exists(s + "head" + pic_file_ext) ? Image.FromFile(s + "head" + pic_file_ext) : null;
 
             ctrl.Invalidate();
         }
@@ -1527,7 +1570,18 @@ namespace Thetis
 
         private static void SetBackgroundImage(Control c)
         {
-            Image objImg = File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) ? Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) : null;
+            Image objImg; // = File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) ? Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) : null;
+
+            if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
+            {
+                objImg = Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
+            }
+            else if (File.Exists(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext))
+            {
+                objImg = Image.FromFile(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext);
+            }
+            else objImg = null;
+
             if (c.Name.Equals("picDisplay")) // special case
             {
                 m_objConsole.PicDisplayBackgroundImage = objImg;

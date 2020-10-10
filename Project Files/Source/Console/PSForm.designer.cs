@@ -101,9 +101,10 @@
             // btnPSAdvanced
             // 
             this.btnPSAdvanced.Image = null;
-            this.btnPSAdvanced.Location = new System.Drawing.Point(245, 12);
+            this.btnPSAdvanced.Location = new System.Drawing.Point(327, 15);
+            this.btnPSAdvanced.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPSAdvanced.Name = "btnPSAdvanced";
-            this.btnPSAdvanced.Size = new System.Drawing.Size(71, 20);
+            this.btnPSAdvanced.Size = new System.Drawing.Size(95, 25);
             this.btnPSAdvanced.TabIndex = 46;
             this.btnPSAdvanced.Text = "Advanced";
             this.btnPSAdvanced.UseVisualStyleBackColor = true;
@@ -117,9 +118,10 @@
             "0.5",
             "1.1",
             "2.5"});
-            this.comboPSTint.Location = new System.Drawing.Point(490, 126);
+            this.comboPSTint.Location = new System.Drawing.Point(653, 155);
+            this.comboPSTint.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.comboPSTint.Name = "comboPSTint";
-            this.comboPSTint.Size = new System.Drawing.Size(57, 21);
+            this.comboPSTint.Size = new System.Drawing.Size(75, 24);
             this.comboPSTint.TabIndex = 45;
             this.comboPSTint.Text = "0.5";
             this.comboPSTint.SelectedIndexChanged += new System.EventHandler(this.comboPSTint_SelectedIndexChanged);
@@ -129,9 +131,10 @@
             this.chkPSStbl.AutoSize = true;
             this.chkPSStbl.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSStbl.Image = null;
-            this.chkPSStbl.Location = new System.Drawing.Point(434, 108);
+            this.chkPSStbl.Location = new System.Drawing.Point(579, 133);
+            this.chkPSStbl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkPSStbl.Name = "chkPSStbl";
-            this.chkPSStbl.Size = new System.Drawing.Size(53, 17);
+            this.chkPSStbl.Size = new System.Drawing.Size(65, 21);
             this.chkPSStbl.TabIndex = 44;
             this.chkPSStbl.Text = "STBL";
             this.chkPSStbl.UseVisualStyleBackColor = true;
@@ -144,9 +147,10 @@
             this.chkPSMap.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPSMap.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSMap.Image = null;
-            this.chkPSMap.Location = new System.Drawing.Point(434, 85);
+            this.chkPSMap.Location = new System.Drawing.Point(579, 105);
+            this.chkPSMap.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkPSMap.Name = "chkPSMap";
-            this.chkPSMap.Size = new System.Drawing.Size(49, 17);
+            this.chkPSMap.Size = new System.Drawing.Size(59, 21);
             this.chkPSMap.TabIndex = 43;
             this.chkPSMap.Text = "MAP";
             this.chkPSMap.UseVisualStyleBackColor = true;
@@ -159,9 +163,10 @@
             this.chkPSPin.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPSPin.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSPin.Image = null;
-            this.chkPSPin.Location = new System.Drawing.Point(434, 62);
+            this.chkPSPin.Location = new System.Drawing.Point(579, 76);
+            this.chkPSPin.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkPSPin.Name = "chkPSPin";
-            this.chkPSPin.Size = new System.Drawing.Size(44, 17);
+            this.chkPSPin.Size = new System.Drawing.Size(52, 21);
             this.chkPSPin.TabIndex = 42;
             this.chkPSPin.Text = "PIN";
             this.chkPSPin.UseVisualStyleBackColor = true;
@@ -175,9 +180,10 @@
             this.chkPSAutoAttenuate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkPSAutoAttenuate.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSAutoAttenuate.Image = null;
-            this.chkPSAutoAttenuate.Location = new System.Drawing.Point(184, 62);
+            this.chkPSAutoAttenuate.Location = new System.Drawing.Point(245, 76);
+            this.chkPSAutoAttenuate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkPSAutoAttenuate.Name = "chkPSAutoAttenuate";
-            this.chkPSAutoAttenuate.Size = new System.Drawing.Size(97, 17);
+            this.chkPSAutoAttenuate.Size = new System.Drawing.Size(125, 21);
             this.chkPSAutoAttenuate.TabIndex = 41;
             this.chkPSAutoAttenuate.Text = "Auto-Attenuate";
             this.chkPSAutoAttenuate.UseVisualStyleBackColor = true;
@@ -188,9 +194,10 @@
             this.btnPSAmpView.BackColor = System.Drawing.SystemColors.Control;
             this.btnPSAmpView.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnPSAmpView.Image = null;
-            this.btnPSAmpView.Location = new System.Drawing.Point(168, 12);
+            this.btnPSAmpView.Location = new System.Drawing.Point(224, 15);
+            this.btnPSAmpView.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPSAmpView.Name = "btnPSAmpView";
-            this.btnPSAmpView.Size = new System.Drawing.Size(71, 20);
+            this.btnPSAmpView.Size = new System.Drawing.Size(95, 25);
             this.btnPSAmpView.TabIndex = 40;
             this.btnPSAmpView.Text = "AmpView";
             this.btnPSAmpView.UseVisualStyleBackColor = false;
@@ -202,9 +209,10 @@
             this.chkPSRelaxPtol.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkPSRelaxPtol.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSRelaxPtol.Image = null;
-            this.chkPSRelaxPtol.Location = new System.Drawing.Point(184, 85);
+            this.chkPSRelaxPtol.Location = new System.Drawing.Point(245, 105);
+            this.chkPSRelaxPtol.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkPSRelaxPtol.Name = "chkPSRelaxPtol";
-            this.chkPSRelaxPtol.Size = new System.Drawing.Size(104, 17);
+            this.chkPSRelaxPtol.Size = new System.Drawing.Size(133, 21);
             this.chkPSRelaxPtol.TabIndex = 39;
             this.chkPSRelaxPtol.Text = "Relax Tolerance";
             this.chkPSRelaxPtol.UseVisualStyleBackColor = true;
@@ -215,9 +223,10 @@
             this.btnPSTwoToneGen.BackColor = System.Drawing.SystemColors.Control;
             this.btnPSTwoToneGen.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnPSTwoToneGen.Image = null;
-            this.btnPSTwoToneGen.Location = new System.Drawing.Point(14, 12);
+            this.btnPSTwoToneGen.Location = new System.Drawing.Point(19, 15);
+            this.btnPSTwoToneGen.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPSTwoToneGen.Name = "btnPSTwoToneGen";
-            this.btnPSTwoToneGen.Size = new System.Drawing.Size(71, 20);
+            this.btnPSTwoToneGen.Size = new System.Drawing.Size(95, 25);
             this.btnPSTwoToneGen.TabIndex = 37;
             this.btnPSTwoToneGen.Text = "Two-tone";
             this.btnPSTwoToneGen.UseVisualStyleBackColor = false;
@@ -228,9 +237,10 @@
             this.labelTS8.AutoSize = true;
             this.labelTS8.ForeColor = System.Drawing.Color.White;
             this.labelTS8.Image = null;
-            this.labelTS8.Location = new System.Drawing.Point(32, 40);
+            this.labelTS8.Location = new System.Drawing.Point(43, 49);
+            this.labelTS8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS8.Name = "labelTS8";
-            this.labelTS8.Size = new System.Drawing.Size(84, 13);
+            this.labelTS8.Size = new System.Drawing.Size(108, 17);
             this.labelTS8.TabIndex = 10;
             this.labelTS8.Text = "Feedback Level";
             // 
@@ -240,9 +250,10 @@
             this.lblPSInfoFB.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfoFB.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfoFB.Image = null;
-            this.lblPSInfoFB.Location = new System.Drawing.Point(14, 41);
+            this.lblPSInfoFB.Location = new System.Drawing.Point(19, 50);
+            this.lblPSInfoFB.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfoFB.Name = "lblPSInfoFB";
-            this.lblPSInfoFB.Size = new System.Drawing.Size(12, 12);
+            this.lblPSInfoFB.Size = new System.Drawing.Size(16, 15);
             this.lblPSInfoFB.TabIndex = 11;
             // 
             // lblPSInfoCO
@@ -251,9 +262,10 @@
             this.lblPSInfoCO.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfoCO.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfoCO.Image = null;
-            this.lblPSInfoCO.Location = new System.Drawing.Point(168, 41);
+            this.lblPSInfoCO.Location = new System.Drawing.Point(224, 50);
+            this.lblPSInfoCO.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfoCO.Name = "lblPSInfoCO";
-            this.lblPSInfoCO.Size = new System.Drawing.Size(12, 12);
+            this.lblPSInfoCO.Size = new System.Drawing.Size(16, 15);
             this.lblPSInfoCO.TabIndex = 13;
             // 
             // labelTS9
@@ -261,9 +273,10 @@
             this.labelTS9.AutoSize = true;
             this.labelTS9.ForeColor = System.Drawing.Color.White;
             this.labelTS9.Image = null;
-            this.labelTS9.Location = new System.Drawing.Point(186, 40);
+            this.labelTS9.Location = new System.Drawing.Point(248, 49);
+            this.labelTS9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS9.Name = "labelTS9";
-            this.labelTS9.Size = new System.Drawing.Size(55, 13);
+            this.labelTS9.Size = new System.Drawing.Size(73, 17);
             this.labelTS9.TabIndex = 12;
             this.labelTS9.Text = "Correcting";
             // 
@@ -272,9 +285,10 @@
             this.btnPSSave.BackColor = System.Drawing.SystemColors.Control;
             this.btnPSSave.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnPSSave.Image = null;
-            this.btnPSSave.Location = new System.Drawing.Point(322, 12);
+            this.btnPSSave.Location = new System.Drawing.Point(429, 15);
+            this.btnPSSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPSSave.Name = "btnPSSave";
-            this.btnPSSave.Size = new System.Drawing.Size(71, 20);
+            this.btnPSSave.Size = new System.Drawing.Size(95, 25);
             this.btnPSSave.TabIndex = 4;
             this.btnPSSave.Text = "Save";
             this.btnPSSave.UseVisualStyleBackColor = false;
@@ -285,9 +299,10 @@
             this.btnPSRestore.BackColor = System.Drawing.SystemColors.Control;
             this.btnPSRestore.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnPSRestore.Image = null;
-            this.btnPSRestore.Location = new System.Drawing.Point(399, 12);
+            this.btnPSRestore.Location = new System.Drawing.Point(532, 15);
+            this.btnPSRestore.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPSRestore.Name = "btnPSRestore";
-            this.btnPSRestore.Size = new System.Drawing.Size(71, 20);
+            this.btnPSRestore.Size = new System.Drawing.Size(95, 25);
             this.btnPSRestore.TabIndex = 0;
             this.btnPSRestore.Text = "Restore";
             this.btnPSRestore.UseVisualStyleBackColor = false;
@@ -298,9 +313,10 @@
             this.labelTS4.AutoSize = true;
             this.labelTS4.ForeColor = System.Drawing.Color.White;
             this.labelTS4.Image = null;
-            this.labelTS4.Location = new System.Drawing.Point(11, 63);
+            this.labelTS4.Location = new System.Drawing.Point(15, 78);
+            this.labelTS4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS4.Name = "labelTS4";
-            this.labelTS4.Size = new System.Drawing.Size(82, 13);
+            this.labelTS4.Size = new System.Drawing.Size(107, 17);
             this.labelTS4.TabIndex = 30;
             this.labelTS4.Text = "MOX Wait (sec)";
             // 
@@ -312,7 +328,8 @@
             0,
             0,
             65536});
-            this.udPSMoxDelay.Location = new System.Drawing.Point(99, 61);
+            this.udPSMoxDelay.Location = new System.Drawing.Point(132, 75);
+            this.udPSMoxDelay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.udPSMoxDelay.Maximum = new decimal(new int[] {
             10,
             0,
@@ -324,7 +341,7 @@
             0,
             65536});
             this.udPSMoxDelay.Name = "udPSMoxDelay";
-            this.udPSMoxDelay.Size = new System.Drawing.Size(51, 20);
+            this.udPSMoxDelay.Size = new System.Drawing.Size(68, 22);
             this.udPSMoxDelay.TabIndex = 29;
             this.udPSMoxDelay.Value = new decimal(new int[] {
             2,
@@ -338,9 +355,10 @@
             this.labelTS2.AutoSize = true;
             this.labelTS2.ForeColor = System.Drawing.Color.White;
             this.labelTS2.Image = null;
-            this.labelTS2.Location = new System.Drawing.Point(11, 117);
+            this.labelTS2.Location = new System.Drawing.Point(15, 144);
+            this.labelTS2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS2.Name = "labelTS2";
-            this.labelTS2.Size = new System.Drawing.Size(80, 13);
+            this.labelTS2.Size = new System.Drawing.Size(106, 17);
             this.labelTS2.TabIndex = 26;
             this.labelTS2.Text = "AMP Delay (ns)";
             // 
@@ -351,7 +369,8 @@
             0,
             0,
             0});
-            this.udPSPhnum.Location = new System.Drawing.Point(99, 115);
+            this.udPSPhnum.Location = new System.Drawing.Point(132, 142);
+            this.udPSPhnum.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.udPSPhnum.Maximum = new decimal(new int[] {
             25000000,
             0,
@@ -363,7 +382,7 @@
             0,
             0});
             this.udPSPhnum.Name = "udPSPhnum";
-            this.udPSPhnum.Size = new System.Drawing.Size(80, 20);
+            this.udPSPhnum.Size = new System.Drawing.Size(107, 22);
             this.udPSPhnum.TabIndex = 25;
             this.udPSPhnum.Value = new decimal(new int[] {
             150,
@@ -398,9 +417,11 @@
             this.grpPSInfo.Controls.Add(this.labelTS142);
             this.grpPSInfo.Controls.Add(this.labelTS141);
             this.grpPSInfo.ForeColor = System.Drawing.Color.White;
-            this.grpPSInfo.Location = new System.Drawing.Point(14, 145);
+            this.grpPSInfo.Location = new System.Drawing.Point(19, 178);
+            this.grpPSInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpPSInfo.Name = "grpPSInfo";
-            this.grpPSInfo.Size = new System.Drawing.Size(356, 148);
+            this.grpPSInfo.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpPSInfo.Size = new System.Drawing.Size(475, 182);
             this.grpPSInfo.TabIndex = 21;
             this.grpPSInfo.TabStop = false;
             this.grpPSInfo.Text = "Calibration Information";
@@ -411,11 +432,12 @@
             this.checkLoopback.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkLoopback.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.checkLoopback.Image = null;
-            this.checkLoopback.Location = new System.Drawing.Point(9, 121);
+            this.checkLoopback.Location = new System.Drawing.Point(12, 149);
+            this.checkLoopback.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkLoopback.Name = "checkLoopback";
-            this.checkLoopback.Size = new System.Drawing.Size(125, 17);
+            this.checkLoopback.Size = new System.Drawing.Size(246, 21);
             this.checkLoopback.TabIndex = 40;
-            this.checkLoopback.Text = "Display Rx0 and Rx1";
+            this.checkLoopback.Text = "Display PS-RX and PS-TX spectra";
             this.checkLoopback.UseVisualStyleBackColor = true;
             this.checkLoopback.CheckedChanged += new System.EventHandler(this.checkLoopback_CheckedChanged);
             // 
@@ -426,18 +448,20 @@
             this.lblPSInfo5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo5.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo5.Image = null;
-            this.lblPSInfo5.Location = new System.Drawing.Point(194, 72);
+            this.lblPSInfo5.Location = new System.Drawing.Point(259, 89);
+            this.lblPSInfo5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo5.Name = "lblPSInfo5";
-            this.lblPSInfo5.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo5.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo5.TabIndex = 21;
             // 
             // labelTS13
             // 
             this.labelTS13.AutoSize = true;
             this.labelTS13.Image = null;
-            this.labelTS13.Location = new System.Drawing.Point(128, 72);
+            this.labelTS13.Location = new System.Drawing.Point(171, 89);
+            this.labelTS13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS13.Name = "labelTS13";
-            this.labelTS13.Size = new System.Drawing.Size(40, 13);
+            this.labelTS13.Size = new System.Drawing.Size(51, 17);
             this.labelTS13.TabIndex = 20;
             this.labelTS13.Text = "cor.cnt";
             // 
@@ -448,18 +472,20 @@
             this.lblPSInfo13.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo13.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo13.Image = null;
-            this.lblPSInfo13.Location = new System.Drawing.Point(194, 48);
+            this.lblPSInfo13.Location = new System.Drawing.Point(259, 59);
+            this.lblPSInfo13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo13.Name = "lblPSInfo13";
-            this.lblPSInfo13.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo13.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo13.TabIndex = 19;
             // 
             // labelTS11
             // 
             this.labelTS11.AutoSize = true;
             this.labelTS11.Image = null;
-            this.labelTS11.Location = new System.Drawing.Point(128, 48);
+            this.labelTS11.Location = new System.Drawing.Point(171, 59);
+            this.labelTS11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS11.Name = "labelTS11";
-            this.labelTS11.Size = new System.Drawing.Size(37, 13);
+            this.labelTS11.Size = new System.Drawing.Size(47, 17);
             this.labelTS11.TabIndex = 18;
             this.labelTS11.Text = "dg.cnt";
             // 
@@ -470,45 +496,50 @@
             this.lblPSInfo6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo6.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo6.Image = null;
-            this.lblPSInfo6.Location = new System.Drawing.Point(194, 24);
+            this.lblPSInfo6.Location = new System.Drawing.Point(259, 30);
+            this.lblPSInfo6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo6.Name = "lblPSInfo6";
-            this.lblPSInfo6.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo6.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo6.TabIndex = 17;
             // 
             // labelTS7
             // 
             this.labelTS7.AutoSize = true;
             this.labelTS7.Image = null;
-            this.labelTS7.Location = new System.Drawing.Point(128, 24);
+            this.labelTS7.Location = new System.Drawing.Point(171, 30);
+            this.labelTS7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS7.Name = "labelTS7";
-            this.labelTS7.Size = new System.Drawing.Size(41, 13);
+            this.labelTS7.Size = new System.Drawing.Size(52, 17);
             this.labelTS7.TabIndex = 16;
             this.labelTS7.Text = "sln.chk";
             // 
             // GetPSpeak
             // 
             this.GetPSpeak.BackColor = System.Drawing.Color.Bisque;
-            this.GetPSpeak.Location = new System.Drawing.Point(287, 69);
+            this.GetPSpeak.Location = new System.Drawing.Point(383, 85);
+            this.GetPSpeak.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.GetPSpeak.Name = "GetPSpeak";
-            this.GetPSpeak.Size = new System.Drawing.Size(57, 20);
+            this.GetPSpeak.Size = new System.Drawing.Size(75, 22);
             this.GetPSpeak.TabIndex = 15;
             // 
             // labelTS3
             // 
             this.labelTS3.AutoSize = true;
             this.labelTS3.Image = null;
-            this.labelTS3.Location = new System.Drawing.Point(250, 72);
+            this.labelTS3.Location = new System.Drawing.Point(333, 89);
+            this.labelTS3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS3.Name = "labelTS3";
-            this.labelTS3.Size = new System.Drawing.Size(37, 13);
+            this.labelTS3.Size = new System.Drawing.Size(47, 17);
             this.labelTS3.TabIndex = 14;
             this.labelTS3.Text = "GetPk";
             // 
             // PSpeak
             // 
             this.PSpeak.BackColor = System.Drawing.Color.Bisque;
-            this.PSpeak.Location = new System.Drawing.Point(287, 93);
+            this.PSpeak.Location = new System.Drawing.Point(383, 114);
+            this.PSpeak.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.PSpeak.Name = "PSpeak";
-            this.PSpeak.Size = new System.Drawing.Size(57, 20);
+            this.PSpeak.Size = new System.Drawing.Size(75, 22);
             this.PSpeak.TabIndex = 13;
             this.PSpeak.TextChanged += new System.EventHandler(this.PSpeak_TextChanged);
             // 
@@ -516,9 +547,10 @@
             // 
             this.labelTS5.AutoSize = true;
             this.labelTS5.Image = null;
-            this.labelTS5.Location = new System.Drawing.Point(250, 96);
+            this.labelTS5.Location = new System.Drawing.Point(333, 118);
+            this.labelTS5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS5.Name = "labelTS5";
-            this.labelTS5.Size = new System.Drawing.Size(36, 13);
+            this.labelTS5.Size = new System.Drawing.Size(45, 17);
             this.labelTS5.TabIndex = 12;
             this.labelTS5.Text = "SetPk";
             // 
@@ -529,18 +561,20 @@
             this.lblPSfb2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSfb2.ForeColor = System.Drawing.Color.Black;
             this.lblPSfb2.Image = null;
-            this.lblPSfb2.Location = new System.Drawing.Point(309, 48);
+            this.lblPSfb2.Location = new System.Drawing.Point(412, 59);
+            this.lblPSfb2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSfb2.Name = "lblPSfb2";
-            this.lblPSfb2.Size = new System.Drawing.Size(2, 15);
+            this.lblPSfb2.Size = new System.Drawing.Size(2, 19);
             this.lblPSfb2.TabIndex = 11;
             // 
             // labelTS1
             // 
             this.labelTS1.AutoSize = true;
             this.labelTS1.Image = null;
-            this.labelTS1.Location = new System.Drawing.Point(250, 48);
+            this.labelTS1.Location = new System.Drawing.Point(333, 59);
+            this.labelTS1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS1.Name = "labelTS1";
-            this.labelTS1.Size = new System.Drawing.Size(40, 13);
+            this.labelTS1.Size = new System.Drawing.Size(51, 17);
             this.labelTS1.TabIndex = 10;
             this.labelTS1.Text = "feedbk";
             // 
@@ -551,18 +585,20 @@
             this.lblPSInfo15.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo15.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo15.Image = null;
-            this.lblPSInfo15.Location = new System.Drawing.Point(309, 24);
+            this.lblPSInfo15.Location = new System.Drawing.Point(412, 30);
+            this.lblPSInfo15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo15.Name = "lblPSInfo15";
-            this.lblPSInfo15.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo15.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo15.TabIndex = 9;
             // 
             // labelTS146
             // 
             this.labelTS146.AutoSize = true;
             this.labelTS146.Image = null;
-            this.labelTS146.Location = new System.Drawing.Point(250, 24);
+            this.labelTS146.Location = new System.Drawing.Point(333, 30);
+            this.labelTS146.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS146.Name = "labelTS146";
-            this.labelTS146.Size = new System.Drawing.Size(30, 13);
+            this.labelTS146.Size = new System.Drawing.Size(39, 17);
             this.labelTS146.TabIndex = 8;
             this.labelTS146.Text = "state";
             // 
@@ -573,9 +609,10 @@
             this.lblPSInfo3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo3.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo3.Image = null;
-            this.lblPSInfo3.Location = new System.Drawing.Point(72, 96);
+            this.lblPSInfo3.Location = new System.Drawing.Point(96, 118);
+            this.lblPSInfo3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo3.Name = "lblPSInfo3";
-            this.lblPSInfo3.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo3.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo3.TabIndex = 7;
             // 
             // lblPSInfo2
@@ -585,9 +622,10 @@
             this.lblPSInfo2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo2.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo2.Image = null;
-            this.lblPSInfo2.Location = new System.Drawing.Point(72, 72);
+            this.lblPSInfo2.Location = new System.Drawing.Point(96, 89);
+            this.lblPSInfo2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo2.Name = "lblPSInfo2";
-            this.lblPSInfo2.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo2.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo2.TabIndex = 6;
             // 
             // lblPSInfo1
@@ -597,9 +635,10 @@
             this.lblPSInfo1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo1.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo1.Image = null;
-            this.lblPSInfo1.Location = new System.Drawing.Point(72, 48);
+            this.lblPSInfo1.Location = new System.Drawing.Point(96, 59);
+            this.lblPSInfo1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo1.Name = "lblPSInfo1";
-            this.lblPSInfo1.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo1.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo1.TabIndex = 5;
             // 
             // lblPSInfo0
@@ -609,18 +648,20 @@
             this.lblPSInfo0.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfo0.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfo0.Image = null;
-            this.lblPSInfo0.Location = new System.Drawing.Point(72, 24);
+            this.lblPSInfo0.Location = new System.Drawing.Point(96, 30);
+            this.lblPSInfo0.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSInfo0.Name = "lblPSInfo0";
-            this.lblPSInfo0.Size = new System.Drawing.Size(2, 15);
+            this.lblPSInfo0.Size = new System.Drawing.Size(2, 19);
             this.lblPSInfo0.TabIndex = 4;
             // 
             // labelTS143
             // 
             this.labelTS143.AutoSize = true;
             this.labelTS143.Image = null;
-            this.labelTS143.Location = new System.Drawing.Point(6, 96);
+            this.labelTS143.Location = new System.Drawing.Point(8, 118);
+            this.labelTS143.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS143.Name = "labelTS143";
-            this.labelTS143.Size = new System.Drawing.Size(38, 13);
+            this.labelTS143.Size = new System.Drawing.Size(50, 17);
             this.labelTS143.TabIndex = 3;
             this.labelTS143.Text = "bldr.cs";
             // 
@@ -628,9 +669,10 @@
             // 
             this.labelTS144.AutoSize = true;
             this.labelTS144.Image = null;
-            this.labelTS144.Location = new System.Drawing.Point(6, 72);
+            this.labelTS144.Location = new System.Drawing.Point(8, 89);
+            this.labelTS144.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS144.Name = "labelTS144";
-            this.labelTS144.Size = new System.Drawing.Size(39, 13);
+            this.labelTS144.Size = new System.Drawing.Size(50, 17);
             this.labelTS144.TabIndex = 2;
             this.labelTS144.Text = "bldr.cc";
             // 
@@ -638,9 +680,10 @@
             // 
             this.labelTS142.AutoSize = true;
             this.labelTS142.Image = null;
-            this.labelTS142.Location = new System.Drawing.Point(6, 48);
+            this.labelTS142.Location = new System.Drawing.Point(8, 59);
+            this.labelTS142.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS142.Name = "labelTS142";
-            this.labelTS142.Size = new System.Drawing.Size(41, 13);
+            this.labelTS142.Size = new System.Drawing.Size(54, 17);
             this.labelTS142.TabIndex = 1;
             this.labelTS142.Text = "bldr.cm";
             // 
@@ -648,9 +691,10 @@
             // 
             this.labelTS141.AutoSize = true;
             this.labelTS141.Image = null;
-            this.labelTS141.Location = new System.Drawing.Point(6, 24);
+            this.labelTS141.Location = new System.Drawing.Point(8, 30);
+            this.labelTS141.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS141.Name = "labelTS141";
-            this.labelTS141.Size = new System.Drawing.Size(35, 13);
+            this.labelTS141.Size = new System.Drawing.Size(47, 17);
             this.labelTS141.TabIndex = 0;
             this.labelTS141.Text = "bldr.rx";
             // 
@@ -658,9 +702,10 @@
             // 
             this.btnPSReset.BackColor = System.Drawing.SystemColors.Control;
             this.btnPSReset.Image = null;
-            this.btnPSReset.Location = new System.Drawing.Point(476, 12);
+            this.btnPSReset.Location = new System.Drawing.Point(635, 15);
+            this.btnPSReset.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPSReset.Name = "btnPSReset";
-            this.btnPSReset.Size = new System.Drawing.Size(71, 20);
+            this.btnPSReset.Size = new System.Drawing.Size(95, 25);
             this.btnPSReset.TabIndex = 20;
             this.btnPSReset.Text = "OFF";
             this.btnPSReset.UseVisualStyleBackColor = false;
@@ -670,9 +715,10 @@
             // 
             this.btnPSCalibrate.BackColor = System.Drawing.SystemColors.Control;
             this.btnPSCalibrate.Image = null;
-            this.btnPSCalibrate.Location = new System.Drawing.Point(91, 12);
+            this.btnPSCalibrate.Location = new System.Drawing.Point(121, 15);
+            this.btnPSCalibrate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPSCalibrate.Name = "btnPSCalibrate";
-            this.btnPSCalibrate.Size = new System.Drawing.Size(71, 20);
+            this.btnPSCalibrate.Size = new System.Drawing.Size(95, 25);
             this.btnPSCalibrate.TabIndex = 19;
             this.btnPSCalibrate.Text = "Single Cal";
             this.btnPSCalibrate.UseVisualStyleBackColor = false;
@@ -683,9 +729,10 @@
             this.labelTS140.AutoSize = true;
             this.labelTS140.ForeColor = System.Drawing.Color.White;
             this.labelTS140.Image = null;
-            this.labelTS140.Location = new System.Drawing.Point(11, 90);
+            this.labelTS140.Location = new System.Drawing.Point(15, 111);
+            this.labelTS140.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTS140.Name = "labelTS140";
-            this.labelTS140.Size = new System.Drawing.Size(78, 13);
+            this.labelTS140.Size = new System.Drawing.Size(102, 17);
             this.labelTS140.TabIndex = 17;
             this.labelTS140.Text = "CAL Wait (sec)";
             // 
@@ -697,7 +744,8 @@
             0,
             0,
             65536});
-            this.udPSCalWait.Location = new System.Drawing.Point(99, 88);
+            this.udPSCalWait.Location = new System.Drawing.Point(132, 108);
+            this.udPSCalWait.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.udPSCalWait.Maximum = new decimal(new int[] {
             100,
             0,
@@ -709,7 +757,7 @@
             0,
             0});
             this.udPSCalWait.Name = "udPSCalWait";
-            this.udPSCalWait.Size = new System.Drawing.Size(51, 20);
+            this.udPSCalWait.Size = new System.Drawing.Size(68, 22);
             this.udPSCalWait.TabIndex = 16;
             this.udPSCalWait.Value = new decimal(new int[] {
             0,
@@ -723,9 +771,10 @@
             this.lblPSTint.AutoSize = true;
             this.lblPSTint.ForeColor = System.Drawing.Color.White;
             this.lblPSTint.Image = null;
-            this.lblPSTint.Location = new System.Drawing.Point(431, 130);
+            this.lblPSTint.Location = new System.Drawing.Point(575, 160);
+            this.lblPSTint.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPSTint.Name = "lblPSTint";
-            this.lblPSTint.Size = new System.Drawing.Size(54, 13);
+            this.lblPSTint.Size = new System.Drawing.Size(70, 17);
             this.lblPSTint.TabIndex = 47;
             this.lblPSTint.Text = "TINT (dB)";
             // 
@@ -734,9 +783,10 @@
             this.chkPSOnTop.AutoSize = true;
             this.chkPSOnTop.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkPSOnTop.Image = null;
-            this.chkPSOnTop.Location = new System.Drawing.Point(434, 266);
+            this.chkPSOnTop.Location = new System.Drawing.Point(579, 327);
+            this.chkPSOnTop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.chkPSOnTop.Name = "chkPSOnTop";
-            this.chkPSOnTop.Size = new System.Drawing.Size(98, 17);
+            this.chkPSOnTop.Size = new System.Drawing.Size(125, 21);
             this.chkPSOnTop.TabIndex = 48;
             this.chkPSOnTop.Text = "Always On Top";
             this.chkPSOnTop.UseVisualStyleBackColor = true;
@@ -744,10 +794,10 @@
             // 
             // PSForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(560, 303);
+            this.ClientSize = new System.Drawing.Size(747, 373);
             this.Controls.Add(this.chkPSOnTop);
             this.Controls.Add(this.lblPSTint);
             this.Controls.Add(this.btnPSRestore);
@@ -776,6 +826,7 @@
             this.Controls.Add(this.udPSCalWait);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "PSForm";
             this.Text = "PureSignal 2.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PSForm_Closing);

@@ -2,7 +2,8 @@
 // database.cs
 //=================================================================
 // Thetis is a C# implementation of a Software Defined Radio.
-// Copyright (C) 2004-2012  FlexRadio Systems Copyright (C) 2010-2017  Doug Wigley
+// Copyright (C) 2004-2012  FlexRadio Systems 
+// Copyright (C) 2010-2020  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,13 +31,9 @@
 
 using System;
 using System.Data;
-using System.Linq;
 using System.Windows.Forms;
 using System.Collections;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Threading;
 
 namespace Thetis
 {
@@ -95,10 +92,10 @@ namespace Thetis
                 AddGroupListTable();
 
             if (!ds.Tables.Contains("TXProfile"))
-                AddTXProfileTable();
+                AddTXProfileTable("TXProfile");
 
             if (!ds.Tables.Contains("TXProfileDef"))
-                AddTXProfileDefTable();
+                AddTXProfileTable("TXProfileDef", true);
 
             Update();
         }
@@ -3670,10 +3667,10 @@ namespace Thetis
             }
         }
 
-        private static void AddTXProfileTable()
+        private static void AddTXProfileTable(string sTableName, bool bIndcludeExtraProfiles = false)
         {
-            ds.Tables.Add("TXProfile");
-            DataTable t = ds.Tables["TXProfile"];
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
 
             t.Columns.Add("Name", typeof(string));
             t.Columns.Add("FilterLow", typeof(int));
@@ -3740,9 +3737,13 @@ namespace Thetis
             t.Columns.Add("Tune_Power", typeof(int));
             t.Columns.Add("Tune_Meter_Type", typeof(string));
             //t.Columns.Add("TX_Limit_Slew", typeof(bool));
+
             t.Columns.Add("TX_AF_Level", typeof(int));
+
             t.Columns.Add("AM_Carrier_Level", typeof(int));
+
             t.Columns.Add("Show_TX_Filter", typeof(bool));
+
             t.Columns.Add("VAC1_On", typeof(bool));
             t.Columns.Add("VAC1_Auto_On", typeof(bool));
             t.Columns.Add("VAC1_RX_Gain", typeof(int));
@@ -3756,6 +3757,7 @@ namespace Thetis
             t.Columns.Add("VAC1_Combine_Input_Channels", typeof(bool));
             t.Columns.Add("VAC1_Latency_On", typeof(bool));
             t.Columns.Add("VAC1_Latency_Duration", typeof(int));
+
             t.Columns.Add("VAC2_On", typeof(bool));
             t.Columns.Add("VAC2_Auto_On", typeof(bool));
             t.Columns.Add("VAC2_RX_Gain", typeof(int));
@@ -3844,532 +3846,6 @@ namespace Thetis
             t.Columns.Add("CFCEqFreq7", typeof(int));
             t.Columns.Add("CFCEqFreq8", typeof(int));
             t.Columns.Add("CFCEqFreq9", typeof(int));
-
-            #region Default
-
-            DataRow dr = t.NewRow();
-            dr["Name"] = "Default";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3000;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = true;
-            dr["CompanderLevel"] = 2;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region Default DX
-
-            dr = t.NewRow();
-            dr["Name"] = "Default DX";
-            dr["FilterLow"] = 200;
-            dr["FilterHigh"] = 3100;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = true;
-            dr["DXLevel"] = 5;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 2;
-            dr["MicGain"] = 5;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-        }
-
-        private static void AddTXProfileDefTable()
-        {
-            ds.Tables.Add("TXProfileDef");
-            DataTable t = ds.Tables["TXProfileDef"];
-
-            t.Columns.Add("Name", typeof(string));
-            t.Columns.Add("FilterLow", typeof(int));
-            t.Columns.Add("FilterHigh", typeof(int));
-            t.Columns.Add("TXEQNumBands", typeof(int));
-            t.Columns.Add("TXEQEnabled", typeof(bool));
-            t.Columns.Add("TXEQPreamp", typeof(int));
-            t.Columns.Add("TXEQ1", typeof(int));
-            t.Columns.Add("TXEQ2", typeof(int));
-            t.Columns.Add("TXEQ3", typeof(int));
-            t.Columns.Add("TXEQ4", typeof(int));
-            t.Columns.Add("TXEQ5", typeof(int));
-            t.Columns.Add("TXEQ6", typeof(int));
-            t.Columns.Add("TXEQ7", typeof(int));
-            t.Columns.Add("TXEQ8", typeof(int));
-            t.Columns.Add("TXEQ9", typeof(int));
-            t.Columns.Add("TXEQ10", typeof(int));
-            t.Columns.Add("TxEqFreq1", typeof(int));
-            t.Columns.Add("TxEqFreq2", typeof(int));
-            t.Columns.Add("TxEqFreq3", typeof(int));
-            t.Columns.Add("TxEqFreq4", typeof(int));
-            t.Columns.Add("TxEqFreq5", typeof(int));
-            t.Columns.Add("TxEqFreq6", typeof(int));
-            t.Columns.Add("TxEqFreq7", typeof(int));
-            t.Columns.Add("TxEqFreq8", typeof(int));
-            t.Columns.Add("TxEqFreq9", typeof(int));
-            t.Columns.Add("TxEqFreq10", typeof(int));
-            t.Columns.Add("DXOn", typeof(bool));
-            t.Columns.Add("DXLevel", typeof(int));
-            t.Columns.Add("CompanderOn", typeof(bool));
-            t.Columns.Add("CompanderLevel", typeof(int));
-            t.Columns.Add("MicGain", typeof(int));
-            t.Columns.Add("FMMicGain", typeof(int));
-            t.Columns.Add("Lev_On", typeof(bool));
-            t.Columns.Add("Lev_Slope", typeof(int));
-            t.Columns.Add("Lev_MaxGain", typeof(int));
-            t.Columns.Add("Lev_Attack", typeof(int));
-            t.Columns.Add("Lev_Decay", typeof(int));
-            t.Columns.Add("Lev_Hang", typeof(int));
-            t.Columns.Add("Lev_HangThreshold", typeof(int));
-            t.Columns.Add("ALC_Slope", typeof(int));
-            t.Columns.Add("ALC_MaximumGain", typeof(int));
-            t.Columns.Add("ALC_Attack", typeof(int));
-            t.Columns.Add("ALC_Decay", typeof(int));
-            t.Columns.Add("ALC_Hang", typeof(int));
-            t.Columns.Add("ALC_HangThreshold", typeof(int));
-            t.Columns.Add("Power", typeof(int));
-
-            t.Columns.Add("VOX_On", typeof(bool));
-            t.Columns.Add("Dexp_On", typeof(bool));
-            t.Columns.Add("Dexp_Threshold", typeof(int));
-            t.Columns.Add("Dexp_Attack", typeof(int));
-            t.Columns.Add("VOX_HangTime", typeof(int));
-            t.Columns.Add("Dexp_Release", typeof(int));
-            t.Columns.Add("Dexp_Attenuate", typeof(decimal));
-            t.Columns.Add("Dexp_Hysterisis", typeof(decimal));
-            t.Columns.Add("Dexp_Tau", typeof(int));
-            t.Columns.Add("Dexp_SCF_On", typeof(bool));
-            t.Columns.Add("Dexp_SCF_Low", typeof(int));
-            t.Columns.Add("Dexp_SCF_High", typeof(int));
-            t.Columns.Add("Dexp_LookAhead_On", typeof(bool));
-            t.Columns.Add("Dexp_LookAhead", typeof(int));
-
-            t.Columns.Add("Tune_Power", typeof(int));
-            t.Columns.Add("Tune_Meter_Type", typeof(string));
-            //t.Columns.Add("TX_Limit_Slew", typeof(bool));
-            t.Columns.Add("TX_AF_Level", typeof(int));
-            t.Columns.Add("AM_Carrier_Level", typeof(int));
-            t.Columns.Add("Show_TX_Filter", typeof(bool));
-            t.Columns.Add("VAC1_On", typeof(bool));
-            t.Columns.Add("VAC1_Auto_On", typeof(bool));
-            t.Columns.Add("VAC1_RX_Gain", typeof(int));
-            t.Columns.Add("VAC1_TX_Gain", typeof(int));
-            t.Columns.Add("VAC1_Stereo_On", typeof(bool));
-            t.Columns.Add("VAC1_Sample_Rate", typeof(string));
-            t.Columns.Add("VAC1_Buffer_Size", typeof(string));
-            t.Columns.Add("VAC1_IQ_Output", typeof(bool));
-            t.Columns.Add("VAC1_IQ_Correct", typeof(bool));
-            t.Columns.Add("VAC1_PTT_OverRide", typeof(bool));
-            t.Columns.Add("VAC1_Combine_Input_Channels", typeof(bool));
-            t.Columns.Add("VAC1_Latency_On", typeof(bool));
-            t.Columns.Add("VAC1_Latency_Duration", typeof(int));
-            t.Columns.Add("VAC2_On", typeof(bool));
-            t.Columns.Add("VAC2_Auto_On", typeof(bool));
-            t.Columns.Add("VAC2_RX_Gain", typeof(int));
-            t.Columns.Add("VAC2_TX_Gain", typeof(int));
-            t.Columns.Add("VAC2_Stereo_On", typeof(bool));
-            t.Columns.Add("VAC2_Sample_Rate", typeof(string));
-            t.Columns.Add("VAC2_Buffer_Size", typeof(string));
-            t.Columns.Add("VAC2_IQ_Output", typeof(bool));
-            t.Columns.Add("VAC2_IQ_Correct", typeof(bool));
-            t.Columns.Add("VAC2_Combine_Input_Channels", typeof(bool));
-            t.Columns.Add("VAC2_Latency_On", typeof(bool));
-            t.Columns.Add("VAC2_Latency_Duration", typeof(int));
-
-            t.Columns.Add("Phone_RX_DSP_Buffer", typeof(string));
-            t.Columns.Add("Phone_TX_DSP_Buffer", typeof(string));
-            t.Columns.Add("FM_RX_DSP_Buffer", typeof(string));
-            t.Columns.Add("FM_TX_DSP_Buffer", typeof(string));
-            t.Columns.Add("Digi_RX_DSP_Buffer", typeof(string));
-            t.Columns.Add("Digi_TX_DSP_Buffer", typeof(string));
-            t.Columns.Add("CW_RX_DSP_Buffer", typeof(string));
-
-            t.Columns.Add("Phone_RX_DSP_Filter_Size", typeof(string));
-            t.Columns.Add("Phone_TX_DSP_Filter_Size", typeof(string));
-            t.Columns.Add("FM_RX_DSP_Filter_Size", typeof(string));
-            t.Columns.Add("FM_TX_DSP_Filter_Size", typeof(string));
-            t.Columns.Add("Digi_RX_DSP_Filter_Size", typeof(string));
-            t.Columns.Add("Digi_TX_DSP_Filter_Size", typeof(string));
-            t.Columns.Add("CW_RX_DSP_Filter_Size", typeof(string));
-
-            t.Columns.Add("Phone_RX_DSP_Filter_Type", typeof(string));
-            t.Columns.Add("Phone_TX_DSP_Filter_Type", typeof(string));
-            t.Columns.Add("FM_RX_DSP_Filter_Type", typeof(string));
-            t.Columns.Add("FM_TX_DSP_Filter_Type", typeof(string));
-            t.Columns.Add("Digi_RX_DSP_Filter_Type", typeof(string));
-            t.Columns.Add("Digi_TX_DSP_Filter_Type", typeof(string));
-            t.Columns.Add("CW_RX_DSP_Filter_Type", typeof(string));
-
-            t.Columns.Add("Mic_Input_On", typeof(bool));
-            t.Columns.Add("Mic_Input_Boost", typeof(bool));
-            t.Columns.Add("Line_Input_On", typeof(bool));
-            t.Columns.Add("Line_Input_Level", typeof(decimal));
-
-            t.Columns.Add("CESSB_On", typeof(bool));
-            t.Columns.Add("Pure_Signal_Enabled", typeof(bool));
-
-            // CFC
-            t.Columns.Add("CFCEnabled", typeof(bool));
-            t.Columns.Add("CFCPostEqEnabled", typeof(bool));
-            t.Columns.Add("CFCPhaseRotatorEnabled", typeof(bool));
-
-            t.Columns.Add("CFCPhaseRotatorFreq", typeof(int));
-            t.Columns.Add("CFCPhaseRotatorStages", typeof(int));
-
-            t.Columns.Add("CFCPreComp", typeof(int));
-            t.Columns.Add("CFCPostEqGain", typeof(int));
-
-            t.Columns.Add("CFCPreComp0", typeof(int));
-            t.Columns.Add("CFCPreComp1", typeof(int));
-            t.Columns.Add("CFCPreComp2", typeof(int));
-            t.Columns.Add("CFCPreComp3", typeof(int));
-            t.Columns.Add("CFCPreComp4", typeof(int));
-            t.Columns.Add("CFCPreComp5", typeof(int));
-            t.Columns.Add("CFCPreComp6", typeof(int));
-            t.Columns.Add("CFCPreComp7", typeof(int));
-            t.Columns.Add("CFCPreComp8", typeof(int));
-            t.Columns.Add("CFCPreComp9", typeof(int));
-
-            t.Columns.Add("CFCPostEqGain0", typeof(int));
-            t.Columns.Add("CFCPostEqGain1", typeof(int));
-            t.Columns.Add("CFCPostEqGain2", typeof(int));
-            t.Columns.Add("CFCPostEqGain3", typeof(int));
-            t.Columns.Add("CFCPostEqGain4", typeof(int));
-            t.Columns.Add("CFCPostEqGain5", typeof(int));
-            t.Columns.Add("CFCPostEqGain6", typeof(int));
-            t.Columns.Add("CFCPostEqGain7", typeof(int));
-            t.Columns.Add("CFCPostEqGain8", typeof(int));
-            t.Columns.Add("CFCPostEqGain9", typeof(int));
-
-            t.Columns.Add("CFCEqFreq0", typeof(int));
-            t.Columns.Add("CFCEqFreq1", typeof(int));
-            t.Columns.Add("CFCEqFreq2", typeof(int));
-            t.Columns.Add("CFCEqFreq3", typeof(int));
-            t.Columns.Add("CFCEqFreq4", typeof(int));
-            t.Columns.Add("CFCEqFreq5", typeof(int));
-            t.Columns.Add("CFCEqFreq6", typeof(int));
-            t.Columns.Add("CFCEqFreq7", typeof(int));
-            t.Columns.Add("CFCEqFreq8", typeof(int));
-            t.Columns.Add("CFCEqFreq9", typeof(int));
-
 
             #region Default
 
@@ -4720,3275 +4196,3277 @@ namespace Thetis
 
             #endregion
 
-            // W4TME
-            #region DIGI 1K@1500
+            if (bIndcludeExtraProfiles) { 
+                // W4TME
+                #region DIGI 1K@1500
 
-            dr = t.NewRow();
-            dr["Name"] = "Digi 1K@1500";
-            dr["FilterLow"] = 1000;
-            dr["FilterHigh"] = 2000;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 0;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 0;
-            dr["MicGain"] = 5;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = false;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
+                dr = t.NewRow();
+                dr["Name"] = "Digi 1K@1500";
+                dr["FilterLow"] = 1000;
+                dr["FilterHigh"] = 2000;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 0;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 0;
+                dr["MicGain"] = 5;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = false;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
 
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
 
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
 
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
 
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
 
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
 
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
              
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
 
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
 
-            t.Rows.Add(dr);
+                t.Rows.Add(dr);
 
-            #endregion
+                #endregion
  
-            // W4TME
-            #region DIGI 1K@2210
-
-            dr = t.NewRow();
-            dr["Name"] = "Digi 1K@2210";
-            dr["FilterLow"] = 1710;
-            dr["FilterHigh"] = 2710;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 0;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 0;
-            dr["MicGain"] = 5;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = false;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region AM
-
-            dr = t.NewRow();
-            dr["Name"] = "AM";
-            dr["FilterLow"] = 0;
-            dr["FilterHigh"] = 4000;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region Conventional
-
-            dr = t.NewRow();
-            dr["Name"] = "Conventional";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3100;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region D-104
-
-            dr = t.NewRow();
-            dr["Name"] = "D-104";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3500;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = -6;
-            dr["TXEQ1"] = 7;
-            dr["TXEQ2"] = 3;
-            dr["TXEQ3"] = 4;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 5;
-            dr["MicGain"] = 25;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region D-104+CPDR
-
-            dr = t.NewRow();
-            dr["Name"] = "D-104+CPDR";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3500;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = -6;
-            dr["TXEQ1"] = 7;
-            dr["TXEQ2"] = 3;
-            dr["TXEQ3"] = 4;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = true;
-            dr["CompanderLevel"] = 5;
-            dr["MicGain"] = 20;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region D-104+EQ
-
-            dr = t.NewRow();
-            dr["Name"] = "D-104+EQ";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3500;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = -6;
-            dr["TXEQ1"] = 7;
-            dr["TXEQ2"] = 3;
-            dr["TXEQ3"] = 4;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 5;
-            dr["MicGain"] = 20;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region DX / Constest
-
-            dr = t.NewRow();
-            dr["Name"] = "DX / Contest";
-            dr["FilterLow"] = 250;
-            dr["FilterHigh"] = 3250;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = true;
-            dr["DXLevel"] = 5;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region ESSB
-
-            dr = t.NewRow();
-            dr["Name"] = "ESSB";
-            dr["FilterLow"] = 50;
-            dr["FilterHigh"] = 3650;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = true;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = false;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region HC4-5
-
-            dr = t.NewRow();
-            dr["Name"] = "HC4-5";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3100;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 5;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region HC4-5+CPDR
-
-            dr = t.NewRow();
-            dr["Name"] = "HC4-5+CPDR";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3100;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = true;
-            dr["CompanderLevel"] = 5;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region PR40+W2IHY
-
-            dr = t.NewRow();
-            dr["Name"] = "PR40+W2IHY";
-            dr["FilterLow"] = 50;
-            dr["FilterHigh"] = 3650;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region PR40+W2IHY+CPDR
-
-            dr = t.NewRow();
-            dr["Name"] = "PR40+W2IHY+CPDR";
-            dr["FilterLow"] = 50;
-            dr["FilterHigh"] = 3650;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = false;
-            dr["TXEQPreamp"] = 0;
-            dr["TXEQ1"] = 0;
-            dr["TXEQ2"] = 0;
-            dr["TXEQ3"] = 0;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = true;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region PR781+EQ
-
-            dr = t.NewRow();
-            dr["Name"] = "PR781+EQ";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3200;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = -11;
-            dr["TXEQ1"] = -6;
-            dr["TXEQ2"] = 2;
-            dr["TXEQ3"] = 8;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 3;
-            dr["MicGain"] = 12;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region PR781+EQ+CPDR
-
-            dr = t.NewRow();
-            dr["Name"] = "PR781+EQ+CPDR";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3200;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = -9;
-            dr["TXEQ1"] = -8;
-            dr["TXEQ2"] = 3;
-            dr["TXEQ3"] = 7;
-            dr["TXEQ4"] = 0;
-            dr["TXEQ5"] = 0;
-            dr["TXEQ6"] = 0;
-            dr["TXEQ7"] = 0;
-            dr["TXEQ8"] = 0;
-            dr["TXEQ9"] = 0;
-            dr["TXEQ10"] = 0;
-            dr["TxEqFreq1"] = 32;
-            dr["TxEqFreq2"] = 63;
-            dr["TxEqFreq3"] = 125;
-            dr["TxEqFreq4"] = 250;
-            dr["TxEqFreq5"] = 500;
-            dr["TxEqFreq6"] = 1000;
-            dr["TxEqFreq7"] = 2000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 8000;
-            dr["TxEqFreq10"] = 16000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = true;
-            dr["CompanderLevel"] = 2;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 10;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "Fwd Pwr";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 50;
-            dr["AM_Carrier_Level"] = 100;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = false;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "2048";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = true;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 120;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = false;
-            dr["CFCPostEqEnabled"] = false;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 0;
-            dr["CFCPostEqGain"] = 0;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 5;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 5;
-            dr["CFCPreComp7"] = 5;
-            dr["CFCPreComp8"] = 5;
-            dr["CFCPreComp9"] = 5;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = 0;
-            dr["CFCPostEqGain2"] = 0;
-            dr["CFCPostEqGain3"] = 0;
-            dr["CFCPostEqGain4"] = 0;
-            dr["CFCPostEqGain5"] = 0;
-            dr["CFCPostEqGain6"] = 0;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 0;
-            dr["CFCPostEqGain9"] = 0;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 125;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 2000;
-            dr["CFCEqFreq6"] = 3000;
-            dr["CFCEqFreq7"] = 4000;
-            dr["CFCEqFreq8"] = 5000;
-            dr["CFCEqFreq9"] = 10000;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region SSB 2.8k CFC
-
-            dr = t.NewRow();
-            dr["Name"] = "SSB 2.8k CFC";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 2900;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = 4;
-            dr["TXEQ1"] = -9;
-            dr["TXEQ2"] = -6;
-            dr["TXEQ3"] = -4;
-            dr["TXEQ4"] = -3;
-            dr["TXEQ5"] = -2;
-            dr["TXEQ6"] = -1;
-            dr["TXEQ7"] = -1;
-            dr["TXEQ8"] = -1;
-            dr["TXEQ9"] = -2;
-            dr["TXEQ10"] = -2;
-            dr["TxEqFreq1"] = 30;
-            dr["TxEqFreq2"] = 70;
-            dr["TxEqFreq3"] = 300;
-            dr["TxEqFreq4"] = 500;
-            dr["TxEqFreq5"] = 1000;
-            dr["TxEqFreq6"] = 2000;
-            dr["TxEqFreq7"] = 3000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 5000;
-            dr["TxEqFreq10"] = 6000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 1;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 6;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "SWR";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 100;
-            dr["AM_Carrier_Level"] = 85;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = true;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "1024";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = false;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 60;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = true;
-            dr["CFCPostEqEnabled"] = true;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 6;
-            dr["CFCPostEqGain"] = -6;
-
-            dr["CFCPreComp0"] = 5;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 4;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 6;
-            dr["CFCPreComp6"] = 7;
-            dr["CFCPreComp7"] = 8;
-            dr["CFCPreComp8"] = 9;
-            dr["CFCPreComp9"] = 9;
-
-            dr["CFCPostEqGain0"] = -7;
-            dr["CFCPostEqGain1"] = -7;
-            dr["CFCPostEqGain2"] = -8;
-            dr["CFCPostEqGain3"] = -8;
-            dr["CFCPostEqGain4"] = -8;
-            dr["CFCPostEqGain5"] = -7;
-            dr["CFCPostEqGain6"] = -5;
-            dr["CFCPostEqGain7"] = -4;
-            dr["CFCPostEqGain8"] = -4;
-            dr["CFCPostEqGain9"] = -5;
-
-            dr["CFCEqFreq0"] = 100;
-            dr["CFCEqFreq1"] = 150;
-            dr["CFCEqFreq2"] = 300;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 750;
-            dr["CFCEqFreq5"] = 1250;
-            dr["CFCEqFreq6"] = 1750;
-            dr["CFCEqFreq7"] = 2000;
-            dr["CFCEqFreq8"] = 2600;
-            dr["CFCEqFreq9"] = 2900;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region SSB 3.0k CFC
-
-            dr = t.NewRow();
-            dr["Name"] = "SSB 3.0k CFC";
-            dr["FilterLow"] = 100;
-            dr["FilterHigh"] = 3100;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = 4;
-            dr["TXEQ1"] = -9;
-            dr["TXEQ2"] = -6;
-            dr["TXEQ3"] = -4;
-            dr["TXEQ4"] = -3;
-            dr["TXEQ5"] = -2;
-            dr["TXEQ6"] = -1;
-            dr["TXEQ7"] = -1;
-            dr["TXEQ8"] = -1;
-            dr["TXEQ9"] = -2;
-            dr["TXEQ10"] = -2;
-            dr["TxEqFreq1"] = 30;
-            dr["TxEqFreq2"] = 70;
-            dr["TxEqFreq3"] = 300;
-            dr["TxEqFreq4"] = 500;
-            dr["TxEqFreq5"] = 1000;
-            dr["TxEqFreq6"] = 2000;
-            dr["TxEqFreq7"] = 3000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 5000;
-            dr["TxEqFreq10"] = 6000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 1;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 6;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "SWR";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 100;
-            dr["AM_Carrier_Level"] = 85;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = true;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "1024";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = false;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 60;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = true;
-            dr["CFCPostEqEnabled"] = true;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 6;
-            dr["CFCPostEqGain"] = -7;
-
-            dr["CFCPreComp0"] = 6;
-            dr["CFCPreComp1"] = 6;
-            dr["CFCPreComp2"] = 5;
-            dr["CFCPreComp3"] = 4;
-            dr["CFCPreComp4"] = 5;
-            dr["CFCPreComp5"] = 6;
-            dr["CFCPreComp6"] = 7;
-            dr["CFCPreComp7"] = 8;
-            dr["CFCPreComp8"] = 9;
-            dr["CFCPreComp9"] = 9;
-
-            dr["CFCPostEqGain0"] = -4;
-            dr["CFCPostEqGain1"] = -5;
-            dr["CFCPostEqGain2"] = -7;
-            dr["CFCPostEqGain3"] = -8;
-            dr["CFCPostEqGain4"] = -8;
-            dr["CFCPostEqGain5"] = -7;
-            dr["CFCPostEqGain6"] = -4;
-            dr["CFCPostEqGain7"] = -2;
-            dr["CFCPostEqGain8"] = -1;
-            dr["CFCPostEqGain9"] = -1;
-
-            dr["CFCEqFreq0"] = 100;
-            dr["CFCEqFreq1"] = 150;
-            dr["CFCEqFreq2"] = 300;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 750;
-            dr["CFCEqFreq5"] = 1250;
-            dr["CFCEqFreq6"] = 1750;
-            dr["CFCEqFreq7"] = 2000;
-            dr["CFCEqFreq8"] = 2600;
-            dr["CFCEqFreq9"] = 3100;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region SSB 3.3k CFC
-
-            dr = t.NewRow();
-            dr["Name"] = "SSB 3.3k CFC";
-            dr["FilterLow"] = 50;
-            dr["FilterHigh"] = 3350;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = 4;
-            dr["TXEQ1"] = -9;
-            dr["TXEQ2"] = -6;
-            dr["TXEQ3"] = -4;
-            dr["TXEQ4"] = -3;
-            dr["TXEQ5"] = -2;
-            dr["TXEQ6"] = -1;
-            dr["TXEQ7"] = -1;
-            dr["TXEQ8"] = -1;
-            dr["TXEQ9"] = -2;
-            dr["TXEQ10"] = -2;
-            dr["TxEqFreq1"] = 30;
-            dr["TxEqFreq2"] = 70;
-            dr["TxEqFreq3"] = 300;
-            dr["TxEqFreq4"] = 500;
-            dr["TxEqFreq5"] = 1000;
-            dr["TxEqFreq6"] = 2000;
-            dr["TxEqFreq7"] = 3000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 5000;
-            dr["TxEqFreq10"] = 6000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 1;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 6;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "SWR";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 100;
-            dr["AM_Carrier_Level"] = 85;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = true;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "1024";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = false;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 60;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = true;
-            dr["CFCPostEqEnabled"] = true;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 8;
-
-            dr["CFCPreComp"] = 7;
-            dr["CFCPostEqGain"] = -6;
-
-            dr["CFCPreComp0"] = 4;
-            dr["CFCPreComp1"] = 4;
-            dr["CFCPreComp2"] = 3;
-            dr["CFCPreComp3"] = 3;
-            dr["CFCPreComp4"] = 4;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 6;
-            dr["CFCPreComp7"] = 7;
-            dr["CFCPreComp8"] = 8;
-            dr["CFCPreComp9"] = 8;
-
-            dr["CFCPostEqGain0"] = -6;
-            dr["CFCPostEqGain1"] = -6;
-            dr["CFCPostEqGain2"] = -7;
-            dr["CFCPostEqGain3"] = -8;
-            dr["CFCPostEqGain4"] = -8;
-            dr["CFCPostEqGain5"] = -7;
-            dr["CFCPostEqGain6"] = -5;
-            dr["CFCPostEqGain7"] = -5;
-            dr["CFCPostEqGain8"] = -4;
-            dr["CFCPostEqGain9"] = -5;
-
-            dr["CFCEqFreq0"] = 50;
-            dr["CFCEqFreq1"] = 150;
-            dr["CFCEqFreq2"] = 300;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 750;
-            dr["CFCEqFreq5"] = 1250;
-            dr["CFCEqFreq6"] = 1750;
-            dr["CFCEqFreq7"] = 2000;
-            dr["CFCEqFreq8"] = 2600;
-            dr["CFCEqFreq9"] = 3350;
-
-            t.Rows.Add(dr);
-
-            #endregion
-
-            #region AM 10k CFC
-
-            dr = t.NewRow();
-            dr["Name"] = "AM 10k CFC";
-            dr["FilterLow"] = 0;
-            dr["FilterHigh"] = 5000;
-            dr["TXEQNumBands"] = 10;
-            dr["TXEQEnabled"] = true;
-            dr["TXEQPreamp"] = 4;
-            dr["TXEQ1"] = -9;
-            dr["TXEQ2"] = -6;
-            dr["TXEQ3"] = -4;
-            dr["TXEQ4"] = -3;
-            dr["TXEQ5"] = -2;
-            dr["TXEQ6"] = -1;
-            dr["TXEQ7"] = -1;
-            dr["TXEQ8"] = -1;
-            dr["TXEQ9"] = -2;
-            dr["TXEQ10"] = -2;
-            dr["TxEqFreq1"] = 30;
-            dr["TxEqFreq2"] = 70;
-            dr["TxEqFreq3"] = 300;
-            dr["TxEqFreq4"] = 500;
-            dr["TxEqFreq5"] = 1000;
-            dr["TxEqFreq6"] = 2000;
-            dr["TxEqFreq7"] = 3000;
-            dr["TxEqFreq8"] = 4000;
-            dr["TxEqFreq9"] = 5000;
-            dr["TxEqFreq10"] = 6000;
-            dr["DXOn"] = false;
-            dr["DXLevel"] = 3;
-            dr["CompanderOn"] = false;
-            dr["CompanderLevel"] = 1;
-            dr["MicGain"] = 10;
-            dr["FMMicGain"] = 6;
-            dr["Lev_On"] = true;
-            dr["Lev_Slope"] = 0;
-            dr["Lev_MaxGain"] = 15;
-            dr["Lev_Attack"] = 2;
-            dr["Lev_Decay"] = 100;
-            dr["Lev_Hang"] = 500;
-            dr["Lev_HangThreshold"] = 0;
-            dr["ALC_Slope"] = 0;
-            dr["ALC_MaximumGain"] = 3;
-            dr["ALC_Attack"] = 2;
-            dr["ALC_Decay"] = 10;
-            dr["ALC_Hang"] = 500;
-            dr["ALC_HangThreshold"] = 0;
-            dr["Power"] = 50;
-            dr["VOX_On"] = false;
-            dr["Dexp_On"] = false;
-            dr["Dexp_Threshold"] = -40;
-            dr["Dexp_Attack"] = 2;
-            dr["VOX_HangTime"] = 250;
-            dr["Dexp_Release"] = 100;
-            dr["Dexp_Attenuate"] = 10.0;
-            dr["Dexp_Hysterisis"] = 2.0;
-            dr["Dexp_Tau"] = 20;
-            dr["Dexp_SCF_On"] = true;
-            dr["Dexp_SCF_Low"] = 500;
-            dr["Dexp_SCF_High"] = 1500;
-            dr["Dexp_LookAhead_On"] = true;
-            dr["Dexp_LookAhead"] = 60;
-            dr["Tune_Power"] = 10;
-            dr["Tune_Meter_Type"] = "SWR";
-            //dr["TX_Limit_Slew"] = false;
-            dr["TX_AF_Level"] = 100;
-            dr["AM_Carrier_Level"] = 95;
-            dr["Show_TX_Filter"] = true;
-            dr["VAC1_On"] = false;
-            dr["VAC1_Auto_On"] = false;
-            dr["VAC1_RX_GAIN"] = 0;
-            dr["VAC1_TX_GAIN"] = 0;
-            dr["VAC1_Stereo_On"] = true;
-            dr["VAC1_Sample_Rate"] = "48000";
-            dr["VAC1_Buffer_Size"] = "1024";
-            dr["VAC1_IQ_Output"] = false;
-            dr["VAC1_IQ_Correct"] = true;
-            dr["VAC1_PTT_OverRide"] = false;
-            dr["VAC1_Combine_Input_Channels"] = false;
-            dr["VAC1_Latency_On"] = true;
-            dr["VAC1_Latency_Duration"] = 60;
-            dr["VAC2_On"] = false;
-            dr["VAC2_Auto_On"] = false;
-            dr["VAC2_RX_GAIN"] = 0;
-            dr["VAC2_TX_GAIN"] = 0;
-            dr["VAC2_Stereo_On"] = false;
-            dr["VAC2_Sample_Rate"] = "48000";
-            dr["VAC2_Buffer_Size"] = "2048";
-            dr["VAC2_IQ_Output"] = false;
-            dr["VAC2_IQ_Correct"] = true;
-            dr["VAC2_Combine_Input_Channels"] = false;
-            dr["VAC2_Latency_On"] = true;
-            dr["VAC2_Latency_Duration"] = 120;
-            dr["Phone_RX_DSP_Buffer"] = "64";
-            dr["Phone_TX_DSP_Buffer"] = "64";
-            dr["FM_RX_DSP_Buffer"] = "256";
-            dr["FM_TX_DSP_Buffer"] = "128";
-            dr["Digi_RX_DSP_Buffer"] = "64";
-            dr["Digi_TX_DSP_Buffer"] = "64";
-            dr["CW_RX_DSP_Buffer"] = "64";
-
-            dr["Phone_RX_DSP_Filter_Size"] = "4096";
-            dr["Phone_TX_DSP_Filter_Size"] = "4096";
-            dr["FM_RX_DSP_Filter_Size"] = "4096";
-            dr["FM_TX_DSP_Filter_Size"] = "4096";
-            dr["Digi_RX_DSP_Filter_Size"] = "4096";
-            dr["Digi_TX_DSP_Filter_Size"] = "4096";
-            dr["CW_RX_DSP_Filter_Size"] = "4096";
-
-            dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
-            dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
-            dr["Mic_Input_On"] = true;
-            dr["Mic_Input_Boost"] = true;
-            dr["Line_Input_On"] = false;
-            dr["Line_Input_Level"] = 0.0;
-            dr["CESSB_On"] = false;
-            dr["Pure_Signal_Enabled"] = false;
-
-            // CFC
-            dr["CFCEnabled"] = true;
-            dr["CFCPostEqEnabled"] = true;
-            dr["CFCPhaseRotatorEnabled"] = false;
-
-            dr["CFCPhaseRotatorFreq"] = 338;
-            dr["CFCPhaseRotatorStages"] = 9;
-
-            dr["CFCPreComp"] = 6;
-            dr["CFCPostEqGain"] = -8;
-
-            dr["CFCPreComp0"] = 6;
-            dr["CFCPreComp1"] = 5;
-            dr["CFCPreComp2"] = 4;
-            dr["CFCPreComp3"] = 4;
-            dr["CFCPreComp4"] = 4;
-            dr["CFCPreComp5"] = 5;
-            dr["CFCPreComp6"] = 6;
-            dr["CFCPreComp7"] = 7;
-            dr["CFCPreComp8"] = 7;
-            dr["CFCPreComp9"] = 7;
-
-            dr["CFCPostEqGain0"] = 0;
-            dr["CFCPostEqGain1"] = -1;
-            dr["CFCPostEqGain2"] = -2;
-            dr["CFCPostEqGain3"] = -3;
-            dr["CFCPostEqGain4"] = -3;
-            dr["CFCPostEqGain5"] = -2;
-            dr["CFCPostEqGain6"] = -1;
-            dr["CFCPostEqGain7"] = 0;
-            dr["CFCPostEqGain8"] = 1;
-            dr["CFCPostEqGain9"] = 1;
-
-            dr["CFCEqFreq0"] = 0;
-            dr["CFCEqFreq1"] = 70;
-            dr["CFCEqFreq2"] = 250;
-            dr["CFCEqFreq3"] = 500;
-            dr["CFCEqFreq4"] = 1000;
-            dr["CFCEqFreq5"] = 1500;
-            dr["CFCEqFreq6"] = 2000;
-            dr["CFCEqFreq7"] = 3000;
-            dr["CFCEqFreq8"] = 4000;
-            dr["CFCEqFreq9"] = 5000;
-
-            t.Rows.Add(dr);
-
-            #endregion
+                // W4TME
+                #region DIGI 1K@2210
+
+                dr = t.NewRow();
+                dr["Name"] = "Digi 1K@2210";
+                dr["FilterLow"] = 1710;
+                dr["FilterHigh"] = 2710;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 0;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 0;
+                dr["MicGain"] = 5;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = false;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region AM
+
+                dr = t.NewRow();
+                dr["Name"] = "AM";
+                dr["FilterLow"] = 0;
+                dr["FilterHigh"] = 4000;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 3;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region Conventional
+
+                dr = t.NewRow();
+                dr["Name"] = "Conventional";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3100;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 3;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region D-104
+
+                dr = t.NewRow();
+                dr["Name"] = "D-104";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3500;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = -6;
+                dr["TXEQ1"] = 7;
+                dr["TXEQ2"] = 3;
+                dr["TXEQ3"] = 4;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 5;
+                dr["MicGain"] = 25;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region D-104+CPDR
+
+                dr = t.NewRow();
+                dr["Name"] = "D-104+CPDR";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3500;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = -6;
+                dr["TXEQ1"] = 7;
+                dr["TXEQ2"] = 3;
+                dr["TXEQ3"] = 4;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = true;
+                dr["CompanderLevel"] = 5;
+                dr["MicGain"] = 20;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region D-104+EQ
+
+                dr = t.NewRow();
+                dr["Name"] = "D-104+EQ";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3500;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = true;
+                dr["TXEQPreamp"] = -6;
+                dr["TXEQ1"] = 7;
+                dr["TXEQ2"] = 3;
+                dr["TXEQ3"] = 4;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 5;
+                dr["MicGain"] = 20;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region DX / Constest
+
+                dr = t.NewRow();
+                dr["Name"] = "DX / Contest";
+                dr["FilterLow"] = 250;
+                dr["FilterHigh"] = 3250;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = true;
+                dr["DXLevel"] = 5;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 3;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region ESSB
+
+                dr = t.NewRow();
+                dr["Name"] = "ESSB";
+                dr["FilterLow"] = 50;
+                dr["FilterHigh"] = 3650;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = true;
+                dr["CompanderLevel"] = 3;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = false;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region HC4-5
+
+                dr = t.NewRow();
+                dr["Name"] = "HC4-5";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3100;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 5;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region HC4-5+CPDR
+
+                dr = t.NewRow();
+                dr["Name"] = "HC4-5+CPDR";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3100;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = true;
+                dr["CompanderLevel"] = 5;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region PR40+W2IHY
+
+                dr = t.NewRow();
+                dr["Name"] = "PR40+W2IHY";
+                dr["FilterLow"] = 50;
+                dr["FilterHigh"] = 3650;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 3;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region PR40+W2IHY+CPDR
+
+                dr = t.NewRow();
+                dr["Name"] = "PR40+W2IHY+CPDR";
+                dr["FilterLow"] = 50;
+                dr["FilterHigh"] = 3650;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = false;
+                dr["TXEQPreamp"] = 0;
+                dr["TXEQ1"] = 0;
+                dr["TXEQ2"] = 0;
+                dr["TXEQ3"] = 0;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = true;
+                dr["CompanderLevel"] = 3;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region PR781+EQ
+
+                dr = t.NewRow();
+                dr["Name"] = "PR781+EQ";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3200;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = true;
+                dr["TXEQPreamp"] = -11;
+                dr["TXEQ1"] = -6;
+                dr["TXEQ2"] = 2;
+                dr["TXEQ3"] = 8;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 3;
+                dr["MicGain"] = 12;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region PR781+EQ+CPDR
+
+                dr = t.NewRow();
+                dr["Name"] = "PR781+EQ+CPDR";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3200;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = true;
+                dr["TXEQPreamp"] = -9;
+                dr["TXEQ1"] = -8;
+                dr["TXEQ2"] = 3;
+                dr["TXEQ3"] = 7;
+                dr["TXEQ4"] = 0;
+                dr["TXEQ5"] = 0;
+                dr["TXEQ6"] = 0;
+                dr["TXEQ7"] = 0;
+                dr["TXEQ8"] = 0;
+                dr["TXEQ9"] = 0;
+                dr["TXEQ10"] = 0;
+                dr["TxEqFreq1"] = 32;
+                dr["TxEqFreq2"] = 63;
+                dr["TxEqFreq3"] = 125;
+                dr["TxEqFreq4"] = 250;
+                dr["TxEqFreq5"] = 500;
+                dr["TxEqFreq6"] = 1000;
+                dr["TxEqFreq7"] = 2000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 8000;
+                dr["TxEqFreq10"] = 16000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = true;
+                dr["CompanderLevel"] = 2;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 10;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "Fwd Pwr";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 50;
+                dr["AM_Carrier_Level"] = 100;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = false;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "2048";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = true;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = false;
+                dr["CFCPostEqEnabled"] = false;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 0;
+                dr["CFCPostEqGain"] = 0;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 5;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 5;
+                dr["CFCPreComp7"] = 5;
+                dr["CFCPreComp8"] = 5;
+                dr["CFCPreComp9"] = 5;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = 0;
+                dr["CFCPostEqGain2"] = 0;
+                dr["CFCPostEqGain3"] = 0;
+                dr["CFCPostEqGain4"] = 0;
+                dr["CFCPostEqGain5"] = 0;
+                dr["CFCPostEqGain6"] = 0;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 0;
+                dr["CFCPostEqGain9"] = 0;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 125;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 2000;
+                dr["CFCEqFreq6"] = 3000;
+                dr["CFCEqFreq7"] = 4000;
+                dr["CFCEqFreq8"] = 5000;
+                dr["CFCEqFreq9"] = 10000;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region SSB 2.8k CFC
+
+                dr = t.NewRow();
+                dr["Name"] = "SSB 2.8k CFC";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 2900;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = true;
+                dr["TXEQPreamp"] = 4;
+                dr["TXEQ1"] = -9;
+                dr["TXEQ2"] = -6;
+                dr["TXEQ3"] = -4;
+                dr["TXEQ4"] = -3;
+                dr["TXEQ5"] = -2;
+                dr["TXEQ6"] = -1;
+                dr["TXEQ7"] = -1;
+                dr["TXEQ8"] = -1;
+                dr["TXEQ9"] = -2;
+                dr["TXEQ10"] = -2;
+                dr["TxEqFreq1"] = 30;
+                dr["TxEqFreq2"] = 70;
+                dr["TxEqFreq3"] = 300;
+                dr["TxEqFreq4"] = 500;
+                dr["TxEqFreq5"] = 1000;
+                dr["TxEqFreq6"] = 2000;
+                dr["TxEqFreq7"] = 3000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 5000;
+                dr["TxEqFreq10"] = 6000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 1;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 6;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "SWR";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 100;
+                dr["AM_Carrier_Level"] = 85;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = true;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "1024";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = false;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = true;
+                dr["CFCPostEqEnabled"] = true;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 6;
+                dr["CFCPostEqGain"] = -6;
+
+                dr["CFCPreComp0"] = 5;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 4;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 6;
+                dr["CFCPreComp6"] = 7;
+                dr["CFCPreComp7"] = 8;
+                dr["CFCPreComp8"] = 9;
+                dr["CFCPreComp9"] = 9;
+
+                dr["CFCPostEqGain0"] = -7;
+                dr["CFCPostEqGain1"] = -7;
+                dr["CFCPostEqGain2"] = -8;
+                dr["CFCPostEqGain3"] = -8;
+                dr["CFCPostEqGain4"] = -8;
+                dr["CFCPostEqGain5"] = -7;
+                dr["CFCPostEqGain6"] = -5;
+                dr["CFCPostEqGain7"] = -4;
+                dr["CFCPostEqGain8"] = -4;
+                dr["CFCPostEqGain9"] = -5;
+
+                dr["CFCEqFreq0"] = 100;
+                dr["CFCEqFreq1"] = 150;
+                dr["CFCEqFreq2"] = 300;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 750;
+                dr["CFCEqFreq5"] = 1250;
+                dr["CFCEqFreq6"] = 1750;
+                dr["CFCEqFreq7"] = 2000;
+                dr["CFCEqFreq8"] = 2600;
+                dr["CFCEqFreq9"] = 2900;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region SSB 3.0k CFC
+
+                dr = t.NewRow();
+                dr["Name"] = "SSB 3.0k CFC";
+                dr["FilterLow"] = 100;
+                dr["FilterHigh"] = 3100;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = true;
+                dr["TXEQPreamp"] = 4;
+                dr["TXEQ1"] = -9;
+                dr["TXEQ2"] = -6;
+                dr["TXEQ3"] = -4;
+                dr["TXEQ4"] = -3;
+                dr["TXEQ5"] = -2;
+                dr["TXEQ6"] = -1;
+                dr["TXEQ7"] = -1;
+                dr["TXEQ8"] = -1;
+                dr["TXEQ9"] = -2;
+                dr["TXEQ10"] = -2;
+                dr["TxEqFreq1"] = 30;
+                dr["TxEqFreq2"] = 70;
+                dr["TxEqFreq3"] = 300;
+                dr["TxEqFreq4"] = 500;
+                dr["TxEqFreq5"] = 1000;
+                dr["TxEqFreq6"] = 2000;
+                dr["TxEqFreq7"] = 3000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 5000;
+                dr["TxEqFreq10"] = 6000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 1;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 6;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "SWR";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 100;
+                dr["AM_Carrier_Level"] = 85;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = true;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "1024";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = false;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = true;
+                dr["CFCPostEqEnabled"] = true;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 6;
+                dr["CFCPostEqGain"] = -7;
+
+                dr["CFCPreComp0"] = 6;
+                dr["CFCPreComp1"] = 6;
+                dr["CFCPreComp2"] = 5;
+                dr["CFCPreComp3"] = 4;
+                dr["CFCPreComp4"] = 5;
+                dr["CFCPreComp5"] = 6;
+                dr["CFCPreComp6"] = 7;
+                dr["CFCPreComp7"] = 8;
+                dr["CFCPreComp8"] = 9;
+                dr["CFCPreComp9"] = 9;
+
+                dr["CFCPostEqGain0"] = -4;
+                dr["CFCPostEqGain1"] = -5;
+                dr["CFCPostEqGain2"] = -7;
+                dr["CFCPostEqGain3"] = -8;
+                dr["CFCPostEqGain4"] = -8;
+                dr["CFCPostEqGain5"] = -7;
+                dr["CFCPostEqGain6"] = -4;
+                dr["CFCPostEqGain7"] = -2;
+                dr["CFCPostEqGain8"] = -1;
+                dr["CFCPostEqGain9"] = -1;
+
+                dr["CFCEqFreq0"] = 100;
+                dr["CFCEqFreq1"] = 150;
+                dr["CFCEqFreq2"] = 300;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 750;
+                dr["CFCEqFreq5"] = 1250;
+                dr["CFCEqFreq6"] = 1750;
+                dr["CFCEqFreq7"] = 2000;
+                dr["CFCEqFreq8"] = 2600;
+                dr["CFCEqFreq9"] = 3100;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region SSB 3.3k CFC
+
+                dr = t.NewRow();
+                dr["Name"] = "SSB 3.3k CFC";
+                dr["FilterLow"] = 50;
+                dr["FilterHigh"] = 3350;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = true;
+                dr["TXEQPreamp"] = 4;
+                dr["TXEQ1"] = -9;
+                dr["TXEQ2"] = -6;
+                dr["TXEQ3"] = -4;
+                dr["TXEQ4"] = -3;
+                dr["TXEQ5"] = -2;
+                dr["TXEQ6"] = -1;
+                dr["TXEQ7"] = -1;
+                dr["TXEQ8"] = -1;
+                dr["TXEQ9"] = -2;
+                dr["TXEQ10"] = -2;
+                dr["TxEqFreq1"] = 30;
+                dr["TxEqFreq2"] = 70;
+                dr["TxEqFreq3"] = 300;
+                dr["TxEqFreq4"] = 500;
+                dr["TxEqFreq5"] = 1000;
+                dr["TxEqFreq6"] = 2000;
+                dr["TxEqFreq7"] = 3000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 5000;
+                dr["TxEqFreq10"] = 6000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 1;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 6;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "SWR";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 100;
+                dr["AM_Carrier_Level"] = 85;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = true;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "1024";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = false;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = true;
+                dr["CFCPostEqEnabled"] = true;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 8;
+
+                dr["CFCPreComp"] = 7;
+                dr["CFCPostEqGain"] = -6;
+
+                dr["CFCPreComp0"] = 4;
+                dr["CFCPreComp1"] = 4;
+                dr["CFCPreComp2"] = 3;
+                dr["CFCPreComp3"] = 3;
+                dr["CFCPreComp4"] = 4;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 6;
+                dr["CFCPreComp7"] = 7;
+                dr["CFCPreComp8"] = 8;
+                dr["CFCPreComp9"] = 8;
+
+                dr["CFCPostEqGain0"] = -6;
+                dr["CFCPostEqGain1"] = -6;
+                dr["CFCPostEqGain2"] = -7;
+                dr["CFCPostEqGain3"] = -8;
+                dr["CFCPostEqGain4"] = -8;
+                dr["CFCPostEqGain5"] = -7;
+                dr["CFCPostEqGain6"] = -5;
+                dr["CFCPostEqGain7"] = -5;
+                dr["CFCPostEqGain8"] = -4;
+                dr["CFCPostEqGain9"] = -5;
+
+                dr["CFCEqFreq0"] = 50;
+                dr["CFCEqFreq1"] = 150;
+                dr["CFCEqFreq2"] = 300;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 750;
+                dr["CFCEqFreq5"] = 1250;
+                dr["CFCEqFreq6"] = 1750;
+                dr["CFCEqFreq7"] = 2000;
+                dr["CFCEqFreq8"] = 2600;
+                dr["CFCEqFreq9"] = 3350;
+
+                t.Rows.Add(dr);
+
+                #endregion
+
+                #region AM 10k CFC
+
+                dr = t.NewRow();
+                dr["Name"] = "AM 10k CFC";
+                dr["FilterLow"] = 0;
+                dr["FilterHigh"] = 5000;
+                dr["TXEQNumBands"] = 10;
+                dr["TXEQEnabled"] = true;
+                dr["TXEQPreamp"] = 4;
+                dr["TXEQ1"] = -9;
+                dr["TXEQ2"] = -6;
+                dr["TXEQ3"] = -4;
+                dr["TXEQ4"] = -3;
+                dr["TXEQ5"] = -2;
+                dr["TXEQ6"] = -1;
+                dr["TXEQ7"] = -1;
+                dr["TXEQ8"] = -1;
+                dr["TXEQ9"] = -2;
+                dr["TXEQ10"] = -2;
+                dr["TxEqFreq1"] = 30;
+                dr["TxEqFreq2"] = 70;
+                dr["TxEqFreq3"] = 300;
+                dr["TxEqFreq4"] = 500;
+                dr["TxEqFreq5"] = 1000;
+                dr["TxEqFreq6"] = 2000;
+                dr["TxEqFreq7"] = 3000;
+                dr["TxEqFreq8"] = 4000;
+                dr["TxEqFreq9"] = 5000;
+                dr["TxEqFreq10"] = 6000;
+                dr["DXOn"] = false;
+                dr["DXLevel"] = 3;
+                dr["CompanderOn"] = false;
+                dr["CompanderLevel"] = 1;
+                dr["MicGain"] = 10;
+                dr["FMMicGain"] = 6;
+                dr["Lev_On"] = true;
+                dr["Lev_Slope"] = 0;
+                dr["Lev_MaxGain"] = 15;
+                dr["Lev_Attack"] = 2;
+                dr["Lev_Decay"] = 100;
+                dr["Lev_Hang"] = 500;
+                dr["Lev_HangThreshold"] = 0;
+                dr["ALC_Slope"] = 0;
+                dr["ALC_MaximumGain"] = 3;
+                dr["ALC_Attack"] = 2;
+                dr["ALC_Decay"] = 10;
+                dr["ALC_Hang"] = 500;
+                dr["ALC_HangThreshold"] = 0;
+                dr["Power"] = 50;
+                dr["VOX_On"] = false;
+                dr["Dexp_On"] = false;
+                dr["Dexp_Threshold"] = -40;
+                dr["Dexp_Attack"] = 2;
+                dr["VOX_HangTime"] = 250;
+                dr["Dexp_Release"] = 100;
+                dr["Dexp_Attenuate"] = 10.0;
+                dr["Dexp_Hysterisis"] = 2.0;
+                dr["Dexp_Tau"] = 20;
+                dr["Dexp_SCF_On"] = true;
+                dr["Dexp_SCF_Low"] = 500;
+                dr["Dexp_SCF_High"] = 1500;
+                dr["Dexp_LookAhead_On"] = true;
+                dr["Dexp_LookAhead"] = 60;
+                dr["Tune_Power"] = 10;
+                dr["Tune_Meter_Type"] = "SWR";
+                //dr["TX_Limit_Slew"] = false;
+                dr["TX_AF_Level"] = 100;
+                dr["AM_Carrier_Level"] = 95;
+                dr["Show_TX_Filter"] = true;
+                dr["VAC1_On"] = false;
+                dr["VAC1_Auto_On"] = false;
+                dr["VAC1_RX_GAIN"] = 0;
+                dr["VAC1_TX_GAIN"] = 0;
+                dr["VAC1_Stereo_On"] = true;
+                dr["VAC1_Sample_Rate"] = "48000";
+                dr["VAC1_Buffer_Size"] = "1024";
+                dr["VAC1_IQ_Output"] = false;
+                dr["VAC1_IQ_Correct"] = true;
+                dr["VAC1_PTT_OverRide"] = false;
+                dr["VAC1_Combine_Input_Channels"] = false;
+                dr["VAC1_Latency_On"] = true;
+                dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC2_On"] = false;
+                dr["VAC2_Auto_On"] = false;
+                dr["VAC2_RX_GAIN"] = 0;
+                dr["VAC2_TX_GAIN"] = 0;
+                dr["VAC2_Stereo_On"] = false;
+                dr["VAC2_Sample_Rate"] = "48000";
+                dr["VAC2_Buffer_Size"] = "2048";
+                dr["VAC2_IQ_Output"] = false;
+                dr["VAC2_IQ_Correct"] = true;
+                dr["VAC2_Combine_Input_Channels"] = false;
+                dr["VAC2_Latency_On"] = true;
+                dr["VAC2_Latency_Duration"] = 120;
+                dr["Phone_RX_DSP_Buffer"] = "64";
+                dr["Phone_TX_DSP_Buffer"] = "64";
+                dr["FM_RX_DSP_Buffer"] = "256";
+                dr["FM_TX_DSP_Buffer"] = "128";
+                dr["Digi_RX_DSP_Buffer"] = "64";
+                dr["Digi_TX_DSP_Buffer"] = "64";
+                dr["CW_RX_DSP_Buffer"] = "64";
+
+                dr["Phone_RX_DSP_Filter_Size"] = "4096";
+                dr["Phone_TX_DSP_Filter_Size"] = "4096";
+                dr["FM_RX_DSP_Filter_Size"] = "4096";
+                dr["FM_TX_DSP_Filter_Size"] = "4096";
+                dr["Digi_RX_DSP_Filter_Size"] = "4096";
+                dr["Digi_TX_DSP_Filter_Size"] = "4096";
+                dr["CW_RX_DSP_Filter_Size"] = "4096";
+
+                dr["Phone_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Phone_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["FM_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Digi_TX_DSP_Filter_Type"] = "Low Latency";
+                dr["CW_RX_DSP_Filter_Type"] = "Low Latency";
+                dr["Mic_Input_On"] = true;
+                dr["Mic_Input_Boost"] = true;
+                dr["Line_Input_On"] = false;
+                dr["Line_Input_Level"] = 0.0;
+                dr["CESSB_On"] = false;
+                dr["Pure_Signal_Enabled"] = false;
+
+                // CFC
+                dr["CFCEnabled"] = true;
+                dr["CFCPostEqEnabled"] = true;
+                dr["CFCPhaseRotatorEnabled"] = false;
+
+                dr["CFCPhaseRotatorFreq"] = 338;
+                dr["CFCPhaseRotatorStages"] = 9;
+
+                dr["CFCPreComp"] = 6;
+                dr["CFCPostEqGain"] = -8;
+
+                dr["CFCPreComp0"] = 6;
+                dr["CFCPreComp1"] = 5;
+                dr["CFCPreComp2"] = 4;
+                dr["CFCPreComp3"] = 4;
+                dr["CFCPreComp4"] = 4;
+                dr["CFCPreComp5"] = 5;
+                dr["CFCPreComp6"] = 6;
+                dr["CFCPreComp7"] = 7;
+                dr["CFCPreComp8"] = 7;
+                dr["CFCPreComp9"] = 7;
+
+                dr["CFCPostEqGain0"] = 0;
+                dr["CFCPostEqGain1"] = -1;
+                dr["CFCPostEqGain2"] = -2;
+                dr["CFCPostEqGain3"] = -3;
+                dr["CFCPostEqGain4"] = -3;
+                dr["CFCPostEqGain5"] = -2;
+                dr["CFCPostEqGain6"] = -1;
+                dr["CFCPostEqGain7"] = 0;
+                dr["CFCPostEqGain8"] = 1;
+                dr["CFCPostEqGain9"] = 1;
+
+                dr["CFCEqFreq0"] = 0;
+                dr["CFCEqFreq1"] = 70;
+                dr["CFCEqFreq2"] = 250;
+                dr["CFCEqFreq3"] = 500;
+                dr["CFCEqFreq4"] = 1000;
+                dr["CFCEqFreq5"] = 1500;
+                dr["CFCEqFreq6"] = 2000;
+                dr["CFCEqFreq7"] = 3000;
+                dr["CFCEqFreq8"] = 4000;
+                dr["CFCEqFreq9"] = 5000;
+
+                t.Rows.Add(dr);
+
+                    #endregion
+            }
         }
 
         private static void CheckBandTextValid()
@@ -8032,7 +7510,7 @@ namespace Thetis
         // Public Member Functions 
         // ======================================================
 
-        public static bool Init(Console thisConsole)
+        public static bool Init()
         {
             ds = new DataSet("Data");
             
@@ -8046,14 +7524,13 @@ namespace Thetis
                 {
                     return false;
                 }
-            }
-                
+            }                
 
             VerifyTables();
 
             CheckBandTextValid();
 
-            VersionNumber = thisConsole.getVersion();
+            VersionNumber = Common.GetVerNum();
             VersionString = TitleBar.GetString();
 
             return true;
@@ -8213,36 +7690,8 @@ namespace Thetis
             ZoomFactor = (int)((double)((DataRow)rows[index])["ZoomFactor"]);
             CenterFreq = (double)((DataRow)rows[index])["CenterFreq"];
 
-            //mode = getDBString(((DataRow)rows[index])["Mode"]);
-            //filter = getDBString(((DataRow)rows[index])["Filter"]);
-            //freq = getDBDouble(((DataRow)rows[index])["Freq"]);
-            //CTUN = getDBBool(((DataRow)rows[index])["CTUN"]);
-            //ZoomFactor = (int)getDBDouble(((DataRow)rows[index])["ZoomFactor"]);
-            //CenterFreq = getDBDouble(((DataRow)rows[index])["CenterFreq"]);
-
             return true;
         }
-
-        //private static string getDBString(Object o, string def = "")
-        //{
-        //    if (o is System.DBNull) return def;
-        //    return (string)o;
-        //}
-        //private static int getDBInt(Object o, int def = 0)
-        //{
-        //    if (o is System.DBNull) return def;
-        //    return (int)o;
-        //}
-        //private static double getDBDouble(Object o, double def = 0)
-        //{
-        //    if (o is System.DBNull) return def;
-        //    return (double)o;
-        //}
-        //private static bool getDBBool(Object o, bool def = false)
-        //{
-        //    if (o is System.DBNull) return def;
-        //    return (bool)o;
-        //}
 
         public static void AddBandStack(string band, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
         {
@@ -8412,19 +7861,6 @@ namespace Thetis
                 foreach (var row in rows)
                     row.Delete();
             }
-            //rows = ds.Tables["State"].Select("Key = 'udRX1StepAttData'");
-            //if (rows != null)
-            //{
-            //    foreach (var row in rows)
-            //        row.Delete();
-            //}
-            //rows = ds.Tables["State"].Select("Key ='udRX2StepAttData'");
-            //if (rows != null)
-            //{
-            //    foreach (var row in rows)
-            //        row.Delete();
-            //}
-
         }
 
         public static void SaveVars(string tableName, ref ArrayList list)
@@ -8467,18 +7903,7 @@ namespace Thetis
                     newRow[1] = vals[1];
                     ds.Tables[tableName].Rows.Add(newRow);
                 }
-                //if (rows.Length == 0)	// name is not in list
-                //{
-                //    DataRow newRow = ds.Tables[tableName].NewRow();
-                //    newRow[0] = vals[0];
-                //    newRow[1] = vals[1];
-                //    ds.Tables[tableName].Rows.Add(newRow);
-                //}
-                //else if (rows.Length == 1)
-                //{
-                //    rows[0][1] = vals[1];
-                //}
-            }
+             }
         }
 
         public static ArrayList GetVars(string tableName)
@@ -8496,10 +7921,12 @@ namespace Thetis
 
             return list;
         }
-
+       
         //-W2PA New version of ImportDatabase to merge an old database or partly corruped one with a new default one
         public static bool ImportAndMergeDatabase(string filename, string appDataPath)
         {
+            string _versionnumber = "";
+
             importedDS = false;
             if (!File.Exists(filename)) return false;
 
@@ -8544,6 +7971,19 @@ namespace Thetis
             foreach (DataTable oldTable in oldDB.Tables)
             {
                 bool found = false;
+
+                if (oldTable.TableName == "State")
+                {
+                    foreach (DataRow rw in oldTable.Rows)
+                    {
+                        string thisKey = Convert.ToString(rw["Key"]);
+                        if (thisKey == "VersionNumber")
+                        {
+                            _versionnumber = Convert.ToString(rw["Value"]);
+                        }
+                    }
+                }
+
                 foreach (DataTable existingTable in existingDB.Tables)
                 {
                     if (existingTable.TableName == oldTable.TableName)
@@ -8710,8 +8150,9 @@ namespace Thetis
                                 tempTable = t.Copy();
                                 foundTable = true;
                                 break;
-                            }                            
+                            }
                         }
+
                         if (!foundTable)
                         {
                             // No corresponding table found in old database - must be new, so retain it as-is
@@ -8729,7 +8170,7 @@ namespace Thetis
                             {
                                 row["Value"] = VersionNumber;
                                 tempMergedTable.ImportRow(row);
-                            } 
+                            }
                             else if (thisKey == "Version")
                             {
                                 row["Value"] = VersionString;
@@ -8752,6 +8193,32 @@ namespace Thetis
                                         newSettingsValue += paddingDefault;  // expand old string into larger new string
                                     newSettingsRow["Value"] = newSettingsValue;
                                     tempMergedTable.ImportRow(newSettingsRow);
+                                }
+                                else tempMergedTable.ImportRow(row);
+                            }
+                            else if (thisKey == "comboRadioModel" && String.Compare(_versionnumber, "2.7.0") < 0)
+                            {
+                                //MW0LGE this db contains comboRadioModel, we need to pull over old radio selection from radio button implementation
+                                //but only if exists. This will always run even if db being imported does not contain these rad button setting, and
+                                //ideally should only happen if previous verison < 2.7.0. TODO?
+                                string sRad = "";
+                                if (     getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelHPSDR")) sRad = "HPSDR";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelHermes")) sRad = "HERMES";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN10")) sRad = "ANAN-10";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN10E")) sRad = "ANAN-10E";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN100")) sRad = "ANAN-100";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN100B")) sRad = "ANAN-100B";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN100D")) sRad = "ANAN-100D";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN200D")) sRad = "ANAN-200D";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN7000D")) sRad = "ANAN-7000DLE";
+                                else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN8000D")) sRad = "ANAN-8000DLE";
+                                //else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelORIONMKII")) sRad = ""; // not implemented in comboRadioModel list items
+
+                                if(sRad != "") // a radio has been previously selected
+                                {
+                                    //Debug.Print("** FOUND OLD RADIO SETTING : " + sRad);
+                                    row["Value"] = sRad;
+                                    tempMergedTable.ImportRow(row);
                                 }
                                 else tempMergedTable.ImportRow(row);
                             }
@@ -8789,6 +8256,23 @@ namespace Thetis
             WriteImportLog(logFN, "\nImport succeeded.\n");
             importedDS = true;  // Prevents overwriting the new database file on next exit
             return true;
+        }
+
+        //--MW0LGE
+        private static bool getRadioSelectedFromOldRadButton(ref DataTable tempTable, string sRadButtonName)
+        {
+            // returns true if radbuttonname passed exists in old db and has a setting of true
+            bool bRet = false;
+            DataRow oldSettingsRow;
+            string selector = "Key = '" + sRadButtonName + "'";
+            DataRow[] foundRow = tempTable.Select(selector);
+            if (foundRow.Length != 0)
+            {
+                oldSettingsRow = foundRow[0];
+                bRet = Convert.ToBoolean(oldSettingsRow["Value"]);
+            }
+
+            return bRet;
         }
 
         //-W2PA Basic validity checks of imported DataSet xml file

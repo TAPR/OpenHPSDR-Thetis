@@ -75,6 +75,12 @@
     <ClInclude Include="obbuffs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aamix.c">
@@ -138,6 +144,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="obbuffs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="networkproto1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pro.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

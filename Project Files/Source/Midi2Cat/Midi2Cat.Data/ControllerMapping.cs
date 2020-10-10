@@ -24,12 +24,6 @@ Modifications to support the Behringer CMD PL-1 controller
 by Chris Codella, W2PA, Feb 2017.  Indicated by //-W2PA comment lines.
 
 */
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Midi2Cat.IO;
 
 namespace Midi2Cat.Data

@@ -105,7 +105,6 @@
         private System.Windows.Forms.PictureBox picVOX;
         private System.Windows.Forms.CheckBoxTS chkNoiseGate;
         private System.Windows.Forms.PictureBox picNoiseGate;
-        private System.Windows.Forms.TextBox txtOverload;
         private System.Windows.Forms.TextBoxTS txtDisplayCursorOffset;
         private System.Windows.Forms.TextBoxTS txtDisplayCursorPower;
         private System.Windows.Forms.TextBoxTS txtDisplayCursorFreq;
@@ -902,6 +901,15 @@
             this.toolStripStatusLabel_Volts = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_Amps = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_SeqWarning = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelRXAnt = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripStatusLabelTXAnt = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem17 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripStatusLabelAndromedaMulti = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_Fill = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_timer = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_UTCTime = new System.Windows.Forms.ToolStripStatusLabel();
@@ -1044,8 +1052,8 @@
             this.lblTXGain = new System.Windows.Forms.LabelTS();
             this.grpDIGSampleRate = new System.Windows.Forms.GroupBoxTS();
             this.panelDisplay = new System.Windows.Forms.PanelTS();
+            this.txtOverload = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayPeakOffset = new System.Windows.Forms.TextBoxTS();
-            this.txtOverload = new System.Windows.Forms.TextBox();
             this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
             this.txtDisplayPeakPower = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayPeakFreq = new System.Windows.Forms.TextBoxTS();
@@ -2616,7 +2624,6 @@
             resources.GetString("comboDisplayModeTop.Items2")});
             this.comboDisplayModeTop.Name = "comboDisplayModeTop";
             this.toolTip1.SetToolTip(this.comboDisplayModeTop, resources.GetString("comboDisplayModeTop.ToolTip"));
-            this.comboDisplayModeTop.SelectedIndexChanged += new System.EventHandler(this.comboDisplayModeTop_SelectedIndexChanged);
             // 
             // comboDisplayModeBottom
             // 
@@ -2632,7 +2639,6 @@
             resources.GetString("comboDisplayModeBottom.Items2")});
             this.comboDisplayModeBottom.Name = "comboDisplayModeBottom";
             this.toolTip1.SetToolTip(this.comboDisplayModeBottom, resources.GetString("comboDisplayModeBottom.ToolTip"));
-            this.comboDisplayModeBottom.SelectedIndexChanged += new System.EventHandler(this.comboDisplayModeBottom_SelectedIndexChanged);
             // 
             // comboRX2MeterMode
             // 
@@ -4744,6 +4750,9 @@
             this.toolStripStatusLabel_Volts,
             this.toolStripStatusLabel_Amps,
             this.toolStripStatusLabel_SeqWarning,
+            this.toolStripStatusLabelRXAnt,
+            this.toolStripStatusLabelTXAnt,
+            this.toolStripStatusLabelAndromedaMulti,
             this.toolStripStatusLabel_Fill,
             this.toolStripStatusLabel_timer,
             this.toolStripStatusLabel_UTCTime,
@@ -4979,10 +4988,77 @@
             this.toolStripStatusLabel_SeqWarning.Name = "toolStripStatusLabel_SeqWarning";
             this.toolStripStatusLabel_SeqWarning.Click += new System.EventHandler(this.toolStripStatusLabel_SeqWarning_Click);
             // 
+            // toolStripStatusLabelRXAnt
+            // 
+            resources.ApplyResources(this.toolStripStatusLabelRXAnt, "toolStripStatusLabelRXAnt");
+            this.toolStripStatusLabelRXAnt.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem20,
+            this.toolStripMenuItem19,
+            this.toolStripMenuItem18});
+            this.toolStripStatusLabelRXAnt.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.toolStripStatusLabelRXAnt.Image = global::Thetis.Properties.Resources.RXAnt;
+            this.toolStripStatusLabelRXAnt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.toolStripStatusLabelRXAnt.Name = "toolStripStatusLabelRXAnt";
+            // 
+            // toolStripMenuItem20
+            // 
+            this.toolStripMenuItem20.Name = "toolStripMenuItem20";
+            resources.ApplyResources(this.toolStripMenuItem20, "toolStripMenuItem20");
+            this.toolStripMenuItem20.Click += new System.EventHandler(this.ToolStripMenuItem20_Click);
+            // 
+            // toolStripMenuItem19
+            // 
+            this.toolStripMenuItem19.Name = "toolStripMenuItem19";
+            resources.ApplyResources(this.toolStripMenuItem19, "toolStripMenuItem19");
+            this.toolStripMenuItem19.Click += new System.EventHandler(this.ToolStripMenuItem19_Click);
+            // 
+            // toolStripMenuItem18
+            // 
+            this.toolStripMenuItem18.Name = "toolStripMenuItem18";
+            resources.ApplyResources(this.toolStripMenuItem18, "toolStripMenuItem18");
+            this.toolStripMenuItem18.Click += new System.EventHandler(this.ToolStripMenuItem18_Click);
+            // 
+            // toolStripStatusLabelTXAnt
+            // 
+            resources.ApplyResources(this.toolStripStatusLabelTXAnt, "toolStripStatusLabelTXAnt");
+            this.toolStripStatusLabelTXAnt.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem16,
+            this.toolStripMenuItem15,
+            this.toolStripMenuItem17});
+            this.toolStripStatusLabelTXAnt.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.toolStripStatusLabelTXAnt.Image = global::Thetis.Properties.Resources.txant;
+            this.toolStripStatusLabelTXAnt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.toolStripStatusLabelTXAnt.Name = "toolStripStatusLabelTXAnt";
+            // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            resources.ApplyResources(this.toolStripMenuItem16, "toolStripMenuItem16");
+            this.toolStripMenuItem16.Click += new System.EventHandler(this.ToolStripMenuItem16_Click);
+            // 
+            // toolStripMenuItem15
+            // 
+            this.toolStripMenuItem15.Name = "toolStripMenuItem15";
+            resources.ApplyResources(this.toolStripMenuItem15, "toolStripMenuItem15");
+            this.toolStripMenuItem15.Click += new System.EventHandler(this.ToolStripMenuItem15_Click);
+            // 
+            // toolStripMenuItem17
+            // 
+            this.toolStripMenuItem17.Name = "toolStripMenuItem17";
+            resources.ApplyResources(this.toolStripMenuItem17, "toolStripMenuItem17");
+            this.toolStripMenuItem17.Click += new System.EventHandler(this.ToolStripMenuItem17_Click);
+            // 
+            // toolStripStatusLabelAndromedaMulti
+            // 
+            resources.ApplyResources(this.toolStripStatusLabelAndromedaMulti, "toolStripStatusLabelAndromedaMulti");
+            this.toolStripStatusLabelAndromedaMulti.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.toolStripStatusLabelAndromedaMulti.Image = global::Thetis.Properties.Resources.Multifunction;
+            this.toolStripStatusLabelAndromedaMulti.Name = "toolStripStatusLabelAndromedaMulti";
+            // 
             // toolStripStatusLabel_Fill
             // 
-            this.toolStripStatusLabel_Fill.Name = "toolStripStatusLabel_Fill";
             resources.ApplyResources(this.toolStripStatusLabel_Fill, "toolStripStatusLabel_Fill");
+            this.toolStripStatusLabel_Fill.Name = "toolStripStatusLabel_Fill";
             this.toolStripStatusLabel_Fill.Spring = true;
             // 
             // toolStripStatusLabel_timer
@@ -6231,6 +6307,7 @@
             // 
             resources.ApplyResources(this.panelDisplay, "panelDisplay");
             this.panelDisplay.BackColor = System.Drawing.Color.Transparent;
+            this.panelDisplay.Controls.Add(this.txtOverload);
             this.panelDisplay.Controls.Add(this.radDisplayZoom4x);
             this.panelDisplay.Controls.Add(this.radDisplayZoom2x);
             this.panelDisplay.Controls.Add(this.radDisplayZoom1x);
@@ -6238,7 +6315,6 @@
             this.panelDisplay.Controls.Add(this.ptbDisplayZoom);
             this.panelDisplay.Controls.Add(this.ptbDisplayPan);
             this.panelDisplay.Controls.Add(this.txtDisplayPeakOffset);
-            this.panelDisplay.Controls.Add(this.txtOverload);
             this.panelDisplay.Controls.Add(this.lblDisplayZoom);
             this.panelDisplay.Controls.Add(this.txtDisplayPeakPower);
             this.panelDisplay.Controls.Add(this.btnDisplayPanCenter);
@@ -6253,6 +6329,15 @@
             this.panelDisplay.Controls.Add(this.txtDisplayOrionMKIIPAVolts);
             this.panelDisplay.Name = "panelDisplay";
             // 
+            // txtOverload
+            // 
+            this.txtOverload.BackColor = System.Drawing.Color.Black;
+            this.txtOverload.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            resources.ApplyResources(this.txtOverload, "txtOverload");
+            this.txtOverload.ForeColor = System.Drawing.Color.Red;
+            this.txtOverload.Name = "txtOverload";
+            this.txtOverload.ReadOnly = true;
+            // 
             // txtDisplayPeakOffset
             // 
             this.txtDisplayPeakOffset.BackColor = System.Drawing.Color.Black;
@@ -6263,16 +6348,6 @@
             this.txtDisplayPeakOffset.Name = "txtDisplayPeakOffset";
             this.txtDisplayPeakOffset.ReadOnly = true;
             this.txtDisplayPeakOffset.GotFocus += new System.EventHandler(this.HideFocus);
-            // 
-            // txtOverload
-            // 
-            this.txtOverload.BackColor = System.Drawing.Color.Black;
-            this.txtOverload.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtOverload.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.txtOverload, "txtOverload");
-            this.txtOverload.ForeColor = System.Drawing.Color.Red;
-            this.txtOverload.Name = "txtOverload";
-            this.txtOverload.ReadOnly = true;
             // 
             // lblDisplayZoom
             // 
@@ -7171,14 +7246,15 @@
             this.Controls.Add(this.panelVFOALabels);
             this.Controls.Add(this.panelVFOLabels);
             this.Controls.Add(this.panelAndromedaMisc);
+            this.Controls.Add(this.panelModeSpecificCW);
             this.Controls.Add(this.panelModeSpecificPhone);
             this.Controls.Add(this.panelModeSpecificFM);
             this.Controls.Add(this.panelModeSpecificDigital);
-            this.Controls.Add(this.panelModeSpecificCW);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Console";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Console_Closing);
+            this.Shown += new System.EventHandler(this.Console_Shown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Console_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
@@ -7406,5 +7482,15 @@
         private LabelTS lblAndromedaEncoderSlider;
         private TrackBarTS tbAndromedaEncoderSlider;
         private ToolStripStatusLabel toolStripStatusLabel_timer;
+        private TextBoxTS txtOverload;
+        private ToolStripDropDownButton toolStripStatusLabelTXAnt;
+        private ToolStripMenuItem toolStripMenuItem16;
+        private ToolStripMenuItem toolStripMenuItem15;
+        private ToolStripMenuItem toolStripMenuItem17;
+        private ToolStripDropDownButton toolStripStatusLabelRXAnt;
+        private ToolStripMenuItem toolStripMenuItem20;
+        private ToolStripMenuItem toolStripMenuItem19;
+        private ToolStripMenuItem toolStripMenuItem18;
+        private ToolStripStatusLabel toolStripStatusLabelAndromedaMulti;
     }
 }

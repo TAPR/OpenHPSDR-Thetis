@@ -405,6 +405,18 @@ namespace Midi2Cat.Data
         LockVFOAOnOff = 256,
         [CatCommandAttribute("Lock VFO B", ControlType.Button, true)]
         LockVFOBOnOff = 257,
+        [CatCommandAttribute("Diversity Form Open", ControlType.Button, true)]
+        DiversityFormOpen = 258,
+        [CatCommandAttribute("Diversity Enable", ControlType.Button, true)]
+        DiversityEnable = 259,
+        [CatCommandAttribute("Diversity Phase", ControlType.Wheel)]
+        DiversityPhase= 260,
+        [CatCommandAttribute("Diversity Gain", ControlType.Wheel)]
+        DiversityGain = 261,
+        [CatCommandAttribute("Diversity RX Reference", ControlType.Button, true)]
+        DiversityReference = 262,
+        [CatCommandAttribute("Diversity RX Source", ControlType.Button, true)]
+        DiversitySource = 263,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }

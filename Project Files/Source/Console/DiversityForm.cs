@@ -34,6 +34,7 @@ using System.Drawing.Text;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Timers;
 
 namespace Thetis
 {
@@ -108,6 +109,8 @@ namespace Thetis
         private CheckBoxTS chkLockR;
         private CheckBoxTS chkLockAngle;
         private CheckBoxTS chkEnableDiversity;
+        private bool FormAutoShown;
+        System.Timers.Timer AutoHideTimer;                         // times auto hiding of form 
 
         /// <summary>
         /// Required designer variable.
@@ -144,6 +147,11 @@ namespace Thetis
             WDSP.SetEXTDIVNr(0, 2);
            // console.Diversity2 = true;
             chkEnableDiversity_CheckedChanged(this, e);
+            // create timer for autohide and attach callback
+            AutoHideTimer = new System.Timers.Timer();
+            AutoHideTimer.Elapsed += new ElapsedEventHandler(Callback);
+            AutoHideTimer.Enabled = false;
+
         }
 
         /// <summary>
@@ -902,6 +910,7 @@ namespace Thetis
             this.Name = "DiversityForm";
             this.Text = "Phasing Control";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.DiversityForm_Closing);
+            this.Load += new System.EventHandler(this.DiversityForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).EndInit();
             this.panelDivControls.ResumeLayout(false);
             this.panelDivControls.PerformLayout();
@@ -1831,6 +1840,49 @@ namespace Thetis
             {
                 chkEnableDiversity.BackColor = Color.Red;
                 chkEnableDiversity.Text = "Disabled";
+            }
+        }
+
+        // method called by console encoder event. Provides option of auto-show and auto-hide
+        // if form was not shown, mark it as opened by an encoder event
+        public void FormEncoderEvent()
+        {
+            if (!this.Visible)
+            {
+                FormAutoShown = true;
+                this.Show();
+            }
+            // set timer if form is auto shown
+            if (FormAutoShown)
+            {
+                AutoHideTimer.Enabled = false;
+                AutoHideTimer.AutoReset = false;                    // just one callback
+                AutoHideTimer.Interval = 10000;                     // 10 seconds
+                AutoHideTimer.Enabled = true;
+
+            }
+        }
+
+        // callback function when 10 second timer expires; hide the form
+        private void Callback(object source, ElapsedEventArgs e)
+        {
+            FormAutoShown = false;
+            AutoHideTimer.Enabled = false;
+            this.Hide();
+        }
+
+        // check if we want portrait or landscape format. If landscape change form size and panel positions
+        private void DiversityForm_Load(object sender, EventArgs e)
+        {
+            if(console.SetupForm != null)
+            {
+                if(console.SetupForm.AndromedaDiversityFormLandscape)
+                {
+                    picRadar.Anchor = (AnchorStyles.None);
+                    picRadar.Size = new Size(226, 226);
+                    this.Size = new Size(750, 280);
+                    picRadar.Location = new Point(470,1);
+                }
             }
         }
     }

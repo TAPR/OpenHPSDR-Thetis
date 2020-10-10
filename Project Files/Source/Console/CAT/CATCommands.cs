@@ -1542,7 +1542,7 @@ namespace Thetis
 		//Sets or reads the BCI Rejection button status
 		public string ZZBR(string s)
 		{
-			if(console.CurrentModel == Model.HPSDR)
+			if(console.CurrentHPSDRModel == HPSDRModel.HPSDR)
 			{
 				int sx = 0;
 
@@ -1888,8 +1888,8 @@ namespace Thetis
 		// Reads the CPU Usage
 		public string ZZCU()
 		{
-            //return parser.Error1;
-           // return console.cpu_usage.ToString("f").PadLeft(6, '0');
+			//return parser.Error1;
+			if (console.initializing) return "";
             return String.Format("{0:000.00}", console.cpu_usage.NextValue());
 		}
 
@@ -2063,7 +2063,7 @@ namespace Thetis
                     return parser.Error1;
         }
 
-        //Sets or reads the Diversity Form RX1 gain
+        //Sets or reads the Diversity Form RX gain
         public string ZZDG(string s)
         {
             decimal gain;
@@ -2073,15 +2073,15 @@ namespace Thetis
                 if (s != null && s != "")
                     n = Convert.ToInt32(s);
                 n = Math.Max(0, n);
-                n = Math.Min(5000, n);
+                n = Math.Min(1000, n);
                 gain = (decimal)n / 1000.0m;
-                console.CATDiversityRX1Gain = gain;
-                console.TitleBarEncoderString = "Diversity RX1 Gain = " + gain;
+                console.CATDiversityGain = gain;
+                console.TitleBarEncoderString = "Diversity RX Gain = " + gain;
                 return "";
             }
             else if (s.Length == parser.nGet)
             {
-                gain = console.CATDiversityRX1Gain;
+                gain = console.CATDiversityGain;
                 n = (int)(gain * 1000.0m);
                 return AddLeadingZeros(n);
             }
@@ -2169,11 +2169,6 @@ namespace Thetis
 
 				}
 
-//				if(n > (int) DisplayMode.FIRST && n < (int) DisplayMode.LAST)
-//					Display.CurrentDisplayMode = (DisplayMode) n;
-//				else
-//					return parser.Error1;
-//
 				return "";
 			}
 			else if(s.Length == parser.nGet)
@@ -3902,7 +3897,6 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 string msg = "";
-                char ch;
                 int code;
                 int cntr;
 
@@ -5666,9 +5660,16 @@ namespace Thetis
                     else
                         num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH);
 
-                switch (console.CurrentModel)
+                switch (console.CurrentHPSDRModel)
                 {
-                    case Model.HERMES:
+                     case HPSDRModel.HPSDR:
+                        num = num +
+                        console.MultiMeterCalOffset +
+                        Display.RX1PreampOffset +
+                            //console.RX1FilterSizeCalOffset +
+                        console.RX1XVTRGainOffset;
+                        break;
+                    default:
                         if (s == "0")
                         {
                             num = num +
@@ -5686,14 +5687,7 @@ namespace Thetis
                             console.RX2XVTRGainOffset;
                         }
                         break;
-                    case Model.HPSDR:
-                        num = num +
-                        console.MultiMeterCalOffset +
-                        Display.RX1PreampOffset +
-                            //console.RX1FilterSizeCalOffset +
-                        console.RX1XVTRGainOffset;
-                        break;
-                }
+               }
                 num = Math.Max(-140, num);
                 num = Math.Min(-10, num);
                 sm = ((int)num + 140) * 2;
@@ -6842,7 +6836,8 @@ namespace Thetis
 		// Returns the version number of the PowerSDR program
 		public string ZZVN()
 		{
-			return console.CATGetVersion().PadLeft(12,'0');
+			//return console.CATGetVersion().PadLeft(12,'0');
+			return Common.GetFileVersion().PadLeft(12, '0');
 		}
 
         // Reads or sets the VAC Output cable
@@ -8261,184 +8256,6 @@ namespace Thetis
         }
 
         #endregion Repeater Methods
-
-        #region Antenna Methods
-
-        private string FWCAntenna2String(FWCAnt ant)
-		{
-			string ans = "";
-			switch(ant)
-			{
-				case FWCAnt.NC:
-					ans = "0";
-					break;
-				case FWCAnt.ANT1:
-                    ans = "1";
-					break;
-				case FWCAnt.ANT2:
-					ans = "2";
-					break;
-				case FWCAnt.ANT3:
-					ans = "3";
-					break;
-				case FWCAnt.RX1IN:
-					ans = "4";
-					break;
-				case FWCAnt.RX2IN:
-					ans = "5";
-					break;
-				case FWCAnt.RX1TAP:
-					ans = "6";
-					break;
-				case FWCAnt.SIG_GEN:
-					ans = "7";
-					break;
-			}
-			return ans;
-		}
-
-		private FWCAnt String2FWCAntenna(string ant)
-		{
-			FWCAnt ans = FWCAnt.ANT1;
-			switch(ant)
-			{
-				case "0":
-					ans = FWCAnt.NC;
-					break;
-				case "1":
-					ans = FWCAnt.ANT1;
-					break;
-				case "2":
-					ans = FWCAnt.ANT2;
-					break;
-				case "3":
-					ans = FWCAnt.ANT3;
-					break;
-				case "4":
-					ans = FWCAnt.RX1IN;
-					break;
-				case "5":
-					ans = FWCAnt.RX2IN;
-					break;
-				case "6":
-					ans = FWCAnt.RX1TAP;
-					break;
-				case "7":
-					ans = FWCAnt.SIG_GEN;
-					break;
-			}
-			return ans;
-		}
-
-  /*      private string HIDAntenna2String(HIDAnt ant)
-        {
-            string ans = "";
-            switch (ant)
-            {
-                case HIDAnt.PA:
-                    ans = "0";
-                    break;
-                case HIDAnt.XVTX_COM:
-                    ans = "1";
-                    break;
-                case HIDAnt.XVRX:
-                    ans = "2";
-                    break;
-                case HIDAnt.BITE:
-                    ans = "3";
-                    break;
-            }
-            return ans;
-        }
-
-        private HIDAnt String2HIDAntenna(string ant)
-        {
-            HIDAnt ans = HIDAnt.PA;
-            switch (ant)
-            {
-                case "0":
-                    ans = HIDAnt.PA;
-                    break;
-                case "1":
-                    ans = HIDAnt.XVTX_COM;
-                    break;
-                case "2":
-                    ans = HIDAnt.XVRX;
-                    break;
-                case "3":
-                    ans = HIDAnt.BITE;
-                    break;
-            }
-            return ans;
-        } */
-
-
-		private string AntMode2String(AntMode ant)
-		{
-			string ans = "0";
-			switch(ant)
-			{
-				case AntMode.Simple:
-					break;
-				case AntMode.Expert:
-					ans = "1";
-					break;
-			}
-			return ans;
-		}
-
-		private AntMode String2AntMode(string amode)
-		{
-			AntMode ans = AntMode.Simple;
-			switch(amode)
-			{
-				case "0":
-					break;
-				case "1":
-					ans = AntMode.Expert;
-					break;
-			}
-			return ans;
-		}
-
-		#endregion Antenna Methods
-
-		#region Split Methods
-
-		private void SetKWSplitStatus(string s)
-		{
-			if(s == "0")
-			{
-				console.VFOSplit = false;
-				lastFR = "0";
-				lastFT = "0";
-			}
-			else if(s == "1" && !console.VFOSplit)
-			{
-				console.VFOSplit = true;
-				lastFR = "0";
-				lastFT = "1";
-			}
-			else if(s == "1" && lastFR == "1" && lastFT == "1" && console.VFOSplit)
-			{
-				console.VFOSplit = false;
-				lastFR = "0";
-				lastFT = "0";
-			}
-			Debug.WriteLine("lastFR = "+lastFR+" lastFT = "+lastFT);
-		}
-
-		private string GetP10()
-		{
-			return lastFT;
-		}
-
-		private string GetP12()
-		{
-			return lastFT;
-		}
-
-		#endregion Split Methods
 
 		#region VFO Methods
 		// Converts a vfo frequency to a proper CAT frequency string

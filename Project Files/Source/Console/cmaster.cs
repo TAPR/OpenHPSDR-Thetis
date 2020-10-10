@@ -250,6 +250,9 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "getLEDs", CallingConvention = CallingConvention.Cdecl)]
         extern public static int getLEDs();
 
+        // version
+        [DllImport("ChannelMaster.dll", EntryPoint = "GetCMVersion", CallingConvention = CallingConvention.Cdecl)]
+        extern public static int GetCMVersion();
         #endregion
 
         #region properties
@@ -317,6 +320,7 @@ namespace Thetis
             set { ps_rate = value; }
         }
 
+        public static RadioProtocol CurrentRadioProtocol { get; set; }
         #endregion
 
         #region logic calls
@@ -336,14 +340,14 @@ namespace Thetis
             int[] xcm_inrates = new int[8] {192000, 192000, 192000, 192000, 192000, 48000, 192000, 192000};
             int aud_outrate = 48000;
             int[] rcvr_ch_outrates = new int[5] {48000, 48000, 48000, 48000, 48000};
-            int[] xmtr_ch_outrates = new int[1] {192000};
+            int[] xmtr_ch_outrates = new int[1] { 192000 };
             fixed (int* p1 = xcm_inrates, p2 = rcvr_ch_outrates, p3 = xmtr_ch_outrates)
                 cmaster.SetCMDefaultRates(p1, aud_outrate, p2, p3);
 
             // create receivers, transmitters, specials, and buffers
             cmaster.CreateRadio();
 
-            // get transmitter idenifiers
+            // get transmitter identifiers
             int txinid = cmaster.inid(1, 0);        // stream id
             int txch = cmaster.chid(txinid, 0);     // wdsp channel
 
@@ -385,219 +389,338 @@ namespace Thetis
 
         public static void CMLoadRouterAll(HPSDRModel model)
         {
-            if (ps_loopback)    // for test purposes
+            switch (NetworkIO.CurrentRadioProtocol)
             {
-                switch (model)
-                {
-                    case HPSDRModel.ANAN100D:
-                    case HPSDRModel.ANAN200D:
-                    case HPSDRModel.ORIONMKII:
-                    case HPSDRModel.ANAN7000D:
-                    case HPSDRModel.ANAN8000D:
-                        // This ANGELIA table is for test purposes and it routes Rx0 and Rx1 to RX1 and RX2, 
-                        //      respectively, (as well as to PureSignal) when transmitting with PureSignal 
-                        //      Enabled in Setup.
-                        // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
-                        int[] Angelia_Function_PSTest = new int[112] 
-                        { 
-                            0, 0, 2, 2, 0, 2, 2, 2,     // Rx0, port 1035, Call 0
-                            0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 1
-                            1, 1, 0, 0, 1, 0, 0, 0,     // Rx2, port 1037, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037, Call 1
-                            1, 1, 1, 1, 1, 0, 1, 0,     // Rx3, port 1038, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx3, port 1038, Call 1
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx4, port 1039, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx4, port 1039, Call 1
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx5, port 1040, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx5, port 1040, Call 1
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx6, port 1041, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0      // Rx6, port 1041, Call 1
-                        };
-                        int[] Angelia_Callid_PSTest = new int[112]
+                case RadioProtocol.USB:
+                    if (ps_loopback)
+                    {
+                        switch (model)
                         {
-                            0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035, Call 0
-                            0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 1
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037, Call 1
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038, Call 0
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038, Call 1
-                            2, 2, 2, 2, 2, 2, 2, 2,     // Rx4, port 1039, Call 0
-                            2, 2, 2, 2, 2, 2, 2, 2,     // Rx4, port 1039, Call 1
-                            3, 3, 3, 3, 3, 3, 3, 3,     // Rx5, port 1040, Call 0
-                            3, 3, 3, 3, 3, 3, 3, 3,     // Rx5, port 1040, Call 1
-                            4, 4, 4, 4, 4, 4, 4, 4,     // Rx6, port 1041, Call 0
-                            4, 4, 4, 4, 4, 4, 4, 4      // Rx6, port 1041, Call 1
-                        };
-                        int[] Angelia_nstreams_PSTest = new int[7]
+                            case HPSDRModel.ANAN10E:
+                            case HPSDRModel.ANAN100B:
+                                int[] TWO_DDC_Function = new int[16]
+                                    {
+                                    2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2      // DDC0+DDC1, port 1035, Call 1
+                                    };
+                                int[] TWO_DDC_Callid = new int[16]
+                                    {
+                                    2, 2, 2, 2, 2, 1, 2, 1,      // DDC0+DDC1, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2       // DDC0+DDC1, port 1035, Call 1
+                                    };
+                                int[] TWO_DDC_nstreams = new int[1]
+                                    {
+                                    2                           // DDC0+DDC1, port 1035
+                                    };
+                                fixed (int* pstreams = &TWO_DDC_nstreams[0], pfunction = &TWO_DDC_Function[0], pcallid = &TWO_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 1, 2, 8, pstreams, pfunction, pcallid);
+                                break;
+                            case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN10:
+                            case HPSDRModel.ANAN100:
+                                int[] FOUR_DDC_Function = new int[48]
+                                    {
+                                    1, 1, 1, 1, 1, 0, 1, 0,     // DDC0,      port 1035, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // DDC0,      port 1035, Call 1
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC2+DDC3, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC2+DDC3, port 1036, Call 1
+                                    1, 1, 1, 1, 1, 0, 1, 0,     // DDC1,      port 1037, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0      // DDC1,      port 1037, Call 1
+                                    };
+                                int[] FOUR_DDC_Callid = new int[48]
+                                    {
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // DDC0,      port 1035, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // DDC0,      port 1035, Call 1
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // DDC2+DDC3, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC2+DDC3, port 1036, Call 1
+                                    1, 1, 1, 1, 1, 0, 1, 0,     // DDC1,      port 1037, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0      // DDC1,      port 1037, Call 1
+                                    };
+                                int[] FOUR_DDC_nstreams = new int[3]
+                                    {
+                                    1,                          // DDC0,      port 1035
+                                    2,                          // DDC2+DDC3, port 1036
+                                    1                           // DDC1,      port 1037
+                                    };
+                                fixed (int* pstreams = &FOUR_DDC_nstreams[0], pfunction = &FOUR_DDC_Function[0], pcallid = &FOUR_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 3, 2, 8, pstreams, pfunction, pcallid);
+                                break;
+                            case HPSDRModel.ANAN100D:
+                            case HPSDRModel.ANAN200D:
+                            case HPSDRModel.ORIONMKII:
+                            case HPSDRModel.ANAN7000D:
+                            case HPSDRModel.ANAN8000D:
+                                int[] FIVE_DDC_Function = new int[48]
+                                    {
+                                    2, 2, 2, 2, 2, 0, 2, 0,     // DDC0+DDC1, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // DDC0+DDC1, port 1035, Call 1
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC3+DDC4, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC3+DDC4, port 1036, Call 1
+                                    1, 1, 1, 1, 1, 0, 1, 0,     // DDC2,      port 1037, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0      // DDC2,      port 1037, Call 1
+                                    };
+                                int[] FIVE_DDC_Callid = new int[48]
+                                    {
+                                    3, 3, 0, 0, 3, 0, 0, 0,     // DDC0+DDC1, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // DDC0+DDC1, port 1035, Call 1
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // DDC3+DDC4, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC3+DDC4, port 1036, Call 1
+                                    1, 1, 1, 1, 1, 0, 1, 0,     // DDC2,      port 1037, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0      // DDC2,      port 1037, Call 1
+                                    };
+                                int[] FIVE_DDC_nstreams = new int[3]
+                                    {
+                                    2,                          // DDC0+DDC1, port 1035
+                                    2,                          // DDC1+DDC4, port 1036
+                                    1                           // DDC2,      port 1037
+                                    };
+                                fixed (int* pstreams = &FIVE_DDC_nstreams[0], pfunction = &FIVE_DDC_Function[0], pcallid = &FIVE_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 3, 2, 8, pstreams, pfunction, pcallid);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (model)
                         {
-                            2,                          // Rx0, port 1035
-                            1,                          // Rx1, port 1036
-                            1,                          // Rx2, port 1037
-                            1,                          // Rx3, port 1038
-                            1,                          // Rx4, port 1039
-                            1,                          // Rx5, port 1040
-                            1                           // Rx6, port 1041
-                        };
-                        fixed (int* pstreams = &Angelia_nstreams_PSTest[0], pfunction = &Angelia_Function_PSTest[0], pcallid = &Angelia_Callid_PSTest[0])
-                            LoadRouterAll((void*)0, 0, 7, 2, 8, pstreams, pfunction, pcallid);
-                        break;
+                            case HPSDRModel.ANAN10E:
+                            case HPSDRModel.ANAN100B:
+                                int[] TWO_DDC_Function = new int[8]
+                                    {
+                                    2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
+                                    };
+                                int[] TWO_DDC_Callid = new int[8]
+                                    {
+                                    2, 2, 2, 2, 2, 1, 2, 1      // DDC0+DDC1, port 1035, Call 0
+                                    };
+                                int[] TWO_DDC_nstreams = new int[1]
+                                    {
+                                    2                           // DDC0+DDC1, port 1035
+                                    };
+                                fixed (int* pstreams = &TWO_DDC_nstreams[0], pfunction = &TWO_DDC_Function[0], pcallid = &TWO_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 1, 1, 8, pstreams, pfunction, pcallid);
+                                break;
+                            case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN10:
+                            case HPSDRModel.ANAN100:
+                                int[] FOUR_DDC_Function = new int[24]
+                                    {
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // DDC0,      port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC2+DDC3, port 1036, Call 0
+                                    1, 1, 1, 1, 1, 1, 1, 1      // DDC1,      port 1037, Call 0
+                                    };
+                                int[] FOUR_DDC_Callid = new int[24]
+                                    {
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // DDC0,      port 1035, Call 0
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // DDC2+DDC3, port 1036, Call 0
+                                    1, 1, 1, 1, 1, 1, 1, 1      // DDC1,      port 1037, Call 0
+                                    };
+                                int[] FOUR_DDC_nstreams = new int[3]
+                                    {
+                                    1,                          // DDC0,      port 1035
+                                    2,                          // DDC2+DDC3, port 1036
+                                    1                           // DDC1,      port 1037
+                                    };
+                                fixed (int* pstreams = &FOUR_DDC_nstreams[0], pfunction = &FOUR_DDC_Function[0], pcallid = &FOUR_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 3, 1, 8, pstreams, pfunction, pcallid);
+                                break;
+                            case HPSDRModel.ANAN100D:
+                            case HPSDRModel.ANAN200D:
+                            case HPSDRModel.ORIONMKII:
+                            case HPSDRModel.ANAN7000D:
+                            case HPSDRModel.ANAN8000D:
+                                int[] FIVE_DDC_Function = new int[24]
+                                    {
+                                    2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // DDC3+DDC4, port 1036, Call 0
+                                    1, 1, 1, 1, 1, 1, 1, 1      // DDC2,      port 1037, Call 0
+                                    };
+                                int[] FIVE_DDC_Callid = new int[24]
+                                    {
+                                    3, 3, 0, 0, 3, 3, 0, 0,     // DDC0+DDC1, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // DDC3+DDC4, port 1036, Call 0
+                                    1, 1, 1, 1, 1, 1, 1, 1      // DDC2,      port 1037, Call 0
+                                    };
+                                int[] FIVE_DDC_nstreams = new int[3]
+                                    {
+                                    2,                          // DDC0+DDC1, port 1035
+                                    2,                          // DDC3+DDC4, port 1036
+                                    1                           // DDC2,      port 1037
+                                    };
+                                fixed (int* pstreams = &FIVE_DDC_nstreams[0], pfunction = &FIVE_DDC_Function[0], pcallid = &FIVE_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 3, 1, 8, pstreams, pfunction, pcallid);
+                                break;
+                        }
+                    }
+                    break;
+                case RadioProtocol.ETH:
+                    if (ps_loopback)    // for test purposes
+                    {
+                        switch (model)
+                        {
+                            case HPSDRModel.ANAN100D:
+                            case HPSDRModel.ANAN200D:
+                            case HPSDRModel.ORIONMKII:
+                            case HPSDRModel.ANAN7000D:
+                            case HPSDRModel.ANAN8000D:
+                                // This ANGELIA table is for test purposes and it routes DDC0 and DDC1 to RX1 and RX2, 
+                                //      respectively, (as well as to PureSignal) when transmitting with PureSignal 
+                                //      Enabled in Setup.
+                                // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
+                                int[] Angelia_Function_PSTest = new int[112] 
+                                { 
+                                    0, 0, 2, 2, 0, 2, 2, 2,     // Rx0, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 1
+                                    1, 1, 0, 0, 1, 0, 0, 0,     // Rx2, port 1037, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037, Call 1
+                                    1, 1, 1, 1, 1, 0, 1, 0,     // Rx3, port 1038, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx3, port 1038, Call 1
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx4, port 1039, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx4, port 1039, Call 1
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx5, port 1040, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx5, port 1040, Call 1
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx6, port 1041, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0      // Rx6, port 1041, Call 1
+                                };
+                                int[] Angelia_Callid_PSTest = new int[112]
+                                {
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 1
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037, Call 1
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038, Call 0
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038, Call 1
+                                    2, 2, 2, 2, 2, 2, 2, 2,     // Rx4, port 1039, Call 0
+                                    2, 2, 2, 2, 2, 2, 2, 2,     // Rx4, port 1039, Call 1
+                                    3, 3, 3, 3, 3, 3, 3, 3,     // Rx5, port 1040, Call 0
+                                    3, 3, 3, 3, 3, 3, 3, 3,     // Rx5, port 1040, Call 1
+                                    4, 4, 4, 4, 4, 4, 4, 4,     // Rx6, port 1041, Call 0
+                                    4, 4, 4, 4, 4, 4, 4, 4      // Rx6, port 1041, Call 1
+                                };
+                                int[] Angelia_nstreams_PSTest = new int[7]
+                                {
+                                    2,                          // Rx0, port 1035
+                                    1,                          // Rx1, port 1036
+                                    1,                          // Rx2, port 1037
+                                    1,                          // Rx3, port 1038
+                                    1,                          // Rx4, port 1039
+                                    1,                          // Rx5, port 1040
+                                    1                           // Rx6, port 1041
+                                };
+                                fixed (int* pstreams = &Angelia_nstreams_PSTest[0], pfunction = &Angelia_Function_PSTest[0], pcallid = &Angelia_Callid_PSTest[0])
+                                    LoadRouterAll((void*)0, 0, 7, 2, 8, pstreams, pfunction, pcallid);
+                                break;
 
-                    case HPSDRModel.HERMES:
-                    case HPSDRModel.ANAN10:
-                    case HPSDRModel.ANAN100:
-                    case HPSDRModel.ANAN10E:
-                    case HPSDRModel.ANAN100B:
-                        int[] HermesE_Function = new int[32]
+                            case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN10:
+                            case HPSDRModel.ANAN100:
+                            case HPSDRModel.ANAN10E:
+                            case HPSDRModel.ANAN100B:
+                                int[] HermesE_Function = new int[32]
+                                {
+                                    1, 1, 2, 2, 1, 2, 2, 2,     // Rx0, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
+                                    1, 1, 0, 0, 1, 0, 0, 0,     // Rx1, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0      // Rx1, port 1036, Call 1
+                                };
+                                int[] HermesE_Callid = new int[32]
+                                {
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx1, port 1036, Call 0
+                                    1, 1, 1, 1, 1, 1, 1, 1      // Rx1, port 1036, Call 1
+                                };
+                                int[] HermesE_nstreams = new int[2]
+                                {
+                                    2,                          // Rx0, port 1035
+                                    1                           // Rx1, port 1036
+                                };
+                                fixed (int* pstreams = &HermesE_nstreams[0], pfunction = &HermesE_Function[0], pcallid = &HermesE_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 2, 2, 8, pstreams, pfunction, pcallid);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (model)
                         {
-                            1, 1, 2, 2, 1, 2, 2, 2,     // Rx0, port 1035, Call 0
-                            0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                            1, 1, 0, 0, 1, 0, 0, 0,     // Rx1, port 1036, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0      // Rx1, port 1036, Call 1
-                        };
-                        int[] HermesE_Callid = new int[32]
-                        {
-                            0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035, Call 0
-                            0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx1, port 1036, Call 0
-                            1, 1, 1, 1, 1, 1, 1, 1      // Rx1, port 1036, Call 1
-                        };
-                        int[] HermesE_nstreams = new int[2]
-                        {
-                            2,                          // Rx0, port 1035
-                            1                           // Rx1, port 1036
-                        };
-                        fixed (int* pstreams = &HermesE_nstreams[0], pfunction = &HermesE_Function[0], pcallid = &HermesE_Callid[0])
-                            LoadRouterAll((void*)0, 0, 2, 2, 8, pstreams, pfunction, pcallid);
-                        break;
-                    //case HPSDRModel.ANAN10E: // DDCs syncronous                
-                    //case HPSDRModel.ANAN100B:
-                    //    int[] HermesES_Function = new int[32]
-                    //    {
-                    //        2, 2, 2, 2, 2, 2, 2, 2,     // Rx0, port 1035, Call 0
-                    //        0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                    //        0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 0
-                    //        0, 0, 0, 0, 0, 0, 0, 0      // Rx1, port 1036, Call 1
-                    //    };
-                    //    int[] HermesES_Callid = new int[32]
-                    //    {
-                    //        2, 2, 0, 0, 2, 1, 0, 1,     // Rx0, port 1035, Call 0
-                    //        0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                    //        1, 1, 1, 1, 1, 1, 1, 1,     // Rx1, port 1036, Call 0
-                    //        1, 1, 1, 1, 1, 1, 1, 1      // Rx1, port 1036, Call 1
-                    //    };
-                    //    int[] HermesES_nstreams = new int[2]
-                    //    {
-                    //        2,                          // Rx0, port 1035
-                    //        1                           // Rx1, port 1036
-                    //    };
-                    //    fixed (int* pstreams = &HermesES_nstreams[0], pfunction = &HermesES_Function[0], pcallid = &HermesES_Callid[0])
-                    //        LoadRouterAll((void*)0, 0, 2, 2, 8, pstreams, pfunction, pcallid);
-                    //    break;
-                }
-            }
-            else
-            {
-                switch (model)
-                {
-                    case HPSDRModel.ANAN100D:
-                    case HPSDRModel.ANAN200D:
-                    case HPSDRModel.ORIONMKII:
-                    case HPSDRModel.ANAN7000D:
-                    case HPSDRModel.ANAN8000D:
-                        // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
-                        int[] Angelia_Function = new int[56] 
-                        { 
-                            0, 0, 2, 2, 0, 2, 2, 2,     // Rx0, port 1035
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036
-                            1, 1, 0, 0, 1, 1, 0, 1,     // Rx2, port 1037
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx4, port 1039
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx5, port 1040
-                            1, 1, 1, 1, 1, 1, 1, 1      // Rx6, port 1041
-                        };
-                        int[] Angelia_Callid = new int[56]
-                        {
-                            0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036
-                            0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038
-                            2, 2, 2, 2, 2, 2, 2, 2,     // Rx4, port 1039
-                            3, 3, 3, 3, 3, 3, 3, 3,     // Rx5, port 1040
-                            4, 4, 4, 4, 4, 4, 4, 4      // Rx6, port 1041
-                        };
-                        int[] Angelia_nstreams = new int[7]
-                        {
-                            2,                          // Rx0, port 1035
-                            1,                          // Rx1, port 1036
-                            1,                          // Rx2, port 1037
-                            1,                          // Rx3, port 1038
-                            1,                          // Rx4, port 1039
-                            1,                          // Rx5, port 1040
-                            1                           // Rx6, port 1041
-                        };
-                        fixed (int* pstreams = &Angelia_nstreams[0], pfunction = &Angelia_Function[0], pcallid = &Angelia_Callid[0])
-                            LoadRouterAll((void*)0, 0, 7, 1, 8, pstreams, pfunction, pcallid);
-                        break;
+                            case HPSDRModel.ANAN100D:
+                            case HPSDRModel.ANAN200D:
+                            case HPSDRModel.ORIONMKII:
+                            case HPSDRModel.ANAN7000D:
+                            case HPSDRModel.ANAN8000D:
+                                // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
+                                int[] Angelia_Function = new int[56] 
+                                { 
+                                    0, 0, 2, 2, 0, 2, 2, 2,     // Rx0, port 1035
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036
+                                    1, 1, 0, 0, 1, 1, 0, 1,     // Rx2, port 1037
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx4, port 1039
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx5, port 1040
+                                    1, 1, 1, 1, 1, 1, 1, 1      // Rx6, port 1041
+                                };
+                                int[] Angelia_Callid = new int[56]
+                                {
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036
+                                    0, 0, 0, 0, 0, 0, 0, 0,     // Rx2, port 1037
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx3, port 1038
+                                    2, 2, 2, 2, 2, 2, 2, 2,     // Rx4, port 1039
+                                    3, 3, 3, 3, 3, 3, 3, 3,     // Rx5, port 1040
+                                    4, 4, 4, 4, 4, 4, 4, 4      // Rx6, port 1041
+                                };
+                                int[] Angelia_nstreams = new int[7]
+                                {
+                                    2,                          // Rx0, port 1035
+                                    1,                          // Rx1, port 1036
+                                    1,                          // Rx2, port 1037
+                                    1,                          // Rx3, port 1038
+                                    1,                          // Rx4, port 1039
+                                    1,                          // Rx5, port 1040
+                                    1                           // Rx6, port 1041
+                                };
+                                fixed (int* pstreams = &Angelia_nstreams[0], pfunction = &Angelia_Function[0], pcallid = &Angelia_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 7, 1, 8, pstreams, pfunction, pcallid);
+                                break;
 
-                    case HPSDRModel.HERMES:
-                    case HPSDRModel.ANAN10:
-                    case HPSDRModel.ANAN100:
-                    case HPSDRModel.ANAN10E:
-                    case HPSDRModel.ANAN100B:
-                        int[] HermesE_Function = new int[32]
-                        {
-                            1, 1, 2, 2, 1, 2, 2, 2,     // Rx0, port 1035, Call 0
-                            0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                            1, 1, 0, 0, 1, 0, 0, 0,     // Rx1, port 1036, Call 0
-                            0, 0, 0, 0, 0, 0, 0, 0      // Rx1, port 1036, Call 1
-                        };
-                        int[] HermesE_Callid = new int[32]
-                        {
-                            0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035, Call 0
-                            0, 0, 0, 0, 0, 3, 0, 3,     // Rx0, port 1035, Call 1
-                            1, 1, 1, 1, 1, 1, 1, 1,     // Rx1, port 1036, Call 0
-                            1, 1, 1, 1, 1, 1, 1, 1      // Rx1, port 1036, Call 1
-                        };
-                        int[] HermesE_nstreams = new int[2]
-                        {
-                            2,                          // Rx0, port 1035
-                            1                           // Rx1, port 1036
-                        };
-                        fixed (int* pstreams = &HermesE_nstreams[0], pfunction = &HermesE_Function[0], pcallid = &HermesE_Callid[0])
-                            LoadRouterAll((void*)0, 0, 2, 2, 8, pstreams, pfunction, pcallid);
-                        break;
-                    //case HPSDRModel.ANAN10E: // DDCs syncronous
-                    //case HPSDRModel.ANAN100B:
-                    //    int[] HermesES_Function = new int[32]
-                    //    {
-                    //        2, 2, 2, 2, 2, 2, 2, 2,     // Rx0, port 1035, Call 0
-                    //        0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
-                    //        0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 0
-                    //        0, 0, 0, 0, 0, 0, 0, 0      // Rx1, port 1036, Call 1
-                    //    };
-                    //    int[] HermesES_Callid = new int[32]
-                    //    {
-                    //        2, 2, 0, 0, 2, 1, 0, 1,     // Rx0, port 1035, Call 0
-                    //        0, 0, 0, 0, 0, 3, 0, 3,     // Rx0, port 1035, Call 1
-                    //        1, 1, 1, 1, 1, 1, 1, 1,     // Rx1, port 1036, Call 0
-                    //        1, 1, 1, 1, 1, 1, 1, 1      // Rx1, port 1036, Call 1
-                    //    };
-                    //    int[] HermesES_nstreams = new int[2]
-                    //    {
-                    //        2,                          // Rx0, port 1035
-                    //        1                           // Rx1, port 1036
-                    //    };
-                    //    fixed (int* pstreams = &HermesES_nstreams[0], pfunction = &HermesES_Function[0], pcallid = &HermesES_Callid[0])
-                    //        LoadRouterAll((void*)0, 0, 2, 2, 8, pstreams, pfunction, pcallid);
-                    //    break;
-                    case HPSDRModel.HPSDR:
+                            case HPSDRModel.HERMES:
+                            case HPSDRModel.ANAN10:
+                            case HPSDRModel.ANAN100:
+                            case HPSDRModel.ANAN10E:
+                            case HPSDRModel.ANAN100B:
+                                int[] HermesE_Function = new int[32]
+                                {
+                                    1, 1, 2, 2, 1, 2, 2, 2,     // Rx0, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
+                                    1, 1, 0, 0, 1, 0, 0, 0,     // Rx1, port 1036, Call 0
+                                    0, 0, 0, 0, 0, 0, 0, 0      // Rx1, port 1036, Call 1
+                                };
+                                int[] HermesE_Callid = new int[32]
+                                {
+                                    0, 0, 0, 0, 0, 1, 0, 1,     // Rx0, port 1035, Call 0
+                                    0, 0, 0, 0, 0, 3, 0, 3,     // Rx0, port 1035, Call 1
+                                    1, 1, 1, 1, 1, 1, 1, 1,     // Rx1, port 1036, Call 0
+                                    1, 1, 1, 1, 1, 1, 1, 1      // Rx1, port 1036, Call 1
+                                };
+                                int[] HermesE_nstreams = new int[2]
+                                {
+                                    2,                          // Rx0, port 1035
+                                    1                           // Rx1, port 1036
+                                };
+                                fixed (int* pstreams = &HermesE_nstreams[0], pfunction = &HermesE_Function[0], pcallid = &HermesE_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 2, 2, 8, pstreams, pfunction, pcallid);
+                                break;
+                            case HPSDRModel.HPSDR:
 
-                        break;
-                }
+                                break;
+                        }
+                    }
+                    break;
             }
         }
         
@@ -781,7 +904,7 @@ namespace Thetis
 
         public static void CMSetTXOutputLevelRun()
         {
-            bool run = /* Audio.console.CurrentModel != Model.HERMES && */ !Audio.console.PennyLanePresent;
+            bool run = false; // /* Audio.console.CurrentModel != Model.HERMES && */ !Audio.console.PennyLanePresent;
             cmaster.SetTXFixedGainRun(0, run);
         }
 

@@ -104,10 +104,13 @@ namespace Thetis
         [StructLayout(LayoutKind.Sequential)]
         public struct PaHostApiInfo
         {
+            public string name => _name == IntPtr.Zero ? null : Marshal.PtrToStringAnsi(_name);
+
             public int structVersion;
             public int type;
-            [MarshalAs(UnmanagedType.LPStr)]
-            public string name;
+           // [MarshalAs(UnmanagedType.LPStr)]
+            //public string name;
+            private readonly IntPtr _name;
             public int deviceCount;
             public PaDeviceIndex defaultInputDevice;
             public PaDeviceIndex defaultOutputDevice;
@@ -125,9 +128,12 @@ namespace Thetis
         [StructLayout(LayoutKind.Sequential)]
         public struct PaDeviceInfo
         {
+            public string name => _name == IntPtr.Zero ? null : Marshal.PtrToStringAnsi(_name);
+
             public int structVersion;
-            [MarshalAs(UnmanagedType.LPStr)]
-            public string name;
+            private IntPtr _name;
+           // [MarshalAs(UnmanagedType.LPStr)]
+           // public string name;
             public PaHostApiIndex hostApi;
             public int maxInputChannels;
             public int maxOutputChannels;

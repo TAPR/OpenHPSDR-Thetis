@@ -91,6 +91,7 @@ namespace Thetis
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AndromedaEditForm));
             this.BtnClose = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -283,6 +284,7 @@ namespace Thetis
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.BtnClose);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AndromedaEditForm";
             this.Text = "Andromeda Settings Editor";
             this.Activated += new System.EventHandler(this.AndromedaEditForm_Activated);

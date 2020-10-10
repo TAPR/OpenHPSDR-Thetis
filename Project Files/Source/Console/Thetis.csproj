@@ -46,8 +46,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.8.7.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -118,7 +118,7 @@
     <ErrorReport>prompt</ErrorReport>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\bin\x86\Release\</OutputPath>
@@ -130,7 +130,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|AnyCPU'">
     <OutputPath>bin\Interleaved\</OutputPath>
@@ -159,7 +159,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -205,10 +205,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="SharpDX">
       <HintPath>..\..\lib\SharpDX\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Desktop">
+    <Reference Include="SharpDX.Desktop, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\SharpDX\SharpDX.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct2D1">
@@ -220,7 +222,8 @@
     <Reference Include="SharpDX.DXGI">
       <HintPath>..\..\lib\SharpDX\SharpDX.DXGI.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Mathematics">
+    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\SharpDX\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System">
@@ -252,23 +255,27 @@
     <Compile Include="AmpView.Designer.cs">
       <DependentUpon>AmpView.cs</DependentUpon>
     </Compile>
-    <Compile Include="AndromedaEditForm.cs">
+    <Compile Include="Andromeda\AndromedaEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Andromeda\Andromeda.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BandButtonsPopup.cs">
+    <Compile Include="Andromeda\BandButtonsPopup.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="BasicAudio.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="cmaster.cs" />
-    <Compile Include="displaysettingsform.cs">
+    <Compile Include="Andromeda\displaysettingsform.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dumpcap.cs" />
-    <Compile Include="FilterButtonsPopup.cs">
+    <Compile Include="enums.cs" />
+    <Compile Include="Andromeda\FilterButtonsPopup.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmNotchPopup.cs">
@@ -341,9 +348,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="database.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="deltacp.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="display.cs">
@@ -440,14 +444,12 @@
     <Compile Include="Memory\MemoryList.cs" />
     <Compile Include="Memory\MemoryRecord.cs" />
     <Compile Include="Midi2CatCommands.cs" />
-    <Compile Include="ModeButtonsPopup.cs">
+    <Compile Include="Andromeda\ModeButtonsPopup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ModeDependentSettingsForm.cs">
+    <Compile Include="Andromeda\ModeDependentSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="notch.cs" />
-    <Compile Include="notchlist.cs" />
     <Compile Include="HPSDR\Penny.cs" />
     <Compile Include="PanDisplay.cs">
       <SubType>Component</SubType>
@@ -463,9 +465,6 @@
     </Compile>
     <Compile Include="PrettyTrackBar.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="process_sample_thread_controller.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="progress.cs">
       <SubType>Form</SubType>
@@ -501,7 +500,7 @@
       <DependentUpon>setup.cs</DependentUpon>
     </Compile>
     <Compile Include="Skin.cs" />
-    <Compile Include="SliderSettingsForm.cs">
+    <Compile Include="Andromeda\SliderSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SortableBindingList.cs" />
@@ -514,10 +513,10 @@
     <Compile Include="KE9N\spot_options.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ThreadedBindingList.cs" />
     <Compile Include="titlebar.cs" />
     <Compile Include="TuneStep.cs" />
-    <Compile Include="vfosettingspopup.cs">
+    <Compile Include="Versions.cs" />
+    <Compile Include="Andromeda\vfosettingspopup.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="wave.cs">
@@ -538,9 +537,6 @@
     <Compile Include="win32.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="wizard.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -553,13 +549,16 @@
     <None Include="Resources\screen.png" />
     <None Include="Resources\warning4.png" />
     <None Include="Resources\zap.png" />
-    <EmbeddedResource Include="AndromedaEditForm.resx">
+    <EmbeddedResource Include="Andromeda\AndromedaEditForm.resx">
       <DependentUpon>AndromedaEditForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="displaysettingsform.resx">
+    <EmbeddedResource Include="Andromeda\BandButtonsPopup.resx">
+      <DependentUpon>BandButtonsPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Andromeda\displaysettingsform.resx">
       <DependentUpon>displaysettingsform.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FilterButtonsPopup.resx">
+    <EmbeddedResource Include="Andromeda\FilterButtonsPopup.resx">
       <DependentUpon>FilterButtonsPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmNotchPopup.resx">
@@ -572,10 +571,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>scan.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ModeButtonsPopup.resx">
+    <EmbeddedResource Include="Andromeda\ModeButtonsPopup.resx">
       <DependentUpon>ModeButtonsPopup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ModeDependentSettingsForm.resx">
+    <EmbeddedResource Include="Andromeda\ModeDependentSettingsForm.resx">
       <DependentUpon>ModeDependentSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\picD1orig.png" />
@@ -681,7 +680,7 @@
     <EmbeddedResource Include="ShutdownForm.resx">
       <DependentUpon>ShutdownForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SliderSettingsForm.resx">
+    <EmbeddedResource Include="Andromeda\SliderSettingsForm.resx">
       <DependentUpon>SliderSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="splash.resx">
@@ -695,7 +694,7 @@
     <EmbeddedResource Include="KE9N\spot_options.resx">
       <DependentUpon>spot_options.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="vfosettingspopup.resx">
+    <EmbeddedResource Include="Andromeda\vfosettingspopup.resx">
       <DependentUpon>vfosettingspopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="wave.resx">
@@ -708,10 +707,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="wideband.resx">
       <DependentUpon>wideband.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="wizard.resx">
-      <DependentUpon>wizard.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="xvtr.resx">
       <DependentUpon>xvtr.cs</DependentUpon>

@@ -34,11 +34,11 @@ namespace Thetis
     class TitleBar
     {
         public const string BUILD_NAME = "";
-        public const string BUILD_DATE = "(1/25/20)";
+        public const string BUILD_DATE = "(10/10/20)";
 
         public static string GetString()
         {
-            string version = GetVerNum();
+            string version = Common.GetVerNum();
             string s = "Thetis";
 
             s += " v" + version;
@@ -46,23 +46,6 @@ namespace Thetis
             if (BUILD_NAME != "") s += " " + BUILD_NAME;
 
             return s;
-        }
-
-        // returns the Thetis version number in "a.b.c" format
-        private static string m_sVersionNumber = "";
-        public static string GetVerNum()
-        {
-            //MW0LGE build version number string once and return that
-            // if called again. Issue reported by NJ2US where assembly.Location
-            // passed into GetVersionInfo failed. Perhaps because norton or something
-            // moved the file after it was accessed. The version isn't going to
-            // change anyway, so obtaining it once is fine.
-            if (m_sVersionNumber != "") return m_sVersionNumber;
-
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            m_sVersionNumber = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
-            return m_sVersionNumber;
         }
     }
 }

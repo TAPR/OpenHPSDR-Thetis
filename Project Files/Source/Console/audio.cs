@@ -3,7 +3,7 @@
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
-// Copyright (C) 2010-2019  Doug Wigley
+// Copyright (C) 2010-2020  Doug Wigley
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -29,10 +29,11 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
+using System.Linq;
 using System.Windows.Forms;
+//using ProjectCeilidh.PortAudio;
+//using ProjectCeilidh.PortAudio.Native;
+//using static ProjectCeilidh.PortAudio.Native.PortAudio;
 
 namespace Thetis
 {
@@ -64,21 +65,9 @@ namespace Thetis
             SILENCE,
         }
 
-#if(_INTERLEAVED)
-#if(SPLIT_INTERLEAVED)
-		unsafe private static PA19.PaStreamCallback callback1 = new PA19.PaStreamCallback(Callback1ILDI);	// Init callbacks to prevent GC
-		unsafe private static PA19.PaStreamCallback callbackVAC = new PA19.PaStreamCallback(CallbackVACILDI);
-		unsafe private static PA19.PaStreamCallback callback4port = new PA19.PaStreamCallback(Callback4PortILDI);
-#else
-		unsafe private static PA19.PaStreamCallback callback1 = new PA19.PaStreamCallback(Callback1IL);	// Init callbacks to prevent GC
-		unsafe private static PA19.PaStreamCallback callbackVAC = new PA19.PaStreamCallback(CallbackVACIL);
-		unsafe private static PA19.PaStreamCallback callback4port = new PA19.PaStreamCallback(Callback4PortIL);
-#endif
-#else
-        unsafe private static PA19.PaStreamCallback callback3port = Callback3Port;
-#endif
+        // unsafe private static PA19.PaStreamCallback PAcallbackport = PACallbackPort;
 
-        public static int callback_return;
+        // public static int callback_return;
 
         private static bool rx2_auto_mute_tx = true;
         public static bool RX2AutoMuteTX
@@ -106,34 +95,6 @@ namespace Thetis
         {
             get { return source_scale; }
             set { source_scale = value; }
-        }
-
-        private static SignalSource rx1_input_signal = SignalSource.RADIO;
-        public static SignalSource RX1InputSignal
-        {
-            get { return rx1_input_signal; }
-            set { rx1_input_signal = value; }
-        }
-
-        private static SignalSource rx1_output_signal = SignalSource.RADIO;
-        public static SignalSource RX1OutputSignal
-        {
-            get { return rx1_output_signal; }
-            set { rx1_output_signal = value; }
-        }
-
-        private static SignalSource rx2_input_signal = SignalSource.RADIO;
-        public static SignalSource RX2InputSignal
-        {
-            get { return rx2_input_signal; }
-            set { rx2_input_signal = value; }
-        }
-
-        private static SignalSource rx2_output_signal = SignalSource.RADIO;
-        public static SignalSource RX2OutputSignal
-        {
-            get { return rx2_output_signal; }
-            set { rx2_output_signal = value; }
         }
 
         private static SignalSource tx_input_signal = SignalSource.RADIO;
@@ -187,12 +148,6 @@ namespace Thetis
             get { return format_tag; }
             set { format_tag = value; }
         }
-        private static float peak = float.MinValue;
-        public static float Peak
-        {
-            get { return peak; }
-            set { peak = value; }
-        }
 
         private static bool vox_enabled = false;
         public static bool VOXEnabled
@@ -221,17 +176,6 @@ namespace Thetis
             }
         }
 
-        //private static float vox_threshold = 0.001f;
-        //public static float VOXThreshold
-        //{
-        //    get { return vox_threshold; }
-        //    set
-        //    {
-        //        vox_threshold = value;
-        //        cmaster.CMSetTXAVoxThresh(0);
-        //    }
-        //}
-
         private static float vox_gain = 1.0f;
         public static float VOXGain
         {
@@ -239,25 +183,7 @@ namespace Thetis
             set
             {
                 vox_gain = value;
-                //cmaster.CMSetTXAVoxThresh(0);
             }
-        }
-
-        public static double TXScale
-        {
-            get { return high_swr_scale * radio_volume; }
-        }
-
-        public static double FWCTXScale
-        {
-            get { return high_swr_scale * temp_scale * radio_volume; }
-        }
-
-        private static double temp_scale = 1.0;
-        public static double TempScale
-        {
-            get { return temp_scale; }
-            set { temp_scale = value; }
         }
 
         private static double high_swr_scale = 1.0;
@@ -304,17 +230,6 @@ namespace Thetis
             }
         }
 
-        private static double dsp_adjust = 1.0 / 0.98;
-        public static double DspAdjust
-        {
-            get { return dsp_adjust; }
-            set
-            {
-                dsp_adjust = value;
-            }
-        }
-
-        //  public static double PennylanePowerBreakPoint = 0.4;
         private static double radio_volume = 0.0;
         public static double RadioVolume
         {
@@ -322,17 +237,7 @@ namespace Thetis
             set
             {
                 radio_volume = value;
-                if (//console.CurrentModel == Model.HERMES ||
-                    console.CurrentHPSDRModel != HPSDRModel.HPSDR ||
-                                            console.PennyLanePresent ||
-                                           (console.PennyPresent && console.CWFWKeyer))
-                {
-                    NetworkIO.SetOutputPower((float)(value * dsp_adjust));
-                }
-                else
-                {
-                    NetworkIO.SetOutputPower((float)0.0);
-                }
+                NetworkIO.SetOutputPower((float)(value * 1.02));
                 cmaster.CMSetTXOutputLevel();
             }
         }
@@ -342,57 +247,6 @@ namespace Thetis
         {
             get { return current_audio_state1; }
             set { current_audio_state1 = value; }
-        }
-
-        private static int in_rx1_l;
-
-        public static int IN_RX1_L
-        {
-            get { return in_rx1_l; }
-            set { in_rx1_l = value; }
-        }
-
-        private static int in_rx1_r = 1;
-
-        public static int IN_RX1_R
-        {
-            get { return in_rx1_r; }
-            set { in_rx1_r = value; }
-        }
-
-        private static int in_rx2_l = 2;
-
-        public static int IN_RX2_L
-        {
-            get { return in_rx2_l; }
-            set { in_rx2_l = value; }
-        }
-
-        private static int in_rx2_r = 3;
-
-        public static int IN_RX2_R
-        {
-            get { return in_rx2_r; }
-            set { in_rx2_r = value; }
-        }
-
-        private static int in_tx_l = 4;
-
-        public static int IN_TX_L
-        {
-            get { return in_tx_l; }
-            set
-            {
-                in_tx_l = value;
-            }
-        }
-
-        private static int in_tx_r = 5;
-
-        public static int IN_TX_R
-        {
-            get { return in_tx_r; }
-            set { in_tx_r = value; }
         }
 
         private static bool rx2_enabled;
@@ -558,7 +412,7 @@ namespace Thetis
                 cmaster.CMSetTXAPanelGain1(WDSP.id(1, 0));
                 cmaster.CMSetAntiVoxSourceWhat();
                 if (console.PowerOn)
-                EnableVAC1(value);
+                    EnableVAC1(value);
             }
             get { return vac_enabled; }
         }
@@ -571,7 +425,7 @@ namespace Thetis
                 vac2_enabled = value;
                 cmaster.CMSetAntiVoxSourceWhat();
                 if (console.PowerOn)
-                EnableVAC2(value);
+                    EnableVAC2(value);
             }
             get { return vac2_enabled; }
         }
@@ -589,7 +443,7 @@ namespace Thetis
             set { vac1_latency_manual_out = value; }
             get { return vac1_latency_manual_out; }
         }
-        
+
         private static bool vac1_latency_pa_in_manual = false;
         public static bool VAC1LatencyPAInManual
         {
@@ -632,13 +486,6 @@ namespace Thetis
             get { return vac2_latency_pa_out_manual; }
         }
 
-        //private static bool vac2_rx2 = true;
-        //public static bool VAC2RX2
-        //{
-        //    get { return vac2_rx2; }
-        //    set { vac2_rx2 = value; }
-        //}
-
         private static bool vac_bypass = false;
         public static bool VACBypass
         {
@@ -658,10 +505,10 @@ namespace Thetis
         private static bool vac_rb_reset = false;
         public static bool VACRBReset
         {
-            set 
-            { 
+            set
+            {
                 vac_rb_reset = value;
-                ivac.SetIVACRBReset(0, Convert.ToInt32(value)); 
+                ivac.SetIVACRBReset(0, Convert.ToInt32(value));
             }
             get { return vac_rb_reset; }
         }
@@ -669,10 +516,10 @@ namespace Thetis
         private static bool vac2_rb_reset = false;
         public static bool VAC2RBReset
         {
-            set 
-            { 
+            set
+            {
                 vac2_rb_reset = value;
-                ivac.SetIVACRBReset(1, Convert.ToInt32(value)); 
+                ivac.SetIVACRBReset(1, Convert.ToInt32(value));
             }
             get { return vac2_rb_reset; }
         }
@@ -720,18 +567,6 @@ namespace Thetis
                 vac2_rx_scale = value;
                 ivac.SetIVACrxscale(1, value);
             }
-        }
-
-        private static DSPMode rx1_dsp_mode = DSPMode.LSB;
-        public static DSPMode RX1DSPMode
-        {
-            set { rx1_dsp_mode = value; }
-        }
-
-        private static DSPMode rx2_dsp_mode = DSPMode.LSB;
-        public static DSPMode RX2DSPMode
-        {
-            set { rx2_dsp_mode = value; }
         }
 
         private static DSPMode tx_dsp_mode = DSPMode.LSB;
@@ -850,13 +685,6 @@ namespace Thetis
             }
         }
 
-        private static double audio_volts1 = 0.8;
-        public static double AudioVolts1
-        {
-            get { return audio_volts1; }
-            set { audio_volts1 = value; }
-        }
-
         private static bool vac_stereo = false;
         public static bool VACStereo
         {
@@ -907,30 +735,6 @@ namespace Thetis
             {
                 vac_output_rx2 = value;
             }
-        }
-
-        private static float iq_phase = 0.0f;
-        public static float IQPhase
-        {
-            set { iq_phase = value; }
-        }
-
-        private static float iq_gain = 1.0f;
-        public static float IQGain
-        {
-            set { iq_gain = value; }
-        }
-
-        private static float iq_phase2 = 0.0f;
-        public static float IQPhase2
-        {
-            set { iq_phase2 = value; }
-        }
-
-        private static float iq_gain2 = 1.0f;
-        public static float IQGain2
-        {
-            set { iq_gain2 = value; }
         }
 
         private static bool vac_correct_iq = true;
@@ -1005,7 +809,7 @@ namespace Thetis
         {
             set { latency2_out = value; }
         }
-        
+
         private static int latency_pa_in = 120;
         public static int LatencyPAIn
         {
@@ -1042,69 +846,12 @@ namespace Thetis
             set { latency3 = value; }
         }
 
-        private static float min_in_l = float.MaxValue;
-        public static float MinInL
-        {
-            get { return min_in_l; }
-        }
-
-        private static float min_in_r = float.MaxValue;
-        public static float MinInR
-        {
-            get { return min_in_r; }
-        }
-
-        private static float min_out_l = float.MaxValue;
-        public static float MinOutL
-        {
-            get { return min_out_l; }
-        }
-
-        private static float min_out_r = float.MaxValue;
-        public static float MinOutR
-        {
-            get { return min_out_r; }
-        }
-
-        private static float max_in_l = float.MaxValue;
-        public static float MaxInL
-        {
-            get { return max_in_l; }
-        }
-
-        private static float max_in_r = float.MaxValue;
-        public static float MaxInR
-        {
-            get { return max_in_r; }
-        }
-
-        private static float max_out_l = float.MaxValue;
-
-        public static float MaxOutL
-        {
-            get { return max_out_l; }
-        }
-
-        private static float max_out_r = float.MaxValue;
-
-        public static float MaxOutR
-        {
-            get { return max_out_r; }
-        }
-
-        private static bool mute_output = false;
-        public static bool MuteOutput
-        {
-            get { return mute_output; }
-            set { mute_output = value; }
-        }
-
         private static bool mute_rx1 = false;
         public static bool MuteRX1
         {
             get { return mute_rx1; }
-            set 
-            { 
+            set
+            {
                 mute_rx1 = value;
                 unsafe
                 {
@@ -1118,8 +865,8 @@ namespace Thetis
         public static bool MuteRX2
         {
             get { return mute_rx2; }
-            set 
-            { 
+            set
+            {
                 mute_rx2 = value;
                 unsafe
                 {
@@ -1160,7 +907,7 @@ namespace Thetis
                 SetOutCountTX();
             }
         }
-        
+
         private static void SetOutCount()
         {
             if (out_rate >= sample_rate1)
@@ -1211,7 +958,7 @@ namespace Thetis
             get { return out_count_tx; }
             set
             {
-                out_count_tx = value;               
+                out_count_tx = value;
             }
         }
 
@@ -1219,13 +966,7 @@ namespace Thetis
 
         #region Callback Routines
 
-        unsafe public static int Callback3Port(void* input, void* output, int frameCount,
-                                               PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
-        { 
-            return 0; 
-        }
-
-         #endregion
+        #endregion
 
         #region Misc Routines
 
@@ -1245,7 +986,7 @@ namespace Thetis
         {
             var a = new ArrayList();
 
-            if (hostIndex >= PA19.PA_GetHostApiCount()) //xylowolf 
+            if (hostIndex >= PA19.PA_GetHostApiCount())
             {
                 a.Add(new PADeviceInfo("HPSDR (PCM A/D)", 0));
                 return a;
@@ -1259,7 +1000,7 @@ namespace Thetis
                 if (devInfo.maxInputChannels > 0)
                 {
                     string name = devInfo.name;
-                    int index = name.IndexOf("- "); // find case for things like "Microphone (2- FLEX-1500)"
+                    int index = name.IndexOf("- ");
                     if (index > 0)
                     {
                         char c = name[index - 1]; // make sure this is what we're looking for
@@ -1324,6 +1065,7 @@ namespace Thetis
             return a;
         }
 
+
         public static bool CheckPAOutputDevices(int hostIndex, string name)
         {
             PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
@@ -1337,10 +1079,96 @@ namespace Thetis
             return false;
         }
 
+        //public static ArrayList GetPAHosts() // returns a text list of driver types
+        //{
+        //    var a = new ArrayList();
+
+        //    foreach (var api in PortAudioHostApi.SupportedHostApis)
+        //    {
+        //        a.Add(api.Name);
+        //    }
+        //    a.Add("HPSDR (USB/UDP)");
+        //    return a;
+        //}
+
+        //public static ArrayList GetPAInputDevices(int hostIndex)
+        //{
+        //    var a = new ArrayList();
+
+
+        //    if (hostIndex >= PortAudioHostApi.SupportedHostApis.Count())
+        //    {
+        //        a.Add(new PADeviceInfo("HPSDR (PCM A/D)", 0));               
+        //        return a;
+        //    }
+
+        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostIndex);         
+        //    int idx = 0;
+        //        foreach (var dev in hst.Devices)
+        //        {
+        //            if (dev.MaxInputChannels > 0)
+        //            {
+        //                string name = dev.Name;
+        //                int index = name.IndexOf("- ");
+        //                if (index > 0)
+        //                {
+        //                    char c = name[index - 1]; // make sure this is what we're looking for
+        //                    if (c >= '0' && c <= '9') // it is... remove index
+        //                    {
+        //                        int x = name.IndexOf("(");
+        //                        name = dev.Name.Substring(0, x + 1); // grab first part of string including "("
+        //                        name += dev.Name.Substring(index + 2, dev.Name.Length - index - 2); // add end of string;
+        //                    }
+        //                }
+        //                a.Add(new PADeviceInfo(name, idx));
+        //            idx++;
+        //            }
+        //        }
+
+        //    return a;
+        //}
+
+        //public static ArrayList GetPAOutputDevices(int hostIndex)
+        //{
+        //    var a = new ArrayList();
+
+        //    if (hostIndex >= PortAudioHostApi.SupportedHostApis.Count())
+        //    {
+        //        a.Add(new PADeviceInfo("HPSDR (PWM D/A)", 0));
+        //        return a;
+        //    }
+
+        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostIndex);       
+        //    int idx = 0;
+        //        foreach (var dev in hst.Devices)
+        //        {
+        //            if (dev.MaxOutputChannels > 0)
+        //            {
+        //                string name = dev.Name;
+        //                int index = name.IndexOf("- ");
+        //                if (index > 0)
+        //                {
+        //                    char c = name[index - 1]; // make sure this is what we're looking for
+        //                    if (c >= '0' && c <= '9') // it is... remove index
+        //                    {
+        //                        int x = name.IndexOf("(");
+        //                        name = dev.Name.Substring(0, x + 1); // grab first part of string including "("
+        //                        name += dev.Name.Substring(index + 2, dev.Name.Length - index - 2); // add end of string;
+        //                    }
+        //                }
+        //                a.Add(new PADeviceInfo(name, idx));
+        //                idx++;
+        //            }
+        //        }
+
+        //    return a;
+        //}
+
+
         public static void EnableVAC1(bool enable)
         {
             bool retval = false;
-
+ 
             if (enable)
                 unsafe
                 {
@@ -1351,6 +1179,7 @@ namespace Thetis
                     double out_latency = vac1_latency_manual_out ? latency2_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
                     double pa_in_latency = vac1_latency_pa_in_manual ? latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
                     double pa_out_latency = vac1_latency_pa_out_manual ? latency_pa_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
+                  //  double pa_out_latency = vac1_latency_pa_out_manual ? latency_pa_out / 1000.0 : outp_dev2.;
 
                     if (vac_output_iq)
                     {
@@ -1389,7 +1218,7 @@ namespace Thetis
             {
                 ivac.SetIVACrun(0, 0);
                 ivac.StopAudioIVAC(0);
-           }
+            }
 
         }
 
@@ -1404,8 +1233,8 @@ namespace Thetis
                     int sample_rate = sample_rate3;
                     int block_size = block_size_vac2;
 
-                    double in_latency = vac2_latency_manual ? latency3/1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
-                    double out_latency = vac2_latency_out_manual ? vac2_latency_out/1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
+                    double in_latency = vac2_latency_manual ? latency3 / 1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
+                    double out_latency = vac2_latency_out_manual ? vac2_latency_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
                     double pa_in_latency = vac2_latency_pa_in_manual ? vac2_latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
                     double pa_out_latency = vac2_latency_pa_out_manual ? vac2_latency_pa_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
 
@@ -1416,7 +1245,7 @@ namespace Thetis
                         block_size = block_size_rx2;
                     }
                     else if (vac2_stereo) num_chan = 2;
-			
+
                     VAC2RBReset = true;
 
                     ivac.SetIVAChostAPIindex(1, host3);
@@ -1448,7 +1277,7 @@ namespace Thetis
             {
                 ivac.SetIVACrun(1, 0);
                 ivac.StopAudioIVAC(1);
-           }
+            }
 
         }
 
@@ -1458,8 +1287,9 @@ namespace Thetis
             int rc;
             phase_buf_l = new float[2048];
             phase_buf_r = new float[2048];
-
+            Console c = Console.getConsole();
             rc = NetworkIO.initRadio();
+
             if (rc != 0)
             {
                 if (rc == -101) // firmware version error; 
@@ -1483,31 +1313,52 @@ namespace Thetis
                 }
             }
 
-            int result = NetworkIO.StartAudioNative(callback3port);
+            // add setup calls that are needed to change between P1 & P2 before startup
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
+            {
+                console.SampleRateTX = 48000; // set tx audio sampling rate  
+                WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), false);
+                puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
+                console.psform.PSdefpeak = "0.4072";
+            }
+            else
+            {
+                console.SampleRateTX = 192000;
+                WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
+                puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
+                console.psform.PSdefpeak = "0.2899";
+            }
+
+            c.SetupForm.InitAudioTab();
+            c.SetupForm.ForceReset = true;
+            cmaster.PSLoopback = cmaster.PSLoopback;
+
+            int result = NetworkIO.StartAudioNative();
             if (result == 0) retval = true;
 
-                return retval;
+            return retval;
         }
 
-        private static void PortAudioErrorMessageBox(int error)
-        {
-            switch (error)
-            {
-                case (int)PA19.PaErrorCode.paInvalidDevice:
-                    string s = "Whoops!  Looks like something has gone wrong in the\n" +
-                        "Audio section.  Go look in the Setup Form -> Audio Tab to\n" +
-                        "verify the settings there.";
-                    if (vac_enabled) s += "  Since VAC is enabled, make sure\n" +
-                         "you look at those settings as well.";
-                    MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-                default:
-                    MessageBox.Show(PA19.PA_GetErrorText(error), "PortAudio Error: " + error,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-            }
-        }
+//        private static void PortAudioErrorMessageBox(PaErrorCode error)
+ //       {
+//            if (error < PaErrorCode.NoError) throw PortAudioException.GetException(error);
+//             switch (error)
+//             {
+//                 case PaErrorCode.InvalidDevice:
+//                     string s = "Whoops!  Looks like something has gone wrong in the\n" +
+//                         "Audio section.  Go look in the Setup Form -> Audio Tab to\n" +
+//                         "verify the settings there.";
+//                     if (vac_enabled) s += "  Since VAC is enabled, make sure\n" +
+//                          "you look at those settings as well.";
+//                     MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
+//                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+//                     break;
+//                 default:
+//                     MessageBox.Show(PortAudio.Pa_GetErrorText(error), "PortAudio Error: " + error,
+//                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+//                     break;
+//             }
+//        }
 
         #endregion
 
@@ -1565,7 +1416,7 @@ namespace Thetis
             for (int i = 0; i < frameCount; i++)
             {
                 if (Display.CurrentDisplayMode == DisplayMode.SCOPE || //MW0LGE added all other scope modes
-                    Display.CurrentDisplayMode == DisplayMode.PANASCOPE || 
+                    Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
                     Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
                 {
                     if (buf[i] < scope_pixel_min)
@@ -1612,7 +1463,8 @@ namespace Thetis
         {
             set { scope2_max = value; }
         }
-        public static float[] Scope2Min {
+        public static float[] Scope2Min
+        {
             set { scope2_min = value; }
         }
 
@@ -1633,7 +1485,7 @@ namespace Thetis
 
             for (int i = 0; i < frameCount; i++)
             {
-                if (Display.CurrentDisplayMode == DisplayMode.SCOPE || //MW0LGE added all other scope modes
+                if (Display.CurrentDisplayMode == DisplayMode.SCOPE ||
                     Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
                     Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
                 {
@@ -1665,30 +1517,6 @@ namespace Thetis
                 }
             }
         }
-        //unsafe public static void DoScope2(float* buf, int frameCount)
-        //{
-        //     if (scope2_max == null || scope2_max.Length < scope_display_width)
-        //    {
-        //        if (Display.Scope2Max == null || Display.Scope2Max.Length < scope_display_width)
-        //            Display.Scope2Max = new float[scope_display_width];
-        //        scope2_max = Display.Scope2Max;
-        //    }
-
-        //    for (int i = 0; i < frameCount; i++)
-        //    {
-        //        scope2_pixel_max = buf[i];
-        //        scope2_sample_index++;
-        //        if (scope2_sample_index >= scope_samples_per_pixel)
-        //        {
-        //            scope2_sample_index = 0;
-        //            scope2_max[scope2_pixel_index] = scope2_pixel_max;
-        //            scope2_pixel_max = float.MinValue;
-        //            scope2_pixel_index++;
-        //            if (scope2_pixel_index >= scope_display_width)
-        //                scope2_pixel_index = 0;
-        //        }
-        //    }
-        //}
 
         #endregion
 

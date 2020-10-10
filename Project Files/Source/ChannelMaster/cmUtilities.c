@@ -92,3 +92,129 @@ void WriteAudio(double seconds, int rate, int size, double* indata, int mode)
 		_beginthread (WriteAudioFile, 0, (void *)data);
 	}
 }
+
+
+/***********************************************************************************************************************************/
+
+// WriteCharFiles(...) is specifically to dissect radio=>PC Protocol_1 packets (frames portion) 
+//    and write out files for Audacity.
+// This is to be called ONCE FOR EACH PACKET (2 frames, 1024 bytes) of data.
+// The ddc files written should be imported as 'Raw Data' into Audacity as Signed 32-bit Stereo.
+// The mic file written should be imported as 'Raw Data' into Audacity as Signed 32-bit, Mono, 48Khz.
+
+int char_ready = 0;
+struct EscribeEstructura
+{
+	int* ddc[8];
+	int* mic;
+	int nddcs;
+	int n;
+	int nmic;
+};
+struct EscribeEstructura EscribeCosas;
+
+void EscribeLoTodo (void* arg)
+{
+
+	for (int i = 0; i < EscribeCosas.nddcs; i++)
+	{
+		char num[1];
+		char filename[4] = "ddc";
+		itoa (i, num, 10);
+		strcat(filename, num);
+		FILE* file = fopen(&filename[0], "wb");
+		fwrite((int*)EscribeCosas.ddc[i], sizeof(int), EscribeCosas.n, file);
+		fflush(file);
+		fclose(file);
+		free (EscribeCosas.ddc[i]);
+	}
+	FILE* file = fopen("mic", "wb");
+	fwrite((int*)EscribeCosas.mic, sizeof (int), EscribeCosas.nmic, file);
+	fflush (file);
+	fclose (file);
+	free (EscribeCosas.mic);
+	_endthread();
+}
+
+
+PORT
+void WriteCharFiles (int seconds, int rate, unsigned char* indata, int num_ddcs)
+{
+	static int n;							// number of sample sets to collect
+	static int n_mic;						// number of mic samples to collect
+	static int mic_dec;						// decimation factor for mic
+	static int spf;							// samples for each ddc in one frame of data = sample_sets per frame
+	static int nframes;						// total number of frames needed
+	static int* ddc_data[8];				// array or pointers to complex samples from each ddc
+	static int* mic_data;					// pointer to mic samples
+	static int mic_dec_count;				// decimation counter for mic samples
+	static int mic_sample_count;			// count of mic samples stored
+	static int frame_count;					// number of frames processed thus far
+	static int char_done;
+	if (!char_ready)
+		{
+			n = seconds * rate;				// this is equal to the samples per ddc to collect
+			switch (rate)
+			{
+			case 48000:
+				mic_dec = 1;
+				break;
+			case 96000:
+				mic_dec = 2;
+				break;
+			case 192000:
+				mic_dec = 4;
+				break;
+			case 384000:
+				mic_dec = 8;
+				break;
+			}
+			n_mic = n / mic_dec;
+			spf = 504 / (6 * num_ddcs + 2);
+			nframes = (int) ceil ((double)n / (double)spf);
+			for (int i = 0; i < num_ddcs; i++)
+				ddc_data[i] = (int *) calloc (nframes * spf, 2 * sizeof (int));		// large enough for complex samples
+			mic_data = (int *) calloc (nframes * spf, sizeof (int));
+			mic_dec_count = 0;
+			mic_sample_count = 0;
+			char_done = 0;
+			frame_count = 0;
+			char_ready = 1;
+		}
+	for (int frame = 0, bidx = 8; frame < 2; frame++, bidx += 512)					// for each frame in the packet
+	{
+		if (frame_count < nframes)
+		{
+			int offset = frame_count * spf;
+			for (int j = 0, ssidx = bidx; j < spf; j++, ssidx += 6 * num_ddcs + 2)	// for each sample set in the frame
+			{
+				int stidx = 2 * (offset + j);
+				for (int iddc = 0, idx = ssidx; iddc < num_ddcs; iddc++, idx += 6)	// for each ddc in the sample set
+				{
+					ddc_data[iddc][stidx + 0] = (int)((indata[idx + 0] << 24) | (indata[idx + 1] << 16) | (indata[idx + 2] << 8));	// I
+					ddc_data[iddc][stidx + 1] = (int)((indata[idx + 3] << 24) | (indata[idx + 4] << 16) | (indata[idx + 5] << 8));	// Q
+				}
+				if (++mic_dec_count == mic_dec)
+				{
+					int idx = ssidx + num_ddcs * 6;
+					mic_data[mic_sample_count++] = (int)((indata[idx + 0] << 24) | (indata[idx + 1] << 16));	// mic sample
+					mic_dec_count = 0;
+				}
+			}
+			frame_count++;
+		}
+	}
+	if ((frame_count >= nframes) && !char_done)
+	{
+		for (int i = 0; i < 8; i++)
+			EscribeCosas.ddc[i] = ddc_data[i];
+		EscribeCosas.mic = mic_data;
+		EscribeCosas.nddcs = num_ddcs;
+		EscribeCosas.n = n;
+		EscribeCosas.nmic = n_mic;
+		_beginthread(EscribeLoTodo, 0, (void*)0);
+		char_done = 1;
+	}
+}
+
+/***********************************************************************************************************************************/

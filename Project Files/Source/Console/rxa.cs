@@ -50,7 +50,7 @@ namespace Thetis
         private void create_rxa()
         {
             // JanusAudio setup
-            NetworkIO.SetSampleRate(fwid, 48000);                       // set receivers samplerate to 48K
+            NetworkIO.SetDDCRate(fwid, 48000);                       // set receivers samplerate to 48K
             NetworkIO.EnableRx(fwid, 1);                                   // enable the receiver
 
             // ChannelMaster setup

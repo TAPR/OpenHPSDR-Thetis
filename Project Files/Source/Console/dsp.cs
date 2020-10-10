@@ -459,6 +459,9 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenSweepRate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAPostGenSweepRate(int channel, double rate);
+        
+        [DllImport("wdsp.dll", EntryPoint = "GetWDSPVersion", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetWDSPVersion();
 
         // diversity
 

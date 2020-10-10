@@ -86,7 +86,7 @@ void flush_cmbuffs (int id)
 }
 
 PORT
-void Inbound (int id, int nsamples, double* in)	
+void Inbound (int id, int nsamples, double* in)
 {
 	int n;
 	int first, second;

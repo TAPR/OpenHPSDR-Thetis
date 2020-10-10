@@ -47,8 +47,8 @@ typedef struct _obb
 	int   max_in_size;							// max input number of complex samples
 	int   r1_outsize;							// number of complex samples taken out of the ring for processing 
 
-	int   r1_size;								// size of a single maximum sized transfer
-	int   r1_active_buffsize;					// size of ring (in complex samples)
+	int   r1_size;							// size of a single maximum sized transfer
+	int   r1_active_buffsize;				// size of ring (in complex samples)
 	
 	double* r1_baseptr;							// pointer to ring
 	int   r1_inidx;								// in 'double', actual index into the buffer is 2 times this
@@ -68,7 +68,7 @@ extern void destroy_obbuffs (int id);
 
 extern void flush_obbuffs (int id);
 
-extern __declspec (dllexport) void OutBound (int id, int nsamples, double* in);	
+extern __declspec (dllexport) void OutBound (int id, int nsamples, double* in);
 
 extern void obdata (int id, double* out);
 

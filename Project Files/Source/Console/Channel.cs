@@ -27,9 +27,6 @@
 //=================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Thetis
 {
@@ -103,8 +100,8 @@ namespace Thetis
 
         public bool InBW(double low, double high)
         {
-            double channel_low = Freq - (BW / 2) * 1e-6;
-            double channel_high = Freq + (BW / 2) * 1e-6;
+            double channel_low = Freq - ((double)BW / 2) * 1e-6;
+            double channel_high = Freq + ((double)BW / 2) * 1e-6;
 
             return ((low > channel_low && low < channel_high) ||
                 (high > channel_low && high < channel_high) ||

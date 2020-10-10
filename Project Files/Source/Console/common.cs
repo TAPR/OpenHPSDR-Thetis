@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.IO.Ports;
 using System.IO;
+using System.Reflection;
 
 namespace Thetis
 {
@@ -98,7 +99,7 @@ namespace Thetis
 					c.GetType() == typeof(RadioButton) ||
 					c.GetType() == typeof(TextBox) ||
 					c.GetType() == typeof(TrackBar))
-					Debug.WriteLine(c.Name+" needs to be converted to a Thread Safe control.");
+					Debug.WriteLine(form.Name + " -> " + c.Name+" needs to be converted to a Thread Safe control.");
 #endif
 			}
 			a.Add("Top/"+form.Top);
@@ -486,5 +487,41 @@ namespace Thetis
 
             }
         }
-    }
+
+		// returns the Thetis version number in "a.b.c" format
+		// MW0LGE moved here from titlebar.cs, and used by console.cs and others
+		private static string m_sVersionNumber = "";
+		private static string m_sFileVersion = "";
+		public static string GetVerNum()
+		{
+			if (m_sVersionNumber != "") return m_sVersionNumber;
+
+			setupVersions();
+
+			return m_sVersionNumber;
+		}
+		public static string GetFileVersion()
+		{
+			if (m_sFileVersion != "") return m_sFileVersion;
+
+			setupVersions();
+
+			return m_sFileVersion;
+		}
+
+		private static void setupVersions()
+		{
+			//MW0LGE build version number string once and return that
+			// if called again. Issue reported by NJ2US where assembly.Location
+			// passed into GetVersionInfo failed. Perhaps because norton or something
+			// moved the file after it was accessed. The version isn't going to
+			// change anyway while running, so obtaining it once is fine.
+			if (m_sVersionNumber!="" && m_sFileVersion!="") return; // already setup
+
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+			m_sVersionNumber = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
+			m_sFileVersion = fvi.FileVersion;
+		}
+	}
 }

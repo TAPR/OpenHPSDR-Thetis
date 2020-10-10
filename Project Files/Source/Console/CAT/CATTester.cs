@@ -21,7 +21,7 @@ namespace Thetis
 		private System.Windows.Forms.LabelTS label1;
 		private System.Windows.Forms.LabelTS label2;
 		private DataSet ds;
-		private System.Windows.Forms.DataGrid dataGrid1;
+		private System.Windows.Forms.DataGridView dataGrid1;
 		private System.Windows.Forms.Button btnExecute;
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace Thetis
             this.txtResult = new System.Windows.Forms.TextBoxTS();
             this.label1 = new System.Windows.Forms.LabelTS();
             this.label2 = new System.Windows.Forms.LabelTS();
-            this.dataGrid1 = new System.Windows.Forms.DataGrid();
+            this.dataGrid1 = new System.Windows.Forms.DataGridView();
             this.btnExecute = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
             this.SuspendLayout();
@@ -128,7 +128,6 @@ namespace Thetis
             // dataGrid1
             // 
             this.dataGrid1.DataMember = "";
-            this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
             this.dataGrid1.Location = new System.Drawing.Point(8, 0);
             this.dataGrid1.Name = "dataGrid1";
             this.dataGrid1.Size = new System.Drawing.Size(512, 224);

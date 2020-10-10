@@ -1,7 +1,7 @@
 /*
  * netinterface.c
  * Copyright (C) 2006,2007  Bill Tracey (bill@ejwt.com) (KD5TFD)
- * Copyright (C) 2010-2016 Doug Wigley (W5WC)
+ * Copyright (C) 2010-2020 Doug Wigley (W5WC)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,117 +26,99 @@
 #define MDECAY 0.99f;
 const int numInputBuffs = 12;
 
-//
-// StartAudio -- called when we need to start reading audio and passing it to PowerSDR via the callback.
-//
-
 PORT
-int StartAudioNative(//int sample_rate, int samples_per_block,
-int(__stdcall *callbackp)(void *inp, void *outp, int framcount, void *timeinfop, int flags, void *userdata)) //,int sample_bits)
+int StartAudioNative()
 {
-	DWORD dwWaitResult;
 	int myrc = 0;
-
+	int rc;
 	HaveSync = 1;
 
 	// make sure we're not already opened
-	if (IOThreadRunning) {
+	if (IOThreadRunning || prn == NULL) 
+	{
 		return 3;
 	}
 
-	do { // once		
-		if (prn == NULL)
-			create_rnet();
+	UpdateRadioProtocolSampleSize(); // we know the radio protocol - need to update sample sizes
 
-		if (prn != NULL)
-		{
-			StartReadThread();
-
-			prn->hReadThreadInitSem = CreateSemaphore(NULL, 0, 1, NULL);
-			if (prn->hReadThreadInitSem == NULL) {
-				printf("CreateSemaphore(ReadThreadInitSem) error: %d\n", GetLastError());
-				myrc = 4;
+	if (RadioProtocol == USB)
+	{		
+		do { // once								
+			rc = SendStartToMetis();
+			if (rc != 0) {
+				printf("SendStart failed ...\n"); fflush(stdout);
+				StopReadThread();
+				myrc = -3;
 				break;
 			}
-			else
-				printf("CreateSemaphore(ReadThreadInitSem) is OK\n");
 
-			prn->hReadThreadMain = CreateThread(NULL, 0, ReadThreadMain, 0, 0, NULL);
-			if (prn->hReadThreadMain == NULL) {
-				printf("CreateThread(ReadThreadMain) error: %d\n", GetLastError());
-				myrc = 4;
-				break;
+			if (prn != NULL)
+			{				
+				prn->hReadThreadInitSem = CreateSemaphore(NULL, 0, 1, NULL);				
+				prn->hReadThreadMain = (HANDLE)_beginthreadex(NULL, 0, MetisReadThreadMain, 0, 0, NULL);
+			
+				WaitForSingleObject(prn->hReadThreadInitSem, INFINITE); // wait for the thread to get going
+				
+				prn->hWriteThreadInitSem = CreateSemaphore(NULL, 0, 1, NULL);
+				prn->hWriteThreadMain = (HANDLE)_beginthreadex(NULL, 0, sendProtocol1Samples, 0, 0, NULL);
+				// Create Events
+				prn->hsendEventHandles[0] = ( prn->hsendLRSem = CreateSemaphore(NULL, 0, 64, NULL));
+				prn->hsendEventHandles[1] = ( prn->hsendIQSem = CreateSemaphore(NULL, 0, 64, NULL));
+				prn->hobbuffsRun[0] = CreateSemaphore (NULL, 0, 1, NULL);
+				prn->hobbuffsRun[1] = CreateSemaphore (NULL, 0, 1, NULL);
 			}
-			else
-				printf("CreateThread(ReadThreadMain) is OK\n");
 
-			prn->hKeepAliveThread = CreateThread(NULL, 0, KeepAliveMain, 0, 0, NULL);
-			if (prn->hKeepAliveThread == NULL) {
-				printf("CreateThread(KeepAliveMain) error: %d\n", GetLastError());
-				myrc = 4;
-				break;
-			}
-			else
-				printf("CreateThread(KeepAliveMain) is OK\n");
-
-			dwWaitResult = WaitForSingleObject(prn->hReadThreadInitSem, INFINITE); // wait for the thread to get going
-			switch (dwWaitResult)
-			{
-				// The semaphore object was signaled.
-			case WAIT_OBJECT_0: printf("The semaphore object was signaled. Can open another window..\n");
-				// OK to open another window.
-				break;
-				// Semaphore was nonsignaled, so a time-out occurred.
-			case WAIT_TIMEOUT: printf("The semaphore object was nonsignaled, so a time-out...Can't open another window\n");
-				// Cannot open another window.
-				break;
-			}
-		}
-
-	} while (0);
-
-	if (myrc != 0) {  // we failed -- clean up
-
-		StopReadThread(); /* is a no op if not running */
+		} while (0);
 	}
-	DotDashBits = 0;
-	// printf("StartAudioNative - myrc: %d\n", myrc);
+	else
+	{
+		do { 		
+				StartReadThread();
+				prn->hReadThreadInitSem = CreateSemaphore(NULL, 0, 1, NULL);
+				prn->hReadThreadMain = (HANDLE)_beginthreadex(NULL, 0, ReadThreadMain, 0, 0, NULL);
+				WaitForSingleObject(prn->hReadThreadInitSem, INFINITE); // wait for the thread to get going
+				prn->hKeepAliveThread = (HANDLE)_beginthreadex(NULL, 0, KeepAliveMain, 0, 0, NULL);
+		} while (0);
+	}
+
+	   if (myrc != 0) 
+	   {  // we failed -- clean up
+		   StopReadThread(); /* is a no op if not running */
+	   }
+
 	return myrc;
 
 }
 
-//
-// StopAudio -- undo what start audio did.  Close/Free/Destroy that which StartAudio Opened/Alloc'd/Created.
-//
 PORT
-void StopAudio() {
+void StopAudio() 
+{
 	int rc;
 	printf("stop audio called\n");  fflush(stdout);
 	rc = IOThreadStop();
-	if (rc != 0) {
+	if (rc != 0) 
+	{
 		fprintf(stderr, "Warning: IOThreadStop failed with rc=%d\n", rc);
 	}
 	printf("iothread stopped\n");   fflush(stdout);
 
 	StopReadThread();
-
-	DotDashBits = 0;
-
-	return;
 }
 
 int getDDPTTcount = 0;
 int last_DDP = 0;
 
 PORT
-int nativeGetDotDashPTT() {
+int nativeGetDotDashPTT() 
+{
 	return (prn->dot_in |
 		prn->dash_in |
 		prn->ptt_in) & 0x7;
 }
 
 PORT
-int getAndResetADC_Overload() {
+int getAndResetADC_Overload() 
+{
 	int n = prn->adc[0].adc_overload | (prn->adc[1].adc_overload << 1) | (prn->adc[2].adc_overload << 2);
 
 	return n;
@@ -167,9 +149,6 @@ int getOOO() { // OOO == Out Of Order packet
 
 	if (result > 0)
 	{
-		//PrintTimeHack();
-		//printf("- seq_error %d\n", result);
-
 		prn->cc_seq_err = 0;
 		prn->rx[0].rx_in_seq_err = 0;
 		prn->rx[1].rx_in_seq_err = 0;
@@ -185,14 +164,16 @@ int getOOO() { // OOO == Out Of Order packet
 }
 
 PORT
-int getSeqInDelta(int nInit, int rx, int deltas[], char* dateTimeStamp, size_t *received_seqnum, size_t *last_seqnum) {
+int getSeqInDelta(int nInit, int rx, int deltas[], char* dateTimeStamp, int *received_seqnum, int *last_seqnum) 
+{
 	int nRet = 0;
 
 	EnterCriticalSection(&prn->seqErrors);
 	
 	if (nInit == 1) prn->rx[rx].snapshot = prn->rx[rx].snapshots_head;
 
-	if (prn->rx[rx].snapshot != NULL) {
+	if (prn->rx[rx].snapshot != NULL) 
+	{
 		memcpy(deltas, prn->rx[rx].snapshot->rx_in_seq_snapshot, sizeof(int) * MAX_IN_SEQ_LOG);
 		memcpy(dateTimeStamp, prn->rx[rx].snapshot->dateTimeStamp, sizeof(char) * 24);
 
@@ -210,96 +191,95 @@ int getSeqInDelta(int nInit, int rx, int deltas[], char* dateTimeStamp, size_t *
 }
 
 PORT
-int getUserI01() {
-	return (prn->user_io & 0x1) != 0;
+int getUserI01() 
+{
 
+	return (prn->user_dig_in & 0x1) != 0;
 }
 
 PORT
-int getUserI02() {
+int getUserI02() 
+{
 
-	return (prn->user_io & 0x2) != 0;
-
+	return (prn->user_dig_in & 0x2) != 0;
 }
 
 PORT
-int getUserI03() {
+int getUserI03() 
+{
 
-	return (prn->user_io & 0x4) != 0;
-
+	return (prn->user_dig_in & 0x4) != 0;
 }
 
 PORT
-int getUserI04() {
+int getUserI04() 
+{
 
-	return (prn->user_io & 0x8) != 0;
-
+	return (prn->user_dig_in & 0x8) != 0;
 }
 
 PORT
-int getExciterPower() {
+int getExciterPower() 
+{
 
 	return prn->tx[0].exciter_power;
-
 }
 
 PORT
-float getFwdPower() {
+float getFwdPower() 
+{
 
-	// PeakFwdPower((float)prn->tx[0].fwd_power);
 	return FwdPower;
 }
 
 PORT
-float getRevPower() {
+float getRevPower() 
+{
 
-	// PeakRevPower((float)prn->tx[0].rev_power);
 	return RevPower;
 }
 
 PORT
-int getUserADC0() {
-
+int getUserADC0() 
+{
 
 	return prn->user_adc0;
-
 }
 
 PORT
-int getUserADC1() {
-
+int getUserADC1() 
+{
 
 	return prn->user_adc1;
-
 }
 
 PORT
-int getUserADC2() {
-
+int getUserADC2() 
+{
 
 	return prn->user_adc2;
-
 }
 
 PORT
-int getUserADC3() {
-
+int getUserADC3() 
+{
 
 	return prn->user_adc3;
-
 }
 
 PORT
-int getHermesDCVoltage() {
+int getHermesDCVoltage() 
+{
 
 	return prn->supply_volts;
 }
 
 PORT
-void SetPttOut(int xmit) {
-
+void SetPttOut(int xmit) 
+{
 	if (prn->tx[0].ptt_out != xmit)
 	{
+		XmitBit = xmit;
 		prn->tx[0].ptt_out = xmit & 0x1;
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
@@ -307,8 +287,8 @@ void SetPttOut(int xmit) {
 }
 
 PORT
-void SetTRXrelay(int bit) {
-
+void SetTRXrelay(int bit) 
+{
 	if (prbpfilter->_TR_Relay != bit)
 	{
 		if (!prn->tx[0].pa) // disable PA
@@ -320,14 +300,10 @@ void SetTRXrelay(int bit) {
 }
 
 PORT
-void SetC1Bits(int bits) { // for HPSDR
-	C1Mask = bits;
-	return;
-}
-
-PORT
-void EnableEClassModulation(int bit) {
-	if (prn->cw.eer != bit) {
+void EnableEClassModulation(int bit) 
+{
+	if (prn->cw.eer != bit) 
+	{
 		prn->cw.eer = bit;
 		if (listenSock != INVALID_SOCKET)
 			CmdRx();
@@ -335,7 +311,8 @@ void EnableEClassModulation(int bit) {
 }
 
 PORT
-void SetOCBits(int b) {
+void SetOCBits(int b) 
+{
 	if (prn->oc_output != b)
 	{
 		prn->oc_output = b;
@@ -345,8 +322,8 @@ void SetOCBits(int b) {
 }
 
 PORT
-void SetAlexAtten(int bits) {
-
+void SetAlexAtten(int bits) 
+{
 	if (mkiibpf) return;
 
 	if ((prbpfilter->_20_dB_Atten | prbpfilter->_10_dB_Atten) != bits)
@@ -356,29 +333,30 @@ void SetAlexAtten(int bits) {
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
-	return;
 }
 
 PORT
-void SetADCDither(int bits) {
+void SetADCDither(int bits) 
+{
 
-	if (prn->adc[0].dither != bits) {
+	if (prn->adc[0].dither != bits) 
+	{
 		prn->adc[0].dither = prn->adc[1].dither = prn->adc[2].dither = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdRx();
 	}
-	return;
 }
 
 PORT
-void SetADCRandom(int bits) {
+void SetADCRandom(int bits) 
+{
 
-	if (prn->adc[0].random != bits) {
+	if (prn->adc[0].random != bits) 
+	{
 		prn->adc[0].random = prn->adc[1].random = prn->adc[2].random = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdRx();
 	}
-	return;
 }
 
 PORT
@@ -411,11 +389,11 @@ void SetAntBits(int rx_only_ant, int trx_ant, int rx_out, char tx) {
 	prbpfilter->_ANT_3 = (trx_ant & (0x01 | 0x02)) == (0x01 | 0x02);
 	if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 		CmdHighPriority();
-	return;
 }
 
 PORT
-void SetVFOfreq(int id, int freq, int tx) {
+void SetVFOfreq(int id, int freq, int tx) 
+{
 	if (tx)
 	{
 		if (prn != NULL && prn->tx[id].frequency != freq)
@@ -434,13 +412,11 @@ void SetVFOfreq(int id, int freq, int tx) {
 				CmdHighPriority();
 		}
 	}
-	return;
 }
 
 PORT
-void SetOutputPowerFactor(int u) {
-
-	
+void SetOutputPowerFactor(int u) 
+{
 	if (prn->tx[0].drive_level != u)
 	{
 		prn->tx[0].drive_level = u;
@@ -450,57 +426,68 @@ void SetOutputPowerFactor(int u) {
 }
 
 PORT
-void SetMicBoost(int bits) {
-
-	if (prn->mic.mic_boost != bits) {
+void SetMicBoost(int bits) 
+{
+	if (prn->mic.mic_boost != bits) 
+	{
 		prn->mic.mic_boost = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-	return;
 }
 
 PORT
-void SetLineIn(int bits) {
-	if (prn->mic.line_in != bits) {
+void SetLineIn(int bits) 
+{
+	if (prn->mic.line_in != bits) 
+	{
 		prn->mic.line_in = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void EnableApolloFilter(int bits) {
+void EnableApolloFilter(int bits) 
+{
 	if (bits != 0)
 		ApolloFilt = 0x4;
 	else
 		ApolloFilt = 0;
-	return;
 }
 
 PORT
-void EnableApolloTuner(int bits) {
+void EnableApolloTuner(int bits) 
+{
 	if (bits != 0)
 		ApolloTuner = 0x8;
 	else
 		ApolloTuner = 0;
-	return;
 }
 
 PORT
-void EnableApolloAutoTune(int bits) {
+void EnableApolloAutoTune(int bits) 
+{
 	if (bits != 0)
 		ApolloATU = 0x10;
 	else
 		ApolloATU = 0;
-	return;
 }
 
 PORT
-void SetAlexHPFBits(int bits) {
-	if (AlexHPFMask != bits) {
+void SelectApolloFilter(int bits) 
+{
+	if (bits != 0)
+		ApolloFiltSelect = 0x20;
+	else
+		ApolloFiltSelect = 0;
+}
+
+PORT
+void SetAlexHPFBits(int bits) 
+{
+	if (AlexHPFMask != bits) 
+	{
 		prbpfilter->_13MHz_HPF = (bits & 0x01) != 0;
 		prbpfilter->_20MHz_HPF = (bits & 0x02) != 0;
 		prbpfilter->_9_5MHz_HPF = (bits & 0x04) != 0;
@@ -513,22 +500,24 @@ void SetAlexHPFBits(int bits) {
 	}
 
 	AlexHPFMask = bits;
-	return;
 }
 
 PORT
-void DisablePA(int bit) {
-	if (prn->tx[0].pa != bit) {
+void DisablePA(int bit) 
+{
+	if (prn->tx[0].pa != bit) 
+	{
 		prn->tx[0].pa = bit;		
 		if (listenSock != INVALID_SOCKET)
 			CmdGeneral();
 	}
-	return;
 }
 
 PORT
-void SetAlex2HPFBits(int bits) {
-	if (Alex2HPFMask != bits) {
+void SetAlex2HPFBits(int bits) 
+{
+	if (Alex2HPFMask != bits) 
+	{
 		prbpfilter2->_13MHz_HPF = (bits & 0x01) != 0;
 		prbpfilter2->_20MHz_HPF = (bits & 0x02) != 0;
 		prbpfilter2->_9_5MHz_HPF = (bits & 0x04) != 0;
@@ -541,36 +530,36 @@ void SetAlex2HPFBits(int bits) {
 	}
 
 	Alex2HPFMask = bits;
-	return;
 }
 
 PORT
-void SetBPF2Gnd(int bits) {
-
+void SetBPF2Gnd(int bits) 
+{
 	if ((prbpfilter2->_rx2_gnd) != bits)
 	{
 		prbpfilter2->_rx2_gnd = (bits & 0x1) != 0;
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
-	return;
 }
 
 PORT
-void SetAlex3HPFBits(int bits) {
+void SetAlex3HPFBits(int bits) 
+{
 	Alex3HPFMask = bits;
-	return;
 }
 
 PORT
-void SetAlex4HPFBits(int bits) {
+void SetAlex4HPFBits(int bits) 
+{
 	Alex4HPFMask = bits;
-	return;
 }
 
 PORT
-void SetAlexLPFBits(int bits) {
-	if (AlexLPFMask != bits) {
+void SetAlexLPFBits(int bits) 
+{
+	if (AlexLPFMask != bits) 
+	{
 		prbpfilter->_30_20_LPF = (bits & 0x01) != 0;
 		prbpfilter->_60_40_LPF = (bits & 0x02) != 0;
 		prbpfilter->_80_LPF = (bits & 0x04) != 0;
@@ -583,29 +572,29 @@ void SetAlexLPFBits(int bits) {
 	}
 
 	AlexLPFMask = bits;
-	return;
 }
 
 PORT
-void SetAlex2LPFBits(int bits) {
+void SetAlex2LPFBits(int bits) 
+{
 	Alex2LPFMask = bits;
-	return;
 }
 
 PORT
-void SetAlex3LPFBits(int bits) {
+void SetAlex3LPFBits(int bits) 
+{
 	Alex3LPFMask = bits;
-	return;
 }
 
 PORT
-void SetAlex4LPFBits(int bits) {
+void SetAlex4LPFBits(int bits) 
+{
 	Alex4LPFMask = bits;
-	return;
 }
 
 PORT
-void SetRX1Preamp(int bits) {
+void SetRX1Preamp(int bits) 
+{
 
 	if (prn->rx[0].preamp != bits)
 	{
@@ -613,215 +602,169 @@ void SetRX1Preamp(int bits) {
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
-	return;
 }
 
 PORT
-void SetRX2Preamp(int bits) {
-
+void SetRX2Preamp(int bits) 
+{
 	if (prn->rx[1].preamp != bits)
 	{
 		prn->rx[1].preamp = bits;
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
-
-	return;
 }
 
 PORT
-void SetMicTipRing(int bits) {
-
-	if (prn->mic.mic_trs != bits) {
+void SetMicTipRing(int bits) 
+{
+	if (prn->mic.mic_trs != bits) 
+	{
 		prn->mic.mic_trs = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void SetMicBias(int bits) {
-	if (prn->mic.mic_bias != bits) {
+void SetMicBias(int bits) 
+{
+	if (prn->mic.mic_bias != bits) 
+	{
 		prn->mic.mic_bias = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void SetMicPTT(int bits) {
-
-	if (prn->mic.mic_ptt != bits) {
+void SetMicPTT(int bits) 
+{
+	if (prn->mic.mic_ptt != bits) 
+	{
 		prn->mic.mic_ptt = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void SetLineBoost(int bits) {
-
-	if (prn->mic.line_in_gain != bits) {
+void SetLineBoost(int bits) 
+{
+	if (prn->mic.line_in_gain != bits) 
+	{
 		prn->mic.line_in_gain = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void SetMercTxAtten(int bit) {
-	if (bit != 0) {
-		MercTxAtten = 0x20;
-	}
-	else {
-		MercTxAtten = 0;
-	}
-
-	return;
-}
-
-PORT
-void SetPureSignal(int bit) {
+void SetPureSignal(int bit) 
+{
 	if (prn->puresignal_run != bit)
 	{
 		prn->puresignal_run = bit & 0x1;
-		if (listenSock != INVALID_SOCKET)
-			// CmdRx();
-			CmdHighPriority();
+		//if (listenSock != INVALID_SOCKET)
+		//	CmdHighPriority();
 	}
-
-	return;
 }
 
 PORT
-void SetUserOut0(int out) {
-	if (out == 0) {
-		UserOut0 = 0;
-	}
-	else {
-		UserOut0 = 1;
-	}
-
-	return;
+void SetUserOut0(int out) 
+{
+	prn->user_dig_out = out & 1;	
 }
 
 PORT
-void SetUserOut1(int out) {
-	if (out == 0) {
-		UserOut1 = 0;
-	}
-	else {
-		UserOut1 = 0x2;
-	}
-	return;
+void SetUserOut1(int out) 
+{
+	prn->user_dig_out = (out << 1) & 2;	
 }
 
 PORT
-void SetUserOut2(int out) {
-	if (out == 0) {
-		UserOut2 = 0;
-	}
-	else {
-		UserOut2 = 0x4;
-	}
-
-	return;
+void SetUserOut2(int out) 
+{
+	prn->user_dig_out = (out << 2) & 4;
 }
 
 PORT
-void SetUserOut3(int out) {
-	if (out == 0) {
-		UserOut3 = 0;
-	}
-	else {
-		UserOut3 = 0x8;
-	}
-
-	return;
+void SetUserOut3(int out) 
+{
+	prn->user_dig_out = (out << 3) & 8;	
 }
 
 PORT
-void SetADC1StepAttenData(int data) {
-
+void SetADC1StepAttenData(int data) 
+{
 	if (prn->adc[0].rx_step_attn != data)
 	{
 		prn->adc[0].rx_step_attn = data;
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
-	return;
 }
 
 PORT
-void SetADC2StepAttenData(int data) {
-
+void SetADC2StepAttenData(int data) 
+{
 	if (prn->adc[1].rx_step_attn != data)
 	{
 		prn->adc[1].rx_step_attn = data;
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
-
-	return;
 }
 
 PORT
-void SetADC3StepAttenData(int data) {
-
+void SetADC3StepAttenData(int data) 
+{
 	if (prn->adc[2].rx_step_attn != data)
 	{
 		prn->adc[2].rx_step_attn = data;
 		if (listenSock != INVALID_SOCKET)
 			CmdHighPriority();
 	}
-
-	return;
 }
 
 PORT
-void ReversePaddles(int bits) {
-
-	if (prn->cw.rev_paddle != bits) {
+void ReversePaddles(int bits) 
+{
+	if (prn->cw.rev_paddle != bits) 
+	{
 		prn->cw.rev_paddle = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void SetCWKeyerSpeed(int speed) {
-
-	if (prn->cw.keyer_speed != speed) {
+void SetCWKeyerSpeed(int speed) 
+{
+	if (prn->cw.keyer_speed != speed) 
+	{
 		prn->cw.keyer_speed = speed;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
 }
 
 PORT
-void SetCWKeyerMode(int mode) {
-	if (prn->cw.mode_b != mode) {
+void SetCWKeyerMode(int mode) 
+{
+	if (prn->cw.mode_b != mode) 
+	{
 		prn->cw.mode_b = mode;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
 }
 
 PORT
-void SetCWKeyerWeight(int weight) {
-	if (prn->cw.keyer_weight != weight) {
+void SetCWKeyerWeight(int weight) 
+{
+	if (prn->cw.keyer_weight != weight) 
+	{
 		prn->cw.keyer_weight = weight;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
@@ -829,129 +772,147 @@ void SetCWKeyerWeight(int weight) {
 }
 
 PORT
-void EnableCWKeyerSpacing(int bits) {
-
-	if (prn->cw.strict_spacing != bits) {
+void EnableCWKeyerSpacing(int bits) 
+{
+	if (prn->cw.strict_spacing != bits) 
+	{
 		prn->cw.strict_spacing = bits;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void SetADC_cntrl1(int bits) {
-
-	if (ADC_cntrl1 != bits) {
+void SetADC_cntrl1(int bits) 
+{
+	if (ADC_cntrl1 != bits) 
+	{
 		prn->rx[0].rx_adc = bits & 0x3;
 		prn->rx[1].rx_adc = (bits >> 2) & 0x3;
 		prn->rx[2].rx_adc = (bits >> 4) & 0x3;
 		prn->rx[3].rx_adc = (bits >> 6) & 0x3;
-		if (listenSock != INVALID_SOCKET)
-			CmdRx();
+		//if (listenSock != INVALID_SOCKET)
+		//	CmdRx();
 	}
 
 	ADC_cntrl1 = bits;
-	return;
 }
 
 PORT
-int GetADC_cntrl1() {
+int GetADC_cntrl1() 
+{
 	return ADC_cntrl1;
 }
 
 PORT
-void SetADC_cntrl2(int bits) {
-	if (ADC_cntrl2 != bits) {
+void SetADC_cntrl2(int bits) 
+{
+	if (ADC_cntrl2 != bits) 
+	{
 		prn->rx[4].rx_adc = bits & 0x3;
 		prn->rx[5].rx_adc = (bits >> 2) & 0x3;
 		prn->rx[6].rx_adc = (bits >> 4) & 0x3;
-		if (listenSock != INVALID_SOCKET)
-			CmdRx();
+		//if (listenSock != INVALID_SOCKET)
+		//	CmdRx();
 	}
 
 	ADC_cntrl2 = bits;
-	return;
 }
 
 PORT
-int GetADC_cntrl2() {
+int GetADC_cntrl2() 
+{
 	return ADC_cntrl2;
 }
 
+
 PORT
-void SetTxAttenData(int bits) {
+void SetADC_cntrl_P1(int bits)						// ADC assignment for protocol1.  14 bits, 2 per DDC:  66554433221100
+{
+	P1_adc_cntrl = bits;
+}
+
+PORT
+int GetADC_cntrl_P1()
+{
+	return P1_adc_cntrl;
+}
+
+
+PORT
+void SetTxAttenData(int bits) 
+{
 	int i;
 
-	if (prn->adc[0].tx_step_attn != bits) {
-		for (i = 0; i < MAX_ADC; i++) {
+	if (prn->adc[0].tx_step_attn != bits) 
+	{
+		for (i = 0; i < MAX_ADC; i++) 
+		{
 			prn->adc[i].tx_step_attn = bits;
 		}
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void EnableCWKeyer(int enable) {
-
-	if (prn->cw.cw_enable != enable) {
+void EnableCWKeyer(int enable) 
+{
+	if (prn->cw.cw_enable != enable) 
+	{
 		prn->cw.cw_enable = enable;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
-	return;
 }
 
 PORT
-void SetCWSidetoneVolume(int vol) {
-
-	if (prn->cw.sidetone_level != vol) {
+void SetCWSidetoneVolume(int vol) 
+{
+	if (prn->cw.sidetone_level != vol) 
+	{
 		prn->cw.sidetone_level = vol;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
 }
 
 PORT
-void SetCWPTTDelay(int delay) {
-
-	if (prn->cw.rf_delay != delay) {
+void SetCWPTTDelay(int delay) 
+{
+	if (prn->cw.rf_delay != delay) 
+	{
 		prn->cw.rf_delay = delay;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
 }
 
 PORT
-void SetCWHangTime(int time) {
-
-	if (prn->cw.hang_delay != time) {
+void SetCWHangTime(int time) 
+{
+	if (prn->cw.hang_delay != time)
+	{
 		prn->cw.hang_delay = time;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
 }
 
 PORT
-void SetCWSidetoneFreq(int freq) {
-	if (prn->cw.sidetone_freq != freq) {
+void SetCWSidetoneFreq(int freq) 
+{
+	if (prn->cw.sidetone_freq != freq) 
+	{
 		prn->cw.sidetone_freq = freq;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
 	}
-
 }
 
 PORT
-void SetEERPWMmin(int min) {
+void SetEERPWMmin(int min) 
+{
 	if (prn->tx[0].epwm_min != min)
 	{
 		prn->tx[0].epwm_min = min;
@@ -961,7 +922,8 @@ void SetEERPWMmin(int min) {
 }
 
 PORT
-void SetEERPWMmax(int max) {
+void SetEERPWMmax(int max) 
+{
 	if (prn->tx[0].epwm_max != max)
 	{
 		prn->tx[0].epwm_max = max;
@@ -974,9 +936,10 @@ void SetEERPWMmax(int max) {
 // misc functions
 // *************************************************
 PORT
-void SetCWSidetone(int enable) {
-
-	if (prn->cw.sidetone != enable) {
+void SetCWSidetone(int enable) 
+{
+	if (prn->cw.sidetone != enable) 
+	{
 		prn->cw.sidetone = enable;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
@@ -984,9 +947,10 @@ void SetCWSidetone(int enable) {
 }
 
 PORT
-void SetCWIambic(int enable) {
-
-	if (prn->cw.iambic != enable) {
+void SetCWIambic(int enable) 
+{
+	if (prn->cw.iambic != enable) 
+	{
 		prn->cw.iambic = enable;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
@@ -994,9 +958,10 @@ void SetCWIambic(int enable) {
 }
 
 PORT
-void SetCWBreakIn(int enable) {
-
-	if (prn->cw.break_in != enable) {
+void SetCWBreakIn(int enable) 
+{
+	if (prn->cw.break_in != enable) 
+	{
 		prn->cw.break_in = enable;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
@@ -1004,9 +969,10 @@ void SetCWBreakIn(int enable) {
 }
 
 PORT
-void SetCWDash(int bit) {
-
-	if (prn->tx[0].dash != bit) {
+void SetCWDash(int bit) 
+{
+	if (prn->tx[0].dash != bit) 
+	{
 		prn->tx[0].dash = bit;
 		if (listenSock != INVALID_SOCKET)
 			CmdHighPriority();
@@ -1014,8 +980,10 @@ void SetCWDash(int bit) {
 }
 
 PORT
-void SetCWDot(int bit) {
-	if (prn->tx[0].dot != bit) {
+void SetCWDot(int bit) 
+{
+	if (prn->tx[0].dot != bit) 
+	{
 		prn->tx[0].dot = bit;
 		if (listenSock != INVALID_SOCKET)
 			CmdHighPriority();
@@ -1023,8 +991,10 @@ void SetCWDot(int bit) {
 }
 
 PORT
-void SetCWX(int bit) {
-	if (prn->tx[0].cwx != bit) {
+void SetCWX(int bit) 
+{
+	if (prn->tx[0].cwx != bit) 
+	{
 		prn->tx[0].cwx = bit;
 		if (listenSock != INVALID_SOCKET)
 			CmdHighPriority();
@@ -1032,39 +1002,24 @@ void SetCWX(int bit) {
 }
 
 PORT
-int GetC1Bits(void) {
-	return C1Mask;
-}
-
-PORT
-int getHaveSync() {
+int getHaveSync() 
+{
 	return HaveSync;
 }
 
 PORT
-int getControlByteIn(int n) {
-	if (n < 0 || n > 4) {
+int getControlByteIn(int n) 
+{
+	if (n < 0 || n > 4) 
+	{
 		return -1;
 	}
 	return ControlBytesIn[n];
 }
 
 PORT
-void SetLegacyDotDashPTT(int bit) {
-	if (bit) {
-		CandCAddrMask = 0xfc;
-		CandCFwdPowerBit = 0x4;
-		DotDashMask = 0x3;
-	}
-	else {
-		CandCAddrMask = 0xf8;
-		CandCFwdPowerBit = 0x8;
-		DotDashMask = 0x7;
-	}
-}
-
-PORT
-void EnableRx(int id, int enable) {
+void EnableRx(int id, int enable) 
+{
 	if (prn->rx[id].enable != enable)
 	{
 		prn->rx[id].enable = enable & 0x1;
@@ -1074,7 +1029,8 @@ void EnableRx(int id, int enable) {
 }
 
 PORT
-void EnableRxs(int rxs) {
+void EnableRxs(int rxs) 
+{
 	int i, sum = 0;
 
 	for (i = 0; i < 4; i++)
@@ -1088,10 +1044,17 @@ void EnableRxs(int rxs) {
 		{
 			prn->rx[i].enable = (rxs >> i) & 0x1;
 		}
-		/*if (listenSock != INVALID_SOCKET)
-			CmdRx();*/
 	}
 
+	if (RadioProtocol == USB)
+	{
+		sum = 0;
+		for (i = 0; i < 4; i++)
+		{
+			sum += (prn->rx[i].enable);
+		}
+		nreceivers = sum;
+	}
 }
 
 PORT
@@ -1100,53 +1063,26 @@ void EnableRxSync(int id, int sync)
 	if (prn->rx[id].sync != sync)
 	{
 		prn->rx[id].sync = sync & 0xff;
-		/*if (listenSock != INVALID_SOCKET)
-			CmdRx();*/
 	}
 }
 
 PORT
-void SetSampleRate(int id, int rate)
+void Protocol1DDCConfig(int ddcconfig, int en_diversity, int rxcount, int inddc)
 {
-	if (prn->rx[id].sampling_rate != rate)
-	{
-		prn->rx[id].sampling_rate = rate;
-		switch (rate)
-		{
-		case 48000:
-			prn->rx[id].sampling_rate = 48;
-			break;
-		case 96000:
-			prn->rx[id].sampling_rate = 96;
-			break;
-		case 192000:
-			prn->rx[id].sampling_rate = 192;
-			break;
-		case 384000:
-			prn->rx[id].sampling_rate = 384;
-			break;
-		case 768000:
-			prn->rx[id].sampling_rate = 768;
-			break;
-		case 1536000:
-			prn->rx[id].sampling_rate = 1536;
-			break;
-		}
-
-		if (listenSock != INVALID_SOCKET)
-			CmdRx();
-	}
-
+	P1ddcconfig = ddcconfig;
+	P1_en_diversity = en_diversity;
+	nddc = inddc;
+	P1_rxcount = rxcount;
 }
 
 PORT
 void SetDDCRate(int id, int rate)
 {
-	if (prn->rx[id].sampling_rate != rate)
-	{
-		prn->rx[id].sampling_rate = rate;
 		switch (rate)
 		{
+		case 0:
+			prn->rx[id].sampling_rate = 0;
+			break;
 		case 48000:
 			prn->rx[id].sampling_rate = 48;
 			break;
@@ -1166,12 +1102,39 @@ void SetDDCRate(int id, int rate)
 			prn->rx[id].sampling_rate = 1536;
 			break;
 		}
-	}
+
+		if (id == 0 && RadioProtocol == USB)
+		{
+			switch (rate)
+			{
+			case 48000:
+				SampleRateIn2Bits = 0;
+				mic_decimation_factor = 1;
+				break;
+			case 96000:
+				SampleRateIn2Bits = 1;
+				mic_decimation_factor = 2;
+				break;
+			case 192000:
+				SampleRateIn2Bits = 2;
+				mic_decimation_factor = 4;
+				break;
+			case 384000:
+				SampleRateIn2Bits = 3;
+				mic_decimation_factor = 8;
+				break;
+			default:
+				SampleRateIn2Bits = 2;
+				mic_decimation_factor = 4;
+				break;
+			}
+            mic_decimation_count = 0;
+		}
 }
 
 PORT
-void SetRxADC(int n) {
-
+void SetRxADC(int n) 
+{
 	if (prn->num_adc != n)
 	{
 		prn->num_adc = n;
@@ -1207,7 +1170,8 @@ void SetWBEnable(int adc, int enable)
 }
 
 PORT
-void SendHighPriority(int send) {
+void SendHighPriority(int send) 
+{
 	if (send)
 	{
 		prn->sendHighPriority = 1;
@@ -1263,17 +1227,21 @@ int getLEDs()
 }
 
 PORT
-void create_rnet() {
+void create_rnet() 
+{
 	int i;
 
 	prn = (RADIONET)malloc(sizeof(radionet));
 	if (prn) {
+		prn->RxBuff = (double**) calloc (8, sizeof (double*));
+		for (int i = 0; i < 8; i++)
+			prn->RxBuff[i] = (double*) calloc (64, 2 * sizeof (double));
 		prn->RxReadBufp = (double*)calloc(1, 2 * sizeof(double) * 240);
 		prn->TxReadBufp = (double*)calloc(1, 2 * sizeof(double) * 720);
 		prn->ReadBufp = (unsigned char*)calloc(1, sizeof(unsigned char) * 1444);
-		//prn->ReadBufp = (char *)calloc(1, sizeof(char) * 1444);
 		prn->OutBufp = (char*)calloc(1, sizeof(char) * 1440);
-		//prn->readbuf = prn->ReadBufp;
+		prn->outLRbufp = (double*)calloc(1, sizeof(double) * 1440); 
+		prn->outIQbufp = (double*)calloc(1, sizeof(double) * 1440);
 		prn->rx_base_port = 1035;
 		prn->run = 0;
 		prn->wdt = 0;
@@ -1296,10 +1264,7 @@ void create_rnet() {
 
 		prn->mic.mic_control = 0;
 		prn->mic.line_in_gain = 0;
-		prn->mic.spp = 64; // 64;	720;					// I-samples per packet
-
-		for (i = 0; i < 2; i++)
-			prn->syncrxbuff[i] = (double*)calloc(1, 2 * sizeof(double) * 120);
+		prn->mic.spp = 64; // I-samples per packet
 
 		prn->wb_base_port = 1027;
 		prn->wb_base_dispid = 32;
@@ -1320,7 +1285,8 @@ void create_rnet() {
 			prn->adc[i].wb_buff = (double*)malloc0(1024 * sizeof(double));
 		}
 
-		for (i = 0; i < MAX_RX_STREAMS; i++) {
+		for (i = 0; i < MAX_RX_STREAMS; i++) 
+		{
 			prn->rx[i].id = i;
 			prn->rx[i].rx_adc = 0;
 			prn->rx[i].frequency = 0;
@@ -1336,9 +1302,9 @@ void create_rnet() {
 			prn->rx[i].bits_per_sample = 0;
 			prn->rx[i].spp = 238;				// IQ-samples per packet
 
-			//MW0LGE
 			prn->rx[i].rx_in_seq_delta_index = 0;
-			for (int ii = 0; ii < MAX_IN_SEQ_LOG; ii++) {
+			for (int ii = 0; ii < MAX_IN_SEQ_LOG; ii++) 
+			{
 				prn->rx[i].rx_in_seq_delta[ii] = 0;
 			}
 			prn->rx[i].snapshots_head = NULL;
@@ -1347,7 +1313,8 @@ void create_rnet() {
 			prn->rx[i].snapshot = NULL;
 		}
 
-		for (i = 0; i < MAX_TX_STREAMS; i++) {
+		for (i = 0; i < MAX_TX_STREAMS; i++) 
+		{
 			prn->tx[i].id = i;
 			prn->tx[i].frequency = 0;
 			prn->tx[i].sampling_rate = 192;
@@ -1363,12 +1330,12 @@ void create_rnet() {
 			prn->tx[i].mic_in_seq_no = 0;
 			prn->tx[i].mic_in_seq_err = 0;
 			prn->tx[i].mic_out_seq_no = 0;
-			prn->tx[i].spp = 240;				// IQ-samples per packet
+			prn->tx[i].spp = 240;	// IQ-samples per packet
 		}
 
 		for (i = 0; i < MAX_AUDIO_STREAMS; i++)
 		{
-			prn->audio[i].spp = 64; // 64;	360;			// LR-samples per packet
+			prn->audio[i].spp = 64; // LR-samples per packet
 		}
 
 		prn->puresignal_run = 0;
@@ -1396,18 +1363,19 @@ void create_rnet() {
 
 		prn->hReadThreadMain = NULL;
 		prn->hReadThreadInitSem = NULL;
+		prn->hWriteThreadMain = NULL;
+		prn->hWriteThreadInitSem = NULL;
 		prn->hKeepAliveThread = NULL;
 		prn->hTimer = NULL;
 
-		create_obbuffs(0, 1, 2048, prn->audio[0].spp);	// last parameter is number of samples per packet
-		create_obbuffs(1, 1, 2048, prn->tx[0].spp);
 		(void)InitializeCriticalSectionAndSpinCount(&prn->udpOUT, 2500);
+		(void)InitializeCriticalSectionAndSpinCount(&prn->sendOUT, 2500);		
 		(void)InitializeCriticalSectionAndSpinCount(&prn->rcvpkt, 2500);
 		(void)InitializeCriticalSectionAndSpinCount(&prn->sndpkt, 2500);
+		(void)InitializeCriticalSectionAndSpinCount(&prn->rcvpktp1, 2500);
+		(void)InitializeCriticalSectionAndSpinCount(&prn->seqErrors, 0); 
 
-		(void)InitializeCriticalSectionAndSpinCount(&prn->seqErrors, 0); //MW0LGE
-
-		SendpOutbound(OutBound);
+		SendpOutbound(OutBound); 
 	}
 }
 
@@ -1416,7 +1384,8 @@ void clearSnapshots()
 {
 	EnterCriticalSection(&prn->seqErrors);
 	int i;
-	for (i = 0; i < MAX_RX_STREAMS; i++) {
+	for (i = 0; i < MAX_RX_STREAMS; i++) 
+	{
 		while (prn->rx[i].snapshots_head != NULL)
 		{
 			_seqLogSnapshot_t* tmp = prn->rx[i].snapshots_head;
@@ -1430,7 +1399,8 @@ void clearSnapshots()
 }
 
 PORT
-void destroy_rnet() {
+void destroy_rnet() 
+{
 	int i;
 	for (i = 0; i < MAX_ADC; i++)
 	{
@@ -1439,16 +1409,17 @@ void destroy_rnet() {
 	DeleteCriticalSection(&prn->udpOUT);
 	DeleteCriticalSection(&prn->rcvpkt);
 	DeleteCriticalSection(&prn->sndpkt);
-	free(prn->OutBufp);
-	for (i = 0; i < 2; i++)
-		free(prn->syncrxbuff[i]);
+	DeleteCriticalSection(&prn->rcvpktp1);
+	if (prn->OutBufp != NULL)
+	    free(prn->OutBufp);
 	free(prn->TxReadBufp);
 	free(prn->RxReadBufp);
+	for (i = 0; i < 8; i++)
+		free (prn->RxBuff[i]);
+	free (prn->RxBuff);
 	free(prn->ReadBufp);
-	//MW0LGE
 	clearSnapshots();
 	DeleteCriticalSection(&prn->seqErrors);
-	//
 	free(prn);
 	_aligned_free(prbpfilter);
 	_aligned_free(prbpfilter2);
@@ -1457,7 +1428,8 @@ void destroy_rnet() {
 }
 
 void
-PrintTimeHack() {
+PrintTimeHack() 
+{
 	GetLocalTime(&lt);
 	printf("(%02d/%02d %02d:%02d:%02d:%03d) ", lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond, lt.wMilliseconds);
 }
@@ -1476,4 +1448,28 @@ void PeakRevPower(float rev)
 		RevPower = rev;
 	else
 		RevPower *= MDECAY;
+}
+
+void UpdateRadioProtocolSampleSize()
+{
+	int i;
+
+	prn->mic.spp = RadioProtocol == USB ? 63 : 64;              // I-samples per packet
+
+	for (i = 0; i < MAX_RX_STREAMS; i++) 
+	{
+		prn->rx[i].spp = RadioProtocol == USB ? 63 : 238;		// IQ-samples per packet
+	}
+	for (i = 0; i < MAX_TX_STREAMS; i++) 
+	{
+		prn->tx[i].spp = RadioProtocol == USB ? 126 : 240;	    // IQ-samples per packet
+	}
+
+	for (i = 0; i < MAX_AUDIO_STREAMS; i++)
+	{
+		prn->audio[i].spp = RadioProtocol == USB ? 126 : 64;    // LR-samples per packet
+	}
+
+	create_obbuffs(0, 1, 2048, prn->audio[0].spp);	// rx audio - last parameter is number of samples per packet
+	create_obbuffs(1, 1, 2048, prn->tx[0].spp);    // tx mic audio
 }

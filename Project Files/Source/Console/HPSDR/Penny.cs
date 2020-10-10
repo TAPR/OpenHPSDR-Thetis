@@ -1,7 +1,7 @@
 /*
 *
 * Copyright (C) 2008 Bill Tracey, KD5TFD, bill@ewjt.com 
-* Copyright (C) 2010-2013  Doug Wigley
+* Copyright (C) 2010-2020  Doug Wigley
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -86,38 +86,27 @@ namespace Thetis
 
         }
         
-        public void ExtCtrlEnable(bool enable, Band band, Band bandb, bool tx) 
+        public void ExtCtrlEnable(Band band, Band bandb, bool tx) 
 		{
-			if ( !enable ) 
-			{
-				NetworkIO.SetOCBits(0); 
-			}
-			else 
-			{
+			//if ( !enable ) 
+			//{
+			//	NetworkIO.SetOCBits(0); 
+			//}
+			//else 
+			//{
 				UpdateExtCtrl(band, bandb, tx);
-			}
+			//}
 		}
 
         public int RxABitMask = 0xf; // 4x3 split
         public bool SplitPins = false;
         public bool VFOTBX = false;
 		public void UpdateExtCtrl(Band band, Band bandb, bool tx) 
-		{
-            /*
-			if (!tx && (int)band < 40)  // 12 if !tx ignore given band and round off to nearest band based on freq 
-			{ 
-				band = Alex.AntBandFromFreq();
-			}
-
-            if (!tx && (int)bandb < 40)
-            {
-                bandb = Alex.AntBandFromFreqB();
-            }
-            */
+		{         
             int idx = (int)band - (int)Band.B160M;
             int idxb = (int)bandb - (int)Band.B160M;
 			int bits; 
-			if ( (idx < 0 || idx > 40) || (idxb < 0 || idxb > 40) ) //26
+			if ( (idx < 0 || idx > 40) || (SplitPins && idxb < 0 || SplitPins && idxb > 40) ) //26
 			{ 
 				bits = 0; 
 			} 
