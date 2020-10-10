@@ -6,7 +6,7 @@ See [ Thetis Change Log ](https://github.com/TAPR/OpenHPSDR-Thetis/blob/master/T
 # 2.8.6 (2020-10-6)
 See [ Thetis Change Log ](https://github.com/TAPR/OpenHPSDR-Thetis/blob/master/Thetis%20v2.8.6%20Change%20Log.pdf) for more details.
 
-# 2.7.0 Not Officailly Released
+# 2.7.0 Not Officially Released
 
 # 2.6.9 (2020-1-24)
 See [ Thetis Change Log ](https://github.com/TAPR/OpenHPSDR-Thetis/blob/master/Thetis%20v2.6.9%20Change%20Log.pdf) for more details.
