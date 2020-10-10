@@ -56,7 +56,7 @@ namespace Thetis
         }
         public void LoadSound(string sFile)
         {
-            if (m_bLoading) return;
+            if (m_bLoading || sFile == "") return;
             m_bOkToPlay = false;
             m_bLoading = true;
 

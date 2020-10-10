@@ -13,3 +13,15 @@ D:\OpenHPSDR\GitHub\TAPR\OpenHPSDR-Thetis\Project Files\Source\RawInput\bin\x86\
 D:\OpenHPSDR\GitHub\TAPR\OpenHPSDR-Thetis\Project Files\Source\RawInput\obj\x86\Release\RawInput.csprojAssemblyReference.cache
 D:\OpenHPSDR\GitHub\TAPR\OpenHPSDR-Thetis\Project Files\Source\RawInput\obj\x86\Release\RawInput.dll
 D:\OpenHPSDR\GitHub\TAPR\OpenHPSDR-Thetis\Project Files\Source\RawInput\obj\x86\Release\RawInput.pdb
+E:\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\bin\x86\Release\RawInput.dll
+E:\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\bin\x86\Release\RawInput.pdb
+E:\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.csproj.CoreCompileInputs.cache
+E:\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.dll
+E:\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.pdb
+E:\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.csprojAssemblyReference.cache
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\bin\x86\Release\RawInput.dll
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\bin\x86\Release\RawInput.pdb
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.csprojAssemblyReference.cache
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.csproj.CoreCompileInputs.cache
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.dll
+D:\OpenHPSDR\GitHub\W5WC\Thetis-2.7.0\Project Files\Source\RawInput\obj\x86\Release\RawInput.pdb

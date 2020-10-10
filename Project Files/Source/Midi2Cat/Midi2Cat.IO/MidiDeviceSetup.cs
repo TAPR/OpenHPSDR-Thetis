@@ -292,7 +292,7 @@ namespace Midi2Cat.IO
                 if (msg != null)
                     errorListBox.Items.Insert(0, msg);
                 else if (errorListBox.Items.Count == 0)
-                    errorListBox.Items.Add("The have not been any errors");
+                    errorListBox.Items.Add("No errors detected.");
             }
             if (msg != null)
                 Debug.WriteLine(msg);

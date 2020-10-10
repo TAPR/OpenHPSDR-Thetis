@@ -62,19 +62,19 @@ namespace Midi2Cat.IO
         public static extern int MidiInGetDevCaps(int uDeviceID, ref MIDIINCAPS caps, int cbMidiInCaps);
 
         [DllImport("winmm.dll", EntryPoint = "midiInOpen", CharSet = CharSet.Ansi)]
-        public static extern int MidiInOpen(ref int lphMidiIn, int uDeviceID, MidiInCallback dwCallback, int dwInstance, int dwFlags);
+        public static extern int MidiInOpen(out IntPtr lphMidiIn, uint uDeviceID, MidiInCallback dwCallback, IntPtr dwInstance, MidiInOpenFlags dwFlags);
 
         [DllImport("winmm.dll", EntryPoint = "midiInClose", CharSet = CharSet.Ansi)]
-        public static extern int MidiInClose(int hMidiIn);
+        public static extern int MidiInClose(IntPtr hMidiIn);
 
         [DllImport("winmm.dll", EntryPoint = "midiInReset", CharSet = CharSet.Ansi)]
-        public static extern int MidiInReset(int hMidiIn);
+        public static extern int MidiInReset(IntPtr hMidiIn);
 
         [DllImport("winmm.dll", EntryPoint = "midiInStart", CharSet = CharSet.Ansi)]
-        public static extern int MidiInStart(int hMidiIn);
+        public static extern int MidiInStart(IntPtr hMidiIn);
 
         [DllImport("winmm.dll", EntryPoint = "midiInStop", CharSet = CharSet.Ansi)]
-        public static extern int MidiInStop(int hMidiIn);
+        public static extern int MidiInStop(IntPtr hMidiIn);
 
         [DllImport("winmm.dll", EntryPoint = "midiInAddBuffer")]
         public static extern int MidiInAddBuffer(int hMidiIn, IntPtr headerPtr, int cbMidiInHdr);
@@ -111,13 +111,13 @@ namespace Midi2Cat.IO
         public static extern int MidiOutGetDevCaps(int uDeviceID, ref MIDIOUTCAPS caps, int cbMidiOutCaps);
 
         [DllImport("winmm.dll", EntryPoint = "midiOutOpen")]
-        public static extern int MidiOutOpen(ref int lphMidiOut, int uDeviceID, IntPtr dwCallback, int dwInstance, int dwFlags);
+        public static extern int MidiOutOpen(out IntPtr lphMidiOut, uint uDeviceID, IntPtr dwCallback, IntPtr dwInstance, MidiOutOpenFlags dwFlags);
 
         [DllImport("winmm.dll", EntryPoint = "midiOutClose")]
-        public static extern int MidiOutClose(int hMidiOut);
+        public static extern int MidiOutClose(IntPtr hMidiOut);
 
         [DllImport("winmm.dll", EntryPoint = "midiOutShortMsg")]
-        public static extern int MidiOutShortMessage(int hMidiOut, uint dwMsg);
+        public static extern int MidiOutShortMessage(IntPtr hMidiOut, uint dwMsg);
 
         [DllImport("winmm.dll", EntryPoint = "midiOutLongMsg")]
         public static extern int MidiOutLongMessage(int handle, IntPtr headerPtr, int sizeOfMidiHeader);
@@ -142,6 +142,25 @@ namespace Midi2Cat.IO
             public int dwSupport;
         }
 
+        [Flags]
+        public enum MidiInOpenFlags
+        {
+            Null = 0,
+            Window = 0x10000,
+            Task = 0x20000,
+            Function = 0x30000,
+            MidiIoStatus = 0x00020,
+        }
+
+        [Flags]
+        public enum MidiOutOpenFlags
+        {
+            Null,
+            Function,
+            Thread,
+            Window,
+            Event,
+        }
         #endregion
     }
 }

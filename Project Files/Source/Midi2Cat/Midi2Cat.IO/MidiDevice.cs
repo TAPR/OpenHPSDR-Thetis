@@ -62,8 +62,8 @@ namespace Midi2Cat.IO
 
 
         private WinMM.MidiInCallback callback;
-        private int midi_in_handle=0;
-        private int midi_out_handle=0;
+        private IntPtr midi_in_handle = (IntPtr)0;
+        private IntPtr midi_out_handle = (IntPtr)0;
         private object in_lock_obj = new Object();
         private object out_lock_obj = new Object();
         
@@ -91,7 +91,8 @@ namespace Midi2Cat.IO
             this.DeviceName = deviceName;
             //this.VFOSelect = 0;
             callback = new WinMM.MidiInCallback(InCallback);
-            int result = WinMM.MidiInOpen(ref midi_in_handle, DeviceIndex, callback, 0, CALLBACK_FUNCTION);
+            int result = WinMM.MidiInOpen(out midi_in_handle, (uint)DeviceIndex, callback, IntPtr.Zero, 
+                WinMM.MidiInOpenFlags.Function | WinMM.MidiInOpenFlags.MidiIoStatus);
             if (result != 0)
             {
                 StringBuilder error_text = new StringBuilder(256);
@@ -152,7 +153,7 @@ namespace Midi2Cat.IO
             }
             else
             {
-                int result = WinMM.MidiOutOpen(ref midi_out_handle, outDeviceID, IntPtr.Zero, 0, 0);
+                int result = WinMM.MidiOutOpen(out midi_out_handle, (uint)outDeviceID, IntPtr.Zero, IntPtr.Zero, WinMM.MidiOutOpenFlags.Null);
                 if (result != 0)
                 {
                     StringBuilder error_text = new StringBuilder(256);
@@ -167,13 +168,13 @@ namespace Midi2Cat.IO
 
         public void CloseMidiIn()
         {
-            if (midi_in_handle != 0)
+            if (midi_in_handle != null)
             {
                 WinMM.MidiInStop(midi_in_handle);
                 //resetting = true;
                 WinMM.MidiInReset(midi_in_handle);
                 WinMM.MidiInClose(midi_in_handle);
-                midi_in_handle = 0;
+                midi_in_handle = (IntPtr)0;
                 //resetting = false;
                 DebugMsg(Direction.Out, Status.Closed);
             }
@@ -181,7 +182,7 @@ namespace Midi2Cat.IO
 
         public void CloseMidiOut()
         {
-            if (midi_out_handle != 0)
+            if (midi_out_handle != null)
             {
                 WinMM.MidiOutClose(midi_out_handle);
                 DebugMsg(Direction.Out, Status.Closed);
@@ -664,7 +665,7 @@ namespace Midi2Cat.IO
 
         public void SendMsg(int Event, int Channel,int Data1, int Data2 )
         {
-            if (midi_out_handle == 0)
+            if (midi_out_handle == null)
             {
                 OpenMidiOut();            
     
@@ -677,7 +678,7 @@ namespace Midi2Cat.IO
             bytes[2] = (byte)Data2;
             bytes[3] = 0;
             uint msg = BitConverter.ToUInt32(bytes,0);
-            if (midi_out_handle != 0)
+            if (midi_out_handle != null)
             {
                 int Rc = WinMM.MidiOutShortMessage(midi_out_handle, msg);
             }
