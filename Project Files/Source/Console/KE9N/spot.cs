@@ -8045,7 +8045,7 @@ namespace Thetis
            
             //Create a IPAddress object and port, create an IPEndPoint node:  
             int port = 13;
-            string[] whost = { "time-nw.nist.gov", "time.nist.gov" , "time-a.nist.gov", "time-b.nist.gov","time.windows.com" };  //   ,  "time-a.nist.gov", "time-b.nist.gov", "tick.mit.edu",  "clock.sgi.com" };
+            string[] whost = { "utcnist.colorado.edu", "utcnist2.colorado.edu", "0.de.pool.ntp.org", "0.south-america.pool.ntp.org", "0.north-america.pool.ntp.org", "time-a-g.nist.gov", "time-b-g.nist.gov", "time-c-g.nist.gov", "time-d-g.nist.gov" };  //   Servers changed DH1KLM
 
             IPHostEntry iphostinfo;
             IPAddress ip;

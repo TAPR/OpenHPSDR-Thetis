@@ -7980,7 +7980,7 @@
             this.chkSplitOff.Image = null;
             this.chkSplitOff.Location = new System.Drawing.Point(9, 49);
             this.chkSplitOff.Name = "chkSplitOff";
-            this.chkSplitOff.Size = new System.Drawing.Size(104, 28);
+            this.chkSplitOff.Size = new System.Drawing.Size(123, 32);
             this.chkSplitOff.TabIndex = 12;
             this.chkSplitOff.Text = "Disable Split on Band Change";
             this.toolTip1.SetToolTip(this.chkSplitOff, "Split will be disabled when band is changed");
@@ -8087,7 +8087,7 @@
             0,
             0,
             0});
-            this.udCWKeyUpDelay.Location = new System.Drawing.Point(84, 19);
+            this.udCWKeyUpDelay.Location = new System.Drawing.Point(104, 19);
             this.udCWKeyUpDelay.Maximum = new decimal(new int[] {
             500,
             0,
@@ -8116,7 +8116,7 @@
             0,
             0,
             0});
-            this.udHWKeyDownDelay.Location = new System.Drawing.Point(84, 50);
+            this.udHWKeyDownDelay.Location = new System.Drawing.Point(104, 50);
             this.udHWKeyDownDelay.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -8384,7 +8384,7 @@
             this.grpGenTuningOptions.Controls.Add(this.udOptClickTuneOffsetDIGU);
             this.grpGenTuningOptions.Location = new System.Drawing.Point(542, 222);
             this.grpGenTuningOptions.Name = "grpGenTuningOptions";
-            this.grpGenTuningOptions.Size = new System.Drawing.Size(145, 73);
+            this.grpGenTuningOptions.Size = new System.Drawing.Size(168, 73);
             this.grpGenTuningOptions.TabIndex = 25;
             this.grpGenTuningOptions.TabStop = false;
             this.grpGenTuningOptions.Text = "Click Tune / Filter Offsets";
@@ -8819,12 +8819,12 @@
             // labelTS55
             // 
             this.labelTS55.Image = null;
-            this.labelTS55.Location = new System.Drawing.Point(26, 32);
+            this.labelTS55.Location = new System.Drawing.Point(32, 39);
             this.labelTS55.Name = "labelTS55";
-            this.labelTS55.Size = new System.Drawing.Size(60, 30);
+            this.labelTS55.Size = new System.Drawing.Size(54, 23);
             this.labelTS55.TabIndex = 13;
-            this.labelTS55.Text = "TX Display Offset:";
-            this.labelTS55.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.labelTS55.Text = "Offset:";
+            this.labelTS55.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // udTXDisplayCalOffset
             // 
@@ -9037,7 +9037,7 @@
             0,
             0,
             0});
-            this.udGeneralCalLevel.Location = new System.Drawing.Point(80, 48);
+            this.udGeneralCalLevel.Location = new System.Drawing.Point(105, 50);
             this.udGeneralCalLevel.Maximum = new decimal(new int[] {
             0,
             0,
@@ -9093,21 +9093,22 @@
             // lblGenCalLevelFreq
             // 
             this.lblGenCalLevelFreq.Image = null;
-            this.lblGenCalLevelFreq.Location = new System.Drawing.Point(16, 24);
+            this.lblGenCalLevelFreq.Location = new System.Drawing.Point(16, 20);
             this.lblGenCalLevelFreq.Name = "lblGenCalLevelFreq";
             this.lblGenCalLevelFreq.Size = new System.Drawing.Size(64, 23);
             this.lblGenCalLevelFreq.TabIndex = 0;
             this.lblGenCalLevelFreq.Text = "Frequency:";
+            this.lblGenCalLevelFreq.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblGeneralCalLevel
             // 
             this.lblGeneralCalLevel.Image = null;
             this.lblGeneralCalLevel.Location = new System.Drawing.Point(16, 48);
             this.lblGeneralCalLevel.Name = "lblGeneralCalLevel";
-            this.lblGeneralCalLevel.Size = new System.Drawing.Size(68, 23);
+            this.lblGeneralCalLevel.Size = new System.Drawing.Size(88, 23);
             this.lblGeneralCalLevel.TabIndex = 2;
             this.lblGeneralCalLevel.Text = "Level (dBm):";
-            this.lblGeneralCalLevel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblGeneralCalLevel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnGeneralCalLevelStart
             // 
@@ -29994,7 +29995,7 @@
             this.grpAMSQMaxTail.Controls.Add(this.udRXAMSQMaxTail);
             this.grpAMSQMaxTail.Location = new System.Drawing.Point(330, 40);
             this.grpAMSQMaxTail.Name = "grpAMSQMaxTail";
-            this.grpAMSQMaxTail.Size = new System.Drawing.Size(172, 92);
+            this.grpAMSQMaxTail.Size = new System.Drawing.Size(201, 92);
             this.grpAMSQMaxTail.TabIndex = 43;
             this.grpAMSQMaxTail.TabStop = false;
             this.grpAMSQMaxTail.Text = "RX AM/SSB Max Squelch Tail";
@@ -34760,17 +34761,17 @@
             this.grpBoxMic.Controls.Add(this.udLineInBoost);
             this.grpBoxMic.Controls.Add(this.chk20dbMicBoost);
             this.grpBoxMic.Controls.Add(this.lblLineInBoost);
-            this.grpBoxMic.Location = new System.Drawing.Point(180, 133);
+            this.grpBoxMic.Location = new System.Drawing.Point(155, 114);
             this.grpBoxMic.Name = "grpBoxMic";
-            this.grpBoxMic.Size = new System.Drawing.Size(144, 91);
+            this.grpBoxMic.Size = new System.Drawing.Size(189, 110);
             this.grpBoxMic.TabIndex = 58;
             this.grpBoxMic.TabStop = false;
-            this.grpBoxMic.Text = "Mic    Gain         Source";
+            this.grpBoxMic.Text = "Mic    Gain             Source";
             // 
             // radLineIn
             // 
             this.radLineIn.Image = null;
-            this.radLineIn.Location = new System.Drawing.Point(82, 42);
+            this.radLineIn.Location = new System.Drawing.Point(105, 43);
             this.radLineIn.Name = "radLineIn";
             this.radLineIn.Size = new System.Drawing.Size(57, 16);
             this.radLineIn.TabIndex = 13;
@@ -34784,7 +34785,7 @@
             // 
             this.radMicIn.Checked = true;
             this.radMicIn.Image = null;
-            this.radMicIn.Location = new System.Drawing.Point(82, 17);
+            this.radMicIn.Location = new System.Drawing.Point(105, 18);
             this.radMicIn.Name = "radMicIn";
             this.radMicIn.Size = new System.Drawing.Size(55, 16);
             this.radMicIn.TabIndex = 12;
@@ -34881,7 +34882,7 @@
             0,
             65536});
             this.udLineInBoost.InterceptArrowKeys = false;
-            this.udLineInBoost.Location = new System.Drawing.Point(92, 64);
+            this.udLineInBoost.Location = new System.Drawing.Point(114, 74);
             this.udLineInBoost.Maximum = new decimal(new int[] {
             12,
             0,
@@ -34910,7 +34911,7 @@
             this.chk20dbMicBoost.Checked = true;
             this.chk20dbMicBoost.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk20dbMicBoost.Image = null;
-            this.chk20dbMicBoost.Location = new System.Drawing.Point(10, 65);
+            this.chk20dbMicBoost.Location = new System.Drawing.Point(9, 75);
             this.chk20dbMicBoost.Name = "chk20dbMicBoost";
             this.chk20dbMicBoost.Size = new System.Drawing.Size(110, 16);
             this.chk20dbMicBoost.TabIndex = 11;
@@ -34921,9 +34922,9 @@
             // lblLineInBoost
             // 
             this.lblLineInBoost.Image = null;
-            this.lblLineInBoost.Location = new System.Drawing.Point(3, 66);
+            this.lblLineInBoost.Location = new System.Drawing.Point(6, 75);
             this.lblLineInBoost.Name = "lblLineInBoost";
-            this.lblLineInBoost.Size = new System.Drawing.Size(90, 16);
+            this.lblLineInBoost.Size = new System.Drawing.Size(119, 16);
             this.lblLineInBoost.TabIndex = 11;
             this.lblLineInBoost.Text = "Line In Gain (dB)";
             this.lblLineInBoost.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -34978,7 +34979,7 @@
             this.grpTXAM.Controls.Add(this.udTXAMCarrierLevel);
             this.grpTXAM.Location = new System.Drawing.Point(350, 71);
             this.grpTXAM.Name = "grpTXAM";
-            this.grpTXAM.Size = new System.Drawing.Size(137, 56);
+            this.grpTXAM.Size = new System.Drawing.Size(157, 56);
             this.grpTXAM.TabIndex = 52;
             this.grpTXAM.TabStop = false;
             this.grpTXAM.Text = "AM";
@@ -34988,7 +34989,7 @@
             this.lblTXAMCarrierLevel.Image = null;
             this.lblTXAMCarrierLevel.Location = new System.Drawing.Point(1, 24);
             this.lblTXAMCarrierLevel.Name = "lblTXAMCarrierLevel";
-            this.lblTXAMCarrierLevel.Size = new System.Drawing.Size(72, 16);
+            this.lblTXAMCarrierLevel.Size = new System.Drawing.Size(88, 16);
             this.lblTXAMCarrierLevel.TabIndex = 5;
             this.lblTXAMCarrierLevel.Text = "Carrier Level:";
             // 
@@ -35000,7 +35001,7 @@
             0,
             0,
             65536});
-            this.udTXAMCarrierLevel.Location = new System.Drawing.Point(76, 20);
+            this.udTXAMCarrierLevel.Location = new System.Drawing.Point(95, 22);
             this.udTXAMCarrierLevel.Maximum = new decimal(new int[] {
             125,
             0,
@@ -48972,7 +48973,7 @@
             this.grpAppRXWaterfall.Controls.Add(this.chkShowTXFilterOnRXWaterfall);
             this.grpAppRXWaterfall.Controls.Add(this.chkShowRXZeroLineOnWaterfall);
             this.grpAppRXWaterfall.Controls.Add(this.chkShowRXFilterOnWaterfall);
-            this.grpAppRXWaterfall.Location = new System.Drawing.Point(444, 107);
+            this.grpAppRXWaterfall.Location = new System.Drawing.Point(551, 107);
             this.grpAppRXWaterfall.Name = "grpAppRXWaterfall";
             this.grpAppRXWaterfall.Size = new System.Drawing.Size(132, 88);
             this.grpAppRXWaterfall.TabIndex = 84;
@@ -49018,7 +49019,7 @@
             // lblMultiRXFilterAlpha
             // 
             this.lblMultiRXFilterAlpha.Image = null;
-            this.lblMultiRXFilterAlpha.Location = new System.Drawing.Point(521, 243);
+            this.lblMultiRXFilterAlpha.Location = new System.Drawing.Point(628, 243);
             this.lblMultiRXFilterAlpha.Name = "lblMultiRXFilterAlpha";
             this.lblMultiRXFilterAlpha.Size = new System.Drawing.Size(40, 18);
             this.lblMultiRXFilterAlpha.TabIndex = 83;
@@ -49051,12 +49052,12 @@
             this.grpAppGrid.Controls.Add(this.lblDisplayZeroLineColor);
             this.grpAppGrid.Controls.Add(this.clrbtnText);
             this.grpAppGrid.Controls.Add(this.lblDisplayTextColor);
-            this.grpAppGrid.Location = new System.Drawing.Point(230, 5);
+            this.grpAppGrid.Location = new System.Drawing.Point(283, 5);
             this.grpAppGrid.Name = "grpAppGrid";
-            this.grpAppGrid.Size = new System.Drawing.Size(200, 293);
+            this.grpAppGrid.Size = new System.Drawing.Size(241, 293);
             this.grpAppGrid.TabIndex = 78;
             this.grpAppGrid.TabStop = false;
-            this.grpAppGrid.Text = "Grid                                     Alpha";
+            this.grpAppGrid.Text = "Grid                                   Alpha";
             // 
             // tbDataFillAlpha
             // 
@@ -49356,10 +49357,10 @@
             this.grpAppPanadapter.Controls.Add(this.clrbtnFilter);
             this.grpAppPanadapter.Location = new System.Drawing.Point(20, 5);
             this.grpAppPanadapter.Name = "grpAppPanadapter";
-            this.grpAppPanadapter.Size = new System.Drawing.Size(200, 293);
+            this.grpAppPanadapter.Size = new System.Drawing.Size(247, 293);
             this.grpAppPanadapter.TabIndex = 77;
             this.grpAppPanadapter.TabStop = false;
-            this.grpAppPanadapter.Text = "Panadapter                           Alpha";
+            this.grpAppPanadapter.Text = "Panadapter                         Alpha";
             // 
             // chkShowZeroLine
             // 
@@ -49378,7 +49379,7 @@
             // tbGrayLineAlpha
             // 
             this.tbGrayLineAlpha.AutoSize = false;
-            this.tbGrayLineAlpha.Location = new System.Drawing.Point(130, 175);
+            this.tbGrayLineAlpha.Location = new System.Drawing.Point(147, 174);
             this.tbGrayLineAlpha.Maximum = 200;
             this.tbGrayLineAlpha.Name = "tbGrayLineAlpha";
             this.tbGrayLineAlpha.Size = new System.Drawing.Size(66, 18);
@@ -49393,7 +49394,7 @@
             this.clrbtnGrayLine.Automatic = "Automatic";
             this.clrbtnGrayLine.Color = System.Drawing.Color.Black;
             this.clrbtnGrayLine.Image = null;
-            this.clrbtnGrayLine.Location = new System.Drawing.Point(80, 175);
+            this.clrbtnGrayLine.Location = new System.Drawing.Point(97, 174);
             this.clrbtnGrayLine.MoreColors = "More Colors...";
             this.clrbtnGrayLine.Name = "clrbtnGrayLine";
             this.clrbtnGrayLine.Size = new System.Drawing.Size(40, 23);
@@ -49403,11 +49404,12 @@
             // labelgrayline
             // 
             this.labelgrayline.Image = null;
-            this.labelgrayline.Location = new System.Drawing.Point(8, 175);
+            this.labelgrayline.Location = new System.Drawing.Point(8, 177);
             this.labelgrayline.Name = "labelgrayline";
-            this.labelgrayline.Size = new System.Drawing.Size(64, 32);
+            this.labelgrayline.Size = new System.Drawing.Size(64, 23);
             this.labelgrayline.TabIndex = 89;
-            this.labelgrayline.Text = "GrayLine Color:\r\n";
+            this.labelgrayline.Text = "GrayLine:\r\n";
+            this.labelgrayline.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // chkGridControl
             // 
@@ -49425,7 +49427,7 @@
             // tbMultiRXFilterAlpha
             // 
             this.tbMultiRXFilterAlpha.AutoSize = false;
-            this.tbMultiRXFilterAlpha.Location = new System.Drawing.Point(130, 110);
+            this.tbMultiRXFilterAlpha.Location = new System.Drawing.Point(147, 109);
             this.tbMultiRXFilterAlpha.Maximum = 255;
             this.tbMultiRXFilterAlpha.Name = "tbMultiRXFilterAlpha";
             this.tbMultiRXFilterAlpha.Size = new System.Drawing.Size(66, 18);
@@ -49439,7 +49441,7 @@
             this.clrbtnSubRXZero.Automatic = "Automatic";
             this.clrbtnSubRXZero.Color = System.Drawing.Color.LightSkyBlue;
             this.clrbtnSubRXZero.Image = null;
-            this.clrbtnSubRXZero.Location = new System.Drawing.Point(80, 140);
+            this.clrbtnSubRXZero.Location = new System.Drawing.Point(97, 139);
             this.clrbtnSubRXZero.MoreColors = "More Colors...";
             this.clrbtnSubRXZero.Name = "clrbtnSubRXZero";
             this.clrbtnSubRXZero.Size = new System.Drawing.Size(40, 23);
@@ -49461,7 +49463,7 @@
             // tbRX1FilterAlpha
             // 
             this.tbRX1FilterAlpha.AutoSize = false;
-            this.tbRX1FilterAlpha.Location = new System.Drawing.Point(130, 20);
+            this.tbRX1FilterAlpha.Location = new System.Drawing.Point(147, 19);
             this.tbRX1FilterAlpha.Maximum = 255;
             this.tbRX1FilterAlpha.Name = "tbRX1FilterAlpha";
             this.tbRX1FilterAlpha.Size = new System.Drawing.Size(66, 18);
@@ -49475,16 +49477,17 @@
             this.lblSubRXZeroLine.Image = null;
             this.lblSubRXZeroLine.Location = new System.Drawing.Point(8, 140);
             this.lblSubRXZeroLine.Name = "lblSubRXZeroLine";
-            this.lblSubRXZeroLine.Size = new System.Drawing.Size(64, 30);
+            this.lblSubRXZeroLine.Size = new System.Drawing.Size(83, 23);
             this.lblSubRXZeroLine.TabIndex = 80;
-            this.lblSubRXZeroLine.Text = "MultiRX Zero Line:";
+            this.lblSubRXZeroLine.Text = "MultiRX 0 Line:";
+            this.lblSubRXZeroLine.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // clrbtnSubRXFilter
             // 
             this.clrbtnSubRXFilter.Automatic = "Automatic";
             this.clrbtnSubRXFilter.Color = System.Drawing.Color.Blue;
             this.clrbtnSubRXFilter.Image = null;
-            this.clrbtnSubRXFilter.Location = new System.Drawing.Point(80, 110);
+            this.clrbtnSubRXFilter.Location = new System.Drawing.Point(97, 109);
             this.clrbtnSubRXFilter.MoreColors = "More Colors...";
             this.clrbtnSubRXFilter.Name = "clrbtnSubRXFilter";
             this.clrbtnSubRXFilter.Size = new System.Drawing.Size(40, 23);
@@ -49496,16 +49499,17 @@
             this.lblSubRXFilterColor.Image = null;
             this.lblSubRXFilterColor.Location = new System.Drawing.Point(8, 110);
             this.lblSubRXFilterColor.Name = "lblSubRXFilterColor";
-            this.lblSubRXFilterColor.Size = new System.Drawing.Size(64, 32);
+            this.lblSubRXFilterColor.Size = new System.Drawing.Size(83, 23);
             this.lblSubRXFilterColor.TabIndex = 78;
-            this.lblSubRXFilterColor.Text = "MultiRX Filter Color:";
+            this.lblSubRXFilterColor.Text = "MultiRX Filter:";
+            this.lblSubRXFilterColor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // clrbtnBandEdge
             // 
             this.clrbtnBandEdge.Automatic = "Automatic";
             this.clrbtnBandEdge.Color = System.Drawing.Color.Red;
             this.clrbtnBandEdge.Image = null;
-            this.clrbtnBandEdge.Location = new System.Drawing.Point(80, 80);
+            this.clrbtnBandEdge.Location = new System.Drawing.Point(97, 79);
             this.clrbtnBandEdge.MoreColors = "More Colors...";
             this.clrbtnBandEdge.Name = "clrbtnBandEdge";
             this.clrbtnBandEdge.Size = new System.Drawing.Size(40, 23);
@@ -49517,7 +49521,7 @@
             this.lblBandEdge.Image = null;
             this.lblBandEdge.Location = new System.Drawing.Point(8, 80);
             this.lblBandEdge.Name = "lblBandEdge";
-            this.lblBandEdge.Size = new System.Drawing.Size(64, 24);
+            this.lblBandEdge.Size = new System.Drawing.Size(64, 23);
             this.lblBandEdge.TabIndex = 65;
             this.lblBandEdge.Text = "Band Edge:";
             this.lblBandEdge.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -49527,7 +49531,7 @@
             this.clrbtnTXFilter.Automatic = "Automatic";
             this.clrbtnTXFilter.Color = System.Drawing.Color.Yellow;
             this.clrbtnTXFilter.Image = null;
-            this.clrbtnTXFilter.Location = new System.Drawing.Point(80, 50);
+            this.clrbtnTXFilter.Location = new System.Drawing.Point(97, 49);
             this.clrbtnTXFilter.MoreColors = "More Colors...";
             this.clrbtnTXFilter.Name = "clrbtnTXFilter";
             this.clrbtnTXFilter.Size = new System.Drawing.Size(40, 23);
@@ -49539,25 +49543,27 @@
             this.lblTXFilterColor.Image = null;
             this.lblTXFilterColor.Location = new System.Drawing.Point(8, 50);
             this.lblTXFilterColor.Name = "lblTXFilterColor";
-            this.lblTXFilterColor.Size = new System.Drawing.Size(64, 30);
+            this.lblTXFilterColor.Size = new System.Drawing.Size(64, 23);
             this.lblTXFilterColor.TabIndex = 75;
-            this.lblTXFilterColor.Text = "TX Filter Color:";
+            this.lblTXFilterColor.Text = "TX Filter:";
+            this.lblTXFilterColor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblDisplayFilterColor
             // 
             this.lblDisplayFilterColor.Image = null;
             this.lblDisplayFilterColor.Location = new System.Drawing.Point(8, 20);
             this.lblDisplayFilterColor.Name = "lblDisplayFilterColor";
-            this.lblDisplayFilterColor.Size = new System.Drawing.Size(64, 30);
+            this.lblDisplayFilterColor.Size = new System.Drawing.Size(83, 23);
             this.lblDisplayFilterColor.TabIndex = 45;
-            this.lblDisplayFilterColor.Text = "Main RX Filter Color:";
+            this.lblDisplayFilterColor.Text = "Main RX Filter:";
+            this.lblDisplayFilterColor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // clrbtnFilter
             // 
             this.clrbtnFilter.Automatic = "Automatic";
             this.clrbtnFilter.Color = System.Drawing.Color.White;
             this.clrbtnFilter.Image = null;
-            this.clrbtnFilter.Location = new System.Drawing.Point(80, 20);
+            this.clrbtnFilter.Location = new System.Drawing.Point(97, 19);
             this.clrbtnFilter.MoreColors = "More Colors...";
             this.clrbtnFilter.Name = "clrbtnFilter";
             this.clrbtnFilter.Size = new System.Drawing.Size(40, 23);
@@ -49567,7 +49573,7 @@
             // lblRX1FilterAlpha
             // 
             this.lblRX1FilterAlpha.Image = null;
-            this.lblRX1FilterAlpha.Location = new System.Drawing.Point(495, 280);
+            this.lblRX1FilterAlpha.Location = new System.Drawing.Point(602, 280);
             this.lblRX1FilterAlpha.Name = "lblRX1FilterAlpha";
             this.lblRX1FilterAlpha.Size = new System.Drawing.Size(40, 18);
             this.lblRX1FilterAlpha.TabIndex = 79;
@@ -49581,7 +49587,7 @@
             this.grpDisplayPeakCursor.Controls.Add(this.lblPeakBackground);
             this.grpDisplayPeakCursor.Controls.Add(this.clrbtnPeakText);
             this.grpDisplayPeakCursor.Controls.Add(this.lblPeakText);
-            this.grpDisplayPeakCursor.Location = new System.Drawing.Point(441, 5);
+            this.grpDisplayPeakCursor.Location = new System.Drawing.Point(548, 5);
             this.grpDisplayPeakCursor.Name = "grpDisplayPeakCursor";
             this.grpDisplayPeakCursor.Size = new System.Drawing.Size(136, 96);
             this.grpDisplayPeakCursor.TabIndex = 74;
@@ -49635,7 +49641,7 @@
             // lblGridFineAlpha
             // 
             this.lblGridFineAlpha.Image = null;
-            this.lblGridFineAlpha.Location = new System.Drawing.Point(481, 215);
+            this.lblGridFineAlpha.Location = new System.Drawing.Point(588, 215);
             this.lblGridFineAlpha.Name = "lblGridFineAlpha";
             this.lblGridFineAlpha.Size = new System.Drawing.Size(40, 18);
             this.lblGridFineAlpha.TabIndex = 82;
@@ -49646,7 +49652,7 @@
             // lblBackgroundAlpha
             // 
             this.lblBackgroundAlpha.Image = null;
-            this.lblBackgroundAlpha.Location = new System.Drawing.Point(449, 280);
+            this.lblBackgroundAlpha.Location = new System.Drawing.Point(556, 280);
             this.lblBackgroundAlpha.Name = "lblBackgroundAlpha";
             this.lblBackgroundAlpha.Size = new System.Drawing.Size(40, 18);
             this.lblBackgroundAlpha.TabIndex = 80;
@@ -49657,7 +49663,7 @@
             // lblGridCourseAlpha
             // 
             this.lblGridCourseAlpha.Image = null;
-            this.lblGridCourseAlpha.Location = new System.Drawing.Point(462, 243);
+            this.lblGridCourseAlpha.Location = new System.Drawing.Point(569, 243);
             this.lblGridCourseAlpha.Name = "lblGridCourseAlpha";
             this.lblGridCourseAlpha.Size = new System.Drawing.Size(40, 18);
             this.lblGridCourseAlpha.TabIndex = 81;
@@ -50006,7 +50012,7 @@
             // 
             this.grpAppTXWaterfall.Controls.Add(this.chkShowTXZeroLineOnWaterfall);
             this.grpAppTXWaterfall.Controls.Add(this.chkShowTXFilterOnWaterfall);
-            this.grpAppTXWaterfall.Location = new System.Drawing.Point(444, 6);
+            this.grpAppTXWaterfall.Location = new System.Drawing.Point(541, 5);
             this.grpAppTXWaterfall.Name = "grpAppTXWaterfall";
             this.grpAppTXWaterfall.Size = new System.Drawing.Size(132, 67);
             this.grpAppTXWaterfall.TabIndex = 85;
@@ -50048,10 +50054,10 @@
             this.groupBoxTS3.Controls.Add(this.udTXLineWidth);
             this.groupBoxTS3.Location = new System.Drawing.Point(20, 5);
             this.groupBoxTS3.Name = "groupBoxTS3";
-            this.groupBoxTS3.Size = new System.Drawing.Size(200, 128);
+            this.groupBoxTS3.Size = new System.Drawing.Size(227, 128);
             this.groupBoxTS3.TabIndex = 80;
             this.groupBoxTS3.TabStop = false;
-            this.groupBoxTS3.Text = "Panadapter                           Alpha";
+            this.groupBoxTS3.Text = "Panadapter                         Alpha";
             // 
             // tbTXFilterAlpha
             // 
@@ -50070,9 +50076,10 @@
             this.lblDispTXFilterColor.Image = null;
             this.lblDispTXFilterColor.Location = new System.Drawing.Point(8, 20);
             this.lblDispTXFilterColor.Name = "lblDispTXFilterColor";
-            this.lblDispTXFilterColor.Size = new System.Drawing.Size(64, 30);
+            this.lblDispTXFilterColor.Size = new System.Drawing.Size(64, 23);
             this.lblDispTXFilterColor.TabIndex = 45;
-            this.lblDispTXFilterColor.Text = "TX Filter Color:";
+            this.lblDispTXFilterColor.Text = "TX Filter:";
+            this.lblDispTXFilterColor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // clrbtnGridTXFilter
             // 
@@ -50169,12 +50176,12 @@
             this.groupBoxTS2.Controls.Add(this.lblTXZeroLineColor);
             this.groupBoxTS2.Controls.Add(this.clrbtnTXText);
             this.groupBoxTS2.Controls.Add(this.lblTXTextColor);
-            this.groupBoxTS2.Location = new System.Drawing.Point(230, 5);
+            this.groupBoxTS2.Location = new System.Drawing.Point(266, 5);
             this.groupBoxTS2.Name = "groupBoxTS2";
-            this.groupBoxTS2.Size = new System.Drawing.Size(200, 256);
+            this.groupBoxTS2.Size = new System.Drawing.Size(256, 256);
             this.groupBoxTS2.TabIndex = 79;
             this.groupBoxTS2.TabStop = false;
-            this.groupBoxTS2.Text = "Grid                                      Alpha";
+            this.groupBoxTS2.Text = "Grid                                    Alpha";
             // 
             // tbTXTextAlpha
             // 
@@ -52919,7 +52926,7 @@
             this.grpBoxTS1.Controls.Add(this.grpSigGenReceive);
             this.grpBoxTS1.Location = new System.Drawing.Point(228, 8);
             this.grpBoxTS1.Name = "grpBoxTS1";
-            this.grpBoxTS1.Size = new System.Drawing.Size(352, 350);
+            this.grpBoxTS1.Size = new System.Drawing.Size(432, 350);
             this.grpBoxTS1.TabIndex = 88;
             this.grpBoxTS1.TabStop = false;
             this.grpBoxTS1.Text = "Signal Generator";
@@ -52935,9 +52942,9 @@
             this.grpSigGenTransmit.Controls.Add(this.labelTS303);
             this.grpSigGenTransmit.Controls.Add(this.lblSigGenTXMode);
             this.grpSigGenTransmit.Controls.Add(this.cmboSigGenTXMode);
-            this.grpSigGenTransmit.Location = new System.Drawing.Point(192, 16);
+            this.grpSigGenTransmit.Location = new System.Drawing.Point(221, 18);
             this.grpSigGenTransmit.Name = "grpSigGenTransmit";
-            this.grpSigGenTransmit.Size = new System.Drawing.Size(152, 326);
+            this.grpSigGenTransmit.Size = new System.Drawing.Size(176, 326);
             this.grpSigGenTransmit.TabIndex = 102;
             this.grpSigGenTransmit.TabStop = false;
             this.grpSigGenTransmit.Text = "Transmit";
@@ -52952,7 +52959,7 @@
             this.grpPulse.Controls.Add(this.labelTS315);
             this.grpPulse.Location = new System.Drawing.Point(7, 220);
             this.grpPulse.Name = "grpPulse";
-            this.grpPulse.Size = new System.Drawing.Size(138, 100);
+            this.grpPulse.Size = new System.Drawing.Size(152, 100);
             this.grpPulse.TabIndex = 119;
             this.grpPulse.TabStop = false;
             this.grpPulse.Text = "Pulse";
@@ -52965,7 +52972,7 @@
             0,
             0,
             262144});
-            this.udTXGenPulseTransition.Location = new System.Drawing.Point(76, 70);
+            this.udTXGenPulseTransition.Location = new System.Drawing.Point(90, 69);
             this.udTXGenPulseTransition.Maximum = new decimal(new int[] {
             1,
             0,
@@ -52992,7 +52999,7 @@
             this.labelTS317.Image = null;
             this.labelTS317.Location = new System.Drawing.Point(6, 72);
             this.labelTS317.Name = "labelTS317";
-            this.labelTS317.Size = new System.Drawing.Size(64, 16);
+            this.labelTS317.Size = new System.Drawing.Size(78, 16);
             this.labelTS317.TabIndex = 114;
             this.labelTS317.Text = "Trans. (sec)";
             // 
@@ -53004,7 +53011,7 @@
             0,
             0,
             131072});
-            this.udTXGenPulseDutyCycle.Location = new System.Drawing.Point(76, 43);
+            this.udTXGenPulseDutyCycle.Location = new System.Drawing.Point(90, 42);
             this.udTXGenPulseDutyCycle.Maximum = new decimal(new int[] {
             1,
             0,
@@ -53043,7 +53050,7 @@
             0,
             0,
             65536});
-            this.udTXGenPulseFreq.Location = new System.Drawing.Point(76, 16);
+            this.udTXGenPulseFreq.Location = new System.Drawing.Point(90, 16);
             this.udTXGenPulseFreq.Maximum = new decimal(new int[] {
             100,
             0,
@@ -53095,7 +53102,7 @@
             this.grpTXGenSweep.Controls.Add(this.udTXGenSweepLow);
             this.grpTXGenSweep.Location = new System.Drawing.Point(7, 115);
             this.grpTXGenSweep.Name = "grpTXGenSweep";
-            this.grpTXGenSweep.Size = new System.Drawing.Size(138, 102);
+            this.grpTXGenSweep.Size = new System.Drawing.Size(152, 102);
             this.grpTXGenSweep.TabIndex = 110;
             this.grpTXGenSweep.TabStop = false;
             this.grpTXGenSweep.Text = "Sweep";
@@ -53105,7 +53112,7 @@
             this.labelTS306.Image = null;
             this.labelTS306.Location = new System.Drawing.Point(3, 70);
             this.labelTS306.Name = "labelTS306";
-            this.labelTS306.Size = new System.Drawing.Size(67, 16);
+            this.labelTS306.Size = new System.Drawing.Size(81, 16);
             this.labelTS306.TabIndex = 90;
             this.labelTS306.Text = "Rate (Hz/s):";
             // 
@@ -53116,7 +53123,7 @@
             0,
             0,
             0});
-            this.udTXGenSweepRate.Location = new System.Drawing.Point(76, 70);
+            this.udTXGenSweepRate.Location = new System.Drawing.Point(90, 70);
             this.udTXGenSweepRate.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -53154,7 +53161,7 @@
             0,
             0,
             0});
-            this.udTXGenSweepHigh.Location = new System.Drawing.Point(76, 43);
+            this.udTXGenSweepHigh.Location = new System.Drawing.Point(90, 42);
             this.udTXGenSweepHigh.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -53192,7 +53199,7 @@
             0,
             0,
             0});
-            this.udTXGenSweepLow.Location = new System.Drawing.Point(76, 16);
+            this.udTXGenSweepLow.Location = new System.Drawing.Point(90, 16);
             this.udTXGenSweepLow.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -53334,7 +53341,7 @@
             this.grpSigGenReceive.Controls.Add(this.cmboSigGenRXMode);
             this.grpSigGenReceive.Location = new System.Drawing.Point(8, 16);
             this.grpSigGenReceive.Name = "grpSigGenReceive";
-            this.grpSigGenReceive.Size = new System.Drawing.Size(152, 326);
+            this.grpSigGenReceive.Size = new System.Drawing.Size(189, 326);
             this.grpSigGenReceive.TabIndex = 101;
             this.grpSigGenReceive.TabStop = false;
             this.grpSigGenReceive.Text = "Receive";
@@ -53372,7 +53379,7 @@
             this.grpRXGenSweep.Controls.Add(this.udRXGenSweepLow);
             this.grpRXGenSweep.Location = new System.Drawing.Point(7, 115);
             this.grpRXGenSweep.Name = "grpRXGenSweep";
-            this.grpRXGenSweep.Size = new System.Drawing.Size(138, 102);
+            this.grpRXGenSweep.Size = new System.Drawing.Size(163, 102);
             this.grpRXGenSweep.TabIndex = 115;
             this.grpRXGenSweep.TabStop = false;
             this.grpRXGenSweep.Text = "Sweep";
@@ -53382,7 +53389,7 @@
             this.labelTS307.Image = null;
             this.labelTS307.Location = new System.Drawing.Point(3, 70);
             this.labelTS307.Name = "labelTS307";
-            this.labelTS307.Size = new System.Drawing.Size(67, 16);
+            this.labelTS307.Size = new System.Drawing.Size(85, 16);
             this.labelTS307.TabIndex = 90;
             this.labelTS307.Text = "Rate (Hz/s):";
             // 
@@ -53393,7 +53400,7 @@
             0,
             0,
             0});
-            this.udRXGenSweepRate.Location = new System.Drawing.Point(76, 70);
+            this.udRXGenSweepRate.Location = new System.Drawing.Point(94, 69);
             this.udRXGenSweepRate.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -53431,7 +53438,7 @@
             0,
             0,
             0});
-            this.udRXGenSweepHigh.Location = new System.Drawing.Point(76, 43);
+            this.udRXGenSweepHigh.Location = new System.Drawing.Point(94, 43);
             this.udRXGenSweepHigh.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -53469,7 +53476,7 @@
             0,
             0,
             0});
-            this.udRXGenSweepLow.Location = new System.Drawing.Point(76, 16);
+            this.udRXGenSweepLow.Location = new System.Drawing.Point(94, 15);
             this.udRXGenSweepLow.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -53498,7 +53505,7 @@
             0,
             0,
             0});
-            this.udRXGenFreq.Location = new System.Drawing.Point(83, 91);
+            this.udRXGenFreq.Location = new System.Drawing.Point(101, 91);
             this.udRXGenFreq.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -53537,7 +53544,7 @@
             0,
             0,
             65536});
-            this.udRXGenScale.Location = new System.Drawing.Point(83, 64);
+            this.udRXGenScale.Location = new System.Drawing.Point(101, 64);
             this.udRXGenScale.Maximum = new decimal(new int[] {
             13,
             0,
