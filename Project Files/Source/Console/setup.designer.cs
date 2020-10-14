@@ -12850,7 +12850,7 @@
             this.chkPennyExtCtrl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkPennyExtCtrl.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkPennyExtCtrl.Image = null;
-            this.chkPennyExtCtrl.Location = new System.Drawing.Point(19, 260);
+            this.chkPennyExtCtrl.Location = new System.Drawing.Point(73, 259);
             this.chkPennyExtCtrl.Name = "chkPennyExtCtrl";
             this.chkPennyExtCtrl.Size = new System.Drawing.Size(90, 23);
             this.chkPennyExtCtrl.TabIndex = 1;
@@ -12858,7 +12858,6 @@
             this.chkPennyExtCtrl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.chkPennyExtCtrl, "Enable External Control on Penelope J6");
             this.chkPennyExtCtrl.UseVisualStyleBackColor = false;
-            this.chkPennyExtCtrl.Visible = false;
             this.chkPennyExtCtrl.CheckedChanged += new System.EventHandler(this.chkPennyExtCtrl_CheckedChanged);
             // 
             // chkHERCULES
@@ -12869,7 +12868,7 @@
             this.chkHERCULES.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkHERCULES.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkHERCULES.Image = null;
-            this.chkHERCULES.Location = new System.Drawing.Point(119, 260);
+            this.chkHERCULES.Location = new System.Drawing.Point(73, 288);
             this.chkHERCULES.Name = "chkHERCULES";
             this.chkHERCULES.Size = new System.Drawing.Size(90, 23);
             this.chkHERCULES.TabIndex = 2;
@@ -12885,7 +12884,7 @@
             this.btnPennyCtrlReset.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPennyCtrlReset.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnPennyCtrlReset.Image = null;
-            this.btnPennyCtrlReset.Location = new System.Drawing.Point(219, 260);
+            this.btnPennyCtrlReset.Location = new System.Drawing.Point(182, 259);
             this.btnPennyCtrlReset.Name = "btnPennyCtrlReset";
             this.btnPennyCtrlReset.Size = new System.Drawing.Size(60, 23);
             this.btnPennyCtrlReset.TabIndex = 4;

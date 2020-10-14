@@ -13108,10 +13108,10 @@ namespace Thetis
 
         private void chkPennyExtCtrl_CheckedChanged(object sender, System.EventArgs e)
         {
-            grpPennyExtCtrl.Enabled = true; // chkPennyExtCtrl.Checked;
-            grpPennyExtCtrlVHF.Enabled = true; // chkPennyExtCtrl.Checked;
-            grpExtCtrlSWL.Enabled = true; // chkPennyExtCtrl.Checked;
-            console.PennyExtCtrlEnabled = true;  //chkPennyExtCtrl.Checked;
+            grpPennyExtCtrl.Enabled = chkPennyExtCtrl.Checked;
+            grpPennyExtCtrlVHF.Enabled =  chkPennyExtCtrl.Checked;
+            grpExtCtrlSWL.Enabled =  chkPennyExtCtrl.Checked;
+            console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;
         }
 
         private void chkAlexAntCtrl_CheckedChanged(object sender, System.EventArgs e)
