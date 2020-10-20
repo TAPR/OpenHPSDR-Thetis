@@ -19733,7 +19733,6 @@ namespace Thetis
                 rx2_attenuator_data = value;
                 if (rx2_step_att_present)
                 {
-                    // NetworkIO.EnableADC2StepAtten(1);
                     NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
                 }
 
@@ -19741,10 +19740,10 @@ namespace Thetis
                     rx2_step_attenuator_by_band[(int)rx2_band] = value;
                 if (!mox)
                 {
-                    // update_preamp_mode = false;
                     update_preamp = true;
                     UpdatePreamps();
                 }
+                UpdateRX2DisplayOffsets();
             }
         }
 
@@ -20308,6 +20307,30 @@ namespace Thetis
             {
                 ptbDX.Value = value;
                 ptbDX_Scroll(this, EventArgs.Empty);
+            }
+        }
+
+        public bool CFCEnabled
+        {
+            get
+            {
+                return SetupForm.CFCEnabled;
+            }
+            set
+            {
+                SetupForm.CFCEnabled = value;
+            }
+        }
+
+        public bool PhaseRotEnabled
+        {
+            get
+            {
+                return SetupForm.PhaseRotEnabled;
+            }
+            set
+            {
+                SetupForm.PhaseRotEnabled = value;
             }
         }
 
@@ -23215,6 +23238,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(1);
                         NetworkIO.SetMKIIBPF(0);
                         cmaster.SetADCSupply(0, 33);
+                        NetworkIO.LRAudioSwap(1);
                         CurrentHPSDRHardware = HPSDRHW.Hermes;
                         break;
                     case HPSDRModel.ANAN10:
@@ -23224,6 +23248,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(1);
                         NetworkIO.SetMKIIBPF(0);
                         cmaster.SetADCSupply(0, 33);
+                        NetworkIO.LRAudioSwap(1);
                         CurrentHPSDRHardware = HPSDRHW.Hermes;
                         break;
                     case HPSDRModel.ANAN10E:
@@ -23233,6 +23258,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(1);
                         NetworkIO.SetMKIIBPF(0);
                         cmaster.SetADCSupply(0, 33);
+                        NetworkIO.LRAudioSwap(1);
                         CurrentHPSDRHardware = HPSDRHW.HermesII;
                         break;
                     case HPSDRModel.ANAN100:
@@ -23242,6 +23268,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(1);
                         NetworkIO.SetMKIIBPF(0);
                         cmaster.SetADCSupply(0, 33);
+                        NetworkIO.LRAudioSwap(1);
                         CurrentHPSDRHardware = HPSDRHW.Hermes;
                         break;
                     case HPSDRModel.ANAN100B:
@@ -23251,6 +23278,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(1);
                         NetworkIO.SetMKIIBPF(0);
                         cmaster.SetADCSupply(0, 33);
+                        NetworkIO.LRAudioSwap(1);
                         CurrentHPSDRHardware = HPSDRHW.HermesII;
                         break;
                     case HPSDRModel.ANAN100D:
@@ -23259,6 +23287,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(2);
                         NetworkIO.SetMKIIBPF(0);
                         cmaster.SetADCSupply(0, 33);
+                        NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.Angelia;
                         break;
                     case HPSDRModel.ANAN200D:
@@ -23267,6 +23296,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(2);
                         NetworkIO.SetMKIIBPF(0);
                         cmaster.SetADCSupply(0, 50);
+                        NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.Orion;
                         break;
                     case HPSDRModel.ORIONMKII:
@@ -23275,6 +23305,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(2);
                         NetworkIO.SetMKIIBPF(1);
                         cmaster.SetADCSupply(0, 50);
+                        NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.OrionMKII;
                         break;
                     case HPSDRModel.ANAN7000D:
@@ -23283,6 +23314,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(2);
                         NetworkIO.SetMKIIBPF(1);
                         cmaster.SetADCSupply(0, 50);
+                        NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.OrionMKII;
                         break;
                     case HPSDRModel.ANAN8000D:
@@ -23291,6 +23323,7 @@ namespace Thetis
                         NetworkIO.SetRxADC(2);
                         NetworkIO.SetMKIIBPF(1);
                         cmaster.SetADCSupply(0, 50);
+                        NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.OrionMKII;
                         break;
 
@@ -23367,7 +23400,7 @@ namespace Thetis
                 {
                     Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
                     Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
-                    Penny.getPenny().ExtCtrlEnable(lo_band, lo_bandb, mox);
+                    Penny.getPenny().ExtCtrlEnable(lo_band, lo_bandb, mox, value);
                 }
             }
         }
@@ -23552,8 +23585,16 @@ namespace Thetis
                         break;
                 }
 
-                EnableAllBands();             
-                EnableAllModes();
+                if (value)
+                {
+                    DisableAllBands();
+                    DisableAllModes();
+                }
+                else
+                {
+                    EnableAllBands();
+                    EnableAllModes();
+                }
                 
                 btnVFOBtoA.Enabled = enabled;
                 btnVFOSwap.Enabled = enabled;
@@ -25377,8 +25418,8 @@ namespace Thetis
                 if (!IsSetupFormNull)
                     SetupForm.TunePower = tune_power;
 
-                //if (chkTUN.Checked && !tx_tune_power)
-                //    PWR = tune_power;
+                if (chkTUN.Checked && !tx_tune_power)
+                    PWR = tune_power;
             }
         }
 
@@ -25395,17 +25436,6 @@ namespace Thetis
             get { return previous_pwr; }
             set { previous_pwr = value; }
         }
-
-        //private bool no_hardware_offset = false;
-        //public bool NoHardwareOffset
-        //{
-        //    get { return no_hardware_offset; }
-        //    set
-        //    {
-        //        no_hardware_offset = value;
-        //        comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
-        //    }
-        //}
 
         #region CAT Properties
 
@@ -37283,6 +37313,7 @@ namespace Thetis
             was_panadapter = false;
             was_waterfall = false;
             UpdateRX1DisplayOffsets();
+            UpdateRX2DisplayOffsets();
 
             if (comboDisplayMode.Focused)
                 btnHidden.Focus();
@@ -40218,11 +40249,14 @@ namespace Thetis
             Band lo_band = Band.FIRST;
             Band lo_bandb = Band.FIRST;
 
-            // added G8NJJ for Aries ATU: see if ARIES needs a new frequency update
+            // added G8NJJ for Aries ATU: see if ARIES needs a new frequency update and antenna band update
             // and at this point so that TX band has been set
+            DisplayAriesRXAntenna();
             if ((AriesCATEnabled) && (chkVFOATX.Checked))
+            {
                 SetAriesTXFrequency(freq);
-
+                DisplayAriesTXAntenna();
+            }
 
             if (chkPower.Checked)
             {
@@ -41379,9 +41413,13 @@ namespace Thetis
 
         end:
 
-            // added G8NJJ for Aries ATU: see if ARIES needs a new frequency update
+            // added G8NJJ for Aries ATU: see if ARIES needs a new frequency update and antenna band update
+            DisplayAriesRXAntenna();
             if ((AriesCATEnabled) && (chkVFOBTX.Checked))
+            {
                 SetAriesTXFrequency(freq);
+                DisplayAriesTXAntenna();
+            }
 
 
             if (chkVFOSync.Checked && VFOAFreq != VFOBFreq)//MW0LGE txtVFOAFreq.Text != txtVFOBFreq.Text)
@@ -54506,7 +54544,7 @@ namespace Thetis
                         //chkNR.Checked = false;
                         chkNR.CheckState = CheckState.Unchecked;
                         SetupForm.CESSB = false;
-                        SetupForm.CFCEnabled = false;
+                        CFCEnabled = false;
                         SetupForm.PhaseRotEnabled = false;
                         break;
                     case "preset":
@@ -54518,7 +54556,7 @@ namespace Thetis
                         rx1dm.ANF = chkANF.Checked;
                         rx1dm.NR = chkNR.CheckState;
                         rx1dm.CESSB = SetupForm.CESSB;
-                        rx1dm.CFCEnabled = SetupForm.CFCEnabled;
+                        rx1dm.CFCEnabled = CFCEnabled;
                         rx1dm.PhaseRotEnabled = SetupForm.PhaseRotEnabled;
                         break;
                     case "reset":
@@ -54530,7 +54568,7 @@ namespace Thetis
                         chkANF.Checked = rx1dm.ANF;
                         chkNR.CheckState = rx1dm.NR;
                         SetupForm.CESSB = rx1dm.CESSB;
-                        SetupForm.CFCEnabled = rx1dm.CFCEnabled;
+                        CFCEnabled = rx1dm.CFCEnabled;
                         SetupForm.PhaseRotEnabled = rx1dm.PhaseRotEnabled;
                         break;
                 }

@@ -127,7 +127,6 @@ namespace Thetis
             // 
             // dataGrid1
             // 
-            this.dataGrid1.DataMember = "";
             this.dataGrid1.Location = new System.Drawing.Point(8, 0);
             this.dataGrid1.Name = "dataGrid1";
             this.dataGrid1.Size = new System.Drawing.Size(512, 224);

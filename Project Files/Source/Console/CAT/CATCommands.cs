@@ -6154,12 +6154,15 @@ namespace Thetis
 				tl = Convert.ToInt32(s);
 				tl = Math.Max(0, tl);
 				tl = Math.Min(100, tl);
-				console.SetupForm.TunePower = tl;		
+				if (console.TXTunePower) console.PWR = tl;
+				else console.SetupForm.TunePower = tl;
+		
 				return "";
 			}
 			else if(s.Length == parser.nGet)	// if this is a read command
 			{
-				return AddLeadingZeros(console.SetupForm.TunePower);
+				if (console.TXTunePower) return AddLeadingZeros(console.PWR);
+				else return AddLeadingZeros(console.SetupForm.TunePower);
 			}
 			else
 			{

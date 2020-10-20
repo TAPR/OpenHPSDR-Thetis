@@ -1227,6 +1227,13 @@ int getLEDs()
 }
 
 PORT
+void LRAudioSwap (int swap)
+{
+	if (prn->lr_audio_swap != swap)
+		prn->lr_audio_swap = swap;
+}
+
+PORT
 void create_rnet() 
 {
 	int i;
@@ -1273,6 +1280,7 @@ void create_rnet()
 		prn->wb_sample_size = 16;
 		prn->wb_update_rate = 70;
 		prn->wb_packets_per_frame = 32;
+		prn->lr_audio_swap = 0;
 		for (i = 0; i < MAX_ADC; i++) {
 			prn->adc[i].id = i;
 			prn->adc[i].rx_step_attn = 0;

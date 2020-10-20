@@ -86,17 +86,17 @@ namespace Thetis
 
         }
         
-        public void ExtCtrlEnable(Band band, Band bandb, bool tx) 
+        public void ExtCtrlEnable(Band band, Band bandb, bool tx, bool enable) 
 		{
-			//if ( !enable ) 
-			//{
-			//	NetworkIO.SetOCBits(0); 
-			//}
-			//else 
-			//{
-				UpdateExtCtrl(band, bandb, tx);
-			//}
-		}
+            if (!enable)
+            {
+                NetworkIO.SetOCBits(0);
+            }
+            else
+            {
+                UpdateExtCtrl(band, bandb, tx);
+            }
+        }
 
         public int RxABitMask = 0xf; // 4x3 split
         public bool SplitPins = false;

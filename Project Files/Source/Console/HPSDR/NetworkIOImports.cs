@@ -324,5 +324,8 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int SendStopToMetis();
 
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void LRAudioSwap(int swap);
+
     }
 }

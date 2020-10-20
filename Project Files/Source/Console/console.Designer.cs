@@ -7246,10 +7246,10 @@
             this.Controls.Add(this.panelVFOALabels);
             this.Controls.Add(this.panelVFOLabels);
             this.Controls.Add(this.panelAndromedaMisc);
-            this.Controls.Add(this.panelModeSpecificCW);
             this.Controls.Add(this.panelModeSpecificPhone);
             this.Controls.Add(this.panelModeSpecificFM);
             this.Controls.Add(this.panelModeSpecificDigital);
+            this.Controls.Add(this.panelModeSpecificCW);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Console";

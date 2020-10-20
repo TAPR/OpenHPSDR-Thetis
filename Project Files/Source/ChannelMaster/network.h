@@ -113,6 +113,9 @@ typedef struct CACHE_ALIGN _radionet
 	int wb_packets_per_frame;
 	volatile long wb_enable;
 
+	// L & R audio swap for certain models; fixes firmware bugs
+	int lr_audio_swap;
+
 	struct _adc
 	{
 		int id;

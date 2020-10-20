@@ -460,8 +460,8 @@ namespace Thetis
            radP1DDC1ADC1.Checked = true;
            radP1DDC1ADC2.Checked = false;
 
-           radP1DDC2ADC0.Checked = true;
-           radP1DDC2ADC1.Checked = false;
+           radP1DDC2ADC0.Checked = false;
+           radP1DDC2ADC1.Checked = true;
            radP1DDC2ADC2.Checked = false;
 
            radP1DDC3ADC0.Checked = true;
@@ -1570,7 +1570,7 @@ namespace Thetis
 
             //ADC assignment
             radDDCADC_CheckedChanged(this, e);
-           
+            radP1DDCADC_CheckedChanged(this, e);
             chkWheelReverse_CheckedChanged(this, e);
 
             // IVAC
@@ -2460,7 +2460,7 @@ namespace Thetis
             }
         }
 
-        public bool CFCEnabled 
+        public bool CFCEnabled
         {
             get
             {
@@ -2471,7 +2471,6 @@ namespace Thetis
                 if (chkCFCEnable != null)
                 {
                     chkCFCEnable.Checked = value;
-                    chkCFCEnable_CheckedChanged(this, EventArgs.Empty);
                 }
             }
         }
@@ -2487,7 +2486,6 @@ namespace Thetis
                 if (chkPHROTEnable != null)
                 {
                     chkPHROTEnable.Checked = value;
-                    chkPHROTEnable_CheckedChanged(this, EventArgs.Empty);
                 }
             }
         }
@@ -13731,6 +13729,8 @@ namespace Thetis
         // this must also cancel any ext input check boxes
         public void SetRXAntenna(int Antenna, Band band)
         {
+            if((band >=Band.B160M) && (band <=Band.B6M))
+            {
             int idx = (int)band - (int)Band.B160M;
             int Btn;
             // change to new radio button and clear all ext input checkboxes
@@ -13748,13 +13748,15 @@ namespace Thetis
             {
                     cboxes[Btn].Checked = false;
             }
-
+            }
         }
 
         // set TX antenna to new antenna 1-3
         // only select antennas 2 or 3 if not blocked by "do not TX" check boxes
         public void SetTXAntenna(int Antenna, Band band)
         {
+            if ((band >= Band.B160M) && (band <= Band.B6M))
+            {
             int idx = (int)band - (int)Band.B160M;
             int Btn;
             bool TXAllowed = true;
@@ -13780,6 +13782,7 @@ namespace Thetis
                 else
                     buttons[Btn].Checked = false;
             }
+        }
         }
         }
 

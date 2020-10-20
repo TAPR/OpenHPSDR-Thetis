@@ -987,6 +987,16 @@ void sendOutbound(int id, double* out)
 		}
 		else
 		{
+			if (prn->lr_audio_swap)
+			{
+				double swap;
+				for (i = 0; i < 2 * prn->audio[0].spp; i += 2)
+				{
+					swap       = out[i + 0];
+					out[i + 0] = out[i + 1];
+					out[i + 1] = swap;
+				}
+			}
 			for (i = 0; i < 2 * prn->audio[0].spp; i++)
 			{
 				temp = out[i] >= 0.0 ? (short)floor(out[i] * 32767.0 + 0.5) :

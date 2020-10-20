@@ -484,7 +484,7 @@ void WriteMainLoop(char* bufp)
 			else if (nddc == 5)
 				ddc_freq = prn->rx[0].frequency;
 			else
-				ddc_freq = prn->rx[3].frequency;
+				ddc_freq = prn->rx[1].frequency; //Hermes RX2 freq
 			C1 = (ddc_freq >> 24) & 0xff; // byte 0 of rx2 freq 
 			C2 = (ddc_freq >> 16) & 0xff; // byte 1 of rx2 freq 
 			C3 = (ddc_freq >> 8) & 0xff; // byte 2 of rx2 freq 
@@ -668,6 +668,7 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n)
 
 	int i, j, k;
 	short temp;
+	double swap;
 	double *pbuffs [2];
 	pbuffs[0] = prn->outLRbufp;
 	pbuffs[1] = prn->outIQbufp;
@@ -675,10 +676,18 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n)
 	while (io_keep_running != 0)
 	{
 		WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, INFINITE);
-
-		for (i = 0; i < 2 * 63; i++)     // for each sample from both sets, 8 bytes per
-			for (j = 0; j < 2; j++)	 // for a sample from each set, 4 bytes per
-				for (k = 0; k < 2; k++)  // for each component of the sample, 2 per
+		// if ((nddc == 2) || (nddc == 4))
+		{
+			for (i = 0; i < 4 * 63; i += 2)			// swap L & R audio; firmware bug fix
+			{
+				swap             = pbuffs[0][i + 0];
+				pbuffs[0][i + 0] = pbuffs[0][i + 1];
+				pbuffs[0][i + 1] = swap;
+			}
+		}
+		for (i = 0; i < 2 * 63; i++)				// for each sample from both sets, 8 bytes per
+			for (j = 0; j < 2; j++)					// for a sample from each set, 4 bytes per
+				for (k = 0; k < 2; k++)				// for each component of the sample, 2 per
 				{
 					temp = pbuffs[j][i * 2 + k] >= 0.0 ? (short)floor(pbuffs[j][i * 2 + k] * 32767.0 + 0.5) :
 						(short)ceil(pbuffs[j][i * 2 + k] * 32767.0 - 0.5);
@@ -689,7 +698,6 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n)
 					prn->OutBufp[8 * i + 4 * j + 2 * k + 0] = (char)((temp >> 8) & 0xff);
 					prn->OutBufp[8 * i + 4 * j + 2 * k + 1] = (char)(temp & 0xff);
 				}
-
 			WriteMainLoop(prn->OutBufp);						
 	}
 	return 0;

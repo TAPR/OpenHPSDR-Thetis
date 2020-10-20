@@ -47,7 +47,6 @@
     
     <MediaTemplate EmbedCab="yes" />
 
-    <!-- This sample has been developed and tested on Windows 7sp1/8.1/10 -->
     <!--<Condition Message="OS must be Windows 7 sp1, Windows 8.1 or Windows 10">
       <![CDATA[Installed OR (VersionNT >= 601)]]>
     </Condition>-->

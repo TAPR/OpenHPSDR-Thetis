@@ -1182,6 +1182,9 @@ namespace Thetis
 		private bool temp_cpdr = false;
 		private bool temp_dx = false;
         private bool temp_vacbypass = false; //MW0LGE
+        private bool temp_cfc = false;
+        private bool temp_phaserot = false;
+
         public static int QAC = 0; // ke9ns add
  
 		private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
@@ -1217,7 +1220,13 @@ namespace Thetis
 				temp_dx = console.DX;
 				console.DX = false;
 
-				temp_play = Audio.RecordTXPreProcessed;
+                temp_cfc = console.CFCEnabled;
+                console.CFCEnabled = false;
+
+                temp_phaserot = console.PhaseRotEnabled;
+                console.PhaseRotEnabled = false;
+
+                temp_play = Audio.RecordTXPreProcessed;
 				Audio.RecordTXPreProcessed = true;  // set TRUE temporarily
 				
 				temp_mon = console.MON;
@@ -1237,6 +1246,9 @@ namespace Thetis
 					console.TXEQ = temp_txeq;               // set TX Eq back to original state
                     console.CPDR = temp_cpdr; //MW0LGE
                     console.DX = temp_dx; //MW0LGE
+                    console.CFCEnabled = temp_cfc;
+                    console.PhaseRotEnabled = temp_phaserot;
+
                     if (console.BypassVACWhenPlayingRecording) Audio.VACBypass = temp_vacbypass; //MW0LGE
 					return;
 				}			
@@ -1254,6 +1266,9 @@ namespace Thetis
 				console.TXEQ = temp_txeq;               // set TX Eq back to original state
 				console.CPDR = temp_cpdr;
 				console.DX = temp_dx;
+                console.CFCEnabled = temp_cfc;
+                console.PhaseRotEnabled = temp_phaserot;
+
                 if (console.BypassVACWhenPlayingRecording)
                 {
                     Audio.VACBypass = temp_vacbypass; //MW0LGE

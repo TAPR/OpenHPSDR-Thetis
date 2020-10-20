@@ -15,6 +15,9 @@ namespace Thetis
         private bool AriesTuneState = false;                    // ATU tune state; true if solution available
         private bool AriesEnabled = false;                      // true if ARIES ATU function enabled
         private int AriesAntenna = 0;                           // antenna that Aries has been told to tune for
+        private int TXAntennaSent = -1;                         // antenna in use for TX
+        private string RXAntennaSentString = "none";            // antenna in use for RX
+
         // array of ints to store TX antenna vs band
         // initialised to antenna 1; setup form sends updates when it loads for any antennas on 2 or 3
         private const int ARIESANTARRAYSIZE = 12;
@@ -267,6 +270,8 @@ namespace Thetis
             DisplayAriesRXAntenna();
         }
 
+
+
         // function to set whether an aux input is selected as RX antenna for a given band
         // this is called when an antenna control changes in setup.
         // parameter true if aux input (ext1, ext2, xvtr) selected
@@ -278,6 +283,7 @@ namespace Thetis
             DisplayAriesRXAntenna();
         }
 
+
         // function to tell Aries that TUNE is active 
         // at the moment, it just sends a CAT message
         private void SetAriesTuneState(bool IsTune)
@@ -285,15 +291,91 @@ namespace Thetis
             MakeAriesTuneRequestMsg(IsTune);
         }
 
+
+
+        // helper to find nearest band, if we are out of an amateur band. Same logic as Alex.
+        public Band AntennaBandFromFreq(bool IsTX)
+        {
+            Band result;
+
+            double freq = 0.0;
+
+            if (RX1XVTRIndex >= 0)
+                freq = XVTRForm.TranslateFreq(freq);
+            else
+            {
+                // really should check TX freq, in case it is a split frequency
+                freq = VFOAFreq;
+            }
+
+            // now find nearest "real" band
+            if (freq >= 12.075)
+            {
+                if (freq >= 23.17)
+                {
+                    if (freq >= 26.465)
+                    {
+                        result = freq >= 39.85 ? Band.B6M : Band.B10M;
+                    }
+                    else /* >23.17  <26.465 */
+                    {
+                        result = Band.B12M;
+                    }
+                }
+                else  /* >12.075  <23.17 */
+                {
+                    if (freq >= 16.209)
+                    {
+                        result = freq >= 19.584 ? Band.B15M : Band.B17M;
+                    }
+                    else
+                    {
+                        result = Band.B20M;
+                    }
+                }
+            }
+            else  /* < 12.075 */
+            {
+                if (freq >= 6.20175)
+                {
+                    result = freq >= 8.7 ? Band.B30M : Band.B40M;
+                }
+                else
+                {
+                    if (freq >= 4.66525)
+                    {
+                        result = Band.B60M;
+                    }
+                    else
+                    {
+                        result = freq >= 2.75 ? Band.B80M : Band.B160M;
+                    }
+                }
+            }
+            return result;
+        }
+
+
         // show the TX antenna on the Andromeda screen
         private void DisplayAriesTXAntenna()
         {
+            Band CurrentBand;
             int Antenna;
-            int idx = (int)TXBand - (int)Band.B160M;
+
+            CurrentBand = TXBand;
+            // see if we are in an amateur band; if not lookup using Alex function
+            if ((CurrentBand < Band.B160M) || (CurrentBand > Band.B6M))
+                CurrentBand = AntennaBandFromFreq(true);
+
+            int idx = (int)CurrentBand - (int)Band.B160M;
             if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
             {
                 Antenna = AntennaArrayByBand[idx];
-                toolStripStatusLabelTXAnt.Text = "Tx Ant " + Antenna.ToString();
+                if(Antenna != TXAntennaSent)
+                {
+                    toolStripStatusLabelTXAnt.Text = "Tx Ant " + Antenna.ToString();
+                    TXAntennaSent = Antenna;
+                }
             }
         }
 
@@ -302,8 +384,16 @@ namespace Thetis
         private void DisplayAriesRXAntenna()
         {
             int Antenna;
+            Band CurrentBand;
             string AntString = "RX";
-            int idx = (int)RX1Band - (int)Band.B160M;
+            CurrentBand = RX1Band;
+
+            // see if we are in an amateur band; if not lookup using Alex function
+            if ((CurrentBand < Band.B160M) || (CurrentBand > Band.B6M))
+                CurrentBand = AntennaBandFromFreq(false);
+
+            // convert to int, 160m = index value 0
+            int idx = (int)CurrentBand - (int)Band.B160M;
             if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
             {
                 if (RXAuxAntennaArrayByBand[idx])
@@ -330,7 +420,11 @@ namespace Thetis
                     }
                 else
                     AntString = "Rx Ant " + RXAntennaArrayByBand[idx].ToString();
-                toolStripStatusLabelRXAnt.Text = AntString;
+                if(AntString != RXAntennaSentString)
+                {
+                    toolStripStatusLabelRXAnt.Text = AntString;
+                    RXAntennaSentString = AntString;
+                }
             }
         }
 
@@ -361,7 +455,7 @@ namespace Thetis
             }
         }
 
-        // set TX antenna to specified antenna (1=3)
+        // set TX antenna to specified antenna (1=3) called by status bar handler
         void SetNewTXAntenna(int Ant)
         {
             if ((Ant >= 1) && (Ant <= 3))
@@ -373,7 +467,7 @@ namespace Thetis
             }
         }
 
-        // set RX antenna to specified antenna (1=3)
+        // set RX antenna to specified antenna (1=3) called by status bar handler
         void SetNewRXAntenna(int Ant)
         {
             if ((Ant >= 1) && (Ant <= 3))
@@ -381,7 +475,7 @@ namespace Thetis
                 // change antenna only if TX band == RX band
                 // step by the current TX antenna
                 if (SetupForm != null) 
-                    SetupForm.SetRXAntenna(Ant, TXBand);
+                    SetupForm.SetRXAntenna(Ant, RX1Band);
             }
         }
 
