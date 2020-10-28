@@ -19,7 +19,7 @@
     <DelaySign>false</DelaySign>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Thetis</RootNamespace>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
     <StartupObject>Thetis.Console</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -188,6 +188,8 @@
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Interleaved|x64'">
     <OutputPath>bin\x64\Interleaved\</OutputPath>
@@ -540,10 +542,15 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Content Include="PA19.dll" />
+    <Content Include="Resources\screen4.png" />
+    <None Include="Resources\openhpsdrnotastall.bmp" />
+    <None Include="Resources\openhpsdrnotastall.png" />
+    <None Include="Resources\splashimg.bmp" />
+    <None Include="Resources\openhpsdr.bmp" />
     <None Include="Resources\play.png" />
     <None Include="Resources\timer_on.png" />
     <None Include="Resources\timer.png" />
-    <None Include="Resources\screen4.png" />
     <None Include="Resources\screen3.png" />
     <None Include="Resources\screen2.png" />
     <None Include="Resources\screen.png" />
@@ -786,7 +793,6 @@
       <Name>RawInput</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

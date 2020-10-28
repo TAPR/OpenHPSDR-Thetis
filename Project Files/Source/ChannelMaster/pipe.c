@@ -129,7 +129,9 @@ void xpipe (int stream, int pos, double** buffs)
 {
 	double* buff = buffs[stream];
 	int i, j;
-	int rx, tx, sp0;
+    int rx = 0;
+    int tx = 0;
+    int sp0 = 0;
 	int st = stype (stream);
 	if      (st == 0) rx  = rxid (stream);
 	else if (st == 1) tx  = txid (stream);

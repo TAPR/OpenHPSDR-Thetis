@@ -113,6 +113,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap openhpsdrnotastall {
+            get {
+                object obj = ResourceManager.GetObject("openhpsdrnotastall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap picD1 {
             get {
                 object obj = ResourceManager.GetObject("picD1", resourceCulture);
@@ -506,7 +516,8 @@ namespace Thetis.Properties {
         ///     padding-top: 10px;
         ///     margin-right: 10px;
         ///   }
-        ///   .f [rest of string was truncated]&quot;;.
+        ///   .freqPanel {    
+        ///     backg [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template {
             get {

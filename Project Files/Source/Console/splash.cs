@@ -126,9 +126,9 @@ namespace Thetis
             // 
             this.pnlStatus.BackColor = System.Drawing.Color.White;
             this.pnlStatus.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pnlStatus.Location = new System.Drawing.Point(42, 259);
+            this.pnlStatus.Location = new System.Drawing.Point(69, 387);
             this.pnlStatus.Name = "pnlStatus";
-            this.pnlStatus.Size = new System.Drawing.Size(300, 17);
+            this.pnlStatus.Size = new System.Drawing.Size(538, 17);
             this.pnlStatus.TabIndex = 2;
             this.pnlStatus.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlStatus_Paint);
             // 
@@ -140,38 +140,46 @@ namespace Thetis
             // lblTimeRemaining
             // 
             this.lblTimeRemaining.BackColor = System.Drawing.Color.Transparent;
-            this.lblTimeRemaining.ForeColor = System.Drawing.Color.Transparent;
+            this.lblTimeRemaining.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTimeRemaining.ForeColor = System.Drawing.Color.Blue;
             this.lblTimeRemaining.Image = null;
-            this.lblTimeRemaining.Location = new System.Drawing.Point(273, 206);
+            this.lblTimeRemaining.Location = new System.Drawing.Point(289, 57);
             this.lblTimeRemaining.Name = "lblTimeRemaining";
             this.lblTimeRemaining.Size = new System.Drawing.Size(89, 16);
             this.lblTimeRemaining.TabIndex = 1;
             this.lblTimeRemaining.Text = "Time";
+            this.lblTimeRemaining.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
-            this.lblStatus.ForeColor = System.Drawing.Color.Black;
+            this.lblStatus.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus.ForeColor = System.Drawing.Color.MediumBlue;
             this.lblStatus.Image = null;
-            this.lblStatus.Location = new System.Drawing.Point(-1, 9);
+            this.lblStatus.Location = new System.Drawing.Point(110, 368);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(397, 16);
+            this.lblStatus.Size = new System.Drawing.Size(457, 16);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Status";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Splash
             // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoSize = true;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(397, 318);
-            this.Controls.Add(this.pnlStatus);
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(677, 416);
             this.Controls.Add(this.lblTimeRemaining);
+            this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.lblStatus);
+            this.Cursor = System.Windows.Forms.Cursors.AppStarting;
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Splash";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Splash";
+            this.Text = "Thetis Starting ...";
             this.Load += new System.EventHandler(this.Splash_Load);
             this.ResumeLayout(false);
 
@@ -449,8 +457,8 @@ namespace Thetis
 			{
 				LinearGradientBrush brBackground = 
 					new LinearGradientBrush(m_rProgress, 
-					Color.FromArgb(100, 100, 100),
-					Color.FromArgb(130, 255, 130), 
+					Color.FromArgb(0, 0, 70),
+					Color.FromArgb(160, 160, 200), 
 					LinearGradientMode.Horizontal);
 				e.Graphics.FillRectangle(brBackground, m_rProgress);
 			}

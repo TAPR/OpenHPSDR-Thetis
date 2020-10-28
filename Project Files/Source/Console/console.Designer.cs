@@ -6388,6 +6388,7 @@
             this.picDisplay.Cursor = System.Windows.Forms.Cursors.Cross;
             this.picDisplay.Name = "picDisplay";
             this.picDisplay.TabStop = false;
+            this.picDisplay.Click += new System.EventHandler(this.picDisplay_Click);
             this.picDisplay.Paint += new System.Windows.Forms.PaintEventHandler(this.picDisplay_Paint);
             this.picDisplay.DoubleClick += new System.EventHandler(this.picDisplay_DoubleClick);
             this.picDisplay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseDown);

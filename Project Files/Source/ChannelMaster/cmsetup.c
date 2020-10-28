@@ -118,7 +118,7 @@ int getInputRate (int stype, int id)
 PORT
 int getChannelOutputRate (int stype, int id)
 {
-	int rate;
+	int rate  = 0;
 	switch (stype)
 	{
 	case 0:

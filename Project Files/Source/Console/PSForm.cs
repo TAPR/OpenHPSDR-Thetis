@@ -208,6 +208,8 @@ namespace Thetis
         #endregion
 
         #region event handlers
+        
+       
 
         private void PSForm_Load(object sender, EventArgs e)
         {
@@ -217,10 +219,12 @@ namespace Thetis
                 puresignal.GetPSHWPeak(txachannel, ptr);
             PSpeak.Text = PShwpeak.ToString();
             btnPSAdvanced_Click(this, e);
+            PSpeak.Text = Common.GetSavedPSPeakValue();
         }
 
         private void PSForm_Closing(object sender, FormClosingEventArgs e)
         {
+            Common.SavePeakPSValue(PSpeak.Text);
             if (ampv != null)
             {
                 dismissAmpv = true;
@@ -679,6 +683,7 @@ namespace Thetis
         {
             PShwpeak = Convert.ToDouble(PSpeak.Text);
             puresignal.SetPSHWPeak(txachannel, PShwpeak);
+            Common.SavePeakPSValue(PSpeak.Text);
         }
 
         private void chkPSRelaxPtol_CheckedChanged(object sender, EventArgs e)

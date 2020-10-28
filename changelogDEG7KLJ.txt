@@ -1,0 +1,34 @@
+Fixed:
+
+Thetis hangs forever (deadlock) when trying to close application (especially when audio / network in trouble)
+
+----------------------------------------------
+Updated to latest version of PortAudio
+
+Updated all to Visual Studio 2019. I was only concerned with the x64 release: SSE2 instructions are automatically used on the latest MSVC compiler chain.
+
+Fixed application not exiting when bad version Dlls are loaded.	
+Added useful diagnostic info when DLLs are not found and/or cannot be loaded.
+
+Added versioning to all DLLS in the project (PortAudioForThetis.dll, wdsp.dll and ChannelMaster.dll.
+Added more progress messages during (long!) program start-up.
+
+BUG: VAC checkbox not saved on program exit.
+Improved applicaton shutdown time. Now will not hang forever if you turn off the radio whilst Thetis is still running!
+
+red square top left?????
+
+Fixed crazy parsing of version from the TitleBar (I put square brackets in there and broke the database update, ffs!)
+
+Changed many thread priorities in order to try to reduce (many) audio glitches.
+NOTE TO SELF: VAC still sometimes go crazy in TX and makes you sound like 'The Voice of The Mysterons'. This needs an urgent fix!
+
+Removed many stupid warnings when compiling some of the C-stuff.
+
+Changed splash screen so it's clear which version you are running.
+
+Added Launcher to installer. Be clear it's only any good on the only version I distribute (64-bit) due to hard-coded path:
+I gave up after several fruitless hours trying to do it 'The Wix way'
+
+Added capability to auto-save the SetPeak field in PureSignal. My Hermes-Lite 2 requires a value of more like 0.2 than 0.4,
+and it wouldn't save this before.

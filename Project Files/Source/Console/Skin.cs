@@ -64,10 +64,14 @@ namespace Thetis
         private static Console m_objConsole;
 
         private static string app_data_path = "";
-        public static string AppDataPath
+
+        public static string GetAppDataPath()
         {
-            set { app_data_path = value; }
+            Debug.Assert(app_data_path.Length > 0);
+            return app_data_path; 
         }
+        public static void SetAppDataPath(string value)
+        { app_data_path = value; }
 
         #endregion
 

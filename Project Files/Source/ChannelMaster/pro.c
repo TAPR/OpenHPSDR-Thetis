@@ -25,6 +25,7 @@ warren@wpratt.com
 */
 
 #include "pro.h"
+#include <assert.h>
 
 PRO create_pro (
 	int run,
@@ -33,15 +34,24 @@ PRO create_pro (
 	int lpacks )
 {
 	PRO a = (PRO) malloc (sizeof (pro));
-	int i;
+    assert(a);
+    if (!a) return NULL;
+
+	int i = 0;
+
+
+
 	a->run = run;
+	
 	a->psize = psize;
 	a->npacks = npacks;
 	a->lpacks = lpacks;
 	a->pbuffs = (unsigned char *) calloc (a->npacks, a->psize * sizeof (unsigned char));
 	a->pbuff = (unsigned char **) calloc (a->npacks, sizeof (unsigned char *));
-	for (i = 0; i < a->npacks; i++)
-		a->pbuff[i] = a->pbuffs + i * a->psize;
+    for (i = 0; i < a->npacks; i++) {
+        if (a->pbuff)
+        a->pbuff[i] = a->pbuffs + i * a->psize;
+    }
 	a->sbuff = (unsigned int *)calloc(a->npacks, sizeof(unsigned int));
 	a->mask = a->npacks - 1;
 	a->base_set = 0;

@@ -439,7 +439,7 @@ namespace Thetis
             {
                 Name = "help thread",
                 IsBackground = true,                    // if app closes, kill this thread
-                Priority = ThreadPriority.Normal
+                Priority = ThreadPriority.Lowest
             };
             t.Start();
         }
@@ -768,7 +768,7 @@ namespace Thetis
             {
                 Name = "keyboard edit box handler thread",
                 IsBackground = true,                    // if app closes, kill this thread
-                Priority = ThreadPriority.Normal
+                Priority = ThreadPriority.BelowNormal
             };
             keyDisplayThread.Start();
 
@@ -776,7 +776,7 @@ namespace Thetis
             {
                 Name = "CAT Read Thread",
                 IsBackground = true,
-                Priority = ThreadPriority.Highest
+                Priority = ThreadPriority.BelowNormal
             };
             CATReadThread.Start();
 

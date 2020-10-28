@@ -164,10 +164,10 @@ extern void flush_emnr (EMNR a);
 
 extern void xemnr (EMNR a, int pos);
 
-extern setBuffers_emnr (EMNR a, double* in, double* out);
+extern void setBuffers_emnr (EMNR a, double* in, double* out);
 
-extern setSamplerate_emnr (EMNR a, int rate);
+extern void setSamplerate_emnr (EMNR a, int rate);
 
-extern setSize_emnr (EMNR a, int size);
+extern void setSize_emnr (EMNR a, int size);
 
 #endif

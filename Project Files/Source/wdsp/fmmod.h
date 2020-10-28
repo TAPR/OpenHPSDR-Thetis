@@ -64,11 +64,11 @@ extern void flush_fmmod (FMMOD a);
 
 extern void xfmmod (FMMOD a);
 
-extern setBuffers_fmmod (FMMOD a, double* in, double* out);
+extern void setBuffers_fmmod (FMMOD a, double* in, double* out);
 
-extern setSamplerate_fmmod (FMMOD a, int rate);
+extern void setSamplerate_fmmod (FMMOD a, int rate);
 
-extern setSize_fmmod (FMMOD a, int size);
+extern void setSize_fmmod (FMMOD a, int size);
 
 // TXA Properties
 

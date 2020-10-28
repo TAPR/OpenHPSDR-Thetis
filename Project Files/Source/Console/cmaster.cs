@@ -17,6 +17,11 @@ namespace Thetis
 
         #region cmaster method definitions
 
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "build_date", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr Build_date();
+
+
         // cmaster
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetRadioStructure", CallingConvention = CallingConvention.Cdecl)]
@@ -363,7 +368,17 @@ namespace Thetis
             SetPSRxIdx(0, 0);   // txid = 0, all current models use Stream0 for RX feedback
             SetPSTxIdx(0, 1);   // txid = 0, all current models use Stream1 for TX feedback
             puresignal.SetPSFeedbackRate(txch, ps_rate);
-            puresignal.SetPSHWPeak(txch, 0.2899);
+            string PSPeak = Common.GetSavedPSPeakValue();
+            if (PSPeak.Length > 0)
+            {
+                double pspeak = 0;
+                if (Double.TryParse(PSPeak, out pspeak))
+                puresignal.SetPSHWPeak(txch, pspeak);
+            }
+            else
+            {
+                puresignal.SetPSHWPeak(txch, 0.2899);
+            }
 
             // setup transmitter display
             WDSP.TXASetSipMode(txch, 1);            // 1=>call the appropriate 'analyzer'

@@ -1490,6 +1490,7 @@
             this.grpDisplay8000DLE = new System.Windows.Forms.GroupBoxTS();
             this.chkANAN8000DLEDisplayVoltsAmps = new System.Windows.Forms.CheckBoxTS();
             this.grpDisplayDriverEngine = new System.Windows.Forms.GroupBoxTS();
+            this.label1 = new System.Windows.Forms.Label();
             this.chkVSyncDX = new System.Windows.Forms.CheckBoxTS();
             this.chkAccurateFrameTiming = new System.Windows.Forms.CheckBoxTS();
             this.chkAntiAlias = new System.Windows.Forms.CheckBoxTS();
@@ -7273,7 +7274,7 @@
             // 
             this.grpFRSRegion.Controls.Add(this.chkExtended);
             this.grpFRSRegion.Controls.Add(this.comboFRSRegion);
-            this.grpFRSRegion.Location = new System.Drawing.Point(39, 174);
+            this.grpFRSRegion.Location = new System.Drawing.Point(27, 108);
             this.grpFRSRegion.Name = "grpFRSRegion";
             this.grpFRSRegion.Size = new System.Drawing.Size(111, 81);
             this.grpFRSRegion.TabIndex = 33;
@@ -7363,9 +7364,9 @@
             // chkGeneralRXOnly
             // 
             this.chkGeneralRXOnly.Image = null;
-            this.chkGeneralRXOnly.Location = new System.Drawing.Point(8, 309);
+            this.chkGeneralRXOnly.Location = new System.Drawing.Point(39, 250);
             this.chkGeneralRXOnly.Name = "chkGeneralRXOnly";
-            this.chkGeneralRXOnly.Size = new System.Drawing.Size(96, 16);
+            this.chkGeneralRXOnly.Size = new System.Drawing.Size(96, 32);
             this.chkGeneralRXOnly.TabIndex = 11;
             this.chkGeneralRXOnly.Text = "Receive Only";
             this.toolTip1.SetToolTip(this.chkGeneralRXOnly, "Check to disable transmit functionality.");
@@ -22446,6 +22447,7 @@
             // tpVAC
             // 
             this.tpVAC.Controls.Add(this.chkBypassVACPlayingRecording);
+            this.tpVAC.Controls.Add(this.grpAudioSampleRate2);
             this.tpVAC.Controls.Add(this.grpVAC1monitor);
             this.tpVAC.Controls.Add(this.chkMOXAllowBypass);
             this.tpVAC.Controls.Add(this.chkSPACEAllowBypass);
@@ -22456,7 +22458,6 @@
             this.tpVAC.Controls.Add(this.grpAudioVACGain);
             this.tpVAC.Controls.Add(this.grpAudio2Stereo);
             this.tpVAC.Controls.Add(this.grpAudioLatency2);
-            this.tpVAC.Controls.Add(this.grpAudioSampleRate2);
             this.tpVAC.Controls.Add(this.grpAudioBuffer2);
             this.tpVAC.Controls.Add(this.grpAudioDetails2);
             this.tpVAC.Controls.Add(this.chkAudioEnableVAC);
@@ -22790,7 +22791,7 @@
             this.grpDirectIQOutput.Controls.Add(this.chkAudioRX2toVAC);
             this.grpDirectIQOutput.Controls.Add(this.chkAudioCorrectIQ);
             this.grpDirectIQOutput.Controls.Add(this.chkAudioIQtoVAC);
-            this.grpDirectIQOutput.Location = new System.Drawing.Point(557, 52);
+            this.grpDirectIQOutput.Location = new System.Drawing.Point(573, 28);
             this.grpDirectIQOutput.Name = "grpDirectIQOutput";
             this.grpDirectIQOutput.Size = new System.Drawing.Size(120, 104);
             this.grpDirectIQOutput.TabIndex = 78;
@@ -22834,7 +22835,7 @@
             // 
             this.chkVACCombine.Enabled = false;
             this.chkVACCombine.Image = null;
-            this.chkVACCombine.Location = new System.Drawing.Point(557, 12);
+            this.chkVACCombine.Location = new System.Drawing.Point(447, 106);
             this.chkVACCombine.Name = "chkVACCombine";
             this.chkVACCombine.Size = new System.Drawing.Size(104, 40);
             this.chkVACCombine.TabIndex = 76;
@@ -22885,7 +22886,7 @@
             this.grpAudioVACGain.Controls.Add(this.udAudioVACGainTX);
             this.grpAudioVACGain.Controls.Add(this.lblAudioVACGainRX);
             this.grpAudioVACGain.Controls.Add(this.udAudioVACGainRX);
-            this.grpAudioVACGain.Location = new System.Drawing.Point(406, 12);
+            this.grpAudioVACGain.Location = new System.Drawing.Point(449, 28);
             this.grpAudioVACGain.Name = "grpAudioVACGain";
             this.grpAudioVACGain.Size = new System.Drawing.Size(96, 72);
             this.grpAudioVACGain.TabIndex = 72;
@@ -22974,7 +22975,7 @@
             // grpAudio2Stereo
             // 
             this.grpAudio2Stereo.Controls.Add(this.chkAudio2Stereo);
-            this.grpAudio2Stereo.Location = new System.Drawing.Point(406, 86);
+            this.grpAudio2Stereo.Location = new System.Drawing.Point(573, 138);
             this.grpAudio2Stereo.Name = "grpAudio2Stereo";
             this.grpAudio2Stereo.Size = new System.Drawing.Size(96, 39);
             this.grpAudio2Stereo.TabIndex = 71;
@@ -23236,7 +23237,7 @@
             // grpAudioSampleRate2
             // 
             this.grpAudioSampleRate2.Controls.Add(this.comboAudioSampleRate2);
-            this.grpAudioSampleRate2.Location = new System.Drawing.Point(274, 64);
+            this.grpAudioSampleRate2.Location = new System.Drawing.Point(347, 90);
             this.grpAudioSampleRate2.Name = "grpAudioSampleRate2";
             this.grpAudioSampleRate2.Size = new System.Drawing.Size(96, 56);
             this.grpAudioSampleRate2.TabIndex = 66;
@@ -23268,7 +23269,7 @@
             // grpAudioBuffer2
             // 
             this.grpAudioBuffer2.Controls.Add(this.comboAudioBuffer2);
-            this.grpAudioBuffer2.Location = new System.Drawing.Point(274, 6);
+            this.grpAudioBuffer2.Location = new System.Drawing.Point(347, 28);
             this.grpAudioBuffer2.Name = "grpAudioBuffer2";
             this.grpAudioBuffer2.Size = new System.Drawing.Size(96, 56);
             this.grpAudioBuffer2.TabIndex = 65;
@@ -23303,7 +23304,7 @@
             this.grpAudioDetails2.Controls.Add(this.comboAudioDriver2);
             this.grpAudioDetails2.Location = new System.Drawing.Point(8, 28);
             this.grpAudioDetails2.Name = "grpAudioDetails2";
-            this.grpAudioDetails2.Size = new System.Drawing.Size(224, 100);
+            this.grpAudioDetails2.Size = new System.Drawing.Size(333, 100);
             this.grpAudioDetails2.TabIndex = 35;
             this.grpAudioDetails2.TabStop = false;
             this.grpAudioDetails2.Text = "Virtual Audio Cable Setup";
@@ -23325,7 +23326,7 @@
             this.comboAudioOutput2.ItemHeight = 13;
             this.comboAudioOutput2.Location = new System.Drawing.Point(56, 70);
             this.comboAudioOutput2.Name = "comboAudioOutput2";
-            this.comboAudioOutput2.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioOutput2.Size = new System.Drawing.Size(271, 21);
             this.comboAudioOutput2.TabIndex = 34;
             this.toolTip1.SetToolTip(this.comboAudioOutput2, "Output Audio Device");
             this.comboAudioOutput2.SelectedIndexChanged += new System.EventHandler(this.comboAudioOutput2_SelectedIndexChanged);
@@ -23355,7 +23356,7 @@
             this.comboAudioInput2.ItemHeight = 13;
             this.comboAudioInput2.Location = new System.Drawing.Point(56, 44);
             this.comboAudioInput2.Name = "comboAudioInput2";
-            this.comboAudioInput2.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioInput2.Size = new System.Drawing.Size(271, 21);
             this.comboAudioInput2.TabIndex = 28;
             this.toolTip1.SetToolTip(this.comboAudioInput2, "Input Audio Device");
             this.comboAudioInput2.SelectedIndexChanged += new System.EventHandler(this.comboAudioInput2_SelectedIndexChanged);
@@ -23367,7 +23368,7 @@
             this.comboAudioDriver2.ItemHeight = 13;
             this.comboAudioDriver2.Location = new System.Drawing.Point(56, 18);
             this.comboAudioDriver2.Name = "comboAudioDriver2";
-            this.comboAudioDriver2.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioDriver2.Size = new System.Drawing.Size(271, 21);
             this.comboAudioDriver2.TabIndex = 26;
             this.toolTip1.SetToolTip(this.comboAudioDriver2, "Sound Card Driver Selection");
             this.comboAudioDriver2.SelectedIndexChanged += new System.EventHandler(this.comboAudioDriver2_SelectedIndexChanged);
@@ -24461,7 +24462,7 @@
             // groupBoxTS11
             // 
             this.groupBoxTS11.Controls.Add(this.chkSmallModeFilteronVFOs);
-            this.groupBoxTS11.Location = new System.Drawing.Point(513, 100);
+            this.groupBoxTS11.Location = new System.Drawing.Point(513, 84);
             this.groupBoxTS11.Name = "groupBoxTS11";
             this.groupBoxTS11.Size = new System.Drawing.Size(200, 47);
             this.groupBoxTS11.TabIndex = 47;
@@ -24486,7 +24487,7 @@
             this.grpDisplay8000DLE.Controls.Add(this.chkANAN8000DLEDisplayVoltsAmps);
             this.grpDisplay8000DLE.Location = new System.Drawing.Point(513, 22);
             this.grpDisplay8000DLE.Name = "grpDisplay8000DLE";
-            this.grpDisplay8000DLE.Size = new System.Drawing.Size(200, 72);
+            this.grpDisplay8000DLE.Size = new System.Drawing.Size(200, 47);
             this.grpDisplay8000DLE.TabIndex = 44;
             this.grpDisplay8000DLE.TabStop = false;
             this.grpDisplay8000DLE.Text = "7000DLE/8000DLE";
@@ -24507,24 +24508,34 @@
             // 
             // grpDisplayDriverEngine
             // 
+            this.grpDisplayDriverEngine.Controls.Add(this.label1);
             this.grpDisplayDriverEngine.Controls.Add(this.chkVSyncDX);
             this.grpDisplayDriverEngine.Controls.Add(this.chkAccurateFrameTiming);
             this.grpDisplayDriverEngine.Controls.Add(this.chkAntiAlias);
             this.grpDisplayDriverEngine.Controls.Add(this.comboDisplayThreadPriority);
             this.grpDisplayDriverEngine.Controls.Add(this.chkShowFPS);
             this.grpDisplayDriverEngine.Controls.Add(this.comboDisplayDriver);
-            this.grpDisplayDriverEngine.Location = new System.Drawing.Point(528, 153);
+            this.grpDisplayDriverEngine.Location = new System.Drawing.Point(513, 153);
             this.grpDisplayDriverEngine.Name = "grpDisplayDriverEngine";
-            this.grpDisplayDriverEngine.Size = new System.Drawing.Size(147, 189);
+            this.grpDisplayDriverEngine.Size = new System.Drawing.Size(200, 206);
             this.grpDisplayDriverEngine.TabIndex = 46;
             this.grpDisplayDriverEngine.TabStop = false;
-            this.grpDisplayDriverEngine.Text = "Driver Engine";
+            this.grpDisplayDriverEngine.Text = "Display Driver Engine";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 55);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(90, 13);
+            this.label1.TabIndex = 51;
+            this.label1.Text = "Rendering Priority";
             // 
             // chkVSyncDX
             // 
             this.chkVSyncDX.AutoSize = true;
             this.chkVSyncDX.Image = null;
-            this.chkVSyncDX.Location = new System.Drawing.Point(9, 130);
+            this.chkVSyncDX.Location = new System.Drawing.Point(10, 158);
             this.chkVSyncDX.Name = "chkVSyncDX";
             this.chkVSyncDX.Size = new System.Drawing.Size(57, 17);
             this.chkVSyncDX.TabIndex = 50;
@@ -24537,7 +24548,7 @@
             // 
             this.chkAccurateFrameTiming.AutoSize = true;
             this.chkAccurateFrameTiming.Image = null;
-            this.chkAccurateFrameTiming.Location = new System.Drawing.Point(9, 166);
+            this.chkAccurateFrameTiming.Location = new System.Drawing.Point(10, 182);
             this.chkAccurateFrameTiming.Name = "chkAccurateFrameTiming";
             this.chkAccurateFrameTiming.Size = new System.Drawing.Size(128, 17);
             this.chkAccurateFrameTiming.TabIndex = 49;
@@ -24550,7 +24561,7 @@
             // 
             this.chkAntiAlias.AutoSize = true;
             this.chkAntiAlias.Image = null;
-            this.chkAntiAlias.Location = new System.Drawing.Point(9, 107);
+            this.chkAntiAlias.Location = new System.Drawing.Point(10, 134);
             this.chkAntiAlias.Name = "chkAntiAlias";
             this.chkAntiAlias.Size = new System.Drawing.Size(80, 17);
             this.chkAntiAlias.TabIndex = 48;
@@ -24570,7 +24581,7 @@
             "Normal",
             "Above Normal",
             "High"});
-            this.comboDisplayThreadPriority.Location = new System.Drawing.Point(8, 51);
+            this.comboDisplayThreadPriority.Location = new System.Drawing.Point(10, 82);
             this.comboDisplayThreadPriority.Name = "comboDisplayThreadPriority";
             this.comboDisplayThreadPriority.Size = new System.Drawing.Size(128, 21);
             this.comboDisplayThreadPriority.TabIndex = 47;
@@ -24581,7 +24592,7 @@
             // 
             this.chkShowFPS.AutoSize = true;
             this.chkShowFPS.Image = null;
-            this.chkShowFPS.Location = new System.Drawing.Point(9, 84);
+            this.chkShowFPS.Location = new System.Drawing.Point(10, 110);
             this.chkShowFPS.Name = "chkShowFPS";
             this.chkShowFPS.Size = new System.Drawing.Size(76, 17);
             this.chkShowFPS.TabIndex = 46;
@@ -24597,7 +24608,7 @@
             this.comboDisplayDriver.Items.AddRange(new object[] {
             "GDI+",
             "DirectX"});
-            this.comboDisplayDriver.Location = new System.Drawing.Point(8, 24);
+            this.comboDisplayDriver.Location = new System.Drawing.Point(10, 23);
             this.comboDisplayDriver.Name = "comboDisplayDriver";
             this.comboDisplayDriver.Size = new System.Drawing.Size(128, 21);
             this.comboDisplayDriver.TabIndex = 45;
@@ -24766,7 +24777,7 @@
             this.lblMultimeterDigitalDelay.Image = null;
             this.lblMultimeterDigitalDelay.Location = new System.Drawing.Point(16, 112);
             this.lblMultimeterDigitalDelay.Name = "lblMultimeterDigitalDelay";
-            this.lblMultimeterDigitalDelay.Size = new System.Drawing.Size(120, 16);
+            this.lblMultimeterDigitalDelay.Size = new System.Drawing.Size(112, 16);
             this.lblMultimeterDigitalDelay.TabIndex = 35;
             this.lblMultimeterDigitalDelay.Text = "Digital Refresh (ms):";
             // 
@@ -24885,7 +24896,7 @@
             this.lblDisplayMultiPeakHoldTime.Image = null;
             this.lblDisplayMultiPeakHoldTime.Location = new System.Drawing.Point(16, 16);
             this.lblDisplayMultiPeakHoldTime.Name = "lblDisplayMultiPeakHoldTime";
-            this.lblDisplayMultiPeakHoldTime.Size = new System.Drawing.Size(128, 16);
+            this.lblDisplayMultiPeakHoldTime.Size = new System.Drawing.Size(120, 16);
             this.lblDisplayMultiPeakHoldTime.TabIndex = 0;
             this.lblDisplayMultiPeakHoldTime.Text = "Analog Peak Hold (ms):";
             // 
@@ -24924,7 +24935,7 @@
             this.lblDisplayMeterDelay.Image = null;
             this.lblDisplayMeterDelay.Location = new System.Drawing.Point(16, 88);
             this.lblDisplayMeterDelay.Name = "lblDisplayMeterDelay";
-            this.lblDisplayMeterDelay.Size = new System.Drawing.Size(128, 16);
+            this.lblDisplayMeterDelay.Size = new System.Drawing.Size(112, 16);
             this.lblDisplayMeterDelay.TabIndex = 33;
             this.lblDisplayMeterDelay.Text = "Analog Refresh (ms):";
             // 
@@ -24974,7 +24985,7 @@
             this.lblDisplayScopeTime.Image = null;
             this.lblDisplayScopeTime.Location = new System.Drawing.Point(8, 17);
             this.lblDisplayScopeTime.Name = "lblDisplayScopeTime";
-            this.lblDisplayScopeTime.Size = new System.Drawing.Size(64, 23);
+            this.lblDisplayScopeTime.Size = new System.Drawing.Size(56, 23);
             this.lblDisplayScopeTime.TabIndex = 1;
             this.lblDisplayScopeTime.Text = "Time (us):";
             // 
@@ -25337,7 +25348,7 @@
             this.labelTS374.Image = null;
             this.labelTS374.Location = new System.Drawing.Point(6, 113);
             this.labelTS374.Name = "labelTS374";
-            this.labelTS374.Size = new System.Drawing.Size(64, 20);
+            this.labelTS374.Size = new System.Drawing.Size(55, 20);
             this.labelTS374.TabIndex = 3;
             this.labelTS374.Text = "Time (ms):";
             // 
@@ -25642,7 +25653,7 @@
             this.lblDisplayAVGTime.Image = null;
             this.lblDisplayAVGTime.Location = new System.Drawing.Point(6, 113);
             this.lblDisplayAVGTime.Name = "lblDisplayAVGTime";
-            this.lblDisplayAVGTime.Size = new System.Drawing.Size(64, 20);
+            this.lblDisplayAVGTime.Size = new System.Drawing.Size(55, 20);
             this.lblDisplayAVGTime.TabIndex = 3;
             this.lblDisplayAVGTime.Text = "Time (ms):";
             // 
@@ -34969,7 +34980,7 @@
             // 
             this.lstTXProfileDef.Location = new System.Drawing.Point(8, 16);
             this.lstTXProfileDef.Name = "lstTXProfileDef";
-            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 82);
+            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 69);
             this.lstTXProfileDef.TabIndex = 53;
             // 
             // grpTXAM
@@ -55025,6 +55036,7 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.tcSetup);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "Setup";
@@ -59490,5 +59502,6 @@
         private RadioButtonTS radP1DDC0ADC1;
         private RadioButtonTS radP1DDC0ADC0;
         private TabPage tpADC;
+        private Label label1;
     }
 }

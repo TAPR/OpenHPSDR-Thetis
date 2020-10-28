@@ -1057,7 +1057,7 @@ namespace Thetis
                                 CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                                 Name = "mp3 Thread",
                                 IsBackground = true,
-                                Priority = ThreadPriority.Normal
+                                Priority = ThreadPriority.Lowest
                             };
                             t1.Start();
 

@@ -37,6 +37,9 @@
              InstallScope="perMachine"
              Description="!(loc.ProductDescription)"
              Comments="!(loc.Comments) $(var.VersionNumber)"/>
+	  
+	  
+
 
     <!-- Upgrade logic -->
     <!-- AllowSameVersionUpgrades -> Always upgrade, never allow two versions to be installed next to each other -->
@@ -54,6 +57,8 @@
     <PropertyRef Id="NETFRAMEWORK45" />
     <PropertyRef Id="WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED"/>
 
+
+
     <Condition Message="[ProductName] Requires .NET Framework 4.8.0 or later to be installed. Please install the .NET Framework then run this installer again.">
       <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED]]>
     </Condition>
@@ -64,6 +69,8 @@
     </Condition>-->
 
     <WixVariable Id="WixUILicenseRtf" Value="GNU_GENERAL_PUBLIC_LICENSE.rtf" />
+	  
+	  
 
     <Feature Id="ProductFeature" Title="Thetis" Level="1" ConfigurableDirectory="INSTALLFOLDER">
       <ComponentGroupRef Id="ProductComponents" />
@@ -74,9 +81,28 @@
     <Feature Id="VC142Redist" Title="Visual C++ 14.2 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
       <MergeRef Id="VC142Redist"/>
     </Feature>
+	 
+
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-    <UIRef Id="WixUI_Mondo" />
+	  
+	  <UI>
+  <UIRef Id='WixUI_Mondo'/>
+  <Publish Dialog="ExitDialog"
+    Control="Finish" 
+    Event="DoAction" 
+    Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
+</UI>
+	  
+	
+	  
+	      <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Thetis" />
+<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
+    <!-- Step 3: Include the custom action -->
+
+	  <Property Id="WixShellExecTarget" Value="C:/Program Files/OpenHPSDR/Thetis/Thetis.exe" />
+<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+
 
     <!-- UI customization -->
     <WixVariable Id="WixUIBannerBmp" Value="binary/hpsdrbanner.bmp"/>
@@ -86,8 +112,9 @@
     <Icon Id="icon.ico" SourceFile="binary/Thetis.ico" />
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
     <Property Id="ARPNOMODIFY" Value="yes" Secure="yes" />
- 
-    <!-- 
+
+
+	  <!-- 
          Launch conditions
          
             Check minimum OS version 
@@ -105,8 +132,13 @@
       <![CDATA[VersionNT64]]>
     </Condition>
     <?endif?>
+	  
+	  
     
   </Product>
+	
+	
+
 
   <Fragment>
     <PropertyRef Id="WIXNETFX4RELEASEINSTALLED" />
@@ -249,8 +281,8 @@
       </Component>
 
       <Component Guid="*">
-        <File Id="PA19DLL"
-              Source="$(var.FilesPath)PA19.dll"
+        <File Id="PORTAUDIOFORTHETISDLL"
+              Source="$(var.FilesPath)PortAudioForThetis.dll"
               KeyPath="yes"
               />
       </Component>
@@ -370,6 +402,7 @@
         Impersonate="yes" Execute="deferred" ExeCommand="[SystemFolder]cmd.exe /C start OpenHPSDR_Skins.exe &amp; exit"
                   Return="check"/>
 
+
     <InstallExecuteSequence>
       <Custom Action='InstallSkins_CA' Before='InstallFinalize'>
         NOT Installed
@@ -377,5 +410,11 @@
     </InstallExecuteSequence>
     <!--   -->
   </Fragment>
+	
+
+	
+	
+	
+
 
 </Wix>

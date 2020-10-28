@@ -26,6 +26,7 @@ warren@wpratt.com
 
 #include "comm.h"
 
+
 void calc_fmmod (FMMOD a)
 {
 	// ctcss gen
@@ -109,7 +110,7 @@ void xfmmod (FMMOD a)
 		memcpy (a->out, a->in, a->size * sizeof (complex));
 }
 
-setBuffers_fmmod (FMMOD a, double* in, double* out)
+void setBuffers_fmmod (FMMOD a, double* in, double* out)
 {
 	a->in = in;
 	a->out = out;
@@ -117,7 +118,7 @@ setBuffers_fmmod (FMMOD a, double* in, double* out)
 	setBuffers_fircore (a->p, a->out, a->out);
 }
 
-setSamplerate_fmmod (FMMOD a, int rate)
+void setSamplerate_fmmod (FMMOD a, int rate)
 {
 	double* impulse;
 	a->samplerate = rate;
@@ -127,7 +128,7 @@ setSamplerate_fmmod (FMMOD a, int rate)
 	_aligned_free (impulse);
 }
 
-setSize_fmmod (FMMOD a, int size)
+void setSize_fmmod (FMMOD a, int size)
 {
 	double* impulse;
 	a->size = size;

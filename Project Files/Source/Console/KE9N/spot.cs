@@ -1467,7 +1467,7 @@ namespace Thetis
 
                     Name = "SWL Spotter Thread",
                     IsBackground = true,
-                    Priority = ThreadPriority.Normal
+                    Priority = ThreadPriority.Lowest
                 };
                 t.Start();
 
@@ -2225,7 +2225,7 @@ namespace Thetis
                     CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                     Name = "Spotter Thread",
                     IsBackground = true,
-                    Priority = ThreadPriority.Normal // normal
+                    Priority = ThreadPriority.Lowest
                 };
                 SP_Active = 1;
                 t.Start();
@@ -3559,12 +3559,14 @@ namespace Thetis
 
                                 }
 
+                                // unreachable code
+                                /*/
                                 if ((r1.IsMatch(us2)))
                                 {
                                      Debug.WriteLine("bypass4 " + DX_Spotter[DX_Index1]);
                                     continue; // dont show spot if not on the r1 list
                                 }
-
+                                /*/
 
                             }
                             else if (chkBoxNA.Checked) // filter out call signs outside of NA
@@ -4869,7 +4871,7 @@ namespace Thetis
                     CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                     Name = "Track Thread",
                     IsBackground = true,
-                    Priority = ThreadPriority.Normal
+                    Priority = ThreadPriority.Lowest
                 };  // turn on track map (sun, grayline, voacap, or beacon)
                 SP5_Active = 1; // turn on track map (sun, grayline, voacap, or beacon)
                 t.Start();
@@ -7129,7 +7131,7 @@ namespace Thetis
                         CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                         Name = "Track Thread",
                         IsBackground = true,
-                        Priority = ThreadPriority.Normal
+                        Priority = ThreadPriority.Lowest
                     }; // turn on track map (sun, grayline, voacap, or beacon)
                     SP5_Active = 1; // turn on track map (sun, grayline, voacap, or beacon)
                     t.Start();
@@ -7281,7 +7283,7 @@ namespace Thetis
                     CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                     Name = "Beacon slot tracking",
                     IsBackground = true,
-                    Priority = ThreadPriority.Normal
+                    Priority = ThreadPriority.Lowest
                 }; // show beacons (turn on tracking map)
                 SP5_Active = 1; // turn on track map (sun, grayline, voacap, or beacon)
                 t.Start();
@@ -8237,7 +8239,7 @@ namespace Thetis
                         CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                         Name = "WWV Time Sync",
                         IsBackground = true,
-                        Priority = ThreadPriority.AboveNormal
+                        Priority = ThreadPriority.Lowest
                     };
                     WTime = true;   // enabled (let display know to get a Floor dbm
                     t.Start();
@@ -8264,7 +8266,7 @@ namespace Thetis
                     CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                     Name = "NIST Time Sync",
                     IsBackground = true,
-                    Priority = ThreadPriority.Normal
+                    Priority = ThreadPriority.Lowest
                 };  // get internet NIST time
                 WTime = true;   // enabled (let display know to get a Floor dbm              
                 t.Start();
@@ -9317,7 +9319,9 @@ namespace Thetis
             }
 
 
-VOACHECK_TOP:
+#pragma warning disable CS0164 // This label has not been referenced
+        VOACHECK_TOP:
+#pragma warning restore CS0164 // This label has not been referenced
 
             // int MHZ1 = (int)double.Parse(console.txtVFOAFreq.Text.Replace(",", ".")); // get current freq value in hz, so convert to mhz
 
@@ -9426,7 +9430,7 @@ VOACHECK_TOP:
                     CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US"),
                     Name = "VOACAP Thread",
                     IsBackground = true,
-                    Priority = ThreadPriority.Normal
+                    Priority = ThreadPriority.Lowest
                 };
                 t.Start();      
             }

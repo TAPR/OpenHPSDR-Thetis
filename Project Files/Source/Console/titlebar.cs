@@ -26,26 +26,45 @@
 //    USA
 //=================================================================
 
+using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace Thetis
 {
     class TitleBar
     {
         public const string BUILD_NAME = "";
-        public const string BUILD_DATE = "(10/20/20)";
+        public const string BUILDER = "(G7KLJ BRANCH compiled on";
+
+        public static DateTime BuildDate()
+        {
+            //System.IntPtr verText = cmaster.Build_date();
+            //string s = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(verText);
+            //return s;
+            return Common.AppBuildDate();
+
+        }
+
+        private static string m_sTitleString = "";
 
         public static string GetString()
         {
-            string version = Common.GetVerNum();
-            string s = "Thetis";
+            if (m_sTitleString.Length == 0)
+            {
+                string version = Common.GetVerNum();
+                string s = "Thetis";
+                // G7KLJ: Since c# does not support the __DATE__ macro, I know no better way of doing this:
 
-            s += " v" + version;
-            if (BUILD_DATE != "") s += " " + BUILD_DATE;
-            if (BUILD_NAME != "") s += " " + BUILD_NAME;
 
-            return s;
+                s += " v" + version;
+                s += " " + BUILDER;
+                s += " " + BuildDate();
+                s += ")";
+                m_sTitleString = s;
+            }
+            return m_sTitleString;
         }
     }
 }

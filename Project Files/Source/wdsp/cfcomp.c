@@ -361,20 +361,20 @@ void xcfcomp (CFCOMP a, int pos)
 		memcpy (a->out, a->in, a->bsize * sizeof (complex));
 }
 
-setBuffers_cfcomp (CFCOMP a, double* in, double* out)
+void setBuffers_cfcomp (CFCOMP a, double* in, double* out)
 {
 	a->in = in;
 	a->out = out;
 }
 
-setSamplerate_cfcomp (CFCOMP a, int rate)
+void setSamplerate_cfcomp (CFCOMP a, int rate)
 {
 	decalc_cfcomp (a);
 	a->rate = rate;
 	calc_cfcomp (a);
 }
 
-setSize_cfcomp (CFCOMP a, int size)
+void setSize_cfcomp (CFCOMP a, int size)
 {
 	decalc_cfcomp (a);
 	a->bsize = size;

@@ -34,8 +34,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <VCToolsVersion>
+    </VCToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -48,8 +50,9 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <VCToolsVersion>14.27.29110</VCToolsVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -90,6 +93,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\wdsp\</IntDir>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,14 +110,24 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
       <CompileAs>CompileAsC</CompileAs>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\wdsp.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
       <AdditionalLibraryDirectories>../Debug;../../lib/portaudio_VS2008/build/msvc/Win32/Debug;../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(OutDir)$(ProjectName).dll" "$(PROJECTDIR)../../bin/$(HPSDR_PLATFORM)/$(Configuration)/$(ProjectName).dll";</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying wdsp.dll to working directory</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -121,8 +135,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions)</AdditionalOptions>
@@ -130,14 +144,25 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
       <CompileAs>CompileAsC</CompileAs>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\wdsp.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
       <AdditionalLibraryDirectories>../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(OutDir)$(ProjectName).dll" "$(PROJECTDIR)../../bin/$(HPSDR_PLATFORM)/$(Configuration)/$(ProjectName).dll";</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying wdsp.dll to working directory</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -156,16 +181,25 @@
       <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\wdsp.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
       <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../Release;../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(OutDir)$(ProjectName).dll" "$(PROJECTDIR)../../bin/$(HPSDR_PLATFORM)/$(Configuration)/$(ProjectName).dll";</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying wdsp.dll to working directory</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -177,23 +211,33 @@
       <PreprocessorDefinitions>WIN32;_WIN32;_MBCS;NDEBUG;_WINDOWS;_USRDLL;SPECHPSDR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsC</CompileAs>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\wdsp.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
       <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(OutDir)$(ProjectName).dll" "$(PROJECTDIR)../../bin/$(HPSDR_PLATFORM)/$(Configuration)/$(ProjectName).dll";</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying wdsp.dll to working directory</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="amd.h" />
@@ -239,6 +283,7 @@
     <ClInclude Include="osctrl.h" />
     <ClInclude Include="patchpanel.h" />
     <ClInclude Include="resample.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="rmatch.h" />
     <ClInclude Include="RXA.h" />
     <ClInclude Include="sender.h" />
@@ -310,6 +355,9 @@
     <ClCompile Include="version.c" />
     <ClCompile Include="wcpAGC.c" />
     <ClCompile Include="wisdom.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="wdsp.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

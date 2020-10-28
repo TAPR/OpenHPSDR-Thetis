@@ -34,7 +34,7 @@ namespace Thetis
     using System.Threading;
 
     #region Radio Class 
-
+    
 	public class Radio
 	{
 		private const int NUM_RX_THREADS = 2;
@@ -46,7 +46,7 @@ namespace Thetis
 		{
             RadioDSP.AppDataPath = datapath;
 			RadioDSP.CreateDSP();
-            Thread.Sleep(100);
+            Thread.Sleep(10);
 
 			dsp_rx = new RadioDSPRX[NUM_RX_THREADS][];
 			for(int i=0; i<NUM_RX_THREADS; i++)

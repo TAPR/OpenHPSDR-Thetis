@@ -94,10 +94,10 @@ extern void flush_cfcomp (CFCOMP a);
 
 extern void xcfcomp (CFCOMP a, int pos);
 
-extern setBuffers_cfcomp (CFCOMP a, double* in, double* out);
+extern void setBuffers_cfcomp (CFCOMP a, double* in, double* out);
 
-extern setSamplerate_cfcomp (CFCOMP a, int rate);
+extern void setSamplerate_cfcomp (CFCOMP a, int rate);
 
-extern setSize_cfcomp (CFCOMP a, int size);
+extern void setSize_cfcomp (CFCOMP a, int size);
 
 #endif
