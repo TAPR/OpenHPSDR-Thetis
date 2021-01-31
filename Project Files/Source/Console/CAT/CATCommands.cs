@@ -2841,7 +2841,7 @@ namespace Thetis
             else if (radio == "ANAN10" || radio == "ANAN10E")
                 return "0";
 
-            else if (radio == "ANAN100" || radio == "ANAN100B" || radio == "ANAN100D" || radio == "ANAN200D" || radio == "ANAN8000D")
+            else if (radio == "ANAN100" || radio == "ANAN100B" || radio == "ANAN100D" || radio == "ANAN200D" || radio == "ANAN7000DLE" || radio == "ANAN8000D")
                 return "1";
             else
                 return parser.Error1;
