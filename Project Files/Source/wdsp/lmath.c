@@ -86,8 +86,8 @@ void trI (
             B[ni * n + nj] = b;
             B[nj * n + ni] = b;
         }
-	_aligned_free (v);
-	_aligned_free (y);
+    _aligned_free (v);
+    _aligned_free (y);
 }
 
 void asolve(int xsize, int asize, double* x, double* a)

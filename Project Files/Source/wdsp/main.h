@@ -27,7 +27,7 @@ warren@wpratt.com
 #ifndef _mainloop_h
 #define _mainloop_h
 
-extern void main (void *pargs);
+extern void wdspmain (void *pargs);
 
 extern void create_main (int channel);
 

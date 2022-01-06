@@ -26,6 +26,8 @@ warren@wpratt.com
 #define _CRT_SECURE_NO_WARNINGS
 #include "comm.h"
 
+#include "calculus.h"
+
 /********************************************************************************************************
 *																										*
 *											Special Functions											*
@@ -208,8 +210,9 @@ void calc_emnr(EMNR a)
 		60.0, 80.0, 120.0, 140.0, 160.0, 180.0, 220.0, 260.0, 300.0 };
 	double Mvals[18] = { 0.000, 0.260, 0.480, 0.580, 0.610, 0.668, 0.705, 0.762, 0.800,
 		0.841, 0.865, 0.890, 0.900, 0.910, 0.920, 0.930, 0.935, 0.940 };
-	double Hvals[18] = { 0.000, 0.150, 0.480, 0.780, 0.980, 1.550, 2.000, 2.300, 2.520,
-		3.100, 3.380, 4.150, 4.350, 4.250, 3.900, 4.100, 4.700, 5.000 };
+	//Hvals currently nowhere used
+	//double Hvals[18] = { 0.000, 0.150, 0.480, 0.780, 0.980, 1.550, 2.000, 2.300, 2.520,
+	//	3.100, 3.380, 4.150, 4.350, 4.250, 3.900, 4.100, 4.700, 5.000 };
 	a->incr = a->fsize / a->ovrlp;
 	a->gain = a->ogain / a->fsize / (double)a->ovrlp;
 	if (a->fsize > a->bsize)
@@ -272,13 +275,10 @@ void calc_emnr(EMNR a)
 	}
 	a->g.gmax = 10000.0;
 	//
-	a->g.GG = (double *)malloc0(241 * 241 * sizeof(double));
-	a->g.GGS = (double *)malloc0(241 * 241 * sizeof(double));
-	a->g.fileb = fopen("calculus", "rb");
-	fread(a->g.GG, sizeof(double), 241 * 241, a->g.fileb);
-	fread(a->g.GGS, sizeof(double), 241 * 241, a->g.fileb);
-	fclose(a->g.fileb);
+	// data for GG and GGS is present as static data
 	//
+	a->g.GG = GG;
+	a->g.GGS = GGS;
 
 	a->np.incr = a->incr;
 	a->np.rate = a->rate;
@@ -437,8 +437,6 @@ void decalc_emnr(EMNR a)
 	_aligned_free(a->np.alphaOptHat);
 	_aligned_free(a->np.p);
 
-	_aligned_free(a->g.GGS);
-	_aligned_free(a->g.GG);
 	_aligned_free(a->g.prev_mask);
 	_aligned_free(a->g.prev_gamma);
 	_aligned_free(a->g.lambda_d);
@@ -674,7 +672,7 @@ void aepf(EMNR a)
 	memcpy (a->mask + n, a->ae.nmask, (a->ae.msize - 2 * n) * sizeof (double));
 }
 
-double getKey(double* type, double gamma, double xi)
+double getKey(const double* type, double gamma, double xi)
 {
 	int ngamma1, ngamma2, nxi1, nxi2;
 	double tg, tx, dg, dx;
@@ -854,20 +852,20 @@ void xemnr (EMNR a, int pos)
 		memcpy (a->out, a->in, a->bsize * sizeof (complex));
 }
 
-setBuffers_emnr (EMNR a, double* in, double* out)
+void setBuffers_emnr (EMNR a, double* in, double* out)
 {
 	a->in = in;
 	a->out = out;
 }
 
-setSamplerate_emnr (EMNR a, int rate)
+void setSamplerate_emnr (EMNR a, int rate)
 {
 	decalc_emnr (a);
 	a->rate = rate;
 	calc_emnr (a);
 }
 
-setSize_emnr (EMNR a, int size)
+void setSize_emnr (EMNR a, int size)
 {
 	decalc_emnr (a);
 	a->bsize = size;

@@ -30,6 +30,7 @@ warren@wpratt.com
 #include <math.h>
 #include <time.h>
 #include <avrt.h>
+#include <stdint.h>
 #include "fftw3.h"
 
 #include "amd.h"

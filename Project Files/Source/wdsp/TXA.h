@@ -160,7 +160,9 @@ struct _txa
 	{
 		CFIR p;
 	} cfir;
-} txa[MAX_CHANNELS];
+};
+
+extern struct _txa txa[];
 
 extern void create_txa (int channel);
 

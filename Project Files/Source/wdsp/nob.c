@@ -33,8 +33,8 @@ warren@wpratt.com
 void initBlanker(ANB a)
 {
     int i;
-	a->trans_count = (int)(a->tau * a->samplerate);
-	if (a->trans_count < 2) a->trans_count = 2;
+    a->trans_count = (int)(a->tau * a->samplerate);
+    if (a->trans_count < 2) a->trans_count = 2;
     a->hang_count = (int)(a->hangtime * a->samplerate);
     a->adv_count = (int)(a->advtime * a->samplerate);
     a->count = 0;
@@ -48,7 +48,7 @@ void initBlanker(ANB a)
     a->ombackmult = 1.0 - a->backmult;
     for (i = 0; i <= a->trans_count; i++)
         a->wave[i] = 0.5 * cos(i * a->coef);
-	memset(a->dline, 0, a->dline_size * sizeof(complex));
+    memset(a->dline, 0, a->dline_size * sizeof(complex));
 }
 
 PORT

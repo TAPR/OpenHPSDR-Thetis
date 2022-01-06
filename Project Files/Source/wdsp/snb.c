@@ -198,7 +198,6 @@ void multA1TA2(double* a1, double* a2, int m, int n, int q, double* c)
     {
         for (j = 0; j < n; j++)
         {
-            int kmin = 0, kmax = 0;
             if (j < p)
             {
                 for (k = i; k <= min(i + p, j); k++)
@@ -427,6 +426,7 @@ int scanFrame(int xsize, int pval, double pmultmin, int* det, int* bimp, int* li
             p_opt[i] = -1;
     }
             
+	nextlist[0]=0;
     for (i = 0; i < nimp; i++)
     {
         merit[i] = (double)p_opt[i] / (double)limp[i];
@@ -664,6 +664,11 @@ PORT void SetRXASNBAOutputBandwidth (int channel, double flow, double fhigh)
 		if (absmax <  a->out_low_cut) absmax =  a->out_low_cut;
 		f_low = a->out_low_cut;
 		f_high = min (a->out_high_cut, absmax);
+	}
+	else
+	{
+		f_low  = 0.0;
+		f_high = 0.0;
 	}
 
 	setBandwidth_resample (d, f_low, f_high);

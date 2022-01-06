@@ -807,11 +807,11 @@ void __cdecl RestoreCorrection(void *pargs)
 	for (i = 0; i < a->util.ints; i++)
 	{
 		for (k = 0; k < 4; k++)
-			fscanf (file, "%le", &(pm[4 * i + k]));
+			(void) fscanf (file, "%le", &(pm[4 * i + k]));
 		for (k = 0; k < 4; k++)
-			fscanf (file, "%le", &(pc[4 * i + k]));
+			(void) fscanf (file, "%le", &(pc[4 * i + k]));
 		for (k = 0; k < 4; k++)
-			fscanf (file, "%le", &(ps[4 * i + k]));
+			(void) fscanf (file, "%le", &(ps[4 * i + k]));
 	}
 	fclose (file);
 	if (!InterlockedBitTestAndSet (&a->ctrl.running, 0))
@@ -931,6 +931,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 						{
 							int nmin = 0;
 							int nmax = a->ints;
+							n = nmin;
 							while (nmax - nmin > 1)
 							{
 								n = (nmin + nmax) / 2;
@@ -1080,7 +1081,7 @@ void PSSaveCorr (int channel, char* filename)
 	int i = 0;
 	EnterCriticalSection (&txa[channel].calcc.cs_update);
 	a = txa[channel].calcc.p;
-	while (a->util.savefile[i++] = *filename++);
+	while ((a->util.savefile[i++] = *filename++));
 	_beginthread(SaveCorrection, 0, (void *)a);
 	LeaveCriticalSection (&txa[channel].calcc.cs_update);
 }
@@ -1092,7 +1093,7 @@ void PSRestoreCorr (int channel, char* filename)
 	int i = 0;
 	EnterCriticalSection (&txa[channel].calcc.cs_update);
 	a = txa[channel].calcc.p;
-	while (a->util.restfile[i++] = *filename++);
+	while ((a->util.restfile[i++] = *filename++));
 	a->ctrl.turnon = 1;
 	_beginthread(RestoreCorrection, 0, (void *)a);
 	LeaveCriticalSection (&txa[channel].calcc.cs_update);

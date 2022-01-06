@@ -235,6 +235,9 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 					+ cosphi *	( - 1.2320203369293225e-02
 					+ cosphi *	( + 4.3778825791773474e-04 ))))));
 			break;
+		default:
+			window = 0.0;
+			break;
 		}
 		coef = scale * sinc * window;
 		switch (rtype)
@@ -275,12 +278,12 @@ double *fir_read (int N, const char *filename, int rtype, double scale)
 		switch (rtype)
 		{
 		case 0:
-			fscanf (file, "%le", &I);
+			(void) fscanf (file, "%le", &I);
 			c_impulse[i] = + scale * I;
 			break;
 		case 1:
-			fscanf (file, "%le", &I);
-			fscanf (file, "%le", &Q);
+			(void) fscanf (file, "%le", &I);
+			(void) fscanf (file, "%le", &Q);
 			c_impulse[2 * i + 0] = + scale * I;
 			c_impulse[2 * i + 1] = - scale * Q;
 			break;

@@ -111,6 +111,9 @@
     <ClInclude Include="calcc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="calculus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="gen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -273,6 +276,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="calcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="calculus.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gen.c">

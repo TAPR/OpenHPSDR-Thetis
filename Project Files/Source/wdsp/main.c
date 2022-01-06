@@ -26,14 +26,14 @@ warren@wpratt.com
 
 #include "comm.h"
 
-void main (void *pargs)
+void wdspmain (void *pargs)
 {
 	DWORD taskIndex = 0;
 	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
 	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
 	else SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
-	int channel = (int)pargs;
+	int channel = (int)(uintptr_t)pargs;
 	while (_InterlockedAnd (&ch[channel].run, 1))
 	{
 		WaitForSingleObject(ch[channel].iob.pd->Sem_BuffReady,INFINITE);

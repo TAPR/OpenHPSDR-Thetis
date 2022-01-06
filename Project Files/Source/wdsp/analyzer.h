@@ -137,7 +137,7 @@ typedef struct _dp
 	int normalize[dMAX_PIXOUTS];
 }  dp, *DP;
 
-DP pdisp[dMAX_DISPLAYS];									// array of pointers to instance data
+extern DP pdisp[];									// array of pointers to instance data
 
 extern __declspec( dllexport )
 void CreateAnalyzer (	int disp,

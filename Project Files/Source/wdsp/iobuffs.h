@@ -27,7 +27,12 @@ warren@wpratt.com
 #ifndef _iobuffs_h
 #define _iobuffs_h
 #include "comm.h"
-typedef struct _iob
+
+//
+// the name "_iob" seems to have a name clash with some runtime environments.
+// since this is  typedef, we can simply omit it
+//
+typedef struct //_iob
 {
 	int   channel;
 	int   in_size;								// input number of complex samples in a fexchange call

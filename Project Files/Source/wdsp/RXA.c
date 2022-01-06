@@ -26,6 +26,8 @@ warren@wpratt.com
 
 #include "comm.h"
 
+struct _rxa rxa[MAX_CHANNELS];
+
 void create_rxa (int channel)
 {
 	rxa[channel].mode = RXA_LSB;
@@ -899,7 +901,7 @@ void RXAbpsnbaSet (int channel)
 ********************************************************************************************************/
 
 PORT
-RXASetPassband (int channel, double f_low, double f_high)
+void RXASetPassband (int channel, double f_low, double f_high)
 {
 	SetRXABandpassFreqs			(channel, f_low, f_high);
 	SetRXASNBAOutputBandwidth	(channel, f_low, f_high);
@@ -907,7 +909,7 @@ RXASetPassband (int channel, double f_low, double f_high)
 }
 
 PORT
-RXASetNC (int channel, int nc)
+void RXASetNC (int channel, int nc)
 {
 	int oldstate = SetChannelState (channel, 0, 1);
 	RXANBPSetNC					(channel, nc);
@@ -921,7 +923,7 @@ RXASetNC (int channel, int nc)
 }
 
 PORT
-RXASetMP (int channel, int mp)
+void RXASetMP (int channel, int mp)
 {
 	RXANBPSetMP					(channel, mp);
 	RXABPSNBASetMP				(channel, mp);
