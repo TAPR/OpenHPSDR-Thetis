@@ -98,7 +98,7 @@ void WDSPwisdom (char* directory)
 			}
 			fprintf(stdout, "Planning REAL    FORWARD  FFT size %d\n", psize);
 			fflush(stdout);
-			fprintf(status, "Planning REAL    FORWARD  FFT size %d\n", psize);
+			sprintf(status, "Planning REAL    FORWARD  FFT size %d\n", psize);
 			tplan = fftw_plan_dft_r2c_1d(psize, fftin, (fftw_complex *)fftout, FFTW_PATIENT);
 			fftw_execute (tplan);
 			fftw_destroy_plan (tplan);

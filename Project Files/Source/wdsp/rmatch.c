@@ -110,9 +110,13 @@ void xaamav (AAMAV a, int input, double* output)
     if (a->load <= a->ringmax) a->load++;
     a->ring[a->i] = input;
     if (a->ring[a->i] >= 0)
+	{
         a->pos += a->ring[a->i];
+	}
     else
+	{
         a->neg -= a->ring[a->i];
+	}
 	if (a->load >= a->ringmin)
 	{
 		*output = (double)a->neg / (double)a->pos;

@@ -169,7 +169,7 @@ void new_window(int disp, int type, int size, double PiAlpha)
 				a->window[i] *= a->inv_coherent_gain;
 			break;
 		}
-		default:
+	default:
 		{
 			igsum = 0.0;
 			break;
