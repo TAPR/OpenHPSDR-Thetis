@@ -206,6 +206,8 @@ namespace Thetis
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            base.OnMouseDown(e); // MW0LGE_21k8, so we can use this if needed
+
             if (e.Button != MouseButtons.Left) return;
             if (head_rect.IsEmpty) return;
 
@@ -329,6 +331,12 @@ namespace Thetis
             sliding = false;
         }
 
+        private bool m_bGreenThumb = false;
+        public bool GreenThumb
+        {
+            get { return m_bGreenThumb; }
+            set { m_bGreenThumb = value; this.Invalidate(); }
+        }
         protected override void OnPaint(PaintEventArgs pe)
         {
             Graphics g = pe.Graphics;
@@ -339,9 +347,33 @@ namespace Thetis
                 /*if(base.BackgroundImage != null)
                     g.DrawImage(base.BackgroundImage, 0, 0);*/
 
+                float brightness = 1.0f;    // no change in brightness
+                float contrast = m_bGreenThumb ? 0.5f : 1f;      // half the contrast
+                float gamma = 1.0f;         // no change in gamma
+                float newBrightness = brightness - 1.0f;
+                float[][] ptsArray ={
+                    new float[] {contrast, 0, 0, 0, 0}, // scale red
+                    new float[] {0, 1, 0, 0, 0}, // scale green
+                    new float[] {0, 0, contrast, 0, 0}, // scale blue
+                    new float[] {0, 0, 0, 1.0f, 0},     // don't scale alpha
+                    new float[] {newBrightness, newBrightness, newBrightness, 0, 1}};
+
+                ImageAttributes imageAttributes = new ImageAttributes();
+                imageAttributes.ClearColorMatrix();
+                imageAttributes.SetColorMatrix(new ColorMatrix(ptsArray), ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                imageAttributes.SetGamma(gamma, ColorAdjustType.Bitmap);
+
                 // draw head
                 if (head_image != null)
-                    g.DrawImage(head_image, head_rect.X, head_rect.Y, head_image.Width, head_image.Height);
+                    //g.DrawImage(head_image, head_rect.X, head_rect.Y, head_image.Width, head_image.Height);
+                    g.DrawImage(head_image,
+                        new Rectangle(head_rect.X, head_rect.Y, head_image.Width, head_image.Height),
+                        0, 0, head_image.Width, head_image.Height,
+                        GraphicsUnit.Pixel,
+                        imageAttributes);
+
+                imageAttributes.Dispose();
+                imageAttributes = null;
             }
             else
             {

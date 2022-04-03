@@ -69,6 +69,7 @@ typedef struct CACHE_ALIGN _radionet
 	int ptt_in;
 	int dot_in;
 	int dash_in;
+	int pll_locked;
 	int oc_output;
 	int supply_volts;
 	int user_adc0;

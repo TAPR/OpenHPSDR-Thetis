@@ -124,8 +124,8 @@ void hshift (VARSAMP a)
 int xvarsamp (VARSAMP a, double var)
 {
 	int outsamps = 0;
-	unsigned _int64* picvar;
-	unsigned _int64 N;
+	uint64_t* picvar;
+	uint64_t N;
 	a->var = var;
 	a->old_inv_cvar = a->inv_cvar;
 	a->cvar = a->var * a->nom_ratio;
@@ -146,7 +146,7 @@ int xvarsamp (VARSAMP a, double var)
 			a->ring[2 * a->idx_in + 0] = a->in[2 * i + 0];
 			a->ring[2 * a->idx_in + 1] = a->in[2 * i + 1];
 			a->inv_cvar += a->dicvar;
-			picvar = (unsigned _int64*)(&a->inv_cvar);
+			picvar = (uint64_t*)(&a->inv_cvar);
 			N = *picvar & 0xffffffffffff0000;
 			a->inv_cvar = *((double *)&N);
 			a->delta = 1.0 - a->inv_cvar;

@@ -1237,11 +1237,11 @@ namespace Thetis
                 tbRX1Atten.Value = console.SetupForm.HermesAttenuatorData;
             else
                 tbRX1Atten.Value = tbRX1Atten.Maximum;
-            if (console.RX2ATT <= tbRX2Atten.Maximum)
-                tbRX2Atten.Value = console.RX2ATT;
+            if (/*console.RX2ATT*/console.SetupForm.HermesAttenuatorDataRX2 <= tbRX2Atten.Maximum)
+                tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2/*RX2ATT*/;
             else
                 tbRX2Atten.Value = tbRX2Atten.Maximum;
-            tbRX2Atten.Value = console.RX2ATT;
+            tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2/*RX2ATT*/; //MW0LGE_21d step atten changes
             tbSubRXPan.Value = console.PanSubRX;
             tbMasterAF.Value = console.AF;
             tbDrive.Value = console.PWR;
@@ -1292,11 +1292,13 @@ namespace Thetis
 
         private void tbRX1RF_Scroll(object sender, EventArgs e)
         {
+            if (console.RF != tbRX1RF.Value && console.AutoAGCRX1) console.AutoAGCRX1 = false; // turn off 'auto agc' only if different MW0LGE_21k8
             console.RF = tbRX1RF.Value;
         }
 
         private void tbRX2RF_Scroll(object sender, EventArgs e)
         {
+            if (console.RX2RF != tbRX2RF.Value && console.AutoAGCRX2) console.AutoAGCRX2 = false; // turn off 'auto agc' only if different MW0LGE_21k8
             console.RX2RF = tbRX2RF.Value;
         }
 
@@ -1376,7 +1378,8 @@ namespace Thetis
 
         private void tbRX2Atten_Scroll(object sender, EventArgs e)
         {
-            console.RX2ATT = tbRX2Atten.Value;
+            //console.RX2ATT = tbRX2Atten.Value;
+            console.SetupForm.HermesAttenuatorDataRX2 = tbRX1Atten.Value; //MW0LGE_21d step atten
         }
 
         private void chkRX1Mute_CheckedChanged(object sender, EventArgs e)

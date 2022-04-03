@@ -93,18 +93,18 @@ void create_pipe()
 		ppip->rbuff[i] = (double *) malloc0 (pcm->rcvr[i].ch_outsize * sizeof (complex));
 		(*pip.create_WavePlay)(i);
 		(*pip.create_WaveRecord)(i);
-		create_ivac (
+		create_ivac(
 			i,									// id
 			0,									// run
 			0,									// iq_type
 			0,									// stereo
-			pcm->xcm_inrate[inid (0, i)],		// rx i-q rate
-			pcm->xcm_inrate[inid (1, 0)],		// mic rate
+			pcm->xcm_inrate[inid(0, i)],		// rx i-q rate
+			pcm->xcm_inrate[inid(1, 0)],		// mic rate
 			pcm->rcvr[i].ch_outrate,			// receiver audio rate
 			pcm->xmtr[0].ch_outrate,			// tx monitor rate
 			48000,								// vac rate
-			pcm->xcm_insize[inid (1, 0)],		// mic buffer size
-			pcm->xcm_insize[inid (0, i)],		// iq buffer size
+			pcm->xcm_insize[inid(1, 0)],		// mic buffer size
+			pcm->xcm_insize[inid(0, i)],		// iq buffer size
 			pcm->rcvr[i].ch_outsize,			// receiver audio buffer size
 			pcm->xmtr[0].ch_outsize,			// tx monitor buffer size
 			1024);								// vac size

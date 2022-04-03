@@ -171,8 +171,8 @@ namespace Thetis
             }
         }
 
-        private int span_clip_l = 0;
-        public int SpanClipL
+        private double span_clip_l = 0;
+        public double SpanClipL
         {
             get { return span_clip_l; }
             set
@@ -181,8 +181,8 @@ namespace Thetis
             }
         }
 
-        private int span_clip_h = 0;
-        public int SpanClipH
+        private double span_clip_h = 0;
+        public double SpanClipH
         {
             get { return span_clip_h; }
             set
@@ -286,10 +286,15 @@ namespace Thetis
 
         void updateNormalizePan()
         {
-            if (norm_oneHz_pan && (det_type_pan == 2 || det_type_pan == 3))
+            if (norm_oneHz_pan && (det_type_pan == 2 || det_type_pan == 3 || det_type_pan == 4))
                 SpecHPSDRDLL.SetDisplayNormOneHz(disp, 0, true);
             else
                 SpecHPSDRDLL.SetDisplayNormOneHz(disp, 0, false);
+        }
+
+        public double DisplayENB
+        {
+            get { return SpecHPSDRDLL.GetDisplayENB(disp); }
         }
 
         private int det_type_pan;
@@ -504,17 +509,23 @@ namespace Thetis
                         clip = (int)Math.Floor(CLIP_FRACTION * fft_size);
 
                         //the amount of frequency in each fft bin (for complex samples) is given by:
+                        //   this is also equal to the interval width!
                         double bin_width = (double)sample_rate / (double)fft_size;
                         double bin_width_tx = 96000.0 / (double)fft_size;
 
                         //the number of useable bins per subspan is
-                        int bins_per_subspan = fft_size - 2 * clip;
+                        //   the '-1' is due to clipping the Nyquist bin
+                        int bins_per_subspan = fft_size - 1 - 2 * clip;
 
                         //the amount of useable bandwidth we get from each subspan is:
+                        //  we'd subtract '1' from 'bins_per_subspan' if we wanted the interval_width_per_subspan
                         bw_per_subspan = bins_per_subspan * bin_width;
 
                         //the total number of bins available to display is:
                         int bins = stitches * bins_per_subspan;
+
+                        //the number of intervals among all the bins equals 'bins - 1'
+                        double intervals = (double)(bins - 1);
 
                         //apply log function to zoom slider value
                         double zoom_slider = Math.Log10(9.0 * z_slider + 1.0);
@@ -522,26 +533,29 @@ namespace Thetis
                         //limits how much you can zoom in; higher value means you zoom more
                         const double zoom_limit = 100;
 
-                        int width = (int)(bins * (1.0 - (1.0 - 1.0 / zoom_limit) * zoom_slider));
+                        //calculate the width in intervals after applying zoom
+                        double width = intervals * (1.0 - (1.0 - 1.0 / zoom_limit) * zoom_slider);
 
-                        //FSCLIPL is 0 if pan_slider is 0; it's bins-width if pan_slider is 1
-                        //FSCLIPH is bins-width if pan_slider is 0; it's 0 if pan_slider is 1
-                        span_clip_l = (int)Math.Floor(pan_slider * (bins - width));
-                        span_clip_h = bins - width - span_clip_l;
+                        //span_clip_l is 0 if pan_slider is 0; it's 'intervals - width' if pan_slider is 1
+                        //span_clip_h is 'intervals - width' if pan_slider is 0; it's 0 if pan_slider is 1
+                        span_clip_l = pan_slider * (intervals - width);
+                        span_clip_h = intervals - width - span_clip_l;
 
-                        if (Display.RX1DSPMode == DSPMode.DRM)
-                        {
-                            //Apply any desired frequency offset
-                            int bin_offset = (int)(freq_offset / bin_width);
-                            if ((span_clip_h -= bin_offset) < 0) span_clip_h = 0;
-                            span_clip_l = bins - width - span_clip_h;
-                        }
+                        //MW0LGE_21a
+                        //this was causing an odd warping in the spectrum when zooming fully out    
+                        //if (Display.RX1DSPMode == DSPMode.DRM)
+                        //{
+                        //    //Apply any desired frequency offset
+                        //    int bin_offset = (int)(freq_offset / bin_width);
+                        //    if ((span_clip_h -= bin_offset) < 0) span_clip_h = 0;
+                        //    span_clip_l = bins - width - span_clip_h;
+                        //}
 
                         //As for the low and high frequencies that are being displayed:
-                        low = -(int)((double)stitches / 2.0 * bw_per_subspan - (double)span_clip_l * bin_width + bin_width / 2.0);
-                        high = +(int)((double)stitches / 2.0 * bw_per_subspan - (double)span_clip_h * bin_width - bin_width / 2.0);
-                         //Note that the bin_width/2.0 factors are included because the complex FFT has one more negative output bin
-                        //  than positive output bin.
+                        //   The Thetis grid interface is limited to integer Hertz values.
+                        low = -(int)((intervals / 2.0 - span_clip_l) * bin_width);
+                        high = +(int)((intervals / 2.0 - span_clip_h) * bin_width);
+                        
                         max_w = fft_size + (int)Math.Min(KEEP_TIME * sample_rate, KEEP_TIME * fft_size * frame_rate);
                         break;
                     }
@@ -687,8 +701,8 @@ namespace Thetis
                     double pi,			// PiAlpha parameter for Kaiser window
                     int ovrlp,			// number of samples each fft (other than the first) is to re-use from the previous 
                     int clp,			// number of fft output bins to be clipped from EACH side of each sub-span
-                    int fscLin,			// number of bins to clip from low end of entire span
-                    int fscHin,			// number of bins to clip from high end of entire span
+                    double fscLin,	    // number of bins to clip from low end of entire span
+                    double fscHin,		// number of bins to clip from high end of entire span
                     int n_pix,			// number of pixel values to return.  may be either <= or > number of bins 
                     int n_stch,			// number of sub-spans to concatenate to form a complete span 
                     int calset,			// identifier of which set of calibration data to use 
@@ -733,6 +747,9 @@ namespace Thetis
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetDisplayNormOneHz(int disp, int pixout, bool norm);
+
+        [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetDisplayENB(int disp);
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetDisplaySampleRate (int disp, int rate);

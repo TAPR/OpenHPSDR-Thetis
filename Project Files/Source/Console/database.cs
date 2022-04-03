@@ -33,7 +33,9 @@ using System;
 using System.Data;
 using System.Windows.Forms;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -79,11 +81,43 @@ namespace Thetis
             if (!ds.Tables.Contains("BandText"))
                 AddBandTextTable();
 
-            if (!ds.Tables.Contains("BandStack"))
+            //MW0LGE_21d BandStack2
+            //if (!ds.Tables.Contains("BandStack"))
+            //{
+            //    AddBandStackTable();
+            //    AddBandStackSWL(); // ke9ns add
+            //}
+
+            //-BandStack2 MW0LGE_21d
+            if (!ds.Tables.Contains("BandStack2Entries"))
             {
-                AddBandStackTable();
-                AddBandStackSWL(); // ke9ns add
+                AddBandStack2EntriesTable("BandStack2Entries");
             }
+            if (!ds.Tables.Contains("BandStack2Filters"))
+            {
+                AddBandStack2FiltersTable("BandStack2Filters");
+            }
+            if (!ds.Tables.Contains("BandStack2FilterFrequencies"))
+            {
+                AddBandStack2FilterFrequenciesTable("BandStack2FilterFrequencies");
+            }
+            if (!ds.Tables.Contains("BandStack2FilterModes"))
+            {
+                AddBandStack2FilterModesTable("BandStack2FilterModes");
+            }
+            if (!ds.Tables.Contains("BandStack2FilterSubModes"))
+            {
+                AddBandStack2FilterSubModesTable("BandStack2FilterSubModes");
+            }
+            if (!ds.Tables.Contains("BandStack2FilterBands"))
+            {
+                AddBandStack2FilterBandsTable("BandStack2FilterBands");
+            }
+            if (!ds.Tables.Contains("BandStack2HiddenEntries"))
+            {
+                AddBandStack2HiddenEntriesTable("BandStack2HiddenEntries");
+            }
+            //-
 
             if (!ds.Tables.Contains("Memory"))
                 AddMemoryTable();
@@ -97,8 +131,485 @@ namespace Thetis
             if (!ds.Tables.Contains("TXProfileDef"))
                 AddTXProfileTable("TXProfileDef", true);
 
-            Update();
+            WriteDB();
         }
+
+        #region BandStack2
+        //----------------------------------------
+        //BandStack2
+        private static void AddBandStack2HiddenEntriesTable(string sTableName)
+        {
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
+
+            t.Columns.Add("FilterGUID", typeof(string));
+            t.Columns.Add("EntryGUID", typeof(int));
+        }
+        private static void AddBandStack2FilterBandsTable(string sTableName)
+        {
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
+
+            t.Columns.Add("FilterGUID", typeof(string));
+            t.Columns.Add("Band", typeof(int));
+        }
+        private static void AddBandStack2FilterSubModesTable(string sTableName)
+        {
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
+
+            t.Columns.Add("FilterGUID", typeof(string));
+            t.Columns.Add("SubMode", typeof(int));
+        }
+        private static void AddBandStack2FilterModesTable(string sTableName)
+        {
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
+
+            t.Columns.Add("FilterGUID", typeof(string));
+            t.Columns.Add("Mode", typeof(int));
+        }
+        private static void AddBandStack2FilterFrequenciesTable(string sTableName)
+        {
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
+
+            t.Columns.Add("FilterGUID", typeof(string));
+
+            t.Columns.Add("Low", typeof(double));
+            t.Columns.Add("High", typeof(double));
+            t.Columns.Add("LowOnly", typeof(bool));
+
+            t.Columns.Add("Band", typeof(int));
+            t.Columns.Add("BandType", typeof(int));
+
+            t.Columns.Add("Region", typeof(int));
+
+            //defaults
+        }
+        private static void AddBandStack2FiltersTable(string sTableName)
+        {
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
+
+            t.Columns.Add("GUID", typeof(string));
+            t.Columns.Add("FilterName", typeof(string));
+            t.Columns.Add("FilterDescription", typeof(string));
+
+            t.Columns.Add("FilterOnFrequencies", typeof(bool));
+            t.Columns.Add("FilterOnBands", typeof(bool));
+            t.Columns.Add("FilterOnModes", typeof(bool));
+            t.Columns.Add("FilterOnSubModes", typeof(bool));
+
+            t.Columns.Add("UserDefined", typeof(bool));
+
+            t.Columns.Add("FilterReturnMode", typeof(int));
+            t.Columns.Add("SpecificReturnGUID", typeof(string));
+
+            t.Columns.Add("CurrentSelectedIndex", typeof(int));
+            t.Columns.Add("CurrentSelectedGUID", typeof(string));
+
+            // last visited, same data as entry (1 could be stored per band filter in the entries table and reference with a guid, but here for now)
+            t.Columns.Add("LastVisitedGUID", typeof(string));
+            t.Columns.Add("LastVisitedDescription", typeof(string));
+            t.Columns.Add("LastVisitedLocked", typeof(bool));
+            t.Columns.Add("LastVisitedFrequency", typeof(double));
+            t.Columns.Add("LastVisitedCentreFrequency", typeof(double));
+            t.Columns.Add("LastVisitedBand", typeof(int));
+            t.Columns.Add("LastVisitedMode", typeof(int));
+            t.Columns.Add("LastVisitedSubMode", typeof(int));
+            t.Columns.Add("LastVisitedCTUNEnabled", typeof(bool));
+            t.Columns.Add("LastVisitedFilter", typeof(int));
+            t.Columns.Add("LastVisitedZoomFactor", typeof(double));
+            t.Columns.Add("LastVisitedZoomSlider", typeof(int));
+
+            //defaults
+        }
+        private static void AddBandStack2EntriesTable(string sTableName)
+        {
+            ds.Tables.Add(sTableName);
+            DataTable t = ds.Tables[sTableName];
+
+            t.Columns.Add("GUID", typeof(string));
+            t.Columns.Add("Description", typeof(string));
+            t.Columns.Add("Locked", typeof(bool));
+            t.Columns.Add("Frequency", typeof(double));
+            t.Columns.Add("CentreFrequency", typeof(double));
+            t.Columns.Add("Band", typeof(int));
+            t.Columns.Add("Mode", typeof(int));
+            t.Columns.Add("SubMode", typeof(int));
+            t.Columns.Add("CTUNEnabled", typeof(bool));
+            t.Columns.Add("Filter", typeof(int));
+            t.Columns.Add("ZoomFactor", typeof(double));
+            t.Columns.Add("ZoomSlider", typeof(int));
+            // future
+            t.Columns.Add("PowerLevel", typeof(double));
+            t.Columns.Add("AGCLevel", typeof(double));
+            t.Columns.Add("FilterLow", typeof(int));
+            t.Columns.Add("FilterHigh", typeof(int));
+
+            // defaults
+        }
+        public static void SaveBandStack2Filter(BandStackFilter bsf)
+        {
+            DataTable t;
+            DataRow dr;
+            DataRow[] rows;
+            string sSelectString;
+
+            //---- remove exiting----
+            //remove filter
+            sSelectString = "GUID = '" + bsf.GUID + "'";
+            rows = ds.Tables["BandStack2Filters"].Select(sSelectString);
+            foreach (DataRow row in rows)
+            {
+                row.Delete();
+            }
+
+            // new select string
+            sSelectString = "FilterGUID = '" + bsf.GUID + "'";
+
+            //remove frequencies to filter on
+            rows = ds.Tables["BandStack2FilterFrequencies"].Select(sSelectString);
+            foreach (DataRow row in rows)
+            {
+                row.Delete();
+            }
+            //remove modes to filter on
+            rows = ds.Tables["BandStack2FilterModes"].Select(sSelectString);
+            foreach (DataRow row in rows)
+            {
+                row.Delete();
+            }
+            //remove submodes to filter on
+            rows = ds.Tables["BandStack2FilterSubModes"].Select(sSelectString);
+            foreach (DataRow row in rows)
+            {
+                row.Delete();
+            }
+            //remove bands to filter on
+            rows = ds.Tables["BandStack2FilterBands"].Select(sSelectString);
+            foreach (DataRow row in rows)
+            {
+                row.Delete();
+            }
+            //---- end remove exiting----
+
+            //then add
+            t = ds.Tables["BandStack2Filters"];
+            dr = t.NewRow();
+            dr["GUID"] = bsf.GUID;
+            dr["FilterName"] = bsf.FilterName;
+            dr["FilterDescription"] = bsf.FilterDescription;
+
+            dr["FilterOnFrequencies"] = bsf.FilterOnFrequencies;
+            dr["FilterOnBands"] = bsf.FilterOnBands;
+            dr["FilterOnModes"] = bsf.FilterOnModes;
+            dr["FilterOnSubModes"] = bsf.FilterOnSubModes;
+
+            dr["UserDefined"] = bsf.UserDefined;
+
+            dr["FilterReturnMode"] = bsf.ReturnMode;
+            dr["SpecificReturnGUID"] = bsf.ReturnGUID;
+
+            dr["CurrentSelectedIndex"] = bsf.IndexOfCurrent;
+            dr["CurrentSelectedGUID"] = bsf.GuidOfCurrent;
+
+            //last
+            dr["LastVisitedGUID"] = bsf.LastVisited.GUID;
+            dr["LastVisitedDescription"] = bsf.LastVisited.Description;
+            dr["LastVisitedLocked"] = bsf.LastVisited.Locked;
+            dr["LastVisitedFrequency"] = bsf.LastVisited.Frequency;
+            dr["LastVisitedCentreFrequency"] = bsf.LastVisited.CentreFrequency;
+            dr["LastVisitedBand"] = (int)bsf.LastVisited.Band;
+            dr["LastVisitedMode"] = (int)bsf.LastVisited.Mode;
+            dr["LastVisitedSubMode"] = (int)bsf.LastVisited.SubMode;
+            dr["LastVisitedCTUNEnabled"] = bsf.LastVisited.CTUNEnabled;
+            dr["LastVisitedFilter"] = (int)bsf.LastVisited.Filter;
+            dr["LastVisitedZoomFactor"] = bsf.LastVisited.ZoomFactor;
+            dr["LastVisitedZoomSlider"] = bsf.LastVisited.ZoomSlider;
+            t.Rows.Add(dr);
+
+            // frequencies
+            t = ds.Tables["BandStack2FilterFrequencies"];
+            foreach(BandFrequencyData bfd in bsf.FrequenciesToFilterOn)
+            {
+                dr = t.NewRow();
+                dr["FilterGUID"] = bsf.GUID;
+                dr["Low"] = bfd.low;
+                dr["High"] = bfd.high;
+                dr["LowOnly"] = bfd.lowOnly;
+                dr["Band"] = (int)bfd.band;
+                dr["BandType"] = (int)bfd.bandType;
+                dr["Region"] = (int)bfd.region;
+
+                t.Rows.Add(dr);
+            }
+            // modes
+            t = ds.Tables["BandStack2FilterModes"];
+            foreach (DSPMode mode in bsf.ModesToFilterOn)
+            {
+                dr = t.NewRow();
+                dr["FilterGUID"] = bsf.GUID;
+                dr["Mode"] = (int)mode;
+                t.Rows.Add(dr);
+            }
+
+            // sub modes
+            t = ds.Tables["BandStack2FilterSubModes"];
+            foreach (DSPSubMode subMode in bsf.SubModesToFilterOn)
+            {
+                dr = t.NewRow();
+                dr["FilterGUID"] = bsf.GUID;
+                dr["SubMode"] = (int)subMode;
+                t.Rows.Add(dr);
+            }
+
+            // bands
+            t = ds.Tables["BandStack2FilterBands"];
+            foreach (Band b in bsf.BandsToFilterOn)
+            {
+                dr = t.NewRow();
+                dr["FilterGUID"] = bsf.GUID;
+                dr["Band"] = (int)b;
+                t.Rows.Add(dr);
+            }
+        }
+        public static void RemoveBandStack2Entry(BandStackEntry bse)
+        {
+            //delete if exiting
+            string sSelectString = "GUID = '" + bse.GUID + "'";
+            DataRow[] rows = ds.Tables["BandStack2Entries"].Select(sSelectString);
+            foreach (DataRow row in rows)
+            {
+                row.Delete();
+            }
+
+            removeReferencesToThisBSEGuid(bse.GUID);
+        }
+        private static void removeReferencesToThisBSEGuid(string sGUID)
+        {
+            if (sGUID == "") return;
+
+            DataRow[] rows;
+            string sSelectString;
+
+            // update anything that was using this guid
+            sSelectString = "SpecificReturnGUID = '" + sGUID + "'";
+            rows = ds.Tables["BandStack2Filters"].Select(sSelectString);
+            foreach (DataRow dr in rows)
+            {
+                dr["SpecificReturnGUID"] = "";
+            }
+            sSelectString = "CurrentSelectedGUID = '" + sGUID + "'";
+            rows = ds.Tables["BandStack2Filters"].Select(sSelectString);
+            foreach (DataRow dr in rows)
+            {
+                dr["CurrentSelectedGUID"] = "";
+                dr["CurrentSelectedIndex"] = -1;
+            }
+            sSelectString = "LastVisitedGUID = '" + sGUID + "'";
+            rows = ds.Tables["BandStack2Filters"].Select(sSelectString);
+            foreach (DataRow dr in rows)
+            {
+                dr["LastVisitedGUID"] = "";
+                dr["LastVisitedDescription"] = "";
+                dr["LastVisitedLocked"] = false;
+                dr["LastVisitedFrequency"] = 0;
+                dr["LastVisitedCentreFrequency"] = 0;
+                dr["LastVisitedBand"] = (int)Band.GEN;
+                dr["LastVisitedMode"] = (int)DSPMode.CWL;
+                dr["LastVisitedSubMode"] = (int)DSPSubMode.NONE;
+                dr["LastVisitedCTUNEnabled"] = false;
+                dr["LastVisitedFilter"] = (int)Filter.NONE;
+                dr["LastVisitedZoomFactor"] = 0;
+                dr["LastVisitedZoomSlider"] = 0;
+            }
+        }
+        public static void RemoveAllBandStack2Entries()
+        {
+            //delete if exiting
+            DataRow[] rows = ds.Tables["BandStack2Entries"].Select();
+            foreach (DataRow row in rows)
+            {
+                removeReferencesToThisBSEGuid(ConvertFromDBVal<string>(row["GUID"]));
+                row.Delete();
+            }
+            //reset all last selected on all filters as this is now not accurate
+            rows = ds.Tables["BandStack2Filters"].Select();
+
+            foreach (DataRow dr in rows)
+            {
+                dr["CurrentSelectedIndex"] = -1;
+                dr["CurrentSelectedGUID"] = "";
+
+                dr["FilterReturnMode"] = (int)BandStackFilter.FilterReturnMode.Current;
+                dr["SpecificReturnGUID"] = "";
+
+                dr["LastVisitedGUID"] = "";
+                dr["LastVisitedDescription"] = "";
+                dr["LastVisitedLocked"] = false;
+                dr["LastVisitedFrequency"] = 0;
+                dr["LastVisitedCentreFrequency"] = 0;
+                dr["LastVisitedBand"] = (int)Band.GEN;
+                dr["LastVisitedMode"] = (int)DSPMode.CWL;
+                dr["LastVisitedSubMode"] = (int)DSPSubMode.NONE;
+                dr["LastVisitedCTUNEnabled"] = false;
+                dr["LastVisitedFilter"] = (int)Filter.NONE;
+                dr["LastVisitedZoomFactor"] = 0;
+                dr["LastVisitedZoomSlider"] = 0;
+            }
+        }
+        public static void AddBandStack2Entry(BandStackEntry bse)
+        {
+            DataTable t = ds.Tables["BandStack2Entries"];
+
+            //delete if exiting
+            RemoveBandStack2Entry(bse);
+            //
+
+            DataRow dr = t.NewRow();
+            dr["GUID"] = bse.GUID;
+            dr["Description"] = bse.Description;
+            dr["Locked"] = bse.Locked;
+            dr["Frequency"] = Math.Round(bse.Frequency,6);
+            dr["CentreFrequency"] = Math.Round(bse.CentreFrequency,6);
+            dr["Band"] = (int)bse.Band;
+            dr["Mode"] = (int)bse.Mode;
+            dr["SubMode"] = (int)bse.SubMode;
+            dr["CTUNEnabled"] = bse.CTUNEnabled;
+            dr["Filter"] = (int)bse.Filter;
+            dr["ZoomFactor"] = bse.ZoomFactor;
+            dr["ZoomSlider"] = bse.ZoomSlider;
+
+            t.Rows.Add(dr);
+        }
+        public static void AddBandStack2Entry(List<BandStackEntry> bseList)
+        {
+            // takes the entire list and stores it
+            foreach (BandStackEntry bse in bseList)
+            {
+                AddBandStack2Entry(bse);
+            }
+        }
+        public static List<BandStackEntry> GetBandStack2Entries()
+        {
+            List<BandStackEntry> bses = new List<BandStackEntry>();
+
+            DataRow[] rows = ds.Tables["BandStack2Entries"].Select();
+
+            foreach(DataRow dr in rows)
+            {
+                BandStackEntry bse = new BandStackEntry();
+
+                bse.GUID = ConvertFromDBVal<string>(dr["GUID"]);
+                bse.Description = ConvertFromDBVal<string>(dr["Description"]);
+                bse.Locked = (bool)dr["Locked"];
+                bse.Frequency = Math.Round((double)dr["Frequency"],6);
+                bse.CentreFrequency = Math.Round((double)dr["CentreFrequency"],6);
+                bse.Band = (Band)dr["Band"];
+                bse.Mode = (DSPMode)dr["Mode"];
+                bse.SubMode = (DSPSubMode)dr["SubMode"];
+                bse.CTUNEnabled = (bool)dr["CTUNEnabled"];
+                bse.Filter = (Filter)dr["Filter"];
+                bse.ZoomFactor = (double)dr["ZoomFactor"];
+                bse.ZoomSlider = (int)dr["ZoomSlider"];
+
+                bses.Add(bse);
+            }
+
+            return bses;
+        }
+        public static Dictionary<string, BandStackFilter> GetBandStack2Filters()
+        {
+            Dictionary<string, BandStackFilter> bsfs = new Dictionary<string, BandStackFilter>();
+
+            DataRow[] rows;
+
+            rows = ds.Tables["BandStack2Filters"].Select();
+            foreach(DataRow dr in rows)
+            {
+                BandStackFilter bsf = new BandStackFilter();
+
+                bsf.GUID = ConvertFromDBVal<string>(dr["GUID"]);
+                bsf.FilterName = ConvertFromDBVal<string>(dr["FilterName"]);
+                bsf.FilterDescription = ConvertFromDBVal<string>(dr["FilterDescription"]);
+
+                bsf.FilterOnFrequencies = (bool)dr["FilterOnFrequencies"];
+                bsf.FilterOnBands = (bool)dr["FilterOnBands"];
+                bsf.FilterOnModes = (bool)dr["FilterOnModes"];
+                bsf.FilterOnSubModes = (bool)dr["FilterOnSubModes"];
+
+                bsf.UserDefined = (bool)dr["UserDefined"];
+
+                bsf.ReturnMode = (BandStackFilter.FilterReturnMode)dr["FilterReturnMode"];
+                bsf.ReturnGUID = ConvertFromDBVal<string>(dr["SpecificReturnGUID"]);
+
+                bsf.LastVisited.GUID = ConvertFromDBVal<string>(dr["LastVisitedGUID"]);
+                bsf.LastVisited.Description = ConvertFromDBVal<string>(dr["LastVisitedDescription"]);
+                bsf.LastVisited.Locked = (bool)dr["LastVisitedLocked"];
+                bsf.LastVisited.Frequency = (double)dr["LastVisitedFrequency"];
+                bsf.LastVisited.CentreFrequency = (double)dr["LastVisitedCentreFrequency"];
+                bsf.LastVisited.Band = (Band)dr["LastVisitedBand"];
+                bsf.LastVisited.Mode = (DSPMode)dr["LastVisitedMode"];
+                bsf.LastVisited.SubMode = (DSPSubMode)dr["LastVisitedSubMode"];
+                bsf.LastVisited.CTUNEnabled = (bool)dr["LastVisitedCTUNEnabled"];
+                bsf.LastVisited.Filter = (Filter)dr["LastVisitedFilter"];
+                bsf.LastVisited.ZoomFactor = (double)dr["LastVisitedZoomFactor"];
+                bsf.LastVisited.ZoomSlider = (int)dr["LastVisitedZoomSlider"];
+
+                string sSelectString = "FilterGUID = '" + bsf.GUID + "'";
+                //add in freqs
+                DataRow[] rowsF = ds.Tables["BandStack2FilterFrequencies"].Select(sSelectString);
+                foreach(DataRow drF in rowsF)
+                {
+                    BandFrequencyData bfd = new BandFrequencyData();
+                    bfd.low = (double)drF["Low"];
+                    bfd.high = (double)drF["High"];
+                    bfd.lowOnly = (bool)drF["LowOnly"];
+                    bfd.band = (Band)drF["Band"];
+                    bfd.bandType = (BandType)drF["BandType"];
+                    bfd.region = (FRSRegion)drF["Region"];
+
+                    bsf.FrequenciesToFilterOn.Add(bfd);
+                }
+                //add in modes
+                DataRow[] rowsM = ds.Tables["BandStack2FilterModes"].Select(sSelectString);
+                foreach (DataRow drM in rowsM)
+                {
+                    bsf.ModesToFilterOn.Add((DSPMode)drM["Mode"]);
+                }
+                //add in submodes
+                DataRow[] rowsSM = ds.Tables["BandStack2FilterSubModes"].Select(sSelectString);
+                foreach (DataRow drSM in rowsSM)
+                {
+                    bsf.SubModesToFilterOn.Add((DSPSubMode)drSM["SubMode"]);
+                }
+                //add in bands
+                DataRow[] rowsB = ds.Tables["BandStack2FilterBands"].Select(sSelectString);
+                foreach (DataRow drB in rowsB)
+                {
+                    bsf.BandsToFilterOn.Add((Band)drB["Band"]);
+                }
+
+                //down here so data is available having been setup in above assignments
+                bsf.IndexOfCurrentBlind = (int)dr["CurrentSelectedIndex"];
+                bsf.GuidOfCurrentBlind = (string)dr["CurrentSelectedGUID"];
+
+                if (!bsfs.ContainsKey(bsf.FilterName))
+                {
+                    bsfs.Add(bsf.FilterName, bsf);
+                }
+                else
+                {
+                    // not good
+                }
+            }
+
+            return bsfs;
+        }
+        //BandStack2 END------------------------------------
+        #endregion
 
         private static void checkForPrimaryKeys(string name)
         {
@@ -909,98 +1420,99 @@ namespace Thetis
             }
         }
 
+        //MW0LGE_21d BandStack2 
         //===============================================================================================
         // ke9ns add needed to add to RevQ database
-        private static void AddBandStackSWL()
-        {
-            object[] data = {
-                                
-                                "LMF", "SAM", "F4", 0.560000, false, 150, 0.0,  
-                                "LMF", "SAM", "F4", 0.720000, false, 150, 0.0,
-                                "LMF", "SAM", "F4", 0.780000, false, 150, 0.0,
-                                "LMF", "SAM", "F4", 1.000000, false, 150, 0.0,
-                                "LMF", "SAM", "F4", 1.700000, false, 150, 0.0,
+        //private static void AddBandStackSWL()
+        //{
+        //    object[] data = {
 
-                                "120M", "SAM", "F4", 2.400000, false, 150, 0.0,
-                                "120M", "SAM", "F4", 2.410000, false, 150, 0.0,
-                                "120M", "SAM", "F4", 2.420000, false, 150, 0.0,
+        //                        "LMF", "SAM", "F4", 0.560000, false, 150, 0.0,  
+        //                        "LMF", "SAM", "F4", 0.720000, false, 150, 0.0,
+        //                        "LMF", "SAM", "F4", 0.780000, false, 150, 0.0,
+        //                        "LMF", "SAM", "F4", 1.000000, false, 150, 0.0,
+        //                        "LMF", "SAM", "F4", 1.700000, false, 150, 0.0,
 
-                                "90M", "SAM", "F4", 3.300000, false, 150, 0.0,
-                                "90M", "SAM", "F4", 3.310000, false, 150, 0.0,
-                                "90M", "SAM", "F4", 3.320000, false, 150, 0.0,
+        //                        "120M", "SAM", "F4", 2.400000, false, 150, 0.0,
+        //                        "120M", "SAM", "F4", 2.410000, false, 150, 0.0,
+        //                        "120M", "SAM", "F4", 2.420000, false, 150, 0.0,
 
-                                "61M", "SAM", "F4", 4.700000, false, 150, 0.0,
-                                "61M", "SAM", "F4", 4.800000, false, 150, 0.0,
-                                "61M", "SAM", "F4", 4.820000, false, 150, 0.0,
+        //                        "90M", "SAM", "F4", 3.300000, false, 150, 0.0,
+        //                        "90M", "SAM", "F4", 3.310000, false, 150, 0.0,
+        //                        "90M", "SAM", "F4", 3.320000, false, 150, 0.0,
 
-                                "49M", "SAM", "F4", 5.600000, false, 150, 0.0,
-                                "49M", "SAM", "F4", 5.700000, false, 150, 0.0,
-                                "49M", "SAM", "F4", 5.800000, false, 150, 0.0,
-                                "49M", "SAM", "F4", 5.900000, false, 150, 0.0,
-                                "49M", "SAM", "F4", 6.000000, false, 150, 0.0,
-                                "49M", "SAM", "F4", 6.200000, false, 150, 0.0,
-                                
+        //                        "61M", "SAM", "F4", 4.700000, false, 150, 0.0,
+        //                        "61M", "SAM", "F4", 4.800000, false, 150, 0.0,
+        //                        "61M", "SAM", "F4", 4.820000, false, 150, 0.0,
 
-                                "41M", "SAM", "F4", 7.310000, false, 150, 0.0,
-                                "41M", "SAM", "F4", 7.400000, false, 150, 0.0,
-                                "41M", "SAM", "F4", 7.500000, false, 150, 0.0,
+        //                        "49M", "SAM", "F4", 5.600000, false, 150, 0.0,
+        //                        "49M", "SAM", "F4", 5.700000, false, 150, 0.0,
+        //                        "49M", "SAM", "F4", 5.800000, false, 150, 0.0,
+        //                        "49M", "SAM", "F4", 5.900000, false, 150, 0.0,
+        //                        "49M", "SAM", "F4", 6.000000, false, 150, 0.0,
+        //                        "49M", "SAM", "F4", 6.200000, false, 150, 0.0,
 
 
-                                "31M", "SAM", "F4", 9.100000, false, 150, 0.0,
-                                "31M", "SAM", "F4", 9.200000, false, 150, 0.0,
-                                "31M", "SAM", "F4", 9.300000, false, 150, 0.0,
-                                "31M", "SAM", "F4", 9.400000, false, 150, 0.0,
-                                "31M", "SAM", "F4", 9.500000, false, 150, 0.0,
-                                "31M", "SAM", "F4", 9.600000, false, 150, 0.0,
+        //                        "41M", "SAM", "F4", 7.310000, false, 150, 0.0,
+        //                        "41M", "SAM", "F4", 7.400000, false, 150, 0.0,
+        //                        "41M", "SAM", "F4", 7.500000, false, 150, 0.0,
 
 
-                                "25M", "SAM", "F4", 11.700000, false, 150, 0.0,
-                                "25M", "SAM", "F4", 11.800000, false, 150, 0.0,
-                                "25M", "SAM", "F4", 11.900000, false, 150, 0.0,
-                                 
-                                "22M", "SAM", "F4", 13.600000, false, 150, 0.0,
-                                "22M", "SAM", "F4", 13.700000, false, 150, 0.0,
-                                "22M", "SAM", "F4", 13.800000, false, 150, 0.0,
+        //                        "31M", "SAM", "F4", 9.100000, false, 150, 0.0,
+        //                        "31M", "SAM", "F4", 9.200000, false, 150, 0.0,
+        //                        "31M", "SAM", "F4", 9.300000, false, 150, 0.0,
+        //                        "31M", "SAM", "F4", 9.400000, false, 150, 0.0,
+        //                        "31M", "SAM", "F4", 9.500000, false, 150, 0.0,
+        //                        "31M", "SAM", "F4", 9.600000, false, 150, 0.0,
 
-                                "19M", "SAM", "F4", 15.200000, false, 150, 0.0,
-                                "19M", "SAM", "F4", 15.300000, false, 150, 0.0,
-                                "19M", "SAM", "F4", 15.400000, false, 150, 0.0,
 
-                                "16M", "SAM", "F4", 17.500000, false, 150, 0.0,
-                                "16M", "SAM", "F4", 17.600000, false, 150, 0.0,
-                                "16M", "SAM", "F4", 17.700000, false, 150, 0.0,
+        //                        "25M", "SAM", "F4", 11.700000, false, 150, 0.0,
+        //                        "25M", "SAM", "F4", 11.800000, false, 150, 0.0,
+        //                        "25M", "SAM", "F4", 11.900000, false, 150, 0.0,
 
-                                "14M", "SAM", "F4", 18.900000, false, 150, 0.0,
-                                "14M", "SAM", "F4", 19.000000, false, 150, 0.0,
-                                "14M", "SAM", "F4", 19.100000, false, 150, 0.0,
+        //                        "22M", "SAM", "F4", 13.600000, false, 150, 0.0,
+        //                        "22M", "SAM", "F4", 13.700000, false, 150, 0.0,
+        //                        "22M", "SAM", "F4", 13.800000, false, 150, 0.0,
 
-                                "13M", "SAM", "F4", 21.500000, false, 150, 0.0,
-                                "13M", "SAM", "F4", 21.600000, false, 150, 0.0,
-                                "13M", "SAM", "F4", 21.700000, false, 150, 0.0,
-                                 
-                                "11M", "SAM", "F4", 25.700000, false, 150, 0.0,
-                                "11M", "SAM", "F4", 26.000000, false, 150, 0.0,
-                                "11M", "SAM", "F4", 26.500000, false, 150, 0.0,
-                                "11M", "SAM", "F4", 27.000000, false, 150, 0.0,
-                                "11M", "SAM", "F4", 27.500000, false, 150, 0.0,
-                                "11M", "SAM", "F4", 27.800000, false, 150, 0.0,
+        //                        "19M", "SAM", "F4", 15.200000, false, 150, 0.0,
+        //                        "19M", "SAM", "F4", 15.300000, false, 150, 0.0,
+        //                        "19M", "SAM", "F4", 15.400000, false, 150, 0.0,
 
-            };
+        //                        "16M", "SAM", "F4", 17.500000, false, 150, 0.0,
+        //                        "16M", "SAM", "F4", 17.600000, false, 150, 0.0,
+        //                        "16M", "SAM", "F4", 17.700000, false, 150, 0.0,
 
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
+        //                        "14M", "SAM", "F4", 18.900000, false, 150, 0.0,
+        //                        "14M", "SAM", "F4", 19.000000, false, 150, 0.0,
+        //                        "14M", "SAM", "F4", 19.100000, false, 150, 0.0,
 
-        } //ke9ns addbandstackSWL
+        //                        "13M", "SAM", "F4", 21.500000, false, 150, 0.0,
+        //                        "13M", "SAM", "F4", 21.600000, false, 150, 0.0,
+        //                        "13M", "SAM", "F4", 21.700000, false, 150, 0.0,
+
+        //                        "11M", "SAM", "F4", 25.700000, false, 150, 0.0,
+        //                        "11M", "SAM", "F4", 26.000000, false, 150, 0.0,
+        //                        "11M", "SAM", "F4", 26.500000, false, 150, 0.0,
+        //                        "11M", "SAM", "F4", 27.000000, false, 150, 0.0,
+        //                        "11M", "SAM", "F4", 27.500000, false, 150, 0.0,
+        //                        "11M", "SAM", "F4", 27.800000, false, 150, 0.0,
+
+        //    };
+
+        //    for (int i = 0; i < data.Length / 7; i++)
+        //    {
+        //        DataRow dr = ds.Tables["BandStack"].NewRow();
+        //        dr["BandName"] = (string)data[i * 7 + 0];
+        //        dr["Mode"] = (string)data[i * 7 + 1];
+        //        dr["Filter"] = (string)data[i * 7 + 2];
+        //        dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //        dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //        dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //        dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //        ds.Tables["BandStack"].Rows.Add(dr);
+        //    }
+
+        //} //ke9ns addbandstackSWL
 
         private static void ClearBandText()
         {
@@ -2449,457 +2961,458 @@ namespace Thetis
 
         // End of Band Text
 
-        private static void AddBandStackTable()
-        {
-            ds.Tables.Add("BandStack");
-            DataTable t = ds.Tables["BandStack"];
+        //MW0LGE_21d BandStack2
+        //     private static void AddBandStackTable()
+        //     {
+        //         ds.Tables.Add("BandStack");
+        //         DataTable t = ds.Tables["BandStack"];
 
-            t.Columns.Add("BandName", typeof(string));
-            t.Columns.Add("Mode", typeof(string));
-            t.Columns.Add("Filter", typeof(string));
-            t.Columns.Add("Freq", typeof(double));
-            t.Columns.Add("CTUN", typeof(bool));
-            t.Columns.Add("ZoomFactor", typeof(double));
-            t.Columns.Add("CenterFreq", typeof(double));
+        //         t.Columns.Add("BandName", typeof(string));
+        //         t.Columns.Add("Mode", typeof(string));
+        //         t.Columns.Add("Filter", typeof(string));
+        //         t.Columns.Add("Freq", typeof(double));
+        //         t.Columns.Add("CTUN", typeof(bool));
+        //         t.Columns.Add("ZoomFactor", typeof(double));
+        //         t.Columns.Add("CenterFreq", typeof(double));
 
-            object[] data = {
-								"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
-								"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
-                                "160M", "LSB", "F5", 1.840000, false, 150, 0.0,
-                                "160M", "LSB", "F5", 1.845000, false, 150, 0.0,
-                                "160M", "LSB", "F5", 1.845000, false, 150, 0.0,
-                                "80M", "CWU", "F1", 3.501000, false, 150, 0.0,
-                                "80M", "CWU", "F1", 3.520000, false, 150, 0.0,
-                                "80M", "LSB", "F5", 3.650000, false, 150, 0.0,
-                                "80M", "LSB", "F5", 3.715000, false, 150, 0.0,
-                                "80M", "SAM", "F5", 3.875000, false, 150, 0.0,
-								"60M", "USB", "F5", 5.330500, false, 150, 0.0, 
-								"60M", "USB", "F5", 5.346500, false, 150, 0.0,
-								"60M", "USB", "F5", 5.357000, false, 150, 0.0,
-								"60M", "USB", "F5", 5.371500, false, 150, 0.0,                             
-								"60M", "USB", "F5", 5.403500, false, 150, 0.0,
-                                "40M", "CWU", "F1", 7.001000, false, 150, 0.0,
-                                "40M", "CWU", "F3", 7.021000, false, 150, 0.0,
-								"40M", "LSB", "F5", 7.152000, false, 150, 0.0,
-                                "40M", "LSB", "F5", 7.180000, false, 150, 0.0,
-								"40M", "LSB", "F5", 7.255000, false, 150, 0.0, 
-                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
-								"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
-                                "20M", "CWU", "F1", 14.020000, false, 150, 0.0,
-                                "20M", "USB", "F5", 14.155000, false, 150, 0.0,
-								"20M", "USB", "F5", 14.230000, false, 150, 0.0,
-                                "20M", "USB", "F5", 14.334000, false, 150, 0.0,
-                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
-								"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
-								"17M", "USB", "F5", 18.125000, false, 150, 0.0,
-                                "17M", "USB", "F5", 18.135000, false, 150, 0.0,
-								"17M", "USB", "F5", 18.140000, false, 150, 0.0,
-								"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
-                                "15M", "CWU", "F1", 21.021000, false, 150, 0.0,
-                                "15M", "USB", "F5", 21.205000, false, 150, 0.0,
-								"15M", "USB", "F5", 21.255000, false, 150, 0.0,
-								"15M", "USB", "F5", 21.300000, false, 150, 0.0,
-								"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
-                                "12M", "CWU", "F1", 24.898000, false, 150, 0.0,
-                                "12M", "USB", "F5", 24.931000, false, 150, 0.0,
-                                "12M", "USB", "F5", 24.940000, false, 150, 0.0,
-                                "12M", "USB", "F5", 24.950000, false, 150, 0.0,
-								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-                                "10M", "CWU", "F1", 28.020000, false, 150, 0.0,
-                                "10M", "USB", "F5", 28.305000, false, 150, 0.0,
-                                "10M", "USB", "F5", 28.350000, false, 150, 0.0,
-                                "10M", "USB", "F5", 28.450000, false, 150, 0.0,
-								"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
-                                "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
-								"6M", "USB", "F5", 50.125000, false, 150, 0.0,
-                                "6M", "USB", "F5", 50.130000, false, 150, 0.0,
-								"6M", "USB", "F5", 50.200000, false, 150, 0.0,
-								"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
-                                "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
-								"2M", "USB", "F5", 144.200000, false, 150, 0.0,
-                                "2M", "USB", "F5", 144.220000, false, 150, 0.0,
-								"2M", "USB", "F5", 144.210000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
-                                "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
-                                "WWV", "USB", "F5", 3.330000, false, 150, 0.0,
-                                "WWV", "USB", "F5", 7.850000, false, 150, 0.0,
-                                "WWV", "USB", "F5", 14.670000, false, 150, 0.0,
-								"GEN", "SAM", "F5", 13.845000, false, 150, 0.0,
-								"GEN", "SAM", "F5", 9.550000, false, 150, 0.0,
-                                "GEN", "SAM", "F5", 5.975000, false, 150, 0.0,
-                                "GEN", "SAM", "F5", 3.250000, false, 150, 0.0,
-								"GEN", "SAM", "F4", 0.590000, false, 150, 0.0,
-			};
+        //         object[] data = {
+        //					"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
+        //					"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
+        //                             "160M", "LSB", "F5", 1.840000, false, 150, 0.0,
+        //                             "160M", "LSB", "F5", 1.845000, false, 150, 0.0,
+        //                             "160M", "LSB", "F5", 1.845000, false, 150, 0.0,
+        //                             "80M", "CWU", "F1", 3.501000, false, 150, 0.0,
+        //                             "80M", "CWU", "F1", 3.520000, false, 150, 0.0,
+        //                             "80M", "LSB", "F5", 3.650000, false, 150, 0.0,
+        //                             "80M", "LSB", "F5", 3.715000, false, 150, 0.0,
+        //                             "80M", "SAM", "F5", 3.875000, false, 150, 0.0,
+        //					"60M", "USB", "F5", 5.330500, false, 150, 0.0, 
+        //					"60M", "USB", "F5", 5.346500, false, 150, 0.0,
+        //					"60M", "USB", "F5", 5.357000, false, 150, 0.0,
+        //					"60M", "USB", "F5", 5.371500, false, 150, 0.0,                             
+        //					"60M", "USB", "F5", 5.403500, false, 150, 0.0,
+        //                             "40M", "CWU", "F1", 7.001000, false, 150, 0.0,
+        //                             "40M", "CWU", "F3", 7.021000, false, 150, 0.0,
+        //					"40M", "LSB", "F5", 7.152000, false, 150, 0.0,
+        //                             "40M", "LSB", "F5", 7.180000, false, 150, 0.0,
+        //					"40M", "LSB", "F5", 7.255000, false, 150, 0.0, 
+        //                             "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
+        //					"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+        //                             "20M", "CWU", "F1", 14.020000, false, 150, 0.0,
+        //                             "20M", "USB", "F5", 14.155000, false, 150, 0.0,
+        //					"20M", "USB", "F5", 14.230000, false, 150, 0.0,
+        //                             "20M", "USB", "F5", 14.334000, false, 150, 0.0,
+        //                             "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
+        //					"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
+        //					"17M", "USB", "F5", 18.125000, false, 150, 0.0,
+        //                             "17M", "USB", "F5", 18.135000, false, 150, 0.0,
+        //					"17M", "USB", "F5", 18.140000, false, 150, 0.0,
+        //					"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
+        //                             "15M", "CWU", "F1", 21.021000, false, 150, 0.0,
+        //                             "15M", "USB", "F5", 21.205000, false, 150, 0.0,
+        //					"15M", "USB", "F5", 21.255000, false, 150, 0.0,
+        //					"15M", "USB", "F5", 21.300000, false, 150, 0.0,
+        //					"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
+        //                             "12M", "CWU", "F1", 24.898000, false, 150, 0.0,
+        //                             "12M", "USB", "F5", 24.931000, false, 150, 0.0,
+        //                             "12M", "USB", "F5", 24.940000, false, 150, 0.0,
+        //                             "12M", "USB", "F5", 24.950000, false, 150, 0.0,
+        //					"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
+        //                             "10M", "CWU", "F1", 28.020000, false, 150, 0.0,
+        //                             "10M", "USB", "F5", 28.305000, false, 150, 0.0,
+        //                             "10M", "USB", "F5", 28.350000, false, 150, 0.0,
+        //                             "10M", "USB", "F5", 28.450000, false, 150, 0.0,
+        //					"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
+        //                             "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
+        //					"6M", "USB", "F5", 50.125000, false, 150, 0.0,
+        //                             "6M", "USB", "F5", 50.130000, false, 150, 0.0,
+        //					"6M", "USB", "F5", 50.200000, false, 150, 0.0,
+        //					"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
+        //                             "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
+        //					"2M", "USB", "F5", 144.200000, false, 150, 0.0,
+        //                             "2M", "USB", "F5", 144.220000, false, 150, 0.0,
+        //					"2M", "USB", "F5", 144.210000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
+        //                             "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
+        //                             "WWV", "USB", "F5", 3.330000, false, 150, 0.0,
+        //                             "WWV", "USB", "F5", 7.850000, false, 150, 0.0,
+        //                             "WWV", "USB", "F5", 14.670000, false, 150, 0.0,
+        //					"GEN", "SAM", "F5", 13.845000, false, 150, 0.0,
+        //					"GEN", "SAM", "F5", 9.550000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F5", 5.975000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F5", 3.250000, false, 150, 0.0,
+        //					"GEN", "SAM", "F4", 0.590000, false, 150, 0.0,
+        //};
 
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
-        }
+        //         for (int i = 0; i < data.Length / 7; i++)
+        //         {
+        //             DataRow dr = ds.Tables["BandStack"].NewRow();
+        //             dr["BandName"] = (string)data[i * 7 + 0];
+        //             dr["Mode"] = (string)data[i * 7 + 1];
+        //             dr["Filter"] = (string)data[i * 7 + 2];
+        //             dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //             dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //             dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //             dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //             ds.Tables["BandStack"].Rows.Add(dr);
+        //         }
+        //     }
 
-        private static void AddRegion1BandStack()
-        {
-            ds.Tables["BandStack"].Clear();
-            DataTable t = ds.Tables["BandStack"];
+        //     private static void AddRegion1BandStack()
+        //     {
+        //         ds.Tables["BandStack"].Clear();
+        //         DataTable t = ds.Tables["BandStack"];
 
-            object[] data = {
-								"160M", "CWL", "F1", 1.805000, false, 150, 0.0,
-                                "160M", "CWL", "F1", 1.810000, false, 150, 0.0,
-								"160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
-								"160M", "LSB", "F6", 1.843000, false, 150, 0.0,
-                                "160M", "LSB", "F6", 1.850000, false, 150, 0.0,
-                                "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
-								"80M", "CWL", "F1", 3.510000, false, 150, 0.0,
-								"80M", "DIGU", "F1", 3.590000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
-                                "80M", "LSB", "F6", 3.900000, false, 150, 0.0,
-                                "60M", "USB", "F6", 5.250000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.325000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.400000, false, 150, 0.0,
-                                "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
-                                "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
-								"40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.09000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.10000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.115000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
-								"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
-								"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.155000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.225000, false, 150, 0.0,
-                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
-								"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
-								"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.120000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
-                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
-								"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
-								"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.210000, false, 150, 0.0,
-                                "15M", "USB", "F6", 21.290000, false, 150, 0.0,
-								"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
-                                "12M", "CWU", "F1", 24.905000, false, 150, 0.0,
-								"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.940000, false, 150, 0.0,
-                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
-                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
-								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-								"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
-                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
-                                "6M", "CWU", "F1", 50.080000, false, 150, 0.0,
-								"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.150000, false, 150, 0.0,
-                                "6M", "USB", "F6", 50.165000, false, 150, 0.0,
-								"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
-								"2M", "CWU", "F1", 144.040000, false, 150, 0.0,
-								"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
-								"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
-								"2M", "USB", "F6", 144.300000, false, 150, 0.0,
-                                "2M", "USB", "F6", 144.310000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
-                                "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
-								"GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
-								"GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
-								"GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
-                                "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
-                                "GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
-			};
+        //         object[] data = {
+        //					"160M", "CWL", "F1", 1.805000, false, 150, 0.0,
+        //                             "160M", "CWL", "F1", 1.810000, false, 150, 0.0,
+        //					"160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
+        //					"160M", "LSB", "F6", 1.843000, false, 150, 0.0,
+        //                             "160M", "LSB", "F6", 1.850000, false, 150, 0.0,
+        //                             "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
+        //					"80M", "CWL", "F1", 3.510000, false, 150, 0.0,
+        //					"80M", "DIGU", "F1", 3.590000, false, 150, 0.0,
+        //					"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
+        //                             "80M", "LSB", "F6", 3.900000, false, 150, 0.0,
+        //                             "60M", "USB", "F6", 5.250000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.325000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.400000, false, 150, 0.0,
+        //                             "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
+        //                             "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
+        //					"40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.09000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.10000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.115000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+        //					"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+        //					"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
+        //					"20M", "USB", "F6", 14.155000, false, 150, 0.0,
+        //					"20M", "USB", "F6", 14.225000, false, 150, 0.0,
+        //                             "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
+        //					"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
+        //					"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.120000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+        //                             "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
+        //					"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
+        //					"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.210000, false, 150, 0.0,
+        //                             "15M", "USB", "F6", 21.290000, false, 150, 0.0,
+        //					"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
+        //                             "12M", "CWU", "F1", 24.905000, false, 150, 0.0,
+        //					"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
+        //					"12M", "USB", "F6", 24.940000, false, 150, 0.0,
+        //                             "12M", "USB", "F6", 24.950000, false, 150, 0.0,
+        //                             "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
+        //					"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
+        //					"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
+        //					"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+        //                             "10M", "USB", "F6", 28.450000, false, 150, 0.0,
+        //                             "6M", "CWU", "F1", 50.080000, false, 150, 0.0,
+        //					"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
+        //					"6M", "USB", "F6", 50.150000, false, 150, 0.0,
+        //                             "6M", "USB", "F6", 50.165000, false, 150, 0.0,
+        //					"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
+        //					"2M", "CWU", "F1", 144.040000, false, 150, 0.0,
+        //					"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
+        //					"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
+        //					"2M", "USB", "F6", 144.300000, false, 150, 0.0,
+        //                             "2M", "USB", "F6", 144.310000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
+        //                             "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
+        //					"GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
+        //					"GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
+        //					"GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
+        //};
 
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
-        }
+        //         for (int i = 0; i < data.Length / 7; i++)
+        //         {
+        //             DataRow dr = ds.Tables["BandStack"].NewRow();
+        //             dr["BandName"] = (string)data[i * 7 + 0];
+        //             dr["Mode"] = (string)data[i * 7 + 1];
+        //             dr["Filter"] = (string)data[i * 7 + 2];
+        //             dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //             dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //             dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //             dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //             ds.Tables["BandStack"].Rows.Add(dr);
+        //         }
+        //     }
 
-        private static void AddRegion2BandStack()
-        {
-            ds.Tables["BandStack"].Clear();
-            DataTable t = ds.Tables["BandStack"];
+        //     private static void AddRegion2BandStack()
+        //     {
+        //         ds.Tables["BandStack"].Clear();
+        //         DataTable t = ds.Tables["BandStack"];
 
-            object[] data = {
-								"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
-								"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
-                                "160M", "LSB", "F6", 1.840000, false, 150, 0.0,
-                                "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
-                                "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
-                                "80M", "CWU", "F1", 3.501000, false, 150, 0.0,
-                                "80M", "CWU", "F1", 3.520000, false, 150, 0.0,
-                                "80M", "LSB", "F6", 3.650000, false, 150, 0.0,
-                                "80M", "LSB", "F6", 3.715000, false, 150, 0.0,
-                                "80M", "SAM", "F5", 3.875000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.330500, false, 150, 0.0,
-								"60M", "USB", "F6", 5.346500, false, 150, 0.0,
-								"60M", "USB", "F6", 5.357000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.371500, false, 150, 0.0,                              
-								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
-                                "40M", "CWU", "F1", 7.001000, false, 150, 0.0,
-                                "40M", "CWU", "F3", 7.021000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.152000, false, 150, 0.0,
-                                "40M", "LSB", "F6", 7.180000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.255000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
-								"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
-                                "20M", "CWU", "F1", 14.020000, false, 150, 0.0,
-                                "20M", "USB", "F6", 14.155000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.230000, false, 150, 0.0,
-                                "20M", "USB", "F6", 14.334000, false, 150, 0.0,
-                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
-								"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.125000, false, 150, 0.0,
-                                "17M", "USB", "F6", 18.135000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
-								"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
-                                "15M", "CWU", "F1", 21.021000, false, 150, 0.0,
-                                "15M", "USB", "F6", 21.205000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.255000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
-								"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
-                                "12M", "CWU", "F1", 24.898000, false, 150, 0.0,
-                                "12M", "USB", "F6", 24.931000, false, 150, 0.0,
-                                "12M", "USB", "F6", 24.940000, false, 150, 0.0,
-                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
-								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-                                "10M", "CWU", "F1", 28.020000, false, 150, 0.0,
-                                "10M", "USB", "F6", 28.305000, false, 150, 0.0,
-                                "10M", "USB", "F6", 28.350000, false, 150, 0.0,
-                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
-								"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
-                                "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.125000, false, 150, 0.0,
-                                "6M", "USB", "F6", 50.130000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.200000, false, 150, 0.0,								
-								"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
-                                "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
-								"2M", "USB", "F6", 144.200000, false, 150, 0.0,
-                                "2M", "USB", "F6", 144.220000, false, 150, 0.0,
-								"2M", "USB", "F6", 144.210000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
-								"GEN", "SAM", "F5", 13.845000, false, 150, 0.0,
-								"GEN", "SAM", "F5", 9.550000, false, 150, 0.0,
-                                "GEN", "SAM", "F5", 5.975000, false, 150, 0.0,
-                                "GEN", "SAM", "F5", 3.250000, false, 150, 0.0,
-								"GEN", "SAM", "F4", 0.590000, false, 150, 0.0,
-			};
+        //         object[] data = {
+        //					"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
+        //					"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
+        //                             "160M", "LSB", "F6", 1.840000, false, 150, 0.0,
+        //                             "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
+        //                             "160M", "LSB", "F6", 1.845000, false, 150, 0.0,
+        //                             "80M", "CWU", "F1", 3.501000, false, 150, 0.0,
+        //                             "80M", "CWU", "F1", 3.520000, false, 150, 0.0,
+        //                             "80M", "LSB", "F6", 3.650000, false, 150, 0.0,
+        //                             "80M", "LSB", "F6", 3.715000, false, 150, 0.0,
+        //                             "80M", "SAM", "F5", 3.875000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.330500, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.346500, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.357000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.371500, false, 150, 0.0,                              
+        //					"60M", "USB", "F6", 5.403500, false, 150, 0.0,
+        //                             "40M", "CWU", "F1", 7.001000, false, 150, 0.0,
+        //                             "40M", "CWU", "F3", 7.021000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.152000, false, 150, 0.0,
+        //                             "40M", "LSB", "F6", 7.180000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.255000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
+        //					"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+        //                             "20M", "CWU", "F1", 14.020000, false, 150, 0.0,
+        //                             "20M", "USB", "F6", 14.155000, false, 150, 0.0,
+        //					"20M", "USB", "F6", 14.230000, false, 150, 0.0,
+        //                             "20M", "USB", "F6", 14.334000, false, 150, 0.0,
+        //                             "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
+        //					"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.125000, false, 150, 0.0,
+        //                             "17M", "USB", "F6", 18.135000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+        //					"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
+        //                             "15M", "CWU", "F1", 21.021000, false, 150, 0.0,
+        //                             "15M", "USB", "F6", 21.205000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.255000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.300000, false, 150, 0.0,
+        //					"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
+        //                             "12M", "CWU", "F1", 24.898000, false, 150, 0.0,
+        //                             "12M", "USB", "F6", 24.931000, false, 150, 0.0,
+        //                             "12M", "USB", "F6", 24.940000, false, 150, 0.0,
+        //                             "12M", "USB", "F6", 24.950000, false, 150, 0.0,
+        //					"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
+        //                             "10M", "CWU", "F1", 28.020000, false, 150, 0.0,
+        //                             "10M", "USB", "F6", 28.305000, false, 150, 0.0,
+        //                             "10M", "USB", "F6", 28.350000, false, 150, 0.0,
+        //                             "10M", "USB", "F6", 28.450000, false, 150, 0.0,
+        //					"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
+        //                             "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
+        //					"6M", "USB", "F6", 50.125000, false, 150, 0.0,
+        //                             "6M", "USB", "F6", 50.130000, false, 150, 0.0,
+        //					"6M", "USB", "F6", 50.200000, false, 150, 0.0,								
+        //					"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
+        //                             "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
+        //					"2M", "USB", "F6", 144.200000, false, 150, 0.0,
+        //                             "2M", "USB", "F6", 144.220000, false, 150, 0.0,
+        //					"2M", "USB", "F6", 144.210000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
+        //					"GEN", "SAM", "F5", 13.845000, false, 150, 0.0,
+        //					"GEN", "SAM", "F5", 9.550000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F5", 5.975000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F5", 3.250000, false, 150, 0.0,
+        //					"GEN", "SAM", "F4", 0.590000, false, 150, 0.0,
+        //};
 
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
-        }
+        //         for (int i = 0; i < data.Length / 7; i++)
+        //         {
+        //             DataRow dr = ds.Tables["BandStack"].NewRow();
+        //             dr["BandName"] = (string)data[i * 7 + 0];
+        //             dr["Mode"] = (string)data[i * 7 + 1];
+        //             dr["Filter"] = (string)data[i * 7 + 2];
+        //             dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //             dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //             dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //             dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //             ds.Tables["BandStack"].Rows.Add(dr);
+        //         }
+        //     }
 
-        private static void AddRegion3BandStack()
-        {
-            ds.Tables["BandStack"].Clear();
-            DataTable t = ds.Tables["BandStack"];
+        //     private static void AddRegion3BandStack()
+        //     {
+        //         ds.Tables["BandStack"].Clear();
+        //         DataTable t = ds.Tables["BandStack"];
 
-            object[] data = {
-								"160M", "CWL", "F1", 1.820000, false, 150, 0.0,
-								"160M", "DIGU", "F1", 1.832000, false, 150, 0.0,
-								"160M", "LSB", "F6", 1.843000, false, 150, 0.0,
-								"80M", "CWL", "F1", 3.510000, false, 150, 0.0,
-								"80M", "DIGU", "F1", 3.580000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
-                                "60M", "USB", "F6", 5.264000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.357000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
-                                "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
-								"40M", "DIGU", "F1", 7.035000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.12000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
-								"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
-								"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.225000, false, 150, 0.0,
-								"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
-								"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
-								"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
-								"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
-								"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
-								"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.940000, false, 150, 0.0,
-								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-								"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
-								"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.150000, false, 150, 0.0,
-								"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
-								"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
-								"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
-								"2M", "USB", "F6", 144.200000, false, 150, 0.0,
-								"WWV", "SAM", "F5", 2.500000, false, 150, 0.0,
-								"WWV", "SAM", "F5", 5.000000, false, 150, 0.0,
-								"WWV", "SAM", "F5", 10.000000, false, 150, 0.0,
-								"WWV", "SAM", "F5", 15.000000, false, 150, 0.0,
-								"WWV", "SAM", "F5", 20.000000, false, 150, 0.0,
-                                "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
-                                "WWV", "USB", "F6", 3.330000, false, 150, 0.0,
-                                "WWV", "USB", "F6", 7.850000, false, 150, 0.0,
-                                "WWV", "USB", "F6", 14.670000, false, 150, 0.0,
-								"GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
-								"GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
-								"GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
-                                "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
-                                "GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
-            };
+        //         object[] data = {
+        //					"160M", "CWL", "F1", 1.820000, false, 150, 0.0,
+        //					"160M", "DIGU", "F1", 1.832000, false, 150, 0.0,
+        //					"160M", "LSB", "F6", 1.843000, false, 150, 0.0,
+        //					"80M", "CWL", "F1", 3.510000, false, 150, 0.0,
+        //					"80M", "DIGU", "F1", 3.580000, false, 150, 0.0,
+        //					"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
+        //                             "60M", "USB", "F6", 5.264000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.357000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.403500, false, 150, 0.0,
+        //                             "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
+        //					"40M", "DIGU", "F1", 7.035000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.12000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+        //					"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+        //					"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
+        //					"20M", "USB", "F6", 14.225000, false, 150, 0.0,
+        //					"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
+        //					"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+        //					"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
+        //					"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.300000, false, 150, 0.0,
+        //					"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
+        //					"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
+        //					"12M", "USB", "F6", 24.940000, false, 150, 0.0,
+        //					"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
+        //					"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
+        //					"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+        //					"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
+        //					"6M", "USB", "F6", 50.150000, false, 150, 0.0,
+        //					"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
+        //					"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
+        //					"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
+        //					"2M", "USB", "F6", 144.200000, false, 150, 0.0,
+        //					"WWV", "SAM", "F5", 2.500000, false, 150, 0.0,
+        //					"WWV", "SAM", "F5", 5.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F5", 10.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F5", 15.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F5", 20.000000, false, 150, 0.0,
+        //                             "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
+        //                             "WWV", "USB", "F6", 3.330000, false, 150, 0.0,
+        //                             "WWV", "USB", "F6", 7.850000, false, 150, 0.0,
+        //                             "WWV", "USB", "F6", 14.670000, false, 150, 0.0,
+        //					"GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
+        //					"GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
+        //					"GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
+        //         };
 
-            // MW0LGE
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
-        }
-        
-        private static void AddRegionJapanBandStack()
-        {
-            ds.Tables["BandStack"].Clear();
-            DataTable t = ds.Tables["BandStack"];
+        //         // MW0LGE
+        //         for (int i = 0; i < data.Length / 7; i++)
+        //         {
+        //             DataRow dr = ds.Tables["BandStack"].NewRow();
+        //             dr["BandName"] = (string)data[i * 7 + 0];
+        //             dr["Mode"] = (string)data[i * 7 + 1];
+        //             dr["Filter"] = (string)data[i * 7 + 2];
+        //             dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //             dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //             dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //             dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //             ds.Tables["BandStack"].Rows.Add(dr);
+        //         }
+        //     }
 
-            object[] data = {
-								"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
-								"160M", "CWU", "F1", 1.825000, false, 150, 0.0,
-								"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
-                                "160M", "USB", "F6", 1.840000, false, 150, 0.0,
-								"160M", "USB", "F6", 1.845000, false, 150, 0.0,
-								"80M", "CWL", "F1", 3.501000, false, 150, 0.0,
-                                "80M", "CWU", "F1", 3.510000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.751000, false, 150, 0.0,
-                                "80M", "LSB", "F6", 3.755000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.850000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.330500, false, 150, 0.0,
-								"60M", "USB", "F6", 5.346500, false, 150, 0.0,
-								"60M", "USB", "F6", 5.357000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.371500, false, 150, 0.0,                              
-								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
-								"40M", "CWL", "F1", 7.001000, false, 150, 0.0,
-                                "40M", "CWU", "F1", 7.005000, false, 150, 0.0,
-                                "40M", "LSB", "F6", 7.090000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.105000, false, 150, 0.0,
-                                "40M", "LSB", "F6", 7.190000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.105000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
-								"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
-                                "20M", "USB", "F6", 14.136000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.230000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.336000, false, 150, 0.0,
-								"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
-                                "17M", "CWU", "F1", 18.095000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.125000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
-                                "17M", "USB", "F6", 18.145000, false, 150, 0.0,
-								"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
-                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.255000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.270000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
-								"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
-                                "12M", "CWU", "F1", 24.897000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.900000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.935000, false, 150, 0.0,
-                                "12M", "USB", "F6", 24.945000, false, 150, 0.0,
-                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
-								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.300000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
-                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
-								"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
-                                "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.125000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.18000, false, 150, 0.0,
-                                "6M", "USB", "F6", 50.190000, false, 150, 0.0,
-								"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
-                                "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
-								"2M", "USB", "F6", 144.200000, false, 150, 0.0,
-								"2M", "USB", "F6", 144.210000, false, 150, 0.0,
-                                "2M", "USB", "F6", 144.215000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
-								"GEN", "SAM", "F5", 13.845000, false, 150, 0.0,
-								"GEN", "SAM", "F5", 9.550000, false, 150, 0.0,
-                                "GEN", "SAM", "F5", 5.975000, false, 150, 0.0,
-                                "GEN", "SAM", "F5", 3.250000, false, 150, 0.0,
-								"GEN", "SAM", "F4", 0.590000, false, 150, 0.0,
-			};
+        //     private static void AddRegionJapanBandStack()
+        //     {
+        //         ds.Tables["BandStack"].Clear();
+        //         DataTable t = ds.Tables["BandStack"];
 
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
-        }
+        //         object[] data = {
+        //					"160M", "CWL", "F5", 1.810000, false, 150, 0.0,
+        //					"160M", "CWU", "F1", 1.825000, false, 150, 0.0,
+        //					"160M", "CWU", "F1", 1.835000, false, 150, 0.0,
+        //                             "160M", "USB", "F6", 1.840000, false, 150, 0.0,
+        //					"160M", "USB", "F6", 1.845000, false, 150, 0.0,
+        //					"80M", "CWL", "F1", 3.501000, false, 150, 0.0,
+        //                             "80M", "CWU", "F1", 3.510000, false, 150, 0.0,
+        //					"80M", "LSB", "F6", 3.751000, false, 150, 0.0,
+        //                             "80M", "LSB", "F6", 3.755000, false, 150, 0.0,
+        //					"80M", "LSB", "F6", 3.850000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.330500, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.346500, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.357000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.371500, false, 150, 0.0,                              
+        //					"60M", "USB", "F6", 5.403500, false, 150, 0.0,
+        //					"40M", "CWL", "F1", 7.001000, false, 150, 0.0,
+        //                             "40M", "CWU", "F1", 7.005000, false, 150, 0.0,
+        //                             "40M", "LSB", "F6", 7.090000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.105000, false, 150, 0.0,
+        //                             "40M", "LSB", "F6", 7.190000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.105000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.130000, false, 150, 0.0,
+        //					"30M", "CWU", "F5", 10.140000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+        //                             "20M", "USB", "F6", 14.136000, false, 150, 0.0,
+        //					"20M", "USB", "F6", 14.230000, false, 150, 0.0,
+        //					"20M", "USB", "F6", 14.336000, false, 150, 0.0,
+        //					"17M", "CWU", "F1", 18.090000, false, 150, 0.0,
+        //                             "17M", "CWU", "F1", 18.095000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.125000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+        //                             "17M", "USB", "F6", 18.145000, false, 150, 0.0,
+        //					"15M", "CWU", "F1", 21.001000, false, 150, 0.0,
+        //                             "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.255000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.270000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.300000, false, 150, 0.0,
+        //					"12M", "CWU", "F1", 24.895000, false, 150, 0.0,
+        //                             "12M", "CWU", "F1", 24.897000, false, 150, 0.0,
+        //					"12M", "USB", "F6", 24.900000, false, 150, 0.0,
+        //					"12M", "USB", "F6", 24.935000, false, 150, 0.0,
+        //                             "12M", "USB", "F6", 24.945000, false, 150, 0.0,
+        //                             "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
+        //					"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
+        //					"10M", "USB", "F6", 28.300000, false, 150, 0.0,
+        //					"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+        //                             "10M", "USB", "F6", 28.450000, false, 150, 0.0,
+        //					"6M", "CWU", "F1", 50.010000, false, 150, 0.0,
+        //                             "6M", "CWU", "F1", 50.015000, false, 150, 0.0,
+        //					"6M", "USB", "F6", 50.125000, false, 150, 0.0,
+        //					"6M", "USB", "F6", 50.18000, false, 150, 0.0,
+        //                             "6M", "USB", "F6", 50.190000, false, 150, 0.0,
+        //					"2M", "CWU", "F1", 144.010000, false, 150, 0.0,
+        //                             "2M", "CWU", "F1", 144.015000, false, 150, 0.0,
+        //					"2M", "USB", "F6", 144.200000, false, 150, 0.0,
+        //					"2M", "USB", "F6", 144.210000, false, 150, 0.0,
+        //                             "2M", "USB", "F6", 144.215000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
+        //					"GEN", "SAM", "F5", 13.845000, false, 150, 0.0,
+        //					"GEN", "SAM", "F5", 9.550000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F5", 5.975000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F5", 3.250000, false, 150, 0.0,
+        //					"GEN", "SAM", "F4", 0.590000, false, 150, 0.0,
+        //};
+
+        //         for (int i = 0; i < data.Length / 7; i++)
+        //         {
+        //             DataRow dr = ds.Tables["BandStack"].NewRow();
+        //             dr["BandName"] = (string)data[i * 7 + 0];
+        //             dr["Mode"] = (string)data[i * 7 + 1];
+        //             dr["Filter"] = (string)data[i * 7 + 2];
+        //             dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //             dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //             dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //             dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //             ds.Tables["BandStack"].Rows.Add(dr);
+        //         }
+        //     }
 
         #region IARU Region 3 BandText
 
@@ -3432,200 +3945,201 @@ namespace Thetis
         }
 
         #endregion
-        
-        private static void AddUK_PlusBandStack()
-        {
-            ds.Tables["BandStack"].Clear();
-            DataTable t = ds.Tables["BandStack"];
 
-            object[] data = {
-								"160M", "CWL", "F1", 1.810000, false, 150, 0.0,
-                                "160M", "CWU", "F1", 1.820000, false, 150, 0.0,
-								"160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
-								"160M", "USB", "F6", 1.840000, false, 150, 0.0,
-                                "160M", "USB", "F6", 1.845000, false, 150, 0.0,
-                                "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
-                                "80M", "CWU", "F1", 3.510000, false, 150, 0.0,
-								"80M", "DIGU", "F1", 3.590000, false, 150, 0.0,
-								"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
-                                "80M", "LSB", "F6", 3.770000, false, 150, 0.0,
-                                "60M", "USB", "F6", 5.258500, false, 150, 0.0,
-								"60M", "USB", "F6", 5.276000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.288500, false, 150, 0.0,
-								"60M", "USB", "F6", 5.298000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.313000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.333000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.354000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.362000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.378000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.395000, false, 150, 0.0,
-								"60M", "USB", "F6", 5.403500, false, 150, 0.0,
-                                "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
-                                "40M", "CWU", "F1", 7.010000, false, 150, 0.0,
-								"40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.09000, false, 150, 0.0,
-								"40M", "LSB", "F6", 7.10000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.105000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
-								"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.130000, false, 150, 0.0,
-								"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
-								"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
-								"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
-                                "20M", "USB", "F6", 14.145000, false, 150, 0.0,
-								"20M", "USB", "F6", 14.225000, false, 150, 0.0,
-								"17M", "CWU", "F1", 18.070000, false, 150, 0.0,
-								"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
-								"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
-								"17M", "USB", "F6", 18.140000, false, 150, 0.0,
-                                "17M", "USB", "F6", 18.150000, false, 150, 0.0,
-                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
-								"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
-								"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.250000, false, 150, 0.0,
-								"15M", "USB", "F6", 21.300000, false, 150, 0.0,
-								"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
-                                "12M", "CWU", "F1", 24.910000, false, 150, 0.0,
-								"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
-								"12M", "USB", "F6", 24.940000, false, 150, 0.0,
-                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
-                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
-								"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-								"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
-								"10M", "USB", "F6", 28.400000, false, 150, 0.0,
-                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
-								"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
-                                "6M", "CWU", "F1", 50.095000, false, 150, 0.0,
-								"6M", "USB", "F6", 50.150000, false, 150, 0.0,
-                                "6M", "USB", "F6", 50.160000, false, 150, 0.0,
-								"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
-								"2M", "CWU", "F1", 144.030000, false, 150, 0.0,
-								"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
-								"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
-								"2M", "USB", "F6", 144.300000, false, 150, 0.0,
-                                "2M", "USB", "F6", 144.310000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
-								"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
-                                "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
-								"GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
-								"GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
-								"GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
-                                "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
-								"GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
-			};
+        //MW0LGE_21d BandStack2
+        //     private static void AddUK_PlusBandStack()
+        //     {
+        //         ds.Tables["BandStack"].Clear();
+        //         DataTable t = ds.Tables["BandStack"];
 
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
-        }
+        //         object[] data = {
+        //					"160M", "CWL", "F1", 1.810000, false, 150, 0.0,
+        //                             "160M", "CWU", "F1", 1.820000, false, 150, 0.0,
+        //					"160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
+        //					"160M", "USB", "F6", 1.840000, false, 150, 0.0,
+        //                             "160M", "USB", "F6", 1.845000, false, 150, 0.0,
+        //                             "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
+        //                             "80M", "CWU", "F1", 3.510000, false, 150, 0.0,
+        //					"80M", "DIGU", "F1", 3.590000, false, 150, 0.0,
+        //					"80M", "LSB", "F6", 3.750000, false, 150, 0.0,
+        //                             "80M", "LSB", "F6", 3.770000, false, 150, 0.0,
+        //                             "60M", "USB", "F6", 5.258500, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.276000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.288500, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.298000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.313000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.333000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.354000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.362000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.378000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.395000, false, 150, 0.0,
+        //					"60M", "USB", "F6", 5.403500, false, 150, 0.0,
+        //                             "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
+        //                             "40M", "CWU", "F1", 7.010000, false, 150, 0.0,
+        //					"40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.09000, false, 150, 0.0,
+        //					"40M", "LSB", "F6", 7.10000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.105000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+        //					"30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.130000, false, 150, 0.0,
+        //					"30M", "DIGU", "F1", 10.140000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.005000, false, 150, 0.0,
+        //					"20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+        //					"20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
+        //                             "20M", "USB", "F6", 14.145000, false, 150, 0.0,
+        //					"20M", "USB", "F6", 14.225000, false, 150, 0.0,
+        //					"17M", "CWU", "F1", 18.070000, false, 150, 0.0,
+        //					"17M", "CWU", "F1", 18.078000, false, 150, 0.0,
+        //					"17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
+        //					"17M", "USB", "F6", 18.140000, false, 150, 0.0,
+        //                             "17M", "USB", "F6", 18.150000, false, 150, 0.0,
+        //                             "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
+        //					"15M", "CWU", "F1", 21.010000, false, 150, 0.0,
+        //					"15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.250000, false, 150, 0.0,
+        //					"15M", "USB", "F6", 21.300000, false, 150, 0.0,
+        //					"12M", "CWU", "F1", 24.900000, false, 150, 0.0,
+        //                             "12M", "CWU", "F1", 24.910000, false, 150, 0.0,
+        //					"12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
+        //					"12M", "USB", "F6", 24.940000, false, 150, 0.0,
+        //                             "12M", "USB", "F6", 24.950000, false, 150, 0.0,
+        //                             "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
+        //					"10M", "CWU", "F1", 28.010000, false, 150, 0.0,
+        //					"10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
+        //					"10M", "USB", "F6", 28.400000, false, 150, 0.0,
+        //                             "10M", "USB", "F6", 28.450000, false, 150, 0.0,
+        //					"6M", "CWU", "F1", 50.090000, false, 150, 0.0,
+        //                             "6M", "CWU", "F1", 50.095000, false, 150, 0.0,
+        //					"6M", "USB", "F6", 50.150000, false, 150, 0.0,
+        //                             "6M", "USB", "F6", 50.160000, false, 150, 0.0,
+        //					"6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
+        //					"2M", "CWU", "F1", 144.030000, false, 150, 0.0,
+        //					"2M", "CWU", "F1", 144.050000, false, 150, 0.0,
+        //					"2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
+        //					"2M", "USB", "F6", 144.300000, false, 150, 0.0,
+        //                             "2M", "USB", "F6", 144.310000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 2.500000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 5.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 10.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 15.000000, false, 150, 0.0,
+        //					"WWV", "SAM", "F7", 20.000000, false, 150, 0.0,
+        //                             "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
+        //					"GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
+        //					"GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
+        //					"GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
+        //                             "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
+        //					"GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
+        //};
 
-        private static void AddSwedenBandStack()
-        {
-            ds.Tables["BandStack"].Clear();
-            DataTable t = ds.Tables["BandStack"];
+        //         for (int i = 0; i < data.Length / 7; i++)
+        //         {
+        //             DataRow dr = ds.Tables["BandStack"].NewRow();
+        //             dr["BandName"] = (string)data[i * 7 + 0];
+        //             dr["Mode"] = (string)data[i * 7 + 1];
+        //             dr["Filter"] = (string)data[i * 7 + 2];
+        //             dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //             dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //             dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //             dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //             ds.Tables["BandStack"].Rows.Add(dr);
+        //         }
+        //     }
 
-            object[] data = {
-                                "160M", "CWL", "F1", 1.805000, false, 150, 0.0,
-                                "160M", "CWL", "F1", 1.810000, false, 150, 0.0,
-		  "160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
-                                "160M", "LSB", "F6", 1.843000, false, 150, 0.0,
-                                "160M", "LSB", "F6", 1.850000, false, 150, 0.0,
-                                "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
-		  "80M", "CWL", "F1", 3.510000, false, 150, 0.0,
-		  "80M", "DIGU","F1", 3.590000, false, 150, 0.0,
-		  "80M", "LSB", "F6", 3.750000, false, 150, 0.0,
-                                "80M", "LSB", "F6", 3.900000, false, 150, 0.0,
-		  "60M", "USB", "F6", 5.310000, false, 150, 0.0,
-		  "60M", "USB", "F6", 5.320000, false, 150, 0.0,
-		  "60M", "USB", "F6", 5.380000, false, 150, 0.0,
-          "60M", "USB", "F6", 5.390000, false, 150, 0.0,
-                                "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
-		  "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
-		  "40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
-                                "40M", "LSB", "F6", 7.09000, false, 150, 0.0,
-                                "40M", "LSB", "F6", 7.10000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
-		  "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
-                                "30M", "CWU", "F1", 10.115000, false, 150, 0.0,
-		  "30M", "CWU", "F1", 10.120000, false, 150, 0.0,
-		  "30M", "DIGU", "F1",10.140000, false, 150, 0.0,
-                                "20M", "CWU", "F1", 14.005000, false, 150, 0.0,
-		  "20M", "CWU", "F1", 14.010000, false, 150, 0.0,
-		  "20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
-                                "20M", "USB", "F6", 14.155000, false, 150, 0.0,
-          "20M", "USB", "F6", 14.225000, false, 150, 0.0,
-                                "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
-		  "17M", "CWU", "F1", 18.078000, false, 150, 0.0,
-		  "17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
-                                "17M", "USB", "F6", 18.120000, false, 150, 0.0,
-		  "17M", "USB", "F6", 18.140000, false, 150, 0.0,
-                                "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
-		  "15M", "CWU", "F1", 21.010000, false, 150, 0.0,
-		  "15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
-                                "15M", "USB", "F6", 21.210000, false, 150, 0.0,
-                                "15M", "USB", "F6", 21.290000, false, 150, 0.0,
-		  "12M", "CWU", "F1", 24.900000, false, 150, 0.0,
-                                "12M", "CWU", "F1", 24.905000, false, 150, 0.0,
-		  "12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
-          "12M", "USB", "F6", 24.940000, false, 150, 0.0,
-                                "12M", "USB", "F6", 24.950000, false, 150, 0.0,
-                                "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
-		  "10M", "CWU", "F1", 28.010000, false, 150, 0.0,
-		  "10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
-		  "10M", "USB", "F6", 28.400000, false, 150, 0.0,
-                                "10M", "USB", "F6", 28.450000, false, 150, 0.0,
-                                "6M", "CWU", "F1", 50.080000, false, 150, 0.0,
-		  "6M", "CWU","F1", 50.090000, false, 150, 0.0,
-		  "6M", "USB", "F6", 50.150000, false, 150, 0.0,
-                                "6M", "USB", "F6", 50.165000, false, 150, 0.0,
-		  "6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
-                                "2M", "CWU", "F1", 144.040000, false, 150, 0.0,
-		  "2M", "CWU", "F1", 144.050000, false, 150, 0.0,
-		  "2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
-                  "2M", "USB", "F6", 144.300000, false, 150, 0.0,
-                  "2M", "USB", "F6", 144.310000, false, 150, 0.0,
-		  "WWV", "SAM", "F5", 2.500000, false, 150, 0.0,
-		  "WWV", "SAM", "F5", 5.000000, false, 150, 0.0,
-		  "WWV", "SAM", "F5", 10.000000, false, 150, 0.0,
-		  "WWV", "SAM","F5", 15.000000, false, 150, 0.0,
-		  "WWV", "SAM", "F5", 20.000000, false, 150, 0.0,
-          "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
-		  "WWV", "USB", "F6", 3.330000, false, 150, 0.0,
-		  "WWV", "USB", "F6", 7.850000, false, 150, 0.0,
-		  "WWV", "USB", "F6", 14.670000, false, 150, 0.0,
-          "GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
-		  "GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
-		  "GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
-		  "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
-		  "GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
-			};
+        //     private static void AddSwedenBandStack()
+        //     {
+        //         ds.Tables["BandStack"].Clear();
+        //         DataTable t = ds.Tables["BandStack"];
 
-            for (int i = 0; i < data.Length / 7; i++)
-            {
-                DataRow dr = ds.Tables["BandStack"].NewRow();
-                dr["BandName"] = (string)data[i * 7 + 0];
-                dr["Mode"] = (string)data[i * 7 + 1];
-                dr["Filter"] = (string)data[i * 7 + 2];
-                dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
-                dr["CTUN"] = ((bool)data[i * 7 + 4]);
-                dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
-                dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
-                ds.Tables["BandStack"].Rows.Add(dr);
-            }
-        }
+        //         object[] data = {
+        //                             "160M", "CWL", "F1", 1.805000, false, 150, 0.0,
+        //                             "160M", "CWL", "F1", 1.810000, false, 150, 0.0,
+        // "160M", "DIGU", "F1", 1.838000, false, 150, 0.0,
+        //                             "160M", "LSB", "F6", 1.843000, false, 150, 0.0,
+        //                             "160M", "LSB", "F6", 1.850000, false, 150, 0.0,
+        //                             "80M", "CWL", "F1", 3.505000, false, 150, 0.0,
+        // "80M", "CWL", "F1", 3.510000, false, 150, 0.0,
+        // "80M", "DIGU","F1", 3.590000, false, 150, 0.0,
+        // "80M", "LSB", "F6", 3.750000, false, 150, 0.0,
+        //                             "80M", "LSB", "F6", 3.900000, false, 150, 0.0,
+        // "60M", "USB", "F6", 5.310000, false, 150, 0.0,
+        // "60M", "USB", "F6", 5.320000, false, 150, 0.0,
+        // "60M", "USB", "F6", 5.380000, false, 150, 0.0,
+        //       "60M", "USB", "F6", 5.390000, false, 150, 0.0,
+        //                             "40M", "CWL", "F1", 7.005000, false, 150, 0.0,
+        // "40M", "CWL", "F1", 7.010000, false, 150, 0.0,
+        // "40M", "DIGU", "F1", 7.045000, false, 150, 0.0,
+        //                             "40M", "LSB", "F6", 7.09000, false, 150, 0.0,
+        //                             "40M", "LSB", "F6", 7.10000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.107000, false, 150, 0.0,
+        // "30M", "CWU", "F1", 10.110000, false, 150, 0.0,
+        //                             "30M", "CWU", "F1", 10.115000, false, 150, 0.0,
+        // "30M", "CWU", "F1", 10.120000, false, 150, 0.0,
+        // "30M", "DIGU", "F1",10.140000, false, 150, 0.0,
+        //                             "20M", "CWU", "F1", 14.005000, false, 150, 0.0,
+        // "20M", "CWU", "F1", 14.010000, false, 150, 0.0,
+        // "20M", "DIGU", "F1", 14.085000, false, 150, 0.0,
+        //                             "20M", "USB", "F6", 14.155000, false, 150, 0.0,
+        //       "20M", "USB", "F6", 14.225000, false, 150, 0.0,
+        //                             "17M", "CWU", "F1", 18.070000, false, 150, 0.0,
+        // "17M", "CWU", "F1", 18.078000, false, 150, 0.0,
+        // "17M", "DIGU", "F1", 18.100000, false, 150, 0.0,
+        //                             "17M", "USB", "F6", 18.120000, false, 150, 0.0,
+        // "17M", "USB", "F6", 18.140000, false, 150, 0.0,
+        //                             "15M", "CWU", "F1", 21.005000, false, 150, 0.0,
+        // "15M", "CWU", "F1", 21.010000, false, 150, 0.0,
+        // "15M", "DIGU", "F1", 21.090000, false, 150, 0.0,
+        //                             "15M", "USB", "F6", 21.210000, false, 150, 0.0,
+        //                             "15M", "USB", "F6", 21.290000, false, 150, 0.0,
+        // "12M", "CWU", "F1", 24.900000, false, 150, 0.0,
+        //                             "12M", "CWU", "F1", 24.905000, false, 150, 0.0,
+        // "12M", "DIGU", "F1", 24.920000, false, 150, 0.0,
+        //       "12M", "USB", "F6", 24.940000, false, 150, 0.0,
+        //                             "12M", "USB", "F6", 24.950000, false, 150, 0.0,
+        //                             "10M", "CWU", "F1", 28.005000, false, 150, 0.0,
+        // "10M", "CWU", "F1", 28.010000, false, 150, 0.0,
+        // "10M", "DIGU", "F1", 28.120000, false, 150, 0.0,
+        // "10M", "USB", "F6", 28.400000, false, 150, 0.0,
+        //                             "10M", "USB", "F6", 28.450000, false, 150, 0.0,
+        //                             "6M", "CWU", "F1", 50.080000, false, 150, 0.0,
+        // "6M", "CWU","F1", 50.090000, false, 150, 0.0,
+        // "6M", "USB", "F6", 50.150000, false, 150, 0.0,
+        //                             "6M", "USB", "F6", 50.165000, false, 150, 0.0,
+        // "6M", "DIGU", "F1", 50.250000, false, 150, 0.0,
+        //                             "2M", "CWU", "F1", 144.040000, false, 150, 0.0,
+        // "2M", "CWU", "F1", 144.050000, false, 150, 0.0,
+        // "2M", "DIGU", "F1", 144.138000, false, 150, 0.0,
+        //               "2M", "USB", "F6", 144.300000, false, 150, 0.0,
+        //               "2M", "USB", "F6", 144.310000, false, 150, 0.0,
+        // "WWV", "SAM", "F5", 2.500000, false, 150, 0.0,
+        // "WWV", "SAM", "F5", 5.000000, false, 150, 0.0,
+        // "WWV", "SAM", "F5", 10.000000, false, 150, 0.0,
+        // "WWV", "SAM","F5", 15.000000, false, 150, 0.0,
+        // "WWV", "SAM", "F5", 20.000000, false, 150, 0.0,
+        //       "WWV", "SAM", "F5", 25.000000, false, 150, 0.0, // ke9ns add
+        // "WWV", "USB", "F6", 3.330000, false, 150, 0.0,
+        // "WWV", "USB", "F6", 7.850000, false, 150, 0.0,
+        // "WWV", "USB", "F6", 14.670000, false, 150, 0.0,
+        //       "GEN", "SAM", "F6", 13.845000, false, 150, 0.0,
+        // "GEN", "SAM", "F7", 5.975000, false, 150, 0.0,
+        // "GEN", "SAM", "F7", 9.550000, false, 150, 0.0,
+        // "GEN", "SAM", "F7", 3.850000, false, 150, 0.0,
+        // "GEN", "SAM", "F8", 0.590000, false, 150, 0.0,
+        //};
+
+        //         for (int i = 0; i < data.Length / 7; i++)
+        //         {
+        //             DataRow dr = ds.Tables["BandStack"].NewRow();
+        //             dr["BandName"] = (string)data[i * 7 + 0];
+        //             dr["Mode"] = (string)data[i * 7 + 1];
+        //             dr["Filter"] = (string)data[i * 7 + 2];
+        //             dr["Freq"] = ((double)data[i * 7 + 3]).ToString("f6");
+        //             dr["CTUN"] = ((bool)data[i * 7 + 4]);
+        //             dr["ZoomFactor"] = ((int)data[i * 7 + 5]).ToString("f6");
+        //             dr["CenterFreq"] = ((double)data[i * 7 + 6]).ToString("f6");
+        //             ds.Tables["BandStack"].Rows.Add(dr);
+        //         }
+        //     }
 
         private static void AddMemoryTable()
         {
@@ -3704,6 +4218,7 @@ namespace Thetis
             t.Columns.Add("CompanderLevel", typeof(int));
             t.Columns.Add("MicGain", typeof(int));
             t.Columns.Add("FMMicGain", typeof(int));
+            t.Columns.Add("MicMute", typeof(bool)); //MW0LGE_21f
             t.Columns.Add("Lev_On", typeof(bool));
             t.Columns.Add("Lev_Slope", typeof(int));
             t.Columns.Add("Lev_MaxGain", typeof(int));
@@ -3758,6 +4273,17 @@ namespace Thetis
             t.Columns.Add("VAC1_Latency_On", typeof(bool));
             t.Columns.Add("VAC1_Latency_Duration", typeof(int));
 
+            t.Columns.Add("VAC1_Latency_RBOut_On", typeof(bool));
+            t.Columns.Add("VAC1_Latency_RBOut_Duration", typeof(int));
+            t.Columns.Add("VAC1_Latency_PAIn_On", typeof(bool));
+            t.Columns.Add("VAC1_Latency_PAIn_Duration", typeof(int));
+            t.Columns.Add("VAC1_Latency_PAOut_On", typeof(bool));
+            t.Columns.Add("VAC1_Latency_PAOut_Duration", typeof(int));
+
+            t.Columns.Add("VAC1_AudioDriver", typeof(string));
+            t.Columns.Add("VAC1_AudioInput", typeof(string));
+            t.Columns.Add("VAC1_AudioOutput", typeof(string));
+
             t.Columns.Add("VAC2_On", typeof(bool));
             t.Columns.Add("VAC2_Auto_On", typeof(bool));
             t.Columns.Add("VAC2_RX_Gain", typeof(int));
@@ -3770,6 +4296,17 @@ namespace Thetis
             t.Columns.Add("VAC2_Combine_Input_Channels", typeof(bool));
             t.Columns.Add("VAC2_Latency_On", typeof(bool));
             t.Columns.Add("VAC2_Latency_Duration", typeof(int));
+
+            t.Columns.Add("VAC2_Latency_RBOut_On", typeof(bool));
+            t.Columns.Add("VAC2_Latency_RBOut_Duration", typeof(int));
+            t.Columns.Add("VAC2_Latency_PAIn_On", typeof(bool));
+            t.Columns.Add("VAC2_Latency_PAIn_Duration", typeof(int));
+            t.Columns.Add("VAC2_Latency_PAOut_On", typeof(bool));
+            t.Columns.Add("VAC2_Latency_PAOut_Duration", typeof(int));
+
+            t.Columns.Add("VAC2_AudioDriver", typeof(string));
+            t.Columns.Add("VAC2_AudioInput", typeof(string));
+            t.Columns.Add("VAC2_AudioOutput", typeof(string));
 
             t.Columns.Add("Phone_RX_DSP_Buffer", typeof(string));
             t.Columns.Add("Phone_TX_DSP_Buffer", typeof(string));
@@ -3884,6 +4421,7 @@ namespace Thetis
             dr["CompanderLevel"] = 2;
             dr["MicGain"] = 10;
             dr["FMMicGain"] = 10;
+            dr["MicMute"] = true; //MW0LGE_21f
             dr["Lev_On"] = true;
             dr["Lev_Slope"] = 0;
             dr["Lev_MaxGain"] = 15;
@@ -3931,6 +4469,15 @@ namespace Thetis
             dr["VAC1_Combine_Input_Channels"] = false;
             dr["VAC1_Latency_On"] = true;
             dr["VAC1_Latency_Duration"] = 120;
+            dr["VAC1_Latency_RBOut_On"] = true;
+            dr["VAC1_Latency_RBOut_Duration"] = 120;
+            dr["VAC1_Latency_PAIn_On"] = true;
+            dr["VAC1_Latency_PAIn_Duration"] = 120;
+            dr["VAC1_Latency_PAOut_On"] = true;
+            dr["VAC1_Latency_PAOut_Duration"] = 120;
+            dr["VAC1_AudioDriver"] = "";
+            dr["VAC1_AudioInput"] = "";
+            dr["VAC1_AudioOutput"] = "";
             dr["VAC2_On"] = false;
             dr["VAC2_Auto_On"] = false;
             dr["VAC2_RX_GAIN"] = 0;
@@ -3943,7 +4490,15 @@ namespace Thetis
             dr["VAC2_Combine_Input_Channels"] = false;
             dr["VAC2_Latency_On"] = true;
             dr["VAC2_Latency_Duration"] = 120;
-
+            dr["VAC2_Latency_RBOut_On"] = true;
+            dr["VAC2_Latency_RBOut_Duration"] = 120;
+            dr["VAC2_Latency_PAIn_On"] = true;
+            dr["VAC2_Latency_PAIn_Duration"] = 120;
+            dr["VAC2_Latency_PAOut_On"] = true;
+            dr["VAC2_Latency_PAOut_Duration"] = 120;
+            dr["VAC2_AudioDriver"] = "";
+            dr["VAC2_AudioInput"] = "";
+            dr["VAC2_AudioOutput"] = "";
             dr["Phone_RX_DSP_Buffer"] = "64";
             dr["Phone_TX_DSP_Buffer"] = "64";
             dr["FM_RX_DSP_Buffer"] = "256";
@@ -4058,6 +4613,7 @@ namespace Thetis
             dr["CompanderLevel"] = 2;
             dr["MicGain"] = 5;
             dr["FMMicGain"] = 10;
+            dr["MicMute"] = true; //MW0LGE_21f
             dr["Lev_On"] = true;
             dr["Lev_Slope"] = 0;
             dr["Lev_MaxGain"] = 15;
@@ -4105,6 +4661,15 @@ namespace Thetis
             dr["VAC1_Combine_Input_Channels"] = false;
             dr["VAC1_Latency_On"] = true;
             dr["VAC1_Latency_Duration"] = 120;
+            dr["VAC1_Latency_RBOut_On"] = true;
+            dr["VAC1_Latency_RBOut_Duration"] = 120;
+            dr["VAC1_Latency_PAIn_On"] = true;
+            dr["VAC1_Latency_PAIn_Duration"] = 120;
+            dr["VAC1_Latency_PAOut_On"] = true;
+            dr["VAC1_Latency_PAOut_Duration"] = 120;
+            dr["VAC1_AudioDriver"] = "";
+            dr["VAC1_AudioInput"] = "";
+            dr["VAC1_AudioOutput"] = "";
             dr["VAC2_On"] = false;
             dr["VAC2_Auto_On"] = false;
             dr["VAC2_RX_GAIN"] = 0;
@@ -4117,6 +4682,15 @@ namespace Thetis
             dr["VAC2_Combine_Input_Channels"] = false;
             dr["VAC2_Latency_On"] = true;
             dr["VAC2_Latency_Duration"] = 120;
+            dr["VAC2_Latency_RBOut_On"] = true;
+            dr["VAC2_Latency_RBOut_Duration"] = 120;
+            dr["VAC2_Latency_PAIn_On"] = true;
+            dr["VAC2_Latency_PAIn_Duration"] = 120;
+            dr["VAC2_Latency_PAOut_On"] = true;
+            dr["VAC2_Latency_PAOut_Duration"] = 120;
+            dr["VAC2_AudioDriver"] = "";
+            dr["VAC2_AudioInput"] = "";
+            dr["VAC2_AudioOutput"] = "";
             dr["Phone_RX_DSP_Buffer"] = "64";
             dr["Phone_TX_DSP_Buffer"] = "64";
             dr["FM_RX_DSP_Buffer"] = "256";
@@ -4233,6 +4807,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 0;
                 dr["MicGain"] = 5;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = false;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -4280,6 +4855,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -4292,6 +4876,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -4406,6 +4999,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 0;
                 dr["MicGain"] = 5;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = false;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -4453,6 +5047,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -4465,6 +5068,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -4578,6 +5190,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 3;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -4625,6 +5238,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -4637,6 +5259,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -4750,6 +5381,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 3;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -4797,6 +5429,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -4809,6 +5450,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -4922,6 +5572,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 5;
                 dr["MicGain"] = 25;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -4969,6 +5620,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -4981,6 +5641,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -5094,6 +5763,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 5;
                 dr["MicGain"] = 20;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -5141,6 +5811,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -5153,6 +5832,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -5266,6 +5954,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 5;
                 dr["MicGain"] = 20;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -5313,6 +6002,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -5325,6 +6023,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -5438,6 +6145,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 3;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -5485,6 +6193,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -5497,6 +6214,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -5610,6 +6336,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 3;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = false;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -5657,6 +6384,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -5669,6 +6405,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -5782,6 +6527,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 5;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -5829,6 +6575,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -5841,6 +6596,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -5954,6 +6718,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 5;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -6001,6 +6766,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -6013,6 +6787,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -6126,6 +6909,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 3;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -6173,6 +6957,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -6185,6 +6978,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -6298,6 +7100,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 3;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -6345,6 +7148,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -6357,6 +7169,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -6470,6 +7291,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 3;
                 dr["MicGain"] = 12;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -6517,6 +7339,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -6529,6 +7360,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -6642,6 +7482,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 2;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 10;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -6689,6 +7530,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 120;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 120;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 120;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 120;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -6701,6 +7551,15 @@ namespace Thetis
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
                 dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 120;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 120;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 120;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -6814,6 +7673,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 1;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 6;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -6861,6 +7721,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 60;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 60;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 60;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -6872,7 +7741,16 @@ namespace Thetis
                 dr["VAC2_IQ_Correct"] = true;
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
-                dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_Duration"] = 60;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 60;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 60;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 60;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -6986,6 +7864,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 1;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 6;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -7033,6 +7912,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 60;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 60;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 60;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -7044,7 +7932,16 @@ namespace Thetis
                 dr["VAC2_IQ_Correct"] = true;
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
-                dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_Duration"] = 60;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 60;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 60;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 60;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -7158,6 +8055,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 1;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 6;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -7205,6 +8103,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 60;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 60;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 60;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -7216,7 +8123,16 @@ namespace Thetis
                 dr["VAC2_IQ_Correct"] = true;
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
-                dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_Duration"] = 60;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 60;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 60;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 60;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -7330,6 +8246,7 @@ namespace Thetis
                 dr["CompanderLevel"] = 1;
                 dr["MicGain"] = 10;
                 dr["FMMicGain"] = 6;
+                dr["MicMute"] = true; //MW0LGE_21f
                 dr["Lev_On"] = true;
                 dr["Lev_Slope"] = 0;
                 dr["Lev_MaxGain"] = 15;
@@ -7377,6 +8294,15 @@ namespace Thetis
                 dr["VAC1_Combine_Input_Channels"] = false;
                 dr["VAC1_Latency_On"] = true;
                 dr["VAC1_Latency_Duration"] = 60;
+                dr["VAC1_Latency_RBOut_On"] = true;
+                dr["VAC1_Latency_RBOut_Duration"] = 60;
+                dr["VAC1_Latency_PAIn_On"] = true;
+                dr["VAC1_Latency_PAIn_Duration"] = 60;
+                dr["VAC1_Latency_PAOut_On"] = true;
+                dr["VAC1_Latency_PAOut_Duration"] = 60;
+                dr["VAC1_AudioDriver"] = "";
+                dr["VAC1_AudioInput"] = "";
+                dr["VAC1_AudioOutput"] = "";
                 dr["VAC2_On"] = false;
                 dr["VAC2_Auto_On"] = false;
                 dr["VAC2_RX_GAIN"] = 0;
@@ -7388,7 +8314,16 @@ namespace Thetis
                 dr["VAC2_IQ_Correct"] = true;
                 dr["VAC2_Combine_Input_Channels"] = false;
                 dr["VAC2_Latency_On"] = true;
-                dr["VAC2_Latency_Duration"] = 120;
+                dr["VAC2_Latency_Duration"] = 60;
+                dr["VAC2_Latency_RBOut_On"] = true;
+                dr["VAC2_Latency_RBOut_Duration"] = 60;
+                dr["VAC2_Latency_PAIn_On"] = true;
+                dr["VAC2_Latency_PAIn_Duration"] = 60;
+                dr["VAC2_Latency_PAOut_On"] = true;
+                dr["VAC2_Latency_PAOut_Duration"] = 60;
+                dr["VAC2_AudioDriver"] = "";
+                dr["VAC2_AudioInput"] = "";
+                dr["VAC2_AudioOutput"] = "";
                 dr["Phone_RX_DSP_Buffer"] = "64";
                 dr["Phone_TX_DSP_Buffer"] = "64";
                 dr["FM_RX_DSP_Buffer"] = "256";
@@ -7536,7 +8471,19 @@ namespace Thetis
             return true;
         }
 
-        public static void Update()
+        public static T ConvertFromDBVal<T>(object obj)
+        {
+            if (obj == null || obj == DBNull.Value)
+            {
+                return default(T); // returns the default value for the type
+            }
+            else
+            {
+                return (T)obj;
+            }
+        }
+
+        public static void WriteDB()
         {
             try
             {
@@ -7599,7 +8546,7 @@ namespace Thetis
         public static void Exit()
         {
             if (!importedDS) //-W2PA Only update if not just imported.
-            Update();
+            WriteDB();
             else importedDS = false;
             ds = null;
         }
@@ -7639,213 +8586,215 @@ namespace Thetis
             }
         }
 
-        public static int[] GetBandStackNum()
-        {
-            string[] band_list = {"160M", "80M", "60M", "40M", "30M", "20M", "17M",
-									 "15M", "12M", "10M", "6M", "2M", "WWV", "GEN",
-                                      "LMF","120M","90M","61M","49M","41M","31M","25M",
-                                     "22M","19M","16M","14M","13M","11M",
-                                     "VHF0", "VHF1", "VHF2", "VHF3", "VHF4", "VHF5",
-									 "VHF6", "VHF7", "VHF8", "VHF9", "VHF10", "VHF11",
-									 "VHF12", "VHF13" };
+        //MW0LGE_21d BandStack2
+        //public static int[] GetBandStackNum()
+        //{
+        //    string[] band_list = {"160M", "80M", "60M", "40M", "30M", "20M", "17M",
+        //	 "15M", "12M", "10M", "6M", "2M", "WWV", "GEN",
+        //                              "LMF","120M","90M","61M","49M","41M","31M","25M",
+        //                             "22M","19M","16M","14M","13M","11M",
+        //                             "VHF0", "VHF1", "VHF2", "VHF3", "VHF4", "VHF5",
+        //	 "VHF6", "VHF7", "VHF8", "VHF9", "VHF10", "VHF11",
+        //	 "VHF12", "VHF13" };
 
-            int[] retvals = new int[band_list.Length];
+        //    int[] retvals = new int[band_list.Length];
 
-            for (int i = 0; i < band_list.Length; i++)
-            {
-                string s = band_list[i];
-                DataRow[] rows = ds.Tables["BandStack"].Select("'" + s + "' = BandName");
-                retvals[i] = rows.Length;
-            }
+        //    for (int i = 0; i < band_list.Length; i++)
+        //    {
+        //        string s = band_list[i];
+        //        DataRow[] rows = ds.Tables["BandStack"].Select("'" + s + "' = BandName");
+        //        retvals[i] = rows.Length;
+        //    }
 
-            return retvals;
-        }
+        //    return retvals;
+        //}
 
-        public static bool GetBandStack(string band, int index, out string mode, out string filter, out double freq, 
-            out bool CTUN, 
-            out int ZoomFactor, 
-            out double CenterFreq)
-        {
-            DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
+        //MW0LGE_21d BandStack2
+        //public static bool GetBandStack(string band, int index, out string mode, out string filter, out double freq, 
+        //    out bool CTUN, 
+        //    out int ZoomFactor, 
+        //    out double CenterFreq)
+        //{
+        //    DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
 
-            if (rows.Length == 0)
-            {
-                MessageBox.Show("No Entries found for Band: " + band, "No Entry Found",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                mode = "";
-                filter = "";
-                freq = 0.0f;
-                CTUN = false;
-                ZoomFactor = 150;
-                CenterFreq = 0.0f; 
-                return false;
-            }
+        //    if (rows.Length == 0)
+        //    {
+        //        MessageBox.Show("No Entries found for Band: " + band, "No Entry Found",
+        //            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        mode = "";
+        //        filter = "";
+        //        freq = 0.0f;
+        //        CTUN = false;
+        //        ZoomFactor = 150;
+        //        CenterFreq = 0.0f; 
+        //        return false;
+        //    }
 
-            index = index % rows.Length;
+        //    index = index % rows.Length;
 
-            mode = (string)((DataRow)rows[index])["Mode"];
-            filter = (string)((DataRow)rows[index])["Filter"];
-            freq = (double)((DataRow)rows[index])["Freq"];
-            CTUN = (bool)((DataRow)rows[index])["CTUN"];
-            ZoomFactor = (int)((double)((DataRow)rows[index])["ZoomFactor"]);
-            CenterFreq = (double)((DataRow)rows[index])["CenterFreq"];
+        //    mode = (string)((DataRow)rows[index])["Mode"];
+        //    filter = (string)((DataRow)rows[index])["Filter"];
+        //    freq = (double)((DataRow)rows[index])["Freq"];
+        //    CTUN = (bool)((DataRow)rows[index])["CTUN"];
+        //    ZoomFactor = (int)((double)((DataRow)rows[index])["ZoomFactor"]);
+        //    CenterFreq = (double)((DataRow)rows[index])["CenterFreq"];
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        public static void AddBandStack(string band, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
-        {
-            DataRow dr = ds.Tables["BandStack"].NewRow();
-            dr["BandName"] = band;
-            dr["Mode"] = mode;
-            dr["Filter"] = filter;
-            dr["Freq"] = freq;
-            dr["CTUN"] = CTUN;
-            dr["ZoomFactor"] = ZoomFactor;
-            dr["CenterFreq"] = CenterFreq;
-            ds.Tables["BandStack"].Rows.Add(dr);
-        }
+        //public static void AddBandStack(string band, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
+        //{
+        //    DataRow dr = ds.Tables["BandStack"].NewRow();
+        //    dr["BandName"] = band;
+        //    dr["Mode"] = mode;
+        //    dr["Filter"] = filter;
+        //    dr["Freq"] = freq;
+        //    dr["CTUN"] = CTUN;
+        //    dr["ZoomFactor"] = ZoomFactor;
+        //    dr["CenterFreq"] = CenterFreq;
+        //    ds.Tables["BandStack"].Rows.Add(dr);
+        //}
 
-        public static int filter3 = 0;
-        public static void SaveBandStack(string band, int index, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
-        {
-            DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
+        ////public static int filter3 = 0;  //MW0LGE_21a
+        //public static void SaveBandStack(string band, int index, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
+        //{
+        //    DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
 
-            if (rows.Length == 0) return;
+        //    if (rows.Length == 0) return;
 
-            foreach (DataRow datarow in rows)			// prevent duplicates
-            {
-                if ((string)datarow["BandName"] == band &&
-                    (double)datarow["Freq"] == freq)
-                {
-                    datarow["Filter"] = filter;
-                    datarow["Mode"] = mode;
-                    datarow["CTUN"] = CTUN;
-                    datarow["ZoomFactor"] = ZoomFactor;
-                    datarow["CenterFreq"] = CenterFreq;
-                    return;
-                }
-            }
+        //    foreach (DataRow datarow in rows)			// prevent duplicates
+        //    {
+        //        if ((string)datarow["BandName"] == band &&
+        //            (double)datarow["Freq"] == freq)
+        //        {
+        //            datarow["Filter"] = filter;
+        //            datarow["Mode"] = mode;
+        //            datarow["CTUN"] = CTUN;
+        //            datarow["ZoomFactor"] = ZoomFactor;
+        //            datarow["CenterFreq"] = CenterFreq;
+        //            return;
+        //        }
+        //    }
 
-            index = index % rows.Length;
+        //    index = index % rows.Length;
 
-            DataRow d = (DataRow)rows[index];
-            d["Mode"] = mode;
-            d["Filter"] = filter;
-            d["Freq"] = freq;
-            d["CTUN"] = CTUN;
-            d["ZoomFactor"] = ZoomFactor;
-            d["CenterFreq"] = CenterFreq;
+        //    DataRow d = (DataRow)rows[index];
+        //    d["Mode"] = mode;
+        //    d["Filter"] = filter;
+        //    d["Freq"] = freq;
+        //    d["CTUN"] = CTUN;
+        //    d["ZoomFactor"] = ZoomFactor;
+        //    d["CenterFreq"] = CenterFreq;
 
-        }
+        //}
 
-        public static void GetBandStack1(string band)
-        {
-            DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
+        //public static void GetBandStack1(string band)
+        //{
+        //    DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
 
-            if (rows.Length == 0)
-            {
-                MessageBox.Show("No Entries found for Band: " + band, "No Entry Found",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    if (rows.Length == 0)
+        //    {
+        //        MessageBox.Show("No Entries found for Band: " + band, "No Entry Found",
+        //            MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            }
+        //    }
 
-        }
-
-
-        //==================================================================================================
-        // ke9ns add to delete the current bandstack entry (passed from stack.cs to console.cs)
-        public static void PurgeBandStack(int index, string band, string mode, string filter, string freq2)
-        {
-
-            if (!ds.Tables.Contains("BandStack")) return;  // dont run in no bandstack data
-
-            string temp = "Freq = '" + freq2 + "'";
-
-            try
-            {
-                DataRow[] rows = ds.Tables["BandStack"].Select(temp);   // find the identical freq in the bandstack
-
-                foreach (var row in rows)
-                {
-                    row.Delete();
-                    break;               // if there is a dup thenjust delete the first occurance
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("No Entries found to Delete for Band: " + band, "No Entry Found",
-                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+        //}
 
 
-        } // PurgeBandStack()
+        ////==================================================================================================
+        //// ke9ns add to delete the current bandstack entry (passed from stack.cs to console.cs)
+        //public static void PurgeBandStack(int index, string band, string mode, string filter, string freq2)
+        //{
+
+        //    if (!ds.Tables.Contains("BandStack")) return;  // dont run in no bandstack data
+
+        //    string temp = "Freq = '" + freq2 + "'";
+
+        //    try
+        //    {
+        //        DataRow[] rows = ds.Tables["BandStack"].Select(temp);   // find the identical freq in the bandstack
+
+        //        foreach (var row in rows)
+        //        {
+        //            row.Delete();
+        //            break;               // if there is a dup thenjust delete the first occurance
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MessageBox.Show("No Entries found to Delete for Band: " + band, "No Entry Found",
+        //          MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    }
 
 
-        //====================================================================================================
-        // ke9ns add  allows bubble sort routine in stack.cs to update bandstack without checking for dups
-        public static void SortBandStack(string band, int index, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
-        {
-            try
-            {
-
-                DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
-
-                filter3 = Console.BandStackLock;
-
-                index = index % rows.Length;
-
-                DataRow d = (DataRow)rows[index];
-                d["Mode"] = mode;
-                d["Filter"] = filter;
-                d["Freq"] = freq;
-                d["CTUN"] = CTUN;
-                d["ZoomFactor"] = ZoomFactor;
-                d["CenterFreq"] = CenterFreq;
-
-                //  Debug.WriteLine("=====BANDSTACK SORT====");
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("problem found sorting entry for Band: " + band, "No Entry Found",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-        } //Sortbandstack
-
-        //==================================================================================================
-        // ke9ns add
-        public static void AddBandText(double freq, double freq1, string name, bool tx)
-        {
-            DataRow dr = ds.Tables["BandText"].NewRow();
-            dr["Low"] = freq;
-            dr["High"] = freq1;
-            dr["Name"] = name;
-            dr["TX"] = tx;
-            ds.Tables["BandText"].Rows.Add(dr);
-        }
+        //} // PurgeBandStack()
 
 
-        //===========================================================
-        // ke9ns add
-        public static void WWV25()
-        {
+        ////====================================================================================================
+        //// ke9ns add  allows bubble sort routine in stack.cs to update bandstack without checking for dups
+        //public static void SortBandStack(string band, int index, string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
+        //{
+        //    try
+        //    {
 
-            DataTable t = ds.Tables["BandText"];
-            object[] data = {
-                                2500000, 2500000, "WWV Time",                 false,
-            };
+        //        DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
 
-            int i = 0;
+        //        //filter3 = Console.BandStackLock; //MW0LGE_21a
 
-            DataRow dr = t.NewRow();
-            dr["Low"] = (double)data[i * 4 + 0];
-            dr["High"] = (double)data[i * 4 + 1];
-            dr["Name"] = (string)data[i * 4 + 2];
-            dr["TX"] = (bool)data[i * 4 + 3];
-            t.Rows.Add(dr);
+        //        index = index % rows.Length;
 
-        } // WWV25;
+        //        DataRow d = (DataRow)rows[index];
+        //        d["Mode"] = mode;
+        //        d["Filter"] = filter;
+        //        d["Freq"] = freq;
+        //        d["CTUN"] = CTUN;
+        //        d["ZoomFactor"] = ZoomFactor;
+        //        d["CenterFreq"] = CenterFreq;
+
+        //        //  Debug.WriteLine("=====BANDSTACK SORT====");
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MessageBox.Show("problem found sorting entry for Band: " + band, "No Entry Found",
+        //                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    }
+
+        //} //Sortbandstack
+
+        ////==================================================================================================
+        //// ke9ns add
+        //public static void AddBandText(double freq, double freq1, string name, bool tx)
+        //{
+        //    DataRow dr = ds.Tables["BandText"].NewRow();
+        //    dr["Low"] = freq;
+        //    dr["High"] = freq1;
+        //    dr["Name"] = name;
+        //    dr["TX"] = tx;
+        //    ds.Tables["BandText"].Rows.Add(dr);
+        //}
+
+
+        ////===========================================================
+        //// ke9ns add
+        //public static void WWV25()
+        //{
+
+        //    DataTable t = ds.Tables["BandText"];
+        //    object[] data = {
+        //                        2500000, 2500000, "WWV Time",                 false,
+        //    };
+
+        //    int i = 0;
+
+        //    DataRow dr = t.NewRow();
+        //    dr["Low"] = (double)data[i * 4 + 0];
+        //    dr["High"] = (double)data[i * 4 + 1];
+        //    dr["Name"] = (string)data[i * 4 + 2];
+        //    dr["TX"] = (bool)data[i * 4 + 3];
+        //    t.Rows.Add(dr);
+
+        //} // WWV25;
 
         // This removes the notches from the state database so we can rewrite all of them without
         // having one that was previously deleted staying in the database
@@ -7863,6 +8812,43 @@ namespace Thetis
             }
         }
 
+        public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict)
+        {
+            if (!ds.Tables.Contains(tableName))
+                AddFormTable(tableName);
+
+            checkForPrimaryKeys(tableName);
+
+            foreach(KeyValuePair<string,string> kvp in dict)
+            {
+                string key = kvp.Key;
+                string value = kvp.Value;
+
+                if (value.Length == 0) // skip it as no data was provided
+                    continue;
+
+                //MW0LGE converted to Rows.Find because it is insanely faster, needs a primary key though
+                DataRow r = null;
+                try
+                {
+                    r = ds.Tables[tableName].Rows.Find(key);
+                }
+                catch
+                {
+                }
+                if (r != null)
+                {
+                    r[1] = value;
+                }
+                else
+                {
+                    DataRow newRow = ds.Tables[tableName].NewRow();
+                    newRow[0] = key;
+                    newRow[1] = value;
+                    ds.Tables[tableName].Rows.Add(newRow);
+                }
+            }
+        }
         public static void SaveVars(string tableName, ref ArrayList list)
         {
             if (!ds.Tables.Contains(tableName))
@@ -7906,6 +8892,21 @@ namespace Thetis
              }
         }
 
+        public static Dictionary<string, string> GetVarsDictionary(string tableName)
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            if (!ds.Tables.Contains(tableName))
+                return dict;
+
+            DataTable t = ds.Tables[tableName];
+
+            for (int i = 0; i < t.Rows.Count; i++)
+            {
+                dict.Add(t.Rows[i][0].ToString(), t.Rows[i][1].ToString());
+            }
+
+            return dict;
+        }
         public static ArrayList GetVars(string tableName)
         {
             ArrayList list = new ArrayList();
@@ -8035,13 +9036,17 @@ namespace Thetis
                     //    WriteImportLog(logFN, "Imported table <" + table.TableName + "> into database.\n")
                     //    break;
 
-                    case "BandStack":
-                        // Get table of same name in oldDB       
-                        tempTable.Clear();
+                    //BandStack2
+                    case "BandStack2Filters":
+                    case "BandStack2FilterFrequencies":
+                    case "BandStack2FilterModes":
+                    case "BandStack2FilterSubModes":
+                    case "BandStack2FilterBands":
+                    case "BandStack2Entries":
                         tempMergedTable.Clear();
                         foreach (DataTable t in oldDB.Tables)
                         {
-                            if (t.TableName == "BandStack")
+                            if (t.TableName == table.TableName)
                             {
                                 tempTable = t.Copy();
                                 foundTable = true;
@@ -8050,42 +9055,90 @@ namespace Thetis
                         }
                         if (!foundTable)
                         {
-                            WriteImportLog(logFN, "Did not import table <" + table.TableName + "> into database. None found.\n");
+                            // No corresponding table found in old database - must be new, so retain it as-is
+                            mergedDB.Merge(table);
+                            WriteImportLog(logFN, "New table not found in imported database: " + table.TableName + "\n");
                             break;
                         }
-
-                        // For each row of existingDB, if there is a matching BandName in oldDB, 
-                        // copy those entries, else take existing ones, into tempMergedTable.
-                        string bandName = "";
-                        foreach (DataRow row in table.Rows)
+                        else
                         {
-                            if (Convert.ToString(row["Bandname"]) != bandName) // haven't seen this band yet (do each band only once)
-                            {
-                                bandName = Convert.ToString(row["BandName"]);
-                                string selector = "BandName = \'" + bandName + "\'";
-                                DataRow[] foundRowsOld = tempTable.Select(selector);
-                                DataRow[] foundRowsExisting = table.Select(selector);
+                            // import the old rows, as this existingDB shouldn't have any
+                            // there is no DB initalisation for BandStack2
+                            // BandStackManager will add any that are missing
+                            foreach(DataRow dr in tempTable.Rows)
+                            {                                
+                                tempMergedTable.ImportRow(dr);
+                            }
 
-                                if (foundRowsOld.Length > 0)
+                            //import any from old band stack system into bandstack2entries if coming from older db and we havent added them into the merged table already
+                            if((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
+                            {
+                                foundTable = false;
+                                foreach (DataTable t in oldDB.Tables)
                                 {
-                                    for (int i = 0; i < foundRowsOld.Length; i++)
+                                    if (t.TableName == "BandStack")
                                     {
-                                        tempMergedTable.ImportRow(foundRowsOld[i]);
+                                        tempTable = t.Copy();
+                                        foundTable = true;
+                                        break;
                                     }
                                 }
-                                for (int i = foundRowsOld.Length; i < foundRowsExisting.Length; i++) // Pad with more rows if the new version has more band stack rows
-                                {
-                                    tempMergedTable.ImportRow(foundRowsExisting[i]);
+                                if (foundTable) {
+                                    foreach (DataRow dr in tempTable.Rows)
+                                    {
+                                        //check frequency not already in merged
+                                        string selector = "Frequency = " + (double)dr["Freq"];
+                                        DataRow[] foundRowsInMerged = tempMergedTable.Select(selector);
+
+                                        if (foundRowsInMerged.Length == 0)
+                                        {
+                                            // not in merged, let us add this entry
+                                            try // just in case
+                                            {
+                                                DataRow newEntry = tempMergedTable.NewRow();
+
+                                                newEntry["GUID"] = (string)Guid.NewGuid().ToString();
+                                                newEntry["Description"] = ConvertFromDBVal<string>(dr["BandName"]);
+                                                
+                                                newEntry["Frequency"] = Math.Round((double)dr["Freq"],6);
+                                                newEntry["CentreFrequency"] = Math.Round((double)dr["CenterFreq"],6);
+
+                                                newEntry["Band"] = (int)BandStackManager.StringToBand(ConvertFromDBVal<string>(dr["BandName"]));
+                                                newEntry["Mode"] = (int)BandStackManager.StringToMode(ConvertFromDBVal<string>(dr["Mode"]));
+
+                                                newEntry["SubMode"] = (int)DSPSubMode.FIRST;
+                                                newEntry["CTUNEnabled"] = (bool)dr["CTUN"];
+
+                                                string sFilter = ConvertFromDBVal<string>(dr["Filter"]);
+                                                if (sFilter.EndsWith("@"))
+                                                {
+                                                    newEntry["Locked"] = true;
+                                                    sFilter = sFilter.Substring(0, sFilter.Length - 1);
+                                                }
+                                                else
+                                                {
+                                                    newEntry["Locked"] = false;
+                                                }
+                                                newEntry["Filter"] = (int)BandStackManager.StringToFilter(sFilter);
+
+                                                newEntry["ZoomFactor"] = (double)dr["ZoomFactor"];
+                                                newEntry["ZoomSlider"] = (int)((double)dr["ZoomFactor"]);
+
+                                                tempMergedTable.Rows.Add(newEntry);
+                                            }
+                                            catch { }
+                                        }
+                                    }
                                 }
                             }
+
+                            mergedDB.Merge(tempMergedTable);
+                            WriteImportLog(logFN, "Imported table <" + table.TableName + "> into database.\n");
                         }
 
-                        // Copy tempTable into mergedDB 
-                        mergedDB.Merge(tempMergedTable);
-                        WriteImportLog(logFN, "Imported table <" + table.TableName + "> into database.\n");
                         break;
+
                     case "BandText":
-                   // case "BandStack":
                     case "GroupList":
                     case "Memory":
                         mergedDB.Merge(table); // don't overwrite current tables for these cases
@@ -8166,6 +9219,7 @@ namespace Thetis
                         foreach (DataRow row in table.Rows)
                         {
                             string thisKey = Convert.ToString(row["Key"]);
+                            
                             if (thisKey == "VersionNumber") // Exception: don't overwrite version number with an old one
                             {
                                 row["Value"] = VersionNumber;
@@ -8230,6 +9284,21 @@ namespace Thetis
                                 else tempMergedTable.ImportRow(row);
                             }                           
                         }
+
+                        // merge in any old notch entries MW0LGE_21k9rc6
+                        if (foundTable && table.TableName == "State")
+                        {
+                            foreach (DataRow row in tempTable.Rows)
+                            {
+                                string thisKey = Convert.ToString(row["Key"]);
+
+                                if (thisKey.Contains("mnotchdb"))
+                                {
+                                    tempMergedTable.ImportRow(row);
+                                }
+                            }
+                        }
+                        //
 
                         // Merge in the assembled temp table into mergedDB 
                         mergedDB.Merge(tempMergedTable);
@@ -8379,8 +9448,8 @@ namespace Thetis
             {
                 case FRSRegion.Australia:
                 case FRSRegion.US:
-                    AddRegion2BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion2BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion2BandText();
                     break;
@@ -8391,8 +9460,8 @@ namespace Thetis
                     //ClearBandText();
                     //AddRegionJapanBandText();
                     //AddBandTextSWB();
-                    AddRegion3BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion3BandStack();
+                    //MW0LGE_21d AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddJapanBandText160m();
                     AddJapanBandText80m();
@@ -8411,8 +9480,8 @@ namespace Thetis
                    break;
 
                 case FRSRegion.India:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegionIndiaBandText160m();
                     AddRegionIndiaBandText80m();
@@ -8430,8 +9499,8 @@ namespace Thetis
 
                 case FRSRegion.Spain:
                 case FRSRegion.Slovakia:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8452,8 +9521,8 @@ namespace Thetis
                 case FRSRegion.Europe:
                 case FRSRegion.Italy_Plus:
                 case FRSRegion.Germany:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8472,8 +9541,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Israel:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegionIsraelBandText160m();
                     AddRegionIsraelBandText80m();
@@ -8491,8 +9560,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.UK:
-                    AddUK_PlusBandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddUK_PlusBandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8512,8 +9581,8 @@ namespace Thetis
 
                 case FRSRegion.Norway:
                 case FRSRegion.Denmark:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8532,8 +9601,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Latvia:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8552,8 +9621,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Bulgaria:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddBulgariaBandText160m();
                     AddRegion1BandText80m();
@@ -8572,8 +9641,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Greece:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddBulgariaBandText160m();
                     AddRegion1BandText80m();
@@ -8592,9 +9661,9 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Hungary:
-                    AddRegion1BandStack();
-                     AddBandStackSWL(); // ke9ns add
-                   ClearBandText();
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
+                    ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
                     AddRegion1BandText60m();
@@ -8612,8 +9681,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Netherlands:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddNetherlandsBandText160m();
                     AddRegion1BandText80m();
@@ -8632,9 +9701,9 @@ namespace Thetis
                     break;
 
                 case FRSRegion.France:
-                    AddRegion1BandStack();
-                     AddBandStackSWL(); // ke9ns add
-                   ClearBandText();
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
+                    ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
                     AddRegion1BandText60m();
@@ -8652,8 +9721,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Russia:
-                    AddRegion1BandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8673,8 +9742,8 @@ namespace Thetis
                     break;
 
                 case FRSRegion.Sweden:
-                    AddSwedenBandStack();
-                    AddBandStackSWL(); // ke9ns add
+                    //MW0LGE_21d BandStack2 AddSwedenBandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8694,8 +9763,8 @@ namespace Thetis
 
                 // MW0LGE added region1,2,3
                 case FRSRegion.Region1:
-                    AddRegion1BandStack();
-                    AddBandStackSWL();
+                    //MW0LGE_21d BandStack2 AddRegion1BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL();
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -8712,8 +9781,8 @@ namespace Thetis
                     AddBandTextSWB();
                     break;
                 case FRSRegion.Region2:
-                    AddRegion2BandStack();
-                    AddBandStackSWL();
+                    //MW0LGE_21d BandStack2 AddRegion2BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL();
                     ClearBandText();
                     //AddRegion2BandText160m();
                     //AddRegion2BandText80m();
@@ -8730,8 +9799,8 @@ namespace Thetis
                     AddBandTextSWB();
                     break;
                 case FRSRegion.Region3:
-                    AddRegion3BandStack();
-                    AddBandStackSWL();
+                    //MW0LGE_21d BandStack2 AddRegion3BandStack();
+                    //MW0LGE_21d BandStack2 AddBandStackSWL();
                     ClearBandText();
                     //AddRegion3BandText160m();
                     //AddRegion3BandText80m();
@@ -8751,7 +9820,7 @@ namespace Thetis
             }
 
             CheckBandTextValid();
-            Update();
+            WriteDB();
         }
 
         #endregion

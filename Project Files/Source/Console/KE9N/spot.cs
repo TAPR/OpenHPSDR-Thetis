@@ -137,6 +137,9 @@ namespace Thetis
         public CheckBoxTS chkBoxContour;
         private MenuStrip mainMenu1;
         public ToolStripMenuItem mnuSpotOptions;
+        public CheckBoxTS chkReconnect;
+        public CheckBoxTS chkBoxEU;
+        private CheckBoxTS chkTrackActive;
         private TimeProc timeProcPeriodic;
 
         // ke9ns run this to kill the prior timer and start a new timer 
@@ -163,7 +166,7 @@ namespace Thetis
         #endregion
 
 
-
+        private const int _nARRAYSIZE = 50000;
 
         private static System.Reflection.Assembly myAssembly2 = System.Reflection.Assembly.GetExecutingAssembly();
         public static Stream Map_image = myAssembly2.GetManifestResourceStream("Thetis.Resources.picD1.png");     // MAP
@@ -259,7 +262,7 @@ namespace Thetis
             SpotOptions.SpotForm = this; // allows Spotoptions to see public data 
 
             Display.SpotForm = this;  // allows Display to see public data (not public static data)
-            StackControl.SpotForm = this; // allows Stack to see public data from spot
+            //StackControl.SpotForm = this; // allows Stack to see public data from spot                            MW0LGE_21d
                                           //  SwlControl.SpotForm = this; // allows swl to see public data from spot
 
             Common.RestoreForm(this, "SpotForm", true);
@@ -301,11 +304,42 @@ namespace Thetis
                 console.DXMemList.Save1();
 
                 Debug.WriteLine("create DXURL File");
-
             }
 
+            //MW0LGE_21d moved from form load
+            nameBox.Text = nameB;
+            callBox.Text = callB;
+            nodeBox1.Text = nodeB;
+            portBox2.Text = portB;
 
+            try
+            {
+                if (Convert.ToInt16(portBox2.Text) < 20)
+                {
+                    dataGridView1.CurrentCell = dataGridView1[0, Convert.ToInt16(portBox2.Text)];
+                    Debug.WriteLine("retrieved the index from storage");
 
+                }
+            }
+            catch (Exception)
+            {
+                dataGridView1.CurrentCell = dataGridView1[0, 0];
+            }
+
+            //MW0LGE_21d new to auto login to clust, and to start the background track
+            if (chkReconnect.Checked)
+            {
+                if (SP_Active == 0)
+                {
+                    spotSSB_Click(this, EventArgs.Empty);
+                }
+            }
+
+            if (chkTrackActive.Checked)
+            {
+                btnTrack_Click(this, EventArgs.Empty);
+            }
+            //
         } // spotcontrol
 
         protected override void Dispose(bool disposing)
@@ -331,12 +365,12 @@ namespace Thetis
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpotControl));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.SWLbutton = new System.Windows.Forms.Button();
             this.SSBbutton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -382,6 +416,7 @@ namespace Thetis
             this.chkPanMode = new System.Windows.Forms.CheckBoxTS();
             this.chkGrayLine = new System.Windows.Forms.CheckBoxTS();
             this.chkSUN = new System.Windows.Forms.CheckBoxTS();
+            this.chkReconnect = new System.Windows.Forms.CheckBoxTS();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -391,6 +426,8 @@ namespace Thetis
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             this.mainMenu1 = new System.Windows.Forms.MenuStrip();
             this.mnuSpotOptions = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkBoxEU = new System.Windows.Forms.CheckBoxTS();
+            this.chkTrackActive = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbPanPower)).BeginInit();
@@ -422,7 +459,7 @@ namespace Thetis
             this.SSBbutton.Name = "SSBbutton";
             this.SSBbutton.Size = new System.Drawing.Size(75, 23);
             this.SSBbutton.TabIndex = 1;
-            this.SSBbutton.Text = "Spot DX";
+            this.SSBbutton.Text = "Connect";
             this.toolTip1.SetToolTip(this.SSBbutton, "Click to Turn On/Off Dx Cluster Spotting (on both this DX Spotting window and Pan" +
         "adapter)\r\nRequires Internet to work.\r\n");
             this.SSBbutton.UseVisualStyleBackColor = false;
@@ -549,6 +586,7 @@ namespace Thetis
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(13, 201);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 13);
@@ -559,6 +597,7 @@ namespace Thetis
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(612, 204);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 13);
@@ -599,34 +638,34 @@ namespace Thetis
             this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.Location = new System.Drawing.Point(11, 27);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.Size = new System.Drawing.Size(269, 113);
             this.dataGridView1.TabIndex = 72;
             this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
@@ -641,34 +680,34 @@ namespace Thetis
             this.dataGridView2.AllowUserToResizeColumns = false;
             this.dataGridView2.AllowUserToResizeRows = false;
             this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle11;
-            this.dataGridView2.Location = new System.Drawing.Point(479, 174);
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle5;
+            this.dataGridView2.Location = new System.Drawing.Point(422, 73);
             this.dataGridView2.MultiSelect = false;
             this.dataGridView2.Name = "dataGridView2";
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridView2.Size = new System.Drawing.Size(254, 94);
             this.dataGridView2.TabIndex = 75;
             this.toolTip1.SetToolTip(this.dataGridView2, "memories");
@@ -717,6 +756,7 @@ namespace Thetis
             // 
             this.checkBoxTone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxTone.AutoSize = true;
+            this.checkBoxTone.ForeColor = System.Drawing.Color.White;
             this.checkBoxTone.Location = new System.Drawing.Point(559, 259);
             this.checkBoxTone.Name = "checkBoxTone";
             this.checkBoxTone.Size = new System.Drawing.Size(46, 17);
@@ -743,6 +783,7 @@ namespace Thetis
             // chkBoxContour
             // 
             this.chkBoxContour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxContour.ForeColor = System.Drawing.Color.White;
             this.chkBoxContour.Image = null;
             this.chkBoxContour.Location = new System.Drawing.Point(343, 275);
             this.chkBoxContour.Name = "chkBoxContour";
@@ -772,6 +813,7 @@ namespace Thetis
             // chkBoxAnt
             // 
             this.chkBoxAnt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxAnt.ForeColor = System.Drawing.Color.White;
             this.chkBoxAnt.Image = null;
             this.chkBoxAnt.Location = new System.Drawing.Point(343, 299);
             this.chkBoxAnt.Name = "chkBoxAnt";
@@ -788,6 +830,7 @@ namespace Thetis
             this.chkBoxDIG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxDIG.Checked = true;
             this.chkBoxDIG.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBoxDIG.ForeColor = System.Drawing.Color.White;
             this.chkBoxDIG.Image = null;
             this.chkBoxDIG.Location = new System.Drawing.Point(182, 276);
             this.chkBoxDIG.Name = "chkBoxDIG";
@@ -799,6 +842,7 @@ namespace Thetis
             // checkBoxMUF
             // 
             this.checkBoxMUF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxMUF.ForeColor = System.Drawing.Color.White;
             this.checkBoxMUF.Image = null;
             this.checkBoxMUF.Location = new System.Drawing.Point(273, 272);
             this.checkBoxMUF.Name = "checkBoxMUF";
@@ -844,6 +888,7 @@ namespace Thetis
             // checkBoxWWV
             // 
             this.checkBoxWWV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxWWV.ForeColor = System.Drawing.Color.White;
             this.checkBoxWWV.Image = null;
             this.checkBoxWWV.Location = new System.Drawing.Point(511, 235);
             this.checkBoxWWV.Name = "checkBoxWWV";
@@ -887,6 +932,7 @@ namespace Thetis
             // BoxBFScan
             // 
             this.BoxBFScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.BoxBFScan.ForeColor = System.Drawing.Color.White;
             this.BoxBFScan.Image = null;
             this.BoxBFScan.Location = new System.Drawing.Point(343, 347);
             this.BoxBFScan.Name = "BoxBFScan";
@@ -899,6 +945,7 @@ namespace Thetis
             // BoxBScan
             // 
             this.BoxBScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.BoxBScan.ForeColor = System.Drawing.Color.White;
             this.BoxBScan.Image = null;
             this.BoxBScan.Location = new System.Drawing.Point(273, 348);
             this.BoxBScan.Name = "BoxBScan";
@@ -913,6 +960,7 @@ namespace Thetis
             // chkBoxBeam
             // 
             this.chkBoxBeam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxBeam.ForeColor = System.Drawing.Color.White;
             this.chkBoxBeam.Image = null;
             this.chkBoxBeam.Location = new System.Drawing.Point(417, 299);
             this.chkBoxBeam.Name = "chkBoxBeam";
@@ -991,6 +1039,7 @@ namespace Thetis
             // chkBoxMem
             // 
             this.chkBoxMem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxMem.ForeColor = System.Drawing.Color.White;
             this.chkBoxMem.Image = null;
             this.chkBoxMem.Location = new System.Drawing.Point(417, 321);
             this.chkBoxMem.Name = "chkBoxMem";
@@ -1004,6 +1053,7 @@ namespace Thetis
             // chkBoxPan
             // 
             this.chkBoxPan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxPan.ForeColor = System.Drawing.Color.White;
             this.chkBoxPan.Image = null;
             this.chkBoxPan.Location = new System.Drawing.Point(417, 276);
             this.chkBoxPan.Name = "chkBoxPan";
@@ -1018,6 +1068,7 @@ namespace Thetis
             this.chkBoxSSB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxSSB.Checked = true;
             this.chkBoxSSB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBoxSSB.ForeColor = System.Drawing.Color.White;
             this.chkBoxSSB.Image = null;
             this.chkBoxSSB.Location = new System.Drawing.Point(182, 246);
             this.chkBoxSSB.Name = "chkBoxSSB";
@@ -1031,6 +1082,7 @@ namespace Thetis
             this.chkBoxCW.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxCW.Checked = true;
             this.chkBoxCW.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBoxCW.ForeColor = System.Drawing.Color.White;
             this.chkBoxCW.Image = null;
             this.chkBoxCW.Location = new System.Drawing.Point(182, 218);
             this.chkBoxCW.Name = "chkBoxCW";
@@ -1044,6 +1096,7 @@ namespace Thetis
             this.chkMapBand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkMapBand.Checked = true;
             this.chkMapBand.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMapBand.ForeColor = System.Drawing.Color.White;
             this.chkMapBand.Image = null;
             this.chkMapBand.Location = new System.Drawing.Point(417, 253);
             this.chkMapBand.Name = "chkMapBand";
@@ -1056,6 +1109,7 @@ namespace Thetis
             // chkMapCountry
             // 
             this.chkMapCountry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkMapCountry.ForeColor = System.Drawing.Color.White;
             this.chkMapCountry.Image = null;
             this.chkMapCountry.Location = new System.Drawing.Point(417, 207);
             this.chkMapCountry.Name = "chkMapCountry";
@@ -1070,6 +1124,7 @@ namespace Thetis
             this.chkMapCall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkMapCall.Checked = true;
             this.chkMapCall.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMapCall.ForeColor = System.Drawing.Color.White;
             this.chkMapCall.Image = null;
             this.chkMapCall.Location = new System.Drawing.Point(417, 230);
             this.chkMapCall.Name = "chkMapCall";
@@ -1084,6 +1139,7 @@ namespace Thetis
             this.chkPanMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkPanMode.Checked = true;
             this.chkPanMode.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkPanMode.ForeColor = System.Drawing.Color.White;
             this.chkPanMode.Image = null;
             this.chkPanMode.Location = new System.Drawing.Point(273, 249);
             this.chkPanMode.Name = "chkPanMode";
@@ -1099,6 +1155,7 @@ namespace Thetis
             this.chkGrayLine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkGrayLine.Checked = true;
             this.chkGrayLine.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkGrayLine.ForeColor = System.Drawing.Color.White;
             this.chkGrayLine.Image = null;
             this.chkGrayLine.Location = new System.Drawing.Point(273, 230);
             this.chkGrayLine.Name = "chkGrayLine";
@@ -1114,6 +1171,7 @@ namespace Thetis
             this.chkSUN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkSUN.Checked = true;
             this.chkSUN.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSUN.ForeColor = System.Drawing.Color.White;
             this.chkSUN.Image = null;
             this.chkSUN.Location = new System.Drawing.Point(273, 205);
             this.chkSUN.Name = "chkSUN";
@@ -1124,10 +1182,23 @@ namespace Thetis
         " only when RX1 is in Panadapter Mode with RX2 Display OFF");
             this.chkSUN.CheckedChanged += new System.EventHandler(this.chkSUN_CheckedChanged);
             // 
+            // chkReconnect
+            // 
+            this.chkReconnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkReconnect.ForeColor = System.Drawing.Color.White;
+            this.chkReconnect.Image = null;
+            this.chkReconnect.Location = new System.Drawing.Point(13, 244);
+            this.chkReconnect.Name = "chkReconnect";
+            this.chkReconnect.Size = new System.Drawing.Size(142, 24);
+            this.chkReconnect.TabIndex = 100;
+            this.chkReconnect.Text = "Reconnect at Startup";
+            this.toolTip1.SetToolTip(this.chkReconnect, "Try to connect to last used at startup");
+            // 
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
+            this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(537, 329);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(139, 13);
@@ -1138,6 +1209,7 @@ namespace Thetis
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
+            this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(693, 329);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(71, 13);
@@ -1148,6 +1220,7 @@ namespace Thetis
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.Color.White;
             this.label5.Location = new System.Drawing.Point(541, 310);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(227, 13);
@@ -1157,10 +1230,11 @@ namespace Thetis
             // chkBoxWrld
             // 
             this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxWrld.ForeColor = System.Drawing.Color.White;
             this.chkBoxWrld.Image = null;
-            this.chkBoxWrld.Location = new System.Drawing.Point(11, 299);
+            this.chkBoxWrld.Location = new System.Drawing.Point(16, 317);
             this.chkBoxWrld.Name = "chkBoxWrld";
-            this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
+            this.chkBoxWrld.Size = new System.Drawing.Size(194, 28);
             this.chkBoxWrld.TabIndex = 78;
             this.chkBoxWrld.Text = "Exclude North American Spotters";
             this.chkBoxWrld.CheckedChanged += new System.EventHandler(this.chkBoxWrld_CheckedChanged);
@@ -1168,10 +1242,11 @@ namespace Thetis
             // chkBoxNA
             // 
             this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxNA.ForeColor = System.Drawing.Color.White;
             this.chkBoxNA.Image = null;
-            this.chkBoxNA.Location = new System.Drawing.Point(12, 272);
+            this.chkBoxNA.Location = new System.Drawing.Point(16, 295);
             this.chkBoxNA.Name = "chkBoxNA";
-            this.chkBoxNA.Size = new System.Drawing.Size(175, 35);
+            this.chkBoxNA.Size = new System.Drawing.Size(175, 28);
             this.chkBoxNA.TabIndex = 77;
             this.chkBoxNA.Text = "North American Spotters only";
             this.chkBoxNA.CheckedChanged += new System.EventHandler(this.chkBoxNA_CheckedChanged);
@@ -1179,6 +1254,7 @@ namespace Thetis
             // chkAlwaysOnTop
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkAlwaysOnTop.ForeColor = System.Drawing.Color.White;
             this.chkAlwaysOnTop.Image = null;
             this.chkAlwaysOnTop.Location = new System.Drawing.Point(668, 277);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
@@ -1218,10 +1294,38 @@ namespace Thetis
             this.mnuSpotOptions.Text = "VOCAP Override";
             this.mnuSpotOptions.Click += new System.EventHandler(this.mnuSpotOptions_Click);
             // 
+            // chkBoxEU
+            // 
+            this.chkBoxEU.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxEU.ForeColor = System.Drawing.Color.White;
+            this.chkBoxEU.Image = null;
+            this.chkBoxEU.Location = new System.Drawing.Point(16, 276);
+            this.chkBoxEU.Name = "chkBoxEU";
+            this.chkBoxEU.Size = new System.Drawing.Size(153, 21);
+            this.chkBoxEU.TabIndex = 101;
+            this.chkBoxEU.Text = "European Spotters only";
+            this.chkBoxEU.CheckedChanged += new System.EventHandler(this.chkBoxEU_CheckedChanged);
+            // 
+            // chkTrackActive
+            // 
+            this.chkTrackActive.AutoSize = true;
+            this.chkTrackActive.BackColor = System.Drawing.Color.Red;
+            this.chkTrackActive.Image = null;
+            this.chkTrackActive.Location = new System.Drawing.Point(182, 303);
+            this.chkTrackActive.Name = "chkTrackActive";
+            this.chkTrackActive.Size = new System.Drawing.Size(114, 17);
+            this.chkTrackActive.TabIndex = 102;
+            this.chkTrackActive.Text = "trackActiveHidden";
+            this.chkTrackActive.UseVisualStyleBackColor = false;
+            this.chkTrackActive.Visible = false;
+            // 
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(784, 382);
+            this.Controls.Add(this.chkTrackActive);
+            this.Controls.Add(this.chkBoxEU);
+            this.Controls.Add(this.chkReconnect);
             this.Controls.Add(this.chkBoxContour);
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.tbPanPower);
@@ -1369,26 +1473,6 @@ namespace Thetis
 
         private void SpotControl_Load(object sender, EventArgs e)
         {
-
-            nameBox.Text = nameB;
-            callBox.Text = callB;
-            nodeBox1.Text = nodeB;
-            portBox2.Text = portB;
-
-            try
-            {
-                if (Convert.ToInt16(portBox2.Text) < 20)
-                {
-                    dataGridView1.CurrentCell = dataGridView1[0, Convert.ToInt16(portBox2.Text)];
-                    Debug.WriteLine("retrieved the index from storage");
-
-                }
-            }
-            catch (Exception)
-            {
-                dataGridView1.CurrentCell = dataGridView1[0, 0];
-
-            }
         }
 
         //=======================================================================================================================
@@ -1398,7 +1482,6 @@ namespace Thetis
             VOARUN = true;
            
             checkBoxMUF.Checked = false;
-            
 
             if (timerID != 0)
             {
@@ -1413,12 +1496,17 @@ namespace Thetis
 
             this.Hide();
             e.Cancel = true;
+
             Common.SaveForm(this, "SpotForm");
 
             console.DXMemList.Save1(); // save dx spotter list
+        }
 
-
-
+        //MW0LGE_21d used from consoleexit because fromclosing wont happen if still visible on screen
+        public void ForceSave()
+        {
+            FormClosingEventArgs e = new FormClosingEventArgs(CloseReason.None, false);
+            SpotControl_FormClosing(this, e);
         }
 
         public static byte SP_Active = 0;  // 1= DX Spot feature ON, 2=logging in 3=waiting for spots
@@ -1503,41 +1591,41 @@ namespace Thetis
 
 
         // these are pulled from SWL2.csv file
-        public static string[] SWL2_Station = new string[20000];       // Station name
-        public static int[] SWL2_Freq = new int[20000];              // in hz
-        public static byte[] SWL2_Band = new byte[20000];              // in Mhz
+        public static string[] SWL2_Station = new string[_nARRAYSIZE];       // Station name
+        public static int[] SWL2_Freq = new int[_nARRAYSIZE];              // in hz
+        public static byte[] SWL2_Band = new byte[_nARRAYSIZE];              // in Mhz
 
-        public static string[] SWL2_Lang = new string[20000];          // language of transmitter
-        public static int[] SWL2_TimeN = new int[20000];                // UTC time of operation ON air
-        public static int[] SWL2_TimeF = new int[20000];                // UTC time of operation OFF air
-        public static string[] SWL2_Mode = new string[20000];          // operating mode
-        public static string[] SWL2_Day = new string[20000];          // days of operation
-        public static byte[] SWL2_Day1 = new byte[20000];          // days of operation mo,tu,we,th,fr,sa,su = 1,2,4,8,16,32,64
+        public static string[] SWL2_Lang = new string[_nARRAYSIZE];          // language of transmitter
+        public static int[] SWL2_TimeN = new int[_nARRAYSIZE];                // UTC time of operation ON air
+        public static int[] SWL2_TimeF = new int[_nARRAYSIZE];                // UTC time of operation OFF air
+        public static string[] SWL2_Mode = new string[_nARRAYSIZE];          // operating mode
+        public static string[] SWL2_Day = new string[_nARRAYSIZE];          // days of operation
+        public static byte[] SWL2_Day1 = new byte[_nARRAYSIZE];          // days of operation mo,tu,we,th,fr,sa,su = 1,2,4,8,16,32,64
 
 
-        public static string[] SWL2_Loc = new string[20000];          // location of transmitter
-        public static string[] SWL2_Target = new string[20000];          // target area of station
+        public static string[] SWL2_Loc = new string[_nARRAYSIZE];          // location of transmitter
+        public static string[] SWL2_Target = new string[_nARRAYSIZE];          // target area of station
         public static int SWL2_Index1;  // local index that reset back to 0 after reaching max
         public static byte Flag21 = 0; // flag to skip header line in SWL.csv file
 
 
         // these are pulled from SWL.csv file
-        public static string[] SWL_Station = new string[20000];       // Station name
-        public static int[] SWL_Freq = new int[20000];              // in hz
-        public static byte[] SWL_Band = new byte[20000];              // in Mhz
+        public static string[] SWL_Station = new string[_nARRAYSIZE];       // Station name
+        public static int[] SWL_Freq = new int[_nARRAYSIZE];              // in hz
+        public static byte[] SWL_Band = new byte[_nARRAYSIZE];              // in Mhz
         public static int[] SWL_BandL = new int[31];              // index for each start of mhz listed in swl.csv
 
-        public static string[] SWL_Lang = new string[20000];          // language of transmitter
-        public static int[] SWL_TimeN = new int[20000];                // UTC time of operation ON air
-        public static int[] SWL_TimeF = new int[20000];                // UTC time of operation OFF air
-        public static string[] SWL_Mode = new string[20000];          // operating mode
-        public static string[] SWL_Day = new string[20000];          // days of operation
-        public static byte[] SWL_Day1 = new byte[20000];          // days of operation mo,tu,we,th,fr,sa,su = 1,2,4,8,16,32,64
+        public static string[] SWL_Lang = new string[_nARRAYSIZE];          // language of transmitter
+        public static int[] SWL_TimeN = new int[_nARRAYSIZE];                // UTC time of operation ON air
+        public static int[] SWL_TimeF = new int[_nARRAYSIZE];                // UTC time of operation OFF air
+        public static string[] SWL_Mode = new string[_nARRAYSIZE];          // operating mode
+        public static string[] SWL_Day = new string[_nARRAYSIZE];          // days of operation
+        public static byte[] SWL_Day1 = new byte[_nARRAYSIZE];          // days of operation mo,tu,we,th,fr,sa,su = 1,2,4,8,16,32,64
 
-        public static string[] SWL_Loc = new string[20000];          // location of transmitter
-        public static string[] SWL_Target = new string[20000];          // target area of station
+        public static string[] SWL_Loc = new string[_nARRAYSIZE];          // location of transmitter
+        public static string[] SWL_Target = new string[_nARRAYSIZE];          // target area of station
 
-        public static int[] SWL_Pos = new int[20000];                // related to W on the panadapter screen
+        public static int[] SWL_Pos = new int[_nARRAYSIZE];                // related to W on the panadapter screen
 
         public static int SWL_Index;  //  max number of spots in memory currently
         public static int SWL_Index1;  // local index that reset back to 0 after reaching max
@@ -2255,6 +2343,7 @@ namespace Thetis
 
                 console.spotterMenu.Text = "Closing";
                 statusBox.Text = "Closing";
+                SSBbutton.Text = "Closing..."; //MW0LGE_21a;
 
                 textBox1.Text += "Clicked to Close Socket (click again to Force Closed)\r\n";
 
@@ -2285,6 +2374,8 @@ namespace Thetis
 
                     SP_Active = 0; // turn off DX Spotter
                     SP2_Active = 0; // turn off DX Spotter
+
+                    SSBbutton.Text = "Connect"; // MMW0LGE_21a
                 }
                 else SP2_Active = 1; // in process of shutting down.
 
@@ -2413,7 +2504,9 @@ namespace Thetis
 
            DXLOC_FILE(); // open DXLOC.txt file and put into array of lat/lon values vs prefix
 
-         
+
+            SSBbutton.Text = "Connecting..."; //MW0LGE_21a
+
             try // opening socket
             {
                 textBox1.Text += "Attempt Opening socket \r\n";
@@ -2468,10 +2561,10 @@ namespace Thetis
 
                 textBox1.Text += "Got Socket \r\n";
 
+                SSBbutton.Text = "Disconnect"; //MW0LGE_21a
 
-                for (; SP_Active > 0;) // shut down socket and thread if SP_Active = 0  (0=off, 1=turned on, 2=logging , 3=waiting for spots)
+                for (; SP_Active > 0;) // shut down socket and thread if SP_Active = 0  (0=off, 1=turned on, 2=logging , 3=waiting for spots)                
                 {
-   
                     if (SP_Active == 1) // if you shut down dont attempt to read next spot
                     {
                         sb.Append((char)SP_reader.Read(), 1);
@@ -2516,7 +2609,7 @@ namespace Thetis
                         SP_Active = 3; // logging in
                    
                         statusBox.ForeColor = Color.Green;
-                        console.spotterMenu.ForeColor = Color.Blue;
+                        console.spotterMenu.ForeColor = Color.GreenYellow;//Color.Blue;   //MW0LGE_21b
 
                         statusBox.Text = "Spotting";
                         console.spotterMenu.Text = "Spotting";
@@ -2573,9 +2666,10 @@ namespace Thetis
 
                             statusBox.ForeColor = Color.Green;
                             statusBox.Text = "Spotting";
-                            SP_Active = 3;
+                            //SP_Active = 3; 
+                            if(SP_Active!=0) SP_Active = 3; // well we could never leave MW0LGE_21b
 
-                          
+
                             sb.Replace("\a", "");// get rig of bell 
                             sb.Replace("\r", "");// get rig of cr 
                             sb.Replace("\n", "");// get rig of line feed 
@@ -2641,7 +2735,6 @@ namespace Thetis
                                 sb.Insert(0, '<'); // to differentiate the spotter from the spotted
 
                                 DX_Spotter[DX_Index1] = sb.ToString();
-
                             }
                             catch (FormatException e)
                             {
@@ -2723,7 +2816,7 @@ namespace Thetis
                                        || ((DX_Freq[DX_Index1] >= 144500000) && (DX_Freq[DX_Index1] <= 144900000))|| ((DX_Freq[DX_Index1] >= 145100000) && (DX_Freq[DX_Index1] <= 145500000))
                                        )
                                 {
-                                    DX_Mode[DX_Index1] = 114; // FM mode
+                                    DX_Mode[DX_Index1] = 11/*4*/; // FM mode   //MW0LGE_21k9 rc3 removed the 4
                                 }
 
                                 else
@@ -3589,7 +3682,7 @@ namespace Thetis
 
                                 if ((us1 == "V") || (us1 == "C"))
                                 {
-                                    if ( ((us1 == "V") && !(r2.IsMatch(us2)) ) || ((us1 == "C") && !(r3.IsMatch(us2))))
+                                    if ( ( (us1 == "V") && !(r2.IsMatch(us2) ) ) || ((us1 == "C") && !(r3.IsMatch(us2))))
                                     {
                                         Debug.WriteLine("bypass2a " + DX_Spotter[DX_Index1]);
                                         continue; // dont show spot if not on the r1 list
@@ -3603,9 +3696,41 @@ namespace Thetis
                                         continue; // dont show spot if not on the r1 list
                                     }
                                 }
-
-
                             } // checkBoxUSspot.Checked)
+                            else if (chkBoxEU.Checked)
+                            {
+                                string eu1 = DX_Spotter[DX_Index1].Substring(1, 1);// was 0,1 now 1,1 because I added <>
+                                string eu2 = DX_Spotter[DX_Index1].Substring(2, 1);// was 1,1
+
+                                Debug.WriteLine("eu1 " + eu1 + " eu2 " + eu2);
+
+                                Regex r = new Regex("[12345789ACDEFGHIJLMOPRSTUYZ]"); // first char 12345789ACDEFGHIJLMOPRSTUYZ
+                                Regex r1 = new Regex("[1234567ABCDEFGHIJKLMNOPQRSTUVWXYZ]"); // 2nd char 23456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                                Regex r2 = new Regex("[EWMJGDI]"); // 2nd char // for G/M/2 as the first char
+
+                                if (!(r.IsMatch(eu1)))
+                                {
+                                    Debug.WriteLine("bypass1 " + DX_Spotter[DX_Index1]);
+                                    continue;// dont show spot if not on the r list
+                                }
+
+                                if ((eu1 == "G") || (eu1 == "M") || (eu1 == "2"))
+                                {
+                                    if ( ((eu1 == "G") && !(r2.IsMatch(eu2))) || ((eu1 == "M") && !(r2.IsMatch(eu2))) || ((eu1 == "2") && !(r2.IsMatch(eu2))))
+                                    {
+                                        Debug.WriteLine("bypass2a " + DX_Spotter[DX_Index1]);
+                                        continue; // dont show spot if not on the r1 list
+                                    }
+                                }
+                                else
+                                {
+                                    if (!(r1.IsMatch(eu2)))
+                                    {
+                                        Debug.WriteLine("bypass2 " + DX_Spotter[DX_Index1]);
+                                        continue; // dont show spot if not on the r1 list
+                                    }
+                                }
+                            }
 
                             SP4_Active = 1; // processing message
 
@@ -3801,6 +3926,8 @@ namespace Thetis
                             SP_Active = 0;
                             SP2_Active = 0;
 
+                            SSBbutton.Text = "Connect"; //MW0LGE_21a
+
                             return;
                         } // if disconnected
 
@@ -3821,6 +3948,7 @@ namespace Thetis
 
                 console.spotterMenu.Text = "Closing";
                 statusBox.Text = "Closing";
+                SSBbutton.Text = "Closing..."; //MW0LGE_21a
 
                 textBox1.Text += "Asked to Close \r\n";
 
@@ -3841,6 +3969,7 @@ namespace Thetis
                 textBox1.Text += "All closed \r\n";
                 SP2_Active = 0;
                 SP_Active = 0;
+                SSBbutton.Text = "Connect"; //MW0LGE_21a
                 return;
 
 
@@ -3885,7 +4014,7 @@ namespace Thetis
                 statusBox.Text = "Closed";
                 console.spotterMenu.Text = "Spot";
 
-            //    textBox1.Text = SE.ToString();
+                //    textBox1.Text = SE.ToString();
 
                 return;
 
@@ -3928,7 +4057,8 @@ namespace Thetis
                 statusBox.Text = "Closed";
                 console.spotterMenu.Text = "Spot";
 
-           
+                SSBbutton.Text = "Connect"; //MW0LGE_21a
+
                 return;
             }
 
@@ -4285,7 +4415,6 @@ namespace Thetis
         private void callBox_TextChanged(object sender, EventArgs e)
         {
             DX_Index = 0; // start over if change node
-
         }
 
         private void nameBox_TextChanged(object sender, EventArgs e)
@@ -4363,7 +4492,7 @@ namespace Thetis
 
                     //   Debug.WriteLine("US SPOT CHECKED");
                     chkBoxWrld.Checked = false;
-
+                    chkBoxEU.Checked = false; //MW0LGE_21d
                 }
                 else
                 {
@@ -4377,7 +4506,9 @@ namespace Thetis
             if (chkBoxWrld.Checked == true)
             {
                 chkBoxNA.Checked = false;
+                chkBoxEU.Checked = false; //MW0LGE_21d
                 //   Debug.WriteLine("world SPOT CHECKED");
+                
             }
             else
             {
@@ -4831,7 +4962,6 @@ namespace Thetis
         // turn on/off tracking (sun and/or grayline)
         private void btnTrack_Click(object sender, EventArgs e)
         {
-
             if (SP5_Active == 0)  // if OFF then turn ON
             {
 
@@ -4876,6 +5006,8 @@ namespace Thetis
 
                 textBox1.Text = "Clicked to Turn on GrayLine Sun Tracker\r\n";
 
+                //MW0LGE_21d hacky way of storing setting for use on restart
+                chkTrackActive.Checked = true;
             }
             else // map was already on so turn off
             {
@@ -4895,6 +5027,8 @@ namespace Thetis
              
                 if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
 
+                //MW0LGE_21d hacky way of storing setting for use on restart
+                chkTrackActive.Checked = false;
             } // turn Tracking  off
 
 
@@ -6702,12 +6836,7 @@ namespace Thetis
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             RIndex1 = e.RowIndex; // last row you clicked on 
-
         }
-
-      
-      
-
 
         public static byte SP6_Active = 0; // 1= turn on MEMORY in panadapter
 
@@ -10173,6 +10302,15 @@ RT1:
         {
             statusBoxSWL.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up on a right click
 
+        }
+
+        private void chkBoxEU_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkBoxWrld.Checked == true)
+            {
+                chkBoxNA.Checked = false;
+                chkBoxWrld.Checked = false;
+            }
         }
     } // Spotcontrol
 

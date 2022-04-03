@@ -921,9 +921,7 @@ namespace Thetis
 				checkBoxPlay.BackColor = SystemColors.Control;
 
                 if (console.BypassVACWhenPlayingRecording)
-                {
                     Audio.VACBypass = temp_vacbypass_play;  //MW0LGE
-                }
 			}
             Audio.WavePlayback = checkBoxPlay.Checked;
 			console.WavePlayback = checkBoxPlay.Checked;			
@@ -1189,7 +1187,7 @@ namespace Thetis
  
 		private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
 		{
-            string file_name; // = console.AppDataPath + "\\SDRQuickAudio.wav";
+            string file_name; // = console.AppDataPath + "SDRQuickAudio.wav";
 
 //             if (chkQuickAudioFolder.Checked == true) // ke9ns add to allow subfolder with different names to play
 //             {
@@ -1230,7 +1228,7 @@ namespace Thetis
 				Audio.RecordTXPreProcessed = true;  // set TRUE temporarily
 				
 				temp_mon = console.MON;
-				console.MON = true;
+				if(console.MOX) console.MON = true; // no mon unless mox  MW0LGE_21k95
 
                 if (console.BypassVACWhenPlayingRecording)
                 {
@@ -1238,7 +1236,7 @@ namespace Thetis
                     Audio.VACBypass = true; //MW0LGE
                 }
 
-				if(!OpenWaveFile(file_name, 0))
+                if (!OpenWaveFile(file_name, 0))
 				{
 					chkQuickPlay.Checked = false;
 					console.MON = temp_mon;
@@ -1268,7 +1266,7 @@ namespace Thetis
 				console.DX = temp_dx;
                 console.CFCEnabled = temp_cfc;
                 console.PhaseRotEnabled = temp_phaserot;
-
+                
                 if (console.BypassVACWhenPlayingRecording)
                 {
                     Audio.VACBypass = temp_vacbypass; //MW0LGE
@@ -3070,9 +3068,9 @@ namespace Thetis
                 total_samps_written += out_cnt;                 // sum the total samples written to the ring(s)
             }
 		}
-        
-        //private readonly object ringLock = new object();
-		unsafe public void GetPlayBuffer(float *left, float *right)
+
+        //private readonly Object ringLock = new Object();
+        unsafe public void GetPlayBuffer(float *left, float *right)
 		{
 			//Debug.WriteLine("GetPlayBuffer ("+rb_l.ReadSpace()+")");
 			int count = rb_l.ReadSpace();

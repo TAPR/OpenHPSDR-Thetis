@@ -44,6 +44,7 @@
             this.btnSetWireSharkFolder = new System.Windows.Forms.ButtonTS();
             this.txtWireSharkFolder = new System.Windows.Forms.TextBoxTS();
             this.panelTS3 = new System.Windows.Forms.PanelTS();
+            this.chkStatusBarWarningNegativeOnly = new System.Windows.Forms.CheckBoxTS();
             this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.panelTS2 = new System.Windows.Forms.PanelTS();
@@ -53,9 +54,7 @@
             this.btnCopyImageToClipboard = new System.Windows.Forms.ButtonTS();
             this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.btnCopyToClipboard = new System.Windows.Forms.ButtonTS();
-            this.labelTS6 = new System.Windows.Forms.LabelTS();
             this.btnClear = new System.Windows.Forms.ButtonTS();
-            this.chkStatusBarWarningNegativeOnly = new System.Windows.Forms.CheckBoxTS();
             this.tabMain.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -268,12 +267,25 @@
             this.panelTS3.Controls.Add(this.btnCopyImageToClipboard);
             this.panelTS3.Controls.Add(this.labelTS5);
             this.panelTS3.Controls.Add(this.btnCopyToClipboard);
-            this.panelTS3.Controls.Add(this.labelTS6);
             this.panelTS3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTS3.Location = new System.Drawing.Point(0, 0);
             this.panelTS3.Name = "panelTS3";
             this.panelTS3.Size = new System.Drawing.Size(852, 168);
             this.panelTS3.TabIndex = 13;
+            // 
+            // chkStatusBarWarningNegativeOnly
+            // 
+            this.chkStatusBarWarningNegativeOnly.AutoSize = true;
+            this.chkStatusBarWarningNegativeOnly.Checked = true;
+            this.chkStatusBarWarningNegativeOnly.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkStatusBarWarningNegativeOnly.Image = null;
+            this.chkStatusBarWarningNegativeOnly.Location = new System.Drawing.Point(587, 140);
+            this.chkStatusBarWarningNegativeOnly.Name = "chkStatusBarWarningNegativeOnly";
+            this.chkStatusBarWarningNegativeOnly.Size = new System.Drawing.Size(171, 17);
+            this.chkStatusBarWarningNegativeOnly.TabIndex = 12;
+            this.chkStatusBarWarningNegativeOnly.Text = "Status bar warning on -VE only";
+            this.chkStatusBarWarningNegativeOnly.UseVisualStyleBackColor = true;
+            this.chkStatusBarWarningNegativeOnly.CheckedChanged += new System.EventHandler(this.chkStatusBarWarningNegativeOnly_CheckedChanged);
             // 
             // labelTS1
             // 
@@ -302,7 +314,7 @@
             this.panelTS2.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.panelTS2.BackgroundImage = global::Thetis.Properties.Resources.warning4;
             this.panelTS2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.panelTS2.Location = new System.Drawing.Point(35, 115);
+            this.panelTS2.Location = new System.Drawing.Point(35, 124);
             this.panelTS2.Name = "panelTS2";
             this.panelTS2.Size = new System.Drawing.Size(18, 16);
             this.panelTS2.TabIndex = 11;
@@ -311,7 +323,7 @@
             // 
             this.labelTS3.AutoSize = true;
             this.labelTS3.Image = null;
-            this.labelTS3.Location = new System.Drawing.Point(59, 91);
+            this.labelTS3.Location = new System.Drawing.Point(59, 95);
             this.labelTS3.Name = "labelTS3";
             this.labelTS3.Size = new System.Drawing.Size(398, 13);
             this.labelTS3.TabIndex = 4;
@@ -325,7 +337,7 @@
             this.panelTS1.BackColor = System.Drawing.Color.Red;
             this.panelTS1.BackgroundImage = global::Thetis.Properties.Resources.warning4;
             this.panelTS1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.panelTS1.Location = new System.Drawing.Point(35, 91);
+            this.panelTS1.Location = new System.Drawing.Point(35, 95);
             this.panelTS1.Name = "panelTS1";
             this.panelTS1.Size = new System.Drawing.Size(18, 16);
             this.panelTS1.TabIndex = 10;
@@ -334,7 +346,7 @@
             // 
             this.labelTS4.AutoSize = true;
             this.labelTS4.Image = null;
-            this.labelTS4.Location = new System.Drawing.Point(59, 118);
+            this.labelTS4.Location = new System.Drawing.Point(59, 127);
             this.labelTS4.Name = "labelTS4";
             this.labelTS4.Size = new System.Drawing.Size(388, 13);
             this.labelTS4.TabIndex = 5;
@@ -375,18 +387,6 @@
             this.btnCopyToClipboard.UseVisualStyleBackColor = true;
             this.btnCopyToClipboard.Click += new System.EventHandler(this.btnCopyToClipboard_Click);
             // 
-            // labelTS6
-            // 
-            this.labelTS6.AutoSize = true;
-            this.labelTS6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTS6.ForeColor = System.Drawing.Color.Red;
-            this.labelTS6.Image = null;
-            this.labelTS6.Location = new System.Drawing.Point(59, 144);
-            this.labelTS6.Name = "labelTS6";
-            this.labelTS6.Size = new System.Drawing.Size(404, 13);
-            this.labelTS6.TabIndex = 7;
-            this.labelTS6.Text = "If you see -ve numbers please post details on the apache-labs forums.";
-            // 
             // btnClear
             // 
             this.btnClear.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -398,20 +398,6 @@
             this.btnClear.Text = "HOLDER";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // chkStatusBarWarningNegativeOnly
-            // 
-            this.chkStatusBarWarningNegativeOnly.AutoSize = true;
-            this.chkStatusBarWarningNegativeOnly.Checked = true;
-            this.chkStatusBarWarningNegativeOnly.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkStatusBarWarningNegativeOnly.Image = null;
-            this.chkStatusBarWarningNegativeOnly.Location = new System.Drawing.Point(587, 140);
-            this.chkStatusBarWarningNegativeOnly.Name = "chkStatusBarWarningNegativeOnly";
-            this.chkStatusBarWarningNegativeOnly.Size = new System.Drawing.Size(171, 17);
-            this.chkStatusBarWarningNegativeOnly.TabIndex = 12;
-            this.chkStatusBarWarningNegativeOnly.Text = "Status bar warning on -VE only";
-            this.chkStatusBarWarningNegativeOnly.UseVisualStyleBackColor = true;
-            this.chkStatusBarWarningNegativeOnly.CheckedChanged += new System.EventHandler(this.chkStatusBarWarningNegativeOnly_CheckedChanged);
             // 
             // frmSeqLog
             // 
@@ -449,7 +435,6 @@
         private System.Windows.Forms.LabelTS labelTS3;
         private System.Windows.Forms.LabelTS labelTS4;
         private System.Windows.Forms.LabelTS labelTS5;
-        private System.Windows.Forms.LabelTS labelTS6;
         private System.Windows.Forms.ButtonTS btnCopyToClipboard;
         private System.Windows.Forms.ButtonTS btnCopyImageToClipboard;
         private System.Windows.Forms.PanelTS panelTS1;

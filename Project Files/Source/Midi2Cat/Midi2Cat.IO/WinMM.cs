@@ -77,10 +77,10 @@ namespace Midi2Cat.IO
         public static extern int MidiInStop(IntPtr hMidiIn);
 
         [DllImport("winmm.dll", EntryPoint = "midiInAddBuffer")]
-        public static extern int MidiInAddBuffer(int hMidiIn, IntPtr headerPtr, int cbMidiInHdr);
+        public static extern int MidiInAddBuffer(IntPtr hMidiIn, IntPtr headerPtr, int cbMidiInHdr);
 
         [DllImport("winmm.dll", EntryPoint = "midiInPrepareHeader")]
-        public static extern int MidiInPrepareHeader(int hMidiIn, IntPtr headerPtr, int cbMidiInHdr);
+        public static extern int MidiInPrepareHeader(IntPtr hMidiIn, IntPtr headerPtr, int cbMidiInHdr);
 
         [DllImport("winmm.dll", EntryPoint = "midiInUnprepareHeader")]
         public static extern int MidiInUnprepareHeader(int hMidiIn, IntPtr headerPtr, int cbMidiInHdr);

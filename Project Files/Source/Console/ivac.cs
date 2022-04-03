@@ -96,11 +96,14 @@
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACmon", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACmon(int id, int mon);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACmonVol", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACmonVol(int id, double vol);
+
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACmox", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACmox(int id, int mox);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "getIVACdiags", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void getIVACdiags(int id, int type, int* underflows, int* overflows, double* var, int* ringsize);
+        public static extern void getIVACdiags(int id, int type, int* underflows, int* overflows, double* var, int* ringsize, int* nring);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "forceIVACvar", CallingConvention = CallingConvention.Cdecl)]
         public static extern void forceIVACvar(int id, int type, bool force, double fvar);
@@ -108,6 +111,36 @@
         [DllImport("ChannelMaster.dll", EntryPoint = "resetIVACdiags", CallingConvention = CallingConvention.Cdecl)]
         public static extern void resetIVACdiags(int id, int type);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACFeedbackGain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACFeedbackGain(int id, int type, double feedback_gain);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACSlewTime", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACSlewTime(int id, int type, double slew_time);
+
+        //
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACPropRingMin", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACPropRingMin(int id, int type, int prop_min);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACPropRingMax", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACPropRingMax(int id, int type, int prop_max);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACFFRingMin", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACFFRingMin(int id, int type, int ff_ringmin);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACFFRingMax", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACFFRingMax(int id, int type, int ff_ringmax);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACFFAlpha", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACFFAlpha(int id, int type, double ff_alpha);
+        //[DllImport("ChannelMaster.dll", EntryPoint = "SetIVACvar", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern void SetIVACvar(int id, int type, double var);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "GetIVACControlFlag", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetIVACControlFlag(int id, int type, int* control_flag);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACinitialVars", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACinitialVars(int id, double INvar, double OUTvar);
+        //
         #endregion
 
     }

@@ -39,6 +39,7 @@ void size_calcc (CALCC a)
 	a->cm = (double *) malloc0 (a->ints * 4 * sizeof(double));
 	a->cc = (double *) malloc0 (a->ints * 4 * sizeof(double));
 	a->cs = (double *) malloc0 (a->ints * 4 * sizeof(double));
+	a->cm_old = (double *) malloc0 (a->ints * 4 * sizeof (double));
 
 	a->rxs = (double *) malloc0 (a->nsamps * sizeof (complex));
 	a->txs = (double *) malloc0 (a->nsamps * sizeof (complex));
@@ -77,6 +78,7 @@ void desize_calcc (CALCC a)
 	_aligned_free (a->ctrl.cpi);
 	_aligned_free (a->rxs);
 	_aligned_free (a->txs);
+	_aligned_free (a->cm_old);
 	_aligned_free (a->cm);
 	_aligned_free (a->cc);
 	_aligned_free (a->cs);
@@ -493,18 +495,22 @@ cleanup:
 void scheck(CALCC a)
 {
 	int i, j, k;
-	double v, dx, out;
+	double v, dx, out, x, xold;
 	int intm1 = a->ints - 1;
+	const double diff_thresh = 0.05;
 	a->binfo[6] = 0x0000;
+
 	for (i = 0; i < 4 * a->ints; i++)
 	{
 		if (isnan (a->cm[i])) a->binfo[6] |= 0x0001;
 		if (isnan (a->cc[i])) a->binfo[6] |= 0x0001;
 		if (isnan (a->cs[i])) a->binfo[6] |= 0x0001;
 	}
+
 	for (i = 0; i < a->ints; i++)
 		if ((a->cm[4 * i + 0] == 0.0) && (a->cm[4 * i + 1] == 0.0) &&
 			(a->cm[4 * i + 2] == 0.0) && (a->cm[4 * i + 3] == 0.0)) a->binfo[6] |= 0x0002;
+
 	for (i = 0; i < a->ints; i++)
 	{
 		for (j = 0; j < 4; j++)
@@ -518,11 +524,19 @@ void scheck(CALCC a)
 			if (out < 0.0) a->binfo[6] |= 0x0010;
 		} 
 	}
-	dx = a->t[a->ints] - a->t[a->ints - 1];
-	out = a->cm[4 * intm1 + 0] + dx * (a->cm[4 * intm1 + 1] + dx * (a->cm[4 * intm1 + 2] + dx * a->cm[4 * intm1 + 3]));
-	if (out > 1.07)	// VALUE
+
+	dx = a->t[a->ints] - a->t[intm1];
+	x = a->cm[4 * intm1 + 0] + dx * (a->cm[4 * intm1 + 1] + dx * (a->cm[4 * intm1 + 2] + dx * a->cm[4 * intm1 + 3]));
+
+	if (x > 1.07)	// VALUE
 		a->binfo[6] |= 0x0008;
-	if (out < 0.0) a->binfo[6] |= 0x0020;
+	if (x < 0.0) a->binfo[6] |= 0x0020;
+
+	for (i = 4; i < a->ints; i++)
+		if (fabs (a->cm[4 * i + 0] - a->cm_old[4 * i + 0]) > diff_thresh) a->binfo[6] |= 0x0040;
+	xold = a->cm_old[4 * intm1 + 0] + dx * (a->cm_old[4 * intm1 + 1] + dx * (a->cm_old[4 * intm1 + 2] + dx * a->cm_old[4 * intm1 + 3]));
+	if (fabs (x - xold) > diff_thresh) a->binfo[6] |= 0x0040;
+	memcpy (a->cm_old, a->cm, a->ints * 4 * sizeof(double));
 }
 
 void rxscheck (int rints, double* tvec, double* coef, int* info)
@@ -931,6 +945,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 						{
 							int nmin = 0;
 							int nmax = a->ints;
+
 							while (nmax - nmin > 1)
 							{
 								n = (nmin + nmax) / 2;

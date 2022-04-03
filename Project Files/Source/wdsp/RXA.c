@@ -26,6 +26,8 @@ warren@wpratt.com
 
 #include "comm.h"
 
+struct _rxa rxa[MAX_CHANNELS];
+
 void create_rxa (int channel)
 {
 	rxa[channel].mode = RXA_LSB;
@@ -90,7 +92,7 @@ void create_rxa (int channel)
 		0,												// run the notches
 		0,												// position
 		ch[channel].dsp_size,							// buffer size
-		2048,											// number of coefficients
+		max(2048, ch[channel].dsp_size),				// number of coefficients
 		0,												// minimum phase flag
 		rxa[channel].midbuff,							// pointer to input buffer
 		rxa[channel].midbuff,							// pointer to output buffer
@@ -109,7 +111,7 @@ void create_rxa (int channel)
 		0,												// run the notches
 		0,												// position
 		ch[channel].dsp_size,							// size
-		2048,											// number of filter coefficients
+		max(2048, ch[channel].dsp_size),				// number of filter coefficients
 		0,												// minimum phase flag
 		rxa[channel].midbuff,							// input buffer
 		rxa[channel].midbuff,							// output buffer
@@ -204,9 +206,9 @@ void create_rxa (int channel)
 		0.5,											// audio gain
 		1,												// run tone filter
 		254.1,											// ctcss frequency
-		2048,											// # coefs for de-emphasis filter
+		max(2048, ch[channel].dsp_size),				// # coefs for de-emphasis filter
 		0,												// min phase flag for de-emphasis filter
-		2048,											// # coefs for audio cutoff filter
+		max(2048, ch[channel].dsp_size),				// # coefs for audio cutoff filter
 		0);												// min phase flag for audio cutoff filter
 
 	// FM squelch
@@ -228,7 +230,7 @@ void create_rxa (int channel)
 		0.562,											// noise level to initiate unmute
 		0.000,											// minimum tail time
 		1.200,											// maximum tail time
-		2048,											// number of coefficients for noise filter
+		max(2048, ch[channel].dsp_size),				// number of coefficients for noise filter
 		0);												// minimum phase flag
 
 	// snba
@@ -260,7 +262,7 @@ void create_rxa (int channel)
 	rxa[channel].eqp.p = create_eqp (
 		0,												// run - OFF by default
 		ch[channel].dsp_size,							// buffer size
-		2048,											// number of filter coefficients
+		max(2048, ch[channel].dsp_size),				// number of filter coefficients
 		0,												// minimum phase flag
 		rxa[channel].midbuff,							// pointer to input buffer
 		rxa[channel].midbuff,							// pointer to output buffer
@@ -376,7 +378,7 @@ void create_rxa (int channel)
 		1,												// run - used only with ( AM || ANF || ANR || EMNR)
 		0,												// position
 		ch[channel].dsp_size,							// buffer size
-		2048,											// number of coefficients
+		max(2048, ch[channel].dsp_size),				// number of coefficients
 		0,												// flag for minimum phase
 		rxa[channel].midbuff,							// pointer to input buffer
 		rxa[channel].midbuff,							// pointer to output buffer
@@ -899,7 +901,7 @@ void RXAbpsnbaSet (int channel)
 ********************************************************************************************************/
 
 PORT
-RXASetPassband (int channel, double f_low, double f_high)
+void RXASetPassband (int channel, double f_low, double f_high)
 {
 	SetRXABandpassFreqs			(channel, f_low, f_high);
 	SetRXASNBAOutputBandwidth	(channel, f_low, f_high);
@@ -907,21 +909,21 @@ RXASetPassband (int channel, double f_low, double f_high)
 }
 
 PORT
-RXASetNC (int channel, int nc)
+void RXASetNC (int channel, int nc)
 {
 	int oldstate = SetChannelState (channel, 0, 1);
 	RXANBPSetNC					(channel, nc);
 	RXABPSNBASetNC				(channel, nc);
 	SetRXABandpassNC			(channel, nc);
-	// SetRXAEQNC					(channel, nc);
-	// SetRXAFMSQNC					(channel, nc);
-	// SetRXAFMNCde					(channel, nc);
+	SetRXAEQNC					(channel, nc);
+	SetRXAFMSQNC				(channel, nc);
+	SetRXAFMNCde				(channel, nc);
 	SetRXAFMNCaud				(channel, nc);
 	SetChannelState (channel, oldstate, 0);
 }
 
 PORT
-RXASetMP (int channel, int mp)
+void RXASetMP (int channel, int mp)
 {
 	RXANBPSetMP					(channel, mp);
 	RXABPSNBASetMP				(channel, mp);

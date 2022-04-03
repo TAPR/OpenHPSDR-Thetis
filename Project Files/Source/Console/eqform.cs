@@ -32,6 +32,7 @@ namespace Thetis
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Windows.Forms;
+    using System.Collections.Generic;
 
 	/// <summary>
 	/// Summary description for EQForm.
@@ -1302,11 +1303,41 @@ namespace Thetis
             this.ResumeLayout(false);
 
 		}
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
+        public void HighlightTXProfileSaveItems(bool bHighlight)
+        {
+            Common.HightlightControl(chkTXEQEnabled, bHighlight);
 
-		public int NumBands
+            Common.HightlightControl(rad3Band, bHighlight);
+            Common.HightlightControl(rad10Band, bHighlight);
+
+            Common.HightlightControl(tbTXEQPre, bHighlight);
+            Common.HightlightControl(tbTXEQ0, bHighlight);
+            Common.HightlightControl(tbTXEQ1, bHighlight);
+            Common.HightlightControl(tbTXEQ2, bHighlight);
+            Common.HightlightControl(tbTXEQ3, bHighlight);
+            Common.HightlightControl(tbTXEQ4, bHighlight);
+            Common.HightlightControl(tbTXEQ5, bHighlight);
+            Common.HightlightControl(tbTXEQ6, bHighlight);
+            Common.HightlightControl(tbTXEQ7, bHighlight);
+            Common.HightlightControl(tbTXEQ8, bHighlight);
+            Common.HightlightControl(tbTXEQ9, bHighlight);
+            
+            Common.HightlightControl(udTXEQ0, bHighlight);
+            Common.HightlightControl(udTXEQ1, bHighlight);
+            Common.HightlightControl(udTXEQ2, bHighlight);
+            Common.HightlightControl(udTXEQ3, bHighlight);
+            Common.HightlightControl(udTXEQ4, bHighlight);
+            Common.HightlightControl(udTXEQ5, bHighlight);
+            Common.HightlightControl(udTXEQ6, bHighlight);
+            Common.HightlightControl(udTXEQ7, bHighlight);
+            Common.HightlightControl(udTXEQ8, bHighlight);
+            Common.HightlightControl(udTXEQ9, bHighlight);
+        }
+
+        public int NumBands
 		{
 			get 
 			{
@@ -1390,8 +1421,22 @@ namespace Thetis
 
 				picRXEQ.Invalidate();
 				tbRXEQ_Scroll(this, EventArgs.Empty);
-			}
-		}
+
+                // nasty, if only the value changed event had been used instead. At least 1 5 9 is used in 3 band so dont need any special case for this
+                // notice how now we are RXEQ1 and not RXEQ0 as per the TX array :/
+                setDBtip(tbRXEQPreamp);
+                setDBtip(tbRXEQ1);
+                setDBtip(tbRXEQ2);
+                setDBtip(tbRXEQ3);
+                setDBtip(tbRXEQ4);
+                setDBtip(tbRXEQ5);
+                setDBtip(tbRXEQ6);
+                setDBtip(tbRXEQ7);
+                setDBtip(tbRXEQ8);
+                setDBtip(tbRXEQ9);
+                setDBtip(tbRXEQ10);
+            }
+        }
 
 		public int[] TXEQ
 		{
@@ -1478,10 +1523,31 @@ namespace Thetis
                 udTXEQ8.Value = Math.Max(udTXEQ8.Minimum, Math.Min(udTXEQ8.Maximum, value[19]));
                 udTXEQ9.Value = Math.Max(udTXEQ9.Minimum, Math.Min(udTXEQ9.Maximum, value[20]));
                 //}
-				//picTXEQ.Invalidate();
-				//tbTXEQ_Scroll(this, EventArgs.Empty);
-			}
-		}
+                //picTXEQ.Invalidate();
+                //tbTXEQ_Scroll(this, EventArgs.Empty);
+
+                //MW0LGE_21g
+                // the sliders accessed above with the new data do not cause scroll events
+                // so nothing will get updated. They may cause value change events but these are not handled
+                // let us force the txeqprofile through
+                setTXEQProfile(this, EventArgs.Empty);
+                //
+
+                // nasty, if only the value changed event had been used instead
+                setDBtip(tbTXEQPre);
+                setDBtip(tbTXEQ0);
+                setDBtip(tbTXEQ1);
+                setDBtip(tbTXEQ2);
+                setDBtip(tbTXEQ3);
+                setDBtip(tbTXEQ4);
+                setDBtip(tbTXEQ5);
+                setDBtip(tbTXEQ6);
+                setDBtip(tbTXEQ7);
+                setDBtip(tbTXEQ8);
+                setDBtip(tbTXEQ9);
+
+            }
+        }
 
 		public bool RXEQEnabled
 		{
@@ -1536,8 +1602,93 @@ namespace Thetis
 				console.radio.GetDSPRX(1, 0).RXEQ10 = rxeq;
 			}
 			picRXEQ.Invalidate();
+
+            setDBtip(sender);
 		}
 
+        private void setDBtip(object sender)
+        {
+            if (sender.GetType() != typeof(TrackBarTS)) return;
+            TrackBarTS tb = (TrackBarTS)sender;
+
+            int db;
+
+            switch (tb.Name)
+            {
+                //RX
+                case "tbRXEQPreamp":
+                    db = tbRXEQPreamp.Value;
+                    break;
+                case "tbRXEQ1":
+                    db = tbRXEQ1.Value;
+                    break;
+                case "tbRXEQ2":
+                    db = tbRXEQ2.Value;
+                    break;
+                case "tbRXEQ3":
+                    db = tbRXEQ3.Value;
+                    break;
+                case "tbRXEQ4":
+                    db = tbRXEQ4.Value;
+                    break;
+                case "tbRXEQ5":
+                    db = tbRXEQ5.Value;
+                    break;
+                case "tbRXEQ6":
+                    db = tbRXEQ6.Value;
+                    break;
+                case "tbRXEQ7":
+                    db = tbRXEQ7.Value;
+                    break;
+                case "tbRXEQ8":
+                    db = tbRXEQ8.Value;
+                    break;
+                case "tbRXEQ9":
+                    db = tbRXEQ9.Value;
+                    break;
+                case "tbRXEQ10":
+                    db = tbRXEQ10.Value;
+                    break;
+                //TX
+                case "tbTXEQPre":
+                    db = tbTXEQPre.Value;
+                    break;
+                case "tbTXEQ0":
+                    db = tbTXEQ0.Value;
+                    break;
+                case "tbTXEQ1":
+                    db = tbTXEQ1.Value;
+                    break;
+                case "tbTXEQ2":
+                    db = tbTXEQ2.Value;
+                    break;
+                case "tbTXEQ3":
+                    db = tbTXEQ3.Value;
+                    break;
+                case "tbTXEQ4":
+                    db = tbTXEQ4.Value;
+                    break;
+                case "tbTXEQ5":
+                    db = tbTXEQ5.Value;
+                    break;
+                case "tbTXEQ6":
+                    db = tbTXEQ6.Value;
+                    break;
+                case "tbTXEQ7":
+                    db = tbTXEQ7.Value;
+                    break;
+                case "tbTXEQ8":
+                    db = tbTXEQ8.Value;
+                    break;
+                case "tbTXEQ9":
+                    db = tbTXEQ9.Value;
+                    break;
+
+                default:
+                    return;
+            }
+            toolTip1.SetToolTip(tb, db.ToString() + " dB");
+        }
         //private void tbTXEQ_Scroll(object sender, System.EventArgs e)
         //{
         //    int[] txeq = TXEQ;
@@ -1599,7 +1750,11 @@ namespace Thetis
 		private void chkRXEQEnabled_CheckedChanged(object sender, System.EventArgs e)
 		{
 			console.radio.GetDSPRX(0, 0).RXEQOn = chkRXEQEnabled.Checked;
-			picRXEQ.Invalidate();
+            console.radio.GetDSPRX(1, 0).RXEQOn = chkRXEQEnabled.Checked; //MW0LGE_21b set anyway, even if using single rx as the
+                                                                          //eq data is applied to this rx anyway
+                                                                          //in tbRXEQ_Scroll
+
+            picRXEQ.Invalidate();
 			console.RXEQ = chkRXEQEnabled.Checked;
 		}
 
@@ -1830,6 +1985,8 @@ namespace Thetis
                    WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr);
                 }
             }
+
+            setDBtip(sender);
         }
 
 		#endregion		

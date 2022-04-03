@@ -73,6 +73,8 @@ namespace Thetis
         public static bool FastConnect { get; set; } = false;
         public static HPSDRHW BoardID { get; set; } = HPSDRHW.Hermes;
         public static byte FWCodeVersion { get; set; } = 0;
+        public static byte BetaVersion { get; set; } = 0;
+        public static byte ProtocolSupported { get; set; } = 0;        
         public static string EthernetHostIPAddress { get; set; } = "";
         public static int EthernetHostPort { get; set; } = 0;
         public static string HpSdrHwIpAddress { get; set; } = "";
@@ -256,6 +258,8 @@ namespace Thetis
             int chosenDevice = 0;
             BoardID = hpsdrd[chosenDevice].deviceType;
             FWCodeVersion = hpsdrd[chosenDevice].codeVersion;
+            BetaVersion = hpsdrd[chosenDevice].betaVersion;
+            ProtocolSupported = hpsdrd[chosenDevice].protocolSupported;
             HpSdrHwIpAddress = hpsdrd[chosenDevice].IPAddress;
             HpSdrHwMacAddress = hpsdrd[chosenDevice].MACAddress;
             EthernetHostIPAddress = hpsdrd[chosenDevice].hostPortIPAddress.ToString();
@@ -637,6 +641,7 @@ namespace Thetis
                                     IPAddress = receivedIP,
                                     MACAddress = MAC,
                                     deviceType = CurrentRadioProtocol == RadioProtocol.USB ? (HPSDRHW)data[10] : (HPSDRHW)data[11],
+                                    protocolSupported = CurrentRadioProtocol == RadioProtocol.USB ? (byte)0 : data[12],
                                     codeVersion = CurrentRadioProtocol == RadioProtocol.USB ? data[9] : data[13],
                                     hostPortIPAddress = hostPortIPAddress,
                                     localPort = localEndPoint.Port,
@@ -647,6 +652,7 @@ namespace Thetis
                                     PennyVersion = data[18],
                                     MetisVersion = data[19],
                                     numRxs = data[20],
+                                    betaVersion = CurrentRadioProtocol == RadioProtocol.USB ? (byte)0 : data[23],
                                     protocol = CurrentRadioProtocol
                                 };
 
@@ -809,6 +815,8 @@ namespace Thetis
         public byte MetisVersion;
         public byte numRxs;
         public RadioProtocol protocol;
+        public byte betaVersion;                // byte[23] from P2 discovery packet. MW0LGE_21d
+        public byte protocolSupported;          // byte[12] from P2 discovery packet. MW0LGE_21d 
     }
 
     public class NicProperties

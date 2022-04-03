@@ -128,7 +128,7 @@ void setFreqs_firmin (FIRMIN a, double f_low, double f_high)
 *																										*
 ********************************************************************************************************/
 
-plan_firopt (FIROPT a)
+void plan_firopt (FIROPT a)
 {
 	// must call for change in 'nc', 'size', 'out'
 	int i;
@@ -152,7 +152,7 @@ plan_firopt (FIROPT a)
 	a->crev = fftw_plan_dft_1d(2 * a->size, (fftw_complex *)a->accum, (fftw_complex *)a->out, FFTW_BACKWARD, FFTW_PATIENT);
 }
 
-calc_firopt (FIROPT a)
+void calc_firopt (FIROPT a)
 {
 	// call for change in frequency, rate, wintype, gain
 	// must also call after a call to plan_firopt()
@@ -287,7 +287,7 @@ void setFreqs_firopt (FIROPT a, double f_low, double f_high)
 ********************************************************************************************************/
 
 
-plan_fircore (FIRCORE a)
+void plan_fircore (FIRCORE a)
 {
 	// must call for change in 'nc', 'size', 'out'
 	int i;
@@ -319,7 +319,7 @@ plan_fircore (FIRCORE a)
 	a->masks_ready = 0;
 }
 
-calc_fircore (FIRCORE a, int flip)
+void calc_fircore (FIRCORE a, int flip)
 {
 	// call for change in frequency, rate, wintype, gain
 	// must also call after a call to plan_firopt()

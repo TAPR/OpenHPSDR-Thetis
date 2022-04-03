@@ -3461,7 +3461,7 @@ namespace Thetis
 
         }
 
-        private object m_objBufferLock = new object();
+        private readonly Object m_objBufferLock = new Object();
 
         private Thread draw_display_thread;
         public void StartDisplay(int rx)

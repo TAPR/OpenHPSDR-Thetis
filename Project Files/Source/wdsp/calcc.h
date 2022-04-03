@@ -52,6 +52,7 @@ typedef struct _calcc
 	double* cm;
 	double* cc;
 	double* cs;
+	double* cm_old;
 	double* rxs;
 	double* txs;
 	double ptol;

@@ -191,6 +191,13 @@ int getSeqInDelta(int nInit, int rx, int deltas[], char* dateTimeStamp, int *rec
 }
 
 PORT
+int GetPLLLock()
+{
+
+	return (prn->pll_locked & 0x10) != 0;
+}
+
+PORT
 int getUserI01() 
 {
 
@@ -1258,6 +1265,7 @@ void create_rnet()
 		prn->ptt_in = 0;
 		prn->dot_in = 0;
 		prn->dash_in = 0;
+		prn->pll_locked = 0; //MW0LGE_21d
 		prn->cc_seq_no = 0;
 		prn->cc_seq_err = 0;
 

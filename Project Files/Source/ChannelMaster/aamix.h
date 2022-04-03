@@ -111,6 +111,7 @@ extern void xMixAudio (void* ptr, int id, int stream, double* data);
 
 extern void SetAAudioMixOutputPointer(void* ptr, int id, void (*Outbound)(int id, int nsamples, double* buff));
 
+extern __declspec (dllexport) void SetAAudioMixVol(void* ptr, int id, int stream, double vol);
 extern __declspec (dllexport) void SetAAudioMixVolume (void* ptr, int id, double volume);
 extern __declspec (dllexport) void SetAAudioMixState (void* ptr, int id, int stream, int state);
 extern __declspec (dllexport) void SetAAudioMixStates (void* ptr, int id, int streams, int states);

@@ -436,8 +436,8 @@ void xnob (NOB a)
                                 a->time = 0;
                                 if ((tidx = a->scan_idx + a->hang_slew_count + a->hang_count - a->adv_count - a->adv_slew_count) >= a->dline_size) tidx -= a->dline_size;
                                 if (tidx < 0) tidx += a->dline_size;
-                                a->Inext = a->dline[tidx, 0];
-                                a->Qnext = a->dline[tidx, 1];
+                                a->Inext = a->dline[2 * tidx + 0];
+                                a->Qnext = a->dline[2 * tidx + 1];
                             }
                             else
                             {
@@ -459,8 +459,8 @@ void xnob (NOB a)
                                 a->time = 0;
                                 if ((tidx = a->scan_idx + a->hang_slew_count - a->adv_count - a->adv_slew_count) >= a->dline_size) tidx -= a->dline_size;
                                 if (tidx < 0) tidx += a->dline_size;
-                                a->Inext = a->dline[tidx, 0];
-                                a->Qnext = a->dline[tidx, 1];
+                                a->Inext = a->dline[2 * tidx + 0];
+                                a->Qnext = a->dline[2 * tidx + 1];
                             }
                             else
                             {

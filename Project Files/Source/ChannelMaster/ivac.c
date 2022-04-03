@@ -34,12 +34,12 @@ void create_resamps(IVAC a)
 	a->INringsize = (int)(2 * a->mic_rate * a->in_latency);		// FROM VAC to mic
 	a->OUTringsize = (int)(2 * a->vac_rate * a->out_latency);	// TO VAC from rx audio
 
-	a->rmatchIN  = create_rmatchV (a->vac_size, a->mic_size, a->vac_rate, a->mic_rate, a->INringsize);			// data FROM VAC TO TX MIC INPUT
+	a->rmatchIN  = create_rmatchV (a->vac_size, a->mic_size, a->vac_rate, a->mic_rate, a->INringsize, a->initial_INvar);			// data FROM VAC TO TX MIC INPUT
 	forceRMatchVar (a->rmatchIN, a->INforce, a->INfvar);
 	if (!a->iq_type)
-		a->rmatchOUT = create_rmatchV (a->audio_size, a->vac_size, a->audio_rate, a->vac_rate, a->OUTringsize);	// data FROM RADIO TO VAC
+		a->rmatchOUT = create_rmatchV (a->audio_size, a->vac_size, a->audio_rate, a->vac_rate, a->OUTringsize, a->initial_OUTvar);	// data FROM RADIO TO VAC
 	else
-		a->rmatchOUT = create_rmatchV (a->iq_size, a->vac_size, a->iq_rate, a->vac_rate, a->OUTringsize);		// RX I-Q data going to VAC
+		a->rmatchOUT = create_rmatchV (a->iq_size, a->vac_size, a->iq_rate, a->vac_rate, a->OUTringsize, a->initial_OUTvar);		// RX I-Q data going to VAC
 	forceRMatchVar (a->rmatchOUT, a->OUTforce, a->OUTfvar);
 	a->bitbucket = (double *) malloc0 (getbuffsize (pcm->cmMAXInRate) * sizeof (complex));
 }
@@ -84,6 +84,8 @@ PORT void create_ivac(
 	a->INfvar = 1.0;
 	a->OUTforce = 0;
 	a->OUTfvar = 1.0;
+	a->initial_INvar = 1.0;
+	a->initial_OUTvar = 1.0;
 	create_resamps(a);
 	{
 		int inrate[2] = { a->audio_rate, a->txmon_rate };
@@ -461,7 +463,14 @@ PORT void SetIVACmon(int id, int mon)
 	{
 		SetAAudioMixWhat(a->mixer, 0, 0, 0);
 		SetAAudioMixWhat(a->mixer, 0, 1, 0);
-	}
+	}	
+}
+
+PORT void SetIVACmonVol(int id, double vol)
+{
+	IVAC a = pvac[id];
+	a->vac_mon_scale = vol;
+	SetAAudioMixVol(a->mixer, 0, 1, a->vac_mon_scale);
 }
 
 PORT void SetIVACpreamp(int id, double preamp)
@@ -504,7 +513,7 @@ void scalebuff(int size, double* in, double scale, double* out)
 }
 
 PORT
-void getIVACdiags (int id, int type, int* underflows, int* overflows, double* var, int* ringsize)
+void getIVACdiags (int id, int type, int* underflows, int* overflows, double* var, int* ringsize, int* nring)
 {
 	// type:  0 - From VAC; 1 - To VAC
 	void* a;
@@ -512,7 +521,7 @@ void getIVACdiags (int id, int type, int* underflows, int* overflows, double* va
 		a = pvac[id]->rmatchOUT;
 	else
 		a = pvac[id]->rmatchIN;
-	getRMatchDiags (a, underflows, overflows, var, ringsize);
+	getRMatchDiags (a, underflows, overflows, var, ringsize, nring);
 }
 
 PORT
@@ -546,3 +555,129 @@ void resetIVACdiags(int id, int type)
 		a = pvac[id]->rmatchIN;
 	resetRMatchDiags(a);
 }
+
+//MW0LGE_21h
+PORT void SetIVACFeedbackGain(int id, int type, double feedback_gain)
+{
+	IVAC b = pvac[id];
+	// type = 0 out, 1 = in
+	void* a;
+	if (type == 0)
+		a = b->rmatchOUT;
+	else
+		a = b->rmatchIN;
+	setRMatchFeedbackGain(a, feedback_gain);
+}
+PORT void SetIVACSlewTime(int id, int type, double slew_time)
+{
+	IVAC b = pvac[id];
+	// type = 0 out, 1 = in
+	void* a;
+	if (type == 0)
+		a = b->rmatchOUT;
+	else
+		a = b->rmatchIN;
+	//setRMatchSlewTime(a, slew_time);
+	setRMatchSlewTime1(a, slew_time); // preserve all data in various buffers
+}
+//MW0LGE_21j
+PORT void SetIVACPropRingMin(int id, int type, int prop_min)
+{
+	IVAC b = pvac[id];
+	// type = 0 out, 1 = in
+	void* a;
+	if (type == 0)
+		a = b->rmatchOUT;
+	else
+		a = b->rmatchIN;
+	setRMatchPropRingMin(a, prop_min);
+}
+PORT void SetIVACPropRingMax(int id, int type, int prop_max)
+{
+	IVAC b = pvac[id];
+	// type = 0 out, 1 = in
+	void* a;
+	if (type == 0)
+		a = b->rmatchOUT;
+	else
+		a = b->rmatchIN;
+	setRMatchPropRingMax(a, prop_max);
+}
+PORT void SetIVACFFRingMin(int id, int type, int ff_ringmin)
+{
+	IVAC b = pvac[id];
+	// type = 0 out, 1 = in
+	void* a;
+	if (type == 0)
+		a = b->rmatchOUT;
+	else
+		a = b->rmatchIN;
+	setRMatchFFRingMin(a, ff_ringmin);
+}
+PORT void SetIVACFFRingMax(int id, int type, int ff_ringmax)
+{
+	IVAC b = pvac[id];
+	// type = 0 out, 1 = in
+	void* a;
+	if (type == 0)
+		a = b->rmatchOUT;
+	else
+		a = b->rmatchIN;
+	setRMatchFFRingMax(a, ff_ringmax);
+}
+PORT void SetIVACFFAlpha(int id, int type, double ff_alpha)
+{
+	IVAC b = pvac[id];
+	// type = 0 out, 1 = in
+	void* a;
+	if (type == 0)
+		a = b->rmatchOUT;
+	else
+		a = b->rmatchIN;
+	setRMatchFFAlpha(a, ff_alpha);
+}
+//PORT void SetIVACvar(int id, int type, double var)
+//{
+//	IVAC b = pvac[id];
+//	// type = 0 out, 1 = in
+//	void* a;
+//	if (type == 0)
+//		a = b->rmatchOUT;
+//	else
+//		a = b->rmatchIN;
+//	setRMatchVar(a, var);
+//}
+PORT
+void GetIVACControlFlag(int id, int type, int* control_flag)
+{
+	// type:  0 - From VAC; 1 - To VAC
+	void* a;
+	if (type == 0)
+		a = pvac[id]->rmatchOUT;
+	else
+		a = pvac[id]->rmatchIN;
+	getControlFlag(a, control_flag);
+}
+PORT 
+void SetIVACinitialVars(int id, double INvar, double OUTvar)
+{
+	IVAC a = pvac[id];
+	int change = 0;
+
+	if (INvar != a->initial_INvar)
+	{
+		a->initial_INvar = INvar;
+		change = 1;
+	}
+	if (OUTvar != a->initial_OUTvar)
+	{
+		a->initial_OUTvar = OUTvar;
+		change = 1;
+	}
+	if (change)
+	{
+		destroy_resamps(a);
+		create_resamps(a);
+	}
+}
+//

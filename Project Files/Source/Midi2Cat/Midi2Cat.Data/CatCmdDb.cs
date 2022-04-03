@@ -417,6 +417,84 @@ namespace Midi2Cat.Data
         DiversityReference = 262,
         [CatCommandAttribute("Diversity RX Source", ControlType.Button, true)]
         DiversitySource = 263,
+        [CatCommandAttribute("2Tone On Off", ControlType.Button, true)]  //MW0LGE_21g
+        TwoToneOnOff = 264,
+        [CatCommandAttribute("PS-A On Off", ControlType.Button, true)] // DH1KLM_21g
+        PSOnOff = 265,
+        [CatCommandAttribute("Move VFOB Down 100Khz", ControlType.Button)] // DH1KLM_21g
+        MoveVFOBDown100Khz = 266,
+        [CatCommandAttribute("Move VFOB Up 100Khz", ControlType.Button)] // DH1KLM_21g
+        MoveVFOBUp100Khz = 267,
+        [CatCommandAttribute("RX2 Auto Notch On Off", ControlType.Button, true)] // DH1KLM_21g
+        RX2AutoNotchOnOff = 268,
+        [CatCommandAttribute("RX2 Mode Next", ControlType.Button)] // DH1KLM_21g
+        Rx2ModeNext = 269,
+        [CatCommandAttribute("RX2 Mode Prev", ControlType.Button)] // DH1KLM_21g
+        Rx2ModePrev = 270,
+        [CatCommandAttribute("RX2 Filter Wider", ControlType.Button)] // DH1KLM_21g
+        Rx2FilterWider = 271,
+        [CatCommandAttribute("RX2 Filter Narrower", ControlType.Button)] // DH1KLM_21g
+        Rx2FilterNarrower = 272,
+        [CatCommandAttribute("RX2 AGC Mode Up", ControlType.Button)] // DH1KLM_21g
+        RX2AGCModeUp = 273,
+        [CatCommandAttribute("RX2 AGC Mode Down", ControlType.Button)] // DH1KLM_21g
+        RX2AGCModeDown = 274,
+        [CatCommandAttribute("RX2 CTUN On Off", ControlType.Button, true)] // DH1KLM_21g
+        RX2CTunOnOff = 275,
+        [CatCommandAttribute("RX2 Mode SSB", ControlType.Button)] // DH1KLM_21g 
+        RX2ModeSSB = 276,
+        [CatCommandAttribute("RX2 Mode LSB", ControlType.Button)] // DH1KLM_21g
+        RX2ModeLSB = 277,
+        [CatCommandAttribute("RX2 Mode USB", ControlType.Button)] // DH1KLM_21g
+        RX2ModeUSB = 278,
+        [CatCommandAttribute("RX2 Mode DSB", ControlType.Button)] // DH1KLM_21g
+        RX2ModeDSB = 279,
+        [CatCommandAttribute("RX2 Mode CW", ControlType.Button)] // DH1KLM_21g
+        RX2ModeCW = 280,
+        [CatCommandAttribute("RX2 Mode CWL", ControlType.Button)] // DH1KLM_21g
+        RX2ModeCWL = 281,
+        [CatCommandAttribute("RX2 Mode CWU", ControlType.Button)] // DH1KLM_21g
+        RX2ModeCWU = 282,
+        [CatCommandAttribute("RX2 Mode FM", ControlType.Button)] // DH1KLM_21g
+        RX2ModeFM = 283,
+        [CatCommandAttribute("RX2 Mode AM", ControlType.Button)] // DH1KLM_21g
+        RX2ModeAM = 284,
+        [CatCommandAttribute("RX2 Mode DIGU", ControlType.Button)] // DH1KLM_21g
+        RX2ModeDIGU = 285,
+        [CatCommandAttribute("RX2 Mode SPEC", ControlType.Button)] // DH1KLM_21g
+        RX2ModeSPEC = 286,
+        [CatCommandAttribute("RX2 Mode DIGL", ControlType.Button)] // DH1KLM_21g
+        RX2ModeDIGL = 287,
+        [CatCommandAttribute("RX2 Mode SAM", ControlType.Button)] // DH1KLM_21g
+        RX2ModeSAM = 288,
+        [CatCommandAttribute("RX2 Mode DRM", ControlType.Button)] // DH1KLM_21g
+        RX2ModeDRM = 289,
+        [CatCommandAttribute("Close Thetis", ControlType.Button)] // DH1KLM_21g 
+        CloseConsole = 290,
+        [CatCommandAttribute("Toggle TX VFOA VFOB", ControlType.Button, true)] // DH1KLM_21g
+        ToggleTX = 291,
+        [CatCommandAttribute("RX2 AGC Mode", ControlType.Knob_or_Slider)] //DH1KLM_21g
+        RX2AGCModeKnob = 292,
+        [CatCommandAttribute("TUN Power Level", ControlType.Knob_or_Slider)] //DH1KLM_21g
+        TUNPowerLevel = 293,
+        [CatCommandAttribute("RX2 Squelch On Off", ControlType.Button, true)] // DH1KLM_21g     
+        RX2SquelchOnOff = 294,
+        [CatCommandAttribute("RX2 Squelch Level", ControlType.Knob_or_Slider)] // DH1KLM_21g
+        RX2SquelchControl = 295,
+        [CatCommandAttribute("TX Filter high", ControlType.Wheel)] // DH1KLM_21h
+        TXFilterHigh = 296,
+        [CatCommandAttribute("TX Filter low", ControlType.Wheel)] // DH1KLM_21h
+        TXFilterLow = 297,
+        [CatCommandAttribute("External PA On Off", ControlType.Button, true)] // MW0LGE_21j
+        ExternalPAOnOff = 298,
+        [CatCommandAttribute("Zoom To Band Recall", ControlType.Button)] // MW0LGE_21k9
+        ZoomToBandRecall = 299,
+        [CatCommandAttribute("Zoom To Band Store", ControlType.Button)] // MW0LGE_21k9
+        ZoomToBandStore = 300,
+        [CatCommandAttribute("RX1 Auto AGC compensation", ControlType.Button, true)] // MW0LGE_21k9
+        RX1AutoAGC = 301,
+        [CatCommandAttribute("RX2 Auto AGC compensation", ControlType.Button, true)] // MW0LGE_21k9
+        RX2AutoAGC = 302,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }

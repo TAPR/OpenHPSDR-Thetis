@@ -930,7 +930,7 @@
 		<nsetparms>1</nsetparms>
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
-	</catstruct>
+	</catstruct>	
 	<catstruct code="ZZBI">
 		<desc>extended BIN status</desc>
 		<active>true</active>
@@ -961,6 +961,13 @@
 	</catstruct>
 	<catstruct code="ZZVL">
 		<desc>extended VFO Lock status</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZUP">
+		<desc>External PA button</desc>
 		<active>true</active>
 		<nsetparms>1</nsetparms>
 		<ngetparms>0</ngetparms>
@@ -1365,7 +1372,14 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>11</nansparms>
 	</catstruct>
-	<catstruct code="ZZSD">
+  <catstruct code="ZZFT">
+    <desc>TX Freq</desc>
+    <active>true</active>
+    <nsetparms>11</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>11</nansparms>
+  </catstruct>
+  <catstruct code="ZZSD">
 		<desc>Tune Step Down</desc>
 		<active>true</active>
 		<nsetparms>0</nsetparms>
@@ -2793,4 +2807,39 @@
     <ngetparms>-1</ngetparms>
     <nansparms>-1</nansparms>
   </catstruct>
+  <catstruct code="ZZZT">
+    <desc>Zoom To Band Recall/Store</desc>
+    <active>true</active>
+    <nsetparms>1</nsetparms>
+    <ngetparms>0</ngetparms>
+    <nansparms>1</nansparms>
+  </catstruct>
+	<catstruct code="ZZZQ">
+		<desc>RX1 Auto AGC compensation</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZZR">
+		<desc>RX2 Auto AGC compensation</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZZM">
+		<desc>Get Hardware Model</desc>
+		<active>true</active>
+		<nsetparms>0</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>0</nansparms>	<!-- Answer is variable length -->
+	</catstruct>
+	<catstruct code="ZZZV">
+		<desc>Get Software Version String</desc>
+		<active>true</active>
+		<nsetparms>0</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>0</nansparms>	<!-- Answer is variable length -->		
+	</catstruct>
 </catstructs>

@@ -80,8 +80,7 @@ namespace Thetis
 		private System.Windows.Forms.Timer timer1;
 		private System.Windows.Forms.LabelTS lblStatus;
 		private System.Windows.Forms.Panel pnlStatus;
-		private System.ComponentModel.IContainer components;
-
+        private System.ComponentModel.IContainer components;
 		#endregion
 
 		#region Constructor and Destructor
@@ -124,11 +123,11 @@ namespace Thetis
             // 
             // pnlStatus
             // 
-            this.pnlStatus.BackColor = System.Drawing.Color.White;
+            this.pnlStatus.BackColor = System.Drawing.Color.SkyBlue;
             this.pnlStatus.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pnlStatus.Location = new System.Drawing.Point(42, 259);
+            this.pnlStatus.Location = new System.Drawing.Point(59, 270);
             this.pnlStatus.Name = "pnlStatus";
-            this.pnlStatus.Size = new System.Drawing.Size(300, 17);
+            this.pnlStatus.Size = new System.Drawing.Size(289, 17);
             this.pnlStatus.TabIndex = 2;
             this.pnlStatus.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlStatus_Paint);
             // 
@@ -140,30 +139,31 @@ namespace Thetis
             // lblTimeRemaining
             // 
             this.lblTimeRemaining.BackColor = System.Drawing.Color.Transparent;
-            this.lblTimeRemaining.ForeColor = System.Drawing.Color.Transparent;
+            this.lblTimeRemaining.ForeColor = System.Drawing.Color.White;
             this.lblTimeRemaining.Image = null;
-            this.lblTimeRemaining.Location = new System.Drawing.Point(273, 206);
+            this.lblTimeRemaining.Location = new System.Drawing.Point(256, 290);
             this.lblTimeRemaining.Name = "lblTimeRemaining";
-            this.lblTimeRemaining.Size = new System.Drawing.Size(89, 16);
+            this.lblTimeRemaining.Size = new System.Drawing.Size(92, 16);
             this.lblTimeRemaining.TabIndex = 1;
             this.lblTimeRemaining.Text = "Time";
+            this.lblTimeRemaining.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
-            this.lblStatus.ForeColor = System.Drawing.Color.Black;
+            this.lblStatus.ForeColor = System.Drawing.Color.White;
             this.lblStatus.Image = null;
-            this.lblStatus.Location = new System.Drawing.Point(-1, 9);
+            this.lblStatus.Location = new System.Drawing.Point(12, 252);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(397, 16);
+            this.lblStatus.Size = new System.Drawing.Size(376, 16);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Status";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Splash
             // 
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(397, 318);
+            this.BackgroundImage = global::Thetis.Properties.Resources.thetis_logo1;
+            this.ClientSize = new System.Drawing.Size(400, 320);
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.lblTimeRemaining);
             this.Controls.Add(this.lblStatus);
@@ -222,6 +222,7 @@ namespace Thetis
 				ms_frmSplash.m_dblOpacityIncrement = - 
 					ms_frmSplash.m_dblOpacityDecrement;
 			}
+			//Application.Exit();
 			ms_oThread = null;  // we do not need these any more.
 			ms_frmSplash = null;
 		}
@@ -408,7 +409,6 @@ namespace Thetis
                     //    } while (ttimeDiff.TotalMilliseconds > 400);
                     //    Console.setPowerOn();
                     //});
-
                 }
             }
             if ( m_bFirstLaunch == false && m_dblLastCompletionFraction 
@@ -438,6 +438,7 @@ namespace Thetis
 							iSecondsLeft);
 				}
 			}
+
 		}
 
 		// Paint the portion of the panel invalidated during the tick event.
@@ -468,12 +469,12 @@ namespace Thetis
         {
 
         }
-	}	
+    }
 
-	#region Registry Access Class
+    #region Registry Access Class
 
-	/// A class for managing registry access.
-	public class RegistryAccess
+    /// A class for managing registry access.
+    public class RegistryAccess
 	{
 		private const string SOFTWARE_KEY = "Software";
 		private const string COMPANY_NAME = "OpenHPSDR";

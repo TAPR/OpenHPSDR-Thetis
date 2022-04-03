@@ -420,6 +420,18 @@ namespace Thetis
                     SetupRadioButtonImages((RadioButton)c);
                 return;
             }
+
+            temp = c as ucQuickRecall;
+            if (temp != null)
+            {
+                SetupQuickRecallImages((ucQuickRecall)c);
+            }
+
+            temp = c as ucInfoBar;
+            if (temp != null)
+            {
+                SetupInfoBar((ucInfoBar)c);
+            }
         }
 
         #endregion
@@ -652,6 +664,76 @@ namespace Thetis
                 }
             }
         }
+        private static void SetupQuickRecallImages(ucQuickRecall ctrl)
+        {
+            for (int ii = 0; ii < 3; ii++)
+            {
+                Button b;
+                string sBut;
+                switch (ii)
+                {
+                    case 0:
+                        sBut = "_previous";
+                        b = ctrl.PreviousButton;
+                        break;
+                    case 1:
+                        sBut = "_list";
+                        b = ctrl.ListButton;
+                        break;
+                    case 2:
+                        sBut = "_next";
+                        b = ctrl.NextButton;
+                        break;
+                    default:
+                        sBut = "_previous";
+                        b = ctrl.PreviousButton;
+                        break;
+                }
+
+                if (b.ImageList == null)
+                    b.ImageList = new ImageList();
+                else b.ImageList.Images.Clear();
+                b.ImageList.ImageSize = b.Size; // may be an issue with smaller images
+                b.ImageList.ColorDepth = ColorDepth.Depth32Bit;
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
+                        b.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                    else
+                    {
+                        if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
+                            b.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                    }
+                }
+
+                if (b.ImageList.Images.Count > 0) b.Text = ""; // clear the text if using an image //MW0LGE_21f
+                setupButtonHandlers(b);
+                Button_StateChanged(b, EventArgs.Empty);
+            }
+        }
+        private static void setupButtonHandlers(Button ctrl)
+        {
+            EventHandler handler = new EventHandler(Button_StateChanged);
+            ctrl.Click -= handler; // remove handlers first to ensure they don't get added multiple times
+            ctrl.Click += handler;
+            ctrl.EnabledChanged -= handler;
+            ctrl.EnabledChanged += handler;
+            ctrl.MouseEnter -= new EventHandler(Button_MouseEnter);
+            ctrl.MouseEnter += new EventHandler(Button_MouseEnter);
+            ctrl.MouseLeave -= handler;
+            ctrl.MouseLeave += handler;
+            ctrl.MouseDown -= new MouseEventHandler(Button_MouseDown);
+            ctrl.MouseDown += new MouseEventHandler(Button_MouseDown);
+            ctrl.MouseUp -= new MouseEventHandler(Button_MouseUp);
+            ctrl.MouseUp += new MouseEventHandler(Button_MouseUp);
+            ctrl.GotFocus -= handler;
+            ctrl.GotFocus += handler;
+            ctrl.LostFocus -= handler;
+            ctrl.LostFocus += handler;
+
+            ctrl.BackgroundImage = null;
+        }
 
         private static void SetupButtonImages(Button ctrl)
         {
@@ -673,25 +755,26 @@ namespace Thetis
                         ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
                 }
             }
-            EventHandler handler = new EventHandler(Button_StateChanged);
-            ctrl.Click -= handler; // remove handlers first to ensure they don't get added multiple times
-            ctrl.Click += handler;
-            ctrl.EnabledChanged -= handler;
-            ctrl.EnabledChanged += handler;
-            ctrl.MouseEnter -= new EventHandler(Button_MouseEnter);
-            ctrl.MouseEnter += new EventHandler(Button_MouseEnter);
-            ctrl.MouseLeave -= handler;
-            ctrl.MouseLeave += handler;
-            ctrl.MouseDown -= new MouseEventHandler(Button_MouseDown);
-            ctrl.MouseDown += new MouseEventHandler(Button_MouseDown);
-            ctrl.MouseUp -= new MouseEventHandler(Button_MouseUp);
-            ctrl.MouseUp += new MouseEventHandler(Button_MouseUp);
-            ctrl.GotFocus -= handler;
-            ctrl.GotFocus += handler;
-            ctrl.LostFocus -= handler;
-            ctrl.LostFocus += handler;
+            //EventHandler handler = new EventHandler(Button_StateChanged);
+            //ctrl.Click -= handler; // remove handlers first to ensure they don't get added multiple times
+            //ctrl.Click += handler;
+            //ctrl.EnabledChanged -= handler;
+            //ctrl.EnabledChanged += handler;
+            //ctrl.MouseEnter -= new EventHandler(Button_MouseEnter);
+            //ctrl.MouseEnter += new EventHandler(Button_MouseEnter);
+            //ctrl.MouseLeave -= handler;
+            //ctrl.MouseLeave += handler;
+            //ctrl.MouseDown -= new MouseEventHandler(Button_MouseDown);
+            //ctrl.MouseDown += new MouseEventHandler(Button_MouseDown);
+            //ctrl.MouseUp -= new MouseEventHandler(Button_MouseUp);
+            //ctrl.MouseUp += new MouseEventHandler(Button_MouseUp);
+            //ctrl.GotFocus -= handler;
+            //ctrl.GotFocus += handler;
+            //ctrl.LostFocus -= handler;
+            //ctrl.LostFocus += handler;
 
-            ctrl.BackgroundImage = null;
+            //ctrl.BackgroundImage = null;
+            setupButtonHandlers(ctrl);
             Button_StateChanged(ctrl, EventArgs.Empty);
         }
 
@@ -857,6 +940,14 @@ namespace Thetis
                         ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
                 }
             }
+
+            setupCheckBoxHandlers(ctrl);
+           
+            CheckBox_StateChanged(ctrl, EventArgs.Empty);
+        }
+
+        private static void setupCheckBoxHandlers(CheckBox ctrl)
+        {
             EventHandler handler = new EventHandler(CheckBox_StateChanged);
             ctrl.CheckedChanged -= handler; // remove handlers first to ensure they don't get added multiple times
             ctrl.CheckedChanged += handler;
@@ -872,9 +963,93 @@ namespace Thetis
             ctrl.LostFocus += handler;
 
             ctrl.BackgroundImage = null;
-            CheckBox_StateChanged(ctrl, EventArgs.Empty);
         }
+        private static void SetupInfoBar(ucInfoBar ctrl)
+        {
+            for (int ii = 0; ii < 2; ii++)
+            {
+                CheckBox b;
+                string sBut = "_button" + (ii+1).ToString();
 
+                if (ii == 0)
+                    b = ctrl.Button1;
+                else
+                    b = ctrl.Button2;
+
+                if (b.ImageList == null)
+                    b.ImageList = new ImageList();
+                else b.ImageList.Images.Clear();
+
+                b.ImageList.ImageSize = b.Size; // may be an issue with smaller images
+                b.ImageList.ColorDepth = ColorDepth.Depth32Bit;
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
+                        b.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                    else
+                    {
+                        if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
+                            b.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                    }
+                }
+
+                if (b.ImageList.Images.Count > 0)
+                {
+                    b.BackColor = Color.Transparent;
+                    b.FlatAppearance.CheckedBackColor = Color.Transparent;
+                    b.FlatAppearance.MouseOverBackColor = Color.Transparent;
+                    b.FlatAppearance.MouseDownBackColor = Color.Transparent;
+                }
+                else
+                {
+                    b.BackColor = Color.Transparent;
+                    b.FlatAppearance.CheckedBackColor = Color.Silver;
+                    b.FlatAppearance.MouseOverBackColor = Color.Gray;
+                    b.FlatAppearance.MouseDownBackColor = Color.Gray;
+                }
+
+                setupCheckBoxHandlers(b);
+                CheckBox_StateChanged(b, EventArgs.Empty);
+
+                //setup the 1-8 buttons
+                for(int n = 0; n < 8; n++)
+                {
+                    CheckBox popupButton = ctrl.GetPopupButton(ii + 1, n);
+                    if (popupButton != null)
+                    {
+                        if (popupButton.ImageList == null)
+                            popupButton.ImageList = new ImageList();
+                        else popupButton.ImageList.Images.Clear();
+                        popupButton.ImageList.ImageSize = popupButton.Size;
+                        popupButton.ImageList.ColorDepth = ColorDepth.Depth32Bit;
+
+                        if (b.ImageList.Images.Count > 0)
+                        {
+                            // copy images !
+                            for (int nn = 0;nn < b.ImageList.Images.Count; nn++)
+                            {
+                                popupButton.ImageList.Images.Add(b.ImageList.Images.Keys[nn], b.ImageList.Images[nn]);
+                            }
+                            //
+                            popupButton.BackColor = Color.Transparent;
+                            popupButton.FlatAppearance.CheckedBackColor = Color.Transparent;
+                            popupButton.FlatAppearance.MouseOverBackColor = Color.Transparent;
+                            popupButton.FlatAppearance.MouseDownBackColor = Color.Transparent;
+                        }
+                        else
+                        {
+                            popupButton.BackColor = Color.Transparent;
+                            popupButton.FlatAppearance.CheckedBackColor = Color.Silver;
+                            popupButton.FlatAppearance.MouseOverBackColor = Color.Gray;
+                            popupButton.FlatAppearance.MouseDownBackColor = Color.Gray;
+                        }
+                        setupCheckBoxHandlers(popupButton);
+                        CheckBox_StateChanged(popupButton, EventArgs.Empty);
+                    }
+                }
+            }
+        }
         private static void CheckBox_StateChanged(object sender, EventArgs e)
         {
             CheckBox ctrl = (CheckBox)sender;
@@ -1250,12 +1425,15 @@ namespace Thetis
             ctrl.EnabledChanged += handler;
             ctrl.MouseEnter -= new EventHandler(RadioButton_MouseEnter);
             ctrl.MouseEnter += new EventHandler(RadioButton_MouseEnter);
-            ctrl.MouseLeave -= handler;
-            ctrl.MouseLeave += handler;
-            ctrl.GotFocus += handler;
+            //MW0LGE_21d surely we want to add handlers?
+            //ctrl.GotFocus += handler;
+            //ctrl.GotFocus -= handler;
+            //ctrl.LostFocus += handler;
+            //ctrl.LostFocus -= handler;
             ctrl.GotFocus -= handler;
-            ctrl.LostFocus += handler;
+            ctrl.GotFocus += handler;
             ctrl.LostFocus -= handler;
+            ctrl.LostFocus += handler;
 
             ctrl.BackgroundImage = null;
             RadioButton_StateChanged(ctrl, EventArgs.Empty);
@@ -1265,7 +1443,6 @@ namespace Thetis
         {
             RadioButton ctrl = (RadioButton)sender;
             ImageState state = ImageState.NormalUp;
-
             if (!ctrl.Enabled &&
                 ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledDown.ToString()) >= 0 &&
                 ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledUp.ToString()) >= 0)

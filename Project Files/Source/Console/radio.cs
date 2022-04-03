@@ -32,6 +32,7 @@ namespace Thetis
     using System;
     using System.Collections.Generic;
     using System.Threading;
+    using System.Diagnostics;
 
     #region Radio Class 
 
@@ -357,8 +358,8 @@ namespace Thetis
 		{
 			get { return buffer_size; }
 			set
-			{				
-				buffer_size = value;
+			{
+                buffer_size = value;
 				if(update)
 				{
 					if(value != buffer_size_dsp || force)
@@ -367,8 +368,8 @@ namespace Thetis
 						buffer_size_dsp = value;
 					}
 				}
-			}
-		}
+            }
+        }
 
         private int filter_size_dsp = 2048;
         private int filter_size = 2048;
@@ -1143,8 +1144,8 @@ namespace Thetis
                         WDSP.SetRXAShiftFreq(WDSP.id(thread, subrx), -value);
                         WDSP.RXANBPSetShiftFrequency(WDSP.id(thread, subrx), -value);
 						rx_osc_dsp = value;
-					}
-				}
+                    }
+                }
 			}
 		}
 
@@ -3202,17 +3203,21 @@ namespace Thetis
             get { return list; }
         }
 
+        private static Object m_objListLock = new Object(); //MW0LGE_21k8
         //MW0LGE return a notch that matches
         public static MNotch GetFirstNotchThatMatches(double freqHz, double fwidth, bool bActive)
         {
             MNotch notch = null;
 
-            foreach (MNotch n in list)
+            lock (m_objListLock)
             {
-                if (n.FCenter==freqHz && n.FWidth==fwidth && n.Active==bActive)
+                foreach (MNotch n in list)
                 {
-                    notch = n;
-                    break;
+                    if (n.FCenter == freqHz && n.FWidth == fwidth && n.Active == bActive)
+                    {
+                        notch = n;
+                        break;
+                    }
                 }
             }
 
@@ -3221,9 +3226,12 @@ namespace Thetis
         //MW0LGE check if notch close by
         public static bool NotchNearFreq(double freqHz, int deltaHz)
         {
-            foreach (MNotch n in list)
+            lock (m_objListLock)
             {
-                if (Math.Abs(freqHz - n.FCenter) < deltaHz) return true;
+                foreach (MNotch n in list)
+                {
+                    if (Math.Abs(freqHz - n.FCenter) < deltaHz) return true;
+                }
             }
 
             return false;
@@ -3237,10 +3245,13 @@ namespace Thetis
             double min = centreBWFreqHz + lowHz;
             double max = centreBWFreqHz + highHz;
 
-            foreach (MNotch n in list)
+            lock (m_objListLock)
             {
-                if (((n.FCenter + n.FWidth/2) >= min) && ((n.FCenter - n.FWidth/2) <= max))
-                    l.Add(n);
+                foreach (MNotch n in list)
+                {
+                    if (((n.FCenter + n.FWidth / 2) >= min) && ((n.FCenter - n.FWidth / 2) <= max))
+                        l.Add(n);
+                }
             }
 
             return l;
@@ -3318,8 +3329,8 @@ namespace Thetis
             index = s.IndexOf("active:");
 
             bool active;
-            string a;
-            a = s.Substring(index + 7);
+            //string a;
+            //a = s.Substring(index + 7);
             active = bool.Parse(s.Substring(index + 7));
 
             return new MNotch(freq, width, active);

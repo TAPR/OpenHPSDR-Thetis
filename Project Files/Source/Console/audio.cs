@@ -31,6 +31,8 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading;
 //using ProjectCeilidh.PortAudio;
 //using ProjectCeilidh.PortAudio.Native;
 //using static ProjectCeilidh.PortAudio.Native.PortAudio;
@@ -227,6 +229,23 @@ namespace Thetis
             {
                 monitor_volume = value;
                 cmaster.CMSetAudioVolume(value);
+
+                //MW0LGE_21k-rc2
+                if (vfob_tx)
+                {
+                    if (rx2_enabled) // need to check the vac2 split thing ?
+                    {
+                        ivac.SetIVACmonVol(1, monitor_volume);
+                    }
+                    else
+                    {
+                        ivac.SetIVACmonVol(0, monitor_volume);
+                    }
+                }
+                else
+                {
+                    ivac.SetIVACmonVol(0, monitor_volume);
+                }
             }
         }
 
@@ -343,27 +362,45 @@ namespace Thetis
             }
         }
 
+        private static void setupIVACforMon()
+        {
+            //MW0LGE_21k9d - reworked
+            if (mon && vfob_tx)
+            {
+                if (rx2_enabled) // need to check the vac2 split thing?
+                {
+                    ivac.SetIVACmon(0, 0);
+                    ivac.SetIVACmon(1, 1);
+                    ivac.SetIVACmonVol(1, monitor_volume);
+                }
+                else
+                {
+                    ivac.SetIVACmon(0, 1);
+                    ivac.SetIVACmon(1, 0);
+                    ivac.SetIVACmonVol(0, monitor_volume);
+                }                                    
+            }
+            else if (mon && !vfob_tx)
+            {
+                ivac.SetIVACmon(0, 1);
+                ivac.SetIVACmon(1, 0);
+                ivac.SetIVACmonVol(0, monitor_volume);
+            }
+            else if (!mon)
+            {
+                ivac.SetIVACmon(0, 0);
+                ivac.SetIVACmon(1, 0);
+            }
+        }
         private static bool mon;
         public static bool MON
         {
             set
             {
                 mon = value;
-                if (mon && vfob_tx)
-                {
-                    ivac.SetIVACmon(0, 0);
-                    ivac.SetIVACmon(1, 1);
-                }
-                if (mon && !vfob_tx)
-                {
-                    ivac.SetIVACmon(0, 1);
-                    ivac.SetIVACmon(1, 0);
-                }
-                if (!mon)
-                {
-                    ivac.SetIVACmon(0, 0);
-                    ivac.SetIVACmon(1, 0);
-                }
+
+                setupIVACforMon();
+
                 unsafe
                 {
                     cmaster.SetAAudioMixVol((void*)0, 0, WDSP.id(1, 0), 0.5);
@@ -846,6 +883,376 @@ namespace Thetis
             set { latency3 = value; }
         }
 
+        //MW0LGE_21h/i/j
+        private static double vac1_feedbackgainIn = 4.0e-06;
+        private static double vac1_slewtimeIn = 0.003;
+        private static double vac2_feedbackgainIn = 4.0e-06;
+        private static double vac2_slewtimeIn = 0.003;
+
+        private static int vac1_prop_ringminIn = 4096;
+        private static int vac1_prop_ringmaxIn = 16384; // power of 2
+        private static int vac2_prop_ringminIn = 4096;
+        private static int vac2_prop_ringmaxIn = 16384; // power of 2
+        private static int vac1_ff_ringminIn = 4096;
+        private static int vac1_ff_ringmaxIn = 262144; // power of 2
+        private static int vac2_ff_ringminIn = 4096;
+        private static int vac2_ff_ringmaxIn = 262144; // power of 2
+
+        private static double vac1_ff_alphaIn = 0.01;
+        private static double vac2_ff_alphaIn = 0.01;
+
+        private static double vac1_oldVarIn = 1.0;
+        private static double vac2_oldVarIn = 1.0;
+
+        private static double vac1_feedbackgainOut = 4.0e-06;
+        private static double vac1_slewtimeOut = 0.003;
+        private static double vac2_feedbackgainOut = 4.0e-06;
+        private static double vac2_slewtimeOut = 0.003;
+
+        private static int vac1_prop_ringminOut = 4096;
+        private static int vac1_prop_ringmaxOut = 16384; // power of 2
+        private static int vac2_prop_ringminOut = 4096;
+        private static int vac2_prop_ringmaxOut = 16384; // power of 2
+        private static int vac1_ff_ringminOut = 4096;
+        private static int vac1_ff_ringmaxOut = 262144; // power of 2
+        private static int vac2_ff_ringminOut = 4096;
+        private static int vac2_ff_ringmaxOut = 262144; // power of 2
+
+        private static double vac1_ff_alphaOut = 0.01;
+        private static double vac2_ff_alphaOut = 0.01;
+
+        private static double vac1_oldVarOut = 1.0;
+        private static double vac2_oldVarOut = 1.0;
+
+        private static bool isPowerOfTwo(int x)
+        {
+            return (x != 0) && ((x & (x - 1)) == 0);
+        }
+
+        //vac1in
+        public static double VAC1FeedbackGainIn
+        {
+            set { 
+                vac1_feedbackgainIn = value;
+                ivac.SetIVACFeedbackGain(0, 1, vac1_feedbackgainIn);
+            }
+        }
+        public static double VAC1SlewTimeIn
+        {
+            set { 
+                vac1_slewtimeIn = value;
+                ivac.SetIVACSlewTime(0, 1, vac1_slewtimeIn);
+            }
+        }
+        public static int VAC1PropRingMinIn
+        {
+            get { return vac1_prop_ringminIn; }
+            set
+            {
+                vac1_prop_ringminIn = value;
+                ivac.SetIVACPropRingMin(0, 1, vac1_prop_ringminIn);
+            }
+        }
+        public static int VAC1PropRingMaxIn
+        {
+            get { return vac1_prop_ringmaxIn; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac1_prop_ringmaxIn = value;
+                ivac.SetIVACPropRingMax(0, 1, vac1_prop_ringmaxIn);
+            }
+        }
+        public static int VAC1FFRingMinIn
+        {
+            get { return vac1_ff_ringminIn; }
+            set
+            {
+                vac1_ff_ringminIn = value;
+                ivac.SetIVACFFRingMin(0, 1, vac1_ff_ringminIn);
+            }
+        }
+        public static int VAC1FFRingMaxIn
+        {
+            get { return vac1_ff_ringmaxIn; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac1_ff_ringmaxIn = value;
+                ivac.SetIVACFFRingMax(0, 1, vac1_ff_ringmaxIn);
+            }
+        }
+        public static double VAC1FFAlphaIn
+        {
+            set
+            {
+                vac1_ff_alphaIn = value;
+                ivac.SetIVACFFAlpha(0, 1, vac1_ff_alphaIn);
+            }
+        }
+        public static double VAC1OldVarIn
+        {
+            set
+            {
+                vac1_oldVarIn = value;
+                //ivac.SetIVACvar(0, 1, vac1_oldVarIn); // used in vac enable only
+            }
+        }
+        public static bool VAC1ControlFlagIn
+        {
+            get {
+                int flg;
+                unsafe
+                {
+                    ivac.GetIVACControlFlag(0, 1, &flg);
+                }
+                return flg == 1;
+            }
+        }
+
+        //vac1out
+        public static double VAC1FeedbackGainOut
+        {
+            set { 
+                vac1_feedbackgainOut = value;
+                ivac.SetIVACFeedbackGain(0, 0, vac1_feedbackgainOut);
+            }
+        }
+        public static double VAC1SlewTimeOut
+        {
+            set { 
+                vac1_slewtimeOut = value;
+                ivac.SetIVACSlewTime(0, 0, vac1_slewtimeOut);
+            }
+        }
+        public static int VAC1PropRingMinOut
+        {
+            get { return vac1_prop_ringminOut; }
+            set
+            {
+                vac1_prop_ringminOut = value;
+                ivac.SetIVACPropRingMin(0, 0, vac1_prop_ringminOut);
+            }
+        }
+        public static int VAC1PropRingMaxOut
+        {
+            get { return vac1_prop_ringmaxOut; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac1_prop_ringmaxOut = value;
+                ivac.SetIVACPropRingMax(0, 0, vac1_prop_ringmaxOut);
+            }
+        }
+        public static int VAC1FFRingMinOut
+        {
+            get { return vac1_ff_ringminOut; }
+            set
+            {
+                vac1_ff_ringminOut = value;
+                ivac.SetIVACFFRingMin(0, 0, vac1_ff_ringminOut);
+            }
+        }
+        public static int VAC1FFRingMaxOut
+        {
+            get { return vac1_ff_ringmaxOut; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac1_ff_ringmaxOut = value;
+                ivac.SetIVACFFRingMax(0, 0, vac1_ff_ringmaxOut);
+            }
+        }
+        public static double VAC1FFAlphaOut
+        {
+            set
+            {
+                vac1_ff_alphaOut = value;
+                ivac.SetIVACFFAlpha(0, 0, vac1_ff_alphaOut);
+            }
+        }
+        public static double VAC1OldVarOut
+        {
+            set
+            {
+                vac1_oldVarOut = value;
+                //ivac.SetIVACvar(0, 0, vac1_oldVarOut);  // used in vac enable only
+            }
+        }
+        public static bool VAC1ControlFlagOut
+        {
+            get
+            {
+                int flg;
+                unsafe
+                {
+                    ivac.GetIVACControlFlag(0, 0, &flg);
+                }
+                return flg == 1;
+            }
+        }
+
+        //vac2in
+        public static double VAC2FeedbackGainIn
+        {
+            set { 
+                vac2_feedbackgainIn = value;
+                ivac.SetIVACFeedbackGain(1, 1, vac2_feedbackgainIn);
+            }
+        }
+        public static double VAC2SlewTimeIn
+        {
+            set { 
+                vac2_slewtimeIn = value;
+                ivac.SetIVACSlewTime(1, 1, vac2_slewtimeIn);
+            }
+        }
+        public static int VAC2PropRingMinIn
+        {
+            set
+            {
+                vac2_prop_ringminIn = value;
+                ivac.SetIVACPropRingMin(1, 1, vac2_prop_ringminIn);
+            }
+        }
+        public static int VAC2PropRingMaxIn
+        {
+            get { return vac2_prop_ringmaxIn; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac2_prop_ringmaxIn = value;
+                ivac.SetIVACPropRingMax(1, 1, vac2_prop_ringmaxIn);
+            }
+        }
+        public static int VAC2FFRingMinIn
+        {
+            set
+            {
+                vac2_ff_ringminIn = value;
+                ivac.SetIVACFFRingMin(1, 1, vac2_ff_ringminIn);
+            }
+        }
+        public static int VAC2FFRingMaxIn
+        {
+            get { return vac2_ff_ringmaxIn; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac2_ff_ringmaxIn = value;
+                ivac.SetIVACFFRingMax(1, 1, vac2_ff_ringmaxIn);
+            }
+        }
+        public static double VAC2FFAlphaIn
+        {
+            set
+            {
+                vac2_ff_alphaIn = value;
+                ivac.SetIVACFFAlpha(1, 1, vac2_ff_alphaIn);
+            }
+        }
+        public static double VAC2OldVarIn
+        {
+            set
+            {
+                vac2_oldVarIn = value;
+                //ivac.SetIVACvar(1, 1, vac2_oldVarIn);  // used in vac enable only
+            }
+        }
+        public static bool VAC2ControlFlagIn
+        {
+            get
+            {
+                int flg;
+                unsafe
+                {
+                    ivac.GetIVACControlFlag(1, 1, &flg);
+                }
+                return flg == 1;
+            }
+        }
+
+        //vac2out
+        public static double VAC2FeedbackGainOut
+        {
+            set { 
+                vac2_feedbackgainOut = value;
+                ivac.SetIVACFeedbackGain(1, 0, vac2_feedbackgainOut);
+            }
+        }
+        public static double VAC2SlewTimeOut
+        {
+            set { 
+                vac2_slewtimeOut = value;
+                ivac.SetIVACSlewTime(1, 0, vac2_slewtimeOut);
+            }
+        }
+        public static int VAC2PropRingMinOut
+        {
+            set
+            {
+                vac2_prop_ringminOut = value;
+                ivac.SetIVACPropRingMin(1, 0, vac2_prop_ringminOut);
+            }
+        }
+        public static int VAC2PropRingMaxOut
+        {
+            get { return vac2_prop_ringmaxOut; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac2_prop_ringmaxOut = value;
+                ivac.SetIVACPropRingMax(1, 0, vac2_prop_ringmaxOut);
+            }
+        }
+        public static int VAC2FFRingMinOut
+        {
+            set
+            {
+                vac2_ff_ringminOut = value;
+                ivac.SetIVACFFRingMin(1, 0, vac2_ff_ringminOut);
+            }
+        }
+        public static int VAC2FFRingMaxOut
+        {
+            get { return vac2_ff_ringmaxOut; }
+            set
+            {
+                if (!isPowerOfTwo(value)) return;
+                vac2_ff_ringmaxOut = value;
+                ivac.SetIVACFFRingMax(1, 0, vac2_ff_ringmaxOut);
+            }
+        }
+        public static double VAC2FFAlphaOut
+        {
+            set
+            {
+                vac2_ff_alphaOut = value;
+                ivac.SetIVACFFAlpha(1, 0, vac2_ff_alphaOut);
+            }
+        }
+        public static double VAC2OldVarOut
+        {
+            set
+            {
+                vac2_oldVarOut = value;
+                //ivac.SetIVACvar(1, 0, vac2_oldVarOut);  // used in vac enable only
+            }
+        }
+        public static bool VAC2ControlFlagOut
+        {
+            get
+            {
+                int flg;
+                unsafe
+                {
+                    ivac.GetIVACControlFlag(1, 0, &flg);
+                }
+                return flg == 1;
+            }
+        }
+        //
+
         private static bool mute_rx1 = false;
         public static bool MuteRX1
         {
@@ -853,6 +1260,9 @@ namespace Thetis
             set
             {
                 mute_rx1 = value;
+
+                setupIVACforMon(); //MW0LGE_21k9d
+
                 unsafe
                 {
                     cmaster.SetAAudioMixWhat((void*)0, 0, 0, !mute_rx1);
@@ -868,6 +1278,9 @@ namespace Thetis
             set
             {
                 mute_rx2 = value;
+
+                setupIVACforMon(); //MW0LGE_21k9d
+
                 unsafe
                 {
                     cmaster.SetAAudioMixWhat((void*)0, 0, 2, !mute_rx2);
@@ -1164,7 +1577,6 @@ namespace Thetis
         //    return a;
         //}
 
-
         public static void EnableVAC1(bool enable)
         {
             bool retval = false;
@@ -1188,6 +1600,7 @@ namespace Thetis
                         block_size = block_size1;
                     }
                     else if (vac_stereo) num_chan = 2;
+
                     VACRBReset = true;
 
                     ivac.SetIVAChostAPIindex(0, host2);
@@ -1198,6 +1611,29 @@ namespace Thetis
                     ivac.SetIVACOutLatency(0, out_latency, 0);
                     ivac.SetIVACPAInLatency(0, pa_in_latency, 0);
                     ivac.SetIVACPAOutLatency(0, pa_out_latency, 1);
+
+                    // MW0LGE_21h
+                    ivac.SetIVACFeedbackGain(0, 0, vac1_feedbackgainOut);
+                    ivac.SetIVACFeedbackGain(0, 1, vac1_feedbackgainIn);
+                    ivac.SetIVACSlewTime(0, 0, vac1_slewtimeOut);
+                    ivac.SetIVACSlewTime(0, 1, vac1_slewtimeIn);
+                    //
+
+                    // MW0LGE_21j
+                    ivac.SetIVACPropRingMin(0, 0, vac1_prop_ringminOut);
+                    ivac.SetIVACPropRingMin(0, 1, vac1_prop_ringminIn);
+                    ivac.SetIVACPropRingMax(0, 0, vac1_prop_ringmaxOut);
+                    ivac.SetIVACPropRingMax(0, 1, vac1_prop_ringmaxIn);
+                    ivac.SetIVACFFRingMin(0, 0, vac1_ff_ringminOut);
+                    ivac.SetIVACFFRingMin(0, 1, vac1_ff_ringminIn);
+                    ivac.SetIVACFFRingMax(0, 0, vac1_ff_ringmaxOut);
+                    ivac.SetIVACFFRingMax(0, 1, vac1_ff_ringmaxIn);
+                    ivac.SetIVACFFAlpha(0, 0, vac1_ff_alphaOut);
+                    ivac.SetIVACFFAlpha(0, 1, vac1_ff_alphaIn);
+                    //ivac.SetIVACvar(0, 0, vac1_oldVarOut);
+                    //ivac.SetIVACvar(0, 1, vac1_oldVarIn);
+                    ivac.SetIVACinitialVars(0, vac1_oldVarIn, vac1_oldVarOut);
+                    //
 
                     try
                     {
@@ -1218,6 +1654,8 @@ namespace Thetis
             {
                 ivac.SetIVACrun(0, 0);
                 ivac.StopAudioIVAC(0);
+
+                Thread.Sleep(10); //MW0LGE_21k9rc4 prevent exception when using ASIO 
             }
 
         }
@@ -1257,6 +1695,29 @@ namespace Thetis
                     ivac.SetIVACPAInLatency(1, pa_in_latency, 0);
                     ivac.SetIVACPAOutLatency(1, pa_out_latency, 1);
 
+                    // MW0LGE_21h
+                    ivac.SetIVACFeedbackGain(1, 0, vac2_feedbackgainOut);
+                    ivac.SetIVACFeedbackGain(1, 1, vac2_feedbackgainIn);
+                    ivac.SetIVACSlewTime(1, 0, vac2_slewtimeOut);
+                    ivac.SetIVACSlewTime(1, 1, vac2_slewtimeIn);
+                    //
+
+                    // MW0LGE_21j
+                    ivac.SetIVACPropRingMin(1, 0, vac2_prop_ringminOut);
+                    ivac.SetIVACPropRingMin(1, 1, vac2_prop_ringminIn);
+                    ivac.SetIVACPropRingMax(1, 0, vac2_prop_ringmaxOut);
+                    ivac.SetIVACPropRingMax(1, 1, vac2_prop_ringmaxIn);
+                    ivac.SetIVACFFRingMin(1, 0, vac2_ff_ringminOut);
+                    ivac.SetIVACFFRingMin(1, 1, vac2_ff_ringminIn);
+                    ivac.SetIVACFFRingMax(1, 0, vac2_ff_ringmaxOut);
+                    ivac.SetIVACFFRingMax(1, 1, vac2_ff_ringmaxIn);
+                    ivac.SetIVACFFAlpha(1, 0, vac2_ff_alphaOut);
+                    ivac.SetIVACFFAlpha(1, 1, vac2_ff_alphaIn);
+                    //ivac.SetIVACvar(1, 0, vac2_oldVarOut);
+                    //ivac.SetIVACvar(1, 1, vac2_oldVarIn);
+                    ivac.SetIVACinitialVars(1, vac2_oldVarIn, vac2_oldVarOut);
+                    //
+
                     try
                     {
                         retval = ivac.StartAudioIVAC(1) == 1;
@@ -1277,12 +1738,16 @@ namespace Thetis
             {
                 ivac.SetIVACrun(1, 0);
                 ivac.StopAudioIVAC(1);
+
+                Thread.Sleep(10); //MW0LGE_21k9rc4 prevent exception when using ASIO
             }
 
         }
 
         public static bool Start()
         {
+            RadioProtocol oldProto = NetworkIO.CurrentRadioProtocol;
+
             bool retval = false;
             int rc;
             phase_buf_l = new float[2048];
@@ -1319,18 +1784,19 @@ namespace Thetis
                 console.SampleRateTX = 48000; // set tx audio sampling rate  
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), false);
                 puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
-                console.psform.PSdefpeak = "0.4072";
+                //console.psform.PSdefpeak = "0.4072"; //MW0LGE_21k9rc5 moved to psform.SetDefaultPeaks()
             }
             else
             {
                 console.SampleRateTX = 192000;
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
                 puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
-                console.psform.PSdefpeak = "0.2899";
-            }
+                //console.psform.PSdefpeak = "0.2899";
+            }            
+            console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6
 
             c.SetupForm.InitAudioTab();
-            c.SetupForm.ForceReset = true;
+            c.SetupForm.ForceAudioReset();
             cmaster.PSLoopback = cmaster.PSLoopback;
 
             int result = NetworkIO.StartAudioNative();
@@ -1374,76 +1840,109 @@ namespace Thetis
 
         private static int scope_display_width = 704;
 
-        public static int ScopeDisplayWidth
-        {
-            get { return scope_display_width; }
-            set { scope_display_width = value; }
-        }
+        //public static int ScopeDisplayWidth
+        //{
+        //    get { return scope_display_width; }
+        //    set {
+        //        lock (m_objArrayLock)
+        //        {
+        //            scope_display_width = value;
+        //        }
+        //    }
+        //}
 
-        private static int scope_sample_index;
-        private static int scope_pixel_index;
+        private static int scope_sample_index = 0;
+        private static int scope_pixel_index = 0;
         private static float scope_pixel_min = float.MaxValue;
         private static float scope_pixel_max = float.MinValue;
         private static float[] scope_min;
 
+        private static readonly Object m_objArrayLock = new Object();        //MW0LGE_21k9 lock needed as display can change the size of these arrays, and being in a different thread will cause issues otherwise
         public static float[] ScopeMin
         {
-            set { scope_min = value; }
+            set {
+                lock (m_objArrayLock)
+                {
+                    scope_min = value;
+                    scope_pixel_index = 0; // MW0LGE_21k9
+
+                    int nMin = scope_min != null ? scope_min.Length : 0;
+                    int nMax = scope_max != null ? scope_max.Length : 0;
+
+                    scope_display_width = Math.Min(nMin, nMax);
+                }
+            }
         }
 
         public static float[] scope_max;
 
         public static float[] ScopeMax
         {
-            set { scope_max = value; }
+            set {
+                lock (m_objArrayLock)
+                {
+                    scope_max = value;
+                    scope_pixel_index = 0; // MW0LGE_21k9
+
+                    int nMin = scope_min != null ? scope_min.Length : 0;
+                    int nMax = scope_max != null ? scope_max.Length : 0;
+
+                    scope_display_width = Math.Min(nMin, nMax);
+                }
+            }
         }
 
         unsafe public static void DoScope(float* buf, int frameCount)
         {
-            if (scope_min == null || scope_min.Length < scope_display_width)
+            lock (m_objArrayLock)
             {
-                if (Display.ScopeMin == null || Display.ScopeMin.Length < scope_display_width)
-                    Display.ScopeMin = new float[scope_display_width];
-                scope_min = Display.ScopeMin;
-            }
-            if (scope_max == null || scope_max.Length < scope_display_width)
-            {
-                if (Display.ScopeMax == null || Display.ScopeMax.Length < scope_display_width)
-                    Display.ScopeMax = new float[scope_display_width];
-                scope_max = Display.ScopeMax;
-            }
+                //if (scope_min == null || scope_min.Length < scope_display_width)
+                //{
+                //    if (Display.ScopeMin == null || Display.ScopeMin.Length < scope_display_width)
+                //        Display.ScopeMin = new float[scope_display_width];
+                //    scope_min = Display.ScopeMin;
+                //}
+                //if (scope_max == null || scope_max.Length < scope_display_width)
+                //{
+                //    if (Display.ScopeMax == null || Display.ScopeMax.Length < scope_display_width)
+                //        Display.ScopeMax = new float[scope_display_width];
+                //    scope_max = Display.ScopeMax;
+                //}
+                if (scope_min == null || scope_max == null) return;
 
-            for (int i = 0; i < frameCount; i++)
-            {
-                if (Display.CurrentDisplayMode == DisplayMode.SCOPE || //MW0LGE added all other scope modes
-                    Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
-                    Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
+                for (int i = 0; i < frameCount; i++)
                 {
-                    if (buf[i] < scope_pixel_min)
+                    if (Display.CurrentDisplayMode == DisplayMode.SCOPE || //MW0LGE added all other scope modes
+                        Display.CurrentDisplayMode == DisplayMode.SCOPE2 || //MW0LGE_21g
+                        Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
+                        Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
+                    {
+                        if (buf[i] < scope_pixel_min)
+                            scope_pixel_min = buf[i];
+                        if (buf[i] > scope_pixel_max)
+                            scope_pixel_max = buf[i];
+                    }
+                    else
+                    {
                         scope_pixel_min = buf[i];
-                    if (buf[i] > scope_pixel_max)
                         scope_pixel_max = buf[i];
-                }
-                else
-                {
-                    scope_pixel_min = buf[i];
-                    scope_pixel_max = buf[i];
-                }
+                    }
 
 
-                scope_sample_index++;
-                if (scope_sample_index >= scope_samples_per_pixel)
-                {
-                    scope_sample_index = 0;
-                    scope_min[scope_pixel_index] = scope_pixel_min;
-                    scope_max[scope_pixel_index] = scope_pixel_max;
+                    scope_sample_index++;
+                    if (scope_sample_index >= scope_samples_per_pixel)
+                    {
+                        scope_sample_index = 0;
+                        scope_min[scope_pixel_index] = scope_pixel_min;
+                        scope_max[scope_pixel_index] = scope_pixel_max;
 
-                    scope_pixel_min = float.MaxValue;
-                    scope_pixel_max = float.MinValue;
+                        scope_pixel_min = float.MaxValue;
+                        scope_pixel_max = float.MinValue;
 
-                    scope_pixel_index++;
-                    if (scope_pixel_index >= scope_display_width)
-                        scope_pixel_index = 0;
+                        scope_pixel_index++;
+                        if (scope_pixel_index >= scope_display_width)
+                            scope_pixel_index = 0;
+                    }
                 }
             }
         }
@@ -1452,8 +1951,8 @@ namespace Thetis
 
         #region Scope2 Stuff
 
-        private static int scope2_sample_index;
-        private static int scope2_pixel_index;
+        private static int scope2_sample_index = 0;
+        private static int scope2_pixel_index = 0;
         private static float scope2_pixel_min = float.MaxValue;
         private static float scope2_pixel_max = float.MinValue;
         public static float[] scope2_max;
@@ -1461,59 +1960,86 @@ namespace Thetis
 
         public static float[] Scope2Max
         {
-            set { scope2_max = value; }
+            set {
+                lock (m_objArrayLock)
+                {
+                    scope2_max = value;
+                    scope2_pixel_index = 0; //MW0LGE_21k9
+
+                    int nMin = scope2_min != null ? scope2_min.Length : 0;
+                    int nMax = scope2_max != null ? scope2_max.Length : 0;
+
+                    scope_display_width = Math.Min(nMin, nMax);
+                }
+            }
         }
         public static float[] Scope2Min
         {
-            set { scope2_min = value; }
+            set {
+                lock (m_objArrayLock)
+                {
+                    scope2_min = value;
+                    scope2_pixel_index = 0; //MW0LGE_21k9
+
+                    int nMin = scope2_min != null ? scope2_min.Length : 0;
+                    int nMax = scope2_max != null ? scope2_max.Length : 0;
+
+                    scope_display_width = Math.Min(nMin, nMax);
+                }
+            }
         }
 
         unsafe public static void DoScope2(float* buf, int frameCount)
         {
-            if (scope2_min == null || scope2_min.Length < scope_display_width)
+            lock (m_objArrayLock)
             {
-                if (Display.Scope2Min == null || Display.Scope2Min.Length < scope_display_width)
-                    Display.Scope2Min = new float[scope_display_width];
-                scope2_min = Display.Scope2Min;
-            }
-            if (scope2_max == null || scope2_max.Length < scope_display_width)
-            {
-                if (Display.Scope2Max == null || Display.Scope2Max.Length < scope_display_width)
-                    Display.Scope2Max = new float[scope_display_width];
-                scope2_max = Display.Scope2Max;
-            }
+                //if (scope2_min == null || scope2_min.Length < scope_display_width)
+                //{
+                //    if (Display.Scope2Min == null || Display.Scope2Min.Length < scope_display_width)
+                //        Display.Scope2Min = new float[scope_display_width];
+                //    scope2_min = Display.Scope2Min;
+                //}
+                //if (scope2_max == null || scope2_max.Length < scope_display_width)
+                //{
+                //    if (Display.Scope2Max == null || Display.Scope2Max.Length < scope_display_width)
+                //        Display.Scope2Max = new float[scope_display_width];
+                //    scope2_max = Display.Scope2Max;
+                //}
+                if (scope2_min == null || scope2_max == null) return;
 
-            for (int i = 0; i < frameCount; i++)
-            {
-                if (Display.CurrentDisplayMode == DisplayMode.SCOPE ||
-                    Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
-                    Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
+                for (int i = 0; i < frameCount; i++)
                 {
-                    if (buf[i] < scope2_pixel_min)
+                    if (Display.CurrentDisplayMode == DisplayMode.SCOPE ||
+                        Display.CurrentDisplayMode == DisplayMode.SCOPE2 || //MW0LGE_21g
+                        Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
+                        Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE)
+                    {
+                        if (buf[i] < scope2_pixel_min)
+                            scope2_pixel_min = buf[i];
+                        if (buf[i] > scope2_pixel_max)
+                            scope2_pixel_max = buf[i];
+                    }
+                    else
+                    {
                         scope2_pixel_min = buf[i];
-                    if (buf[i] > scope2_pixel_max)
                         scope2_pixel_max = buf[i];
-                }
-                else
-                {
-                    scope2_pixel_min = buf[i];
-                    scope2_pixel_max = buf[i];
-                }
+                    }
 
 
-                scope2_sample_index++;
-                if (scope2_sample_index >= scope_samples_per_pixel)
-                {
-                    scope2_sample_index = 0;
-                    scope2_min[scope_pixel_index] = scope2_pixel_min;
-                    scope2_max[scope_pixel_index] = scope2_pixel_max;
+                    scope2_sample_index++;
+                    if (scope2_sample_index >= scope_samples_per_pixel)
+                    {
+                        scope2_sample_index = 0;
+                        scope2_min[scope2_pixel_index] = scope2_pixel_min;  //MW0LGE_21g  fix .. was scope_pixel_index
+                        scope2_max[scope2_pixel_index] = scope2_pixel_max;
 
-                    scope2_pixel_min = float.MaxValue;
-                    scope2_pixel_max = float.MinValue;
+                        scope2_pixel_min = float.MaxValue;
+                        scope2_pixel_max = float.MinValue;
 
-                    scope2_pixel_index++;
-                    if (scope2_pixel_index >= scope_display_width)
-                        scope2_pixel_index = 0;
+                        scope2_pixel_index++;
+                        if (scope2_pixel_index >= scope_display_width)
+                            scope2_pixel_index = 0;
+                    }
                 }
             }
         }

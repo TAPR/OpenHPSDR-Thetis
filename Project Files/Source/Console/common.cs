@@ -36,11 +36,148 @@ using System.Linq;
 using System.IO.Ports;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Net.NetworkInformation;
+using System.Text;
+using System.Net;
+using System.Security.Principal;
 
 namespace Thetis
 {
+	// extend contains to be able to ignore case etc MW0LGE
+	public static class StringExtensions
+	{
+		public static bool Contains(this string source, string toCheck, StringComparison comp)
+		{
+			return source?.IndexOf(toCheck, comp) >= 0;
+		}
+	}
+
 	public class Common
 	{
+		private const bool ENABLE_VERSION_TIMEOUT = false;
+		private static DateTime _versionTimeout = new DateTime(2022, 06, 01, 00, 00, 00); // june 1st 2022 00:00:00
+		private static bool _bypassTimeout = false;
+
+		public static MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
+
+		#region WindowDropShadow
+		private const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
+		[StructLayout(LayoutKind.Sequential)]
+		private struct RECT
+		{
+			public int left;
+			public int top;
+			public int right;
+			public int bottom;
+		}
+		private static Dictionary<string, Color> m_backgroundColours = new Dictionary<string, Color>();
+		private static Dictionary<string, Color> m_foregoundColours = new Dictionary<string, Color>();
+		private static Dictionary<string, FlatStyle> m_flatStyle = new Dictionary<string, FlatStyle>();
+		private static Dictionary<string, Image> m_backImage = new Dictionary<string, Image>();
+		public static void HightlightControl(Control c, bool bHighlight)
+		{
+			if (!m_backgroundColours.ContainsKey(c.Name))
+			{
+				m_backgroundColours.Add(c.Name, c.BackColor);
+			}
+			if (!m_foregoundColours.ContainsKey(c.Name))
+			{
+				m_foregoundColours.Add(c.Name, c.ForeColor);
+			}
+			if (!m_backImage.ContainsKey(c.Name))
+			{
+				m_backImage.Add(c.Name, c.BackgroundImage);
+			}
+
+			if (c.GetType() == typeof(NumericUpDownTS))
+			{
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
+			}
+			else if (c.GetType() == typeof(CheckBoxTS))
+			{
+				CheckBoxTS cb = c as CheckBoxTS;
+				if (!m_flatStyle.ContainsKey(cb.Name)) m_flatStyle.Add(cb.Name, cb.FlatStyle);
+				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[cb.Name];
+				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[cb.Name];
+				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[cb.Name];
+				cb.BackgroundImage = bHighlight ? null : m_backImage[cb.Name];
+			}
+			else if (c.GetType() == typeof(TrackBarTS))
+			{
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
+				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[c.Name];
+				c.BackgroundImage = bHighlight ? null : m_backImage[c.Name];
+			}
+			else if (c.GetType() == typeof(PrettyTrackBar))
+			{
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
+				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[c.Name];
+				c.BackgroundImage = bHighlight ? null : m_backImage[c.Name];
+			}
+			else if (c.GetType() == typeof(ComboBoxTS))
+			{
+				ComboBoxTS cb = c as ComboBoxTS;
+				if (!m_flatStyle.ContainsKey(cb.Name)) m_flatStyle.Add(cb.Name, cb.FlatStyle);
+				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[cb.Name];
+				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[cb.Name];
+				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[cb.Name];
+			}
+			else if (c.GetType() == typeof(RadioButtonTS))
+			{
+				RadioButtonTS cb = c as RadioButtonTS;
+				if (!m_flatStyle.ContainsKey(cb.Name)) m_flatStyle.Add(cb.Name, cb.FlatStyle);
+				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[cb.Name];
+				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[cb.Name];
+				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[cb.Name];
+				cb.BackgroundImage = bHighlight ? null : m_backImage[cb.Name];
+			}
+			else if (c.GetType() == typeof(TextBoxTS))
+			{
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
+			}
+			else if (c.GetType() == typeof(LabelTS))
+			{
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
+			}
+
+			if (!bHighlight)
+			{
+				if (!m_backgroundColours.ContainsKey(c.Name)) m_backgroundColours.Remove(c.Name);
+				if (!m_foregoundColours.ContainsKey(c.Name)) m_foregoundColours.Remove(c.Name);
+				if (!m_flatStyle.ContainsKey(c.Name)) m_flatStyle.Remove(c.Name);
+				if (!m_backImage.ContainsKey(c.Name)) m_backImage.Remove(c.Name);
+			}
+
+			c.Invalidate();
+		}
+		public static Size DropShadowSize(Form f)
+		{
+			// this only works on a visibile form
+			if (!f.Visible) return new Size(0, 0);
+
+			Size sz;
+			RECT rectWithShadow;
+			if (Environment.OSVersion.Version.Major < 6)
+			{
+				sz = new Size(0, 0);
+			}
+			else if (DwmGetWindowAttribute(f.Handle, DWMWA_EXTENDED_FRAME_BOUNDS, out rectWithShadow, Marshal.SizeOf(typeof(RECT))) == 0)
+			{
+				sz = new Size(f.Width - (rectWithShadow.right - rectWithShadow.left), f.Height - (rectWithShadow.bottom - rectWithShadow.top));
+			}
+			else
+			{
+				sz = new Size(0, 0);
+			}
+
+			return sz;
+		}
+		#endregion
+
 		public static void ControlList(Control c, ref ArrayList a)
 		{
 			if(c.Controls.Count > 0)
@@ -343,10 +480,11 @@ namespace Thetis
 					right = screens[i].Bounds.Right;
 			}
 
-			if(f.Left > left &&
-				f.Top > top &&
-				f.Right < right &&
-				f.Bottom < bottom)
+			//MW0LGE_21d >= and <= all over
+			if(f.Left >= left &&
+				f.Top >= top &&
+				f.Right <= right &&
+				f.Bottom <= bottom)
             	on_screen = true;				
 
 			if(!on_screen)
@@ -508,7 +646,6 @@ namespace Thetis
 
 			return m_sFileVersion;
 		}
-
 		private static void setupVersions()
 		{
 			//MW0LGE build version number string once and return that
@@ -522,6 +659,94 @@ namespace Thetis
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
 			m_sVersionNumber = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
 			m_sFileVersion = fvi.FileVersion;
+		}
+
+		public static int DaysToTimeOut()
+		{
+			int days = (int)(_versionTimeout - DateTime.Now).TotalDays;
+			if (days < 0) days = 0;
+			return days;
+		}
+		public static bool IsVersionTimedOut
+		{
+			get
+			{
+				if (ENABLE_VERSION_TIMEOUT && !_bypassTimeout)
+					return DaysToTimeOut() == 0;
+				else
+					return false;
+			}
+		}
+		public static bool IsTimeOutEnabled
+		{
+			get { return ENABLE_VERSION_TIMEOUT && !_bypassTimeout; }
+		}
+		public static bool BypassTimeOut
+        {
+            set { _bypassTimeout = value; }
+        }
+		public static bool IsAdministrator()
+		{
+			using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+			{
+				WindowsPrincipal principal = new WindowsPrincipal(identity);
+				return principal.IsInRole(WindowsBuiltInRole.Administrator);
+			}
+		}
+
+		public static bool ShiftKeyDown
+		{
+			get
+			{
+				return Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey);
+			}
+		}
+		public static bool CtrlKeyDown
+		{
+			get
+			{
+				return Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey);
+			}
+		}
+		public static bool Is64Bit
+        {
+            get
+            {
+				return System.IntPtr.Size == 8 ? true : false;
+			}
+        }
+		//#Ukraine
+		public static bool IsCallsignRussian(string callsign)
+		{
+			if (callsign == "") return false;
+
+			bool bRet = false;
+			string lowerCustomTitle = callsign.ToUpper().Trim();
+
+			// filter out U5 - (^[U][5]{1,2}[A-Z]{1,3})
+			Match matchU5 = Regex.Match(lowerCustomTitle, "(^[U][5]{1,2}[A-Z]{1,3})");
+
+			if (!matchU5.Success)
+			{
+				Match match = Regex.Match(lowerCustomTitle, "(^[R][AC-DF-GJ-OPQRST-Z]{0,1}[0-9]{1,3}[A-Z]{1,3})|(^[U][A-I]{0,1}[0-9]{1,2}[A-Z]{1,3})");
+				if (match.Success)
+				{
+					string matchString = match.ToString();
+					if (!(
+						matchString.StartsWith("UA2") ||
+						matchString.StartsWith("RA2") ||
+						matchString.StartsWith("R2") ||
+						matchString.StartsWith("RK2") ||
+						matchString.StartsWith("RN2") ||
+						matchString.StartsWith("RY2")
+						)) // best attemt to ignore Kaliningrad, this is not 100%
+					{
+						bRet = true;
+					}
+				}
+			}
+
+			return bRet;
 		}
 	}
 }

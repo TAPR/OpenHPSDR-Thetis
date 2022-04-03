@@ -56,7 +56,7 @@ namespace Thetis
 		private byte[] TxAnt = new byte[12]; 
 		private byte[] RxAnt = new byte[12]; 
 		private byte[] RxOnlyAnt = new byte[12]; // 1 = rx1, 2 = rx2, 3 = xv, 0 = none selected 
-
+		private bool LimitTXRXAntenna = false;					// when set, antennas should stay on 1 (for external Aries ATU)
         public static bool RxOutOnTx = false;
         public static bool Ext1OutOnTx = false;
         public static bool Ext2OutOnTx = false;
@@ -65,7 +65,15 @@ namespace Thetis
         public static bool TRxAnt = false;
 
         public static bool trx_ant_not_same { set; get; }
+		
+		//
+		// SetAntennasTo1 causes RX, TX antennas to be set to 1
+		// the various RX "bypass" unaffected
+		public void SetAntennasTo1(bool IsSetTo1)
+        {
+			LimitTXRXAntenna = IsSetTo1;
 
+		}
 		public void setRxAnt(Band band, byte ant) 
 		{ 
 			if ( ant > 3 ) 
@@ -239,6 +247,11 @@ namespace Thetis
 			UpdateAlexAntSelection(band, tx, true, xvtr); 
 		}
 
+		private int m_nOld_rx_only_ant = -99;
+		private int m_nOld_trx_ant = -99;
+		private int m_nOld_rx_out = -99;
+		private bool m_bOld_tx = false;
+
 		public void UpdateAlexAntSelection(Band band, bool tx, bool alex_enabled, bool xvtr) 
 		{
 
@@ -266,8 +279,8 @@ namespace Thetis
 					return; 
 				}
 			} 
-			System.Console.WriteLine("Ant idx: " + idx); 
-			
+
+			System.Console.WriteLine("Ant idx: " + idx);  //moved into different check down below			
 
 			if ( tx ) 
 			{
@@ -310,36 +323,57 @@ namespace Thetis
                     rx_out = RxOutOnTx || Ext1OutOnTx || Ext2OutOnTx ? 1 : 0;
                 else rx_out = 0; // disable Rx_Bypass_Out relay
             }
+			//
+			// G8NJJ support for external Aries ATU on antenna port 1
+			// force TX and RX antenna to 1 if selected
+			// this is only enabled if "external Aries" selected in setup
+			//
+			if ((trx_ant != 4) && (LimitTXRXAntenna == true))
+				trx_ant = 1;
+			//
+			//if (init_update)
+			//{
+			//    if (rx_out == 0) xrx_out = 1; // workaround for Hermes
+			//    else xrx_out = 0;
+			//    NetworkIO.SetAlexAntBits(rx_only_ant, trx_ant, xrx_out);
+			//    init_update = false;
+			//    Thread.Sleep(10);
+			//}
 
-            //if (init_update)
-            //{
-            //    if (rx_out == 0) xrx_out = 1; // workaround for Hermes
-            //    else xrx_out = 0;
-            //    NetworkIO.SetAlexAntBits(rx_only_ant, trx_ant, xrx_out);
-            //    init_update = false;
-            //    Thread.Sleep(10);
-            //}
-			NetworkIO.SetAntBits(rx_only_ant, trx_ant, rx_out, tx);
-            System.Console.WriteLine("Ant Rx Only {0} , Tx Ant {1}, Rx Out {2}", rx_only_ant.ToString(), trx_ant.ToString(), rx_out.ToString());
+			//MW0LGE_21k9d only set bits if different
+			if (m_nOld_rx_only_ant != rx_only_ant ||
+				m_nOld_trx_ant != trx_ant ||
+				m_nOld_rx_out != rx_out ||
+				m_bOld_tx != tx)
+			{
+				NetworkIO.SetAntBits(rx_only_ant, trx_ant, rx_out, tx);
+				System.Console.WriteLine("Ant Rx Only {0} , Tx Ant {1}, Rx Out {2}", rx_only_ant.ToString(), trx_ant.ToString(), rx_out.ToString());
+
+				//store old
+				m_nOld_rx_only_ant = rx_only_ant;
+				m_nOld_trx_ant = trx_ant;
+				m_nOld_rx_out = rx_out;
+				m_bOld_tx = tx;
+			}
 
 			// don't allow changing antenna selections when mox is activated 
-		/*	if ( tx )  
-			{ 
-				AlexEnableSavedState = Console.getConsole().SetupForm.SetAlexAntEnabled(false); 
-				AlexEnableIsStateSaved = true; 
-			} 
-			else if ( AlexEnableIsStateSaved ) 
-			{ 
-				Console.getConsole().SetupForm.SetAlexAntEnabled(AlexEnableSavedState); 
-				AlexEnableIsStateSaved = false; 
-			} */
+			/*	if ( tx )  
+				{ 
+					AlexEnableSavedState = Console.getConsole().SetupForm.SetAlexAntEnabled(false); 
+					AlexEnableIsStateSaved = true; 
+				} 
+				else if ( AlexEnableIsStateSaved ) 
+				{ 
+					Console.getConsole().SetupForm.SetAlexAntEnabled(AlexEnableSavedState); 
+					AlexEnableIsStateSaved = false; 
+				} */
 
-            // Console.getConsole().SetupForm.txtRXAnt.Text = rx_ant.ToString();
-           //  Console.getConsole().SetupForm.txtRXOut.Text = rx_out.ToString();
-           //  Console.getConsole().SetupForm.txtTXAnt.Text = tx_ant.ToString();
-            // Console.getConsole().SetupForm.txtAlexBand.Text = band.ToString();
-           //  Console.getConsole().SetupForm.txtAlexEnabled.Text = alex_enabled.ToString();
-           //  Console.getConsole().SetupForm.txtAlexBits.Text = Convert.ToString(rc, 2);
+			// Console.getConsole().SetupForm.txtRXAnt.Text = rx_ant.ToString();
+			//  Console.getConsole().SetupForm.txtRXOut.Text = rx_out.ToString();
+			//  Console.getConsole().SetupForm.txtTXAnt.Text = tx_ant.ToString();
+			// Console.getConsole().SetupForm.txtAlexBand.Text = band.ToString();
+			//  Console.getConsole().SetupForm.txtAlexEnabled.Text = alex_enabled.ToString();
+			//  Console.getConsole().SetupForm.txtAlexBits.Text = Convert.ToString(rc, 2);
 
 			return; 
 		}

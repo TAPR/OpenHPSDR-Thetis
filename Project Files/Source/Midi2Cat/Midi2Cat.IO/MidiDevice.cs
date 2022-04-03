@@ -342,7 +342,8 @@ namespace Midi2Cat.IO
                             data = 0x00;
 
                        // Debug.WriteLine("wMsg=MIM_DATA, dwInstance={0}, dwParam1={1}, dwParam2={2}", dwInstance, dwParam1.ToString("X8"), dwParam2.ToString("X8"));
-                        Debug.WriteLine("ControlId={0}, byte2={1}, status={2}, Event={3}, channel={4}", controlId.ToString("X2"), data.ToString("X2"), status.ToString("X2"), Event.ToString("X2"), channel.ToString("X2"));
+
+                        //Debug.WriteLine("ControlId={0}, byte2={1}, status={2}, Event={3}, channel={4}", controlId.ToString("X2"), data.ToString("X2"), status.ToString("X2"), Event.ToString("X2"), channel.ToString("X2"));
 
                         inDevice_ChannelMessageReceived(controlId, data, status, Event, channel);
                         /*	switch(cmd)

@@ -28,6 +28,7 @@ warren@wpratt.com
 #include <process.h>
 #include <intrin.h>
 #include <math.h>
+#include <stdint.h>
 #include <time.h>
 #include <avrt.h>
 #include "fftw3.h"

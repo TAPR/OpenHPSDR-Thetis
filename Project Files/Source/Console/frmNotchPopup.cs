@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================
+// clsNotchPopup.cs - MW0LGE 2021
+//=================================================================
+
+using System;
 using System.Windows.Forms;
 
 namespace Thetis
@@ -19,10 +23,21 @@ namespace Thetis
             InitializeComponent();           
         }
 
-        public void Show(MNotch notch, int minWidth, int maxWidth)
+        public void Show(MNotch notch, int minWidth, int maxWidth, bool top)
         {
             // init with the passed notch
             if (notch == null) return;  // Todo initialise empty?
+
+            if (top) //MW0LGE_21k9
+            {
+                Win32.SetWindowPos(this.Handle.ToInt32(),
+                    -1, this.Left, this.Top, this.Width, this.Height, 0);
+            }
+            else
+            {
+                Win32.SetWindowPos(this.Handle.ToInt32(),
+                    -2, this.Left, this.Top, this.Width, this.Height, 0);
+            }
 
             trkWidth.Minimum = minWidth;
             if ((int)notch.FWidth > maxWidth)

@@ -207,6 +207,7 @@
         HPSDR_MINUS40,
         HPSDR_MINUS50,
         SA_MINUS10,
+        SA_MINUS20,  //MW0LGE_21d
         SA_MINUS30,
         // STEP_ATTEN,
         LAST,
@@ -236,6 +237,10 @@
     {
         FIRST = -1,
         GEN,
+
+        //B2200M, //MW0LGE_21k8 need fix this
+        //B600M,
+
         B160M,
         B80M,
         B60M,
@@ -394,5 +399,17 @@
         None
     }
 
+    public enum TXPinActions
+    {
+        FIRST = -1,
+        MOX,
+        TUNE,
+        TWOTONE,
+        MOX_TUNE,
+        MOX_TWOTONE,
+        TUNE_TWOTONE,
+        MOX_TUNE_TWOTONE,
+        LAST
+    }
     #endregion
 }

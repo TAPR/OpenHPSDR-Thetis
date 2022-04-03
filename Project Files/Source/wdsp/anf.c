@@ -109,9 +109,13 @@ void xanf(ANF a, int position)
 			if((nel = error * (1.0 - a->two_mu * sigma * inv_sigp)) < 0.0) nel = -nel;
 			if((nev = a->d[a->in_idx] - (1.0 - a->two_mu * a->ngamma) * y - a->two_mu * error * sigma * inv_sigp) < 0.0) nev = -nev;
 			if (nev < nel)
-				if((a->lidx += a->lincr) > a->lidx_max) a->lidx = a->lidx_max;
+			{
+				if ((a->lidx += a->lincr) > a->lidx_max) a->lidx = a->lidx_max;
+			}
 			else
-				if((a->lidx -= a->ldecr) < a->lidx_min) a->lidx = a->lidx_min;
+			{
+				if ((a->lidx -= a->ldecr) < a->lidx_min) a->lidx = a->lidx_min;
+			}
 			a->ngamma = a->gamma * (a->lidx * a->lidx) * (a->lidx * a->lidx) * a->den_mult;
 
 			c0 = 1.0 - a->two_mu * a->ngamma;

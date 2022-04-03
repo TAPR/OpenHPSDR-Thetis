@@ -26,6 +26,7 @@
 //    USA
 //=================================================================
 
+using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -34,14 +35,16 @@ namespace Thetis
     class TitleBar
     {
         public const string BUILD_NAME = "";
-        public const string BUILD_DATE = "(10/20/20)";
+        public const string BUILD_DATE = "(4/3/22)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
 
         public static string GetString()
         {
             string version = Common.GetVerNum();
             string s = "Thetis";
 
-            s += " v" + version;
+            string sBits = Common.Is64Bit ? " x64" : " x86";
+
+            s += " v" + version + sBits;
             if (BUILD_DATE != "") s += " " + BUILD_DATE;
             if (BUILD_NAME != "") s += " " + BUILD_NAME;
 

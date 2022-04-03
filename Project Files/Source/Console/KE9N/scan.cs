@@ -360,6 +360,158 @@ namespace Thetis
         public static byte ScanRST = 0; // 1=pick up where you left off, 0=reset back to low_freq
         private string last_band;							// Used in bandstacking algorithm
 
+        // MW0LGE_21a
+        // was in console.cs. Moved here.
+        public void BandChanged(Band band)
+        {
+            ScanRST = 0;
+
+            if (band == Band.B160M)
+            {
+                freq_Low = 1.8;
+                freq_High = 2.0;
+            }
+            else if (band == Band.B80M)
+            {
+                freq_Low = 3.6;
+                freq_High = 4.0;
+            }
+            else if (band == Band.B60M)
+            {
+                freq_Low = 5.3;
+                freq_High = 5.6;
+            }
+            else if (band == Band.B40M)
+            {
+                freq_Low = 7.0;
+                freq_High = 7.3;
+            }
+            else if (band == Band.B30M)
+            {
+                freq_Low = 10.1;
+                freq_High = 10.15;
+            }
+            else if (band == Band.B20M)
+            {
+                freq_Low = 14.150;
+                freq_High = 14.35;
+            }
+            else if (band == Band.B17M)
+            {
+                freq_Low = 18.11;
+                freq_High = 18.168;
+            }
+            else if (band == Band.B15M)
+            {
+                freq_Low = 21.2;
+                freq_High = 21.45;
+            }
+            else if (band == Band.B12M)
+            {
+                freq_Low = 24.93;
+                freq_High = 24.990;
+            }
+            else if (band == Band.B10M)
+            {
+                freq_Low = 28.0;
+                freq_High = 29.7;
+            }
+            else if (band == Band.B6M)
+            {
+                freq_Low = 50.0;
+                freq_High = 54.0;
+            }
+            else if (band == Band.B2M)
+            {
+                freq_Low = 144.0;
+                freq_High = 148.0;
+            }
+            else if (band == Band.VHF0)
+            {
+                freq_Low = 144.0;
+                freq_High = 148.0;
+            }
+            else if (band == Band.VHF1)
+            {
+                freq_Low = 430.0;
+                freq_High = 450.0;
+            }
+            else if (band == Band.BLMF)
+            {
+                freq_Low = 0.2;
+                freq_High = 1.8;
+            }
+            else if (band == Band.B120M)
+            {
+                freq_Low = 2.3;
+                freq_High = 3.0;
+            }
+            else if (band == Band.B90M)
+            {
+                freq_Low = 3.0;
+                freq_High = 3.5;
+            }
+            else if (band == Band.B61M)
+            {
+                freq_Low = 4.0;
+                freq_High = 5.3;
+            }
+            else if (band == Band.B49M)
+            {
+                freq_Low = 5.4;
+                freq_High = 7.0;
+            }
+            else if (band == Band.B41M)
+            {
+                freq_Low = 7.2;
+                freq_High = 9.0;
+            }
+            else if (band == Band.B31M)
+            {
+                freq_Low = 9.0;
+                freq_High = 9.99;
+            }
+            else if (band == Band.B25M)
+            {
+                freq_Low = 10.0;
+                freq_High = 13.57;
+            }
+            else if (band == Band.B22M)
+            {
+                freq_Low = 13.57;
+                freq_High = 13.87;
+            }
+            else if (band == Band.B19M)
+            {
+                freq_Low = 15.1;
+                freq_High = 17.0;
+            }
+            else if (band == Band.B16M)
+            {
+                freq_Low = 17.0;
+                freq_High = 18.0;
+            }
+            else if (band == Band.B14M)
+            {
+                freq_Low = 18.0;
+                freq_High = 21.0;
+            }
+            else if (band == Band.B13M)
+            {
+                freq_Low = 21.0;
+                freq_High = 25.0;
+            }
+            else if (band == Band.B11M)
+            {
+                freq_Low = 25.0;
+                freq_High = 28.0;
+            }
+
+            lowFBox.Text = freq_Low.ToString("f6");
+            highFBox.Text = freq_High.ToString("f6");
+        }
+        //
+
         //=======================================================================================
         // ke9ns add scan just the Band stacking reg for the SWL bands
         private void button4_Click(object sender, EventArgs e)
@@ -387,24 +539,33 @@ namespace Thetis
            
             last_band = "160M";
 
-            if (last_band.Equals("160M"))
+            BandStackFilter bsf = BandStackManager.GetFilter(BandStackManager.StringToBand(last_band));
+            if (bsf != null)
             {
+                BandStackEntry bse = bsf.Current();
+                if (bse != null)
+                {
+                    console.SetBand(bse.Mode.ToString(), bse.Filter.ToString(), bse.Frequency, bse.CTUNEnabled, bse.ZoomSlider, bse.CentreFrequency);
+                }
+            }
+            //if (last_band.Equals("160M"))
+            //{
                
-                    console.band_160m_index = (console.band_160m_index + 1) % console.band_160m_register;
-            }
-            last_band = "160M";
+            //        console.band_160m_index = (console.band_160m_index + 1) % console.band_160m_register;
+            //}
+            //last_band = "160M";
 
-            string filter, mode;
-            double freq;
+            //string filter, mode;
+            //double freq;
 
-            band_index = console.band_160m_index;
+            //band_index = console.band_160m_index;
 
-            if (DB.GetBandStack(last_band, band_index, out mode, out filter, out freq, out CTUN, out ZoomFactor, out CenterFreq))
-            {
-                filter = filter.Substring(0, 2); // ke9ns add for bandstack lockout
+            //if (DB.GetBandStack(last_band, band_index, out mode, out filter, out freq, out CTUN, out ZoomFactor, out CenterFreq))
+            //{
+            //    filter = filter.Substring(0, 2); // ke9ns add for bandstack lockout
 
-                console.SetBand(mode, filter, freq, CTUN, ZoomFactor, CenterFreq);
-            }
+            //    console.SetBand(mode, filter, freq, CTUN, ZoomFactor, CenterFreq);
+            //}
 
             console.UpdateWaterfallLevelValues();
 

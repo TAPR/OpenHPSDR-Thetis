@@ -508,12 +508,12 @@ namespace Thetis
 
         private void load_alpha()
         {
-            if (!File.Exists(console.AppDataPath + "\\" + sfile))	// create default morsedef.txt
+            if (!File.Exists(console.AppDataPath + sfile))	// create default morsedef.txt
             {
 #if(CWX_DEBUG)
 				MessageBox.Show(sfile+" not found, creating ...");
 #endif
-                using (StreamWriter sw = new StreamWriter(console.AppDataPath + "\\" + sfile))
+                using (StreamWriter sw = new StreamWriter(console.AppDataPath + sfile))
                 {
                     sw.WriteLine("32| |*        | space     ");
                     sw.WriteLine("33|!|...-.    | [SN]      ");
@@ -582,7 +582,7 @@ namespace Thetis
                 }
             }
             //MessageBox.Show("reading ",sfile);
-            using (StreamReader sr = new StreamReader(console.AppDataPath + "\\" + sfile))
+            using (StreamReader sr = new StreamReader(console.AppDataPath + sfile))
             {
                 String line;
                 String t;
@@ -1819,7 +1819,7 @@ namespace Thetis
             keydisplay.ReleaseMutex();
         }
 
-        private Object m_objLock = new Object();
+        private readonly Object m_objLock = new Object();
         private void show_keys(Graphics formGraphics = null)
         {            
             string s;
@@ -1967,9 +1967,9 @@ namespace Thetis
         }
         private void write_a2m2()
         {
-            if (File.Exists(console.AppDataPath + "\\" + sfile))
-                File.Delete(console.AppDataPath + "\\" + sfile);			// out withe the old
-            using (StreamWriter sw = new StreamWriter(console.AppDataPath + "\\" + sfile))	// and in with the new
+            if (File.Exists(console.AppDataPath + sfile))
+                File.Delete(console.AppDataPath + sfile);			// out withe the old
+            using (StreamWriter sw = new StreamWriter(console.AppDataPath + sfile))	// and in with the new
             {
                 for (int i = 0; i < 64; i++)
                 {

@@ -15,6 +15,7 @@ namespace Thetis
         private bool AriesTuneState = false;                    // ATU tune state; true if solution available
         private bool AriesEnabled = false;                      // true if ARIES ATU function enabled
         private int AriesAntenna = 0;                           // antenna that Aries has been told to tune for
+        private int AriesRXAntenna = 0;                         // RX antenna that Aries has been told to set
         private int TXAntennaSent = -1;                         // antenna in use for TX
         private string RXAntennaSentString = "none";            // antenna in use for RX
 
@@ -100,7 +101,7 @@ namespace Thetis
             }
         }
 
-        // send CAT message to Aries to set the ATU on/off state
+        // send CAT message to Aries to set the TX antenna
         // set the "Aries is in this state" variable only if the message is sent
         private void MakeAriesAntennaChangeMsg(int Ant)
         {
@@ -120,6 +121,26 @@ namespace Thetis
             }
         }
 
+        // send CAT message to Aries to set the RX antenna
+        // set the "Aries is in this state" variable only if the message is sent
+        private void MakeAriesRXAntennaChangeMsg(int Ant)
+        {
+            string CATMsg = "";
+            if ((Ant >= 0) && (Ant <= 3))
+            {
+                CATMsg = "ZZOA" + Ant + ";";
+                if (AriesCATEnabled)
+                {
+                    try
+                    {
+                        AriesSiolisten.SIO6.put(CATMsg);
+                        AriesRXAntenna = Ant;
+                    }
+                    catch { }
+                }
+            }
+        }
+
         // send CAT message to Aries to set the ATU on/off state
         // set the "Aries is in this state" variable only if the message is sent
         private void MakeAriesATUEnableRequestMsg(bool IsEnabled)
@@ -133,6 +154,22 @@ namespace Thetis
                 {
                     AriesSiolisten.SIO6.put(CATMsg);
                     AriesEnabled = IsEnabled;
+                }
+                catch { }
+            }
+        }
+
+        // send CAT message to Aries to set the tune algorithm tweak
+        private void MakeAriesQuickTuneRequestMsg(bool IsEnabled)
+        {
+            string CATMsg = "ZZOY0;";               // default no tune
+            if (IsEnabled)
+                CATMsg = "ZZOY1;";                  // message if tune is active
+            if (AriesCATEnabled)
+            {
+                try
+                {
+                    AriesSiolisten.SIO6.put(CATMsg);
                 }
                 catch { }
             }
@@ -195,6 +232,56 @@ namespace Thetis
             get { return aries_ant3_enabled; }
         }
 
+        // 2 properties to set the state of Alex ant 2/3 "do not TX"
+        // G8NJJ_21h
+        private bool alex_ant2_rxonly;
+        public bool AlexANT2RXOnly
+
+        {
+
+            set { alex_ant2_rxonly = value; }
+
+            get { return alex_ant2_rxonly; }
+
+        }
+        private bool alex_ant3_rxonly;
+        public bool AlexANT3RXOnly
+
+        {
+
+            set { alex_ant3_rxonly = value; }
+
+            get { return alex_ant3_rxonly; }
+
+        }
+
+        // AriesStandalone
+        private bool aries_standalone;
+        public bool AriesStandalone
+        {
+            set
+            {
+                aries_standalone = value;
+                if(AriesCATEnabled)
+                    SetAriesAlexMode(value);
+            }
+
+            get { return aries_standalone; }
+        }
+
+        // property to set the state of the "quick tune enabled" button
+        private bool aries_quicktune_enabled;
+        public bool AriesQuickTuneEnabled
+        {
+            set
+            {
+                aries_quicktune_enabled = value;
+                MakeAriesQuickTuneRequestMsg(value);
+            }
+
+            get { return aries_quicktune_enabled; }
+        }
+
 
         private double AriesReportedFrequency_10KHz = 0.0;          // tuned freq, in 10KHz chunks
         // function to check whether a new TX frequency needs to be signaled to Aries
@@ -211,7 +298,7 @@ namespace Thetis
                 AriesTuneState = false;                                                 // set to "no tune solution" till Aries sends a CAT message
                 Frequency_10KHz /= 100.0;
                 freq = Frequency_10KHz.ToString("f6");
-                CATMsg = "ZZTV" + freq.Replace(separator, "").PadLeft(11, '0') + ";";
+                CATMsg = "ZZFT" + freq.Replace(separator, "").PadLeft(11, '0') + ";";
                 if (AriesCATEnabled)
                 {
                     try
@@ -243,6 +330,7 @@ namespace Thetis
                 UpdateAriesDisplayLabel();
             }
             DisplayAriesTXAntenna();
+            SendAriesRXAntennaMsg();                                // check this in case we are RXing on TX antenna
         }
 
         // function to set the RX antenna for a given band
@@ -379,6 +467,49 @@ namespace Thetis
             }
         }
 
+
+        //
+        // send an Aries RX antenna message
+        // has to work out the band, and it could be TX antenna if the "RX on TX antenna" button pressed
+        //
+        void SendAriesRXAntennaMsg()
+        {
+            int Antenna;
+            Band CurrentBand;
+
+            if (chkRxAnt.Checked)                     // if RX on RX antenna, then find TX antenna
+            {
+                CurrentBand = TXBand;
+                // see if we are in an amateur band; if not lookup using Alex function
+                if ((CurrentBand < Band.B160M) || (CurrentBand > Band.B6M))
+                    CurrentBand = AntennaBandFromFreq(true);
+
+                int idx = (int)CurrentBand - (int)Band.B160M;
+                if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
+                {
+                    Antenna = AntennaArrayByBand[idx];
+                    MakeAriesRXAntennaChangeMsg(Antenna);
+                }
+            }
+            else // find RX antenna
+            {
+                CurrentBand = RX1Band;
+
+                // see if we are in an amateur band; if not lookup using Alex function
+                if ((CurrentBand < Band.B160M) || (CurrentBand > Band.B6M))
+                    CurrentBand = AntennaBandFromFreq(false);
+
+                // convert to int, 160m = index value 0
+                int idx = (int)CurrentBand - (int)Band.B160M;
+                if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
+                {
+                    Antenna = RXAntennaArrayByBand[idx];
+                    MakeAriesRXAntennaChangeMsg(Antenna);
+                }
+            }
+        }
+
+
         // show the RX antenna on the Andromeda screen
         // this is now displayed as 2 characters, so existing names have to be remapped
         private void DisplayAriesRXAntenna()
@@ -396,6 +527,8 @@ namespace Thetis
             int idx = (int)CurrentBand - (int)Band.B160M;
             if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
             {
+                Antenna = RXAntennaArrayByBand[idx];
+                SendAriesRXAntennaMsg();
                 if (RXAuxAntennaArrayByBand[idx])
                     switch (RXAntennaNameArrayByBand[idx])
                     {
@@ -419,7 +552,7 @@ namespace Thetis
                             break;
                     }
                 else
-                    AntString = "Rx Ant " + RXAntennaArrayByBand[idx].ToString();
+                    AntString = "Rx Ant " + Antenna.ToString();
                 if(AntString != RXAntennaSentString)
                 {
                     toolStripStatusLabelRXAnt.Text = AntString;
@@ -428,28 +561,68 @@ namespace Thetis
             }
         }
 
-        // antenna step
+        //// antenna step
+        //void TXAntennaStep()
+        //{
+        //    // change antenna only if TX band == RX band
+        //    // step by the current TX antenna
+        //    int Ant;
+        //    if (TXBand == RX1Band)
+        //    {
+        //        int idx = (int)TXBand - (int)Band.B160M;
+        //        if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
+        //        {
+        //            Ant = AntennaArrayByBand[idx];
+        //            if (Ant == 1)
+        //                Ant = 2;
+        //            else if (Ant == 2)
+        //                Ant = 3;
+        //            else
+        //                Ant = 1;
+        //            if (SetupForm != null)
+        //            {
+        //                SetupForm.SetRXAntenna(Ant, TXBand);
+        //                SetupForm.SetTXAntenna(Ant, TXBand);
+        //            }
+        //        }
+        //    }
+        //}
+
+        // antenna step. Called by the button bar handler to step the RX and TX antennas 1-2-3-1 etc
+        // G8NJJ_21h
         void TXAntennaStep()
         {
             // change antenna only if TX band == RX band
             // step by the current TX antenna
-            int Ant;
+            int Ant, NewAnt;
             if (TXBand == RX1Band)
             {
                 int idx = (int)TXBand - (int)Band.B160M;
                 if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
                 {
-                    Ant = AntennaArrayByBand[idx];
+                    Ant = AntennaArrayByBand[idx];              // current TX antenna
+                    NewAnt = Ant;
                     if (Ant == 1)
-                        Ant = 2;
-                    else if (Ant == 2)
-                        Ant = 3;
-                    else
-                        Ant = 1;
-                    if (SetupForm != null)
                     {
-                        SetupForm.SetRXAntenna(Ant, TXBand);
-                        SetupForm.SetTXAntenna(Ant, TXBand);
+                        if (!AlexANT2RXOnly)
+                            NewAnt = 2;
+                        else if (!AlexANT3RXOnly)
+                            NewAnt = 3;
+                    }
+                    else if (Ant == 2)
+                    {
+                        if (!AlexANT3RXOnly)
+                            NewAnt = 3;
+                        else
+                            NewAnt = 1;
+                    }
+                    else        // ant is 3
+                        NewAnt = 1;
+
+                    if ((SetupForm != null) && (NewAnt != Ant))
+                    {
+                        SetupForm.SetRXAntenna(NewAnt, TXBand);
+                        SetupForm.SetTXAntenna(NewAnt, TXBand);
                     }
                 }
             }
@@ -465,6 +638,7 @@ namespace Thetis
                 if (SetupForm != null) 
                     SetupForm.SetTXAntenna(Ant, TXBand);
             }
+            UpdateButtonBarButtons();                           // re-label buttons if needed
         }
 
         // set RX antenna to specified antenna (1=3) called by status bar handler
@@ -519,10 +693,30 @@ namespace Thetis
                 MakeAriesATUEnableRequestMsg(RequiredAriesEnabledState);
                 AndromedaIndicatorCheck(EIndicatorActions.eINATUReady, false, AriesEnabled);            // goes by the state it is actually at
             }
-            // tell Aries if the antenna has changed
+            // tell Aries if the TX antenna has changed
             if (Antenna != AriesAntenna)
                 MakeAriesAntennaChangeMsg(Antenna);
+//finally tell Aries the RX antenna too#
+            SendAriesRXAntennaMsg();
+        }
 
+        //
+        // set Alex to Aries mode: 
+        // if Aries is in standalone mode, TX antenna = RX antenna = 1
+        // 
+        void SetAriesAlexMode(bool state)
+        {
+            Alex.getAlex().SetAntennasTo1(state);
+            // now tell Alex to update its settings
+            if (rx1_xvtr_index >= 0)
+            {
+                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
+                Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, alex_ant_ctrl_enabled, true);
+            }
+            else
+            {
+                Alex.getAlex().UpdateAlexAntSelection(RX1Band, mox, alex_ant_ctrl_enabled, false);
+            }
         }
 
 
@@ -539,8 +733,10 @@ namespace Thetis
             MakeAriesVersionRequestMsg();                       // request h/w and s/w versions
             CheckAriesEnabled();
             MakeAriesATUEnableRequestMsg(AriesEnabled);         // explicitly send the state 1st time
+            MakeAriesQuickTuneRequestMsg(AriesQuickTuneEnabled);        // send quick tune enable
             // (this might send a duplicate CAT message, once)
             UpdateAriesDisplayLabel();
+            SetAriesAlexMode(aries_standalone);
         }
 
         // functions to tweak Aries Inductance and Capacitance value
@@ -872,6 +1068,41 @@ namespace Thetis
             }
         }
 
+
+        // access the andromeda setup for shared buttons defaulting to "band" function
+        private bool andromedaBandButtonIsDefault;
+        public bool AndromedaBandButtonIsDefault
+        {
+            get { return andromedaBandButtonIsDefault; }
+            set 
+            { 
+                andromedaBandButtonIsDefault = value;
+                // set the start state for the band buttons function - band or other function
+                AndromedaBandButtonsEnabled = value;
+                AndromedaIndicatorCheck(EIndicatorActions.eINShiftEnabled, false, AndromedaBandButtonsEnabled);
+
+            }
+        }
+
+        // access the andromeda setup for shift button being "sticky"
+        private bool andromedaStickyShift;
+        public bool AndromedaStickyShift
+        {
+            get { return andromedaStickyShift; }
+            set { andromedaStickyShift = value; }
+        }
+
+        // access the andromeda setup for stick softkey menus
+        private bool andromedastickymenus;
+        public bool AndromedaStickyMenus
+        {
+            get { return andromedastickymenus; }
+            set { andromedastickymenus = value; }
+        }
+
+
+
+
         public AndromedaEditForm andromedaEditorForm;
 
         // this is called from the setup form, to edit control assignments
@@ -889,8 +1120,8 @@ namespace Thetis
         private int CurrentMultifunctionOption = 0;                 // index to current multifunction control
 
 
-        private bool AndromedaMultiEncoderState;                // true if a step changes the multi action
-        private bool AndromedaShiftPressed = false;             // true if andromeda SHIFT is pressed (latching action)
+        private bool AndromedaMultiEncoderState;                    // true if a step changes the multi action
+        private bool AndromedaBandButtonsEnabled = false;           // true if andromeda SHIFT is pressed (latching action)  (name changed for clarity)
 
         System.Timers.Timer AndromedaTimer;                         // times display of a slider on andromeda bar 
         System.Timers.Timer AndromedaMenuTimer;                     // timeout for menu activity
@@ -1358,7 +1589,7 @@ namespace Thetis
             MenubarTable.Rows.Add(28, EButtonBarActions.eBBMOX, "MOX", 0, 0);
             MenubarTable.Rows.Add(29, EButtonBarActions.eBBTune, "TUNE", 0, 0);
             MenubarTable.Rows.Add(30, EButtonBarActions.eBBPuresignal2Tone, "PS 2 Tone test", 0, 0);
-            MenubarTable.Rows.Add(31, EButtonBarActions.eBBNone, "----", 0, 0);
+            MenubarTable.Rows.Add(31, EButtonBarActions.eBBATUOnOff, "ATU", 0, 0);
 
             // menu 5 - display
             MenubarTable.Rows.Add(32, EButtonBarActions.eBBMenu, "Display Menu", 0, 6);
@@ -1513,6 +1744,7 @@ namespace Thetis
             bool IsABSensitive = false;
             if (AndromedaCATEnabled)                        // only process if we have a CAT port assigned
             {
+
                 DataTable table = AndromedaSet.Tables["Indicators"];
                 int RowCount = table.Rows.Count;
 
@@ -1629,7 +1861,7 @@ namespace Thetis
                             State = AriesEnabled;
                             break;
                         case EIndicatorActions.eINShiftEnabled:
-                            State = AndromedaShiftPressed;
+                            State = AndromedaBandButtonsEnabled;
                             break;
 
                     }
@@ -1824,7 +2056,7 @@ namespace Thetis
         // button = 0-98
         // state true if pressed normally; 
         // LongPress = true if a "long press" event
-        // if AndromedaShiftPressed, treat as a band keypad instead
+        // if AndromedaBandButtonsEnabled, treat as a band keypad instead
         //
         public void HandleFrontPanelButtonPress(int Button, bool State, bool LongPress)
         {
@@ -1847,34 +2079,61 @@ namespace Thetis
             }
             if (!UsedForSetup)                  // if not sent to setup form, process normally
             {
-                if (AndromedaShiftPressed && State && (Button >= 29) && (Button <= 40))               // if shift, treat as a set of band buttons in 3x4 grid
+                if ((Button >= 29) && (Button <= 40))               // if it's one of the buttons in 3x4 "band" grid
                 {
-                    switch (Button)
+                    // one of the band button group. If a long press- just do it
+                    if(LongPress)
                     {
-                        case 29: BandName = "160m"; BandSelected = Band.B160M; break;
-                        case 30: BandName = "80m"; BandSelected = Band.B80M; break;
-                        case 31: BandName = "60m"; BandSelected = Band.B60M; break;
-                        case 32: BandName = "40m"; BandSelected = Band.B40M; break;
-                        case 33: BandName = "30m"; BandSelected = Band.B30M; break;
-                        case 34: BandName = "20m"; BandSelected = Band.B20M; break;
-                        case 35: BandName = "17m"; BandSelected = Band.B17M; break;
-                        case 36: BandName = "15m"; BandSelected = Band.B15M; break;
-                        case 37: BandName = "12m"; BandSelected = Band.B12M; break;
-                        case 38: BandName = "10m"; BandSelected = Band.B10M; break;
-                        case 39: BandName = "6m"; BandSelected = Band.B6M; break;
-                        case 40: BandName = "GEN"; BandSelected = Band.GEN; break;
+                        BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
+                        BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
+                        ExecuteButtonLongpress(BtnAction, BtnParam);       // implement the button action
                     }
-                    if (show_rx1)                           // set RX1 or 2 band
-                        SetCATBand(BandSelected);
-                    else
+                    else if (State)             // normal button press.
                     {
-                        //                    RX2Band = BandSelected;
-                        SetupBand(BandName);
+                        if (AndromedaBandButtonsEnabled)        // perform the "band" function of the button
+                        {
+                            switch (Button)
+                            {
+                                case 29: BandName = "160m"; BandSelected = Band.B160M; break;
+                                case 30: BandName = "80m"; BandSelected = Band.B80M; break;
+                                case 31: BandName = "60m"; BandSelected = Band.B60M; break;
+                                case 32: BandName = "40m"; BandSelected = Band.B40M; break;
+                                case 33: BandName = "30m"; BandSelected = Band.B30M; break;
+                                case 34: BandName = "20m"; BandSelected = Band.B20M; break;
+                                case 35: BandName = "17m"; BandSelected = Band.B17M; break;
+                                case 36: BandName = "15m"; BandSelected = Band.B15M; break;
+                                case 37: BandName = "12m"; BandSelected = Band.B12M; break;
+                                case 38: BandName = "10m"; BandSelected = Band.B10M; break;
+                                case 39: BandName = "6m"; BandSelected = Band.B6M; break;
+                                case 40: BandName = "GEN"; BandSelected = Band.GEN; break;
+                            }
+                            // we have changed band, so setup the new band
+                            if (show_rx1)                           // set RX1 or 2 band
+                                SetCATBand(BandSelected);
+                            else
+                            {
+                                SetupRX2Band(BandName);
+                            }
+                        }
+                        else                     // perform the non band function
+                        {
+                            BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
+                            BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
+                            ExecuteButtonAction(BtnAction, BtnParam);       // implement the button action
+                        }
+// now decide if we need to release the "shift" action. If sticky, we don't change it.
+                        if(!AndromedaStickyShift)
+                        {
+                            if(AndromedaBandButtonIsDefault)
+                                AndromedaBandButtonsEnabled = true;          // cancel shift
+                            else
+                                AndromedaBandButtonsEnabled = false;          // cancel shift
+                            AndromedaIndicatorCheck(EIndicatorActions.eINShiftEnabled, false, AndromedaBandButtonsEnabled);
+                        }
                     }
-                    AndromedaShiftPressed = false;          // cancel shift
-                    AndromedaIndicatorCheck(EIndicatorActions.eINShiftEnabled, false, AndromedaShiftPressed);
                 }
-                else if ((Button >= 0) && (Button < RowCount))           // check range
+                // else - a button not in the band group
+                else if ((Button >= 0) && (Button < RowCount))           // check valid button range
                 {
                     BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
                     BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
@@ -1924,16 +2183,16 @@ namespace Thetis
                                 break;
                         }
                     }
-                    else if (State)                                     // ordinary press
+                    // the button isn't in the band group or menu group
+                    else
                     {
-                        ExecuteButtonAction(BtnAction, BtnParam);       // implement the button action
+                        if (State)                                     // ordinary press
+                            ExecuteButtonAction(BtnAction, BtnParam);       // implement the button action
+                        else if (LongPress)
+                            ExecuteButtonLongpress(BtnAction, BtnParam);       // implement the button action
                     }
-                    else if (LongPress)
-                        ExecuteButtonLongpress(BtnAction, BtnParam);       // implement the button action
-
-
                 }
-            }
+            }//if (!UsedForSetup)
         }
 
 
@@ -2065,6 +2324,7 @@ namespace Thetis
                         Value = RF;
                         EncoderUpdate(Steps, ref Value, ptbRF.Minimum, ptbRF.Maximum);
                         ShowAndromedaSlider(Value, ptbRF.Minimum, ptbRF.Maximum, "RX1 AGC");
+                        if (Value != RF && AutoAGCRX1) AutoAGCRX1 = false; // turn off 'auto agc' only if different MW0LGE_21k8
                         RF = Value;
                     }
                     else
@@ -2072,6 +2332,7 @@ namespace Thetis
                         Value = RX2RF;
                         EncoderUpdate(Steps, ref Value, ptbRX2RF.Minimum, ptbRX2RF.Maximum);
                         ShowAndromedaSlider(Value, ptbRX2RF.Minimum, ptbRX2RF.Maximum, "RX2 AGC");
+                        if (Value != RX2RF && AutoAGCRX2) AutoAGCRX2 = false; // turn off 'auto agc' only if different MW0LGE_21k8
                         RX2RF = Value;
                     }
                     CheckGainFormAutoShow();
@@ -2087,10 +2348,10 @@ namespace Thetis
                     }
                     else
                     {
-                        Value = RX2ATT;
+                        Value = SetupForm.HermesAttenuatorDataRX2; //RX2ATT; // MW0LGE_21d step atten changes
                         EncoderUpdate(Steps, ref Value, (int)udRX2StepAttData.Minimum, (int)udRX2StepAttData.Maximum);
                         ShowAndromedaSlider(Value, (int)udRX2StepAttData.Minimum, (int)udRX2StepAttData.Maximum, "RX2 ATT");
-                        RX2ATT = Value;
+                        /*RX2ATT*/SetupForm.HermesAttenuatorDataRX2 = Value; // MW0LGE_21d step atten changes
                     }
                     CheckGainFormAutoShow();
                     break;
@@ -2522,11 +2783,16 @@ namespace Thetis
                 }
                 else
                     ExecuteButtonAction(assignedAction, Override);
-                // now set 10s timeout timer
-                AndromedaMenuTimer.Enabled = false;
-                AndromedaMenuTimer.AutoReset = false;                   // just one callback
-                AndromedaMenuTimer.Interval = 10000;                    // 10 seconds
-                AndromedaMenuTimer.Enabled = true;
+
+                // now set 10s timeout timer, unless menus are set to be "sticky"
+                // after timeout, menu will change to the 1st "quick" menu
+                if(!AndromedaStickyMenus)
+                {
+                    AndromedaMenuTimer.Enabled = false;
+                    AndromedaMenuTimer.AutoReset = false;                   // just one callback
+                    AndromedaMenuTimer.Interval = 10000;                    // 10 seconds
+                    AndromedaMenuTimer.Enabled = true;
+                }
 
             }
         }
@@ -3044,10 +3310,12 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBBandstackForm:           // show band stacks form
-                    if (StackForm == null || StackForm.IsDisposed) StackForm = new StackControl(this);
-                    Invoke(new MethodInvoker(StackForm.Show));
-                    StackForm.Focus();
-                    StackForm.WindowState = FormWindowState.Normal; // ke9ns add
+                    //if (StackForm == null || StackForm.IsDisposed) StackForm = new StackControl(this);
+                    //Invoke(new MethodInvoker(StackForm.Show));
+                    //StackForm.Focus();
+                    //StackForm.WindowState = FormWindowState.Normal; // ke9ns add
+
+                    Invoke(new MethodInvoker(BandStack2Form.Show)); //MW0LGE_21d BandStack2
                     break;
 
                 case EButtonBarActions.eBBBandstack:
@@ -3122,7 +3390,17 @@ namespace Thetis
                         setupToolStripMenuItem_Click(this, EventArgs.Empty);
                     break;
 
-                case EButtonBarActions.eBBATUOnOff:                  // Auto ATU on/off - not implemented yet
+                case EButtonBarActions.eBBATUOnOff:                  // Auto ATU on/off
+                    int idx = (int)TXBand - (int)Band.B160M;         // get TX band then look up the antenna in use
+                    int TXAntenna = 0;
+                    if (idx < ARIESANTARRAYSIZE)
+                    {
+                        TXAntenna = AntennaArrayByBand[idx];
+                        if (!IsSetupFormNull)
+                            SetupForm.SetAriesEnabledButton(TXAntenna, !AriesEnabled);
+                    }
+                    AndromedaIndicatorCheck(EIndicatorActions.eINATUReady, true, AriesEnabled);
+
                     break;
 
                 case EButtonBarActions.eBBMenuButton:                // menu button below screen - shouldn't be called!
@@ -3133,11 +3411,11 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBShift:                    // shift function to select Andromeda band buttons action
-                    if (AndromedaShiftPressed)
-                        AndromedaShiftPressed = false;              // deactivate
+                    if (AndromedaBandButtonsEnabled)
+                        AndromedaBandButtonsEnabled = false;              // deactivate
                     else
-                        AndromedaShiftPressed = true;               // activate shift if not latched
-                    AndromedaIndicatorCheck(EIndicatorActions.eINShiftEnabled, false, AndromedaShiftPressed);
+                        AndromedaBandButtonsEnabled = true;               // activate shift if not latched
+                    AndromedaIndicatorCheck(EIndicatorActions.eINShiftEnabled, false, AndromedaBandButtonsEnabled);
                     break;
 
                 case EButtonBarActions.eBBMNFAdd:                   // add a manual notch filter entry
@@ -3204,6 +3482,10 @@ namespace Thetis
         //
         private void SelectModeDependentPanel()
         {
+            //MW0LGE_21k9d changed to show/hide as it was causing some unexplained
+            //slow down, perhaps z-order fighting, not sure. ~1-3 seconds taken to get through
+            //this function, changing from digi to something else.
+            //Hidden controls are still returned in this.Controls so will still be saved out ok
             switch (RX1DSPMode)
             {
                 case DSPMode.LSB:
@@ -3212,22 +3494,38 @@ namespace Thetis
                 case DSPMode.AM:
                 case DSPMode.SAM:
                 case DSPMode.SPEC:
-                    panelModeSpecificPhone.BringToFront();
+                    panelModeSpecificPhone.Show();
+                    panelModeSpecificCW.Hide();
+                    panelModeSpecificDigital.Hide();
+                    panelModeSpecificFM.Hide();
+                    //panelModeSpecificPhone.BringToFront();
                     break;
 
                 case DSPMode.CWL:
                 case DSPMode.CWU:
-                    panelModeSpecificCW.BringToFront();
+                    panelModeSpecificCW.Show();
+                    panelModeSpecificDigital.Hide();
+                    panelModeSpecificFM.Hide();
+                    panelModeSpecificPhone.Hide();
+                    //panelModeSpecificCW.BringToFront();
                     break;
 
                 case DSPMode.FM:
-                    panelModeSpecificFM.BringToFront();
+                    panelModeSpecificFM.Show();
+                    panelModeSpecificCW.Hide();
+                    panelModeSpecificDigital.Hide();
+                    panelModeSpecificPhone.Hide();
+                    //panelModeSpecificFM.BringToFront();
                     break;
 
                 case DSPMode.DIGU:
                 case DSPMode.DIGL:
                 case DSPMode.DRM:
-                    panelModeSpecificDigital.BringToFront();
+                    panelModeSpecificDigital.Show();
+                    panelModeSpecificCW.Hide();
+                    panelModeSpecificFM.Hide();
+                    panelModeSpecificPhone.Hide();
+                    //panelModeSpecificDigital.BringToFront();
                     break;
             }
         }
@@ -3343,7 +3641,7 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBBandstack:
-                    NewString = DefaultString + "  " + regBox1.Text + "/" + regBox.Text;
+                    NewString = DefaultString + "  " + regBandStackCurrentEntry.Text + "/" + regBandStackTotalEntries.Text;
                     break;
 
                 case EButtonBarActions.eBBQuickRestore:               // restore from "quick memory"
@@ -3359,6 +3657,10 @@ namespace Thetis
 
                 case EButtonBarActions.eBBCWQSK:
                     if (chkQSK.Checked) NewString = chkQSK.Text; else NewString = "QSK: off";
+                    break;
+
+                case EButtonBarActions.eBBATUOnOff:
+                    if (AriesEnabled) NewString = "ATU: On"; else NewString = "ATU: Off";
                     break;
 
 
@@ -3571,7 +3873,7 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBATUOnOff:                  // Auto ATU on/off
-                    State = false;                                   // not yet implemented
+                    State = AriesEnabled;                                   // not yet implemented
                     break;
 
                 case EButtonBarActions.eBBMenuButton:                // menu button below screen

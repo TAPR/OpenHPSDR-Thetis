@@ -489,7 +489,7 @@ void fexchange0 (int channel, double* in, double* out, int* error)
 				if (!_InterlockedAnd (&a->slew.downflag, 1))
 				{
 					InterlockedBitTestAndReset (&ch[channel].exchange, 0);
-					_beginthread (flushChannel, 0, (void *)channel);
+					_beginthread (flushChannel, 0, (void *)(uintptr_t)channel);
 				}
 			}
 			else
@@ -548,7 +548,7 @@ void fexchange2 (int channel, INREAL *Iin, INREAL *Qin, OUTREAL *Iout, OUTREAL *
 				if (!_InterlockedAnd (&a->slew.downflag, 1))
 				{
 					InterlockedBitTestAndReset (&ch[channel].exchange, 0);
-					_beginthread (flushChannel, 0, (void *)channel);
+					_beginthread (flushChannel, 0, (void *)(uintptr_t)channel);
 				}
 			}
 			else

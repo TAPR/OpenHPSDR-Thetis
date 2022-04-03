@@ -468,6 +468,7 @@ ReadThreadMainLoop() {
 					prn->ptt_in = prn->ReadBufp[0] & 0x1;
 					prn->dot_in = prn->ReadBufp[0] & 0x2;
 					prn->dash_in = prn->ReadBufp[0] & 0x4;
+					prn->pll_locked = prn->ReadBufp[0] & 0x10; //MW0LGE_21d
 
 					//Byte 1 - Bit [0] - ADC0  Overload 1 = active, 0 = inactive
 					//		   Bit [1] - ADC1  Overload 1 = active, 0 = inactive

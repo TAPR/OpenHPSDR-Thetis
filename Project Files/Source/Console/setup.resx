@@ -151,6 +151,9 @@ recorded values into the respective spinners.  DO NOT USE
 POWER EXCEEDING THE RATING OF YOUR RADIO!
 </value>
   </data>
+  <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
+    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDAuMTI1fC0xNDczNzYzM3wwfDAuMjUwfC0xMjY5ODA1MHwwfDAuMzc1fC0xMDY1ODQ2N3wwfDAuNTAwfC04NjE4ODg0fDB8MC42MjV8LTY1NzkzMDF8MHwwLjc1MHwtNDUzOTcxOHwwfDAuODc1fC0yNTAwMTM1fDF8MS4wMDB8LTF8</value>
+  </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 
 to the end of the URL
@@ -194,8 +197,14 @@ To view your Display.
   <metadata name="timer_RawInputMouseWheel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>810, 17</value>
   </metadata>
+  <metadata name="tmrPLLLockChecker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1018, 17</value>
+  </metadata>
+  <metadata name="tmrCFCOMPGain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1176, 17</value>
+  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>25</value>
+    <value>99</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

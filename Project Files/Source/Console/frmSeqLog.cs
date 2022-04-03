@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================
+// frmSeqLog.cs - MW0LGE 2020
+//=================================================================
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;

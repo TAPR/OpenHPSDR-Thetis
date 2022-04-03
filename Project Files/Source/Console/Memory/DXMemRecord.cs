@@ -84,9 +84,6 @@ namespace Thetis
             }
         }
 
-
-
-
         #endregion
 
         #region Routines

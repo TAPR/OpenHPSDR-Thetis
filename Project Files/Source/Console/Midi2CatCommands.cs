@@ -29,6 +29,7 @@ using Midi2Cat;
 using Midi2Cat.Data; 
 using System;
 using Midi2Cat.IO; //-W2PA Necessary for changes to support Behringer PL-1 (and others)
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -2247,7 +2248,36 @@ namespace Thetis
             }
             return CmdState.NoChange;
         }
+        //MW0LGE_21g
+        public CmdState TwoToneOnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
 
+                try
+                {
+                    int TunerState = Convert.ToInt16(commands.ZZUT(""));
+
+                    if (TunerState == 0)
+                    {
+                        commands.ZZUT("1");
+                        return CmdState.On;
+                    }
+                    if (TunerState == 1)
+                    {
+                        commands.ZZUT("0");
+                        return CmdState.Off;
+                    }
+                }
+                catch
+                {
+                    return CmdState.NoChange;
+                }
+            }
+            return CmdState.NoChange;
+        }
         public CmdState TunerBypassOnOff(int msg, MidiDevice device)
         {
             if (msg == 127)
@@ -4288,8 +4318,8 @@ namespace Thetis
             parser.nSet = 4;
 
             try
-            {
-                int wf = (int)((msg - 63) * 3.125);
+            {               
+                int wf = (int)((msg - 63) * 3.125f);
                 commands.ZZDN(wf.ToString("0000;-000;0000"));
                 commands.ZZDQ(wf.ToString("0000;-000;0000"));
                 return;
@@ -4305,10 +4335,10 @@ namespace Thetis
         {
             parser.nGet = 0;
             parser.nSet = 4;
-
+            
             try
             {
-                int wf = (int)((msg - 63) * 3.125);
+                int wf = (int)((msg - 63) * 3.125f);
                 commands.ZZDO(wf.ToString("0000;-000;0000"));
                 commands.ZZDP(wf.ToString("0000;-000;0000"));
                 return;
@@ -5173,6 +5203,946 @@ namespace Thetis
             return;
         }
 
+        //DH1KLM_21g block of additions
+		public void Rx2ModeNext(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nSet = 2;
+            parser.nGet = 0;
+            int SelectedMode = Convert.ToInt16(commands.ZZME(""));
+
+            if ((SelectedMode < 11) && (msg == 127))
+            {
+                commands.ZZME((SelectedMode + 1).ToString("00"));
+            }
+        }
+
+        public void Rx2ModePrev(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nSet = 2;
+            parser.nGet = 0;
+            int SelectedMode = Convert.ToInt16(commands.ZZME(""));
+
+            if ((SelectedMode > 0) && (msg == 127))
+            {
+                commands.ZZME((SelectedMode - 1).ToString("00"));
+            }
+        }
+		
+		public void Rx2FilterWider(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nSet = 2;
+            parser.nGet = 0;
+            int SelectedFilter = Convert.ToInt16(commands.ZZFJ(""));
+
+            if ((SelectedFilter > 0) && (msg == 127))
+            {
+                commands.ZZFJ((SelectedFilter - 1).ToString("00"));
+            }
+        }
+
+        public void Rx2FilterNarrower(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nSet = 2;
+            parser.nGet = 0;
+            int SelectedFilter = Convert.ToInt16(commands.ZZFJ(""));
+
+            if ((SelectedFilter < 14) && (msg == 127))
+            {
+                commands.ZZFJ((SelectedFilter + 1).ToString("00"));
+            }
+        }
+		
+		public CmdState RX2AutoNotchOnOff(int msg, MidiDevice device) // DH1KLM 
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int AutoNotchState = Convert.ToInt16(commands.ZZNU(""));
+
+                if (AutoNotchState == 0)
+                {
+                    commands.ZZNU("1");
+                    return CmdState.On;
+                }
+                if (AutoNotchState == 1)
+                {
+                    commands.ZZNU("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+		
+		public CmdState ToggleTX(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int TXABState = Convert.ToInt16(commands.ZZSW(""));
+
+                if (TXABState == 0)
+                {
+                    commands.ZZSW("1");
+                    return CmdState.On;
+                }
+                if (TXABState == 1)
+                {
+                    commands.ZZSW("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+		
+		public void TUNPowerLevel(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nSet = 3;
+            parser.nGet = 0;
+
+            try
+            {
+                double tun = msg * 0.787;
+                commands.ZZTO(tun.ToString("000"));
+                return;
+            }
+            catch
+            {
+                return;
+            }
+        }
+		
+		public void RX2AGCModeKnob(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nGet = 0;
+            parser.nSet = 1;
+
+            if ((msg >= 0) && (msg < 22))
+            {
+                commands.ZZGU("0");
+                return;
+            }
+            if ((msg >= 22) && (msg < 43))
+            {
+                commands.ZZGU("1");
+                return;
+            }
+            if ((msg >= 43) && (msg < 64))
+            {
+                commands.ZZGU("2");
+                return;
+            }
+            if ((msg >= 64) && (msg < 85))
+            {
+                commands.ZZGU("3");
+                return;
+            }
+
+            if ((msg >= 85) && (msg < 106))
+            {
+                commands.ZZGU("4");
+                return;
+            }
+
+            if ((msg >= 106) && (msg < 128))
+            {
+                commands.ZZGU("5");
+                return;
+            }
+
+        }
+		
+		public void RX2AGCModeUp(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nGet = 0;
+            parser.nSet = 1;
+
+            if (msg == 127)
+            {
+                try
+                {
+                    int agcstate = Convert.ToInt16(commands.ZZGU(""));
+
+                    if ((agcstate > 0) && (agcstate <= 5))
+                    {
+                        agcstate = agcstate - 1;
+                        commands.ZZGU(agcstate.ToString("0"));
+                        return;
+                    }
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+		
+		public void RX2AGCModeDown(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nGet = 0;
+            parser.nSet = 1;
+
+            if (msg == 127)
+            {
+                try
+                {
+                    int agcstate = Convert.ToInt16(commands.ZZGU(""));
+
+                    if ((agcstate >= 0) && (agcstate < 5))
+                    {
+                        agcstate = agcstate + 1;
+                        commands.ZZGU(agcstate.ToString("0"));
+                        return;
+                    }
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+		
+		public CmdState RX2CTunOnOff(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int ESC = Convert.ToInt16(commands.ZZCO(""));
+
+                if (ESC == 0)
+                {
+                    commands.ZZCO("1");
+                    return CmdState.On;
+                }
+                if (ESC == 1)
+                {
+                    commands.ZZCO("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+		
+        public CmdState PSOnOff(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int ESC = Convert.ToInt16(commands.ZZLI(""));
+
+                if (ESC == 0)
+                {
+                    commands.ZZLI("1");
+                    return CmdState.On;
+                }
+                if (ESC == 1)
+                {
+                    commands.ZZLI("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+		
+		public void RX2ModeSSB(int msg, MidiDevice device) // Dh1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+                parser.nAns = 3;
+
+                int band = 0;
+
+                try
+                {
+                    band = Convert.ToInt16(commands.ZZBT(""));
+                }
+                catch
+                {
+                    band = 0;
+                }
+
+                parser.nGet = 0;
+                parser.nSet = 2;
+                parser.nAns = 2;
+
+                try
+                {
+                    if (band >= 40) commands.ZZME("00");
+                    if (band < 40) commands.ZZME("01");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeLSB(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("00");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+        public void RX2ModeUSB(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("01");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeDSB(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("02");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeCW(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("01");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeCWL(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("03");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeCWU(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("04");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeFM(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("05");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeAM(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("06");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeDIGU(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("07");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+
+        public void RX2ModeSPEC(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("08");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeDIGL(int msg, MidiDevice device) //  DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("09");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void RX2ModeSAM(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("10");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+
+        public void RX2ModeDRM(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZME("11");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+        
+		public void MoveVFOBDown100Khz(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZBM("11");  //-W2PA 11 indicates 100kHz, 10 indicates 10kHz (as originally coded)
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public void MoveVFOBUp100Khz(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                try
+                {
+                    commands.ZZBP("11");  //-W2PA 11 indicates 100kHz, 10 indicates 10kHz (as originally coded)
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+		
+		public void CloseConsole(int msg, MidiDevice device) // DH1KLM 
+         {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    commands.ZZBY();
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public CmdState RX2SquelchOnOff(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    int sql = Convert.ToInt16(commands.ZZSV(""));
+
+                    if (sql == 0)
+                    {
+                        commands.ZZSV("1");
+                        return CmdState.On;
+                    }
+                    if (sql == 1)
+                    {
+                        commands.ZZSV("0");
+                        return CmdState.Off;
+                    }
+                }
+                catch
+                {
+                    return CmdState.NoChange; ;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        public void RX2SquelchControl(int msg, MidiDevice device) // DH1KLM
+        {
+            parser.nSet = 0;
+            parser.nSet = 3;
+
+            try
+            {
+                double sqlctrl = 160 - (msg * 1.26);
+                commands.ZZSX(sqlctrl.ToString("000"));
+                return;
+            }
+            catch
+            {
+                return;
+            }
+        }
+        //end DH1KLM_21g block of additions
+
+        //end DH1KLM_21h start block of additions
+        public void TXFilterHigh(int msg, MidiDevice device) // DH1KLM_21h
+        {
+            int tuningstep = 20;
+
+            string devName = device.GetDeviceName();
+            if (IsBehringerCMD(device)) //W2PA- Special handling for Behringer
+            {
+                //-W2PA Map to what it expects for the Hercules, as originally written
+                if (msg == 63) msg = 127;
+                if (msg == 65) msg = 1;
+            }
+
+            try
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                string s = commands.ZZMD("");
+                int mode = Convert.ToInt32(s);
+
+                if ((mode == 3) || (mode == 4) || (mode == 7) || (mode == 8) || (mode == 9))
+                {
+                    tuningstep = 20;
+                }
+                else
+                {
+                    tuningstep = 50;
+                }
+            }
+            catch
+            {
+                return;
+            }
+
+            try
+            {
+
+                parser.nSet = 5;
+                parser.nGet = 0;
+                parser.nAns = 5;
+
+                string s = commands.ZZTH("");
+
+                int UpperEdge = Convert.ToInt32(s);
+
+
+                if ((msg == 1) && (UpperEdge >= 0))
+                {
+                    UpperEdge = UpperEdge + tuningstep;
+                    commands.ZZTH(UpperEdge.ToString("00000"));
+                    return;
+                }
+
+                if ((msg == 1) && (UpperEdge < 0))
+                {
+                    if (UpperEdge > (-tuningstep - 1))
+                    {
+                        UpperEdge = UpperEdge + tuningstep;
+                        commands.ZZTH(UpperEdge.ToString("00000"));
+                        return;
+                    }
+                    else
+                    {
+                        UpperEdge = UpperEdge + tuningstep;
+                        commands.ZZTH(UpperEdge.ToString("00000"));
+                        return;
+                    }
+                }
+
+                if ((msg == 127) && (UpperEdge >= 0))
+                {
+                    if (UpperEdge < tuningstep)
+                    {
+                        UpperEdge = UpperEdge - tuningstep;
+                        commands.ZZTH(UpperEdge.ToString("00000"));
+                        return;
+                    }
+                    else
+                    {
+                        UpperEdge = UpperEdge - tuningstep;
+                        commands.ZZTH(UpperEdge.ToString("00000"));
+                        return;
+                    }
+                }
+
+                if ((msg == 127) && (UpperEdge < 0))
+                {
+                    UpperEdge = UpperEdge - tuningstep;
+                    commands.ZZTH(UpperEdge.ToString("00000"));
+                    return;
+                }
+            }
+            catch
+            {
+                return;
+            }
+        }
+        public void TXFilterLow(int msg, MidiDevice device) // DH1KLM_21h
+        {
+            int tuningstep = 20;
+
+            string deviceName = device.GetDeviceName();
+            if (IsBehringerCMD(device))  //-W2PA special handling for Behringer wheel style knobs
+            {
+                //-W2PA Map to what it expects for the Hercules, as originally written
+                if (msg == 63) msg = 127;
+                if (msg == 65) msg = 1;
+            }
+
+            try
+            {
+                parser.nGet = 0;
+                parser.nSet = 2;
+
+                string s = commands.ZZMD("");
+                int mode = Convert.ToInt32(s);
+
+                if ((mode == 3) || (mode == 4) || (mode == 7) || (mode == 8) || (mode == 9))
+                {
+                    ; // tuningstep = tuningstep;
+                }
+                else
+                {
+                    tuningstep = 50;
+                }
+            }
+            catch
+            {
+                return;
+            }
+
+            try
+            {
+
+                parser.nSet = 5;
+                parser.nGet = 0;
+                parser.nAns = 5;
+
+                string s = commands.ZZTL("");
+
+                int LowerEdge = Convert.ToInt32(s);
+
+
+                if ((msg == 1) && (LowerEdge >= 0))
+                {
+                    LowerEdge = LowerEdge + tuningstep;
+                    commands.ZZTL(LowerEdge.ToString("00000"));
+                    return;
+                }
+
+                if ((msg == 1) && (LowerEdge < 0))
+                {
+                    if (LowerEdge > (-tuningstep - 1))
+                    {
+                        LowerEdge = LowerEdge + tuningstep;
+                        commands.ZZTL(LowerEdge.ToString("00000"));
+                        return;
+                    }
+                    else
+                    {
+                        LowerEdge = LowerEdge + tuningstep;
+                        commands.ZZTL(LowerEdge.ToString("00000"));
+                        return;
+                    }
+                }
+
+                if ((msg == 127) && (LowerEdge >= 0))
+                {
+                    if (LowerEdge < tuningstep)
+                    {
+                        LowerEdge = LowerEdge - tuningstep;
+                        commands.ZZTL(LowerEdge.ToString("00000"));
+                        return;
+                    }
+                    else
+                    {
+                        LowerEdge = LowerEdge - tuningstep;
+                        commands.ZZTL(LowerEdge.ToString("00000"));
+                        return;
+                    }
+                }
+
+                if ((msg == 127) && (LowerEdge < 0))
+                {
+                    LowerEdge = LowerEdge - tuningstep;
+                    commands.ZZTL(LowerEdge.ToString("00000"));
+                    return;
+                }
+            }
+            catch
+            {
+                return;
+            }
+        }
+        //end DH1KLM_21h block of additions
+
+        //MW0LGE_21j
+        public CmdState ExternalPAOnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int xPAState = Convert.ToInt16(commands.ZZUP(""));
+
+                if (xPAState == 0)
+                {
+                    commands.ZZUP("1");
+                    return CmdState.On;
+                }
+                if (xPAState == 1)
+                {
+                    commands.ZZUP("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+
+        //MW0LGE_21k9d
+        public void ZoomToBandRecall(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    commands.ZZZT("0");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+        public void ZoomToBandStore(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    commands.ZZZT("1");
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        public CmdState RX1AutoAGC(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int autoAGCState = Convert.ToInt16(commands.ZZZQ(""));
+
+                if (autoAGCState == 0)
+                {
+                    commands.ZZZQ("1");
+                    return CmdState.On;
+                }
+                if (autoAGCState == 1)
+                {
+                    commands.ZZZQ("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public CmdState RX2AutoAGC(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int autoAGCState = Convert.ToInt16(commands.ZZZR(""));
+
+                if (autoAGCState == 0)
+                {
+                    commands.ZZZR("1");
+                    return CmdState.On;
+                }
+                if (autoAGCState == 1)
+                {
+                    commands.ZZZR("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
         #endregion
 
     }

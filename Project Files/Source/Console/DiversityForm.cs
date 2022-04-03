@@ -43,8 +43,9 @@ namespace Thetis
     /// </summary>
     public class DiversityForm : System.Windows.Forms.Form
     {
-        private Point p = new Point(200, 200);
-        private Point last_p;
+        //private Point p = new Point(200, 200); //MW0LGE_21c
+        //private const double m_SCALEFACTOR = 10.0; //MW0LGE_21f this now applied to udR1 and udR2
+        //private Point last_p;
         private Point last_Phase1 = new Point(100, 250);
         private Point last_Phase2 = new Point(100, 100);
         private double angle;
@@ -53,6 +54,7 @@ namespace Thetis
         private double steering_angle;
         private double cross_fire;              // phase shift if using cross-fire feed; pi or 0
         private double fine_null;
+        private double m_dGainMulti = 1; //MW0LGE_21f
 
         //        private Color topColor = Color.FromArgb(0, 120, 0);
         //        private Color bottomColor = Color.FromArgb(0, 40, 0);        
@@ -111,6 +113,9 @@ namespace Thetis
         private CheckBoxTS chkEnableDiversity;
         private bool FormAutoShown;
         System.Timers.Timer AutoHideTimer;                         // times auto hiding of form 
+        private LabelTS labelTS1;
+        private NumericUpDownTS udGainMulti;
+        private CheckBoxTS chkAlwaysOnTop;
 
         /// <summary>
         /// Required designer variable.
@@ -125,6 +130,10 @@ namespace Thetis
             InitializeComponent();
             console = c;
             udR1.Visible = false;
+
+            udR1.Maximum = (decimal)m_dGainMulti; //MW0LGE_21f
+            udR2.Maximum = (decimal)m_dGainMulti;
+
             // labelTS2.Visible = false;
             labelTS30.Visible = false;
             labelTS40.Visible = false;
@@ -145,7 +154,7 @@ namespace Thetis
             radioButtonMerc1_CheckedChanged(this, e);
             radioButtonMerc2_CheckedChanged(this, e);
             WDSP.SetEXTDIVNr(0, 2);
-           // console.Diversity2 = true;
+            // console.Diversity2 = true;
             chkEnableDiversity_CheckedChanged(this, e);
             // create timer for autohide and attach callback
             AutoHideTimer = new System.Timers.Timer();
@@ -195,6 +204,7 @@ namespace Thetis
             this.labelTS40 = new System.Windows.Forms.LabelTS();
             this.label_d = new System.Windows.Forms.LabelTS();
             this.udAntSpacing = new System.Windows.Forms.NumericUpDownTS();
+            this.udR = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.udCalib = new System.Windows.Forms.NumericUpDownTS();
             this.labelDirection = new System.Windows.Forms.LabelTS();
@@ -204,6 +214,8 @@ namespace Thetis
             this.labelTS6 = new System.Windows.Forms.LabelTS();
             this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.groupBox_refMerc = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS1 = new System.Windows.Forms.LabelTS();
+            this.udGainMulti = new System.Windows.Forms.NumericUpDownTS();
             this.chkLockAngle = new System.Windows.Forms.CheckBoxTS();
             this.chkLockR = new System.Windows.Forms.CheckBoxTS();
             this.chkCrossFire = new System.Windows.Forms.CheckBoxTS();
@@ -216,20 +228,21 @@ namespace Thetis
             this.radioButtonMerc2 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonMerc1 = new System.Windows.Forms.RadioButtonTS();
             this.btnShiftUp45 = new System.Windows.Forms.ButtonTS();
-            this.udR = new System.Windows.Forms.NumericUpDownTS();
             this.udAngle = new System.Windows.Forms.NumericUpDownTS();
+            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
             this.panelDivControls.SuspendLayout();
             this.grpRxSource.SuspendLayout();
             this.groupBoxTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCalib)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
             this.groupBox_refMerc.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udGainMulti)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFineNull)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle)).BeginInit();
             this.SuspendLayout();
             // 
@@ -237,7 +250,7 @@ namespace Thetis
             // 
             this.chkAuto.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.chkAuto.Enabled = false;
-            this.chkAuto.Location = new System.Drawing.Point(385, 601);
+            this.chkAuto.Location = new System.Drawing.Point(399, 659);
             this.chkAuto.Name = "chkAuto";
             this.chkAuto.Size = new System.Drawing.Size(48, 24);
             this.chkAuto.TabIndex = 1;
@@ -270,7 +283,7 @@ namespace Thetis
             // 
             this.textBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(194, 601);
+            this.textBox1.Location = new System.Drawing.Point(208, 659);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 4;
@@ -282,9 +295,9 @@ namespace Thetis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picRadar.BackColor = System.Drawing.SystemColors.Control;
-            this.picRadar.Location = new System.Drawing.Point(2, 226);
+            this.picRadar.Location = new System.Drawing.Point(2, 266);
             this.picRadar.Name = "picRadar";
-            this.picRadar.Size = new System.Drawing.Size(466, 394);
+            this.picRadar.Size = new System.Drawing.Size(494, 412);
             this.picRadar.TabIndex = 0;
             this.picRadar.TabStop = false;
             this.picRadar.Paint += new System.Windows.Forms.PaintEventHandler(this.picRadar_Paint);
@@ -295,9 +308,11 @@ namespace Thetis
             // panelDivControls
             // 
             this.panelDivControls.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panelDivControls.Controls.Add(this.chkAlwaysOnTop);
             this.panelDivControls.Controls.Add(this.chkEnableDiversity);
             this.panelDivControls.Controls.Add(this.grpRxSource);
             this.panelDivControls.Controls.Add(this.groupBoxTS1);
+            this.panelDivControls.Controls.Add(this.udR);
             this.panelDivControls.Controls.Add(this.labelTS5);
             this.panelDivControls.Controls.Add(this.udCalib);
             this.panelDivControls.Controls.Add(this.labelDirection);
@@ -309,9 +324,9 @@ namespace Thetis
             this.panelDivControls.Controls.Add(this.groupBox_refMerc);
             this.panelDivControls.Controls.Add(this.btnShiftUp45);
             this.panelDivControls.ImeMode = System.Windows.Forms.ImeMode.AlphaFull;
-            this.panelDivControls.Location = new System.Drawing.Point(2, 1);
+            this.panelDivControls.Location = new System.Drawing.Point(12, 3);
             this.panelDivControls.Name = "panelDivControls";
-            this.panelDivControls.Size = new System.Drawing.Size(465, 226);
+            this.panelDivControls.Size = new System.Drawing.Size(472, 257);
             this.panelDivControls.TabIndex = 51;
             this.panelDivControls.TabStop = false;
             this.panelDivControls.Enter += new System.EventHandler(this.panelDivControls_Enter);
@@ -324,7 +339,7 @@ namespace Thetis
             this.chkEnableDiversity.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnableDiversity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkEnableDiversity.Image = null;
-            this.chkEnableDiversity.Location = new System.Drawing.Point(381, 53);
+            this.chkEnableDiversity.Location = new System.Drawing.Point(387, 54);
             this.chkEnableDiversity.Name = "chkEnableDiversity";
             this.chkEnableDiversity.Size = new System.Drawing.Size(66, 23);
             this.chkEnableDiversity.TabIndex = 101;
@@ -406,7 +421,6 @@ namespace Thetis
             this.labelTS41.Size = new System.Drawing.Size(55, 13);
             this.labelTS41.TabIndex = 98;
             this.labelTS41.Text = "D (meters)";
-            this.labelTS41.Visible = false;
             // 
             // labelTS30
             // 
@@ -418,7 +432,6 @@ namespace Thetis
             this.labelTS30.Size = new System.Drawing.Size(21, 13);
             this.labelTS30.TabIndex = 87;
             this.labelTS30.Text = "l =";
-            this.labelTS30.Visible = false;
             // 
             // labelTS40
             // 
@@ -442,7 +455,6 @@ namespace Thetis
             this.label_d.Size = new System.Drawing.Size(15, 15);
             this.label_d.TabIndex = 96;
             this.label_d.Text = "0";
-            this.label_d.Visible = false;
             // 
             // udAntSpacing
             // 
@@ -474,8 +486,37 @@ namespace Thetis
             0,
             0,
             0});
-            this.udAntSpacing.Visible = false;
             this.udAntSpacing.ValueChanged += new System.EventHandler(this.udAntSpacing_ValueChanged_1);
+            // 
+            // udR
+            // 
+            this.udR.DecimalPlaces = 3;
+            this.udR.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udR.Location = new System.Drawing.Point(122, 184);
+            this.udR.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udR.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udR.Name = "udR";
+            this.udR.Size = new System.Drawing.Size(56, 20);
+            this.udR.TabIndex = 5;
+            this.udR.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udR.Visible = false;
+            this.udR.ValueChanged += new System.EventHandler(this.udR_ValueChanged);
             // 
             // labelTS5
             // 
@@ -532,6 +573,7 @@ namespace Thetis
             this.labelDirection.TabIndex = 65;
             this.labelDirection.Text = "NW";
             this.labelDirection.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelDirection.Visible = false;
             // 
             // btnShiftDwn45
             // 
@@ -614,6 +656,8 @@ namespace Thetis
             // 
             // groupBox_refMerc
             // 
+            this.groupBox_refMerc.Controls.Add(this.labelTS1);
+            this.groupBox_refMerc.Controls.Add(this.udGainMulti);
             this.groupBox_refMerc.Controls.Add(this.chkLockAngle);
             this.groupBox_refMerc.Controls.Add(this.chkLockR);
             this.groupBox_refMerc.Controls.Add(this.chkCrossFire);
@@ -627,11 +671,53 @@ namespace Thetis
             this.groupBox_refMerc.Controls.Add(this.radioButtonMerc1);
             this.groupBox_refMerc.Location = new System.Drawing.Point(213, 111);
             this.groupBox_refMerc.Name = "groupBox_refMerc";
-            this.groupBox_refMerc.Size = new System.Drawing.Size(252, 108);
+            this.groupBox_refMerc.Size = new System.Drawing.Size(252, 140);
             this.groupBox_refMerc.TabIndex = 59;
             this.groupBox_refMerc.TabStop = false;
             this.groupBox_refMerc.Text = "Reference Source";
             this.groupBox_refMerc.Enter += new System.EventHandler(this.groupBox_refMerc_Enter);
+            // 
+            // labelTS1
+            // 
+            this.labelTS1.AutoSize = true;
+            this.labelTS1.Image = null;
+            this.labelTS1.Location = new System.Drawing.Point(20, 115);
+            this.labelTS1.Name = "labelTS1";
+            this.labelTS1.Size = new System.Drawing.Size(56, 13);
+            this.labelTS1.TabIndex = 106;
+            this.labelTS1.Text = "Gain multi:";
+            // 
+            // udGainMulti
+            // 
+            this.udGainMulti.BackColor = System.Drawing.Color.White;
+            this.udGainMulti.DecimalPlaces = 2;
+            this.udGainMulti.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udGainMulti.ForeColor = System.Drawing.Color.Black;
+            this.udGainMulti.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udGainMulti.Location = new System.Drawing.Point(82, 111);
+            this.udGainMulti.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udGainMulti.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udGainMulti.Name = "udGainMulti";
+            this.udGainMulti.Size = new System.Drawing.Size(56, 23);
+            this.udGainMulti.TabIndex = 105;
+            this.udGainMulti.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udGainMulti.ValueChanged += new System.EventHandler(this.udGainMulti_ValueChanged);
             // 
             // chkLockAngle
             // 
@@ -835,35 +921,6 @@ namespace Thetis
             this.btnShiftUp45.UseVisualStyleBackColor = false;
             this.btnShiftUp45.Click += new System.EventHandler(this.btnShiftUp45_Click);
             // 
-            // udR
-            // 
-            this.udR.DecimalPlaces = 3;
-            this.udR.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udR.Location = new System.Drawing.Point(96, 709);
-            this.udR.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udR.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udR.Name = "udR";
-            this.udR.Size = new System.Drawing.Size(56, 20);
-            this.udR.TabIndex = 5;
-            this.udR.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udR.ValueChanged += new System.EventHandler(this.udR_ValueChanged);
-            // 
             // udAngle
             // 
             this.udAngle.DecimalPlaces = 3;
@@ -894,23 +951,37 @@ namespace Thetis
             0});
             this.udAngle.ValueChanged += new System.EventHandler(this.udTheta_ValueChanged);
             // 
+            // chkAlwaysOnTop
+            // 
+            this.chkAlwaysOnTop.AutoSize = true;
+            this.chkAlwaysOnTop.Image = null;
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(367, 12);
+            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
+            this.chkAlwaysOnTop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkAlwaysOnTop.Size = new System.Drawing.Size(98, 17);
+            this.chkAlwaysOnTop.TabIndex = 102;
+            this.chkAlwaysOnTop.Text = "Always On Top";
+            this.chkAlwaysOnTop.UseVisualStyleBackColor = true;
+            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
+            // 
             // DiversityForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(468, 623);
+            this.ClientSize = new System.Drawing.Size(496, 681);
             this.Controls.Add(this.picRadar);
             this.Controls.Add(this.panelDivControls);
             this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.udR);
             this.Controls.Add(this.chkAuto);
             this.Controls.Add(this.chkEnable);
             this.Controls.Add(this.btnSync);
             this.Controls.Add(this.udAngle);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(500, 500);
             this.Name = "DiversityForm";
             this.Text = "Phasing Control";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.DiversityForm_Closing);
             this.Load += new System.EventHandler(this.DiversityForm_Load);
+            this.Resize += new System.EventHandler(this.DiversityForm_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).EndInit();
             this.panelDivControls.ResumeLayout(false);
             this.panelDivControls.PerformLayout();
@@ -919,14 +990,15 @@ namespace Thetis
             this.groupBoxTS1.ResumeLayout(false);
             this.groupBoxTS1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCalib)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).EndInit();
             this.groupBox_refMerc.ResumeLayout(false);
             this.groupBox_refMerc.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udGainMulti)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFineNull)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -994,11 +1066,40 @@ namespace Thetis
                             g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
                         }
             */
-            g.FillEllipse(Brushes.White, p.X - 4, p.Y - 2, 8, 8);
-            g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
+            Point pp = getControlHandlePoint(); // MW0LGE_21c
+            //g.FillEllipse(Brushes.White, p.X - 4, p.Y - 2, 8, 8);
+            //g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
+            g.FillEllipse(Brushes.White, pp.X - 4, pp.Y - 2, 8, 8);
+            g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(pp.X, pp.Y));
 
             //g.FillEllipse(Brushes.Yellow, p.X - 4, p.Y - 4, 8, 8);
             //g.DrawLine(pen2, new Point ((int) (size/2), (int) (size/2)), new Point(p.X, p.Y));
+        }
+
+        private Point getControlHandlePoint()
+        {
+            Point retP;
+            double r = (double)udR.Value;
+            double a = (double)udAngle.Value;
+
+            if (chkLockR.Checked && chkLockAngle.Checked)
+            {
+                retP = PolarToXY(locked_r, -locked_angle);
+            }
+            else if (chkLockR.Checked)
+            {
+                retP = PolarToXY(locked_r, -a);
+            }
+            else if (chkLockAngle.Checked)
+            {
+                retP = PolarToXY(r, -locked_angle);
+            }
+            else
+            {
+                retP = PolarToXY(r, -a);
+            }
+
+            return retP;
         }
 
         private Point PolarToXY(double r, double angle)
@@ -1026,6 +1127,7 @@ namespace Thetis
 
             double r = Math.Min(Math.Sqrt(Math.Pow(xf, 2.0) + Math.Pow(yf, 2.0)), 2.0);
             if (r > 1.0) r = 1.0;   // don't let the phasing magnitude be greater than the radar display boundary
+
             //r = 1.0; // fix magnitude at 1
             angle = Math.Atan2(yf, xf);
             //Debug.WriteLine("xf: "+xf.ToString("f2")+"  yf: "+yf.ToString("f2")+"  r: " + r.ToString("f4") + "  angle: " + angle.ToString("f4"));
@@ -1035,7 +1137,7 @@ namespace Thetis
                 if (chkLockR.Checked && chkLockAngle.Checked) return;
                 if (chkLockR.Checked)
                 {
-                    p = PolarToXY(locked_r, -angle);
+                    //p = PolarToXY(locked_r, -angle); //MW0LGE_21c
                     locked_angle = angle;
                     udR.Value = (decimal)locked_r;
                     udAngle0.Value = (decimal)ConvertAngleToAngle0(angle);
@@ -1045,11 +1147,11 @@ namespace Thetis
                 }
                 else if (chkLockAngle.Checked)
                 {
-                    p = PolarToXY(r, -locked_angle);
+                    //p = PolarToXY(r, -locked_angle); //MW0LGE_21c
                     locked_r = r;
                     udR.Value = (decimal)r;
-                    if (radioButtonMerc1.Checked) udR2.Value = udR.Value;
-                    else udR1.Value = udR.Value;
+                    if (radioButtonMerc1.Checked) udR2.Value = (decimal)Math.Round(udR.Value * (decimal)m_dGainMulti, 3);
+                    else udR1.Value = (decimal)Math.Round(udR.Value * (decimal)m_dGainMulti, 3);
                     udAngle0.Value = (decimal)ConvertAngleToAngle0(angle);
                     udAngle.Value = (decimal)locked_angle;
                     //udFineNull.Value = (decimal)locked_angle;
@@ -1058,14 +1160,14 @@ namespace Thetis
                 else
                 {
                     //p = new Point(e.X, e.Y);
-                    p = PolarToXY(r, -angle);
+                    //p = PolarToXY(r, -angle); //MW0LGE_21c
                     locked_r = r;
                     //Debug.WriteLine("locked_r: " + r.ToString("f4"));
                     if (radioButtonMerc1.Checked)
                     {
                         locked_angle = angle;
                         udR.Value = (decimal)r;
-                        udR2.Value = udR.Value;
+                        udR2.Value = (decimal)Math.Round(udR.Value * (decimal)m_dGainMulti, 3);
                         udAngle.Value = (decimal)angle;
                         //udFineNull.Value = udAngle.Value;
                         udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
@@ -1078,7 +1180,7 @@ namespace Thetis
                     {
                         locked_angle = angle;
                         udR.Value = (decimal)r;
-                        udR1.Value = udR.Value;
+                        udR1.Value = (decimal)Math.Round(udR.Value * (decimal)m_dGainMulti, 3);
                         udAngle.Value = (decimal)angle;
                         //udFineNull.Value = udAngle.Value;
                         udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
@@ -1092,7 +1194,6 @@ namespace Thetis
                 //UpdateDiversity();
                 //last_p = p;
                 picRadar.Invalidate();
-
             }
         }
 
@@ -1220,8 +1321,11 @@ namespace Thetis
 
 
             //DttSP.SetDiversityScalar((float)((r*1.5)*Math.Cos(angle)), (float)((r*1.5)*Math.Sin(angle)));
-            int L = (int)Math.Min(picRadar.Width, picRadar.Height);
-            p = new Point((int)(r * L / 2 * Math.Cos(angle)) + L / 2, -(int)(r * L / 2 * Math.Sin(angle)) + L / 2);
+
+            //MW0LGE_21c
+            //int L = (int)Math.Min(picRadar.Width, picRadar.Height);
+            //p = new Point((int)(r * L / 2 * Math.Cos(angle)) + L / 2, -(int)(r * L / 2 * Math.Sin(angle)) + L / 2);
+
             picRadar.Invalidate();
         }
 
@@ -1348,7 +1452,7 @@ namespace Thetis
                 udFineNull.BackColor = System.Drawing.Color.White;
                 chkLockAngle.BackColor = System.Drawing.SystemColors.Control;
                 if (chkLockR.Checked) udR1.Value = udR.Value;
-               // JanusAudio.SetrefMerc(1);
+                // JanusAudio.SetrefMerc(1);
                 // Audio.RefMerc = 1;
                 //p = PolarToXY((double)udR.Value, -(double)ConvertAngle0ToAngle((double)udAngle0.Value));
                 UpdateDiversity();
@@ -1398,133 +1502,135 @@ namespace Thetis
         private bool updateR2 = true;
         private void udR2_ValueChanged(object sender, EventArgs e)
         {
-          //  if (radioButtonMerc1.Checked)
-           // {
-                if (chkLockR.Checked)
-                {
-                    r_A = locked_r;
-                    udR2.Value = (decimal)locked_r;
-                }
-                udR.Value = udR2.Value;
-                UpdateDiversity();
+            //  if (radioButtonMerc1.Checked)
+            // {
+            if (chkLockR.Checked)
+            {
+                r_A = locked_r;
+                if (udR2.Value != (decimal)locked_r) udR2.Value = (decimal)Math.Round(locked_r * m_dGainMulti, 3); // MW0LGE_21b only assign if different
+                                                                                     // fix endless event loop and crash
+            }
+            udR.Value = (decimal)Math.Round(udR2.Value / (decimal)m_dGainMulti, 3); //MW0LGE_21c;
+            UpdateDiversity();
 
-                if (updateR2)
+            if (updateR2)
+            {
+                switch (console.RX1Band)
                 {
-                    switch (console.RX1Band)
-                    {
-                        case Band.B160M:
-                            console.DiversityR2Gain160m = udR2.Value;
-                            break;
-                        case Band.B80M:
-                            console.DiversityR2Gain80m = udR2.Value;
-                            break;
-                        case Band.B60M:
-                            console.DiversityR2Gain60m = udR2.Value;
-                            break;
-                        case Band.B40M:
-                            console.DiversityR2Gain40m = udR2.Value;
-                            break;
-                        case Band.B30M:
-                            console.DiversityR2Gain30m = udR2.Value;
-                            break;
-                        case Band.B20M:
-                            console.DiversityR2Gain20m = udR2.Value;
-                            break;
-                        case Band.B17M:
-                            console.DiversityR2Gain17m = udR2.Value;
-                            break;
-                        case Band.B15M:
-                            console.DiversityR2Gain15m = udR2.Value;
-                            break;
-                        case Band.B12M:
-                            console.DiversityR2Gain12m = udR2.Value;
-                            break;
-                        case Band.B10M:
-                            console.DiversityR2Gain10m = udR2.Value;
-                            break;
-                        case Band.B6M:
-                            console.DiversityR2Gain6m = udR2.Value;
-                            break;
-                        case Band.WWV:
-                            console.DiversityR2GainWWV = udR2.Value;
-                            break;
-                        case Band.GEN:
-                            console.DiversityR2GainGEN = udR2.Value;
-                            break;
-                        default:
-                            console.DiversityR2GainXVTR = udR2.Value;
-                            break;
-                    }
+                    case Band.B160M:
+                        console.DiversityR2Gain160m = udR2.Value;
+                        break;
+                    case Band.B80M:
+                        console.DiversityR2Gain80m = udR2.Value;
+                        break;
+                    case Band.B60M:
+                        console.DiversityR2Gain60m = udR2.Value;
+                        break;
+                    case Band.B40M:
+                        console.DiversityR2Gain40m = udR2.Value;
+                        break;
+                    case Band.B30M:
+                        console.DiversityR2Gain30m = udR2.Value;
+                        break;
+                    case Band.B20M:
+                        console.DiversityR2Gain20m = udR2.Value;
+                        break;
+                    case Band.B17M:
+                        console.DiversityR2Gain17m = udR2.Value;
+                        break;
+                    case Band.B15M:
+                        console.DiversityR2Gain15m = udR2.Value;
+                        break;
+                    case Band.B12M:
+                        console.DiversityR2Gain12m = udR2.Value;
+                        break;
+                    case Band.B10M:
+                        console.DiversityR2Gain10m = udR2.Value;
+                        break;
+                    case Band.B6M:
+                        console.DiversityR2Gain6m = udR2.Value;
+                        break;
+                    case Band.WWV:
+                        console.DiversityR2GainWWV = udR2.Value;
+                        break;
+                    case Band.GEN:
+                        console.DiversityR2GainGEN = udR2.Value;
+                        break;
+                    default:
+                        console.DiversityR2GainXVTR = udR2.Value;
+                        break;
                 }
-                updateR2 = true;
+            }
+            updateR2 = true;
 
-          //  }
+            //  }
         }
 
         private bool updateR1 = true;
         private void udR1_ValueChanged(object sender, EventArgs e)
         {
-          //  if (radioButtonMerc2.Checked)
-          //  {
-                if (chkLockR.Checked)
-                {
-                    r_A = locked_r;
-                    udR1.Value = (decimal)locked_r;
-                }
-                udR.Value = udR1.Value;
-                UpdateDiversity();
+            //  if (radioButtonMerc2.Checked)
+            //  {
+            if (chkLockR.Checked)
+            {
+                r_A = locked_r;
+                if ((decimal)locked_r != udR1.Value) udR1.Value = (decimal)Math.Round(locked_r * m_dGainMulti, 3); // MW0LGE_21b only assign if different
+                                                                                     // fix endless event loop and crash
+            }
+            udR.Value = (decimal)Math.Round(udR1.Value / (decimal)m_dGainMulti, 3); //MW0LGE_21c
+            UpdateDiversity();
 
-                if (updateR1)
+            if (updateR1)
+            {
+                switch (console.RX1Band)
                 {
-                    switch (console.RX1Band)
-                    {
-                        case Band.B160M:
-                            console.DiversityGain160m = udR1.Value;
-                            break;
-                        case Band.B80M:
-                            console.DiversityGain80m = udR1.Value;
-                            break;
-                        case Band.B60M:
-                            console.DiversityGain60m = udR1.Value;
-                            break;
-                        case Band.B40M:
-                            console.DiversityGain40m = udR1.Value;
-                            break;
-                        case Band.B30M:
-                            console.DiversityGain30m = udR1.Value;
-                            break;
-                        case Band.B20M:
-                            console.DiversityGain20m = udR1.Value;
-                            break;
-                        case Band.B17M:
-                            console.DiversityGain17m = udR1.Value;
-                            break;
-                        case Band.B15M:
-                            console.DiversityGain15m = udR1.Value;
-                            break;
-                        case Band.B12M:
-                            console.DiversityGain12m = udR1.Value;
-                            break;
-                        case Band.B10M:
-                            console.DiversityGain10m = udR1.Value;
-                            break;
-                        case Band.B6M:
-                            console.DiversityGain6m = udR1.Value;
-                            break;
-                        case Band.WWV:
-                            console.DiversityGainWWV = udR1.Value;
-                            break;
-                        case Band.GEN:
-                            console.DiversityGainGEN = udR1.Value;
-                            break;
-                        default:
-                            console.DiversityGainXVTR = udR1.Value;
-                            break;
-                    }
+                    case Band.B160M:
+                        console.DiversityGain160m = udR1.Value;
+                        break;
+                    case Band.B80M:
+                        console.DiversityGain80m = udR1.Value;
+                        break;
+                    case Band.B60M:
+                        console.DiversityGain60m = udR1.Value;
+                        break;
+                    case Band.B40M:
+                        console.DiversityGain40m = udR1.Value;
+                        break;
+                    case Band.B30M:
+                        console.DiversityGain30m = udR1.Value;
+                        break;
+                    case Band.B20M:
+                        console.DiversityGain20m = udR1.Value;
+                        break;
+                    case Band.B17M:
+                        console.DiversityGain17m = udR1.Value;
+                        break;
+                    case Band.B15M:
+                        console.DiversityGain15m = udR1.Value;
+                        break;
+                    case Band.B12M:
+                        console.DiversityGain12m = udR1.Value;
+                        break;
+                    case Band.B10M:
+                        console.DiversityGain10m = udR1.Value;
+                        break;
+                    case Band.B6M:
+                        console.DiversityGain6m = udR1.Value;
+                        break;
+                    case Band.WWV:
+                        console.DiversityGainWWV = udR1.Value;
+                        break;
+                    case Band.GEN:
+                        console.DiversityGainGEN = udR1.Value;
+                        break;
+                    default:
+                        console.DiversityGainXVTR = udR1.Value;
+                        break;
                 }
-                updateR1 = true;
+            }
+            updateR1 = true;
 
-          //  }
+            //  }
         }
 
         public bool DiversityRXRef
@@ -1558,7 +1664,7 @@ namespace Thetis
                     radRxSource1.Checked = true;
                 else
                     radRxSource2.Checked = true;
-        }
+            }
 
             get
             {
@@ -1576,7 +1682,7 @@ namespace Thetis
         {
             set
             {
-                if(radioButtonMerc1.Checked)
+                if (radioButtonMerc1.Checked)
                     udR2.Value = value;
                 else
                     udR1.Value = value;
@@ -1590,16 +1696,23 @@ namespace Thetis
             }
         }
 
-
         public decimal DiversityGain
         {
-            set { udR1.Value = value; }
+            set
+            {
+                decimal v = Math.Min(value, udR1.Maximum);
+                udR1.Value = v;
+            }
             get { return udR1.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands
         }
 
         public decimal DiversityR2Gain
         {
-            set { udR2.Value = value; }
+            set
+            {
+                decimal v = Math.Min(value, udR2.Maximum);
+                udR2.Value = v;
+            }
             get { return udR2.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands
         }
 
@@ -1735,7 +1848,11 @@ namespace Thetis
             {
                 angle_A = locked_angle;
                 //udFineNull.Value = (decimal)locked_angle;
-                udFineNull.Value = (decimal)(180 * locked_angle / Math.PI);  //degrees
+                double dTmpCalc = (180 * locked_angle / Math.PI);
+                if ((decimal)dTmpCalc != udFineNull.Value) // MW0LGE_21a only do if different
+                {
+                    udFineNull.Value = (decimal)dTmpCalc;  //degrees
+                }
             }
             else
             {
@@ -1874,16 +1991,59 @@ namespace Thetis
         // check if we want portrait or landscape format. If landscape change form size and panel positions
         private void DiversityForm_Load(object sender, EventArgs e)
         {
-            if(console.SetupForm != null)
+            if (console.SetupForm != null)
             {
-                if(console.SetupForm.AndromedaDiversityFormLandscape)
+                if (console.SetupForm.AndromedaDiversityFormLandscape)
                 {
                     picRadar.Anchor = (AnchorStyles.None);
                     picRadar.Size = new Size(226, 226);
                     this.Size = new Size(750, 280);
-                    picRadar.Location = new Point(470,1);
+                    picRadar.Location = new Point(470, 1);
                 }
             }
+        }
+
+        private void DiversityForm_Resize(object sender, EventArgs e)
+        {
+            picRadar.Invalidate();
+        }
+
+        private void udGainMulti_ValueChanged(object sender, EventArgs e)
+        {
+            if (chkLockR.Checked)
+            {
+                if(udGainMulti.Value != (decimal)m_dGainMulti) udGainMulti.Value = (decimal)m_dGainMulti;
+                return;
+            }
+
+            double r1 = (double)udR1.Value;
+            double r2 = (double)udR2.Value;
+
+            r1 /= m_dGainMulti; //norm
+            r2 /= m_dGainMulti;
+
+            m_dGainMulti = (double)Math.Round(udGainMulti.Value, 2);
+
+            udR1.Maximum = (decimal)m_dGainMulti;
+            udR2.Maximum = (decimal)m_dGainMulti;
+
+            if (radioButtonMerc1.Checked) // order matters, as udR is updated by each of them and we need the correct one last
+            {
+                udR1.Value = (decimal)Math.Round((r1 * m_dGainMulti), 3);
+                udR2.Value = (decimal)Math.Round((r2 * m_dGainMulti), 3);
+                udR2_ValueChanged(this, EventArgs.Empty);
+            }
+            else if (radioButtonMerc2.Checked)
+            {
+                udR2.Value = (decimal)Math.Round((r2 * m_dGainMulti), 3);
+                udR1.Value = (decimal)Math.Round((r1 * m_dGainMulti), 3);
+                udR1_ValueChanged(this, EventArgs.Empty);
+            }
+        }
+
+        private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            this.TopMost = chkAlwaysOnTop.Checked;
         }
     }
 }

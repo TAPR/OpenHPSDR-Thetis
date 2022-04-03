@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2017 Warren Pratt, NR0V
+Copyright (C) 2017, 2021 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -134,6 +134,7 @@ void calc_comp (CFCOMP a)
 		frac = (f - a->fp[j]) / (a->fp[j + 1] - a->fp[j]);
 		a->comp[i] = pow (10.0, 0.05 * (frac * a->gp[j + 1] + (1.0 - frac) * a->gp[j]));
 		a->peq[i]  = pow (10.0, 0.05 * (frac * a->ep[j + 1] + (1.0 - frac) * a->ep[j]));
+		a->cfc_gain[i] = a->precomplin * a->comp[i];
 	}
 	// print_impulse ("comp.txt", a->msize, a->comp, 0, 0);
 }
@@ -166,7 +167,9 @@ void calc_cfcomp(CFCOMP a)
 	a->inaccum   = (double *)malloc0 (a->iasize * sizeof(double));
 	a->forfftin  = (double *)malloc0 (a->fsize  * sizeof(double));
 	a->forfftout = (double *)malloc0 (a->msize  * sizeof(complex));
+	a->cmask     = (double *)malloc0 (a->msize  * sizeof(double));
 	a->mask      = (double *)malloc0 (a->msize  * sizeof(double));
+	a->cfc_gain  = (double *)malloc0 (a->msize  * sizeof(double));
 	a->revfftin  = (double *)malloc0 (a->msize  * sizeof(complex));
 	a->revfftout = (double *)malloc0 (a->fsize  * sizeof(double));
 	a->save      = (double **)malloc0(a->ovrlp  * sizeof(double *));
@@ -191,11 +194,19 @@ void calc_cfcomp(CFCOMP a)
 
 	a->gain = 0.0;
 	a->mmult = exp (-1.0 / (a->rate * a->ovrlp * a->mtau));
+	a->dmult = exp (-(double)a->fsize / (a->rate * a->ovrlp * a->dtau));
+
+	a->delta         = (double*)malloc0 (a->msize * sizeof(double));
+	a->delta_copy    = (double*)malloc0 (a->msize * sizeof(double));
+	a->cfc_gain_copy = (double*)malloc0 (a->msize * sizeof(double));
 }
 
 void decalc_cfcomp(CFCOMP a)
 {
 	int i;
+	_aligned_free (a->cfc_gain_copy);
+	_aligned_free (a->delta_copy);
+	_aligned_free (a->delta);
 	_aligned_free (a->peq);
 	_aligned_free (a->comp);
 	_aligned_free (a->ep);
@@ -210,7 +221,9 @@ void decalc_cfcomp(CFCOMP a)
 	_aligned_free(a->save);
 	_aligned_free(a->revfftout);
 	_aligned_free(a->revfftin);
+	_aligned_free(a->cfc_gain);
 	_aligned_free(a->mask);
+	_aligned_free(a->cmask);
 	_aligned_free(a->forfftout);
 	_aligned_free(a->forfftin);
 	_aligned_free(a->inaccum);
@@ -218,7 +231,7 @@ void decalc_cfcomp(CFCOMP a)
 }
 
 CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, double* out, int fsize, int ovrlp, 
-	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau)
+	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau, double dtau)
 {
 	CFCOMP a = (CFCOMP) malloc0 (sizeof (cfcomp));
 	
@@ -237,6 +250,7 @@ CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, 
 	a->precomp = precomp;
 	a->prepeq = prepeq;
 	a->mtau = mtau;					// compression metering time constant
+	a->dtau = dtau;					// compression display time constant
 	a->F = (double *)malloc0 (a->nfreqs * sizeof (double));
 	a->G = (double *)malloc0 (a->nfreqs * sizeof (double));
 	a->E = (double *)malloc0 (a->nfreqs * sizeof (double));
@@ -261,6 +275,7 @@ void flush_cfcomp (CFCOMP a)
 	a->oaoutidx = 0;
 	a->saveidx  = 0;
 	a->gain = 0.0;
+	memset(a->delta, 0, a->msize * sizeof(double));
 }
 
 void destroy_cfcomp (CFCOMP a)
@@ -276,7 +291,7 @@ void destroy_cfcomp (CFCOMP a)
 void calc_mask (CFCOMP a)
 {
 	int i;
-	double comp, mask;
+	double comp, mask, delta;
 	switch (a->comp_method)
 	{
 	case 0:
@@ -286,15 +301,19 @@ void calc_mask (CFCOMP a)
 			{
 				mag = sqrt (a->forfftout[2 * i + 0] * a->forfftout[2 * i + 0] 
 					      + a->forfftout[2 * i + 1] * a->forfftout[2 * i + 1]);
-				comp = a->precomplin * a->comp[i];
+				comp = a->cfc_gain[i];
 				test = comp * mag;
 				if (test > 1.0)
 					mask = 1.0 / mag;
 				else
 					mask = comp;
-				a->mask[i] = mask;
+				a->cmask[i] = mask;
 				if (test > a->gain) a->gain = test;
 				else a->gain = a->mmult * a->gain;
+
+				delta = a->cfc_gain[i] - a->cmask[i];
+				if (delta > a->delta[i]) a->delta[i] = delta;
+				else a->delta[i] *= a->dmult;
 			}
 			break;
 		}
@@ -303,9 +322,13 @@ void calc_mask (CFCOMP a)
 	{
 		for (i = 0; i < a->msize; i++)
 		{
-			a->mask[i] *= a->prepeqlin * a->peq[i];
+			a->mask[i] = a->cmask[i] * a->prepeqlin * a->peq[i];
 		}
 	}
+	else
+		memcpy (a->mask, a->cmask, a->msize * sizeof (double));
+	// print_impulse ("mask.txt", a->msize, a->mask, 0, 0);
+	a->mask_ready = 1;
 }
 
 void xcfcomp (CFCOMP a, int pos)
@@ -361,20 +384,20 @@ void xcfcomp (CFCOMP a, int pos)
 		memcpy (a->out, a->in, a->bsize * sizeof (complex));
 }
 
-setBuffers_cfcomp (CFCOMP a, double* in, double* out)
+void setBuffers_cfcomp (CFCOMP a, double* in, double* out)
 {
 	a->in = in;
 	a->out = out;
 }
 
-setSamplerate_cfcomp (CFCOMP a, int rate)
+void setSamplerate_cfcomp (CFCOMP a, int rate)
 {
 	decalc_cfcomp (a);
 	a->rate = rate;
 	calc_cfcomp (a);
 }
 
-setSize_cfcomp (CFCOMP a, int size)
+void setSize_cfcomp (CFCOMP a, int size)
 {
 	decalc_cfcomp (a);
 	a->bsize = size;
@@ -445,6 +468,10 @@ void SetTXACFCOMPPrecomp (int channel, double precomp)
 		EnterCriticalSection (&ch[channel].csDSP);
 		a->precomp = precomp;
 		a->precomplin = pow (10.0, 0.05 * a->precomp);
+		for (int i = 0; i < a->msize; i++)
+		{
+			a->cfc_gain[i] = a->precomplin * a->comp[i];
+		}
 		LeaveCriticalSection (&ch[channel].csDSP);
 	}
 }
@@ -469,4 +496,24 @@ void SetTXACFCOMPPrePeq (int channel, double prepeq)
 	a->prepeq = prepeq;
 	a->prepeqlin = pow (10.0, 0.05 * a->prepeq);
 	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void GetTXACFCOMPDisplayCompression (int channel, double* comp_values, int* ready)
+{
+	int i;
+	CFCOMP a = txa[channel].cfcomp.p;
+	EnterCriticalSection(&ch[channel].csDSP);
+	if (*ready = a->mask_ready)
+	{
+		memcpy(a->delta_copy, a->delta, a->msize * sizeof(double));
+		memcpy(a->cfc_gain_copy, a->cfc_gain, a->msize * sizeof(double));
+		a->mask_ready = 0;
+	}
+	LeaveCriticalSection(&ch[channel].csDSP);
+	if (*ready)
+	{
+		for (i = 0; i < a->msize; i++)
+			comp_values[i] = 20.0 * mlog10 (a->cfc_gain_copy[i] / (a->cfc_gain_copy[i] - a->delta_copy[i]));
+	}
 }

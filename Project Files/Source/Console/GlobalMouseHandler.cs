@@ -13,14 +13,20 @@ namespace Thetis
         private const int WM_MOUSEMOVE = 0x0200;
         //private const int WM_LBUTTONDOWN = 0x0201;
         private const int WM_LBUTTONUP = 0x0202;
-        public event MouseMovedEvent MouseUp;
+
+        public event MouseMovedEvent MouseUp; 
+        public event MouseEventHandler MouseMove;   //MW0LGE_21e
+
         //public event MouseMovedEvent MouseDown;
 
         #region IMessageFilter Members
 
         public bool PreFilterMessage(ref Message m)
         {
-            // if (m.Msg == WM_MOUSEMOVE)
+            if (m.Msg == WM_MOUSEMOVE)
+            {
+                MouseMove?.Invoke(null, new MouseEventArgs(MouseButtons.None,0, Control.MousePosition.X, Control.MousePosition.Y, 0));
+            }
             //if (m.Msg == WM_LBUTTONDOWN)
             //{
             //    if (MouseUp != null)

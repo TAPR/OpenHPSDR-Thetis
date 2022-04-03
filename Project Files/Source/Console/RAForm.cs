@@ -130,9 +130,24 @@ namespace Thetis
                 RArecordCheckBox.BackColor = Color.LimeGreen;
                 RArecordCheckBox.ForeColor = Color.Black;
                 RArecordCheckBox.Text = "Stop";
+
+                //MW0LGE_21d5 change of path
+                // lifted from console, could do with common version
+                    string sPath;
+                    sPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                        + "\\OpenHPSDR\\Thetis\\";
+                    if (Environment.Is64BitProcess)
+                        sPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                        + "\\OpenHPSDR\\Thetis-x64\\";
+#if (DEBUG)
+                    sPath += "Debug\\";
+#endif
+                //
+
                 try
                 {
-                    writer = new System.IO.BinaryWriter(System.IO.File.Open("RA_data.csv", System.IO.FileMode.Create));
+                    //writer = new System.IO.BinaryWriter(System.IO.File.Open("RA_data.csv", System.IO.FileMode.Create));
+                    writer = new System.IO.BinaryWriter(System.IO.File.Open(sPath + "RA_data.csv", System.IO.FileMode.Create));                    
                 }
                 catch (Exception ex)
                 {

@@ -44,14 +44,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.mapControlToCommandGrid = new System.Windows.Forms.DataGridView();
-            this.midiControlIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.midiControlNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.midiControlTypeColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.minValueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.maxValueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.CatCmdIdColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.EditColumn = new System.Windows.Forms.DataGridViewLinkColumn();
-            this.deleteColumn = new System.Windows.Forms.DataGridViewLinkColumn();
             this.controllerMappingBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.commandsTabPage = new System.Windows.Forms.TabPage();
             this.mappedCommandsGridView = new System.Windows.Forms.DataGridView();
@@ -124,6 +116,14 @@
             this.importMappingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMappingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LoadedMappingLabel = new System.Windows.Forms.ToolStripLabel();
+            this.midiControlIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.midiControlNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.midiControlTypeColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.minValueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.maxValueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CatCmdIdColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.EditColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.deleteColumn = new System.Windows.Forms.DataGridViewLinkColumn();
             this.tabControl.SuspendLayout();
             this.mappedControlsTab.SuspendLayout();
             this.promptPanel.SuspendLayout();
@@ -282,76 +282,6 @@
             this.mapControlToCommandGrid.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.mapControlToCommandGrid_RowHeaderMouseClick);
             this.mapControlToCommandGrid.Click += new System.EventHandler(this.mapControlToCommandGrid_Click);
             this.mapControlToCommandGrid.Leave += new System.EventHandler(this.mapControlToCommandGrid_Leave);
-            // 
-            // midiControlIdDataGridViewTextBoxColumn
-            // 
-            this.midiControlIdDataGridViewTextBoxColumn.DataPropertyName = "MidiControlId";
-            this.midiControlIdDataGridViewTextBoxColumn.HeaderText = "Id";
-            this.midiControlIdDataGridViewTextBoxColumn.Name = "midiControlIdDataGridViewTextBoxColumn";
-            this.midiControlIdDataGridViewTextBoxColumn.Width = 30;
-            // 
-            // midiControlNameDataGridViewTextBoxColumn
-            // 
-            this.midiControlNameDataGridViewTextBoxColumn.DataPropertyName = "MidiControlName";
-            this.midiControlNameDataGridViewTextBoxColumn.HeaderText = "Control Name";
-            this.midiControlNameDataGridViewTextBoxColumn.Name = "midiControlNameDataGridViewTextBoxColumn";
-            // 
-            // midiControlTypeColumn
-            // 
-            this.midiControlTypeColumn.DataPropertyName = "MidiControlType";
-            this.midiControlTypeColumn.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-            this.midiControlTypeColumn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.midiControlTypeColumn.HeaderText = "Control Type";
-            this.midiControlTypeColumn.Name = "midiControlTypeColumn";
-            this.midiControlTypeColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.midiControlTypeColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // minValueDataGridViewTextBoxColumn
-            // 
-            this.minValueDataGridViewTextBoxColumn.DataPropertyName = "MinValue";
-            this.minValueDataGridViewTextBoxColumn.HeaderText = "Min";
-            this.minValueDataGridViewTextBoxColumn.Name = "minValueDataGridViewTextBoxColumn";
-            this.minValueDataGridViewTextBoxColumn.ReadOnly = true;
-            this.minValueDataGridViewTextBoxColumn.Width = 30;
-            // 
-            // maxValueDataGridViewTextBoxColumn
-            // 
-            this.maxValueDataGridViewTextBoxColumn.DataPropertyName = "MaxValue";
-            this.maxValueDataGridViewTextBoxColumn.HeaderText = "Max";
-            this.maxValueDataGridViewTextBoxColumn.Name = "maxValueDataGridViewTextBoxColumn";
-            this.maxValueDataGridViewTextBoxColumn.ReadOnly = true;
-            this.maxValueDataGridViewTextBoxColumn.Width = 30;
-            // 
-            // CatCmdIdColumn
-            // 
-            this.CatCmdIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.CatCmdIdColumn.DataPropertyName = "CatCmdId";
-            this.CatCmdIdColumn.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-            this.CatCmdIdColumn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CatCmdIdColumn.HeaderText = "Cat Cmd";
-            this.CatCmdIdColumn.Name = "CatCmdIdColumn";
-            this.CatCmdIdColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.CatCmdIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // EditColumn
-            // 
-            this.EditColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.EditColumn.HeaderText = "Edit";
-            this.EditColumn.Name = "EditColumn";
-            this.EditColumn.ReadOnly = true;
-            this.EditColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.EditColumn.Text = "Edit";
-            this.EditColumn.TrackVisitedState = false;
-            this.EditColumn.UseColumnTextForLinkValue = true;
-            this.EditColumn.Width = 30;
-            // 
-            // deleteColumn
-            // 
-            this.deleteColumn.HeaderText = "Delete";
-            this.deleteColumn.Name = "deleteColumn";
-            this.deleteColumn.Text = "Delete";
-            this.deleteColumn.UseColumnTextForLinkValue = true;
-            this.deleteColumn.Width = 45;
             // 
             // controllerMappingBindingSource1
             // 
@@ -1078,6 +1008,76 @@
             this.LoadedMappingLabel.Size = new System.Drawing.Size(94, 22);
             this.LoadedMappingLabel.Text = "LoadedMapping";
             // 
+            // midiControlIdDataGridViewTextBoxColumn
+            // 
+            this.midiControlIdDataGridViewTextBoxColumn.DataPropertyName = "MidiControlId";
+            this.midiControlIdDataGridViewTextBoxColumn.HeaderText = "Id";
+            this.midiControlIdDataGridViewTextBoxColumn.Name = "midiControlIdDataGridViewTextBoxColumn";
+            this.midiControlIdDataGridViewTextBoxColumn.Width = 30;
+            // 
+            // midiControlNameDataGridViewTextBoxColumn
+            // 
+            this.midiControlNameDataGridViewTextBoxColumn.DataPropertyName = "MidiControlName";
+            this.midiControlNameDataGridViewTextBoxColumn.HeaderText = "Control Name";
+            this.midiControlNameDataGridViewTextBoxColumn.Name = "midiControlNameDataGridViewTextBoxColumn";
+            // 
+            // midiControlTypeColumn
+            // 
+            this.midiControlTypeColumn.DataPropertyName = "MidiControlType";
+            this.midiControlTypeColumn.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+            this.midiControlTypeColumn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.midiControlTypeColumn.HeaderText = "Control Type";
+            this.midiControlTypeColumn.Name = "midiControlTypeColumn";
+            this.midiControlTypeColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.midiControlTypeColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // minValueDataGridViewTextBoxColumn
+            // 
+            this.minValueDataGridViewTextBoxColumn.DataPropertyName = "MinValue";
+            this.minValueDataGridViewTextBoxColumn.HeaderText = "Min";
+            this.minValueDataGridViewTextBoxColumn.Name = "minValueDataGridViewTextBoxColumn";
+            this.minValueDataGridViewTextBoxColumn.ReadOnly = true;
+            this.minValueDataGridViewTextBoxColumn.Width = 30;
+            // 
+            // maxValueDataGridViewTextBoxColumn
+            // 
+            this.maxValueDataGridViewTextBoxColumn.DataPropertyName = "MaxValue";
+            this.maxValueDataGridViewTextBoxColumn.HeaderText = "Max";
+            this.maxValueDataGridViewTextBoxColumn.Name = "maxValueDataGridViewTextBoxColumn";
+            this.maxValueDataGridViewTextBoxColumn.ReadOnly = true;
+            this.maxValueDataGridViewTextBoxColumn.Width = 30;
+            // 
+            // CatCmdIdColumn
+            // 
+            this.CatCmdIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.CatCmdIdColumn.DataPropertyName = "CatCmdId";
+            this.CatCmdIdColumn.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+            this.CatCmdIdColumn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CatCmdIdColumn.HeaderText = "Cat Cmd";
+            this.CatCmdIdColumn.Name = "CatCmdIdColumn";
+            this.CatCmdIdColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.CatCmdIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // EditColumn
+            // 
+            this.EditColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.EditColumn.HeaderText = "Edit";
+            this.EditColumn.Name = "EditColumn";
+            this.EditColumn.ReadOnly = true;
+            this.EditColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.EditColumn.Text = "Edit";
+            this.EditColumn.TrackVisitedState = false;
+            this.EditColumn.UseColumnTextForLinkValue = true;
+            this.EditColumn.Width = 30;
+            // 
+            // deleteColumn
+            // 
+            this.deleteColumn.HeaderText = "Delete";
+            this.deleteColumn.Name = "deleteColumn";
+            this.deleteColumn.Text = "Delete";
+            this.deleteColumn.UseColumnTextForLinkValue = true;
+            this.deleteColumn.Width = 45;
+            // 
             // MidiDeviceSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1193,14 +1193,6 @@
         private System.Windows.Forms.Label eventMappingPrompt;
         private System.Windows.Forms.TextBox newValueReceivedEventTB;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.DataGridViewTextBoxColumn midiControlIdDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn midiControlNameDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewComboBoxColumn midiControlTypeColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn minValueDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn maxValueDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewComboBoxColumn CatCmdIdColumn;
-        private System.Windows.Forms.DataGridViewLinkColumn EditColumn;
-        private System.Windows.Forms.DataGridViewLinkColumn deleteColumn;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripDropDownButton fileButton;
         private System.Windows.Forms.ToolStripMenuItem loadMappingToolStripMenuItem;
@@ -1210,5 +1202,13 @@
         private System.Windows.Forms.ToolStripMenuItem exportMappingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem organiseMappingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripLabel LoadedMappingLabel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn midiControlIdDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn midiControlNameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewComboBoxColumn midiControlTypeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn minValueDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn maxValueDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewComboBoxColumn CatCmdIdColumn;
+        private System.Windows.Forms.DataGridViewLinkColumn EditColumn;
+        private System.Windows.Forms.DataGridViewLinkColumn deleteColumn;
     }
 }

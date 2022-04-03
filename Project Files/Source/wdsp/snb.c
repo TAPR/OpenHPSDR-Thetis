@@ -198,7 +198,6 @@ void multA1TA2(double* a1, double* a2, int m, int n, int q, double* c)
     {
         for (j = 0; j < n; j++)
         {
-            int kmin = 0, kmax = 0;
             if (j < p)
             {
                 for (k = i; k <= min(i + p, j); k++)

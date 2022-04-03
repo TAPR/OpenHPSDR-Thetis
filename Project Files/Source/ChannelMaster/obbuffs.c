@@ -133,7 +133,7 @@ void obdata (int id, double* out)
 {
 	int first, second;
 	OBB a = obp.pdbuff[id];
-	if (!_InterlockedAnd (&a->run, 1)) _endthread();
+	if (!_InterlockedAnd(&a->run, 1)) _endthread();
 	if (a->r1_outsize > (a->r1_active_buffsize - a->r1_outidx))
 	{
 		first = a->r1_active_buffsize - a->r1_outidx;

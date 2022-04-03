@@ -1,0 +1,151 @@
+﻿//=================================================================
+// ucVARGrapher.cs - MW0LGE 2021
+//=================================================================
+
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace Thetis
+{
+    public partial class ucVARGrapher : UserControl
+    {
+        private const double m_MIN = 0.000005;
+
+        private List<double> m_dData = null;
+        private int m_nMaxPoints;
+        private double m_dPlusMinusSwing = 0.04;
+        private double m_dAutoSwing = 0.04;
+        private bool m_bAutoSwing = false;
+        private double m_dRingBufferPerc = 0;
+        private string m_sCaption = "";
+
+        public ucVARGrapher()
+        {
+            m_dData = new List<double>();
+
+            InitializeComponent();
+
+            MaxPoints = 100;
+        }
+
+        public string Caption
+        {
+            get { return m_sCaption; }
+            set { 
+                m_sCaption = value;
+                this.Invalidate();
+            }
+        }
+        public double RingBufferPerc
+        {
+            get { return m_dRingBufferPerc; }
+            set
+            {
+                m_dRingBufferPerc = value;
+                this.Invalidate();
+            }
+        }
+        public bool AutoSwing
+        {
+            get { return m_bAutoSwing; }
+            set { m_bAutoSwing = value; this.Invalidate(); }
+        }
+        public double PlusMinusSwing
+        {
+            get
+            { return m_dPlusMinusSwing; }
+            set 
+            {
+                m_dPlusMinusSwing = value;
+
+                this.Invalidate();
+            }
+        }
+        public void AddDataPoint(double dataPoint)
+        {
+            if (m_dData == null) return;
+
+            m_dData.Add(Math.Round(dataPoint, 6));
+
+            if (m_dData.Count > m_nMaxPoints) m_dData.RemoveAt(0);
+
+            double min = Math.Abs(m_dData.Min());
+            double max = Math.Abs(m_dData.Max());
+            m_dAutoSwing = Math.Max(min, max);
+
+            this.Invalidate();
+        }
+
+        public int MaxPoints
+        {
+            get
+            {
+                return m_nMaxPoints;
+            }
+            set
+            {
+                if (m_dData == null) return;
+
+                m_nMaxPoints = value;
+                if (m_dData.Count > m_nMaxPoints)
+                {
+                    m_dData.RemoveRange(0, m_dData.Count - m_nMaxPoints - 1);
+
+                    this.Invalidate();
+                }
+            }
+        }
+
+        private void VARGraph_Paint(object sender, PaintEventArgs e)
+        {
+            if (m_dData == null) return;
+
+            if (m_dData.Count < 2) return;
+
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            int centreY = (this.Height / 2);
+
+            //split down the 0 point
+            e.Graphics.DrawLine(Pens.Gray, 0, centreY, this.Width, centreY);
+
+            double swing = m_bAutoSwing ? m_dAutoSwing : m_dPlusMinusSwing;
+            if (swing < m_MIN) swing = m_MIN;
+            string sSwing = swing.ToString("F6");
+
+            //text (uses the font defined on the user control)            
+            using (StringFormat format = new StringFormat())
+            {
+
+                format.Alignment = StringAlignment.Far;
+                SizeF sz = e.Graphics.MeasureString("±" + sSwing, this.Font);
+
+                e.Graphics.DrawString("±" + sSwing, this.Font, Brushes.White, new PointF(this.Width, 0), format);
+                e.Graphics.DrawString(m_sCaption, this.Font, Brushes.White, new PointF(this.Width, this.Height - sz.Height - 1), format);
+            }
+
+            //the data as a line
+            double perPixel = this.Height / (swing * 2);
+
+            Point[] points = new Point[m_dData.Count];
+            for (int n = 0; n < m_dData.Count; n++)
+            {
+                int y = (int)(m_dData[n] * perPixel) + centreY;
+                points[n] = new Point(n, (this.Height - 1) - y);
+            }
+            e.Graphics.DrawLines(Pens.Red, points);
+
+            // yellow ring buffer perc line
+            int xBufferPos = (this.Height - 1) - (int)((this.Height-1) * (m_dRingBufferPerc / 100));
+            e.Graphics.DrawLine(Pens.Yellow, 0, xBufferPos, 10, xBufferPos);
+        }
+
+        private void VARGraph_Resize(object sender, EventArgs e)
+        {
+            MaxPoints = this.Width;
+        }
+    }
+}

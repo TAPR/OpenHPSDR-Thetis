@@ -37,7 +37,7 @@
     <ProductVersion>3.5</ProductVersion>
     <ProjectGuid>{b3fb4fdc-d517-4c56-872d-9e86627b5a53}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>Thetis_v2.8.x</OutputName>
+    <OutputName>Thetis</OutputName>
     <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">

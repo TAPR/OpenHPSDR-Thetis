@@ -645,6 +645,15 @@ namespace Thetis
         // TXEQ
         [DllImport("wdsp.dll", EntryPoint = "SetTXAEQProfile", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAEQProfile(int channel, int nfreqs, double* F, double* G);
+
+        // GetTXACFCOMPGainAndMask
+        [DllImport("wdsp.dll", EntryPoint = "GetTXACFCOMPGainAndMask", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetTXACFCOMPGainAndMask(int channel, double* gain_values, double* mask_values, int* ready);
+
+        // GetTXACFCOMPDisplayCompression
+        [DllImport("wdsp.dll", EntryPoint = "GetTXACFCOMPDisplayCompression", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetTXACFCOMPDisplayCompression(int channel, double* comp_values, int* ready);
+
         #endregion
 
         #region Enums

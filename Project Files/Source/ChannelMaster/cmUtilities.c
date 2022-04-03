@@ -120,7 +120,7 @@ void EscribeLoTodo (void* arg)
 	{
 		char num[1];
 		char filename[4] = "ddc";
-		itoa (i, num, 10);
+		_itoa (i, num, 10); //MW0LGE_21a changed to _itoa from itoa
 		strcat(filename, num);
 		FILE* file = fopen(&filename[0], "wb");
 		fwrite((int*)EscribeCosas.ddc[i], sizeof(int), EscribeCosas.n, file);

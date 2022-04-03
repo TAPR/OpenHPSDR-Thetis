@@ -75,10 +75,14 @@ typedef struct _ivac
 	int vac_combine_input;
 	double vac_preamp;
 	double vac_rx_scale;
+	double vac_mon_scale;		// MW0LGE_21k9d the volume level of the vac mon
 	int INforce;				// force var ratio for rmatchIN
 	double INfvar;				// var value when forced for rmatchIN
 	int OUTforce;				// force var ratio for rmatchOUT
 	double OUTfvar;				// var value when forced for rmatchOUT
+
+	double initial_INvar;			// init the var ratio
+	double initial_OUTvar;			// init the var ratio
 } ivac, *IVAC;
 
 void combinebuff (int n, double* a, double* combined);

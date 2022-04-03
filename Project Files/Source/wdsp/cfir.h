@@ -68,4 +68,8 @@ extern void setOutRate_cfir (CFIR a, int rate);
 extern double* cfir_impulse (int N, int DD, int R, int Pairs, double runrate, double cicrate, 
 	double cutoff, int xtype, double xbw, int rtype, double scale, int wintype);
 
+extern __declspec (dllexport) void SetTXACFIRRun(int channel, int run);
+
+extern __declspec (dllexport) void SetTXACFIRNC(int channel, int nc);
+
 #endif

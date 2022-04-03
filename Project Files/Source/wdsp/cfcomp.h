@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2017 Warren Pratt, NR0V
+Copyright (C) 2017, 2021 Warren Pratt, NR0V 
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -43,7 +43,10 @@ typedef struct _cfcomp
 	double* forfftin;
 	double* forfftout;
 	int msize;
+	double* cmask;
 	double* mask;
+	int mask_ready;
+	double* cfc_gain;
 	double* revfftin;
 	double* revfftout;
 	double** save;
@@ -83,10 +86,16 @@ typedef struct _cfcomp
 	double gain;
 	double mtau;
 	double mmult;
+	// display stuff
+	double dtau;
+	double dmult;
+	double* delta;
+	double* delta_copy;
+	double* cfc_gain_copy;
 }cfcomp, *CFCOMP;
 
 extern CFCOMP create_cfcomp (int run, int position, int peq_run, int size, double* in, double* out, int fsize, int ovrlp, 
-	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau);
+	int rate, int wintype, int comp_method, int nfreqs, double precomp, double prepeq, double* F, double* G, double* E, double mtau, double dtau);
 
 extern void destroy_cfcomp (CFCOMP a);
 
@@ -94,10 +103,10 @@ extern void flush_cfcomp (CFCOMP a);
 
 extern void xcfcomp (CFCOMP a, int pos);
 
-extern setBuffers_cfcomp (CFCOMP a, double* in, double* out);
+extern void setBuffers_cfcomp (CFCOMP a, double* in, double* out);
 
-extern setSamplerate_cfcomp (CFCOMP a, int rate);
+extern void setSamplerate_cfcomp (CFCOMP a, int rate);
 
-extern setSize_cfcomp (CFCOMP a, int size);
+extern void setSize_cfcomp (CFCOMP a, int size);
 
 #endif

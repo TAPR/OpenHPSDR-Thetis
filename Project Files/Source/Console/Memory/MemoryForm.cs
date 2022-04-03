@@ -946,13 +946,14 @@ namespace Thetis
 
             try // ke9ns upgrading an old database may fail before its upgraded
             {
-
                 ScheduleStartDate.ValueChanged -= new System.EventHandler(ScheduleStartDate_ValueChanged);  // ke9ns turn off checkchanged temporarily    // ke9ns turn off valuechanged temporarily 
-              
+                ScheduleStartTime.ValueChanged -= new System.EventHandler(ScheduleStartDate_ValueChanged); //MW0LGE_21k9
+
                 ScheduleStartDate.Value = (DateTime)dataGridView1["StartDate", RIndex].Value; // ke9ns add put schedule start date in selected in field box
                 ScheduleStartTime.Value = (DateTime)dataGridView1["StartDate", RIndex].Value; // ke9ns add put schedule start date in selected in field box
 
                 ScheduleStartDate.ValueChanged += new System.EventHandler(ScheduleStartDate_ValueChanged);  // ke9ns turn off checkchanged temporarily    // ke9ns turn off valuechanged temporarily 
+                ScheduleStartTime.ValueChanged += new System.EventHandler(ScheduleStartDate_ValueChanged); //MW0LGE_21k9
 
                 ScheduleOn.Checked = (bool)dataGridView1["ScheduleOn", RIndex].Value; // ke9ns add put schedule ON/OFF in selected in field box
 

@@ -20,11 +20,17 @@
     <StartWorkingDirectory>
     </StartWorkingDirectory>
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
 </Project>

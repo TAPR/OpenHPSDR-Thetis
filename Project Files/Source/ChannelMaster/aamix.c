@@ -429,6 +429,7 @@ void xaamix (AAMIX a)
 	{
 		LeaveCriticalSection (&a->cs_out);
 		_endthread();
+		return; //MW0LGE_21j
 	}
 	memset (a->out, 0, a->outsize * sizeof (complex));
 	what = _InterlockedAnd(&a->what, 0xffffffff) & _InterlockedAnd(&a->active, 0xffffffff);

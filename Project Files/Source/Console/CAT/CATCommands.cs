@@ -1286,6 +1286,7 @@ namespace Thetis
 
             if (s.Length == parser.nSet)
 			{
+				if (console.RF != n && console.AutoAGCRX1) console.AutoAGCRX1 = false; // turn off 'auto agc' only if different MW0LGE_21k8
 				console.RF = n;
                 console.TitleBarEncoderString = "RX1 AGC Threshold = " + n;
 				return "";
@@ -1323,7 +1324,8 @@ namespace Thetis
 
             if (s.Length == parser.nSet)
                 {
-                    console.RX2RF = n;
+					if (console.RX2RF != n && console.AutoAGCRX2) console.AutoAGCRX2 = false; // turn off 'auto agc' only if different MW0LGE_21k8
+					console.RX2RF = n;
                     console.TitleBarEncoderString = "RX2 AGC Threshold = " + n;
                     return "";
                 }
@@ -1578,18 +1580,20 @@ namespace Thetis
         //Sets or gets the current RX2 band setting
         public string ZZBT(string s)
         {
-                if (s.Length == parser.nGet)
-                {
-                    return Band2String(console.RX2Band);
-                }
-                else if (s.Length == parser.nSet)
-                {
-                    console.RX2Band = String2Band(s);
-                    console.SetupBand(s); // MW0LGE force the band to be setup, TODO CHECK if this is actually needed
-                    return "";
-                }
-                else
-                    return parser.Error1;
+            if (s.Length == parser.nGet)
+            {
+                return Band2String(console.RX2Band);
+            }
+            else if (s.Length == parser.nSet)
+            {
+				Band b = String2Band(s);
+
+				console.RX2Band = b;
+                console.SetupRX2Band(b); // MW0LGE_21g
+                return "";
+            }
+            else
+                return parser.Error1;
          }
 
   
@@ -2678,9 +2682,26 @@ namespace Thetis
 			else
 				return parser.Error1;		
 		}
+		//Sets or reads TX frequency
+		public string ZZFT(string s)
+		{
+			if (s.Length == parser.nSet)
+			{
+				console.TXFreq = double.Parse(s);
+				return "";
+			}
+			else if (s.Length == parser.nGet)
+			{
+				int f = Convert.ToInt32(Math.Round(console.TXFreq, 6) * 1e6);
+				return AddLeadingZeros(f);
+			}
+			else
+				return parser.Error1;
 
-        //Selects or reads the FM deviation radio button
-        public string ZZFD(string s)
+		}
+
+		//Selects or reads the FM deviation radio button
+		public string ZZFD(string s)
         {
             if (s.Length == parser.nSet)
             {
@@ -2841,7 +2862,7 @@ namespace Thetis
             else if (radio == "ANAN10" || radio == "ANAN10E")
                 return "0";
 
-            else if (radio == "ANAN100" || radio == "ANAN100B" || radio == "ANAN100D" || radio == "ANAN200D" || radio == "ANAN8000D")
+            else if (radio == "ANAN100" || radio == "ANAN100B" || radio == "ANAN100D" || radio == "ANAN200D" || radio == "ANAN7000D" || radio == "ANAN8000D")  // DH1KLM_21a added 7000D
                 return "1";
             else
                 return parser.Error1;
@@ -3941,10 +3962,9 @@ namespace Thetis
                 return parser.Error1;
         }
 
-
-        //Andromeda front panel s/w version
-        //write only
-        public string ZZZS(string s)
+		//Andromeda front panel s/w version
+		//write only
+		public string ZZZS(string s)
         {
             if (s.Length == parser.nSet)
             {
@@ -4757,7 +4777,7 @@ namespace Thetis
             {
                 s = s.Insert(3, ".");
                 double n = double.Parse(s);
-                console.FMTXOffsetMHz = n;
+				console.FMTXOffsetMHz = n;
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -5549,14 +5569,14 @@ namespace Thetis
                 att = Convert.ToInt32(s);
                 att = Math.Max(0, att);
                 att = Math.Min(31, att);
-                console.RX2ATT = att;        // Set the console control
-                console.TitleBarEncoderString = "RX2 Step Atten = " + att + "dB";
+                console.SetupForm.HermesAttenuatorDataRX2 = att; //RX2ATT = att;        // Set the console control // MW0LGE_21d step atten changes
+				console.TitleBarEncoderString = "RX2 Step Atten = " + att + "dB";
                 return "";
             }
             else if (s.Length == parser.nGet)   // if this is a read command
             {
-                return AddLeadingZeros(console.RX2ATT);     // Get the console setting
-            }
+                return AddLeadingZeros(console.SetupForm.HermesAttenuatorDataRX2 /*RX2ATT*/);     // Get the console setting // MW0LGE_21d step atten changes
+			}
             else
             {
                 return parser.Error1;   // return a ?
@@ -6247,9 +6267,9 @@ namespace Thetis
 			}
 
 		}
-
-        //Sets or reads the transmit VFO frequency when in split with RX2 enabled
-        public string ZZTV(string s)
+		
+		//Sets or reads the transmit VFO frequency when in split with RX2 enabled
+		public string ZZTV(string s)
         {
             if (ZZRS("") == "1" && (ZZSP("") == "1" || ZZMU("") == "1"))
             {
@@ -6328,8 +6348,36 @@ namespace Thetis
 			}
 
 		}
+		public string ZZUP(string s)  //-MW0LGE_21j  xPA on/off
+		{
+			if (s.Length == parser.nSet && (s == "0" || s == "1"))
+			{
+				switch (s)
+				{
+					case "0":
+						console.CATxPA = false;
+						break;
+					case "1":
+						console.CATxPA = true;
+						break;
+				}
 
-        public string ZZUS()  //-W2PA  Initiate PS Single Cal
+				return "";
+			}
+			else if (s.Length == parser.nGet)
+			{
+				if (console.CATxPA)
+					return "1";
+				else
+					return "0";
+			}
+			else
+			{
+				return parser.Error1;
+			}
+		}
+		
+		public string ZZUS()  //-W2PA  Initiate PS Single Cal
         {
             console.CATSingleCal();
             return "";
@@ -6381,7 +6429,7 @@ namespace Thetis
 			{
 				n = Convert.ToInt32(s);
 				n = Math.Max(-40, n);
-				n = Math.Min(20, n);
+				n = Math.Min(40, n); // DH1KLM_21g Changed value from 20 to 40 like it is in VAC2 RX Gain
 			}
 
 			if(s.Length == parser.nSet)
@@ -6420,7 +6468,7 @@ namespace Thetis
 			{
 				n = Convert.ToInt32(s);
 				n = Math.Max(-40, n);
-				n = Math.Min(20, n);
+				n = Math.Min(40, n); // DH1KLM_21g Changed value from 20 to 40 like it is in VAC2 TX Gain
 			}
 
 			if(s.Length == parser.nSet)
@@ -7799,6 +7847,112 @@ namespace Thetis
 			console.Siolisten.SIO.Close();
 			return "";
 		}
+
+		// Zooms to band MW0LGE_21k9
+		// depending on ztb mode
+		// 0 will recall
+		// 1 will store
+		// query will return 1 if ztb is set up as store/recall 
+		public string ZZZT(string s)
+		{
+			if (s.Length == parser.nSet && (s == "0" || s == "1"))
+			{
+				if (s == "0") // recall
+				{
+					console.ZoomToBand(false);
+				}
+				else if (s == "1") // store
+                {
+					console.ZoomToBand(true);
+				}
+				return "";
+			}
+			else if (s.Length == parser.nGet)
+			{
+				if (console.ZTBisRecallStore)
+					return "1";
+				else
+					return "0";
+			}
+			else
+			{
+				return parser.Error1;
+			}
+		}
+		public string ZZZQ(string s)
+		{
+			if (s.Length == parser.nSet && (s == "0" || s == "1"))
+			{
+				if (s == "0")
+				{
+					console.AutoAGCRX1 = false;
+				}
+				else if (s == "1")
+				{
+					console.AutoAGCRX1 = true;
+				}
+				return "";
+			}
+			else if (s.Length == parser.nGet)
+			{
+				if (console.AutoAGCRX1)
+					return "1";
+				else
+					return "0";
+			}
+			else
+			{
+				return parser.Error1;
+			}
+		}
+		public string ZZZR(string s)
+		{
+			if (s.Length == parser.nSet && (s == "0" || s == "1"))
+			{
+				if (s == "0")
+				{
+					console.AutoAGCRX2 = false;
+				}
+				else if (s == "1")
+				{
+					console.AutoAGCRX2 = true;
+				}
+				return "";
+			}
+			else if (s.Length == parser.nGet)
+			{
+				if (console.AutoAGCRX2)
+					return "1";
+				else
+					return "0";
+			}
+			else
+			{
+				return parser.Error1;
+			}
+		}
+		// hardware model string
+		public string ZZZM(string s)
+		{
+			if (s.Length == parser.nGet)
+			{
+				// add command to the return string and terminator, because it is variable length answer
+				return "ZZZM" + console.CurrentHPSDRModel.ToString() + ";";
+			}
+			else
+				return parser.Error1;
+		}
+		// hardware version title string
+		public string ZZZV(string s)
+		{
+			if (s.Length == parser.nGet)
+			{
+				// add command to the return string and terminator, because it is variable length answer
+				return "ZZZV" + console.VersionWithoutFW.Replace(";", "") + ";";
+			}
+			else
+				return parser.Error1;
+		}
 		#endregion Extended CAT Methods ZZR-ZZZ
 
 
@@ -9154,6 +9308,7 @@ namespace Thetis
 			else
 				nextband = BandList[currndx+1];
 			console.SetCATBand(nextband);
+			Debug.Print("BandUp: current=" + current.ToString() + " next=" + nextband.ToString());
 		}
 
 		private void BandDown()
@@ -9165,8 +9320,8 @@ namespace Thetis
 				nextband = BandList[currndx-1];
 			else
 				nextband = BandList[LastBandIndex];
+			Debug.Print("BandDown: current=" + current.ToString() + " next=" + nextband.ToString());
 			console.SetCATBand(nextband);
-
 		}
 
 		private string Band2String(Band pBand)

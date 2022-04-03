@@ -785,7 +785,10 @@ namespace Thetis
                 case "ZZFS":
                     rtncmd = cmdlist.ZZFS(suffix);
                     break;
-                case "ZZFI":
+				case "ZZFT":
+					rtncmd = cmdlist.ZZFT(suffix);
+					break;
+				case "ZZFI":
 					rtncmd = cmdlist.ZZFI(suffix);
 					break;
                 case "ZZFJ":
@@ -1229,7 +1232,7 @@ namespace Thetis
 				case "ZZTU":
 					rtncmd = cmdlist.ZZTU(suffix);
 					break;
-                case "ZZTV":
+				case "ZZTV":
                     rtncmd = cmdlist.ZZTV(suffix);
                     break;
 				case "ZZTX":
@@ -1238,7 +1241,10 @@ namespace Thetis
 				case "ZZUA":
 					rtncmd = cmdlist.ZZUA();
 					break;
-                case "ZZUS":
+				case "ZZUP":
+					rtncmd = cmdlist.ZZUP(suffix);
+					break;
+				case "ZZUS":
                     rtncmd = cmdlist.ZZUS();
                     break;
                 case "ZZUT":
@@ -1448,16 +1454,31 @@ namespace Thetis
                 case "ZZZE":
                     rtncmd = cmdlist.ZZZE(suffix);
                     break;
-                case "ZZZP":
+				case "ZZZM":
+					rtncmd = cmdlist.ZZZM(suffix);
+					break;
+				case "ZZZP":
                     rtncmd = cmdlist.ZZZP(suffix);
-                    break;
+					break;
+				case "ZZZQ":
+					rtncmd = cmdlist.ZZZQ(suffix);
+					break;
+				case "ZZZR":
+					rtncmd = cmdlist.ZZZR(suffix);
+					break;
                 case "ZZZS":
                     rtncmd = cmdlist.ZZZS(suffix);
                     break;
+				case "ZZZT":
+					rtncmd = cmdlist.ZZZT(suffix); ;
+					break;
                 case "ZZZU":
                     rtncmd = cmdlist.ZZZU(suffix);
-                    break;
-                case "ZZZZ":
+					break;
+				case "ZZZV":
+					rtncmd = cmdlist.ZZZV(suffix);
+					break;
+				case "ZZZZ":
 					rtncmd = cmdlist.ZZZZ();
 					break;
 			}

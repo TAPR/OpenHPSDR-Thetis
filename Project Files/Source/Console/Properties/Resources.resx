@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="RXAnt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="grab" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\grab.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -136,17 +139,35 @@
   <data name="swisscli" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscli.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="timer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\timer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="screen3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\screen3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="lock_unlocked_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lock_unlocked_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="swissl" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissl.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="timer_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\timer_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="txant" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="lock_unlocked_grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lock_unlocked_grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="picD11" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\picD1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swissc" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissc.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Multifunction" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\multifunction.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="screen2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\screen2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -157,11 +178,11 @@
   <data name="swissk" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissk.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="screen4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\screen4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="picD1orig" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\picD1orig.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sun" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swissek" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissek.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -169,11 +190,17 @@
   <data name="swisse" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisse.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="lock_locked_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lock_locked_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="swisscl" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscl.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="swisscki" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscki.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="lock_unlocked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lock_unlocked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="picD2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\picD2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -181,11 +208,17 @@
   <data name="swiss" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swiss.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="swissck" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\swissck.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="sun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swissb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissb.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="info" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cross_rl" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cross_rl.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="warning4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\warning4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -205,6 +238,9 @@
   <data name="swisseb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisseb.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="return_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\return_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="cpu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cpu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -220,6 +256,9 @@
   <data name="swissel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissel.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="lock_locked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lock_locked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="picD1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\picD1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -228,6 +267,9 @@
   </data>
   <data name="zap" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swissbo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissbo.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -241,25 +283,10 @@
   <data name="swisscbo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscbo.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="screen4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\screen4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="swissck" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\swissck.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="play" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="timer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\timer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="timer_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\timer_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="RXAnt" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="txant" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Multifunction" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\multifunction.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="thetis-logo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\thetis-logo1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

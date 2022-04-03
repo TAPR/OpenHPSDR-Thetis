@@ -161,7 +161,9 @@ struct _rxa
 		CBL p;
 	} cbl;
 
-} rxa[MAX_CHANNELS];
+};
+
+extern struct _rxa rxa[];
 
 extern void create_rxa (int channel);
 

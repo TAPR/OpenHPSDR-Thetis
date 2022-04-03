@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2017, 2018 Warren Pratt, NR0V
+Copyright (C) 2017, 2018, 2022 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -169,8 +169,6 @@ void calc_rmatch (RMATCH a)
 	// diagnostics
 	a->underflows = 0;
 	a->overflows = 0;
-	a->force = 0;
-	a->fvar = 1.0;
 }
 
 void decalc_rmatch (RMATCH a)
@@ -270,6 +268,7 @@ void control (RMATCH a, int change)
 	EnterCriticalSection (&a->cs_var);
 	a->var = a->feed_forward - a->pr_gain * a->av_deviation;
 	if (a->var > 1.04) a->var = 1.04;
+	if (a->var < 0.96) a->var = 0.96;
 	LeaveCriticalSection (&a->cs_var);
 }
 
@@ -468,7 +467,7 @@ void xrmatchOUT (void* b, double* out)
 }
 
 PORT
-void getRMatchDiags (void* b, int* underflows, int* overflows, double* var, int* ringsize)
+void getRMatchDiags (void* b, int* underflows, int* overflows, double* var, int* ringsize, int* nring)
 {
 	RMATCH a = (RMATCH)b;
 	*underflows = InterlockedAnd (&a->underflows, 0xFFFFFFFF);
@@ -476,6 +475,7 @@ void getRMatchDiags (void* b, int* underflows, int* overflows, double* var, int*
 	EnterCriticalSection (&a->cs_var);
 	*var = a->var;
 	*ringsize = a->ringsize;
+	*nring = a->n_ring;
 	LeaveCriticalSection (&a->cs_var);
 }
 
@@ -498,7 +498,7 @@ void forceRMatchVar (void* b, int force, double fvar)
 }
 
 PORT
-void* create_rmatchV(int in_size, int out_size, int nom_inrate, int nom_outrate, int ringsize)
+void* create_rmatchV(int in_size, int out_size, int nom_inrate, int nom_outrate, int ringsize, double var)
 {
 	return (void*)create_rmatch (
 		1,						// run
@@ -515,7 +515,7 @@ void* create_rmatchV(int in_size, int out_size, int nom_inrate, int nom_outrate,
 		1,						// automatic ring-size [not implemented yet]
 		ringsize,				// ringsize
 		1024,					// R, coefficient density
-		1.0,					// initial variable ratio
+		var,					// initial variable ratio
 		4096,					// feed-forward moving average min size
 		262144,					// feed-forward moving average max size - POWER OF TWO!
 		0.01,					// feed-forward exponential smoothing
@@ -593,9 +593,120 @@ void setRMatchRingsize (void* ptr, int ringsize)
 	InterlockedBitTestAndSet (&a->run, 0);
 }
 
+PORT
+void setRMatchFeedbackGain (void* b, double feedback_gain)
+{
+	RMATCH a = (RMATCH)b;
+	EnterCriticalSection(&a->cs_var);
+	a->prop_gain = feedback_gain;
+	a->pr_gain = a->prop_gain * 48000.0 / (double)a->nom_outrate;
+	LeaveCriticalSection(&a->cs_var);
+}
+
+PORT
+void setRMatchSlewTime (void* b, double slew_time)
+{
+	RMATCH a = (RMATCH)b;
+	InterlockedBitTestAndReset(&a->run, 0);		// turn OFF new data coming into the rmatch
+	Sleep(10);									// wait for processing to cease
+	decalc_rmatch(a);							// deallocate all memory EXCEPT the data structure holding all current parameters
+	a->tslew = slew_time;						// change the value of 'slew_time'
+	calc_rmatch(a);								// recalculate/reallocate everything in the RMATCH
+	InterlockedBitTestAndSet(&a->run, 0);		// turn ON the dataflow
+}
+
+PORT
+void setRMatchSlewTime1(void* b, double slew_time)
+{
+	RMATCH a = (RMATCH)b;
+	double theta, dtheta;
+	int m;
+	InterlockedBitTestAndReset(&a->run, 0);
+	Sleep(10);
+	_aligned_free(a->cslew);
+	a->tslew = slew_time;
+	a->ntslew = (int)(a->tslew * a->nom_outrate);
+	if (a->ntslew + 1 > a->rsize / 2) a->ntslew = a->rsize / 2 - 1;
+	a->cslew = (double*)malloc0((a->ntslew + 1) * sizeof(double));
+	dtheta = PI / (double)a->ntslew;
+	theta = 0.0;
+	for (m = 0; m <= a->ntslew; m++)
+	{
+		a->cslew[m] = 0.5 * (1.0 - cos(theta));
+		theta += dtheta;
+	}
+	InterlockedBitTestAndSet(&a->run, 0);
+}
+
+PORT
+void setRMatchPropRingMin(void* ptr, int prop_min)
+{
+	RMATCH a = (RMATCH)ptr;
+	InterlockedBitTestAndReset(&a->run, 0);
+	Sleep(10);
+	decalc_rmatch(a);
+	a->prop_ringmin = prop_min;
+	calc_rmatch(a);
+	InterlockedBitTestAndSet(&a->run, 0);
+}
+
+PORT
+void setRMatchPropRingMax(void* ptr, int prop_max)
+{
+	RMATCH a = (RMATCH)ptr;
+	InterlockedBitTestAndReset(&a->run, 0);
+	Sleep(10);
+	decalc_rmatch(a);
+	a->prop_ringmax = prop_max;	// must be a power of two
+	calc_rmatch(a);
+	InterlockedBitTestAndSet(&a->run, 0);
+}
+
+PORT
+void setRMatchFFRingMin(void* ptr, int ff_ringmin)
+{
+	RMATCH a = (RMATCH)ptr;
+	InterlockedBitTestAndReset(&a->run, 0);
+	Sleep(10);
+	decalc_rmatch(a);
+	a->ff_ringmin = ff_ringmin;
+	calc_rmatch(a);
+	InterlockedBitTestAndSet(&a->run, 0);
+}
+
+PORT
+void setRMatchFFRingMax(void* ptr, int ff_ringmax)
+{
+	RMATCH a = (RMATCH)ptr;
+	InterlockedBitTestAndReset(&a->run, 0);
+	Sleep(10);
+	decalc_rmatch(a);
+	a->ff_ringmax = ff_ringmax; // must be a power of two
+	calc_rmatch(a);
+	InterlockedBitTestAndSet(&a->run, 0);
+}
+
+PORT
+void setRMatchFFAlpha(void* ptr, double ff_alpha)
+{
+	RMATCH a = (RMATCH)ptr;
+	InterlockedBitTestAndReset(&a->run, 0);
+	Sleep (10);
+	a->ff_alpha = ff_alpha;
+	InterlockedBitTestAndSet(&a->run, 0);
+}
+
+PORT
+void getControlFlag(void* ptr, int* control_flag)
+{
+	RMATCH a = (RMATCH)ptr;
+	EnterCriticalSection(&a->cs_ring);
+	*control_flag = a->control_flag;
+	LeaveCriticalSection(&a->cs_ring);
+}
+
 // the following function is DEPRECATED
 // it is intended for Legacy PowerSDR use only
-
 PORT
 void* create_rmatchLegacyV(int in_size, int out_size, int nom_inrate, int nom_outrate, int ringsize)
 {

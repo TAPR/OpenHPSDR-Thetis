@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2014, 2016 Warren Pratt, NR0V
+Copyright (C) 2014, 2016, 2021 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ CFIR create_cfir (int run, int size, int nc, int mp, double* in, double* out, in
 //	R:  interpolation factor of CIC
 //	Pairs:  number of comb-integrator pairs in the CIC
 //	cutoff:  cutoff frequency
-//  xtype:  0 - fourth power transition; 1 - raised cosine transition
+//  xtype:  0 - fourth power transition; 1 - raised cosine transition; 2 - brick wall
 //  xbw:  width of raised cosine transition
 {
 	CFIR a = (CFIR) malloc0 (sizeof (cfir));
@@ -133,7 +133,7 @@ double* cfir_impulse (int N, int DD, int R, int Pairs, double runrate, double ci
 	// runrate:	sample rate at which this filter is to run (assumes there may be flat interp. between this filter and the CIC)
 	// cicrate: sample rate at interface to CIC
 	// cutoff:	cutoff frequency
-	// xtype:	transition type, 0 for 4th-power rolloff, 1 for raised cosine
+	// xtype:	transition type, 0 for 4th-power rolloff, 1 for raised cosine, 2 for brick wall
 	// xbw:		transition bandwidth for raised cosine
 	// rtype:	0 for real output, 1 for complex output
 	// scale:	scale factor to be applied to the output
@@ -194,6 +194,23 @@ double* cfir_impulse (int N, int DD, int R, int Pairs, double runrate, double ci
 				A[i] = 0.0;
 		}
 	}
+	else if (xtype == 2)
+	{
+		for (i = 0, ri = offset; i < u_samps; i++, ri += 1.0)
+		{
+			fn = ri / (L * (double)N);
+			if (fn <= ft)
+			{
+				if (fn == 0.0) tmp = 1.0;
+				else if ((tmp = DD * R * sin(PI * fn / R) / sin(PI * DD * fn)) < 0.0)
+					tmp = -tmp;
+				mag = pow (tmp, Pairs) * local_scale;
+			}
+			else
+				mag = 0.0;
+			A[i] = mag;
+		}
+	}
 	if (N & 1)
 		for (i = u_samps, j = 2; i < N; i++, j++)
 			A[i] = A[u_samps - j];
@@ -212,10 +229,26 @@ double* cfir_impulse (int N, int DD, int R, int Pairs, double runrate, double ci
 *																										*
 ********************************************************************************************************/
 
-PORT void
-SetTXACFIRRun (int channel, int run)
+PORT
+void SetTXACFIRRun (int channel, int run)
 {
 	EnterCriticalSection(&ch[channel].csDSP);
 	txa[channel].cfir.p->run = run;
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXACFIRNC(int channel, int nc)
+{
+	// NOTE:  'nc' must be >= 'size'
+	CFIR a;
+	EnterCriticalSection(&ch[channel].csDSP);
+	a = txa[channel].cfir.p;
+	if (a->nc != nc)
+	{
+		a->nc = nc;
+		decalc_cfir(a);
+		calc_cfir(a);
+	}
 	LeaveCriticalSection(&ch[channel].csDSP);
 }
