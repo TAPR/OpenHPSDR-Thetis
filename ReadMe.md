@@ -1,5 +1,8 @@
 
-# Latest Release v2.8.11 October 20, 2020
+# Latest Release v2.9.0 April 03, 2022
+
+# 2.9.0 (2022-03-04)
+See [ Thetis Change Log ](https://github.com/TAPR/OpenHPSDR-Thetis/blob/master/Thetis%20v2.9.0%20Change%20Log.pdf) for more details.
 
 # 2.8.11 (2020-20-10)
 See [ Thetis Change Log ](https://github.com/TAPR/OpenHPSDR-Thetis/blob/master/Thetis%20v2.8.11%20Change%20Log.pdf) for more details.
