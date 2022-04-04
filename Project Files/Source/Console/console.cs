@@ -39830,6 +39830,9 @@ namespace Thetis
 
         private void ptbFilterShift_Scroll(object sender, System.EventArgs e)
         {
+            MouseEventArgs mouseEvent = e as MouseEventArgs;
+            bool bScrollUp = mouseEvent != null ? mouseEvent.Delta >= 0 : false;
+
             SelectRX1VarFilter();
 
             int bw = (int)udFilterHigh.Value - (int)udFilterLow.Value;
@@ -39878,7 +39881,11 @@ namespace Thetis
             }
 
             int range = ptbFilterShift.Maximum - ptbFilterShift.Minimum;
-            int new_center = default_center + (int)((float)ptbFilterShift.Value / (range / 2) * adjusted_max);
+            //int new_center = default_center + (int)((float)ptbFilterShift.Value / (range / 2) * adjusted_max);
+            //MW0LGE_22b above line changed to the following 3, to fix issue where mouse wheel would not change in the +ve direciton, due to (int) rounding towards lower int
+            float tmp = ((float)ptbFilterShift.Value / (range / 2f) * adjusted_max);
+            int shift = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
+            int new_center = default_center + shift;
 
             // stop filter moving over 0 MW0LGE_21k9
             int nNewLow = new_center - bw / 2;
@@ -40127,27 +40134,37 @@ namespace Thetis
                 return;  // no good in this mode 
             }
 
+            MouseEventArgs mouseEvent = e as MouseEventArgs;
+            bool bScrollUp = mouseEvent != null ? mouseEvent.Delta >= 0 : false;
+
             SelectRX1VarFilter();
 
             int range = ptbFilterWidth.Maximum - ptbFilterWidth.Minimum;
             int new_bw = 0;
+            float tmp;
 
             switch (current_filter_width_mode)
             {
                 case FilterWidthMode.Linear:
-                    new_bw = (int)((float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * max_filter_width);
+                    //new_bw = (int)((float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * max_filter_width); //MW0LGE_22b changed to the following to fix +ve direciton issue
+                    tmp = (float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * max_filter_width;
+                    new_bw = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
                     break;
                 case FilterWidthMode.Log:
                     double max_log = Math.Log(ptbFilterWidth.Maximum);
                     double temp = Math.Log(Math.Max((ptbFilterWidth.Maximum - ptbFilterWidth.Value), 1.0));
                     temp = max_log - temp;
-                    new_bw = (int)((float)(temp / max_log * max_filter_width));
+                    //new_bw = (int)((float)(temp / max_log * max_filter_width)); //MW0LGE_22b
+                    tmp = (float)(temp / max_log * max_filter_width);
+                    new_bw = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
                     break;
                 case FilterWidthMode.Log10:
                     max_log = Math.Log10(ptbFilterWidth.Maximum);
                     temp = Math.Log10(Math.Max((ptbFilterWidth.Maximum - ptbFilterWidth.Value), 1.0));
                     temp = max_log - temp;
-                    new_bw = (int)((float)(temp / max_log * max_filter_width));
+                    //new_bw = (int)((float)(temp / max_log * max_filter_width)); //MW0LGE_22b
+                    tmp = (float)(temp / max_log * max_filter_width);
+                    new_bw = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
                     break;
             }
 

@@ -432,12 +432,12 @@ namespace Thetis
             if (e.Delta >= 120 && this.Value + large_change <= this.Maximum)
             {
                 Value += large_change; 
-                OnScroll(this, EventArgs.Empty);
+                OnScroll(this, e);//MW0LGE_22b EventArgs.Empty); // needed for filter width slider so we know if we are scrolling up or down based on the delta
             }
             else if (e.Delta <= -120 && this.Value - large_change >= this.Minimum)
             {
                 Value -= large_change;
-                OnScroll(this, EventArgs.Empty);
+                OnScroll(this, e);//MW0LGE_22b EventArgs.Empty); // needed for filter width slider so we know if we are scrolling up or down based on the delta
             }
             base.OnMouseWheel(e);
         }
