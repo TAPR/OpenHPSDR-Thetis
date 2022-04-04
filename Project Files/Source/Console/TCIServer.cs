@@ -2269,7 +2269,7 @@ namespace Thetis
 				}
 			}
 		}
-		private void OnSplitChanged(int rx, bool newSplit)
+		private void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
 		{
 			lock (m_objLocker)
 			{
