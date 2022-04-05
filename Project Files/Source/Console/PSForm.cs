@@ -704,6 +704,16 @@ namespace Thetis
 
         private void checkLoopback_CheckedChanged(object sender, EventArgs e)
         {
+            if(checkLoopback.Checked && (console.SampleRateRX1 != 192000 || console.SampleRateRX2 != 192000))
+            {
+                DialogResult dr = MessageBox.Show("This feature can only be used with sample rates set to 192KHz.",
+                    "Sample Rate Issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                checkLoopback.Checked = false;
+                return;
+            }
             cmaster.PSLoopback = checkLoopback.Checked;
         }
 
