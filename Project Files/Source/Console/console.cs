@@ -22030,10 +22030,14 @@ namespace Thetis
                     bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
                     dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
                 }
+                double dBHZ = 10.0 * Math.Log(bin_width); //MW0LGE_22b
+
+                infoBar.Right2(1, "dBHz " + dBHZ.ToString("N2") + "Hz");
                 infoBar.Right3(1, "RBW " + dRWB.ToString("N3") + "Hz");
             }
             else
             {
+                infoBar.Right2(1, "");
                 infoBar.Right3(1, "");
             }
         }
@@ -25404,6 +25408,7 @@ namespace Thetis
                             "ClickTuneDrag : " + ClickTuneDrag.ToString() + Environment.NewLine +
                             "display_duplex : " + display_duplex.ToString() + Environment.NewLine +
                             "cachedMeasureStrings : " + Display.CachedMeasureStringsCount.ToString() + Environment.NewLine +
+                            "cachedDXBrushes : " + Display.CachedDXBrushes.ToString() + Environment.NewLine +
                             "AttackFastFramesRX1 : " + Display.AttackFastFramesRX1.ToString() + Environment.NewLine +
                             "AttackFastFramesRX2 : " + Display.AttackFastFramesRX2.ToString() + Environment.NewLine +
                             "CurrentClickTuneMode : " + CurrentClickTuneMode.ToString() + Environment.NewLine +

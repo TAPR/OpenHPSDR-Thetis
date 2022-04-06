@@ -329,6 +329,7 @@
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS23 = new System.Windows.Forms.GroupBoxTS();
+            this.chkIgnoreSeqErrors = new System.Windows.Forms.CheckBoxTS();
             this.chkHideFeebackLevel = new System.Windows.Forms.CheckBoxTS();
             this.chkSwapREDBluePSAColours = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS22 = new System.Windows.Forms.GroupBoxTS();
@@ -3727,7 +3728,6 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCFCOMPGain = new System.Windows.Forms.Timer(this.components);
-            this.chkIgnoreSeqErrors = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -9203,6 +9203,19 @@
             this.groupBoxTS23.TabIndex = 34;
             this.groupBoxTS23.TabStop = false;
             this.groupBoxTS23.Text = "Info Bar (below spectrum)";
+            // 
+            // chkIgnoreSeqErrors
+            // 
+            this.chkIgnoreSeqErrors.AutoSize = true;
+            this.chkIgnoreSeqErrors.Image = null;
+            this.chkIgnoreSeqErrors.Location = new System.Drawing.Point(18, 69);
+            this.chkIgnoreSeqErrors.Name = "chkIgnoreSeqErrors";
+            this.chkIgnoreSeqErrors.Size = new System.Drawing.Size(110, 17);
+            this.chkIgnoreSeqErrors.TabIndex = 2;
+            this.chkIgnoreSeqErrors.Text = "Ignore SEQ errors";
+            this.toolTip1.SetToolTip(this.chkIgnoreSeqErrors, "Ignore any SEQ errors. Will not show red seq warnings.");
+            this.chkIgnoreSeqErrors.UseVisualStyleBackColor = true;
+            this.chkIgnoreSeqErrors.CheckedChanged += new System.EventHandler(this.chkIgnoreSeqErrors_CheckedChanged);
             // 
             // chkHideFeebackLevel
             // 
@@ -54687,7 +54700,7 @@
             // lgLinearGradientRX1
             // 
             this.lgLinearGradientRX1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.lgLinearGradientRX1.ColourForSelectedGripper = System.Drawing.Color.Empty;
+            this.lgLinearGradientRX1.ColourForSelectedGripper = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.lgLinearGradientRX1.EncodedText = resources.GetString("lgLinearGradientRX1.EncodedText");
             this.lgLinearGradientRX1.IncludeAlphaInPreview = false;
             this.lgLinearGradientRX1.Location = new System.Drawing.Point(8, 20);
@@ -61564,19 +61577,6 @@
             this.tmrCFCOMPGain.Enabled = true;
             this.tmrCFCOMPGain.Interval = 50;
             this.tmrCFCOMPGain.Tick += new System.EventHandler(this.tmrCFCOMPGain_Tick);
-            // 
-            // chkIgnoreSeqErrors
-            // 
-            this.chkIgnoreSeqErrors.AutoSize = true;
-            this.chkIgnoreSeqErrors.Image = null;
-            this.chkIgnoreSeqErrors.Location = new System.Drawing.Point(18, 69);
-            this.chkIgnoreSeqErrors.Name = "chkIgnoreSeqErrors";
-            this.chkIgnoreSeqErrors.Size = new System.Drawing.Size(110, 17);
-            this.chkIgnoreSeqErrors.TabIndex = 2;
-            this.chkIgnoreSeqErrors.Text = "Ignore SEQ errors";
-            this.toolTip1.SetToolTip(this.chkIgnoreSeqErrors, "Ignore any SEQ errors. Will not show red seq warnings.");
-            this.chkIgnoreSeqErrors.UseVisualStyleBackColor = true;
-            this.chkIgnoreSeqErrors.CheckedChanged += new System.EventHandler(this.chkIgnoreSeqErrors_CheckedChanged);
             // 
             // Setup
             // 

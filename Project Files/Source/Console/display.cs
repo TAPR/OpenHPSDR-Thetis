@@ -9153,6 +9153,10 @@ namespace Thetis
             _DX2Brushes.Clear();
             _DX2Brushes = null;
         }
+        public static int CachedDXBrushes
+        {
+            get { return _DX2Brushes == null ? 0 : _DX2Brushes.Count; }
+        }
         private static SharpDX.Direct2D1.Brush getDXBrushForColour(Color c, int replaceAlpha = -1)
         {
             if (!_bDX2Setup) return null;
