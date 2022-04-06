@@ -22030,7 +22030,7 @@ namespace Thetis
                     bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
                     dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
                 }
-                double dBHZ = 10.0 * Math.Log(bin_width); //MW0LGE_22b
+                double dBHZ = 10.0 * Math.Log10(bin_width); //MW0LGE_22b
 
                 infoBar.Right2(1, "dBHz " + dBHZ.ToString("N2") + "Hz");
                 infoBar.Right3(1, "RBW " + dRWB.ToString("N3") + "Hz");
