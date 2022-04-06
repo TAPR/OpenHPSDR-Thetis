@@ -3436,68 +3436,17 @@
             this.comboKBCWDash = new System.Windows.Forms.ComboBoxTS();
             this.tpCATControl = new System.Windows.Forms.TabPage();
             this.tcCAT = new System.Windows.Forms.TabControl();
-            this.tpCAT = new System.Windows.Forms.TabPage();
-            this.chkRecenterOnZZFx = new System.Windows.Forms.CheckBoxTS();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.udUpdatesPerStepMin = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS512 = new System.Windows.Forms.LabelTS();
-            this.labelTS515 = new System.Windows.Forms.LabelTS();
-            this.labelTS511 = new System.Windows.Forms.LabelTS();
-            this.udUpdatesPerStepMax = new System.Windows.Forms.NumericUpDownTS();
-            this.btnConfigure = new System.Windows.Forms.Button();
-            this.grpFocusMaster = new System.Windows.Forms.GroupBoxTS();
-            this.txtFocusMasterDelay = new System.Windows.Forms.TextBoxTS();
-            this.labelTS359 = new System.Windows.Forms.LabelTS();
-            this.labelTS358 = new System.Windows.Forms.LabelTS();
-            this.labelTS357 = new System.Windows.Forms.LabelTS();
-            this.labelTS356 = new System.Windows.Forms.LabelTS();
-            this.txtFocusMasterWinTitle = new System.Windows.Forms.TextBoxTS();
-            this.txtFocusMasterUDPPort = new System.Windows.Forms.TextBoxTS();
-            this.comboFocusMasterMode = new System.Windows.Forms.ComboBoxTS();
-            this.labelTS323 = new System.Windows.Forms.LabelTS();
-            this.txtZZSN = new System.Windows.Forms.TextBoxTS();
-            this.chkKWAI = new System.Windows.Forms.CheckBoxTS();
-            this.grpCatControlBox = new System.Windows.Forms.GroupBoxTS();
-            this.comboCATPort = new System.Windows.Forms.ComboBoxTS();
-            this.comboCATbaud = new System.Windows.Forms.ComboBoxTS();
-            this.lblCATBaud = new System.Windows.Forms.LabelTS();
-            this.lblCATPort = new System.Windows.Forms.LabelTS();
-            this.chkCATEnable = new System.Windows.Forms.CheckBoxTS();
-            this.lblCATParity = new System.Windows.Forms.LabelTS();
-            this.lblCATData = new System.Windows.Forms.LabelTS();
-            this.lblCATStop = new System.Windows.Forms.LabelTS();
-            this.comboCATparity = new System.Windows.Forms.ComboBoxTS();
-            this.comboCATdatabits = new System.Windows.Forms.ComboBoxTS();
-            this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
-            this.grpRTTYOffset = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS4 = new System.Windows.Forms.LabelTS();
-            this.labelTS3 = new System.Windows.Forms.LabelTS();
-            this.udRTTYU = new System.Windows.Forms.NumericUpDownTS();
-            this.udRTTYL = new System.Windows.Forms.NumericUpDownTS();
-            this.chkRTTYOffsetEnableB = new System.Windows.Forms.CheckBoxTS();
-            this.chkRTTYOffsetEnableA = new System.Windows.Forms.CheckBoxTS();
-            this.chkDigUIsUSB = new System.Windows.Forms.CheckBoxTS();
+            this.tpCATSerialPorts = new System.Windows.Forms.TabPage();
+            this.txtCAT1 = new System.Windows.Forms.TextBoxTS();
+            this.txtCAT4 = new System.Windows.Forms.TextBoxTS();
+            this.txtCAT3 = new System.Windows.Forms.TextBoxTS();
+            this.txtCAT2 = new System.Windows.Forms.TextBoxTS();
             this.grpPTTBitBang = new System.Windows.Forms.GroupBoxTS();
             this.comboCATPTTPort = new System.Windows.Forms.ComboBoxTS();
             this.lblCATPTTPort = new System.Windows.Forms.LabelTS();
             this.chkCATPTT_RTS = new System.Windows.Forms.CheckBoxTS();
             this.chkCATPTT_DTR = new System.Windows.Forms.CheckBoxTS();
             this.chkCATPTTEnabled = new System.Windows.Forms.CheckBoxTS();
-            this.btnCATTest = new System.Windows.Forms.ButtonTS();
-            this.lblCATRigType = new System.Windows.Forms.LabelTS();
-            this.comboCATRigType = new System.Windows.Forms.ComboBoxTS();
-            this.tpCAT2 = new System.Windows.Forms.TabPage();
-            this.grpTCPIPcatServer = new System.Windows.Forms.GroupBoxTS();
-            this.btnShowTCPIPCatLog = new System.Windows.Forms.ButtonTS();
-            this.chkWelcomeMessageTCPIPCat = new System.Windows.Forms.CheckBoxTS();
-            this.lblToggleToUse = new System.Windows.Forms.LabelTS();
-            this.labelTS609 = new System.Windows.Forms.LabelTS();
-            this.chkTCPIPCatServerListening = new System.Windows.Forms.CheckBoxTS();
-            this.btnDefaultBindPortForTCPIPCat = new System.Windows.Forms.ButtonTS();
-            this.txtTCPIPCATServerBindIPPort = new System.Windows.Forms.TextBoxTS();
-            this.txtCAT4 = new System.Windows.Forms.TextBoxTS();
-            this.txtCAT3 = new System.Windows.Forms.TextBoxTS();
-            this.txtCAT2 = new System.Windows.Forms.TextBoxTS();
             this.grpCat4ControlBox = new System.Windows.Forms.GroupBoxTS();
             this.comboCAT4Port = new System.Windows.Forms.ComboBoxTS();
             this.comboCAT4baud = new System.Windows.Forms.ComboBoxTS();
@@ -3534,8 +3483,21 @@
             this.comboCAT2parity = new System.Windows.Forms.ComboBoxTS();
             this.comboCAT2databits = new System.Windows.Forms.ComboBoxTS();
             this.comboCAT2stopbits = new System.Windows.Forms.ComboBoxTS();
-            this.tpUserInterface = new System.Windows.Forms.TabPage();
+            this.grpCatControlBox = new System.Windows.Forms.GroupBoxTS();
+            this.comboCATPort = new System.Windows.Forms.ComboBoxTS();
+            this.comboCATbaud = new System.Windows.Forms.ComboBoxTS();
+            this.lblCATBaud = new System.Windows.Forms.LabelTS();
+            this.lblCATPort = new System.Windows.Forms.LabelTS();
+            this.chkCATEnable = new System.Windows.Forms.CheckBoxTS();
+            this.lblCATParity = new System.Windows.Forms.LabelTS();
+            this.lblCATData = new System.Windows.Forms.LabelTS();
+            this.lblCATStop = new System.Windows.Forms.LabelTS();
+            this.comboCATparity = new System.Windows.Forms.ComboBoxTS();
+            this.comboCATdatabits = new System.Windows.Forms.ComboBoxTS();
+            this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
+            this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
             this.btnIPv4TCI = new System.Windows.Forms.ButtonTS();
             this.btnShowLog = new System.Windows.Forms.ButtonTS();
             this.chkCWLUbecomesCW = new System.Windows.Forms.CheckBoxTS();
@@ -3558,7 +3520,17 @@
             this.chkTCIServerListening = new System.Windows.Forms.CheckBoxTS();
             this.btnDefaultBindPortForTCI = new System.Windows.Forms.ButtonTS();
             this.txtTCIServerBindIPPort = new System.Windows.Forms.TextBoxTS();
+            this.grpTCPIPcatServer = new System.Windows.Forms.GroupBoxTS();
+            this.btnIPv4TCPCat = new System.Windows.Forms.ButtonTS();
+            this.btnShowTCPIPCatLog = new System.Windows.Forms.ButtonTS();
+            this.chkWelcomeMessageTCPIPCat = new System.Windows.Forms.CheckBoxTS();
+            this.lblToggleToUse = new System.Windows.Forms.LabelTS();
+            this.labelTS609 = new System.Windows.Forms.LabelTS();
+            this.chkTCPIPCatServerListening = new System.Windows.Forms.CheckBoxTS();
+            this.btnDefaultBindPortForTCPIPCat = new System.Windows.Forms.ButtonTS();
+            this.txtTCPIPCATServerBindIPPort = new System.Windows.Forms.TextBoxTS();
             this.groupBoxTS16 = new System.Windows.Forms.GroupBoxTS();
+            this.btnIPv4N1MM = new System.Windows.Forms.ButtonTS();
             this.btnN1MMDefault = new System.Windows.Forms.ButtonTS();
             this.labelTS90 = new System.Windows.Forms.LabelTS();
             this.udN1MMSendRate = new System.Windows.Forms.NumericUpDownTS();
@@ -3569,14 +3541,33 @@
             this.txtN1MMSendTo = new System.Windows.Forms.TextBoxTS();
             this.chkN1MMEnableRX2 = new System.Windows.Forms.CheckBoxTS();
             this.chkN1MMEnableRX1 = new System.Windows.Forms.CheckBoxTS();
-            this.groupBoxTS10 = new System.Windows.Forms.GroupBoxTS();
-            this.btnTuneStepChangeLarger2 = new System.Windows.Forms.ButtonTS();
-            this.btnTuneStepChangeSmaller2 = new System.Windows.Forms.ButtonTS();
-            this.txtWheelTune2 = new System.Windows.Forms.TextBoxTS();
-            this.chkBoxIND = new System.Windows.Forms.CheckBoxTS();
-            this.labelTS469 = new System.Windows.Forms.LabelTS();
-            this.chkBoxPM = new System.Windows.Forms.CheckBoxTS();
-            this.udSpeedPM = new System.Windows.Forms.NumericUpDownTS();
+            this.tbMIDIcat = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.udUpdatesPerStepMin = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS511 = new System.Windows.Forms.LabelTS();
+            this.labelTS512 = new System.Windows.Forms.LabelTS();
+            this.labelTS515 = new System.Windows.Forms.LabelTS();
+            this.udUpdatesPerStepMax = new System.Windows.Forms.NumericUpDownTS();
+            this.btnConfigure = new System.Windows.Forms.Button();
+            this.tpCAToptions = new System.Windows.Forms.TabPage();
+            this.groupBoxTS25 = new System.Windows.Forms.GroupBoxTS();
+            this.chkRecenterOnZZFx = new System.Windows.Forms.CheckBoxTS();
+            this.chkDigUIsUSB = new System.Windows.Forms.CheckBoxTS();
+            this.chkKWAI = new System.Windows.Forms.CheckBoxTS();
+            this.txtZZSN = new System.Windows.Forms.TextBoxTS();
+            this.labelTS323 = new System.Windows.Forms.LabelTS();
+            this.groupBoxTS24 = new System.Windows.Forms.GroupBoxTS();
+            this.btnCATTest = new System.Windows.Forms.ButtonTS();
+            this.comboCATRigType = new System.Windows.Forms.ComboBoxTS();
+            this.lblCATRigType = new System.Windows.Forms.LabelTS();
+            this.grpRTTYOffset = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS4 = new System.Windows.Forms.LabelTS();
+            this.labelTS3 = new System.Windows.Forms.LabelTS();
+            this.udRTTYU = new System.Windows.Forms.NumericUpDownTS();
+            this.udRTTYL = new System.Windows.Forms.NumericUpDownTS();
+            this.chkRTTYOffsetEnableB = new System.Windows.Forms.CheckBoxTS();
+            this.chkRTTYOffsetEnableA = new System.Windows.Forms.CheckBoxTS();
+            this.tpUserInterface = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.labelTS459 = new System.Windows.Forms.LabelTS();
             this.chkBoxHttp2 = new System.Windows.Forms.CheckBoxTS();
@@ -3589,6 +3580,23 @@
             this.labelTS468 = new System.Windows.Forms.LabelTS();
             this.udHttpPort = new System.Windows.Forms.NumericUpDownTS();
             this.chkBoxHTTP = new System.Windows.Forms.CheckBoxTS();
+            this.groupBoxTS10 = new System.Windows.Forms.GroupBoxTS();
+            this.btnTuneStepChangeLarger2 = new System.Windows.Forms.ButtonTS();
+            this.btnTuneStepChangeSmaller2 = new System.Windows.Forms.ButtonTS();
+            this.txtWheelTune2 = new System.Windows.Forms.TextBoxTS();
+            this.chkBoxIND = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS469 = new System.Windows.Forms.LabelTS();
+            this.chkBoxPM = new System.Windows.Forms.CheckBoxTS();
+            this.udSpeedPM = new System.Windows.Forms.NumericUpDownTS();
+            this.grpFocusMaster = new System.Windows.Forms.GroupBoxTS();
+            this.txtFocusMasterDelay = new System.Windows.Forms.TextBoxTS();
+            this.labelTS359 = new System.Windows.Forms.LabelTS();
+            this.labelTS358 = new System.Windows.Forms.LabelTS();
+            this.labelTS357 = new System.Windows.Forms.LabelTS();
+            this.labelTS356 = new System.Windows.Forms.LabelTS();
+            this.txtFocusMasterWinTitle = new System.Windows.Forms.TextBoxTS();
+            this.txtFocusMasterUDPPort = new System.Windows.Forms.TextBoxTS();
+            this.comboFocusMasterMode = new System.Windows.Forms.ComboBoxTS();
             this.tpAndromeda = new System.Windows.Forms.TabPage();
             this.grpAndrOptions = new System.Windows.Forms.GroupBoxTS();
             this.chkAndrStickyMenus = new System.Windows.Forms.CheckBoxTS();
@@ -3729,8 +3737,7 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCFCOMPGain = new System.Windows.Forms.Timer(this.components);
-            this.btnIPv4N1MM = new System.Windows.Forms.ButtonTS();
-            this.btnIPv4TCPCat = new System.Windows.Forms.ButtonTS();
+            this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4741,35 +4748,39 @@
             this.grpKBCW.SuspendLayout();
             this.tpCATControl.SuspendLayout();
             this.tcCAT.SuspendLayout();
-            this.tpCAT.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMin)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMax)).BeginInit();
-            this.grpFocusMaster.SuspendLayout();
-            this.grpCatControlBox.SuspendLayout();
-            this.grpRTTYOffset.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udRTTYU)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRTTYL)).BeginInit();
+            this.tpCATSerialPorts.SuspendLayout();
             this.grpPTTBitBang.SuspendLayout();
-            this.tpCAT2.SuspendLayout();
-            this.grpTCPIPcatServer.SuspendLayout();
             this.grpCat4ControlBox.SuspendLayout();
             this.grpCat3ControlBox.SuspendLayout();
             this.grpCat2ControlBox.SuspendLayout();
-            this.tpUserInterface.SuspendLayout();
+            this.grpCatControlBox.SuspendLayout();
+            this.tpTCITCPIPN1MM.SuspendLayout();
             this.grpTCIServer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).BeginInit();
+            this.grpTCPIPcatServer.SuspendLayout();
             this.groupBoxTS16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udN1MMSendRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX2Scaling)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX1Scaling)).BeginInit();
-            this.groupBoxTS10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).BeginInit();
+            this.tbMIDIcat.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMax)).BeginInit();
+            this.tpCAToptions.SuspendLayout();
+            this.groupBoxTS25.SuspendLayout();
+            this.groupBoxTS24.SuspendLayout();
+            this.grpRTTYOffset.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udRTTYU)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udRTTYL)).BeginInit();
+            this.tpUserInterface.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).BeginInit();
+            this.groupBoxTS10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).BeginInit();
+            this.grpFocusMaster.SuspendLayout();
             this.tpAndromeda.SuspendLayout();
             this.grpAndrOptions.SuspendLayout();
             this.grpAndr.SuspendLayout();
@@ -57121,8 +57132,10 @@
             // 
             // tcCAT
             // 
-            this.tcCAT.Controls.Add(this.tpCAT);
-            this.tcCAT.Controls.Add(this.tpCAT2);
+            this.tcCAT.Controls.Add(this.tpCATSerialPorts);
+            this.tcCAT.Controls.Add(this.tpTCITCPIPN1MM);
+            this.tcCAT.Controls.Add(this.tbMIDIcat);
+            this.tcCAT.Controls.Add(this.tpCAToptions);
             this.tcCAT.Controls.Add(this.tpUserInterface);
             this.tcCAT.Controls.Add(this.tpAndromeda);
             this.tcCAT.Location = new System.Drawing.Point(0, 3);
@@ -57131,558 +57144,64 @@
             this.tcCAT.Size = new System.Drawing.Size(732, 433);
             this.tcCAT.TabIndex = 0;
             // 
-            // tpCAT
-            // 
-            this.tpCAT.BackColor = System.Drawing.SystemColors.Control;
-            this.tpCAT.Controls.Add(this.chkRecenterOnZZFx);
-            this.tpCAT.Controls.Add(this.groupBox1);
-            this.tpCAT.Controls.Add(this.grpFocusMaster);
-            this.tpCAT.Controls.Add(this.labelTS323);
-            this.tpCAT.Controls.Add(this.txtZZSN);
-            this.tpCAT.Controls.Add(this.chkKWAI);
-            this.tpCAT.Controls.Add(this.grpCatControlBox);
-            this.tpCAT.Controls.Add(this.grpRTTYOffset);
-            this.tpCAT.Controls.Add(this.chkDigUIsUSB);
-            this.tpCAT.Controls.Add(this.grpPTTBitBang);
-            this.tpCAT.Controls.Add(this.btnCATTest);
-            this.tpCAT.Controls.Add(this.lblCATRigType);
-            this.tpCAT.Controls.Add(this.comboCATRigType);
-            this.tpCAT.Location = new System.Drawing.Point(4, 22);
-            this.tpCAT.Name = "tpCAT";
-            this.tpCAT.Padding = new System.Windows.Forms.Padding(3);
-            this.tpCAT.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.tpCAT.Size = new System.Drawing.Size(724, 407);
-            this.tpCAT.TabIndex = 0;
-            this.tpCAT.Text = "CAT";
-            // 
-            // chkRecenterOnZZFx
-            // 
-            this.chkRecenterOnZZFx.AutoSize = true;
-            this.chkRecenterOnZZFx.Image = null;
-            this.chkRecenterOnZZFx.Location = new System.Drawing.Point(260, 175);
-            this.chkRecenterOnZZFx.Name = "chkRecenterOnZZFx";
-            this.chkRecenterOnZZFx.Size = new System.Drawing.Size(130, 17);
-            this.chkRecenterOnZZFx.TabIndex = 107;
-            this.chkRecenterOnZZFx.Text = "Always recenter VFOs";
-            this.chkRecenterOnZZFx.UseVisualStyleBackColor = true;
-            this.chkRecenterOnZZFx.CheckedChanged += new System.EventHandler(this.chkRecenterOnZZFx_CheckedChanged);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.udUpdatesPerStepMin);
-            this.groupBox1.Controls.Add(this.labelTS512);
-            this.groupBox1.Controls.Add(this.labelTS515);
-            this.groupBox1.Controls.Add(this.labelTS511);
-            this.groupBox1.Controls.Add(this.udUpdatesPerStepMax);
-            this.groupBox1.Controls.Add(this.btnConfigure);
-            this.groupBox1.Location = new System.Drawing.Point(446, 17);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(225, 84);
-            this.groupBox1.TabIndex = 105;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "User Interface Controller";
-            // 
-            // udUpdatesPerStepMin
-            // 
-            this.udUpdatesPerStepMin.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMin.Location = new System.Drawing.Point(138, 40);
-            this.udUpdatesPerStepMin.Maximum = new decimal(new int[] {
-            9,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMin.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMin.Name = "udUpdatesPerStepMin";
-            this.udUpdatesPerStepMin.Size = new System.Drawing.Size(31, 20);
-            this.udUpdatesPerStepMin.TabIndex = 112;
-            this.toolTip1.SetToolTip(this.udUpdatesPerStepMin, "Minimum number of MIDI wheel updates required to produce one frequency step - det" +
-        "ermines the highest sensitivity to wheel rotation.");
-            this.udUpdatesPerStepMin.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMin.ValueChanged += new System.EventHandler(this.udUpdatesPerStepMin_ValueChanged);
-            // 
-            // labelTS512
-            // 
-            this.labelTS512.AutoSize = true;
-            this.labelTS512.Image = null;
-            this.labelTS512.Location = new System.Drawing.Point(178, 63);
-            this.labelTS512.Name = "labelTS512";
-            this.labelTS512.Size = new System.Drawing.Size(27, 13);
-            this.labelTS512.TabIndex = 110;
-            this.labelTS512.Text = "Max";
-            // 
-            // labelTS515
-            // 
-            this.labelTS515.AutoSize = true;
-            this.labelTS515.Image = null;
-            this.labelTS515.Location = new System.Drawing.Point(143, 63);
-            this.labelTS515.Name = "labelTS515";
-            this.labelTS515.Size = new System.Drawing.Size(24, 13);
-            this.labelTS515.TabIndex = 111;
-            this.labelTS515.Text = "Min";
-            // 
-            // labelTS511
-            // 
-            this.labelTS511.AutoSize = true;
-            this.labelTS511.Image = null;
-            this.labelTS511.Location = new System.Drawing.Point(135, 10);
-            this.labelTS511.Name = "labelTS511";
-            this.labelTS511.Size = new System.Drawing.Size(70, 26);
-            this.labelTS511.TabIndex = 108;
-            this.labelTS511.Text = " MIDI Wheel\r\nupdates/step";
-            // 
-            // udUpdatesPerStepMax
-            // 
-            this.udUpdatesPerStepMax.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMax.Location = new System.Drawing.Point(175, 40);
-            this.udUpdatesPerStepMax.Maximum = new decimal(new int[] {
-            64,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMax.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMax.Name = "udUpdatesPerStepMax";
-            this.udUpdatesPerStepMax.Size = new System.Drawing.Size(34, 20);
-            this.udUpdatesPerStepMax.TabIndex = 109;
-            this.toolTip1.SetToolTip(this.udUpdatesPerStepMax, "Maximum number of MIDI wheel updates required to produce one frequency step - det" +
-        "ermines the lowest sensitivity to wheel rotation.");
-            this.udUpdatesPerStepMax.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udUpdatesPerStepMax.ValueChanged += new System.EventHandler(this.udUpdatesPerStepMax_ValueChanged);
-            // 
-            // btnConfigure
-            // 
-            this.btnConfigure.Location = new System.Drawing.Point(15, 19);
-            this.btnConfigure.Name = "btnConfigure";
-            this.btnConfigure.Size = new System.Drawing.Size(100, 30);
-            this.btnConfigure.TabIndex = 5;
-            this.btnConfigure.Text = "Configure MIDI";
-            this.btnConfigure.UseVisualStyleBackColor = true;
-            this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
-            // 
-            // grpFocusMaster
-            // 
-            this.grpFocusMaster.Controls.Add(this.txtFocusMasterDelay);
-            this.grpFocusMaster.Controls.Add(this.labelTS359);
-            this.grpFocusMaster.Controls.Add(this.labelTS358);
-            this.grpFocusMaster.Controls.Add(this.labelTS357);
-            this.grpFocusMaster.Controls.Add(this.labelTS356);
-            this.grpFocusMaster.Controls.Add(this.txtFocusMasterWinTitle);
-            this.grpFocusMaster.Controls.Add(this.txtFocusMasterUDPPort);
-            this.grpFocusMaster.Controls.Add(this.comboFocusMasterMode);
-            this.grpFocusMaster.Location = new System.Drawing.Point(16, 275);
-            this.grpFocusMaster.Name = "grpFocusMaster";
-            this.grpFocusMaster.Size = new System.Drawing.Size(334, 100);
-            this.grpFocusMaster.TabIndex = 104;
-            this.grpFocusMaster.TabStop = false;
-            this.grpFocusMaster.Text = "FocusMaster";
-            // 
-            // txtFocusMasterDelay
-            // 
-            this.txtFocusMasterDelay.Location = new System.Drawing.Point(184, 42);
-            this.txtFocusMasterDelay.Name = "txtFocusMasterDelay";
-            this.txtFocusMasterDelay.Size = new System.Drawing.Size(40, 20);
-            this.txtFocusMasterDelay.TabIndex = 106;
-            this.txtFocusMasterDelay.Text = "2000";
-            this.txtFocusMasterDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtFocusMasterDelay.TextChanged += new System.EventHandler(this.txtFocusMasterDelay_TextChanged);
-            // 
-            // labelTS359
-            // 
-            this.labelTS359.AutoSize = true;
-            this.labelTS359.Image = null;
-            this.labelTS359.Location = new System.Drawing.Point(126, 45);
-            this.labelTS359.Name = "labelTS359";
-            this.labelTS359.Size = new System.Drawing.Size(58, 13);
-            this.labelTS359.TabIndex = 105;
-            this.labelTS359.Text = "Delay (mS)";
-            // 
-            // labelTS358
-            // 
-            this.labelTS358.AutoSize = true;
-            this.labelTS358.Image = null;
-            this.labelTS358.Location = new System.Drawing.Point(5, 71);
-            this.labelTS358.Name = "labelTS358";
-            this.labelTS358.Size = new System.Drawing.Size(69, 13);
-            this.labelTS358.TabIndex = 104;
-            this.labelTS358.Text = "Window Title";
-            // 
-            // labelTS357
-            // 
-            this.labelTS357.AutoSize = true;
-            this.labelTS357.Image = null;
-            this.labelTS357.Location = new System.Drawing.Point(6, 45);
-            this.labelTS357.Name = "labelTS357";
-            this.labelTS357.Size = new System.Drawing.Size(61, 13);
-            this.labelTS357.TabIndex = 104;
-            this.labelTS357.Text = "N1MM Port";
-            // 
-            // labelTS356
-            // 
-            this.labelTS356.AutoSize = true;
-            this.labelTS356.Image = null;
-            this.labelTS356.Location = new System.Drawing.Point(5, 18);
-            this.labelTS356.Name = "labelTS356";
-            this.labelTS356.Size = new System.Drawing.Size(34, 13);
-            this.labelTS356.TabIndex = 104;
-            this.labelTS356.Text = "Mode";
-            // 
-            // txtFocusMasterWinTitle
-            // 
-            this.txtFocusMasterWinTitle.Location = new System.Drawing.Point(76, 68);
-            this.txtFocusMasterWinTitle.Name = "txtFocusMasterWinTitle";
-            this.txtFocusMasterWinTitle.Size = new System.Drawing.Size(224, 20);
-            this.txtFocusMasterWinTitle.TabIndex = 104;
-            this.txtFocusMasterWinTitle.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFocusMasterWinTitle_KeyDown);
-            // 
-            // txtFocusMasterUDPPort
-            // 
-            this.txtFocusMasterUDPPort.Location = new System.Drawing.Point(72, 42);
-            this.txtFocusMasterUDPPort.Name = "txtFocusMasterUDPPort";
-            this.txtFocusMasterUDPPort.Size = new System.Drawing.Size(48, 20);
-            this.txtFocusMasterUDPPort.TabIndex = 104;
-            this.txtFocusMasterUDPPort.Text = "12060";
-            this.txtFocusMasterUDPPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtFocusMasterUDPPort.TextChanged += new System.EventHandler(this.txtFocusMasterUDPPort_TextChanged);
-            // 
-            // comboFocusMasterMode
-            // 
-            this.comboFocusMasterMode.FormattingEnabled = true;
-            this.comboFocusMasterMode.Items.AddRange(new object[] {
-            "None",
-            "N1MM+ Logger",
-            "Select by Click",
-            "Enter Window Title"});
-            this.comboFocusMasterMode.Location = new System.Drawing.Point(72, 15);
-            this.comboFocusMasterMode.Name = "comboFocusMasterMode";
-            this.comboFocusMasterMode.Size = new System.Drawing.Size(121, 21);
-            this.comboFocusMasterMode.TabIndex = 104;
-            this.comboFocusMasterMode.SelectedIndexChanged += new System.EventHandler(this.comboFocusMasterMode_SelectedIndexChanged);
-            // 
-            // labelTS323
-            // 
-            this.labelTS323.AutoSize = true;
-            this.labelTS323.Image = null;
-            this.labelTS323.Location = new System.Drawing.Point(385, 343);
-            this.labelTS323.Name = "labelTS323";
-            this.labelTS323.Size = new System.Drawing.Size(36, 13);
-            this.labelTS323.TabIndex = 100;
-            this.labelTS323.Text = "ZZSN";
-            // 
-            // txtZZSN
-            // 
-            this.txtZZSN.Location = new System.Drawing.Point(373, 360);
-            this.txtZZSN.Name = "txtZZSN";
-            this.txtZZSN.Size = new System.Drawing.Size(65, 20);
-            this.txtZZSN.TabIndex = 99;
-            this.txtZZSN.Text = "0000-0000";
-            this.txtZZSN.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this.txtZZSN, "Enter valid serial number .");
-            // 
-            // chkKWAI
-            // 
-            this.chkKWAI.Image = null;
-            this.chkKWAI.Location = new System.Drawing.Point(260, 220);
-            this.chkKWAI.Name = "chkKWAI";
-            this.chkKWAI.Size = new System.Drawing.Size(176, 24);
-            this.chkKWAI.TabIndex = 98;
-            this.chkKWAI.Text = "Allow Kenwood AI Command";
-            this.toolTip1.SetToolTip(this.chkKWAI, "Check only if your logger does not poll for frequency");
-            this.chkKWAI.CheckedChanged += new System.EventHandler(this.chkKWAI_CheckedChanged);
-            // 
-            // grpCatControlBox
-            // 
-            this.grpCatControlBox.Controls.Add(this.comboCATPort);
-            this.grpCatControlBox.Controls.Add(this.comboCATbaud);
-            this.grpCatControlBox.Controls.Add(this.lblCATBaud);
-            this.grpCatControlBox.Controls.Add(this.lblCATPort);
-            this.grpCatControlBox.Controls.Add(this.chkCATEnable);
-            this.grpCatControlBox.Controls.Add(this.lblCATParity);
-            this.grpCatControlBox.Controls.Add(this.lblCATData);
-            this.grpCatControlBox.Controls.Add(this.lblCATStop);
-            this.grpCatControlBox.Controls.Add(this.comboCATparity);
-            this.grpCatControlBox.Controls.Add(this.comboCATdatabits);
-            this.grpCatControlBox.Controls.Add(this.comboCATstopbits);
-            this.grpCatControlBox.Location = new System.Drawing.Point(24, 17);
-            this.grpCatControlBox.Name = "grpCatControlBox";
-            this.grpCatControlBox.Size = new System.Drawing.Size(160, 216);
-            this.grpCatControlBox.TabIndex = 90;
-            this.grpCatControlBox.TabStop = false;
-            this.grpCatControlBox.Text = "CAT Control";
-            // 
-            // comboCATPort
-            // 
-            this.comboCATPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboCATPort.DropDownWidth = 56;
-            this.comboCATPort.Location = new System.Drawing.Point(72, 48);
-            this.comboCATPort.Name = "comboCATPort";
-            this.comboCATPort.Size = new System.Drawing.Size(72, 21);
-            this.comboCATPort.TabIndex = 95;
-            this.toolTip1.SetToolTip(this.comboCATPort, "Sets the COM port to be used for the CAT interface.");
-            this.comboCATPort.SelectedIndexChanged += new System.EventHandler(this.comboCATPort_SelectedIndexChanged);
-            this.comboCATPort.Click += new System.EventHandler(this.comboCATPort_Click);
-            // 
-            // comboCATbaud
-            // 
-            this.comboCATbaud.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboCATbaud.DropDownWidth = 56;
-            this.comboCATbaud.Items.AddRange(new object[] {
-            "300",
-            "1200",
-            "2400",
-            "4800",
-            "9600",
-            "19200",
-            "38400",
-            "57600",
-            "115200"});
-            this.comboCATbaud.Location = new System.Drawing.Point(72, 88);
-            this.comboCATbaud.Name = "comboCATbaud";
-            this.comboCATbaud.Size = new System.Drawing.Size(72, 21);
-            this.comboCATbaud.TabIndex = 93;
-            this.comboCATbaud.SelectedIndexChanged += new System.EventHandler(this.comboCATbaud_SelectedIndexChanged);
-            // 
-            // lblCATBaud
-            // 
-            this.lblCATBaud.Image = null;
-            this.lblCATBaud.Location = new System.Drawing.Point(24, 88);
-            this.lblCATBaud.Name = "lblCATBaud";
-            this.lblCATBaud.Size = new System.Drawing.Size(40, 23);
-            this.lblCATBaud.TabIndex = 5;
-            this.lblCATBaud.Text = "Baud";
-            // 
-            // lblCATPort
-            // 
-            this.lblCATPort.Image = null;
-            this.lblCATPort.Location = new System.Drawing.Point(24, 48);
-            this.lblCATPort.Name = "lblCATPort";
-            this.lblCATPort.Size = new System.Drawing.Size(40, 23);
-            this.lblCATPort.TabIndex = 3;
-            this.lblCATPort.Text = "Port:";
-            // 
-            // chkCATEnable
-            // 
-            this.chkCATEnable.Image = null;
-            this.chkCATEnable.Location = new System.Drawing.Point(16, 24);
-            this.chkCATEnable.Name = "chkCATEnable";
-            this.chkCATEnable.Size = new System.Drawing.Size(104, 24);
-            this.chkCATEnable.TabIndex = 0;
-            this.chkCATEnable.Text = "Enable CAT";
-            this.chkCATEnable.CheckedChanged += new System.EventHandler(this.chkCATEnable_CheckedChanged);
-            // 
-            // lblCATParity
-            // 
-            this.lblCATParity.Image = null;
-            this.lblCATParity.Location = new System.Drawing.Point(24, 120);
-            this.lblCATParity.Name = "lblCATParity";
-            this.lblCATParity.Size = new System.Drawing.Size(48, 23);
-            this.lblCATParity.TabIndex = 92;
-            this.lblCATParity.Text = "Parity";
-            // 
-            // lblCATData
-            // 
-            this.lblCATData.Image = null;
-            this.lblCATData.Location = new System.Drawing.Point(24, 152);
-            this.lblCATData.Name = "lblCATData";
-            this.lblCATData.Size = new System.Drawing.Size(40, 23);
-            this.lblCATData.TabIndex = 92;
-            this.lblCATData.Text = "Data";
-            // 
-            // lblCATStop
-            // 
-            this.lblCATStop.Image = null;
-            this.lblCATStop.Location = new System.Drawing.Point(24, 184);
-            this.lblCATStop.Name = "lblCATStop";
-            this.lblCATStop.Size = new System.Drawing.Size(40, 23);
-            this.lblCATStop.TabIndex = 92;
-            this.lblCATStop.Text = "Stop";
-            // 
-            // comboCATparity
-            // 
-            this.comboCATparity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboCATparity.DropDownWidth = 56;
-            this.comboCATparity.Items.AddRange(new object[] {
-            "none",
-            "odd ",
-            "even",
-            "mark",
-            "space"});
-            this.comboCATparity.Location = new System.Drawing.Point(72, 120);
-            this.comboCATparity.Name = "comboCATparity";
-            this.comboCATparity.Size = new System.Drawing.Size(72, 21);
-            this.comboCATparity.TabIndex = 92;
-            this.comboCATparity.SelectedIndexChanged += new System.EventHandler(this.comboCATparity_SelectedIndexChanged);
-            // 
-            // comboCATdatabits
-            // 
-            this.comboCATdatabits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboCATdatabits.DropDownWidth = 56;
-            this.comboCATdatabits.Items.AddRange(new object[] {
-            "8",
-            "7",
-            "6"});
-            this.comboCATdatabits.Location = new System.Drawing.Point(72, 152);
-            this.comboCATdatabits.Name = "comboCATdatabits";
-            this.comboCATdatabits.Size = new System.Drawing.Size(72, 21);
-            this.comboCATdatabits.TabIndex = 93;
-            this.comboCATdatabits.SelectedIndexChanged += new System.EventHandler(this.comboCATdatabits_SelectedIndexChanged);
-            // 
-            // comboCATstopbits
-            // 
-            this.comboCATstopbits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboCATstopbits.DropDownWidth = 56;
-            this.comboCATstopbits.Items.AddRange(new object[] {
-            "1",
-            "1.5",
-            "2"});
-            this.comboCATstopbits.Location = new System.Drawing.Point(72, 184);
-            this.comboCATstopbits.Name = "comboCATstopbits";
-            this.comboCATstopbits.Size = new System.Drawing.Size(72, 21);
-            this.comboCATstopbits.TabIndex = 94;
-            this.comboCATstopbits.SelectedIndexChanged += new System.EventHandler(this.comboCATstopbits_SelectedIndexChanged);
-            // 
-            // grpRTTYOffset
-            // 
-            this.grpRTTYOffset.Controls.Add(this.labelTS4);
-            this.grpRTTYOffset.Controls.Add(this.labelTS3);
-            this.grpRTTYOffset.Controls.Add(this.udRTTYU);
-            this.grpRTTYOffset.Controls.Add(this.udRTTYL);
-            this.grpRTTYOffset.Controls.Add(this.chkRTTYOffsetEnableB);
-            this.grpRTTYOffset.Controls.Add(this.chkRTTYOffsetEnableA);
-            this.grpRTTYOffset.Location = new System.Drawing.Point(492, 216);
-            this.grpRTTYOffset.Name = "grpRTTYOffset";
-            this.grpRTTYOffset.Size = new System.Drawing.Size(168, 120);
-            this.grpRTTYOffset.TabIndex = 97;
-            this.grpRTTYOffset.TabStop = false;
-            this.grpRTTYOffset.Text = "RTTY Offset";
-            // 
-            // labelTS4
-            // 
-            this.labelTS4.Image = null;
-            this.labelTS4.Location = new System.Drawing.Point(108, 69);
-            this.labelTS4.Name = "labelTS4";
-            this.labelTS4.Size = new System.Drawing.Size(40, 16);
-            this.labelTS4.TabIndex = 101;
-            this.labelTS4.Text = "DIGU";
-            // 
-            // labelTS3
-            // 
-            this.labelTS3.Image = null;
-            this.labelTS3.Location = new System.Drawing.Point(24, 69);
-            this.labelTS3.Name = "labelTS3";
-            this.labelTS3.Size = new System.Drawing.Size(40, 16);
-            this.labelTS3.TabIndex = 100;
-            this.labelTS3.Text = "DIGL";
-            // 
-            // udRTTYU
-            // 
-            this.udRTTYU.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udRTTYU.Location = new System.Drawing.Point(104, 88);
-            this.udRTTYU.Maximum = new decimal(new int[] {
-            3000,
-            0,
-            0,
-            0});
-            this.udRTTYU.Minimum = new decimal(new int[] {
-            3000,
-            0,
-            0,
-            -2147483648});
-            this.udRTTYU.Name = "udRTTYU";
-            this.udRTTYU.Size = new System.Drawing.Size(48, 20);
-            this.udRTTYU.TabIndex = 99;
-            this.toolTip1.SetToolTip(this.udRTTYU, "Sets the DIGU frequency offset");
-            this.udRTTYU.Value = new decimal(new int[] {
-            2125,
-            0,
-            0,
-            0});
-            this.udRTTYU.ValueChanged += new System.EventHandler(this.udRTTYU_ValueChanged);
-            // 
-            // udRTTYL
-            // 
-            this.udRTTYL.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udRTTYL.Location = new System.Drawing.Point(16, 88);
-            this.udRTTYL.Maximum = new decimal(new int[] {
-            3000,
-            0,
-            0,
-            0});
-            this.udRTTYL.Minimum = new decimal(new int[] {
-            3000,
-            0,
-            0,
-            -2147483648});
-            this.udRTTYL.Name = "udRTTYL";
-            this.udRTTYL.Size = new System.Drawing.Size(48, 20);
-            this.udRTTYL.TabIndex = 98;
-            this.toolTip1.SetToolTip(this.udRTTYL, "Sets the DIGL frequency offset");
-            this.udRTTYL.Value = new decimal(new int[] {
-            2125,
-            0,
-            0,
-            0});
-            this.udRTTYL.ValueChanged += new System.EventHandler(this.udRTTYL_ValueChanged);
-            // 
-            // chkRTTYOffsetEnableB
-            // 
-            this.chkRTTYOffsetEnableB.Image = null;
-            this.chkRTTYOffsetEnableB.Location = new System.Drawing.Point(16, 40);
-            this.chkRTTYOffsetEnableB.Name = "chkRTTYOffsetEnableB";
-            this.chkRTTYOffsetEnableB.Size = new System.Drawing.Size(136, 24);
-            this.chkRTTYOffsetEnableB.TabIndex = 97;
-            this.chkRTTYOffsetEnableB.Text = "Enable Offset VFO B";
-            this.chkRTTYOffsetEnableB.CheckedChanged += new System.EventHandler(this.chkRTTYOffsetEnableB_CheckedChanged);
-            // 
-            // chkRTTYOffsetEnableA
-            // 
-            this.chkRTTYOffsetEnableA.Image = null;
-            this.chkRTTYOffsetEnableA.Location = new System.Drawing.Point(16, 16);
-            this.chkRTTYOffsetEnableA.Name = "chkRTTYOffsetEnableA";
-            this.chkRTTYOffsetEnableA.Size = new System.Drawing.Size(136, 24);
-            this.chkRTTYOffsetEnableA.TabIndex = 96;
-            this.chkRTTYOffsetEnableA.Text = "Enable Offset VFO A";
-            this.chkRTTYOffsetEnableA.CheckedChanged += new System.EventHandler(this.chkRTTYOffsetEnableA_CheckedChanged);
-            // 
-            // chkDigUIsUSB
-            // 
-            this.chkDigUIsUSB.Image = null;
-            this.chkDigUIsUSB.Location = new System.Drawing.Point(260, 197);
-            this.chkDigUIsUSB.Name = "chkDigUIsUSB";
-            this.chkDigUIsUSB.Size = new System.Drawing.Size(160, 24);
-            this.chkDigUIsUSB.TabIndex = 96;
-            this.chkDigUIsUSB.Text = "DigL/U Returns LSB/USB";
-            this.toolTip1.SetToolTip(this.chkDigUIsUSB, "Lies to the Kenwood CAT Interface to fool certain programs");
+            // tpCATSerialPorts
+            // 
+            this.tpCATSerialPorts.BackColor = System.Drawing.SystemColors.Control;
+            this.tpCATSerialPorts.Controls.Add(this.txtCAT1);
+            this.tpCATSerialPorts.Controls.Add(this.txtCAT4);
+            this.tpCATSerialPorts.Controls.Add(this.txtCAT3);
+            this.tpCATSerialPorts.Controls.Add(this.txtCAT2);
+            this.tpCATSerialPorts.Controls.Add(this.grpPTTBitBang);
+            this.tpCATSerialPorts.Controls.Add(this.grpCat4ControlBox);
+            this.tpCATSerialPorts.Controls.Add(this.grpCat3ControlBox);
+            this.tpCATSerialPorts.Controls.Add(this.grpCat2ControlBox);
+            this.tpCATSerialPorts.Controls.Add(this.grpCatControlBox);
+            this.tpCATSerialPorts.Location = new System.Drawing.Point(4, 22);
+            this.tpCATSerialPorts.Name = "tpCATSerialPorts";
+            this.tpCATSerialPorts.Padding = new System.Windows.Forms.Padding(3);
+            this.tpCATSerialPorts.Size = new System.Drawing.Size(724, 407);
+            this.tpCATSerialPorts.TabIndex = 2;
+            this.tpCATSerialPorts.Text = "Serial CAT";
+            // 
+            // txtCAT1
+            // 
+            this.txtCAT1.BackColor = System.Drawing.SystemColors.Window;
+            this.txtCAT1.Location = new System.Drawing.Point(14, 237);
+            this.txtCAT1.Multiline = true;
+            this.txtCAT1.Name = "txtCAT1";
+            this.txtCAT1.Size = new System.Drawing.Size(160, 40);
+            this.txtCAT1.TabIndex = 108;
+            this.toolTip1.SetToolTip(this.txtCAT1, "You can add a discription for that CAT port.");
+            // 
+            // txtCAT4
+            // 
+            this.txtCAT4.BackColor = System.Drawing.SystemColors.Window;
+            this.txtCAT4.Location = new System.Drawing.Point(512, 237);
+            this.txtCAT4.Multiline = true;
+            this.txtCAT4.Name = "txtCAT4";
+            this.txtCAT4.Size = new System.Drawing.Size(160, 40);
+            this.txtCAT4.TabIndex = 96;
+            this.toolTip1.SetToolTip(this.txtCAT4, "You can add a discription for that CAT port.");
+            // 
+            // txtCAT3
+            // 
+            this.txtCAT3.BackColor = System.Drawing.SystemColors.Window;
+            this.txtCAT3.Location = new System.Drawing.Point(346, 237);
+            this.txtCAT3.Multiline = true;
+            this.txtCAT3.Name = "txtCAT3";
+            this.txtCAT3.Size = new System.Drawing.Size(160, 40);
+            this.txtCAT3.TabIndex = 95;
+            this.toolTip1.SetToolTip(this.txtCAT3, "You can add a discription for that CAT port.");
+            // 
+            // txtCAT2
+            // 
+            this.txtCAT2.BackColor = System.Drawing.SystemColors.Window;
+            this.txtCAT2.Location = new System.Drawing.Point(180, 237);
+            this.txtCAT2.Multiline = true;
+            this.txtCAT2.Name = "txtCAT2";
+            this.txtCAT2.Size = new System.Drawing.Size(160, 40);
+            this.txtCAT2.TabIndex = 94;
+            this.toolTip1.SetToolTip(this.txtCAT2, "You can add a discription for that CAT port.");
             // 
             // grpPTTBitBang
             // 
@@ -57691,9 +57210,9 @@
             this.grpPTTBitBang.Controls.Add(this.chkCATPTT_RTS);
             this.grpPTTBitBang.Controls.Add(this.chkCATPTT_DTR);
             this.grpPTTBitBang.Controls.Add(this.chkCATPTTEnabled);
-            this.grpPTTBitBang.Location = new System.Drawing.Point(262, 17);
+            this.grpPTTBitBang.Location = new System.Drawing.Point(12, 289);
             this.grpPTTBitBang.Name = "grpPTTBitBang";
-            this.grpPTTBitBang.Size = new System.Drawing.Size(128, 131);
+            this.grpPTTBitBang.Size = new System.Drawing.Size(160, 112);
             this.grpPTTBitBang.TabIndex = 91;
             this.grpPTTBitBang.TabStop = false;
             this.grpPTTBitBang.Text = "PTT Control";
@@ -57704,7 +57223,7 @@
             this.comboCATPTTPort.DropDownWidth = 56;
             this.comboCATPTTPort.Location = new System.Drawing.Point(40, 42);
             this.comboCATPTTPort.Name = "comboCATPTTPort";
-            this.comboCATPTTPort.Size = new System.Drawing.Size(80, 21);
+            this.comboCATPTTPort.Size = new System.Drawing.Size(95, 21);
             this.comboCATPTTPort.TabIndex = 96;
             this.toolTip1.SetToolTip(this.comboCATPTTPort, "Selects the COM port for use with PTT control");
             this.comboCATPTTPort.SelectedIndexChanged += new System.EventHandler(this.comboCATPTTPort_SelectedIndexChanged);
@@ -57722,9 +57241,9 @@
             // chkCATPTT_RTS
             // 
             this.chkCATPTT_RTS.Image = null;
-            this.chkCATPTT_RTS.Location = new System.Drawing.Point(40, 74);
+            this.chkCATPTT_RTS.Location = new System.Drawing.Point(16, 74);
             this.chkCATPTT_RTS.Name = "chkCATPTT_RTS";
-            this.chkCATPTT_RTS.Size = new System.Drawing.Size(48, 24);
+            this.chkCATPTT_RTS.Size = new System.Drawing.Size(56, 24);
             this.chkCATPTT_RTS.TabIndex = 0;
             this.chkCATPTT_RTS.Text = "RTS";
             this.chkCATPTT_RTS.CheckedChanged += new System.EventHandler(this.chkCATPTT_RTS_CheckedChanged);
@@ -57732,9 +57251,9 @@
             // chkCATPTT_DTR
             // 
             this.chkCATPTT_DTR.Image = null;
-            this.chkCATPTT_DTR.Location = new System.Drawing.Point(40, 106);
+            this.chkCATPTT_DTR.Location = new System.Drawing.Point(80, 78);
             this.chkCATPTT_DTR.Name = "chkCATPTT_DTR";
-            this.chkCATPTT_DTR.Size = new System.Drawing.Size(48, 16);
+            this.chkCATPTT_DTR.Size = new System.Drawing.Size(60, 16);
             this.chkCATPTT_DTR.TabIndex = 1;
             this.chkCATPTT_DTR.Text = "DTR";
             this.chkCATPTT_DTR.CheckedChanged += new System.EventHandler(this.chkCATPTT_DTR_CheckedChanged);
@@ -57749,187 +57268,6 @@
             this.chkCATPTTEnabled.Text = "Enable PTT";
             this.chkCATPTTEnabled.CheckedChanged += new System.EventHandler(this.chkCATPTTEnabled_CheckedChanged);
             // 
-            // btnCATTest
-            // 
-            this.btnCATTest.Image = null;
-            this.btnCATTest.Location = new System.Drawing.Point(460, 126);
-            this.btnCATTest.Name = "btnCATTest";
-            this.btnCATTest.Size = new System.Drawing.Size(77, 40);
-            this.btnCATTest.TabIndex = 92;
-            this.btnCATTest.Text = "Test CAT Commands";
-            this.toolTip1.SetToolTip(this.btnCATTest, "A test utility to verify CAT command responses");
-            this.btnCATTest.Click += new System.EventHandler(this.btnCATTest_Click);
-            // 
-            // lblCATRigType
-            // 
-            this.lblCATRigType.Image = null;
-            this.lblCATRigType.Location = new System.Drawing.Point(546, 137);
-            this.lblCATRigType.Name = "lblCATRigType";
-            this.lblCATRigType.Size = new System.Drawing.Size(36, 23);
-            this.lblCATRigType.TabIndex = 95;
-            this.lblCATRigType.Text = "ID as:";
-            // 
-            // comboCATRigType
-            // 
-            this.comboCATRigType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboCATRigType.DropDownWidth = 56;
-            this.comboCATRigType.Items.AddRange(new object[] {
-            "PowerSDR",
-            "TS-2000",
-            "TS-50S",
-            "TS-480"});
-            this.comboCATRigType.Location = new System.Drawing.Point(584, 134);
-            this.comboCATRigType.Name = "comboCATRigType";
-            this.comboCATRigType.Size = new System.Drawing.Size(88, 21);
-            this.comboCATRigType.TabIndex = 94;
-            this.toolTip1.SetToolTip(this.comboCATRigType, "Sets the CAT protocol for programs that do not have SDR-1000 specific setups.");
-            this.comboCATRigType.SelectedIndexChanged += new System.EventHandler(this.comboCATRigType_SelectedIndexChanged);
-            // 
-            // tpCAT2
-            // 
-            this.tpCAT2.BackColor = System.Drawing.SystemColors.Control;
-            this.tpCAT2.Controls.Add(this.grpTCPIPcatServer);
-            this.tpCAT2.Controls.Add(this.txtCAT4);
-            this.tpCAT2.Controls.Add(this.txtCAT3);
-            this.tpCAT2.Controls.Add(this.txtCAT2);
-            this.tpCAT2.Controls.Add(this.grpCat4ControlBox);
-            this.tpCAT2.Controls.Add(this.grpCat3ControlBox);
-            this.tpCAT2.Controls.Add(this.grpCat2ControlBox);
-            this.tpCAT2.Location = new System.Drawing.Point(4, 22);
-            this.tpCAT2.Name = "tpCAT2";
-            this.tpCAT2.Padding = new System.Windows.Forms.Padding(3);
-            this.tpCAT2.Size = new System.Drawing.Size(724, 407);
-            this.tpCAT2.TabIndex = 2;
-            this.tpCAT2.Text = "CAT+";
-            // 
-            // grpTCPIPcatServer
-            // 
-            this.grpTCPIPcatServer.Controls.Add(this.btnIPv4TCPCat);
-            this.grpTCPIPcatServer.Controls.Add(this.btnShowTCPIPCatLog);
-            this.grpTCPIPcatServer.Controls.Add(this.chkWelcomeMessageTCPIPCat);
-            this.grpTCPIPcatServer.Controls.Add(this.lblToggleToUse);
-            this.grpTCPIPcatServer.Controls.Add(this.labelTS609);
-            this.grpTCPIPcatServer.Controls.Add(this.chkTCPIPCatServerListening);
-            this.grpTCPIPcatServer.Controls.Add(this.btnDefaultBindPortForTCPIPCat);
-            this.grpTCPIPcatServer.Controls.Add(this.txtTCPIPCATServerBindIPPort);
-            this.grpTCPIPcatServer.Location = new System.Drawing.Point(16, 286);
-            this.grpTCPIPcatServer.Name = "grpTCPIPcatServer";
-            this.grpTCPIPcatServer.Size = new System.Drawing.Size(385, 104);
-            this.grpTCPIPcatServer.TabIndex = 97;
-            this.grpTCPIPcatServer.TabStop = false;
-            this.grpTCPIPcatServer.Text = "TCP/IP CAT Server (0 clients)";
-            // 
-            // btnShowTCPIPCatLog
-            // 
-            this.btnShowTCPIPCatLog.Image = null;
-            this.btnShowTCPIPCatLog.Location = new System.Drawing.Point(285, 66);
-            this.btnShowTCPIPCatLog.Name = "btnShowTCPIPCatLog";
-            this.btnShowTCPIPCatLog.Size = new System.Drawing.Size(82, 26);
-            this.btnShowTCPIPCatLog.TabIndex = 98;
-            this.btnShowTCPIPCatLog.Text = "Show Log";
-            this.btnShowTCPIPCatLog.UseVisualStyleBackColor = true;
-            this.btnShowTCPIPCatLog.Click += new System.EventHandler(this.btnShowTCPIPCatLog_Click);
-            // 
-            // chkWelcomeMessageTCPIPCat
-            // 
-            this.chkWelcomeMessageTCPIPCat.AutoSize = true;
-            this.chkWelcomeMessageTCPIPCat.Image = null;
-            this.chkWelcomeMessageTCPIPCat.Location = new System.Drawing.Point(28, 55);
-            this.chkWelcomeMessageTCPIPCat.Name = "chkWelcomeMessageTCPIPCat";
-            this.chkWelcomeMessageTCPIPCat.Size = new System.Drawing.Size(173, 17);
-            this.chkWelcomeMessageTCPIPCat.TabIndex = 16;
-            this.chkWelcomeMessageTCPIPCat.Text = "Send version on client connect";
-            this.toolTip1.SetToolTip(this.chkWelcomeMessageTCPIPCat, "Instantly send a version message to the client on connect (semi colon terminated)" +
-        "");
-            this.chkWelcomeMessageTCPIPCat.UseVisualStyleBackColor = true;
-            this.chkWelcomeMessageTCPIPCat.CheckedChanged += new System.EventHandler(this.chkWelcomeMessageTCPIPCat_CheckedChanged);
-            // 
-            // lblToggleToUse
-            // 
-            this.lblToggleToUse.AutoSize = true;
-            this.lblToggleToUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblToggleToUse.ForeColor = System.Drawing.Color.Red;
-            this.lblToggleToUse.Image = null;
-            this.lblToggleToUse.Location = new System.Drawing.Point(144, 79);
-            this.lblToggleToUse.Name = "lblToggleToUse";
-            this.lblToggleToUse.Size = new System.Drawing.Size(120, 13);
-            this.lblToggleToUse.TabIndex = 15;
-            this.lblToggleToUse.Text = "toggle off/on to use";
-            this.lblToggleToUse.Visible = false;
-            // 
-            // labelTS609
-            // 
-            this.labelTS609.AutoSize = true;
-            this.labelTS609.Image = null;
-            this.labelTS609.Location = new System.Drawing.Point(19, 28);
-            this.labelTS609.Name = "labelTS609";
-            this.labelTS609.Size = new System.Drawing.Size(63, 13);
-            this.labelTS609.TabIndex = 14;
-            this.labelTS609.Text = "Bind IP:Port";
-            // 
-            // chkTCPIPCatServerListening
-            // 
-            this.chkTCPIPCatServerListening.AutoSize = true;
-            this.chkTCPIPCatServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkTCPIPCatServerListening.Image = null;
-            this.chkTCPIPCatServerListening.Location = new System.Drawing.Point(27, 78);
-            this.chkTCPIPCatServerListening.Name = "chkTCPIPCatServerListening";
-            this.chkTCPIPCatServerListening.Size = new System.Drawing.Size(114, 17);
-            this.chkTCPIPCatServerListening.TabIndex = 13;
-            this.chkTCPIPCatServerListening.Text = "Server Running";
-            this.toolTip1.SetToolTip(this.chkTCPIPCatServerListening, "Checked to listen for client connections");
-            this.chkTCPIPCatServerListening.UseVisualStyleBackColor = true;
-            this.chkTCPIPCatServerListening.CheckedChanged += new System.EventHandler(this.chkTCPIPCatServerListening_CheckedChanged);
-            // 
-            // btnDefaultBindPortForTCPIPCat
-            // 
-            this.btnDefaultBindPortForTCPIPCat.Image = null;
-            this.btnDefaultBindPortForTCPIPCat.Location = new System.Drawing.Point(227, 21);
-            this.btnDefaultBindPortForTCPIPCat.Name = "btnDefaultBindPortForTCPIPCat";
-            this.btnDefaultBindPortForTCPIPCat.Size = new System.Drawing.Size(37, 26);
-            this.btnDefaultBindPortForTCPIPCat.TabIndex = 12;
-            this.btnDefaultBindPortForTCPIPCat.Text = "Def";
-            this.toolTip1.SetToolTip(this.btnDefaultBindPortForTCPIPCat, "Default value");
-            this.btnDefaultBindPortForTCPIPCat.UseVisualStyleBackColor = true;
-            this.btnDefaultBindPortForTCPIPCat.Click += new System.EventHandler(this.btnDefaultBindPortForTCPIPCat_Click);
-            // 
-            // txtTCPIPCATServerBindIPPort
-            // 
-            this.txtTCPIPCATServerBindIPPort.Location = new System.Drawing.Point(91, 25);
-            this.txtTCPIPCATServerBindIPPort.Name = "txtTCPIPCATServerBindIPPort";
-            this.txtTCPIPCATServerBindIPPort.Size = new System.Drawing.Size(122, 20);
-            this.txtTCPIPCATServerBindIPPort.TabIndex = 11;
-            this.txtTCPIPCATServerBindIPPort.Text = "127.0.0.1:13013";
-            this.toolTip1.SetToolTip(this.txtTCPIPCATServerBindIPPort, "The bind IP and the port that the server uses to listen on");
-            this.txtTCPIPCATServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCPIPCATServerBindIPPort_TextChanged);
-            // 
-            // txtCAT4
-            // 
-            this.txtCAT4.BackColor = System.Drawing.SystemColors.Window;
-            this.txtCAT4.Location = new System.Drawing.Point(394, 231);
-            this.txtCAT4.Multiline = true;
-            this.txtCAT4.Name = "txtCAT4";
-            this.txtCAT4.Size = new System.Drawing.Size(160, 40);
-            this.txtCAT4.TabIndex = 96;
-            // 
-            // txtCAT3
-            // 
-            this.txtCAT3.BackColor = System.Drawing.SystemColors.Window;
-            this.txtCAT3.Location = new System.Drawing.Point(208, 231);
-            this.txtCAT3.Multiline = true;
-            this.txtCAT3.Name = "txtCAT3";
-            this.txtCAT3.Size = new System.Drawing.Size(160, 40);
-            this.txtCAT3.TabIndex = 95;
-            // 
-            // txtCAT2
-            // 
-            this.txtCAT2.BackColor = System.Drawing.SystemColors.Window;
-            this.txtCAT2.Location = new System.Drawing.Point(16, 231);
-            this.txtCAT2.Multiline = true;
-            this.txtCAT2.Name = "txtCAT2";
-            this.txtCAT2.Size = new System.Drawing.Size(160, 40);
-            this.txtCAT2.TabIndex = 94;
-            // 
             // grpCat4ControlBox
             // 
             this.grpCat4ControlBox.Controls.Add(this.comboCAT4Port);
@@ -57943,7 +57281,7 @@
             this.grpCat4ControlBox.Controls.Add(this.comboCAT4parity);
             this.grpCat4ControlBox.Controls.Add(this.comboCAT4databits);
             this.grpCat4ControlBox.Controls.Add(this.comboCAT4stopbits);
-            this.grpCat4ControlBox.Location = new System.Drawing.Point(394, 9);
+            this.grpCat4ControlBox.Location = new System.Drawing.Point(512, 15);
             this.grpCat4ControlBox.Name = "grpCat4ControlBox";
             this.grpCat4ControlBox.Size = new System.Drawing.Size(160, 216);
             this.grpCat4ControlBox.TabIndex = 93;
@@ -58094,7 +57432,7 @@
             this.grpCat3ControlBox.Controls.Add(this.comboCAT3parity);
             this.grpCat3ControlBox.Controls.Add(this.comboCAT3databits);
             this.grpCat3ControlBox.Controls.Add(this.comboCAT3stopbits);
-            this.grpCat3ControlBox.Location = new System.Drawing.Point(208, 9);
+            this.grpCat3ControlBox.Location = new System.Drawing.Point(346, 15);
             this.grpCat3ControlBox.Name = "grpCat3ControlBox";
             this.grpCat3ControlBox.Size = new System.Drawing.Size(160, 216);
             this.grpCat3ControlBox.TabIndex = 92;
@@ -58245,7 +57583,7 @@
             this.grpCat2ControlBox.Controls.Add(this.comboCAT2parity);
             this.grpCat2ControlBox.Controls.Add(this.comboCAT2databits);
             this.grpCat2ControlBox.Controls.Add(this.comboCAT2stopbits);
-            this.grpCat2ControlBox.Location = new System.Drawing.Point(16, 9);
+            this.grpCat2ControlBox.Location = new System.Drawing.Point(180, 15);
             this.grpCat2ControlBox.Name = "grpCat2ControlBox";
             this.grpCat2ControlBox.Size = new System.Drawing.Size(160, 216);
             this.grpCat2ControlBox.TabIndex = 91;
@@ -58383,22 +57721,174 @@
             this.comboCAT2stopbits.TabIndex = 94;
             this.comboCAT2stopbits.SelectedIndexChanged += new System.EventHandler(this.comboCAT2stopbits_SelectedIndexChanged);
             // 
-            // tpUserInterface
+            // grpCatControlBox
             // 
-            this.tpUserInterface.BackColor = System.Drawing.SystemColors.Control;
-            this.tpUserInterface.Controls.Add(this.grpTCIServer);
-            this.tpUserInterface.Controls.Add(this.groupBoxTS16);
-            this.tpUserInterface.Controls.Add(this.groupBoxTS10);
-            this.tpUserInterface.Controls.Add(this.groupBox2);
-            this.tpUserInterface.Location = new System.Drawing.Point(4, 22);
-            this.tpUserInterface.Name = "tpUserInterface";
-            this.tpUserInterface.Padding = new System.Windows.Forms.Padding(3);
-            this.tpUserInterface.Size = new System.Drawing.Size(724, 407);
-            this.tpUserInterface.TabIndex = 3;
-            this.tpUserInterface.Text = "User Interface";
+            this.grpCatControlBox.Controls.Add(this.comboCATPort);
+            this.grpCatControlBox.Controls.Add(this.comboCATbaud);
+            this.grpCatControlBox.Controls.Add(this.lblCATBaud);
+            this.grpCatControlBox.Controls.Add(this.lblCATPort);
+            this.grpCatControlBox.Controls.Add(this.chkCATEnable);
+            this.grpCatControlBox.Controls.Add(this.lblCATParity);
+            this.grpCatControlBox.Controls.Add(this.lblCATData);
+            this.grpCatControlBox.Controls.Add(this.lblCATStop);
+            this.grpCatControlBox.Controls.Add(this.comboCATparity);
+            this.grpCatControlBox.Controls.Add(this.comboCATdatabits);
+            this.grpCatControlBox.Controls.Add(this.comboCATstopbits);
+            this.grpCatControlBox.Location = new System.Drawing.Point(14, 15);
+            this.grpCatControlBox.Name = "grpCatControlBox";
+            this.grpCatControlBox.Size = new System.Drawing.Size(160, 216);
+            this.grpCatControlBox.TabIndex = 90;
+            this.grpCatControlBox.TabStop = false;
+            this.grpCatControlBox.Text = "CAT1 Control";
+            // 
+            // comboCATPort
+            // 
+            this.comboCATPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCATPort.DropDownWidth = 56;
+            this.comboCATPort.Location = new System.Drawing.Point(72, 48);
+            this.comboCATPort.Name = "comboCATPort";
+            this.comboCATPort.Size = new System.Drawing.Size(72, 21);
+            this.comboCATPort.TabIndex = 95;
+            this.toolTip1.SetToolTip(this.comboCATPort, "Sets the COM port to be used for the CAT interface.");
+            this.comboCATPort.SelectedIndexChanged += new System.EventHandler(this.comboCATPort_SelectedIndexChanged);
+            this.comboCATPort.Click += new System.EventHandler(this.comboCATPort_Click);
+            // 
+            // comboCATbaud
+            // 
+            this.comboCATbaud.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCATbaud.DropDownWidth = 56;
+            this.comboCATbaud.Items.AddRange(new object[] {
+            "300",
+            "1200",
+            "2400",
+            "4800",
+            "9600",
+            "19200",
+            "38400",
+            "57600",
+            "115200"});
+            this.comboCATbaud.Location = new System.Drawing.Point(72, 88);
+            this.comboCATbaud.Name = "comboCATbaud";
+            this.comboCATbaud.Size = new System.Drawing.Size(72, 21);
+            this.comboCATbaud.TabIndex = 93;
+            this.comboCATbaud.SelectedIndexChanged += new System.EventHandler(this.comboCATbaud_SelectedIndexChanged);
+            // 
+            // lblCATBaud
+            // 
+            this.lblCATBaud.Image = null;
+            this.lblCATBaud.Location = new System.Drawing.Point(24, 88);
+            this.lblCATBaud.Name = "lblCATBaud";
+            this.lblCATBaud.Size = new System.Drawing.Size(40, 23);
+            this.lblCATBaud.TabIndex = 5;
+            this.lblCATBaud.Text = "Baud";
+            // 
+            // lblCATPort
+            // 
+            this.lblCATPort.Image = null;
+            this.lblCATPort.Location = new System.Drawing.Point(24, 48);
+            this.lblCATPort.Name = "lblCATPort";
+            this.lblCATPort.Size = new System.Drawing.Size(40, 23);
+            this.lblCATPort.TabIndex = 3;
+            this.lblCATPort.Text = "Port:";
+            // 
+            // chkCATEnable
+            // 
+            this.chkCATEnable.Image = null;
+            this.chkCATEnable.Location = new System.Drawing.Point(16, 24);
+            this.chkCATEnable.Name = "chkCATEnable";
+            this.chkCATEnable.Size = new System.Drawing.Size(104, 24);
+            this.chkCATEnable.TabIndex = 0;
+            this.chkCATEnable.Text = "Enable CAT1";
+            this.chkCATEnable.CheckedChanged += new System.EventHandler(this.chkCATEnable_CheckedChanged);
+            // 
+            // lblCATParity
+            // 
+            this.lblCATParity.Image = null;
+            this.lblCATParity.Location = new System.Drawing.Point(24, 120);
+            this.lblCATParity.Name = "lblCATParity";
+            this.lblCATParity.Size = new System.Drawing.Size(48, 23);
+            this.lblCATParity.TabIndex = 92;
+            this.lblCATParity.Text = "Parity";
+            // 
+            // lblCATData
+            // 
+            this.lblCATData.Image = null;
+            this.lblCATData.Location = new System.Drawing.Point(24, 152);
+            this.lblCATData.Name = "lblCATData";
+            this.lblCATData.Size = new System.Drawing.Size(40, 23);
+            this.lblCATData.TabIndex = 92;
+            this.lblCATData.Text = "Data";
+            // 
+            // lblCATStop
+            // 
+            this.lblCATStop.Image = null;
+            this.lblCATStop.Location = new System.Drawing.Point(24, 184);
+            this.lblCATStop.Name = "lblCATStop";
+            this.lblCATStop.Size = new System.Drawing.Size(40, 23);
+            this.lblCATStop.TabIndex = 92;
+            this.lblCATStop.Text = "Stop";
+            // 
+            // comboCATparity
+            // 
+            this.comboCATparity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCATparity.DropDownWidth = 56;
+            this.comboCATparity.Items.AddRange(new object[] {
+            "none",
+            "odd ",
+            "even",
+            "mark",
+            "space"});
+            this.comboCATparity.Location = new System.Drawing.Point(72, 120);
+            this.comboCATparity.Name = "comboCATparity";
+            this.comboCATparity.Size = new System.Drawing.Size(72, 21);
+            this.comboCATparity.TabIndex = 92;
+            this.comboCATparity.SelectedIndexChanged += new System.EventHandler(this.comboCATparity_SelectedIndexChanged);
+            // 
+            // comboCATdatabits
+            // 
+            this.comboCATdatabits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCATdatabits.DropDownWidth = 56;
+            this.comboCATdatabits.Items.AddRange(new object[] {
+            "8",
+            "7",
+            "6"});
+            this.comboCATdatabits.Location = new System.Drawing.Point(72, 152);
+            this.comboCATdatabits.Name = "comboCATdatabits";
+            this.comboCATdatabits.Size = new System.Drawing.Size(72, 21);
+            this.comboCATdatabits.TabIndex = 93;
+            this.comboCATdatabits.SelectedIndexChanged += new System.EventHandler(this.comboCATdatabits_SelectedIndexChanged);
+            // 
+            // comboCATstopbits
+            // 
+            this.comboCATstopbits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCATstopbits.DropDownWidth = 56;
+            this.comboCATstopbits.Items.AddRange(new object[] {
+            "1",
+            "1.5",
+            "2"});
+            this.comboCATstopbits.Location = new System.Drawing.Point(72, 184);
+            this.comboCATstopbits.Name = "comboCATstopbits";
+            this.comboCATstopbits.Size = new System.Drawing.Size(72, 21);
+            this.comboCATstopbits.TabIndex = 94;
+            this.comboCATstopbits.SelectedIndexChanged += new System.EventHandler(this.comboCATstopbits_SelectedIndexChanged);
+            // 
+            // tpTCITCPIPN1MM
+            // 
+            this.tpTCITCPIPN1MM.BackColor = System.Drawing.SystemColors.Control;
+            this.tpTCITCPIPN1MM.Controls.Add(this.grpTCIServer);
+            this.tpTCITCPIPN1MM.Controls.Add(this.grpTCPIPcatServer);
+            this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS16);
+            this.tpTCITCPIPN1MM.Location = new System.Drawing.Point(4, 22);
+            this.tpTCITCPIPN1MM.Name = "tpTCITCPIPN1MM";
+            this.tpTCITCPIPN1MM.Padding = new System.Windows.Forms.Padding(3);
+            this.tpTCITCPIPN1MM.Size = new System.Drawing.Size(724, 407);
+            this.tpTCITCPIPN1MM.TabIndex = 3;
+            this.tpTCITCPIPN1MM.Text = "Network CAT";
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.chkEmulateExpertSDR3Protocol);
+            this.grpTCIServer.Controls.Add(this.chkEmulateSunSDR2Pro);
             this.grpTCIServer.Controls.Add(this.btnIPv4TCI);
             this.grpTCIServer.Controls.Add(this.btnShowLog);
             this.grpTCIServer.Controls.Add(this.chkCWLUbecomesCW);
@@ -58421,12 +57911,25 @@
             this.grpTCIServer.Controls.Add(this.chkTCIServerListening);
             this.grpTCIServer.Controls.Add(this.btnDefaultBindPortForTCI);
             this.grpTCIServer.Controls.Add(this.txtTCIServerBindIPPort);
-            this.grpTCIServer.Location = new System.Drawing.Point(13, 181);
+            this.grpTCIServer.Location = new System.Drawing.Point(14, 15);
             this.grpTCIServer.Name = "grpTCIServer";
-            this.grpTCIServer.Size = new System.Drawing.Size(471, 215);
+            this.grpTCIServer.Size = new System.Drawing.Size(373, 389);
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // chkEmulateSunSDR2Pro
+            // 
+            this.chkEmulateSunSDR2Pro.AutoSize = true;
+            this.chkEmulateSunSDR2Pro.Image = null;
+            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(22, 204);
+            this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
+            this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
+            this.chkEmulateSunSDR2Pro.TabIndex = 71;
+            this.chkEmulateSunSDR2Pro.Text = "Emulate SunSDR2Pro device";
+            this.toolTip1.SetToolTip(this.chkEmulateSunSDR2Pro, "Causes the TCI device message to send \'SunSDR2PRO\' instead of Anan model");
+            this.chkEmulateSunSDR2Pro.UseVisualStyleBackColor = true;
+            this.chkEmulateSunSDR2Pro.CheckedChanged += new System.EventHandler(this.chkEmulateSunSDR2Pro_CheckedChanged);
             // 
             // btnIPv4TCI
             // 
@@ -58443,7 +57946,7 @@
             // btnShowLog
             // 
             this.btnShowLog.Image = null;
-            this.btnShowLog.Location = new System.Drawing.Point(288, 182);
+            this.btnShowLog.Location = new System.Drawing.Point(51, 353);
             this.btnShowLog.Name = "btnShowLog";
             this.btnShowLog.Size = new System.Drawing.Size(82, 26);
             this.btnShowLog.TabIndex = 69;
@@ -58469,7 +57972,7 @@
             this.clrbtnOwnCallApearance.Automatic = "Automatic";
             this.clrbtnOwnCallApearance.Color = System.Drawing.Color.Yellow;
             this.clrbtnOwnCallApearance.Image = null;
-            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(425, 129);
+            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(312, 304);
             this.clrbtnOwnCallApearance.MoreColors = "More Colors...";
             this.clrbtnOwnCallApearance.Name = "clrbtnOwnCallApearance";
             this.clrbtnOwnCallApearance.Size = new System.Drawing.Size(40, 23);
@@ -58479,7 +57982,7 @@
             // 
             // txtOwnCallsign
             // 
-            this.txtOwnCallsign.Location = new System.Drawing.Point(321, 132);
+            this.txtOwnCallsign.Location = new System.Drawing.Point(206, 304);
             this.txtOwnCallsign.Name = "txtOwnCallsign";
             this.txtOwnCallsign.Size = new System.Drawing.Size(100, 20);
             this.txtOwnCallsign.TabIndex = 28;
@@ -58490,7 +57993,7 @@
             // 
             this.chkSpotOwnCallAppearance.AutoSize = true;
             this.chkSpotOwnCallAppearance.Image = null;
-            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(321, 109);
+            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(72, 306);
             this.chkSpotOwnCallAppearance.Name = "chkSpotOwnCallAppearance";
             this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(129, 17);
             this.chkSpotOwnCallAppearance.TabIndex = 27;
@@ -58503,7 +58006,7 @@
             // 
             this.chkShowTCISpots.AutoSize = true;
             this.chkShowTCISpots.Image = null;
-            this.chkShowTCISpots.Location = new System.Drawing.Point(321, 26);
+            this.chkShowTCISpots.Location = new System.Drawing.Point(22, 227);
             this.chkShowTCISpots.Name = "chkShowTCISpots";
             this.chkShowTCISpots.Size = new System.Drawing.Size(103, 17);
             this.chkShowTCISpots.TabIndex = 26;
@@ -58516,7 +58019,7 @@
             // 
             this.labelTS615.AutoSize = true;
             this.labelTS615.Image = null;
-            this.labelTS615.Location = new System.Drawing.Point(430, 83);
+            this.labelTS615.Location = new System.Drawing.Point(181, 280);
             this.labelTS615.Name = "labelTS615";
             this.labelTS615.Size = new System.Drawing.Size(28, 13);
             this.labelTS615.TabIndex = 25;
@@ -58529,7 +58032,7 @@
             0,
             0,
             0});
-            this.udTCISpotLifetime.Location = new System.Drawing.Point(366, 81);
+            this.udTCISpotLifetime.Location = new System.Drawing.Point(117, 278);
             this.udTCISpotLifetime.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -58557,7 +58060,7 @@
             0,
             0,
             0});
-            this.udMaxTCISpots.Location = new System.Drawing.Point(366, 54);
+            this.udMaxTCISpots.Location = new System.Drawing.Point(117, 251);
             this.udMaxTCISpots.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -58582,7 +58085,7 @@
             // 
             this.labelTS614.AutoSize = true;
             this.labelTS614.Image = null;
-            this.labelTS614.Location = new System.Drawing.Point(286, 83);
+            this.labelTS614.Location = new System.Drawing.Point(37, 280);
             this.labelTS614.Name = "labelTS614";
             this.labelTS614.Size = new System.Drawing.Size(74, 13);
             this.labelTS614.TabIndex = 22;
@@ -58592,7 +58095,7 @@
             // 
             this.labelTS613.AutoSize = true;
             this.labelTS613.Image = null;
-            this.labelTS613.Location = new System.Drawing.Point(297, 57);
+            this.labelTS613.Location = new System.Drawing.Point(48, 254);
             this.labelTS613.Name = "labelTS613";
             this.labelTS613.Size = new System.Drawing.Size(63, 13);
             this.labelTS613.TabIndex = 21;
@@ -58682,7 +58185,7 @@
             this.lblToggleToUseTCI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblToggleToUseTCI.ForeColor = System.Drawing.Color.Red;
             this.lblToggleToUseTCI.Image = null;
-            this.lblToggleToUseTCI.Location = new System.Drawing.Point(141, 193);
+            this.lblToggleToUseTCI.Location = new System.Drawing.Point(141, 331);
             this.lblToggleToUseTCI.Name = "lblToggleToUseTCI";
             this.lblToggleToUseTCI.Size = new System.Drawing.Size(120, 13);
             this.lblToggleToUseTCI.TabIndex = 15;
@@ -58704,7 +58207,7 @@
             this.chkTCIServerListening.AutoSize = true;
             this.chkTCIServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTCIServerListening.Image = null;
-            this.chkTCIServerListening.Location = new System.Drawing.Point(22, 192);
+            this.chkTCIServerListening.Location = new System.Drawing.Point(22, 330);
             this.chkTCIServerListening.Name = "chkTCIServerListening";
             this.chkTCIServerListening.Size = new System.Drawing.Size(114, 17);
             this.chkTCIServerListening.TabIndex = 13;
@@ -58735,6 +58238,119 @@
             this.toolTip1.SetToolTip(this.txtTCIServerBindIPPort, "The bind IP and the port that the server uses to listen on");
             this.txtTCIServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCIServerBindIPPort_TextChanged);
             // 
+            // grpTCPIPcatServer
+            // 
+            this.grpTCPIPcatServer.Controls.Add(this.btnIPv4TCPCat);
+            this.grpTCPIPcatServer.Controls.Add(this.btnShowTCPIPCatLog);
+            this.grpTCPIPcatServer.Controls.Add(this.chkWelcomeMessageTCPIPCat);
+            this.grpTCPIPcatServer.Controls.Add(this.lblToggleToUse);
+            this.grpTCPIPcatServer.Controls.Add(this.labelTS609);
+            this.grpTCPIPcatServer.Controls.Add(this.chkTCPIPCatServerListening);
+            this.grpTCPIPcatServer.Controls.Add(this.btnDefaultBindPortForTCPIPCat);
+            this.grpTCPIPcatServer.Controls.Add(this.txtTCPIPCATServerBindIPPort);
+            this.grpTCPIPcatServer.Location = new System.Drawing.Point(393, 15);
+            this.grpTCPIPcatServer.Name = "grpTCPIPcatServer";
+            this.grpTCPIPcatServer.Size = new System.Drawing.Size(323, 152);
+            this.grpTCPIPcatServer.TabIndex = 97;
+            this.grpTCPIPcatServer.TabStop = false;
+            this.grpTCPIPcatServer.Text = "TCP/IP CAT Server (0 clients)";
+            // 
+            // btnIPv4TCPCat
+            // 
+            this.btnIPv4TCPCat.Image = null;
+            this.btnIPv4TCPCat.Location = new System.Drawing.Point(270, 21);
+            this.btnIPv4TCPCat.Name = "btnIPv4TCPCat";
+            this.btnIPv4TCPCat.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4TCPCat.TabIndex = 99;
+            this.btnIPv4TCPCat.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4TCPCat, "Show list if IPv4 addresses.");
+            this.btnIPv4TCPCat.UseVisualStyleBackColor = true;
+            this.btnIPv4TCPCat.Click += new System.EventHandler(this.btnIPv4TCPCat_Click);
+            // 
+            // btnShowTCPIPCatLog
+            // 
+            this.btnShowTCPIPCatLog.Image = null;
+            this.btnShowTCPIPCatLog.Location = new System.Drawing.Point(59, 101);
+            this.btnShowTCPIPCatLog.Name = "btnShowTCPIPCatLog";
+            this.btnShowTCPIPCatLog.Size = new System.Drawing.Size(82, 26);
+            this.btnShowTCPIPCatLog.TabIndex = 98;
+            this.btnShowTCPIPCatLog.Text = "Show Log";
+            this.btnShowTCPIPCatLog.UseVisualStyleBackColor = true;
+            this.btnShowTCPIPCatLog.Click += new System.EventHandler(this.btnShowTCPIPCatLog_Click);
+            // 
+            // chkWelcomeMessageTCPIPCat
+            // 
+            this.chkWelcomeMessageTCPIPCat.AutoSize = true;
+            this.chkWelcomeMessageTCPIPCat.Image = null;
+            this.chkWelcomeMessageTCPIPCat.Location = new System.Drawing.Point(28, 55);
+            this.chkWelcomeMessageTCPIPCat.Name = "chkWelcomeMessageTCPIPCat";
+            this.chkWelcomeMessageTCPIPCat.Size = new System.Drawing.Size(173, 17);
+            this.chkWelcomeMessageTCPIPCat.TabIndex = 16;
+            this.chkWelcomeMessageTCPIPCat.Text = "Send version on client connect";
+            this.toolTip1.SetToolTip(this.chkWelcomeMessageTCPIPCat, "Instantly send a version message to the client on connect (semi colon terminated)" +
+        "");
+            this.chkWelcomeMessageTCPIPCat.UseVisualStyleBackColor = true;
+            this.chkWelcomeMessageTCPIPCat.CheckedChanged += new System.EventHandler(this.chkWelcomeMessageTCPIPCat_CheckedChanged);
+            // 
+            // lblToggleToUse
+            // 
+            this.lblToggleToUse.AutoSize = true;
+            this.lblToggleToUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblToggleToUse.ForeColor = System.Drawing.Color.Red;
+            this.lblToggleToUse.Image = null;
+            this.lblToggleToUse.Location = new System.Drawing.Point(144, 79);
+            this.lblToggleToUse.Name = "lblToggleToUse";
+            this.lblToggleToUse.Size = new System.Drawing.Size(120, 13);
+            this.lblToggleToUse.TabIndex = 15;
+            this.lblToggleToUse.Text = "toggle off/on to use";
+            this.lblToggleToUse.Visible = false;
+            // 
+            // labelTS609
+            // 
+            this.labelTS609.AutoSize = true;
+            this.labelTS609.Image = null;
+            this.labelTS609.Location = new System.Drawing.Point(19, 28);
+            this.labelTS609.Name = "labelTS609";
+            this.labelTS609.Size = new System.Drawing.Size(63, 13);
+            this.labelTS609.TabIndex = 14;
+            this.labelTS609.Text = "Bind IP:Port";
+            // 
+            // chkTCPIPCatServerListening
+            // 
+            this.chkTCPIPCatServerListening.AutoSize = true;
+            this.chkTCPIPCatServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTCPIPCatServerListening.Image = null;
+            this.chkTCPIPCatServerListening.Location = new System.Drawing.Point(27, 78);
+            this.chkTCPIPCatServerListening.Name = "chkTCPIPCatServerListening";
+            this.chkTCPIPCatServerListening.Size = new System.Drawing.Size(114, 17);
+            this.chkTCPIPCatServerListening.TabIndex = 13;
+            this.chkTCPIPCatServerListening.Text = "Server Running";
+            this.toolTip1.SetToolTip(this.chkTCPIPCatServerListening, "Checked to listen for client connections");
+            this.chkTCPIPCatServerListening.UseVisualStyleBackColor = true;
+            this.chkTCPIPCatServerListening.CheckedChanged += new System.EventHandler(this.chkTCPIPCatServerListening_CheckedChanged);
+            // 
+            // btnDefaultBindPortForTCPIPCat
+            // 
+            this.btnDefaultBindPortForTCPIPCat.Image = null;
+            this.btnDefaultBindPortForTCPIPCat.Location = new System.Drawing.Point(227, 21);
+            this.btnDefaultBindPortForTCPIPCat.Name = "btnDefaultBindPortForTCPIPCat";
+            this.btnDefaultBindPortForTCPIPCat.Size = new System.Drawing.Size(37, 26);
+            this.btnDefaultBindPortForTCPIPCat.TabIndex = 12;
+            this.btnDefaultBindPortForTCPIPCat.Text = "Def";
+            this.toolTip1.SetToolTip(this.btnDefaultBindPortForTCPIPCat, "Default value");
+            this.btnDefaultBindPortForTCPIPCat.UseVisualStyleBackColor = true;
+            this.btnDefaultBindPortForTCPIPCat.Click += new System.EventHandler(this.btnDefaultBindPortForTCPIPCat_Click);
+            // 
+            // txtTCPIPCATServerBindIPPort
+            // 
+            this.txtTCPIPCATServerBindIPPort.Location = new System.Drawing.Point(91, 25);
+            this.txtTCPIPCATServerBindIPPort.Name = "txtTCPIPCATServerBindIPPort";
+            this.txtTCPIPCATServerBindIPPort.Size = new System.Drawing.Size(122, 20);
+            this.txtTCPIPCATServerBindIPPort.TabIndex = 11;
+            this.txtTCPIPCATServerBindIPPort.Text = "127.0.0.1:13013";
+            this.toolTip1.SetToolTip(this.txtTCPIPCATServerBindIPPort, "The bind IP and the port that the server uses to listen on");
+            this.txtTCPIPCATServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCPIPCATServerBindIPPort_TextChanged);
+            // 
             // groupBoxTS16
             // 
             this.groupBoxTS16.Controls.Add(this.btnIPv4N1MM);
@@ -58748,12 +58364,24 @@
             this.groupBoxTS16.Controls.Add(this.txtN1MMSendTo);
             this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX2);
             this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX1);
-            this.groupBoxTS16.Location = new System.Drawing.Point(13, 18);
+            this.groupBoxTS16.Location = new System.Drawing.Point(393, 173);
             this.groupBoxTS16.Name = "groupBoxTS16";
-            this.groupBoxTS16.Size = new System.Drawing.Size(317, 152);
+            this.groupBoxTS16.Size = new System.Drawing.Size(323, 152);
             this.groupBoxTS16.TabIndex = 57;
             this.groupBoxTS16.TabStop = false;
             this.groupBoxTS16.Text = "N1MM+ WaterfallBandmap";
+            // 
+            // btnIPv4N1MM
+            // 
+            this.btnIPv4N1MM.Image = null;
+            this.btnIPv4N1MM.Location = new System.Drawing.Point(267, 86);
+            this.btnIPv4N1MM.Name = "btnIPv4N1MM";
+            this.btnIPv4N1MM.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4N1MM.TabIndex = 71;
+            this.btnIPv4N1MM.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4N1MM, "Show list if IPv4 addresses.");
+            this.btnIPv4N1MM.UseVisualStyleBackColor = true;
+            this.btnIPv4N1MM.Click += new System.EventHandler(this.btnIPv4N1MM_Click);
             // 
             // btnN1MMDefault
             // 
@@ -58915,126 +58543,382 @@
             this.chkN1MMEnableRX1.UseVisualStyleBackColor = true;
             this.chkN1MMEnableRX1.CheckedChanged += new System.EventHandler(this.chkN1MMEnableRX1_CheckedChanged);
             // 
-            // groupBoxTS10
+            // tbMIDIcat
             // 
-            this.groupBoxTS10.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBoxTS10.Controls.Add(this.btnTuneStepChangeLarger2);
-            this.groupBoxTS10.Controls.Add(this.btnTuneStepChangeSmaller2);
-            this.groupBoxTS10.Controls.Add(this.txtWheelTune2);
-            this.groupBoxTS10.Controls.Add(this.chkBoxIND);
-            this.groupBoxTS10.Controls.Add(this.labelTS469);
-            this.groupBoxTS10.Controls.Add(this.chkBoxPM);
-            this.groupBoxTS10.Controls.Add(this.udSpeedPM);
-            this.groupBoxTS10.Location = new System.Drawing.Point(532, 18);
-            this.groupBoxTS10.Name = "groupBoxTS10";
-            this.groupBoxTS10.Size = new System.Drawing.Size(184, 155);
-            this.groupBoxTS10.TabIndex = 56;
-            this.groupBoxTS10.TabStop = false;
-            this.groupBoxTS10.Text = "PowerMate";
-            this.groupBoxTS10.Visible = false;
+            this.tbMIDIcat.BackColor = System.Drawing.SystemColors.Control;
+            this.tbMIDIcat.Controls.Add(this.groupBox1);
+            this.tbMIDIcat.Location = new System.Drawing.Point(4, 22);
+            this.tbMIDIcat.Name = "tbMIDIcat";
+            this.tbMIDIcat.Size = new System.Drawing.Size(724, 407);
+            this.tbMIDIcat.TabIndex = 6;
+            this.tbMIDIcat.Text = "MIDI CAT";
             // 
-            // btnTuneStepChangeLarger2
+            // groupBox1
             // 
-            this.btnTuneStepChangeLarger2.FlatAppearance.BorderSize = 0;
-            this.btnTuneStepChangeLarger2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTuneStepChangeLarger2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.btnTuneStepChangeLarger2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnTuneStepChangeLarger2.Image = null;
-            this.btnTuneStepChangeLarger2.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(112, 60);
-            this.btnTuneStepChangeLarger2.Name = "btnTuneStepChangeLarger2";
-            this.btnTuneStepChangeLarger2.Size = new System.Drawing.Size(16, 19);
-            this.btnTuneStepChangeLarger2.TabIndex = 79;
-            this.btnTuneStepChangeLarger2.Text = "+";
-            this.toolTip1.SetToolTip(this.btnTuneStepChangeLarger2, "Change to the next larger tuning step");
+            this.groupBox1.Controls.Add(this.udUpdatesPerStepMin);
+            this.groupBox1.Controls.Add(this.labelTS511);
+            this.groupBox1.Controls.Add(this.labelTS512);
+            this.groupBox1.Controls.Add(this.labelTS515);
+            this.groupBox1.Controls.Add(this.udUpdatesPerStepMax);
+            this.groupBox1.Controls.Add(this.btnConfigure);
+            this.groupBox1.Location = new System.Drawing.Point(14, 15);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(339, 121);
+            this.groupBox1.TabIndex = 105;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "MIDI Configuration";
             // 
-            // btnTuneStepChangeSmaller2
+            // udUpdatesPerStepMin
             // 
-            this.btnTuneStepChangeSmaller2.FlatAppearance.BorderSize = 0;
-            this.btnTuneStepChangeSmaller2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTuneStepChangeSmaller2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.btnTuneStepChangeSmaller2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnTuneStepChangeSmaller2.Image = null;
-            this.btnTuneStepChangeSmaller2.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(50, 59);
-            this.btnTuneStepChangeSmaller2.Name = "btnTuneStepChangeSmaller2";
-            this.btnTuneStepChangeSmaller2.Size = new System.Drawing.Size(16, 19);
-            this.btnTuneStepChangeSmaller2.TabIndex = 78;
-            this.btnTuneStepChangeSmaller2.Text = "-";
-            this.toolTip1.SetToolTip(this.btnTuneStepChangeSmaller2, "Change to the next smaller tuning step");
-            // 
-            // txtWheelTune2
-            // 
-            this.txtWheelTune2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.txtWheelTune2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtWheelTune2.Cursor = System.Windows.Forms.Cursors.Default;
-            this.txtWheelTune2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.txtWheelTune2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtWheelTune2.Location = new System.Drawing.Point(66, 59);
-            this.txtWheelTune2.Name = "txtWheelTune2";
-            this.txtWheelTune2.ReadOnly = true;
-            this.txtWheelTune2.Size = new System.Drawing.Size(48, 20);
-            this.txtWheelTune2.TabIndex = 16;
-            this.txtWheelTune2.Text = "1kHz";
-            this.toolTip1.SetToolTip(this.txtWheelTune2, "Amount to tune when rotating the mouse wheel.");
-            // 
-            // chkBoxIND
-            // 
-            this.chkBoxIND.Image = null;
-            this.chkBoxIND.Location = new System.Drawing.Point(38, 84);
-            this.chkBoxIND.Name = "chkBoxIND";
-            this.chkBoxIND.Size = new System.Drawing.Size(111, 31);
-            this.chkBoxIND.TabIndex = 7;
-            this.chkBoxIND.Text = "Independent";
-            this.toolTip1.SetToolTip(this.chkBoxIND, "Check to use the PowerMate Tune Step \r\n\r\nUncheck to use the main Thetis Tune Step" +
-        "");
-            // 
-            // labelTS469
-            // 
-            this.labelTS469.Image = null;
-            this.labelTS469.Location = new System.Drawing.Point(47, 23);
-            this.labelTS469.Name = "labelTS469";
-            this.labelTS469.Size = new System.Drawing.Size(54, 16);
-            this.labelTS469.TabIndex = 5;
-            this.labelTS469.Text = "Speed:";
-            // 
-            // chkBoxPM
-            // 
-            this.chkBoxPM.Image = null;
-            this.chkBoxPM.Location = new System.Drawing.Point(6, 121);
-            this.chkBoxPM.Name = "chkBoxPM";
-            this.chkBoxPM.Size = new System.Drawing.Size(62, 31);
-            this.chkBoxPM.TabIndex = 6;
-            this.chkBoxPM.Text = "Active";
-            // 
-            // udSpeedPM
-            // 
-            this.udSpeedPM.DecimalPlaces = 1;
-            this.udSpeedPM.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            65536});
-            this.udSpeedPM.Location = new System.Drawing.Point(107, 21);
-            this.udSpeedPM.Maximum = new decimal(new int[] {
-            8,
+            this.udUpdatesPerStepMin.Increment = new decimal(new int[] {
+            1,
             0,
             0,
             0});
-            this.udSpeedPM.Minimum = new decimal(new int[] {
-            0,
+            this.udUpdatesPerStepMin.Location = new System.Drawing.Point(191, 53);
+            this.udUpdatesPerStepMin.Maximum = new decimal(new int[] {
+            9,
             0,
             0,
             0});
-            this.udSpeedPM.Name = "udSpeedPM";
-            this.udSpeedPM.Size = new System.Drawing.Size(54, 20);
-            this.udSpeedPM.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.udSpeedPM, "Speed of Freq Change");
-            this.udSpeedPM.Value = new decimal(new int[] {
+            this.udUpdatesPerStepMin.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udUpdatesPerStepMin.Name = "udUpdatesPerStepMin";
+            this.udUpdatesPerStepMin.Size = new System.Drawing.Size(31, 20);
+            this.udUpdatesPerStepMin.TabIndex = 112;
+            this.toolTip1.SetToolTip(this.udUpdatesPerStepMin, "Minimum number of MIDI wheel updates required to produce one frequency step - det" +
+        "ermines the highest sensitivity to wheel rotation.");
+            this.udUpdatesPerStepMin.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udUpdatesPerStepMin.ValueChanged += new System.EventHandler(this.udUpdatesPerStepMin_ValueChanged);
+            // 
+            // labelTS511
+            // 
+            this.labelTS511.AutoSize = true;
+            this.labelTS511.Image = null;
+            this.labelTS511.Location = new System.Drawing.Point(176, 33);
+            this.labelTS511.Name = "labelTS511";
+            this.labelTS511.Size = new System.Drawing.Size(130, 13);
+            this.labelTS511.TabIndex = 108;
+            this.labelTS511.Text = "MIDI Wheel updates/step";
+            // 
+            // labelTS512
+            // 
+            this.labelTS512.AutoSize = true;
+            this.labelTS512.Image = null;
+            this.labelTS512.Location = new System.Drawing.Point(253, 76);
+            this.labelTS512.Name = "labelTS512";
+            this.labelTS512.Size = new System.Drawing.Size(27, 13);
+            this.labelTS512.TabIndex = 110;
+            this.labelTS512.Text = "Max";
+            // 
+            // labelTS515
+            // 
+            this.labelTS515.AutoSize = true;
+            this.labelTS515.Image = null;
+            this.labelTS515.Location = new System.Drawing.Point(196, 76);
+            this.labelTS515.Name = "labelTS515";
+            this.labelTS515.Size = new System.Drawing.Size(24, 13);
+            this.labelTS515.TabIndex = 111;
+            this.labelTS515.Text = "Min";
+            // 
+            // udUpdatesPerStepMax
+            // 
+            this.udUpdatesPerStepMax.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udUpdatesPerStepMax.Location = new System.Drawing.Point(250, 53);
+            this.udUpdatesPerStepMax.Maximum = new decimal(new int[] {
+            64,
+            0,
+            0,
+            0});
+            this.udUpdatesPerStepMax.Minimum = new decimal(new int[] {
             2,
             0,
             0,
             0});
+            this.udUpdatesPerStepMax.Name = "udUpdatesPerStepMax";
+            this.udUpdatesPerStepMax.Size = new System.Drawing.Size(34, 20);
+            this.udUpdatesPerStepMax.TabIndex = 109;
+            this.toolTip1.SetToolTip(this.udUpdatesPerStepMax, "Maximum number of MIDI wheel updates required to produce one frequency step - det" +
+        "ermines the lowest sensitivity to wheel rotation.");
+            this.udUpdatesPerStepMax.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udUpdatesPerStepMax.ValueChanged += new System.EventHandler(this.udUpdatesPerStepMax_ValueChanged);
+            // 
+            // btnConfigure
+            // 
+            this.btnConfigure.Location = new System.Drawing.Point(19, 33);
+            this.btnConfigure.Name = "btnConfigure";
+            this.btnConfigure.Size = new System.Drawing.Size(139, 66);
+            this.btnConfigure.TabIndex = 5;
+            this.btnConfigure.Text = "Configure MIDI";
+            this.btnConfigure.UseVisualStyleBackColor = true;
+            this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
+            // 
+            // tpCAToptions
+            // 
+            this.tpCAToptions.BackColor = System.Drawing.SystemColors.Control;
+            this.tpCAToptions.Controls.Add(this.groupBoxTS25);
+            this.tpCAToptions.Controls.Add(this.groupBoxTS24);
+            this.tpCAToptions.Controls.Add(this.grpRTTYOffset);
+            this.tpCAToptions.Location = new System.Drawing.Point(4, 22);
+            this.tpCAToptions.Name = "tpCAToptions";
+            this.tpCAToptions.Padding = new System.Windows.Forms.Padding(3);
+            this.tpCAToptions.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.tpCAToptions.Size = new System.Drawing.Size(724, 407);
+            this.tpCAToptions.TabIndex = 0;
+            this.tpCAToptions.Text = "Options";
+            // 
+            // groupBoxTS25
+            // 
+            this.groupBoxTS25.Controls.Add(this.chkRecenterOnZZFx);
+            this.groupBoxTS25.Controls.Add(this.chkDigUIsUSB);
+            this.groupBoxTS25.Controls.Add(this.chkKWAI);
+            this.groupBoxTS25.Controls.Add(this.txtZZSN);
+            this.groupBoxTS25.Controls.Add(this.labelTS323);
+            this.groupBoxTS25.Location = new System.Drawing.Point(14, 163);
+            this.groupBoxTS25.Name = "groupBoxTS25";
+            this.groupBoxTS25.Size = new System.Drawing.Size(201, 137);
+            this.groupBoxTS25.TabIndex = 109;
+            this.groupBoxTS25.TabStop = false;
+            this.groupBoxTS25.Text = "Other";
+            // 
+            // chkRecenterOnZZFx
+            // 
+            this.chkRecenterOnZZFx.AutoSize = true;
+            this.chkRecenterOnZZFx.Image = null;
+            this.chkRecenterOnZZFx.Location = new System.Drawing.Point(12, 19);
+            this.chkRecenterOnZZFx.Name = "chkRecenterOnZZFx";
+            this.chkRecenterOnZZFx.Size = new System.Drawing.Size(130, 17);
+            this.chkRecenterOnZZFx.TabIndex = 107;
+            this.chkRecenterOnZZFx.Text = "Always recenter VFOs";
+            this.chkRecenterOnZZFx.UseVisualStyleBackColor = true;
+            this.chkRecenterOnZZFx.CheckedChanged += new System.EventHandler(this.chkRecenterOnZZFx_CheckedChanged);
+            // 
+            // chkDigUIsUSB
+            // 
+            this.chkDigUIsUSB.Image = null;
+            this.chkDigUIsUSB.Location = new System.Drawing.Point(12, 41);
+            this.chkDigUIsUSB.Name = "chkDigUIsUSB";
+            this.chkDigUIsUSB.Size = new System.Drawing.Size(160, 24);
+            this.chkDigUIsUSB.TabIndex = 96;
+            this.chkDigUIsUSB.Text = "DigL/U Returns LSB/USB";
+            this.toolTip1.SetToolTip(this.chkDigUIsUSB, "Lies to the Kenwood CAT Interface to fool certain programs");
+            // 
+            // chkKWAI
+            // 
+            this.chkKWAI.Image = null;
+            this.chkKWAI.Location = new System.Drawing.Point(12, 64);
+            this.chkKWAI.Name = "chkKWAI";
+            this.chkKWAI.Size = new System.Drawing.Size(176, 24);
+            this.chkKWAI.TabIndex = 98;
+            this.chkKWAI.Text = "Allow Kenwood AI Command";
+            this.toolTip1.SetToolTip(this.chkKWAI, "Check only if your logger does not poll for frequency");
+            this.chkKWAI.CheckedChanged += new System.EventHandler(this.chkKWAI_CheckedChanged);
+            // 
+            // txtZZSN
+            // 
+            this.txtZZSN.Location = new System.Drawing.Point(51, 105);
+            this.txtZZSN.Name = "txtZZSN";
+            this.txtZZSN.Size = new System.Drawing.Size(65, 20);
+            this.txtZZSN.TabIndex = 99;
+            this.txtZZSN.Text = "0000-0000";
+            this.txtZZSN.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.txtZZSN, "Enter valid serial number .");
+            // 
+            // labelTS323
+            // 
+            this.labelTS323.AutoSize = true;
+            this.labelTS323.Image = null;
+            this.labelTS323.Location = new System.Drawing.Point(9, 108);
+            this.labelTS323.Name = "labelTS323";
+            this.labelTS323.Size = new System.Drawing.Size(39, 13);
+            this.labelTS323.TabIndex = 100;
+            this.labelTS323.Text = "ZZSN:";
+            // 
+            // groupBoxTS24
+            // 
+            this.groupBoxTS24.Controls.Add(this.btnCATTest);
+            this.groupBoxTS24.Controls.Add(this.comboCATRigType);
+            this.groupBoxTS24.Controls.Add(this.lblCATRigType);
+            this.groupBoxTS24.Location = new System.Drawing.Point(462, 15);
+            this.groupBoxTS24.Name = "groupBoxTS24";
+            this.groupBoxTS24.Size = new System.Drawing.Size(241, 100);
+            this.groupBoxTS24.TabIndex = 108;
+            this.groupBoxTS24.TabStop = false;
+            this.groupBoxTS24.Text = "CAT Testing";
+            // 
+            // btnCATTest
+            // 
+            this.btnCATTest.Image = null;
+            this.btnCATTest.Location = new System.Drawing.Point(14, 23);
+            this.btnCATTest.Name = "btnCATTest";
+            this.btnCATTest.Size = new System.Drawing.Size(77, 40);
+            this.btnCATTest.TabIndex = 92;
+            this.btnCATTest.Text = "Test CAT Commands";
+            this.toolTip1.SetToolTip(this.btnCATTest, "A test utility to verify CAT command responses");
+            this.btnCATTest.Click += new System.EventHandler(this.btnCATTest_Click);
+            // 
+            // comboCATRigType
+            // 
+            this.comboCATRigType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCATRigType.DropDownWidth = 56;
+            this.comboCATRigType.Items.AddRange(new object[] {
+            "PowerSDR",
+            "TS-2000",
+            "TS-50S",
+            "TS-480"});
+            this.comboCATRigType.Location = new System.Drawing.Point(138, 31);
+            this.comboCATRigType.Name = "comboCATRigType";
+            this.comboCATRigType.Size = new System.Drawing.Size(88, 21);
+            this.comboCATRigType.TabIndex = 94;
+            this.toolTip1.SetToolTip(this.comboCATRigType, "Sets the CAT protocol for programs that do not have SDR-1000 specific setups.");
+            this.comboCATRigType.SelectedIndexChanged += new System.EventHandler(this.comboCATRigType_SelectedIndexChanged);
+            // 
+            // lblCATRigType
+            // 
+            this.lblCATRigType.Image = null;
+            this.lblCATRigType.Location = new System.Drawing.Point(100, 34);
+            this.lblCATRigType.Name = "lblCATRigType";
+            this.lblCATRigType.Size = new System.Drawing.Size(36, 23);
+            this.lblCATRigType.TabIndex = 95;
+            this.lblCATRigType.Text = "ID as:";
+            // 
+            // grpRTTYOffset
+            // 
+            this.grpRTTYOffset.Controls.Add(this.labelTS4);
+            this.grpRTTYOffset.Controls.Add(this.labelTS3);
+            this.grpRTTYOffset.Controls.Add(this.udRTTYU);
+            this.grpRTTYOffset.Controls.Add(this.udRTTYL);
+            this.grpRTTYOffset.Controls.Add(this.chkRTTYOffsetEnableB);
+            this.grpRTTYOffset.Controls.Add(this.chkRTTYOffsetEnableA);
+            this.grpRTTYOffset.Location = new System.Drawing.Point(14, 15);
+            this.grpRTTYOffset.Name = "grpRTTYOffset";
+            this.grpRTTYOffset.Size = new System.Drawing.Size(201, 131);
+            this.grpRTTYOffset.TabIndex = 97;
+            this.grpRTTYOffset.TabStop = false;
+            this.grpRTTYOffset.Text = "RTTY Offset";
+            // 
+            // labelTS4
+            // 
+            this.labelTS4.Image = null;
+            this.labelTS4.Location = new System.Drawing.Point(108, 69);
+            this.labelTS4.Name = "labelTS4";
+            this.labelTS4.Size = new System.Drawing.Size(40, 16);
+            this.labelTS4.TabIndex = 101;
+            this.labelTS4.Text = "DIGU";
+            // 
+            // labelTS3
+            // 
+            this.labelTS3.Image = null;
+            this.labelTS3.Location = new System.Drawing.Point(24, 69);
+            this.labelTS3.Name = "labelTS3";
+            this.labelTS3.Size = new System.Drawing.Size(40, 16);
+            this.labelTS3.TabIndex = 100;
+            this.labelTS3.Text = "DIGL";
+            // 
+            // udRTTYU
+            // 
+            this.udRTTYU.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udRTTYU.Location = new System.Drawing.Point(104, 88);
+            this.udRTTYU.Maximum = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.udRTTYU.Minimum = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            -2147483648});
+            this.udRTTYU.Name = "udRTTYU";
+            this.udRTTYU.Size = new System.Drawing.Size(48, 20);
+            this.udRTTYU.TabIndex = 99;
+            this.toolTip1.SetToolTip(this.udRTTYU, "Sets the DIGU frequency offset");
+            this.udRTTYU.Value = new decimal(new int[] {
+            2125,
+            0,
+            0,
+            0});
+            this.udRTTYU.ValueChanged += new System.EventHandler(this.udRTTYU_ValueChanged);
+            // 
+            // udRTTYL
+            // 
+            this.udRTTYL.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udRTTYL.Location = new System.Drawing.Point(16, 88);
+            this.udRTTYL.Maximum = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.udRTTYL.Minimum = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            -2147483648});
+            this.udRTTYL.Name = "udRTTYL";
+            this.udRTTYL.Size = new System.Drawing.Size(48, 20);
+            this.udRTTYL.TabIndex = 98;
+            this.toolTip1.SetToolTip(this.udRTTYL, "Sets the DIGL frequency offset");
+            this.udRTTYL.Value = new decimal(new int[] {
+            2125,
+            0,
+            0,
+            0});
+            this.udRTTYL.ValueChanged += new System.EventHandler(this.udRTTYL_ValueChanged);
+            // 
+            // chkRTTYOffsetEnableB
+            // 
+            this.chkRTTYOffsetEnableB.Image = null;
+            this.chkRTTYOffsetEnableB.Location = new System.Drawing.Point(16, 40);
+            this.chkRTTYOffsetEnableB.Name = "chkRTTYOffsetEnableB";
+            this.chkRTTYOffsetEnableB.Size = new System.Drawing.Size(136, 24);
+            this.chkRTTYOffsetEnableB.TabIndex = 97;
+            this.chkRTTYOffsetEnableB.Text = "Enable Offset VFO B";
+            this.chkRTTYOffsetEnableB.CheckedChanged += new System.EventHandler(this.chkRTTYOffsetEnableB_CheckedChanged);
+            // 
+            // chkRTTYOffsetEnableA
+            // 
+            this.chkRTTYOffsetEnableA.Image = null;
+            this.chkRTTYOffsetEnableA.Location = new System.Drawing.Point(16, 16);
+            this.chkRTTYOffsetEnableA.Name = "chkRTTYOffsetEnableA";
+            this.chkRTTYOffsetEnableA.Size = new System.Drawing.Size(136, 24);
+            this.chkRTTYOffsetEnableA.TabIndex = 96;
+            this.chkRTTYOffsetEnableA.Text = "Enable Offset VFO A";
+            this.chkRTTYOffsetEnableA.CheckedChanged += new System.EventHandler(this.chkRTTYOffsetEnableA_CheckedChanged);
+            // 
+            // tpUserInterface
+            // 
+            this.tpUserInterface.BackColor = System.Drawing.SystemColors.Control;
+            this.tpUserInterface.Controls.Add(this.groupBox2);
+            this.tpUserInterface.Controls.Add(this.groupBoxTS10);
+            this.tpUserInterface.Controls.Add(this.grpFocusMaster);
+            this.tpUserInterface.Location = new System.Drawing.Point(4, 22);
+            this.tpUserInterface.Name = "tpUserInterface";
+            this.tpUserInterface.Size = new System.Drawing.Size(724, 407);
+            this.tpUserInterface.TabIndex = 5;
+            this.tpUserInterface.Text = "User Interface";
             // 
             // groupBox2
             // 
@@ -59050,7 +58934,7 @@
             this.groupBox2.Controls.Add(this.labelTS468);
             this.groupBox2.Controls.Add(this.udHttpPort);
             this.groupBox2.Controls.Add(this.chkBoxHTTP);
-            this.groupBox2.Location = new System.Drawing.Point(501, 181);
+            this.groupBox2.Location = new System.Drawing.Point(14, 15);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(215, 215);
             this.groupBox2.TabIndex = 55;
@@ -59208,6 +59092,226 @@
             this.toolTip1.SetToolTip(this.chkBoxHTTP, "Check to turn ON Http Server.\r\n\r\nBasic: view Display only\r\n");
             this.chkBoxHTTP.CheckedChanged += new System.EventHandler(this.chkBoxHTTP_CheckedChanged);
             // 
+            // groupBoxTS10
+            // 
+            this.groupBoxTS10.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBoxTS10.Controls.Add(this.btnTuneStepChangeLarger2);
+            this.groupBoxTS10.Controls.Add(this.btnTuneStepChangeSmaller2);
+            this.groupBoxTS10.Controls.Add(this.txtWheelTune2);
+            this.groupBoxTS10.Controls.Add(this.chkBoxIND);
+            this.groupBoxTS10.Controls.Add(this.labelTS469);
+            this.groupBoxTS10.Controls.Add(this.chkBoxPM);
+            this.groupBoxTS10.Controls.Add(this.udSpeedPM);
+            this.groupBoxTS10.Location = new System.Drawing.Point(515, 14);
+            this.groupBoxTS10.Name = "groupBoxTS10";
+            this.groupBoxTS10.Size = new System.Drawing.Size(184, 155);
+            this.groupBoxTS10.TabIndex = 56;
+            this.groupBoxTS10.TabStop = false;
+            this.groupBoxTS10.Text = "PowerMate";
+            this.groupBoxTS10.Visible = false;
+            // 
+            // btnTuneStepChangeLarger2
+            // 
+            this.btnTuneStepChangeLarger2.FlatAppearance.BorderSize = 0;
+            this.btnTuneStepChangeLarger2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTuneStepChangeLarger2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.btnTuneStepChangeLarger2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnTuneStepChangeLarger2.Image = null;
+            this.btnTuneStepChangeLarger2.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(112, 60);
+            this.btnTuneStepChangeLarger2.Name = "btnTuneStepChangeLarger2";
+            this.btnTuneStepChangeLarger2.Size = new System.Drawing.Size(16, 19);
+            this.btnTuneStepChangeLarger2.TabIndex = 79;
+            this.btnTuneStepChangeLarger2.Text = "+";
+            this.toolTip1.SetToolTip(this.btnTuneStepChangeLarger2, "Change to the next larger tuning step");
+            // 
+            // btnTuneStepChangeSmaller2
+            // 
+            this.btnTuneStepChangeSmaller2.FlatAppearance.BorderSize = 0;
+            this.btnTuneStepChangeSmaller2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTuneStepChangeSmaller2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.btnTuneStepChangeSmaller2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnTuneStepChangeSmaller2.Image = null;
+            this.btnTuneStepChangeSmaller2.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(50, 59);
+            this.btnTuneStepChangeSmaller2.Name = "btnTuneStepChangeSmaller2";
+            this.btnTuneStepChangeSmaller2.Size = new System.Drawing.Size(16, 19);
+            this.btnTuneStepChangeSmaller2.TabIndex = 78;
+            this.btnTuneStepChangeSmaller2.Text = "-";
+            this.toolTip1.SetToolTip(this.btnTuneStepChangeSmaller2, "Change to the next smaller tuning step");
+            // 
+            // txtWheelTune2
+            // 
+            this.txtWheelTune2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtWheelTune2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtWheelTune2.Cursor = System.Windows.Forms.Cursors.Default;
+            this.txtWheelTune2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.txtWheelTune2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtWheelTune2.Location = new System.Drawing.Point(66, 59);
+            this.txtWheelTune2.Name = "txtWheelTune2";
+            this.txtWheelTune2.ReadOnly = true;
+            this.txtWheelTune2.Size = new System.Drawing.Size(48, 20);
+            this.txtWheelTune2.TabIndex = 16;
+            this.txtWheelTune2.Text = "1kHz";
+            this.toolTip1.SetToolTip(this.txtWheelTune2, "Amount to tune when rotating the mouse wheel.");
+            // 
+            // chkBoxIND
+            // 
+            this.chkBoxIND.Image = null;
+            this.chkBoxIND.Location = new System.Drawing.Point(38, 84);
+            this.chkBoxIND.Name = "chkBoxIND";
+            this.chkBoxIND.Size = new System.Drawing.Size(111, 31);
+            this.chkBoxIND.TabIndex = 7;
+            this.chkBoxIND.Text = "Independent";
+            this.toolTip1.SetToolTip(this.chkBoxIND, "Check to use the PowerMate Tune Step \r\n\r\nUncheck to use the main Thetis Tune Step" +
+        "");
+            // 
+            // labelTS469
+            // 
+            this.labelTS469.Image = null;
+            this.labelTS469.Location = new System.Drawing.Point(47, 23);
+            this.labelTS469.Name = "labelTS469";
+            this.labelTS469.Size = new System.Drawing.Size(54, 16);
+            this.labelTS469.TabIndex = 5;
+            this.labelTS469.Text = "Speed:";
+            // 
+            // chkBoxPM
+            // 
+            this.chkBoxPM.Image = null;
+            this.chkBoxPM.Location = new System.Drawing.Point(6, 121);
+            this.chkBoxPM.Name = "chkBoxPM";
+            this.chkBoxPM.Size = new System.Drawing.Size(62, 31);
+            this.chkBoxPM.TabIndex = 6;
+            this.chkBoxPM.Text = "Active";
+            // 
+            // udSpeedPM
+            // 
+            this.udSpeedPM.DecimalPlaces = 1;
+            this.udSpeedPM.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udSpeedPM.Location = new System.Drawing.Point(107, 21);
+            this.udSpeedPM.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.udSpeedPM.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udSpeedPM.Name = "udSpeedPM";
+            this.udSpeedPM.Size = new System.Drawing.Size(54, 20);
+            this.udSpeedPM.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.udSpeedPM, "Speed of Freq Change");
+            this.udSpeedPM.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // grpFocusMaster
+            // 
+            this.grpFocusMaster.Controls.Add(this.txtFocusMasterDelay);
+            this.grpFocusMaster.Controls.Add(this.labelTS359);
+            this.grpFocusMaster.Controls.Add(this.labelTS358);
+            this.grpFocusMaster.Controls.Add(this.labelTS357);
+            this.grpFocusMaster.Controls.Add(this.labelTS356);
+            this.grpFocusMaster.Controls.Add(this.txtFocusMasterWinTitle);
+            this.grpFocusMaster.Controls.Add(this.txtFocusMasterUDPPort);
+            this.grpFocusMaster.Controls.Add(this.comboFocusMasterMode);
+            this.grpFocusMaster.Location = new System.Drawing.Point(14, 247);
+            this.grpFocusMaster.Name = "grpFocusMaster";
+            this.grpFocusMaster.Size = new System.Drawing.Size(334, 100);
+            this.grpFocusMaster.TabIndex = 104;
+            this.grpFocusMaster.TabStop = false;
+            this.grpFocusMaster.Text = "FocusMaster";
+            // 
+            // txtFocusMasterDelay
+            // 
+            this.txtFocusMasterDelay.Location = new System.Drawing.Point(184, 42);
+            this.txtFocusMasterDelay.Name = "txtFocusMasterDelay";
+            this.txtFocusMasterDelay.Size = new System.Drawing.Size(40, 20);
+            this.txtFocusMasterDelay.TabIndex = 106;
+            this.txtFocusMasterDelay.Text = "2000";
+            this.txtFocusMasterDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtFocusMasterDelay.TextChanged += new System.EventHandler(this.txtFocusMasterDelay_TextChanged);
+            // 
+            // labelTS359
+            // 
+            this.labelTS359.AutoSize = true;
+            this.labelTS359.Image = null;
+            this.labelTS359.Location = new System.Drawing.Point(126, 45);
+            this.labelTS359.Name = "labelTS359";
+            this.labelTS359.Size = new System.Drawing.Size(58, 13);
+            this.labelTS359.TabIndex = 105;
+            this.labelTS359.Text = "Delay (mS)";
+            // 
+            // labelTS358
+            // 
+            this.labelTS358.AutoSize = true;
+            this.labelTS358.Image = null;
+            this.labelTS358.Location = new System.Drawing.Point(5, 71);
+            this.labelTS358.Name = "labelTS358";
+            this.labelTS358.Size = new System.Drawing.Size(69, 13);
+            this.labelTS358.TabIndex = 104;
+            this.labelTS358.Text = "Window Title";
+            // 
+            // labelTS357
+            // 
+            this.labelTS357.AutoSize = true;
+            this.labelTS357.Image = null;
+            this.labelTS357.Location = new System.Drawing.Point(6, 45);
+            this.labelTS357.Name = "labelTS357";
+            this.labelTS357.Size = new System.Drawing.Size(61, 13);
+            this.labelTS357.TabIndex = 104;
+            this.labelTS357.Text = "N1MM Port";
+            // 
+            // labelTS356
+            // 
+            this.labelTS356.AutoSize = true;
+            this.labelTS356.Image = null;
+            this.labelTS356.Location = new System.Drawing.Point(5, 18);
+            this.labelTS356.Name = "labelTS356";
+            this.labelTS356.Size = new System.Drawing.Size(34, 13);
+            this.labelTS356.TabIndex = 104;
+            this.labelTS356.Text = "Mode";
+            // 
+            // txtFocusMasterWinTitle
+            // 
+            this.txtFocusMasterWinTitle.Location = new System.Drawing.Point(76, 68);
+            this.txtFocusMasterWinTitle.Name = "txtFocusMasterWinTitle";
+            this.txtFocusMasterWinTitle.Size = new System.Drawing.Size(224, 20);
+            this.txtFocusMasterWinTitle.TabIndex = 104;
+            this.txtFocusMasterWinTitle.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFocusMasterWinTitle_KeyDown);
+            // 
+            // txtFocusMasterUDPPort
+            // 
+            this.txtFocusMasterUDPPort.Location = new System.Drawing.Point(72, 42);
+            this.txtFocusMasterUDPPort.Name = "txtFocusMasterUDPPort";
+            this.txtFocusMasterUDPPort.Size = new System.Drawing.Size(48, 20);
+            this.txtFocusMasterUDPPort.TabIndex = 104;
+            this.txtFocusMasterUDPPort.Text = "12060";
+            this.txtFocusMasterUDPPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtFocusMasterUDPPort.TextChanged += new System.EventHandler(this.txtFocusMasterUDPPort_TextChanged);
+            // 
+            // comboFocusMasterMode
+            // 
+            this.comboFocusMasterMode.FormattingEnabled = true;
+            this.comboFocusMasterMode.Items.AddRange(new object[] {
+            "None",
+            "N1MM+ Logger",
+            "Select by Click",
+            "Enter Window Title"});
+            this.comboFocusMasterMode.Location = new System.Drawing.Point(72, 15);
+            this.comboFocusMasterMode.Name = "comboFocusMasterMode";
+            this.comboFocusMasterMode.Size = new System.Drawing.Size(121, 21);
+            this.comboFocusMasterMode.TabIndex = 104;
+            this.comboFocusMasterMode.SelectedIndexChanged += new System.EventHandler(this.comboFocusMasterMode_SelectedIndexChanged);
+            // 
             // tpAndromeda
             // 
             this.tpAndromeda.BackColor = System.Drawing.SystemColors.Control;
@@ -59229,7 +59333,7 @@
             this.grpAndrOptions.Controls.Add(this.chkAndrDiversityLandscape);
             this.grpAndrOptions.Controls.Add(this.chkAndrDiversityAutoshow);
             this.grpAndrOptions.Controls.Add(this.chkAndrGainAutoshow);
-            this.grpAndrOptions.Location = new System.Drawing.Point(264, 6);
+            this.grpAndrOptions.Location = new System.Drawing.Point(271, 15);
             this.grpAndrOptions.Name = "grpAndrOptions";
             this.grpAndrOptions.Size = new System.Drawing.Size(244, 187);
             this.grpAndrOptions.TabIndex = 107;
@@ -59324,7 +59428,7 @@
             this.grpAndr.Controls.Add(this.comboAndromedaCATPort);
             this.grpAndr.Controls.Add(this.labelTSPort);
             this.grpAndr.Controls.Add(this.chkEnableAndromeda);
-            this.grpAndr.Location = new System.Drawing.Point(6, 6);
+            this.grpAndr.Location = new System.Drawing.Point(14, 15);
             this.grpAndr.Name = "grpAndr";
             this.grpAndr.Size = new System.Drawing.Size(240, 187);
             this.grpAndr.TabIndex = 106;
@@ -59352,7 +59456,7 @@
             // buttonAndromeda
             // 
             this.buttonAndromeda.Image = null;
-            this.buttonAndromeda.Location = new System.Drawing.Point(13, 63);
+            this.buttonAndromeda.Location = new System.Drawing.Point(20, 68);
             this.buttonAndromeda.Name = "buttonAndromeda";
             this.buttonAndromeda.Size = new System.Drawing.Size(91, 30);
             this.buttonAndromeda.TabIndex = 98;
@@ -59364,7 +59468,7 @@
             // 
             this.comboAndromedaCATPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAndromedaCATPort.DropDownWidth = 56;
-            this.comboAndromedaCATPort.Location = new System.Drawing.Point(32, 36);
+            this.comboAndromedaCATPort.Location = new System.Drawing.Point(39, 41);
             this.comboAndromedaCATPort.Name = "comboAndromedaCATPort";
             this.comboAndromedaCATPort.Size = new System.Drawing.Size(80, 21);
             this.comboAndromedaCATPort.TabIndex = 97;
@@ -59375,7 +59479,7 @@
             // labelTSPort
             // 
             this.labelTSPort.Image = null;
-            this.labelTSPort.Location = new System.Drawing.Point(1, 40);
+            this.labelTSPort.Location = new System.Drawing.Point(8, 45);
             this.labelTSPort.Name = "labelTSPort";
             this.labelTSPort.Size = new System.Drawing.Size(40, 15);
             this.labelTSPort.TabIndex = 7;
@@ -59384,7 +59488,7 @@
             // chkEnableAndromeda
             // 
             this.chkEnableAndromeda.Image = null;
-            this.chkEnableAndromeda.Location = new System.Drawing.Point(2, 14);
+            this.chkEnableAndromeda.Location = new System.Drawing.Point(9, 19);
             this.chkEnableAndromeda.Name = "chkEnableAndromeda";
             this.chkEnableAndromeda.Size = new System.Drawing.Size(99, 24);
             this.chkEnableAndromeda.TabIndex = 1;
@@ -61596,29 +61700,18 @@
             this.tmrCFCOMPGain.Interval = 50;
             this.tmrCFCOMPGain.Tick += new System.EventHandler(this.tmrCFCOMPGain_Tick);
             // 
-            // btnIPv4N1MM
+            // chkEmulateExpertSDR3Protocol
             // 
-            this.btnIPv4N1MM.Image = null;
-            this.btnIPv4N1MM.Location = new System.Drawing.Point(267, 86);
-            this.btnIPv4N1MM.Name = "btnIPv4N1MM";
-            this.btnIPv4N1MM.Size = new System.Drawing.Size(42, 26);
-            this.btnIPv4N1MM.TabIndex = 71;
-            this.btnIPv4N1MM.Text = "IPv4";
-            this.toolTip1.SetToolTip(this.btnIPv4N1MM, "Show list if IPv4 addresses.");
-            this.btnIPv4N1MM.UseVisualStyleBackColor = true;
-            this.btnIPv4N1MM.Click += new System.EventHandler(this.btnIPv4N1MM_Click);
-            // 
-            // btnIPv4TCPCat
-            // 
-            this.btnIPv4TCPCat.Image = null;
-            this.btnIPv4TCPCat.Location = new System.Drawing.Point(270, 21);
-            this.btnIPv4TCPCat.Name = "btnIPv4TCPCat";
-            this.btnIPv4TCPCat.Size = new System.Drawing.Size(42, 26);
-            this.btnIPv4TCPCat.TabIndex = 99;
-            this.btnIPv4TCPCat.Text = "IPv4";
-            this.toolTip1.SetToolTip(this.btnIPv4TCPCat, "Show list if IPv4 addresses.");
-            this.btnIPv4TCPCat.UseVisualStyleBackColor = true;
-            this.btnIPv4TCPCat.Click += new System.EventHandler(this.btnIPv4TCPCat_Click);
+            this.chkEmulateExpertSDR3Protocol.AutoSize = true;
+            this.chkEmulateExpertSDR3Protocol.Image = null;
+            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 181);
+            this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
+            this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
+            this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
+            this.chkEmulateExpertSDR3Protocol.Text = "Emulate ExpertSDR3 protocol";
+            this.toolTip1.SetToolTip(this.chkEmulateExpertSDR3Protocol, "Causes the TCI protocol message to send \'ExpertSDR3\' instead of \'Thetis\'");
+            this.chkEmulateExpertSDR3Protocol.UseVisualStyleBackColor = true;
+            this.chkEmulateExpertSDR3Protocol.CheckedChanged += new System.EventHandler(this.chkEmulateExpertSDR3Protocol_CheckedChanged);
             // 
             // Setup
             // 
@@ -62783,44 +62876,48 @@
             this.grpKBCW.ResumeLayout(false);
             this.tpCATControl.ResumeLayout(false);
             this.tcCAT.ResumeLayout(false);
-            this.tpCAT.ResumeLayout(false);
-            this.tpCAT.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMin)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMax)).EndInit();
-            this.grpFocusMaster.ResumeLayout(false);
-            this.grpFocusMaster.PerformLayout();
-            this.grpCatControlBox.ResumeLayout(false);
-            this.grpRTTYOffset.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udRTTYU)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRTTYL)).EndInit();
+            this.tpCATSerialPorts.ResumeLayout(false);
+            this.tpCATSerialPorts.PerformLayout();
             this.grpPTTBitBang.ResumeLayout(false);
-            this.tpCAT2.ResumeLayout(false);
-            this.tpCAT2.PerformLayout();
-            this.grpTCPIPcatServer.ResumeLayout(false);
-            this.grpTCPIPcatServer.PerformLayout();
             this.grpCat4ControlBox.ResumeLayout(false);
             this.grpCat3ControlBox.ResumeLayout(false);
             this.grpCat2ControlBox.ResumeLayout(false);
-            this.tpUserInterface.ResumeLayout(false);
+            this.grpCatControlBox.ResumeLayout(false);
+            this.tpTCITCPIPN1MM.ResumeLayout(false);
             this.grpTCIServer.ResumeLayout(false);
             this.grpTCIServer.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).EndInit();
+            this.grpTCPIPcatServer.ResumeLayout(false);
+            this.grpTCPIPcatServer.PerformLayout();
             this.groupBoxTS16.ResumeLayout(false);
             this.groupBoxTS16.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udN1MMSendRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX2Scaling)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udN1MMRX1Scaling)).EndInit();
-            this.groupBoxTS10.ResumeLayout(false);
-            this.groupBoxTS10.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).EndInit();
+            this.tbMIDIcat.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udUpdatesPerStepMax)).EndInit();
+            this.tpCAToptions.ResumeLayout(false);
+            this.groupBoxTS25.ResumeLayout(false);
+            this.groupBoxTS25.PerformLayout();
+            this.groupBoxTS24.ResumeLayout(false);
+            this.grpRTTYOffset.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udRTTYU)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udRTTYL)).EndInit();
+            this.tpUserInterface.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).EndInit();
+            this.groupBoxTS10.ResumeLayout(false);
+            this.groupBoxTS10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).EndInit();
+            this.grpFocusMaster.ResumeLayout(false);
+            this.grpFocusMaster.PerformLayout();
             this.tpAndromeda.ResumeLayout(false);
             this.grpAndrOptions.ResumeLayout(false);
             this.grpAndrOptions.PerformLayout();
@@ -64436,7 +64533,7 @@
         private System.Windows.Forms.CheckBoxTS chkCBlock;
         private System.Windows.Forms.CheckBoxTS chkRX2CBlock;
         private System.Windows.Forms.TabControl tcCAT;
-        private System.Windows.Forms.TabPage tpCAT;
+        private System.Windows.Forms.TabPage tpCAToptions;
         private System.Windows.Forms.PanelTS panelTS7;
         private System.Windows.Forms.ButtonTS btnSetIPAddr;
         private System.Windows.Forms.NumericUpDownTS udStaticIP4;
@@ -64703,7 +64800,7 @@
         public System.Windows.Forms.TextBoxTS textDCVolts;
         private System.Windows.Forms.ButtonTS btnResetPAValues;
         private System.Windows.Forms.ButtonTS btnResetWattMeterValues;
-        private System.Windows.Forms.TabPage tpCAT2;
+        private System.Windows.Forms.TabPage tpCATSerialPorts;
         private System.Windows.Forms.GroupBoxTS grpCat4ControlBox;
         private System.Windows.Forms.ComboBoxTS comboCAT4Port;
         private System.Windows.Forms.ComboBoxTS comboCAT4baud;
@@ -65508,7 +65605,7 @@
         private System.Windows.Forms.CheckBoxTS chkANAN8000DLEDisplayVoltsAmps;
         private NumericUpDownTS ud6mRx2LNAGainOffset;
         private LabelTS lblRx26mLNA;
-        private TabPage tpUserInterface;
+        private TabPage tpTCITCPIPN1MM;
         public GroupBoxTS groupBoxTS10;
         private ButtonTS btnTuneStepChangeLarger2;
         private ButtonTS btnTuneStepChangeSmaller2;
@@ -66628,5 +66725,12 @@
         private ButtonTS btnIPv4TCI;
         private ButtonTS btnIPv4N1MM;
         private ButtonTS btnIPv4TCPCat;
+        private TextBoxTS txtCAT1;
+        private GroupBoxTS groupBoxTS25;
+        private GroupBoxTS groupBoxTS24;
+        private TabPage tpUserInterface;
+        private TabPage tbMIDIcat;
+        private CheckBoxTS chkEmulateSunSDR2Pro;
+        private CheckBoxTS chkEmulateExpertSDR3Protocol;
     }
 }

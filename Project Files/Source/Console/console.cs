@@ -1853,7 +1853,7 @@ namespace Thetis
 
             //MW0LGE_21k9 MEMORYLEAK - PerformanceCounter.NextValue() has a memory leak when using process based counter. It is ok with _Total.
             //Hide for now until resolved. m_bShowSystemCPUUsage will always be true as it is not recovered from db at the moment (see GetState)
-            thetisOnlyToolStripMenuItem.Visible = true;// false;
+            thetisOnlyToolStripMenuItem.Visible = false;
             //
 
             CalcDisplayFreq();
@@ -2129,6 +2129,26 @@ namespace Thetis
                 if (m_tcpTCIServer != null) m_tcpTCIServer.CWLUbecomesCW = m_bTCICWLUbecomesCW;
             }
         }
+        private bool m_bEmulateSunSDR2Pro = false;
+        public bool EmulateSunSDR2Pro
+        {
+            get { return m_bEmulateSunSDR2Pro; }
+            set
+            {
+                m_bEmulateSunSDR2Pro = value;
+                if (m_tcpTCIServer != null) m_tcpTCIServer.EmulateSunSDR2Pro = m_bEmulateSunSDR2Pro;
+            }
+        }
+        private bool m_bEmulateExpertSDR3Protocol = false;
+        public bool EmulateExpertSDR3Protocol
+        {
+            get { return m_bEmulateExpertSDR3Protocol; }
+            set
+            {
+                m_bEmulateExpertSDR3Protocol = value;
+                if (m_tcpTCIServer != null) m_tcpTCIServer.EmulateExpertSDR3Protocol = m_bEmulateExpertSDR3Protocol;
+            }
+        }
         private bool m_bTCIuseRX1vfoaForRX2vfoa = false;
         public bool TCIuseRX1vfoaForRX2vfoa
         {
@@ -2178,7 +2198,7 @@ namespace Thetis
 
                     addTCIDelegates();
 
-                    m_tcpTCIServer.StartServer(this, rateLimit, m_bTCIcopyRX2VFObToVFOa, m_bTCIuseRX1vfoaForRX2vfoa, m_bTCIsendInitialStateOnConnect, m_bTCICWLUbecomesCW);
+                    m_tcpTCIServer.StartServer(this, rateLimit, m_bTCIcopyRX2VFObToVFOa, m_bTCIuseRX1vfoaForRX2vfoa, m_bTCIsendInitialStateOnConnect, m_bTCICWLUbecomesCW, m_bEmulateSunSDR2Pro, m_bEmulateExpertSDR3Protocol);
 
                     if (!m_tcpTCIServer.IsServerRunning)
                     {

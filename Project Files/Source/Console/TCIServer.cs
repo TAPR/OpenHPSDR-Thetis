@@ -7,6 +7,110 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server
 // https://stackoverflow.com/questions/10200910/creating-a-hello-world-websocket-example
 //
+
+// from my SunSDR2PRO as reference
+// protocol: ExpertSDR3,1.8;
+// device: SunSDR2PRO;
+// receive_only: false;
+// trx_count: 2;
+// channels_count: 2;
+// vfo_limits: 0.0,160000000.0;
+// if_limits: -156250,156250;
+// modulations_list: AM,LSB,USB,CW,NFM,WSPR,FT8,FT4,JT65,JT9,RTTY,BPSK,DIGL,DIGU,WFM,DRM;
+// iq_samplerate: 48000;
+// audio_samplerate: 48000;
+// volume: -8;
+// mute: false;
+// mon_volume: -45;
+// mon_enable: false;
+// digl_offset: 0;
+// digu_offset: 0;
+// dds: 0,144559730;
+// dds: 1,1950000;
+// if:0,0,106320;
+// if:0,1,-429530;
+// if:1,0,0;
+// if:1,1,0;
+// vfo: 0,0,144666050;
+// vfo: 0,1,144130200;
+// vfo: 1,0,1950000;
+// vfo: 1,1,1950000;
+// modulation: 0,USB;
+// modulation: 1,AM;
+// agc_mode: 0,normal;
+// agc_gain: 0,100;
+// agc_mode: 1,normal;
+// agc_gain: 1,80;
+// rx_filter_band: 0,10,3960;
+// rx_filter_band: 1,-3000,3000;
+// rx_nb_enable: 0,false;
+// rx_nb_param: 0,70,20;
+// rx_nb_enable: 1,false;
+// rx_nb_param: 1,70,20;
+// rx_bin_enable: 0,false;
+// rx_bin_enable: 1,false;
+// rx_nr_enable: 0,false;
+// rx_nr_enable: 1,false;
+// rx_anc_enable: 0,false;
+// rx_anc_enable: 1,false;
+// rx_anf_enable: 0,false;
+// rx_anf_enable: 1,false;
+// rx_apf_enable: 0,false;
+// rx_apf_enable: 1,false;
+// rx_dse_enable: 0,false;
+// rx_dse_enable: 1,false;
+// rx_nf_enable: 0,false;
+// rx_nf_enable: 1,false;
+// rx_enable: 1,false;
+// tx_enable: 0,true;
+// tx_enable: 1,true;
+// lock:0,false;
+// lock:1,false;
+// rx_channel_enable: 0,1,false;
+// rit_enable: 0,false;
+// xit_enable: 0,false;
+// split_enable: 0,false;
+// rit_offset: 0,0;
+// xit_offset: 0,0;
+// sql_enable: 0,false;
+// sql_level: 0,-80;
+// rx_mute: 0,false;
+// rx_volume: 0,0,0;
+// rx_balance: 0,0,0;
+// rx_volume: 0,1,0;
+// rx_balance: 0,1,0;
+// rx_channel_enable: 1,1,false;
+// rit_enable: 1,false;
+// xit_enable: 1,false;
+// split_enable: 1,false;
+// rit_offset: 1,0;
+// xit_offset: 1,0;
+// sql_enable: 1,false;
+// sql_level: 1,-80;
+// rx_mute: 1,false;
+// rx_volume: 1,0,0;
+// rx_balance: 1,0,0;
+// rx_volume: 1,1,0;
+// rx_balance: 1,1,0;
+// cw_macros_speed: 30;
+// cw_macros_delay: 10;
+// cw_keyer_speed: 30;
+// drive: 0,0;
+// tune_drive: 0,100;
+// drive: 1,50;
+// tune_drive: 1,50;
+// trx: 0,false;
+// tune: 0,false;
+// iq_stop: 0;
+// trx: 1,false;
+// tune: 1,false;
+// iq_stop: 1;
+// app_focus: false;
+// tx_frequency: 1900000;
+// stop;
+// ready;
+//
+
 using System;
 using System.Text;
 using System.Net;
@@ -244,7 +348,7 @@ namespace Thetis
 			if (m_disconnected) return;
 
 			// check band for tx? TODO
-			sendTXEnable(rx-1, rx == 1 ? console.ThreadSafeTCIAccessor.RX2Enabled : true);
+			sendTXEnable(rx-1, rx == 1 ? true : console.ThreadSafeTCIAccessor.RX2Enabled); // MW0LGE_22b fixed, rx1 should be tx only, not rx2
 		}
 		public void FilterChange(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high)
         {
@@ -572,16 +676,16 @@ namespace Thetis
 
 			if (bSend)
 			{
-				sendVFO(0, 0);
-				sendVFO(0, 1);
-				sendVFO(1, 0);
-				sendVFO(1, 1);
 				sendDDS(0);
 				sendDDS(1);
 				sendIF(0, 0);
 				sendIF(0, 1);
 				sendIF(1, 1);
 				sendIF(1, 1);
+				sendVFO(0, 0);
+				sendVFO(0, 1);
+				sendVFO(1, 0);
+				sendVFO(1, 1);
 			}
 
 			sendMode(0);
@@ -612,9 +716,20 @@ namespace Thetis
 
 		private void sendInitialisationData()
         {
-			sendTextFrame("protocol:Thetis,1.7;");
-			
-			sendTextFrame("device:" + console.ThreadSafeTCIAccessor.CurrentHPSDRModel.ToString() + ";");
+			string sProtocol; //MW0LGE_22 emulate ee3 protocol
+			if (m_server != null && m_server.EmulateExpertSDR3Protocol)
+				sProtocol = "ExpertSDR3";
+            else
+				sProtocol = "Thetis";
+
+			sendTextFrame("protocol:" + sProtocol + ",1.8;");
+
+			string sDevice; //MW0LGE_22 emulate sunsdr
+			if (m_server != null && m_server.EmulateSunSDR2Pro)
+				sDevice = "SunSDR2PRO";
+			else
+				sDevice = console.ThreadSafeTCIAccessor.CurrentHPSDRModel.ToString();
+			sendTextFrame("device:" + sDevice + ";");
 			sendTextFrame("receive_only:false;");
 			sendTextFrame("trx_count:2;");
 			sendTextFrame("channels_count:2;");
@@ -1709,6 +1824,8 @@ namespace Thetis
 		private bool m_bSleepingInPurge = false;
 		private bool m_bDelegatesAdded = false;
 		private int m_nRateLimit = 0;
+		private bool m_bEmulateSunSDR2Pro = false;
+		private bool m_bEmulateExpertSDR3Protocol = false;
 
 		private frmLog _log;
 
@@ -1790,7 +1907,17 @@ namespace Thetis
 			get { return m_bSendInitialStateOnConnect; }
 			set { m_bSendInitialStateOnConnect = value;	}
 		}
-		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false)
+		public bool EmulateSunSDR2Pro
+        {
+            get { return m_bEmulateSunSDR2Pro; }
+			set { m_bEmulateSunSDR2Pro = value; }
+        }
+		public bool EmulateExpertSDR3Protocol
+		{
+			get { return m_bEmulateExpertSDR3Protocol; }
+			set { m_bEmulateExpertSDR3Protocol = value; }
+		}
+		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false)
 		{
 			if (m_server != null)
 			{
@@ -1799,6 +1926,8 @@ namespace Thetis
 				m_bUseRX1VFOaForRX2VFOa = bTCIuseRX1vfoaForRX2vfoa;
 				m_bSendInitialStateOnConnect = bSentInitialStateOnConnect;
 				m_bCWLUbecomesCW = bCWLUbecomesCW;
+				m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
+				m_bEmulateExpertSDR3Protocol = bEmulateExpertSDR3Protocol;
 
 				console = c;
 

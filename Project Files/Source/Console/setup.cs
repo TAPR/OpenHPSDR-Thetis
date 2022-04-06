@@ -23222,6 +23222,16 @@ namespace Thetis
                 txtTCPIPCATServerBindIPPort.Text = sTmp;
             }
         }
+
+        private void chkEmulateSunSDR2Pro_CheckedChanged(object sender, EventArgs e)
+        {
+            console.EmulateSunSDR2Pro = chkEmulateSunSDR2Pro.Checked;
+        }
+
+        private void chkEmulateExpertSDR3Protocol_CheckedChanged(object sender, EventArgs e)
+        {
+            console.EmulateExpertSDR3Protocol = chkEmulateExpertSDR3Protocol.Checked;
+        }
     }
 
     #region PADeviceInfo Helper Class
