@@ -1853,7 +1853,7 @@ namespace Thetis
 
             //MW0LGE_21k9 MEMORYLEAK - PerformanceCounter.NextValue() has a memory leak when using process based counter. It is ok with _Total.
             //Hide for now until resolved. m_bShowSystemCPUUsage will always be true as it is not recovered from db at the moment (see GetState)
-            thetisOnlyToolStripMenuItem.Visible = false;
+            thetisOnlyToolStripMenuItem.Visible = true;// false;
             //
 
             CalcDisplayFreq();
@@ -22021,34 +22021,32 @@ namespace Thetis
                 double bin_width;
                 double dRWB;
                 double rx_dBHz;
-                double passbandWidth;
-                double bin_dBHz;
+                int passbandWidth;
+                double rbw_dBHz;
 
                 if (bOverRX1)
                 {
                     bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
                     dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
-                    passbandWidth = (double)Display.RX1FilterHigh - (double)Display.RX1FilterLow;
+                    passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
                 }
                 else //rx2
                 {
                     bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
                     dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
-                    passbandWidth = (double)Display.RX2FilterHigh - (double)Display.RX2FilterLow;
+                    passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
                 }
 
-                bin_dBHz = 10.0 * Math.Log10(bin_width); //MW0LGE_22b
-                rx_dBHz = 10.0 * Math.Log10(passbandWidth);
+                rx_dBHz = 10.0 * Math.Log10((double)passbandWidth);//MW0LGE_22b
+                rbw_dBHz = 10.0 * Math.Log10(dRWB);
 
-                infoBar.Right1(1, "RdBHz " + rx_dBHz.ToString("N1") + "dB");
-                infoBar.Right2(1, "BdBHz " + bin_dBHz.ToString("N1") + "dB");
-                infoBar.Right3(1, "RBW " + dRWB.ToString("N3") + "Hz");
+                infoBar.Left1(1, "RBW " + dRWB.ToString("N1") + "Hz (" + rbw_dBHz.ToString("N1") + "dBHz)", 160);
+                infoBar.Left2(1, "PB " + passbandWidth.ToString() + "Hz (" + rx_dBHz.ToString("N1") + "dBHz)", 160);
             }
             else
             {
-                infoBar.Right1(1, "");
-                infoBar.Right2(1, "");
-                infoBar.Right3(1, "");
+                infoBar.Left1(1, "");
+                infoBar.Left2(1, "");
             }
         }
         private int HzInNPixels(int nPixelCount, int rx)

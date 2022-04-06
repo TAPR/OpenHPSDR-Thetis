@@ -3536,6 +3536,7 @@
             this.comboCAT2stopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpUserInterface = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.btnIPv4TCI = new System.Windows.Forms.ButtonTS();
             this.btnShowLog = new System.Windows.Forms.ButtonTS();
             this.chkCWLUbecomesCW = new System.Windows.Forms.CheckBoxTS();
             this.clrbtnOwnCallApearance = new Thetis.ColorButton();
@@ -3728,6 +3729,8 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCFCOMPGain = new System.Windows.Forms.Timer(this.components);
+            this.btnIPv4N1MM = new System.Windows.Forms.ButtonTS();
+            this.btnIPv4TCPCat = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -57801,6 +57804,7 @@
             // 
             // grpTCPIPcatServer
             // 
+            this.grpTCPIPcatServer.Controls.Add(this.btnIPv4TCPCat);
             this.grpTCPIPcatServer.Controls.Add(this.btnShowTCPIPCatLog);
             this.grpTCPIPcatServer.Controls.Add(this.chkWelcomeMessageTCPIPCat);
             this.grpTCPIPcatServer.Controls.Add(this.lblToggleToUse);
@@ -58395,6 +58399,7 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.btnIPv4TCI);
             this.grpTCIServer.Controls.Add(this.btnShowLog);
             this.grpTCIServer.Controls.Add(this.chkCWLUbecomesCW);
             this.grpTCIServer.Controls.Add(this.clrbtnOwnCallApearance);
@@ -58422,6 +58427,18 @@
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // btnIPv4TCI
+            // 
+            this.btnIPv4TCI.Image = null;
+            this.btnIPv4TCI.Location = new System.Drawing.Point(219, 54);
+            this.btnIPv4TCI.Name = "btnIPv4TCI";
+            this.btnIPv4TCI.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4TCI.TabIndex = 70;
+            this.btnIPv4TCI.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4TCI, "Show list if IPv4 addresses.");
+            this.btnIPv4TCI.UseVisualStyleBackColor = true;
+            this.btnIPv4TCI.Click += new System.EventHandler(this.btnIPv4TCI_Click);
             // 
             // btnShowLog
             // 
@@ -58720,6 +58737,7 @@
             // 
             // groupBoxTS16
             // 
+            this.groupBoxTS16.Controls.Add(this.btnIPv4N1MM);
             this.groupBoxTS16.Controls.Add(this.btnN1MMDefault);
             this.groupBoxTS16.Controls.Add(this.labelTS90);
             this.groupBoxTS16.Controls.Add(this.udN1MMSendRate);
@@ -58732,7 +58750,7 @@
             this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX1);
             this.groupBoxTS16.Location = new System.Drawing.Point(13, 18);
             this.groupBoxTS16.Name = "groupBoxTS16";
-            this.groupBoxTS16.Size = new System.Drawing.Size(291, 152);
+            this.groupBoxTS16.Size = new System.Drawing.Size(317, 152);
             this.groupBoxTS16.TabIndex = 57;
             this.groupBoxTS16.TabStop = false;
             this.groupBoxTS16.Text = "N1MM+ WaterfallBandmap";
@@ -61577,6 +61595,30 @@
             this.tmrCFCOMPGain.Enabled = true;
             this.tmrCFCOMPGain.Interval = 50;
             this.tmrCFCOMPGain.Tick += new System.EventHandler(this.tmrCFCOMPGain_Tick);
+            // 
+            // btnIPv4N1MM
+            // 
+            this.btnIPv4N1MM.Image = null;
+            this.btnIPv4N1MM.Location = new System.Drawing.Point(267, 86);
+            this.btnIPv4N1MM.Name = "btnIPv4N1MM";
+            this.btnIPv4N1MM.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4N1MM.TabIndex = 71;
+            this.btnIPv4N1MM.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4N1MM, "Show list if IPv4 addresses.");
+            this.btnIPv4N1MM.UseVisualStyleBackColor = true;
+            this.btnIPv4N1MM.Click += new System.EventHandler(this.btnIPv4N1MM_Click);
+            // 
+            // btnIPv4TCPCat
+            // 
+            this.btnIPv4TCPCat.Image = null;
+            this.btnIPv4TCPCat.Location = new System.Drawing.Point(270, 21);
+            this.btnIPv4TCPCat.Name = "btnIPv4TCPCat";
+            this.btnIPv4TCPCat.Size = new System.Drawing.Size(42, 26);
+            this.btnIPv4TCPCat.TabIndex = 99;
+            this.btnIPv4TCPCat.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnIPv4TCPCat, "Show list if IPv4 addresses.");
+            this.btnIPv4TCPCat.UseVisualStyleBackColor = true;
+            this.btnIPv4TCPCat.Click += new System.EventHandler(this.btnIPv4TCPCat_Click);
             // 
             // Setup
             // 
@@ -66583,5 +66625,8 @@
         private ButtonTS btnLoadGradient;
         private ButtonTS btnSaveGradient;
         private CheckBoxTS chkIgnoreSeqErrors;
+        private ButtonTS btnIPv4TCI;
+        private ButtonTS btnIPv4N1MM;
+        private ButtonTS btnIPv4TCPCat;
     }
 }

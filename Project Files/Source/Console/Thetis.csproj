@@ -285,6 +285,12 @@
     <Compile Include="Andromeda\FilterButtonsPopup.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmIPv4Picker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmIPv4Picker.Designer.cs">
+      <DependentUpon>frmIPv4Picker.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmBandStack2.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -648,6 +654,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\FilterButtonsPopup.resx">
       <DependentUpon>FilterButtonsPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmIPv4Picker.resx">
+      <DependentUpon>frmIPv4Picker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmBandStack2.resx">
       <DependentUpon>frmBandStack2.cs</DependentUpon>

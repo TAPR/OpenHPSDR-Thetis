@@ -23180,6 +23180,48 @@ namespace Thetis
         {
             console.InfoBarShowSeqErrors = !chkIgnoreSeqErrors.Checked;
         }
+
+        private void btnIPv4TCI_Click(object sender, EventArgs e)
+        {
+            frmIPv4Picker f = new frmIPv4Picker();
+            f.Init(txtTCIServerBindIPPort.Text);
+            DialogResult dr = f.ShowDialog(this);
+
+            if (dr == DialogResult.OK)
+            {
+                string sTmp = f.IP;
+                if (sTmp == "") sTmp = "127.0.0.1:50001";
+                txtTCIServerBindIPPort.Text = sTmp;
+            }
+        }
+
+        private void btnIPv4N1MM_Click(object sender, EventArgs e)
+        {
+            frmIPv4Picker f = new frmIPv4Picker();
+            f.Init(txtN1MMSendTo.Text, true);
+            DialogResult dr = f.ShowDialog(this);
+
+            if (dr == DialogResult.OK)
+            {
+                string sTmp = f.IP;
+                if (sTmp == "") sTmp = "127.0.0.1:13064";
+                txtN1MMSendTo.Text = sTmp;
+            }
+        }
+
+        private void btnIPv4TCPCat_Click(object sender, EventArgs e)
+        {
+            frmIPv4Picker f = new frmIPv4Picker();
+            f.Init(txtTCPIPCATServerBindIPPort.Text);
+            DialogResult dr = f.ShowDialog(this);
+
+            if (dr == DialogResult.OK)
+            {
+                string sTmp = f.IP;
+                if (sTmp == "") sTmp = "127.0.0.1:13013";
+                txtTCPIPCATServerBindIPPort.Text = sTmp;
+            }
+        }
     }
 
     #region PADeviceInfo Helper Class

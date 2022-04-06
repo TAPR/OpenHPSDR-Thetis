@@ -67,6 +67,12 @@ namespace Thetis
         private string[] _right1;
         private string[] _right2;
         private string[] _right3;
+        private int[] _left1BaseWidth;
+        private int[] _left2BaseWidth;
+        private int[] _left3BaseWidth;
+        private int[] _left1Width;
+        private int[] _left2Width;
+        private int[] _left3Width;
 
         private frmInfoBarPopup _frmInfoBarPopup_Button1;
         private ToolStripDropDown _toolStripForm_Button1;
@@ -168,8 +174,25 @@ namespace Thetis
             _right2 = new string[MAX_FLIP];
             _right3 = new string[MAX_FLIP];
 
+            _left1BaseWidth = new int[MAX_FLIP];
+            _left2BaseWidth = new int[MAX_FLIP];
+            _left3BaseWidth = new int[MAX_FLIP];
+            _left1Width = new int[MAX_FLIP];
+            _left2Width = new int[MAX_FLIP];
+            _left3Width = new int[MAX_FLIP];
+
+            for (int n=0; n<MAX_FLIP; n++)
+            {
+                _left1BaseWidth[n] = lblLeft1.Width;
+                _left2BaseWidth[n] = lblLeft2.Width;
+                _left3BaseWidth[n] = lblLeft3.Width;
+                _left1Width[n] = lblLeft1.Width;
+                _left2Width[n] = lblLeft2.Width;
+                _left3Width[n] = lblLeft3.Width;
+            }
+
             // add the actions
-            for(int n = 0; n < (int)ActionTypes.LAST; n++)
+            for (int n = 0; n < (int)ActionTypes.LAST; n++)
             {
                 _button1Actions.Add((ActionTypes)n, new ActionState() { Action = (ActionTypes)n });
                 _button2Actions.Add((ActionTypes)n, new ActionState() { Action = (ActionTypes)n });
@@ -542,23 +565,59 @@ namespace Thetis
             }
         }
 
-        public void Left1(int flipLayer, string value)
+        public void Left1(int flipLayer, string value, int width = -1)
         {
             if (flipLayer < 0 || flipLayer > MAX_FLIP - 1) return;
             _left1[flipLayer] = value;
+
+            if (width == -1)
+            {
+                _left1Width[flipLayer] = _left1BaseWidth[flipLayer];
+            }
+            else
+            {
+                _left1Width[flipLayer] = width;
+            }
+
             lblLeft1.Text = _left1[_currentFlip];
+
+            repositionControls();
         }
-        public void Left2(int flipLayer, string value)
+        public void Left2(int flipLayer, string value, int width = -1)
         {
             if (flipLayer < 0 || flipLayer > MAX_FLIP - 1) return;
             _left2[flipLayer] = value;
+
+            if (width == -1)
+            {
+                _left2Width[flipLayer] = _left2BaseWidth[flipLayer];
+            }
+            else
+            {
+                _left2Width[flipLayer] = width;
+            }
+
             lblLeft2.Text = _left2[_currentFlip];
+
+            repositionControls();
         }
-        public void Left3(int flipLayer, string value)
+        public void Left3(int flipLayer, string value, int width = -1)
         {
             if (flipLayer < 0 || flipLayer > MAX_FLIP - 1) return;
             _left3[flipLayer] = value;
+
+            if (width == -1)
+            {
+                _left3Width[flipLayer] = _left3BaseWidth[flipLayer];
+            }
+            else
+            {
+                _left3Width[flipLayer] = width;
+            }
+
             lblLeft3.Text = _left3[_currentFlip];
+
+            repositionControls();
         }
         public void Right1(int flipLayer, string value)
         {
@@ -741,6 +800,8 @@ namespace Thetis
             lblRight1.Text = _right1[_currentFlip];
             lblRight2.Text = _right2[_currentFlip];
             lblRight3.Text = _right3[_currentFlip];
+
+            repositionControls();
         }
 
         public int CurrentFlip
@@ -964,6 +1025,14 @@ namespace Thetis
             lblPS.Left = newLeftFB + halfSpan;
             lblPS.Width = halfSpan;
 
+            // align left labels
+            lblLeft1.Width = _left1Width[_currentFlip];
+            lblLeft2.Width = _left2Width[_currentFlip];
+            lblLeft3.Width = _left3Width[_currentFlip];
+
+            lblLeft2.Left = lblLeft1.Left + lblLeft1.Width;
+            lblLeft3.Left = lblLeft2.Left + lblLeft2.Width;
+
             // now the right labels
             int shift = lblRight1.Width + lblRight2.Width + lblRight3.Width + 4;
             lblRight1.Left = lblFB.Left - shift;
@@ -987,6 +1056,11 @@ namespace Thetis
                 if (lblFB.Text == "FB") lblFB.Text = "Feedback";
                 if (lblPS.Text == "Correct") lblPS.Text = "Correcting";
             }
+
+            // check for overlapping anything on left
+            lblLeft1.Visible = !lblSplitter.Bounds.IntersectsWith(lblLeft1.Bounds);
+            lblLeft2.Visible = lblLeft1.Visible && !lblSplitter.Bounds.IntersectsWith(lblLeft2.Bounds);
+            lblLeft3.Visible = lblLeft2.Visible && !lblSplitter.Bounds.IntersectsWith(lblLeft3.Bounds);
 
             // check for right hand side overlapping left hand side
             lblRight1.Visible = !(lblRight1.Bounds.IntersectsWith(lblLeft3.Bounds) || lblRight1.Bounds.IntersectsWith(lblLeft2.Bounds) || lblRight1.Bounds.IntersectsWith(lblLeft1.Bounds));
