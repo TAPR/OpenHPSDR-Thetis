@@ -22020,23 +22020,33 @@ namespace Thetis
             {
                 double bin_width;
                 double dRWB;
+                double rx_dBHz;
+                double passbandWidth;
+                double bin_dBHz;
+
                 if (bOverRX1)
                 {
                     bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
                     dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
+                    passbandWidth = (double)Display.RX1FilterHigh - (double)Display.RX1FilterLow;
                 }
                 else //rx2
                 {
                     bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
                     dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
+                    passbandWidth = (double)Display.RX2FilterHigh - (double)Display.RX2FilterLow;
                 }
-                double dBHZ = 10.0 * Math.Log10(bin_width); //MW0LGE_22b
 
-                infoBar.Right2(1, "dBHz " + dBHZ.ToString("N2") + "Hz");
+                bin_dBHz = 10.0 * Math.Log10(bin_width); //MW0LGE_22b
+                rx_dBHz = 10.0 * Math.Log10(passbandWidth);
+
+                infoBar.Right1(1, "RdBHz " + rx_dBHz.ToString("N1") + "dB");
+                infoBar.Right2(1, "BdBHz " + bin_dBHz.ToString("N1") + "dB");
                 infoBar.Right3(1, "RBW " + dRWB.ToString("N3") + "Hz");
             }
             else
             {
+                infoBar.Right1(1, "");
                 infoBar.Right2(1, "");
                 infoBar.Right3(1, "");
             }
