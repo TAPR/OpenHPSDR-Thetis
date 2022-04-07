@@ -2176,7 +2176,7 @@ namespace Thetis
             set
             {
                 m_bTCIsendInitialStateOnConnect = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.SendInitialStateOnConnect = m_bTCIsendInitialStateOnConnect;
+                if (m_tcpTCIServer != null) m_tcpTCIServer.SendInitialFrequencyStateOnConnect = m_bTCIsendInitialStateOnConnect;
             }
         }
         public void ShowTCILog()
@@ -52176,6 +52176,14 @@ namespace Thetis
             }
         }
         #endregion
+        //private bool _btemp = false;
+        //private void buttonTS1_Click(object sender, EventArgs e)
+        //{
+        //    _btemp = !_btemp;
+        //    NetworkIO.SetAudioAmpEnable(_btemp);
+        //    bool enabled = NetworkIO.getUserI02();
+        //    Debug.Print("currently : " + enabled);
+        //}
     }
 
     public class DigiMode

@@ -6,7 +6,7 @@
 // https://www.codeproject.com/Articles/5733/A-TCP-IP-Server-written-in-C
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server
 // https://stackoverflow.com/questions/10200910/creating-a-hello-world-websocket-example
-//
+// https://github.com/ExpertSDR3/TCI
 
 // from my SunSDR2PRO as reference
 // protocol: ExpertSDR3,1.8;
@@ -210,7 +210,7 @@ namespace Thetis
 		{
 			if (m_disconnected) return;
 			bool bSplit = console.ThreadSafeTCIAccessor.VFOSplit;
-			sendSpit(rx-1, bSplit);
+			sendSplit(rx-1, bSplit);
 		}
 
 		private void limitList()
@@ -493,7 +493,7 @@ namespace Thetis
 		{
 			sendTextFrame("stop;");
 		}
-		private void sendSpit(int rx, bool bSplit)
+		private void sendSplit(int rx, bool bSplit)
         {
 			string s = "split_enable:" + rx.ToString() + "," + bSplit.ToString().ToLower() + ";";
 			sendTextFrame(s);
@@ -585,7 +585,7 @@ namespace Thetis
 			else
 				sMode = mode.ToString().ToLower();
 
-			string s = "modulation:" + rx.ToString() + "," + sMode + ";";
+			string s = "modulation:" + rx.ToString() + "," + sMode.ToUpper() + ";"; // MW0LGE_22b mods are uppcase on the sun, replicate
 			sendTextFrame(s);
 		}
 		private void sendTunePower(int rx, int drive)
@@ -670,9 +670,7 @@ namespace Thetis
 
 		private void sendInitialRadioState()
         {
-			sendStartStop(console.ThreadSafeTCIAccessor.PowerOn);
-
-			bool bSend = m_server != null ? m_server.SendInitialStateOnConnect : true;
+			bool bSend = m_server != null ? m_server.SendInitialFrequencyStateOnConnect : true;
 
 			if (bSend)
 			{
@@ -696,7 +694,12 @@ namespace Thetis
 			sendRXEnable(0, !console.ThreadSafeTCIAccessor.MOX);
 			sendRXEnable(1, console.ThreadSafeTCIAccessor.RX2Enabled && !console.ThreadSafeTCIAccessor.MOX);
 
+			//lock
 			//TODO rx channel enable
+			// rit/xit
+
+			sendSplit(0, console.ThreadSafeTCIAccessor.VFOSplit);
+			sendSplit(1, console.ThreadSafeTCIAccessor.RX2Enabled && console.ThreadSafeTCIAccessor.VFOSplit);
 
 			sendTXEnable(0, !console.ThreadSafeTCIAccessor.MOX);
 			sendTXEnable(1, console.ThreadSafeTCIAccessor.RX2Enabled && !console.ThreadSafeTCIAccessor.MOX);
@@ -707,11 +710,13 @@ namespace Thetis
             sendTune(0, console.ThreadSafeTCIAccessor.TUN && !(console.ThreadSafeTCIAccessor.VFOBTX && console.ThreadSafeTCIAccessor.RX2Enabled));
             sendTune(1, console.ThreadSafeTCIAccessor.TUN && (console.ThreadSafeTCIAccessor.VFOBTX && console.ThreadSafeTCIAccessor.RX2Enabled));
 
-            //TODO iq sample rate
-            //TODO iq stop
-            //TODO audio_samplerate
+			//TODO iq sample rate
+			//TODO iq stop
+			//TODO audio_samplerate
 
-            Debug.Print("SENT INITIAL STATE");
+			sendStartStop(console.ThreadSafeTCIAccessor.PowerOn);// MW0LGE_22b moved here to replicate sun
+
+			Debug.Print("SENT INITIAL STATE");
 		}
 
 		private void sendInitialisationData()
@@ -745,7 +750,7 @@ namespace Thetis
 			else
 				sCW = "cwl, cwu";
 
-			sendTextFrame("modulations_list:am,sam,dsb,lsb,usb,nfm,fm,digl,digu," + sCW + ";");
+			sendTextFrame("modulations_list:" + ("am,sam,dsb,lsb,usb,nfm,fm,digl,digu," + sCW).ToUpper() + ";"); // MW0LGE_22b modulations are upper in sun, so replicate
 
 			sendInitialRadioState();
 
@@ -1134,7 +1139,7 @@ namespace Thetis
 				if (bOK)
 				{
 					bool bSplitGet = console.ThreadSafeTCIAccessor.VFOSplit;
-					sendSpit(rx, bSplitGet);
+					sendSplit(rx, bSplitGet);
 				}
 			}
 		}
@@ -1530,6 +1535,14 @@ namespace Thetis
 				SpotManager2.DeleteSpot(args[0]);
             }
         }
+		private void handleDrive(string[] args)
+		{
+			//todo
+		}
+		private void handleTuneDrive(string[] args)
+        {
+			//todo
+		}
 		private void handleSpot(string[] args)
         {
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
@@ -1709,6 +1722,12 @@ namespace Thetis
 						break;
 					case "spot_delete":
 						handleDeleteSpot(args);
+						break;
+					case "drive":
+						handleDrive(args);
+						break;
+					case "tune_drive":
+						handleTuneDrive(args);
 						break;
                 }
             }
@@ -1902,7 +1921,7 @@ namespace Thetis
 			set { m_bUseRX1VFOaForRX2VFOa = value; }
 		}
 		private bool m_bSendInitialStateOnConnect = true;
-		public bool SendInitialStateOnConnect
+		public bool SendInitialFrequencyStateOnConnect
 		{
 			get { return m_bSendInitialStateOnConnect; }
 			set { m_bSendInitialStateOnConnect = value;	}

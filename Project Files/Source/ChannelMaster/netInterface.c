@@ -939,6 +939,18 @@ void SetEERPWMmax(int max)
 	}
 }
 
+////MW0LGE_22b
+//PORT
+//void SetAudioAmpEnable(int enable)
+//{
+//	if (audioamp_enable != enable)
+//	{
+//		audioamp_enable = enable;
+//		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
+//			CmdHighPriority();
+//	}
+//}
+
 // *************************************************
 // misc functions
 // *************************************************

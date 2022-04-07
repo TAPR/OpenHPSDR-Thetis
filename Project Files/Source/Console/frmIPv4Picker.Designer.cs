@@ -68,7 +68,7 @@
             "26"});
             this.comboAddresses.Location = new System.Drawing.Point(12, 12);
             this.comboAddresses.Name = "comboAddresses";
-            this.comboAddresses.Size = new System.Drawing.Size(121, 150);
+            this.comboAddresses.Size = new System.Drawing.Size(125, 150);
             this.comboAddresses.TabIndex = 0;
             // 
             // frmIPv4Picker

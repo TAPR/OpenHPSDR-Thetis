@@ -111,6 +111,10 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetEERPWMmax(int max);
 
+        //[DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+
+        //public static extern void SetAudioAmpEnable(bool enable);
+
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int getUserADC0();
 

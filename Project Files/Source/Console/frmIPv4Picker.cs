@@ -14,6 +14,8 @@ namespace Thetis
     {
         private string _ip = "";
         private int _port = -1;
+        private bool _bPortOk = false;
+        private string _sOldPort = "";
         public frmIPv4Picker()
         {
             InitializeComponent();
@@ -21,10 +23,21 @@ namespace Thetis
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            if (_port != -1)
+            if (_port != -1 && _bPortOk)
+            {
                 _ip = comboAddresses.Text + ":" + _port.ToString();
+            }
             else
-                _ip = comboAddresses.Text;
+            {
+                if (_sOldPort != "")
+                {
+                    _ip = comboAddresses.Text + ":" + _sOldPort.ToString();
+                }
+                else
+                {
+                    _ip = comboAddresses.Text;
+                }
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -40,6 +53,9 @@ namespace Thetis
         {
             _port = -1;
             _ip = "";
+            _bPortOk = false;
+            _sOldPort = "";
+
             comboAddresses.Items.Clear();
 
             try
@@ -55,7 +71,8 @@ namespace Thetis
                 {
                     sTmp = parts[0];
                     sPort = parts[1];
-                    bool bOk = int.TryParse(sPort, out _port);
+                    _sOldPort = sPort;
+                    bool _bPortOk = int.TryParse(sPort, out _port);
                 }
 
                 bool bOK = IPAddress.TryParse(sTmp, out address);
