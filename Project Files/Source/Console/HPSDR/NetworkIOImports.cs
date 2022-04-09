@@ -111,9 +111,9 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetEERPWMmax(int max);
 
-        //[DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
 
-        //public static extern void SetAudioAmpEnable(bool enable);
+        public static extern void SetAudioAmpEnable(bool enable);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int getUserADC0();
@@ -139,6 +139,7 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetUserOut3(int bits);
 
+        // p1 versions
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool getUserI01(); // TX Inhibit input sense
 
@@ -150,6 +151,24 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool getUserI04();
+        //
+
+        // p2 versions
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool getUserI04_p2();
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool getUserI05_p2(); // TX Inhibit input sense
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool getUserI06_p2();
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool getUserI08_p2();
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool getUserI02_p2();
+        //
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)] // controls PureSignal
         public static extern void SetPureSignal(int enable);

@@ -1523,6 +1523,15 @@ namespace Thetis
             power_by_band = new int[(int)Band.LAST];
             for (int i = 0; i < (int)Band.LAST; i++) power_by_band[i] = 50;
 
+            limitPower_by_band = new int[(int)Band.LAST];
+            for (int i = 0; i < (int)Band.LAST; i++) limitPower_by_band[i] = 100;
+
+            tunePower_by_band = new int[(int)Band.LAST];
+            for (int i = 0; i < (int)Band.LAST; i++) tunePower_by_band[i] = 50;
+
+            limitTunePower_by_band = new int[(int)Band.LAST];
+            for (int i = 0; i < (int)Band.LAST; i++) limitTunePower_by_band[i] = 100;
+
             fm_tx_offset_by_band_mhz = new double[(int)Band.LAST];
             for (int i = 0; i < (int)Band.LAST; i++) // setup default FM offsets
             {
@@ -1803,6 +1812,7 @@ namespace Thetis
                 comboRX2AGC.Text = "Med";
            
             ptbPWR_Scroll(this, EventArgs.Empty);
+            ptbTune_Scroll(this, EventArgs.Empty); //MW0LGE_22b
             ptbAF_Scroll(this, EventArgs.Empty);
             ptbSquelch_Scroll(this, EventArgs.Empty);
             ptbMic_Scroll(this, EventArgs.Empty);
@@ -1902,6 +1912,8 @@ namespace Thetis
             non_qsk_ATTOnTXVal = SetupForm.ATTOnTX;
             non_qsk_breakin_delay = break_in_delay;
             RX1_band_change = RX1Band;
+
+            setupTuneSlider(); //MW0LGE_22b
 
             //setup info bar
             SetupInfoBar();
@@ -2829,6 +2841,24 @@ namespace Thetis
             s = "power_by_band/";
             for (int i = 0; i < (int)Band.LAST; i++)
                 s += power_by_band[i].ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "tunePower_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += tunePower_by_band[i].ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "limitPower_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += limitPower_by_band[i].ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "limitTunePower_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += limitTunePower_by_band[i].ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
@@ -3998,6 +4028,30 @@ namespace Thetis
                         for (int i = 0; i < (int)Band.LAST; i++)
                         {
                             power_by_band[i] = int.Parse(list[i]);
+                        }
+                        break;
+
+                    case var nam when name.StartsWith("tunePower_by_band"):
+                        list = val.Split('|');
+                        for (int i = 0; i < (int)Band.LAST; i++)
+                        {
+                            tunePower_by_band[i] = int.Parse(list[i]);
+                        }
+                        break;
+
+                    case var nam when name.StartsWith("limitPower_by_band"):
+                        list = val.Split('|');
+                        for (int i = 0; i < (int)Band.LAST; i++)
+                        {
+                            limitPower_by_band[i] = int.Parse(list[i]);
+                        }
+                        break;
+
+                    case var nam when name.StartsWith("limitTunePower_by_band"):
+                        list = val.Split('|');
+                        for (int i = 0; i < (int)Band.LAST; i++)
+                        {
+                            limitTunePower_by_band[i] = int.Parse(list[i]);
                         }
                         break;
 
@@ -12656,6 +12710,9 @@ namespace Thetis
         private double[] fm_tx_offset_by_band_mhz;
 
         private int[] power_by_band;
+        private int[] tunePower_by_band;
+        private int[] limitPower_by_band;
+        private int[] limitTunePower_by_band;
         public void SetPower(Band b, int pwr)
         {
             power_by_band[(int)b] = pwr;
@@ -17980,10 +18037,27 @@ namespace Thetis
                 if (!IsSetupFormNull)
                     SetupForm.TunePower = tune_power;
 
-                if (chkTUN.Checked && !tx_tune_power)
+                if (chkTUN.Checked)// && !tx_tune_power) // MW0LGE_22b now done it power handler
                     PWR = tune_power;
 
-                if (changed) DrivePowerChangedHandlers?.Invoke(1, tune_power, true); // RX1 only MW0LGE_21k9d
+                //if (changed) DrivePowerChangedHandlers?.Invoke(1, tune_power, true); // RX1 only MW0LGE_21k9d
+            }
+        }
+        private int twotone_tune_power; //MW0LGE_22b
+        public int TwoToneTunePower
+        {
+            get { return twotone_tune_power; }
+            set
+            {
+                bool changed = (value != twotone_tune_power);
+                twotone_tune_power = value;
+                if (!IsSetupFormNull)
+                    SetupForm.TunePower = twotone_tune_power;
+
+                if (chk2TONE.Checked)// && !tx_tune_power) // MW0LGE_22b now done it power handler
+                    TunePWR = twotone_tune_power;
+
+                //if (changed) DrivePowerChangedHandlers?.Invoke(1, tune_power, true); // RX1 only MW0LGE_21k9d
             }
         }
 
@@ -18270,7 +18344,11 @@ namespace Thetis
                     power_by_band[(int)old_band] = old_pwr;
 
                     //if(tx_xvtr_index < 0)
+                    ptbPWR.LimitValue = limitPower_by_band[(int)value];
+                    ptbTune.LimitValue = limitTunePower_by_band[(int)value]; //MW0LGE_22b
+
                     PWR = power_by_band[(int)value];
+                    TunePWR = tunePower_by_band[(int)value]; //MW0LGE_22b
 
                     //ptbPWR_Scroll(this, EventArgs.Empty);  // MW0LGE commented, setting PWR= above calls _Scroll
 
@@ -19191,6 +19269,14 @@ namespace Thetis
             }
         }
 
+        public int PWRConstrained
+        {
+            get { return ptbPWR.ConstrainedValue; }
+        }
+        public int TunePWRConstrained
+        {
+            get { return ptbTune.ConstrainedValue; }
+        }
         public int PWR
         {
             get { return ptbPWR.Value; }
@@ -19201,6 +19287,18 @@ namespace Thetis
 
                 ptbPWR.Value = value;
                 ptbPWR_Scroll(this, EventArgs.Empty);
+            }
+        }
+        public int TunePWR  //MW0LGE_22b
+        {
+            get { return ptbTune.Value; }
+            set
+            {
+                value = Math.Max(0, value);			// lower bound
+                value = Math.Min(100, value);		// upper bound
+
+                ptbTune.Value = value;
+                ptbTune_Scroll(this, EventArgs.Empty);
             }
         }
 
@@ -27025,19 +27123,20 @@ namespace Thetis
             }
         }
 
-        bool audio_amp_mute;
+        bool tmp;
+        //bool audio_amp_mute;
         private async void PollTXInhibit()
         {
             bool inhibit_input;
-            bool audio_amp_mute_input;
             while (chkPower.Checked)
             {
                 if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
                 {
                     if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
-                        inhibit_input = NetworkIO.getUserI02();
+                        inhibit_input = NetworkIO.getUserI05_p2();//MW0LGE_22b
                     else
-                        inhibit_input = NetworkIO.getUserI01();
+                        inhibit_input = NetworkIO.getUserI01(); // <- is this correct for all other radios? even P2's that are not 7k/8k's ?  //MW0LGE_22b
+
                     if (tx_inhibit_sense)
                     {
                         if (inhibit_input) TXInhibit = true;
@@ -27050,16 +27149,49 @@ namespace Thetis
                     }
                 }
 
-                if (current_hpsdr_model == HPSDRModel.ANAN7000D)
+                bool b = NetworkIO.getUserI04_p2();
+                if(b != tmp)
                 {
-                    audio_amp_mute_input = NetworkIO.getUserI01();
-                    if (audio_amp_mute_input != audio_amp_mute)
-                        NetworkIO.SendHighPriority(1);
-                    audio_amp_mute = audio_amp_mute_input;
+                    tmp = b;
+                    Debug.Print("changed to : " + b.ToString());
                 }
+
                 await Task.Delay(100);
-                //Thread.Sleep(40);
             }
+
+            //MW0LGE_22b old
+            //bool inhibit_input;
+            //bool audio_amp_mute_input;
+            //while (chkPower.Checked)
+            //{
+            //    if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
+            //    {
+            //        if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
+            //            inhibit_input = NetworkIO.getUserI02();
+            //        else
+            //            inhibit_input = NetworkIO.getUserI01();
+            //        if (tx_inhibit_sense)
+            //        {
+            //            if (inhibit_input) TXInhibit = true;
+            //            else TXInhibit = false;
+            //        }
+            //        else
+            //        {
+            //            if (inhibit_input) TXInhibit = false;
+            //            else TXInhibit = true;
+            //        }
+            //    }
+
+            //    if (current_hpsdr_model == HPSDRModel.ANAN7000D)
+            //    {
+            //        audio_amp_mute_input = NetworkIO.getUserI01();
+            //        if (audio_amp_mute_input != audio_amp_mute)
+            //            NetworkIO.SendHighPriority(1);
+            //        audio_amp_mute = audio_amp_mute_input;
+            //    }
+            //    await Task.Delay(100);
+            //    //Thread.Sleep(40);
+            //}
         }
 
         private UdpClient n1mm_udp_client;
@@ -29181,6 +29313,8 @@ namespace Thetis
                 if (m_bAttontx) NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
                 else NetworkIO.SetTxAttenData(0);
 
+                enableAudioAmplfier(_bEnableAudioAmplifier); // MW0LGE_22b
+
                 if (!Audio.Start())   // starts JanusAudio running
                 {
                     chkPower.Checked = false;
@@ -30386,65 +30520,87 @@ namespace Thetis
             return false;
         }
 
+        private void updateDriveLabel(bool bShowLimitValue, System.EventArgs e)
+        {
+            if (!bShowLimitValue)
+            {
+                if (ptbPWR.IsConstrained)
+                    lblPWR.Text = "Drive:  " + ptbPWR.ConstrainedValue.ToString() + " (lim)";
+                else
+                    lblPWR.Text = "Drive:  " + ptbPWR.Value.ToString();
+            }
+            else
+            {
+                PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
+                lblPWR.Text = "Drive Limit: " + lc.LimitValue.ToString();
+            }
+        }
+
+        private void ptbPWR_MouseUp(object sender, MouseEventArgs e)
+        {
+            updateDriveLabel(false, EventArgs.Empty);
+        }
         private double m_fDrivePower = -1;
         private void ptbPWR_Scroll(object sender, System.EventArgs e)
         {
-            lblPWR.Text = "Drive:  " + ptbPWR.Value.ToString();
+            PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
+            updateDriveLabel(lc != null, e);
 
             if (IsSetupFormNull)
                 return;
 
-            Band b = tx_band;
+            if (lc != null)
+                    limitPower_by_band[(int)tx_band] = lc.LimitValue; // store the adjusted limit level
 
-            int new_pwr = 0;
-            float val = 0.0f;
-            if (!tuning || (tuning && tx_tune_power))
-            {
-                new_pwr = ptbPWR.Value;
-                val = (float)ptbPWR.Value;
-            }
-            else
-            {
-                new_pwr = tune_power;
-                val = (float)tune_power;
-            }
-            power_by_band[(int)tx_band] = new_pwr;
+            int new_pwr = setPowerWithHelper();
+            power_by_band[(int)tx_band] = ptbPWR.Value;
+            //if (!tuning || (tuning && tx_tune_power))
+            //    new_pwr = ptbPWR.Value;
+            //else
+            //    new_pwr = tune_power;
 
-            if ((!tuning || xvtr_tune_power) && tx_xvtr_index >= 0)
-            {
-                int power = ptbPWR.Value;
-                if (ptbPWR.Focused)
-                    XVTRForm.SetPower(tx_xvtr_index, power);
-                b = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
-            }
+            //power_by_band[(int)tx_band] = new_pwr;
+            //if (lc != null) limitPower_by_band[(int)tx_band] = lc.LimitValue; // store the adjusted limit level
 
-            double target_dbm = 10 * (double)Math.Log10((double)val * 1000);
-            double gbb = 0.0;
-            if (tx_xvtr_index >= 0)
-            {
-                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
-                gbb = GainByBand(lo_band);
-            }
-            else
-            {
-                gbb = GainByBand(TXBand);
-            }
-            target_dbm -= gbb;
+            //if ((!tuning || xvtr_tune_power) && tx_xvtr_index >= 0)
+            //{
+            //    int power = ptbPWR.Value;
+            //    if (ptbPWR.Focused)
+            //        XVTRForm.SetPower(tx_xvtr_index, power);
+            //    Band b = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
+            //}
 
-            double target_volts = Math.Sqrt(Math.Pow(10, target_dbm * 0.1) * 0.05);		// E = Sqrt(P * R) 
+            ////MW0LGE_22b constrain power
+            //new_pwr = ptbPWR.ConstrainValue(new_pwr);
+            ////
 
-            if (ptbPWR.Value == 0)
-            {
-                Audio.RadioVolume = 0.0;
-                if (chkTUN.Checked)
-                    radio.GetDSPTX(0).TXPostGenRun = 0;
-            }
-            else
-            {
-                if (chkTUN.Checked)
-                    radio.GetDSPTX(0).TXPostGenRun = 1;
-                Audio.RadioVolume = (double)Math.Min((target_volts / 0.8), 1.0);
-            }
+            //double target_dbm = 10 * (double)Math.Log10((double)new_pwr * 1000);
+            //double gbb = 0.0;
+            //if (tx_xvtr_index >= 0)
+            //{
+            //    Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
+            //    gbb = GainByBand(lo_band);
+            //}
+            //else
+            //{
+            //    gbb = GainByBand(TXBand);
+            //}
+            //target_dbm -= gbb;
+
+            //double target_volts = Math.Sqrt(Math.Pow(10, target_dbm * 0.1) * 0.05);		// E = Sqrt(P * R) 
+
+            //if (ptbPWR.Value == 0)
+            //{
+            //    Audio.RadioVolume = 0.0;
+            //    if (chkTUN.Checked)
+            //        radio.GetDSPTX(0).TXPostGenRun = 0;
+            //}
+            //else
+            //{
+            //    if (chkTUN.Checked)
+            //        radio.GetDSPTX(0).TXPostGenRun = 1;
+            //    Audio.RadioVolume = (double)Math.Min((target_volts / 0.8), 1.0);
+            //}
 
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
@@ -30459,6 +30615,7 @@ namespace Thetis
             //-W2PA Update LEDs on Behringer MIDI controller mini wheel
             pct = Convert.ToDouble(ptbPWR.Value - ptbPWR.Minimum) / Convert.ToDouble(ptbPWR.Maximum - ptbPWR.Minimum);
             Midi2Cat.SendUpdateToMidi(CatCmd.DriveLevel_inc, pct);
+
             if (sliderForm != null)
                 sliderForm.TXDrive = ptbPWR.Value;
 
@@ -30492,7 +30649,7 @@ namespace Thetis
 
             if ((!MOX && !Audio.MOX) ||
                 (MOX && !Audio.MOX)) RXAF = ptbAF.Value;
-            else if (MOX && !m_bIgnoreAFChangeForMonitor) TXAF = ptbAF.Value; //MW0LGE_21k9 ingore the monitor AF slider change when in mox
+            else if (MOX && chkMON.Checked && !m_bIgnoreAFChangeForMonitor) TXAF = ptbAF.Value; //MW0LGE_21k9 ingore the monitor AF slider change when in mox //MW0LGE_22b added chMON, so only adjust txaf if monitoring
 
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
@@ -31703,10 +31860,24 @@ namespace Thetis
                 radio.GetDSPTX(0).TXPostGenMode = 0;
                 radio.GetDSPTX(0).TXPostGenRun = 1;
 
-                if (!tx_tune_power)
-                    PreviousPWR = ptbPWR.Value;                                 // save current value
-                if ((!xvtr_tune_power || tx_xvtr_index < 0) && !tx_tune_power)  // switch to TUN value
-                    PWR = tune_power;
+                // remember old power //MW0LGE_22b
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED) 
+                    PreviousPWR = ptbPWR.Value;
+                // set power
+                int new_pwr = setPowerWithHelper();
+                //
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
+                {
+                    ptbPWR.LimitEnabled = false;
+                    PWR = new_pwr;
+                }
+                //
+
+                //MW0LGE_22b
+                //if (!tx_tune_power)
+                //    PreviousPWR = ptbPWR.Value;                                 // save current value
+                //if ((!xvtr_tune_power || tx_xvtr_index < 0) && !tx_tune_power)  // switch to TUN value
+                //    PWR = tune_power;
 
                 //MW0LGE_21k8
                 //if (!chkVFOSplit.Checked && !chkVFOBTX.Checked)                 // pick correct VFO & set freq
@@ -31814,8 +31985,16 @@ namespace Thetis
                 //if ((tx_xvtr_index < 0 || xvtr_tune_power) && !tx_tune_power)
                 //    TunePower = ptbPWR.Value;
 
-                if (!tx_tune_power)
+                //MW0LGE_22b
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
+                {
+                    ptbPWR.LimitEnabled = true;
                     PWR = PreviousPWR;
+                }
+
+                //MW0LGE_22b
+                //if (!tx_tune_power)
+                //    PWR = PreviousPWR;
 
                 //if (tune_meter_tx_mode != old_tune_meter_tx_mode)
                 if (current_meter_tx_mode != old_meter_tx_mode_before_tune) //MW0LGE_21j
@@ -31837,7 +32016,9 @@ namespace Thetis
             if(AriesCATEnabled)
                 SetAriesTuneState(chkTUN.Checked);              // G8NJJ tell ARIES that tune is active
 
-            if(oldTune != tuning) TuneChangedHandlers?.Invoke(1, oldTune, tuning); //MW0LGE_21kd9 // just rx1
+            setupTuneSlider(); // MW0LGE_22b
+
+            if (oldTune != tuning) TuneChangedHandlers?.Invoke(1, oldTune, tuning); //MW0LGE_21kd9 // just rx1
         }
 
         private CancellationTokenSource ATUTunetokenSource;
@@ -31929,10 +32110,9 @@ namespace Thetis
             whatisHF = false;
             whatisGEN = false;
 
-            ////MW0LGE why ??  {
-            //    if (collapsedDisplay)
-            //        CollapseDisplay();
-            //}
+            //MW0LGE_22b re-instated this. It is such a bad way to get the band bars to redraw, but no desire to rework compressed view
+            if (collapsedDisplay)
+                CollapseDisplay();
 
             //MW0LGE WTH? why? why? why?
             //if (!rx1_click_tune_drag)
@@ -31959,10 +32139,9 @@ namespace Thetis
             whatisHF = true;
             whatisGEN = false;
 
-            ////MW0LGE why ??  {
-            //    if (collapsedDisplay)
-            //        CollapseDisplay();
-            //}
+            //MW0LGE_22b re-instated this. It is such a bad way to get the band bars to redraw, but no desire to rework compressed view
+            if (collapsedDisplay)
+                CollapseDisplay();
 
             //MW0LGE WTH? why? why? why?
             //if (!rx1_click_tune_drag)
@@ -31989,6 +32168,10 @@ namespace Thetis
             whatisVHF = false;
             whatisHF = false;
             whatisGEN = true;
+
+            //MW0LGE_22b re-instated this. It is such a bad way to get the band bars to redraw, but no desire to rework compressed view
+            if (collapsedDisplay)
+                CollapseDisplay();
 
             lblRX1MuteVFOA.SendToBack();
             lblRX1APF.SendToBack();
@@ -38318,38 +38501,7 @@ namespace Thetis
 
         private void radBandGEN_Click(object sender, EventArgs e)
         {
-            //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.GEN);
-            //MW0LGE_21d end new bandstack
 
-            //NetworkIO.SendHighPriority(0);
-            //SaveBand();
-            //if (last_band == "GEN")
-            //{
-            //    if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
-            //        band_gen_index = (band_gen_index - 1 + band_gen_register) % band_gen_register;
-            //    else
-            //        band_gen_index = (band_gen_index + 1) % band_gen_register;
-            //}
-            //last_band = "GEN";
-
-            //string filter, mode;
-            //double freq;
-            //bool CTUN;
-            //int ZoomFactor;
-            //double CenterFreq;
-            //if (DB.GetBandStack(last_band, band_gen_index, out mode, out filter, out freq, out CTUN, out ZoomFactor, out CenterFreq))
-            //{
-            //    if (filter.Contains("@"))
-            //    {
-            //        filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
-            //    }
-            //    SetBand(mode, filter, freq, CTUN, ZoomFactor, CenterFreq);
-            //}
-            //UpdateWaterfallLevelValues();
-            //updateDisplayGridLevelValues();
-            //UpdateDiversityValues();
-            //NetworkIO.SendHighPriority(1);
         }
 
         private void radBandVHF_Click(object sender, EventArgs e)
@@ -47682,7 +47834,6 @@ namespace Thetis
             {
                 panelButtonBar.Location = new Point(5, top);
                 top = top + panelButtonBar.Height;
-
             }
             else
             {
@@ -50786,6 +50937,8 @@ namespace Thetis
             {
                 chk2TONE.BackColor = SystemColors.Control;
             }
+
+            setupTuneSlider(); // MW0LGE_22b
         }
 
         private void ucQuickRecallPad_ButtonClicked(object sender, EventArgs e)
@@ -50816,22 +50969,22 @@ namespace Thetis
             {
                 if (sub != "")
                 {
-                    getControl(c, new Point(p.X - c.Location.X, p.Y - c.Location.Y), sub + " > " + c.Name);
+                    getControl(c, new Point(p.X - c.Location.X, p.Y - c.Location.Y), sub + " > " + c.Name + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")");
                 }
                 else
                 {
-                    getControl(c, new Point(p.X - c.Location.X, p.Y - c.Location.Y), c.Name);
+                    getControl(c, new Point(p.X - c.Location.X, p.Y - c.Location.Y), c.Name  + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")");
                 }
             }
             else
             {
                 if (sub != "")
                 {
-                    m_sOverControlName = sub + " > " + c.Name;
+                    m_sOverControlName = sub + " > " + c.Name + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")";
                 }
                 else
                 {
-                    m_sOverControlName = c.Name;
+                    m_sOverControlName = c.Name + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")";
                 }
             }
         }
@@ -52175,15 +52328,246 @@ namespace Thetis
                 }
             }
         }
+        private void updateTuneLabel(bool bShowLimitValue, System.EventArgs e)
+        {
+            string sHeader = "Tun2Ton";
+            if (_tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource != DrivePowerSource.TUNE_SLIDER) sHeader = "Tune";
+            if (_tuneDrivePowerSource != DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER) sHeader = "2Tone";
+
+            if (!bShowLimitValue)
+            {
+                if (ptbTune.IsConstrained)
+                    lblTune.Text = sHeader + ":  " + ptbTune.ConstrainedValue.ToString() + " (lim)";
+                else
+                    lblTune.Text = sHeader + ":  " + ptbTune.Value.ToString();
+            }
+            else
+            {
+                PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
+                lblTune.Text = sHeader + " Limit: " + lc.LimitValue.ToString();
+            }
+        }
+        private double m_fTuneDrivePower = -1;
+        private void ptbTune_Scroll(object sender, EventArgs e)
+        {
+            PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
+            updateTuneLabel(lc != null, e);
+
+            if (IsSetupFormNull)
+                return;
+
+            if (lc != null)
+                    limitTunePower_by_band[(int)tx_band] = lc.LimitValue; // store the adjusted limit level
+
+            int new_pwr = setPowerWithHelper();
+            tunePower_by_band[(int)tx_band] = ptbTune.Value;
+
+            if (sender.GetType() == typeof(PrettyTrackBar))
+                ptbTune.Focus();
+
+            //double pct = Convert.ToDouble(new_pwr) / 100.0;  //-W2PA Send LED update back to Behringer
+            //if (pct <= 0.0) pct = 0.0;
+            //else if (pct < 1.0 / 15.0) pct = 1.0 / 15.0; //-W2PA Don't let the last LED go out until zero
+            //Midi2Cat.SendUpdateToMidi(CatCmd.DriveLevel, pct);
+
+            ////-W2PA Update LEDs on Behringer MIDI controller mini wheel
+            //pct = Convert.ToDouble(ptbPWR.Value - ptbPWR.Minimum) / Convert.ToDouble(ptbPWR.Maximum - ptbPWR.Minimum);
+            //Midi2Cat.SendUpdateToMidi(CatCmd.DriveLevel_inc, pct);
+
+            //if (sliderForm != null)
+            //    sliderForm.TXDrive = ptbPWR.Value;
+
+            if (m_fTuneDrivePower != new_pwr)  // MW0LGE_21k9d
+            {
+                m_fTuneDrivePower = new_pwr;
+                DrivePowerChangedHandlers?.Invoke(1, (int)new_pwr, true); // only rx1, and always tune
+            }
+        }
+        private DrivePowerSource _tuneDrivePowerSource = DrivePowerSource.DRIVE_SLIDER;
+        private DrivePowerSource _2ToneDrivePowerSource = DrivePowerSource.DRIVE_SLIDER;
+        public DrivePowerSource TuneDrivePowerOrigin
+        {
+            get { return _tuneDrivePowerSource; }
+            set { 
+                _tuneDrivePowerSource = value;
+                switch (_tuneDrivePowerSource)
+                {
+                    case DrivePowerSource.DRIVE_SLIDER:
+                        ptbPWR_Scroll(this, EventArgs.Empty);
+                        break;
+                    case DrivePowerSource.TUNE_SLIDER:
+                        ptbTune_Scroll(this, EventArgs.Empty);
+                        break;
+                    case DrivePowerSource.FIXED:
+                        ptbPWR_Scroll(this, EventArgs.Empty);
+                        break;
+                }
+
+                setupTuneSlider();
+                updateTuneLabel(false, EventArgs.Empty);
+            }
+        }
+        public DrivePowerSource TwoToneDrivePowerOrigin
+        {
+            get { return _2ToneDrivePowerSource; }
+            set { 
+                _2ToneDrivePowerSource = value;
+                switch (_2ToneDrivePowerSource)
+                {
+                    case DrivePowerSource.DRIVE_SLIDER:
+                        ptbPWR_Scroll(this, EventArgs.Empty);
+                        break;
+                    case DrivePowerSource.TUNE_SLIDER:
+                        ptbTune_Scroll(this, EventArgs.Empty);
+                        break;
+                    case DrivePowerSource.FIXED:
+                        ptbPWR_Scroll(this, EventArgs.Empty);
+                        break;
+                }
+
+                setupTuneSlider();
+                updateTuneLabel(false, EventArgs.Empty);
+            }
+        }
+        private void setupTuneSlider()
+        {
+            if(_tuneDrivePowerSource != DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource != DrivePowerSource.TUNE_SLIDER)
+            {
+                // hide it
+                ptbTune.Visible = false;
+                lblTune.Visible = false;
+                return;
+            }
+
+            //position it
+            ptbTune.Visible = true;
+            lblTune.Visible = true;
+
+            if (chkTUN.Checked || chk2TONE.Checked)
+                ptbTune.Enabled = (_tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER && chkTUN.Checked) || (_2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER && chk2TONE.Checked);
+            else
+                ptbTune.Enabled = true;
+            lblTune.Enabled = ptbTune.Enabled;
+        }
+        private int setPowerWithHelper()
+        {
+            PrettyTrackBar slider = ptbPWR;
+            bool bConstrain = true;
+            int new_pwr = 0;
+
+            // tx mode
+            int txMode = 0;
+            if (chkTUN.Checked)
+                txMode = 1;
+            else if (chk2TONE.Checked)
+                txMode = 2;
+            
+            switch (txMode)
+            {
+                case 0: //normal
+                    new_pwr = ptbPWR.Value;
+                    power_by_band[(int)tx_band] = new_pwr;
+                    break;
+                case 1: //tune
+                    switch (_tuneDrivePowerSource)
+                    {
+                        case DrivePowerSource.DRIVE_SLIDER:
+                            new_pwr = ptbPWR.Value;
+                            break;
+                        case DrivePowerSource.TUNE_SLIDER:
+                            slider = ptbTune;
+                            new_pwr = ptbTune.Value;
+                            break;
+                        case DrivePowerSource.FIXED:
+                            new_pwr = tune_power;
+                            bConstrain = false;
+                            break;
+                    }
+                    break;
+                case 2: //2tone
+                    switch (_2ToneDrivePowerSource)
+                    {
+                        case DrivePowerSource.DRIVE_SLIDER:
+                            new_pwr = ptbPWR.Value;
+                            break;
+                        case DrivePowerSource.TUNE_SLIDER:
+                            slider = ptbTune;
+                            new_pwr = ptbTune.Value;
+                            break;
+                        case DrivePowerSource.FIXED:
+                            new_pwr = twotone_tune_power;
+                            bConstrain = false;
+                            break;
+                    }
+                    break;
+            }
+
+            if ((!chkTUN.Checked || xvtr_tune_power) && tx_xvtr_index >= 0)
+            {
+                if (slider.Focused)
+                    XVTRForm.SetPower(tx_xvtr_index, slider.Value);
+                Band b = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
+            }
+
+            //constrain power
+            if(bConstrain) new_pwr = slider.ConstrainValue(new_pwr);
+            //
+
+            double target_dbm = 10 * (double)Math.Log10((double)new_pwr * 1000);
+            double gbb = 0.0;
+            if (tx_xvtr_index >= 0)
+            {
+                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
+                gbb = GainByBand(lo_band);
+            }
+            else
+            {
+                gbb = GainByBand(TXBand);
+            }
+            target_dbm -= gbb;
+
+            double target_volts = Math.Sqrt(Math.Pow(10, target_dbm * 0.1) * 0.05);		// E = Sqrt(P * R) 
+
+            if (new_pwr == 0)
+            {
+                Audio.RadioVolume = 0.0;
+                if (chkTUN.Checked)
+                    radio.GetDSPTX(0).TXPostGenRun = 0;
+            }
+            else
+            {
+                if (chkTUN.Checked)
+                    radio.GetDSPTX(0).TXPostGenRun = 1;
+                Audio.RadioVolume = (double)Math.Min((target_volts / 0.8), 1.0);
+            }
+
+            return new_pwr;
+        }
+
+        private bool _bEnableAudioAmplifier = true;
+        public bool EnableAudioAmplifier
+        {
+            get { return _bEnableAudioAmplifier; }
+            set
+            {
+                _bEnableAudioAmplifier = value;
+                enableAudioAmplfier(_bEnableAudioAmplifier);
+            }
+        }
+        private void enableAudioAmplfier(bool bEnable)
+        {
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH &&
+                (CurrentHPSDRModel == HPSDRModel.ANAN7000D || CurrentHPSDRModel == HPSDRModel.ANAN8000D))
+            {
+                NetworkIO.SetAudioAmpEnable(_bEnableAudioAmplifier);
+            }
+        }
         #endregion
-        //private bool _btemp = false;
-        //private void buttonTS1_Click(object sender, EventArgs e)
-        //{
-        //    _btemp = !_btemp;
-        //    NetworkIO.SetAudioAmpEnable(_btemp);
-        //    bool enabled = NetworkIO.getUserI02();
-        //    Debug.Print("currently : " + enabled);
-        //}
+
+        private void ptbTune_MouseUp(object sender, MouseEventArgs e)
+        {
+            updateTuneLabel(false, EventArgs.Empty);
+        }
     }
 
     public class DigiMode

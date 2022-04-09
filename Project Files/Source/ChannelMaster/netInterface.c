@@ -196,34 +196,71 @@ int GetPLLLock()
 
 	return (prn->pll_locked & 0x10) != 0;
 }
-
+//NOTE: these 4 user get fuctions are named for P1 //MW0LGE_22b
+// Bit [0] - User I/O (IO1) 1 = active, 0 = inactive
+// Bit [1] - User I/O (IO2) 1 = active, 0 = inactive
+// Bit [2] - User I/O (IO3) 1 = active, 0 = inactive
+// Bit [3] - User I/O (IO4) 1 = active, 0 = inactive
 PORT
 int getUserI01() 
 {
-
 	return (prn->user_dig_in & 0x1) != 0;
 }
 
 PORT
 int getUserI02() 
 {
-
 	return (prn->user_dig_in & 0x2) != 0;
 }
 
 PORT
 int getUserI03() 
 {
-
 	return (prn->user_dig_in & 0x4) != 0;
 }
 
 PORT
 int getUserI04() 
 {
-
 	return (prn->user_dig_in & 0x8) != 0;
 }
+//
+
+//NOTE: these 5 user get functions are named for P2 //MW0LGE_22b
+// Bit [0] - User I/O (IO4) 1 = active, 0 = inactive
+// Bit [1] - User I/O (IO5) 1 = active, 0 = inactive
+// Bit [2] - User I/O (IO6) 1 = active, 0 = inactive
+// Bit [3] - User I/O (IO8) 1 = active, 0 = inactive
+// Bit [4] - User I/O (IO2) 1 = active, 0 = inactive
+PORT
+int getUserI04_p2()
+{
+	return (prn->user_dig_in & 0x1) != 0;
+}
+
+PORT
+int getUserI05_p2()
+{
+	return (prn->user_dig_in & 0x2) != 0;
+}
+
+PORT
+int getUserI06_p2()
+{
+	return (prn->user_dig_in & 0x4) != 0;
+}
+
+PORT
+int getUserI08_p2()
+{
+	return (prn->user_dig_in & 0x8) != 0;
+}
+PORT
+int getUserI02_p2()
+{
+	return (prn->user_dig_in & 0x16) != 0;
+}
+//
 
 PORT
 int getExciterPower() 
@@ -939,17 +976,17 @@ void SetEERPWMmax(int max)
 	}
 }
 
-////MW0LGE_22b
-//PORT
-//void SetAudioAmpEnable(int enable)
-//{
-//	if (audioamp_enable != enable)
-//	{
-//		audioamp_enable = enable;
-//		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
-//			CmdHighPriority();
-//	}
-//}
+//MW0LGE_22b
+PORT
+void SetAudioAmpEnable(int enable)
+{
+	if (audioamp_enable != enable)
+	{
+		audioamp_enable = enable;
+		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
+			CmdHighPriority();
+	}
+}
 
 // *************************************************
 // misc functions

@@ -360,7 +360,7 @@ int ADC_cntrl2;
 int nreceivers;
 int xvtr_enable;
 int atu_tune; // controls J16 pin 10 on Orion MKII board
-//int audioamp_enable; // constrol audio amp on ?? board //MW0LGE_22b
+int audioamp_enable; // constrol audio amp on ?? board //MW0LGE_22b
 int AlexHPFMask;
 int AlexLPFMask;
 int AlexTRRelay;

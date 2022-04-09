@@ -1738,6 +1738,8 @@ namespace Thetis
             udTXGenScale_ValueChanged(this, e);
             udTwoToneLevel_ValueChanged(this, e);
             chkShowControlDebug_CheckedChanged(this, e);
+            udTestIMDPower_ValueChanged(this, e); //MW0LGE_22b
+            setupTuneAnd2ToneRadios(); //MW0LGE_22b
 
             // Display Tab
             udDisplayGridMax_ValueChanged(this, e);
@@ -11795,11 +11797,18 @@ namespace Thetis
 
                 console.radio.GetDSPTX(0).TXPostGenRun = 1;
 
-                if (!chkTestIMDPower.Checked)
+                //MW0LGE_22b
+                if (console.TwoToneDrivePowerOrigin == DrivePowerSource.FIXED)
                 {
                     console.PreviousPWR = console.PWR;
                     console.PWR = (int)udTestIMDPower.Value;
                 }
+                //if (!chkTestIMDPower.Checked)
+                //{
+                //    console.PreviousPWR = console.PWR;
+                //    console.PWR = (int)udTestIMDPower.Value;
+                //}
+
                 console.ManualMox = true;
                 console.Manual2Tone = true; // MW0LGE_21a
                 Audio.MOX = true;//
@@ -11820,6 +11829,8 @@ namespace Thetis
                 //Audio.MOX = true;
                 chkTestIMD.BackColor = console.ButtonSelectedColor;
                 console.psform.TTgenON = true;
+
+                chkTestIMD.Text = "Stop"; //MW0LGE_22b
             }
             else
             {
@@ -11830,11 +11841,19 @@ namespace Thetis
                 Audio.MOX = false;//
                 console.ManualMox = false;
                 console.Manual2Tone = false; // MW0LGE_21a
-                if (!chkTestIMDPower.Checked)
+
+                //MW0LGE_22b
+                if (console.TwoToneDrivePowerOrigin == DrivePowerSource.FIXED)
                 {
                     udTestIMDPower.Value = console.PWR;
                     console.PWR = console.PreviousPWR;
                 }
+                //if (!chkTestIMDPower.Checked)
+                //{
+                //    udTestIMDPower.Value = console.PWR;
+                //    console.PWR = console.PreviousPWR;
+                //}
+
                 chkTestIMD.BackColor = SystemColors.Control;
                 console.psform.TTgenON = false;
                 console.radio.GetDSPTX(0).TXPostGenRun = 0;
@@ -11844,6 +11863,8 @@ namespace Thetis
                 udTestIMDPower.Enabled = true;
                 chkInvertTones.Enabled = true;
                 udFreq2Delay.Enabled = true;
+
+                chkTestIMD.Text = "Start";
             }
         }
 
@@ -23231,6 +23252,74 @@ namespace Thetis
         private void chkEmulateExpertSDR3Protocol_CheckedChanged(object sender, EventArgs e)
         {
             console.EmulateExpertSDR3Protocol = chkEmulateExpertSDR3Protocol.Checked;
+        }
+
+        private void chkDisableRearSpeakerJacksAudioAmplifier_CheckedChanged(object sender, EventArgs e)
+        {
+            console.EnableAudioAmplifier = !chkDisableRearSpeakerJacksAudioAmplifier.Checked;
+        }
+
+        private void radUseDriveSliderTune_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TuneDrivePowerOrigin = DrivePowerSource.DRIVE_SLIDER;
+        }
+
+        private void radUseTuneSliderTune_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TuneDrivePowerOrigin = DrivePowerSource.TUNE_SLIDER;
+        }
+
+        private void radUseFixedDriveTune_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TuneDrivePowerOrigin = DrivePowerSource.FIXED;
+        }
+
+        private void udTestIMDPower_ValueChanged(object sender, EventArgs e)
+        {
+            console.TwoToneTunePower = (int)udTestIMDPower.Value;
+        }
+        private void setupTuneAnd2ToneRadios()
+        {
+            switch (console.TuneDrivePowerOrigin)
+            {
+                case DrivePowerSource.DRIVE_SLIDER:
+                    radUseDriveSliderTune.Checked = true;
+                    break;
+                case DrivePowerSource.TUNE_SLIDER:
+                    radUseTuneSliderTune.Checked = true;
+                    break;
+                case DrivePowerSource.FIXED:
+                    radUseFixedDriveTune.Checked = true;
+                    break;
+            }
+
+            switch (console.TwoToneDrivePowerOrigin)
+            {
+                case DrivePowerSource.DRIVE_SLIDER:
+                    radUseDriveSlider2Tone.Checked = true;
+                    break;
+                case DrivePowerSource.TUNE_SLIDER:
+                    radUseTuneSlider2Tone.Checked = true;
+                    break;
+                case DrivePowerSource.FIXED:
+                    radUseTuneSlider2Tone.Checked = true;
+                    break;
+            }
+        }
+
+        private void radUseDriveSlider2Tone_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TwoToneDrivePowerOrigin = DrivePowerSource.DRIVE_SLIDER;
+        }
+
+        private void radUseTuneSlider2Tone_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TwoToneDrivePowerOrigin = DrivePowerSource.TUNE_SLIDER;
+        }
+
+        private void radUseFixedDrive2Tone_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TwoToneDrivePowerOrigin = DrivePowerSource.FIXED;
         }
     }
 

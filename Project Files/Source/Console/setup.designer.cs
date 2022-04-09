@@ -1669,6 +1669,7 @@
             this.comboAudioDriver3 = new System.Windows.Forms.ComboBoxTS();
             this.chkVAC2Enable = new System.Windows.Forms.CheckBoxTS();
             this.tpAudioOptions = new System.Windows.Forms.TabPage();
+            this.chkDisableRearSpeakerJacksAudioAmplifier = new System.Windows.Forms.CheckBoxTS();
             this.chkNoFadeOverUnderWarning = new System.Windows.Forms.CheckBoxTS();
             this.chkAFSlidersMute = new System.Windows.Forms.CheckBoxTS();
             this.tpAdvancedAudio = new System.Windows.Forms.TabPage();
@@ -2463,10 +2464,12 @@
             this.tbCFC1 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.chkTXTunePower = new System.Windows.Forms.CheckBoxTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC1DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
+            this.lblTransmitTunePower = new System.Windows.Forms.LabelTS();
             this.chkLimitExtAmpOnOverload = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPSpeechProcessor = new System.Windows.Forms.GroupBoxTS();
             this.chkDSPCESSB = new System.Windows.Forms.CheckBoxTS();
@@ -2478,6 +2481,8 @@
             this.udTXFilterLowSave = new System.Windows.Forms.NumericUpDownTS();
             this.udTXFilterHighSave = new System.Windows.Forms.NumericUpDownTS();
             this.grpBoxMic = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS617 = new System.Windows.Forms.LabelTS();
+            this.labelTS616 = new System.Windows.Forms.LabelTS();
             this.radLineIn = new System.Windows.Forms.RadioButtonTS();
             this.radMicIn = new System.Windows.Forms.RadioButtonTS();
             this.udMicGainMin = new System.Windows.Forms.NumericUpDownTS();
@@ -2503,10 +2508,11 @@
             this.btnTXProfileSave = new System.Windows.Forms.ButtonTS();
             this.comboTXProfileName = new System.Windows.Forms.ComboBoxTS();
             this.grpPATune = new System.Windows.Forms.GroupBoxTS();
-            this.chkTXTunePower = new System.Windows.Forms.CheckBoxTS();
+            this.radUseFixedDriveTune = new System.Windows.Forms.RadioButtonTS();
+            this.radUseDriveSliderTune = new System.Windows.Forms.RadioButtonTS();
+            this.radUseTuneSliderTune = new System.Windows.Forms.RadioButtonTS();
             this.comboTXTUNMeter = new System.Windows.Forms.ComboBoxTS();
             this.lblTXTUNMeter = new System.Windows.Forms.LabelTS();
-            this.lblTransmitTunePower = new System.Windows.Forms.LabelTS();
             this.udTXTunePower = new System.Windows.Forms.NumericUpDownTS();
             this.grpTXFilter = new System.Windows.Forms.GroupBoxTS();
             this.lblTXFilterHigh = new System.Windows.Forms.LabelTS();
@@ -3497,6 +3503,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
             this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
             this.btnIPv4TCI = new System.Windows.Forms.ButtonTS();
             this.btnShowLog = new System.Windows.Forms.ButtonTS();
@@ -3617,6 +3624,7 @@
             this.chkShowDisplayDebug = new System.Windows.Forms.CheckBoxTS();
             this.chkShowControlDebug = new System.Windows.Forms.CheckBoxTS();
             this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
+            this.chkTestIMDPower = new System.Windows.Forms.CheckBoxTS();
             this.grpBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.grpSigGenTransmit = new System.Windows.Forms.GroupBoxTS();
             this.grpPulse = new System.Windows.Forms.GroupBoxTS();
@@ -3658,17 +3666,18 @@
             this.lblSigGenRXMode = new System.Windows.Forms.LabelTS();
             this.cmboSigGenRXMode = new System.Windows.Forms.ComboBoxTS();
             this.grpTestTXIMD = new System.Windows.Forms.GroupBoxTS();
+            this.radUseFixedDrive2Tone = new System.Windows.Forms.RadioButtonTS();
+            this.radUseDriveSlider2Tone = new System.Windows.Forms.RadioButtonTS();
+            this.radUseTuneSlider2Tone = new System.Windows.Forms.RadioButtonTS();
             this.labelTS18 = new System.Windows.Forms.LabelTS();
             this.labelTS17 = new System.Windows.Forms.LabelTS();
             this.udFreq2Delay = new System.Windows.Forms.NumericUpDownTS();
-            this.chkTestIMDPower = new System.Windows.Forms.CheckBoxTS();
             this.labelTS314 = new System.Windows.Forms.LabelTS();
             this.chkInvertTones = new System.Windows.Forms.CheckBoxTS();
             this.lblTwoToneLevel = new System.Windows.Forms.LabelTS();
             this.udTwoToneLevel = new System.Windows.Forms.NumericUpDownTS();
             this.lblTestToneFreq2 = new System.Windows.Forms.LabelTS();
             this.udTestIMDFreq2 = new System.Windows.Forms.NumericUpDownTS();
-            this.lblTestIMDPower = new System.Windows.Forms.LabelTS();
             this.udTestIMDPower = new System.Windows.Forms.NumericUpDownTS();
             this.chkTestIMD = new System.Windows.Forms.CheckBoxTS();
             this.lblTestToneFreq1 = new System.Windows.Forms.LabelTS();
@@ -3678,6 +3687,7 @@
             this.btnImpulse = new System.Windows.Forms.ButtonTS();
             this.grpTestAudioBalance = new System.Windows.Forms.GroupBoxTS();
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
+            this.lblTestIMDPower = new System.Windows.Forms.LabelTS();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnExportDB = new System.Windows.Forms.ButtonTS();
@@ -3737,7 +3747,6 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCFCOMPGain = new System.Windows.Forms.Timer(this.components);
-            this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -27437,6 +27446,7 @@
             // tpAudioOptions
             // 
             this.tpAudioOptions.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAudioOptions.Controls.Add(this.chkDisableRearSpeakerJacksAudioAmplifier);
             this.tpAudioOptions.Controls.Add(this.chkNoFadeOverUnderWarning);
             this.tpAudioOptions.Controls.Add(this.chkAFSlidersMute);
             this.tpAudioOptions.Location = new System.Drawing.Point(4, 22);
@@ -27445,6 +27455,19 @@
             this.tpAudioOptions.Size = new System.Drawing.Size(712, 404);
             this.tpAudioOptions.TabIndex = 4;
             this.tpAudioOptions.Text = "Options";
+            // 
+            // chkDisableRearSpeakerJacksAudioAmplifier
+            // 
+            this.chkDisableRearSpeakerJacksAudioAmplifier.AutoSize = true;
+            this.chkDisableRearSpeakerJacksAudioAmplifier.Image = null;
+            this.chkDisableRearSpeakerJacksAudioAmplifier.Location = new System.Drawing.Point(20, 80);
+            this.chkDisableRearSpeakerJacksAudioAmplifier.Name = "chkDisableRearSpeakerJacksAudioAmplifier";
+            this.chkDisableRearSpeakerJacksAudioAmplifier.Size = new System.Drawing.Size(239, 17);
+            this.chkDisableRearSpeakerJacksAudioAmplifier.TabIndex = 2;
+            this.chkDisableRearSpeakerJacksAudioAmplifier.Text = "Disable audio amplifier (rear speaker sockets)";
+            this.toolTip1.SetToolTip(this.chkDisableRearSpeakerJacksAudioAmplifier, "Disable the internal audio amplifer. This is only available on 7000/8000\'s");
+            this.chkDisableRearSpeakerJacksAudioAmplifier.UseVisualStyleBackColor = true;
+            this.chkDisableRearSpeakerJacksAudioAmplifier.CheckedChanged += new System.EventHandler(this.chkDisableRearSpeakerJacksAudioAmplifier_CheckedChanged);
             // 
             // chkNoFadeOverUnderWarning
             // 
@@ -34170,7 +34193,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(48, 12);
             this.label1.TabIndex = 132;
-            this.label1.Text = "dB Offset";
+            this.label1.Text = "± Shift";
             // 
             // udRX1AutoAGCOffset
             // 
@@ -40078,10 +40101,12 @@
             // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.chkTXTunePower);
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC1DeviceDetailsFromTXProfile);
             this.tpTransmit.Controls.Add(this.btnExportCurrentTXProfile);
+            this.tpTransmit.Controls.Add(this.lblTransmitTunePower);
             this.tpTransmit.Controls.Add(this.chkLimitExtAmpOnOverload);
             this.tpTransmit.Controls.Add(this.grpDSPSpeechProcessor);
             this.tpTransmit.Controls.Add(this.grpExtTXInhibit);
@@ -40103,11 +40128,24 @@
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
             // 
+            // chkTXTunePower
+            // 
+            this.chkTXTunePower.Checked = true;
+            this.chkTXTunePower.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTXTunePower.Image = null;
+            this.chkTXTunePower.Location = new System.Drawing.Point(275, 403);
+            this.chkTXTunePower.Name = "chkTXTunePower";
+            this.chkTXTunePower.Size = new System.Drawing.Size(108, 16);
+            this.chkTXTunePower.TabIndex = 51;
+            this.chkTXTunePower.Text = "Use Drive Power";
+            this.toolTip1.SetToolTip(this.chkTXTunePower, "Use Drive Power for TUN");
+            this.chkTXTunePower.CheckedChanged += new System.EventHandler(this.chkTXTunePower_CheckedChanged);
+            // 
             // chkHighlightTXProfileSaveItems
             // 
             this.chkHighlightTXProfileSaveItems.AutoSize = true;
             this.chkHighlightTXProfileSaveItems.Image = null;
-            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 384);
+            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 402);
             this.chkHighlightTXProfileSaveItems.Name = "chkHighlightTXProfileSaveItems";
             this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(175, 17);
             this.chkHighlightTXProfileSaveItems.TabIndex = 76;
@@ -40118,7 +40156,7 @@
             // chkRestoreVAC2DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 265);
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 284);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Name = "chkRestoreVAC2DeviceDetailsFromTXProfile";
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 75;
@@ -40128,7 +40166,7 @@
             // chkRestoreVAC1DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 241);
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 260);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Name = "chkRestoreVAC1DeviceDetailsFromTXProfile";
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 74;
@@ -40145,6 +40183,15 @@
             this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
             this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
             this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
+            // 
+            // lblTransmitTunePower
+            // 
+            this.lblTransmitTunePower.Image = null;
+            this.lblTransmitTunePower.Location = new System.Drawing.Point(272, 381);
+            this.lblTransmitTunePower.Name = "lblTransmitTunePower";
+            this.lblTransmitTunePower.Size = new System.Drawing.Size(45, 16);
+            this.lblTransmitTunePower.TabIndex = 5;
+            this.lblTransmitTunePower.Text = "Power:";
             // 
             // chkLimitExtAmpOnOverload
             // 
@@ -40217,9 +40264,9 @@
             // chkSaveTXProfileOnExit
             // 
             this.chkSaveTXProfileOnExit.Image = null;
-            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(24, 307);
+            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 319);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
-            this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 26);
+            this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 18);
             this.chkSaveTXProfileOnExit.TabIndex = 67;
             this.chkSaveTXProfileOnExit.Text = "Auto Save TX Profile on Thetis close";
             this.toolTip1.SetToolTip(this.chkSaveTXProfileOnExit, "Automatically saves the current TX Profile when Thetis is closed");
@@ -40228,9 +40275,9 @@
             // chkAutoSaveTXProfile
             // 
             this.chkAutoSaveTXProfile.Image = null;
-            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(23, 334);
+            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(23, 343);
             this.chkAutoSaveTXProfile.Name = "chkAutoSaveTXProfile";
-            this.chkAutoSaveTXProfile.Size = new System.Drawing.Size(189, 25);
+            this.chkAutoSaveTXProfile.Size = new System.Drawing.Size(189, 18);
             this.chkAutoSaveTXProfile.TabIndex = 66;
             this.chkAutoSaveTXProfile.Text = "Auto Save TX Profile on change";
             this.toolTip1.SetToolTip(this.chkAutoSaveTXProfile, "Automatically saves the current TX Profile if another profile is selected");
@@ -40295,6 +40342,8 @@
             // 
             // grpBoxMic
             // 
+            this.grpBoxMic.Controls.Add(this.labelTS617);
+            this.grpBoxMic.Controls.Add(this.labelTS616);
             this.grpBoxMic.Controls.Add(this.radLineIn);
             this.grpBoxMic.Controls.Add(this.radMicIn);
             this.grpBoxMic.Controls.Add(this.udMicGainMin);
@@ -40306,15 +40355,35 @@
             this.grpBoxMic.Controls.Add(this.lblLineInBoost);
             this.grpBoxMic.Location = new System.Drawing.Point(170, 103);
             this.grpBoxMic.Name = "grpBoxMic";
-            this.grpBoxMic.Size = new System.Drawing.Size(189, 110);
+            this.grpBoxMic.Size = new System.Drawing.Size(189, 137);
             this.grpBoxMic.TabIndex = 58;
             this.grpBoxMic.TabStop = false;
-            this.grpBoxMic.Text = "Mic    Gain             Source";
+            this.grpBoxMic.Text = "Mic";
+            // 
+            // labelTS617
+            // 
+            this.labelTS617.AutoSize = true;
+            this.labelTS617.Image = null;
+            this.labelTS617.Location = new System.Drawing.Point(124, 16);
+            this.labelTS617.Name = "labelTS617";
+            this.labelTS617.Size = new System.Drawing.Size(41, 13);
+            this.labelTS617.TabIndex = 15;
+            this.labelTS617.Text = "Source";
+            // 
+            // labelTS616
+            // 
+            this.labelTS616.AutoSize = true;
+            this.labelTS616.Image = null;
+            this.labelTS616.Location = new System.Drawing.Point(53, 16);
+            this.labelTS616.Name = "labelTS616";
+            this.labelTS616.Size = new System.Drawing.Size(29, 13);
+            this.labelTS616.TabIndex = 14;
+            this.labelTS616.Text = "Gain";
             // 
             // radLineIn
             // 
             this.radLineIn.Image = null;
-            this.radLineIn.Location = new System.Drawing.Point(105, 43);
+            this.radLineIn.Location = new System.Drawing.Point(111, 62);
             this.radLineIn.Name = "radLineIn";
             this.radLineIn.Size = new System.Drawing.Size(57, 16);
             this.radLineIn.TabIndex = 13;
@@ -40328,7 +40397,7 @@
             // 
             this.radMicIn.Checked = true;
             this.radMicIn.Image = null;
-            this.radMicIn.Location = new System.Drawing.Point(105, 18);
+            this.radMicIn.Location = new System.Drawing.Point(111, 37);
             this.radMicIn.Name = "radMicIn";
             this.radMicIn.Size = new System.Drawing.Size(55, 16);
             this.radMicIn.TabIndex = 12;
@@ -40346,7 +40415,7 @@
             0,
             0,
             0});
-            this.udMicGainMin.Location = new System.Drawing.Point(35, 40);
+            this.udMicGainMin.Location = new System.Drawing.Point(41, 59);
             this.udMicGainMin.Maximum = new decimal(new int[] {
             0,
             0,
@@ -40375,7 +40444,7 @@
             0,
             0,
             0});
-            this.udMicGainMax.Location = new System.Drawing.Point(35, 15);
+            this.udMicGainMax.Location = new System.Drawing.Point(41, 34);
             this.udMicGainMax.Maximum = new decimal(new int[] {
             70,
             0,
@@ -40400,7 +40469,7 @@
             // labelTS21
             // 
             this.labelTS21.Image = null;
-            this.labelTS21.Location = new System.Drawing.Point(4, 43);
+            this.labelTS21.Location = new System.Drawing.Point(10, 62);
             this.labelTS21.Name = "labelTS21";
             this.labelTS21.Size = new System.Drawing.Size(30, 16);
             this.labelTS21.TabIndex = 5;
@@ -40409,7 +40478,7 @@
             // labelTS20
             // 
             this.labelTS20.Image = null;
-            this.labelTS20.Location = new System.Drawing.Point(4, 18);
+            this.labelTS20.Location = new System.Drawing.Point(10, 37);
             this.labelTS20.Name = "labelTS20";
             this.labelTS20.Size = new System.Drawing.Size(30, 16);
             this.labelTS20.TabIndex = 4;
@@ -40425,7 +40494,7 @@
             0,
             65536});
             this.udLineInBoost.InterceptArrowKeys = false;
-            this.udLineInBoost.Location = new System.Drawing.Point(114, 74);
+            this.udLineInBoost.Location = new System.Drawing.Point(120, 93);
             this.udLineInBoost.Maximum = new decimal(new int[] {
             12,
             0,
@@ -40454,7 +40523,7 @@
             this.chk20dbMicBoost.Checked = true;
             this.chk20dbMicBoost.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk20dbMicBoost.Image = null;
-            this.chk20dbMicBoost.Location = new System.Drawing.Point(9, 75);
+            this.chk20dbMicBoost.Location = new System.Drawing.Point(13, 94);
             this.chk20dbMicBoost.Name = "chk20dbMicBoost";
             this.chk20dbMicBoost.Size = new System.Drawing.Size(110, 16);
             this.chk20dbMicBoost.TabIndex = 11;
@@ -40465,7 +40534,7 @@
             // lblLineInBoost
             // 
             this.lblLineInBoost.Image = null;
-            this.lblLineInBoost.Location = new System.Drawing.Point(6, 75);
+            this.lblLineInBoost.Location = new System.Drawing.Point(6, 94);
             this.lblLineInBoost.Name = "lblLineInBoost";
             this.lblLineInBoost.Size = new System.Drawing.Size(119, 16);
             this.lblLineInBoost.TabIndex = 11;
@@ -40678,30 +40747,57 @@
             // 
             // grpPATune
             // 
-            this.grpPATune.Controls.Add(this.chkTXTunePower);
+            this.grpPATune.Controls.Add(this.radUseFixedDriveTune);
+            this.grpPATune.Controls.Add(this.radUseDriveSliderTune);
+            this.grpPATune.Controls.Add(this.radUseTuneSliderTune);
             this.grpPATune.Controls.Add(this.comboTXTUNMeter);
             this.grpPATune.Controls.Add(this.lblTXTUNMeter);
-            this.grpPATune.Controls.Add(this.lblTransmitTunePower);
             this.grpPATune.Controls.Add(this.udTXTunePower);
-            this.grpPATune.Location = new System.Drawing.Point(8, 103);
+            this.grpPATune.Location = new System.Drawing.Point(8, 89);
             this.grpPATune.Name = "grpPATune";
-            this.grpPATune.Size = new System.Drawing.Size(143, 110);
+            this.grpPATune.Size = new System.Drawing.Size(143, 151);
             this.grpPATune.TabIndex = 22;
             this.grpPATune.TabStop = false;
             this.grpPATune.Text = "Tune";
             // 
-            // chkTXTunePower
+            // radUseFixedDriveTune
             // 
-            this.chkTXTunePower.Checked = true;
-            this.chkTXTunePower.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTXTunePower.Image = null;
-            this.chkTXTunePower.Location = new System.Drawing.Point(15, 79);
-            this.chkTXTunePower.Name = "chkTXTunePower";
-            this.chkTXTunePower.Size = new System.Drawing.Size(108, 16);
-            this.chkTXTunePower.TabIndex = 51;
-            this.chkTXTunePower.Text = "Use Drive Power";
-            this.toolTip1.SetToolTip(this.chkTXTunePower, "Use Drive Power for TUN");
-            this.chkTXTunePower.CheckedChanged += new System.EventHandler(this.chkTXTunePower_CheckedChanged);
+            this.radUseFixedDriveTune.AutoSize = true;
+            this.radUseFixedDriveTune.Image = null;
+            this.radUseFixedDriveTune.Location = new System.Drawing.Point(17, 96);
+            this.radUseFixedDriveTune.Name = "radUseFixedDriveTune";
+            this.radUseFixedDriveTune.Size = new System.Drawing.Size(100, 17);
+            this.radUseFixedDriveTune.TabIndex = 12;
+            this.radUseFixedDriveTune.TabStop = true;
+            this.radUseFixedDriveTune.Text = "Use Fixed Drive";
+            this.radUseFixedDriveTune.UseVisualStyleBackColor = true;
+            this.radUseFixedDriveTune.CheckedChanged += new System.EventHandler(this.radUseFixedDriveTune_CheckedChanged);
+            // 
+            // radUseDriveSliderTune
+            // 
+            this.radUseDriveSliderTune.AutoSize = true;
+            this.radUseDriveSliderTune.Image = null;
+            this.radUseDriveSliderTune.Location = new System.Drawing.Point(17, 50);
+            this.radUseDriveSliderTune.Name = "radUseDriveSliderTune";
+            this.radUseDriveSliderTune.Size = new System.Drawing.Size(101, 17);
+            this.radUseDriveSliderTune.TabIndex = 11;
+            this.radUseDriveSliderTune.TabStop = true;
+            this.radUseDriveSliderTune.Text = "Use Drive Slider";
+            this.radUseDriveSliderTune.UseVisualStyleBackColor = true;
+            this.radUseDriveSliderTune.CheckedChanged += new System.EventHandler(this.radUseDriveSliderTune_CheckedChanged);
+            // 
+            // radUseTuneSliderTune
+            // 
+            this.radUseTuneSliderTune.AutoSize = true;
+            this.radUseTuneSliderTune.Image = null;
+            this.radUseTuneSliderTune.Location = new System.Drawing.Point(17, 73);
+            this.radUseTuneSliderTune.Name = "radUseTuneSliderTune";
+            this.radUseTuneSliderTune.Size = new System.Drawing.Size(101, 17);
+            this.radUseTuneSliderTune.TabIndex = 10;
+            this.radUseTuneSliderTune.TabStop = true;
+            this.radUseTuneSliderTune.Text = "Use Tune Slider";
+            this.radUseTuneSliderTune.UseVisualStyleBackColor = true;
+            this.radUseTuneSliderTune.CheckedChanged += new System.EventHandler(this.radUseTuneSliderTune_CheckedChanged);
             // 
             // comboTXTUNMeter
             // 
@@ -40714,7 +40810,7 @@
             "Fwd SWR",
             "SWR",
             "Off"});
-            this.comboTXTUNMeter.Location = new System.Drawing.Point(64, 48);
+            this.comboTXTUNMeter.Location = new System.Drawing.Point(64, 19);
             this.comboTXTUNMeter.Name = "comboTXTUNMeter";
             this.comboTXTUNMeter.Size = new System.Drawing.Size(73, 21);
             this.comboTXTUNMeter.TabIndex = 9;
@@ -40724,21 +40820,12 @@
             // lblTXTUNMeter
             // 
             this.lblTXTUNMeter.Image = null;
-            this.lblTXTUNMeter.Location = new System.Drawing.Point(8, 48);
+            this.lblTXTUNMeter.Location = new System.Drawing.Point(8, 19);
             this.lblTXTUNMeter.Name = "lblTXTUNMeter";
             this.lblTXTUNMeter.Size = new System.Drawing.Size(56, 24);
             this.lblTXTUNMeter.TabIndex = 8;
             this.lblTXTUNMeter.Text = "TX Meter:";
             this.lblTXTUNMeter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lblTransmitTunePower
-            // 
-            this.lblTransmitTunePower.Image = null;
-            this.lblTransmitTunePower.Location = new System.Drawing.Point(8, 24);
-            this.lblTransmitTunePower.Name = "lblTransmitTunePower";
-            this.lblTransmitTunePower.Size = new System.Drawing.Size(45, 16);
-            this.lblTransmitTunePower.TabIndex = 5;
-            this.lblTransmitTunePower.Text = "Power:";
             // 
             // udTXTunePower
             // 
@@ -40747,7 +40834,7 @@
             0,
             0,
             0});
-            this.udTXTunePower.Location = new System.Drawing.Point(64, 22);
+            this.udTXTunePower.Location = new System.Drawing.Point(64, 119);
             this.udTXTunePower.Maximum = new decimal(new int[] {
             100,
             0,
@@ -57918,6 +58005,19 @@
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
             // 
+            // chkEmulateExpertSDR3Protocol
+            // 
+            this.chkEmulateExpertSDR3Protocol.AutoSize = true;
+            this.chkEmulateExpertSDR3Protocol.Image = null;
+            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 181);
+            this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
+            this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
+            this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
+            this.chkEmulateExpertSDR3Protocol.Text = "Emulate ExpertSDR3 protocol";
+            this.toolTip1.SetToolTip(this.chkEmulateExpertSDR3Protocol, "Causes the TCI protocol message to send \'ExpertSDR3\' instead of \'Thetis\'");
+            this.chkEmulateExpertSDR3Protocol.UseVisualStyleBackColor = true;
+            this.chkEmulateExpertSDR3Protocol.CheckedChanged += new System.EventHandler(this.chkEmulateExpertSDR3Protocol_CheckedChanged);
+            // 
             // chkEmulateSunSDR2Pro
             // 
             this.chkEmulateSunSDR2Pro.AutoSize = true;
@@ -59500,10 +59600,12 @@
             this.tpTests.Controls.Add(this.chkShowDisplayDebug);
             this.tpTests.Controls.Add(this.chkShowControlDebug);
             this.tpTests.Controls.Add(this.btnShowSeqLog);
+            this.tpTests.Controls.Add(this.chkTestIMDPower);
             this.tpTests.Controls.Add(this.grpBoxTS1);
             this.tpTests.Controls.Add(this.grpTestTXIMD);
             this.tpTests.Controls.Add(this.grpImpulseTest);
             this.tpTests.Controls.Add(this.grpTestAudioBalance);
+            this.tpTests.Controls.Add(this.lblTestIMDPower);
             this.tpTests.Location = new System.Drawing.Point(4, 22);
             this.tpTests.Name = "tpTests";
             this.tpTests.Size = new System.Drawing.Size(728, 436);
@@ -59513,7 +59615,7 @@
             // chkShowDisplayDebug
             // 
             this.chkShowDisplayDebug.Image = null;
-            this.chkShowDisplayDebug.Location = new System.Drawing.Point(24, 349);
+            this.chkShowDisplayDebug.Location = new System.Drawing.Point(529, 398);
             this.chkShowDisplayDebug.Name = "chkShowDisplayDebug";
             this.chkShowDisplayDebug.Size = new System.Drawing.Size(131, 24);
             this.chkShowDisplayDebug.TabIndex = 119;
@@ -59524,7 +59626,7 @@
             // chkShowControlDebug
             // 
             this.chkShowControlDebug.Image = null;
-            this.chkShowControlDebug.Location = new System.Drawing.Point(24, 326);
+            this.chkShowControlDebug.Location = new System.Drawing.Point(529, 375);
             this.chkShowControlDebug.Name = "chkShowControlDebug";
             this.chkShowControlDebug.Size = new System.Drawing.Size(131, 24);
             this.chkShowControlDebug.TabIndex = 118;
@@ -59536,13 +59638,25 @@
             // btnShowSeqLog
             // 
             this.btnShowSeqLog.Image = null;
-            this.btnShowSeqLog.Location = new System.Drawing.Point(37, 379);
+            this.btnShowSeqLog.Location = new System.Drawing.Point(420, 376);
             this.btnShowSeqLog.Name = "btnShowSeqLog";
-            this.btnShowSeqLog.Size = new System.Drawing.Size(97, 23);
+            this.btnShowSeqLog.Size = new System.Drawing.Size(97, 46);
             this.btnShowSeqLog.TabIndex = 92;
             this.btnShowSeqLog.Text = "Show SEQ log";
             this.btnShowSeqLog.UseVisualStyleBackColor = true;
             this.btnShowSeqLog.Click += new System.EventHandler(this.btnShowSeqLog_Click);
+            // 
+            // chkTestIMDPower
+            // 
+            this.chkTestIMDPower.Checked = true;
+            this.chkTestIMDPower.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTestIMDPower.Image = null;
+            this.chkTestIMDPower.Location = new System.Drawing.Point(24, 392);
+            this.chkTestIMDPower.Name = "chkTestIMDPower";
+            this.chkTestIMDPower.Size = new System.Drawing.Size(108, 16);
+            this.chkTestIMDPower.TabIndex = 119;
+            this.chkTestIMDPower.Text = "Use Drive Power";
+            this.toolTip1.SetToolTip(this.chkTestIMDPower, "Use Drive Power for IMD Test");
             // 
             // grpBoxTS1
             // 
@@ -60237,32 +60351,72 @@
             // 
             // grpTestTXIMD
             // 
+            this.grpTestTXIMD.Controls.Add(this.radUseFixedDrive2Tone);
+            this.grpTestTXIMD.Controls.Add(this.radUseDriveSlider2Tone);
+            this.grpTestTXIMD.Controls.Add(this.radUseTuneSlider2Tone);
             this.grpTestTXIMD.Controls.Add(this.labelTS18);
             this.grpTestTXIMD.Controls.Add(this.labelTS17);
             this.grpTestTXIMD.Controls.Add(this.udFreq2Delay);
-            this.grpTestTXIMD.Controls.Add(this.chkTestIMDPower);
             this.grpTestTXIMD.Controls.Add(this.labelTS314);
             this.grpTestTXIMD.Controls.Add(this.chkInvertTones);
             this.grpTestTXIMD.Controls.Add(this.lblTwoToneLevel);
             this.grpTestTXIMD.Controls.Add(this.udTwoToneLevel);
             this.grpTestTXIMD.Controls.Add(this.lblTestToneFreq2);
             this.grpTestTXIMD.Controls.Add(this.udTestIMDFreq2);
-            this.grpTestTXIMD.Controls.Add(this.lblTestIMDPower);
             this.grpTestTXIMD.Controls.Add(this.udTestIMDPower);
             this.grpTestTXIMD.Controls.Add(this.chkTestIMD);
             this.grpTestTXIMD.Controls.Add(this.lblTestToneFreq1);
             this.grpTestTXIMD.Controls.Add(this.udTestIMDFreq1);
             this.grpTestTXIMD.Location = new System.Drawing.Point(8, 8);
             this.grpTestTXIMD.Name = "grpTestTXIMD";
-            this.grpTestTXIMD.Size = new System.Drawing.Size(162, 272);
+            this.grpTestTXIMD.Size = new System.Drawing.Size(162, 326);
             this.grpTestTXIMD.TabIndex = 83;
             this.grpTestTXIMD.TabStop = false;
             this.grpTestTXIMD.Text = "Two Tone Test";
             // 
+            // radUseFixedDrive2Tone
+            // 
+            this.radUseFixedDrive2Tone.AutoSize = true;
+            this.radUseFixedDrive2Tone.Image = null;
+            this.radUseFixedDrive2Tone.Location = new System.Drawing.Point(25, 198);
+            this.radUseFixedDrive2Tone.Name = "radUseFixedDrive2Tone";
+            this.radUseFixedDrive2Tone.Size = new System.Drawing.Size(100, 17);
+            this.radUseFixedDrive2Tone.TabIndex = 125;
+            this.radUseFixedDrive2Tone.TabStop = true;
+            this.radUseFixedDrive2Tone.Text = "Use Fixed Drive";
+            this.radUseFixedDrive2Tone.UseVisualStyleBackColor = true;
+            this.radUseFixedDrive2Tone.CheckedChanged += new System.EventHandler(this.radUseFixedDrive2Tone_CheckedChanged);
+            // 
+            // radUseDriveSlider2Tone
+            // 
+            this.radUseDriveSlider2Tone.AutoSize = true;
+            this.radUseDriveSlider2Tone.Image = null;
+            this.radUseDriveSlider2Tone.Location = new System.Drawing.Point(25, 152);
+            this.radUseDriveSlider2Tone.Name = "radUseDriveSlider2Tone";
+            this.radUseDriveSlider2Tone.Size = new System.Drawing.Size(101, 17);
+            this.radUseDriveSlider2Tone.TabIndex = 124;
+            this.radUseDriveSlider2Tone.TabStop = true;
+            this.radUseDriveSlider2Tone.Text = "Use Drive Slider";
+            this.radUseDriveSlider2Tone.UseVisualStyleBackColor = true;
+            this.radUseDriveSlider2Tone.CheckedChanged += new System.EventHandler(this.radUseDriveSlider2Tone_CheckedChanged);
+            // 
+            // radUseTuneSlider2Tone
+            // 
+            this.radUseTuneSlider2Tone.AutoSize = true;
+            this.radUseTuneSlider2Tone.Image = null;
+            this.radUseTuneSlider2Tone.Location = new System.Drawing.Point(25, 175);
+            this.radUseTuneSlider2Tone.Name = "radUseTuneSlider2Tone";
+            this.radUseTuneSlider2Tone.Size = new System.Drawing.Size(101, 17);
+            this.radUseTuneSlider2Tone.TabIndex = 123;
+            this.radUseTuneSlider2Tone.TabStop = true;
+            this.radUseTuneSlider2Tone.Text = "Use Tune Slider";
+            this.radUseTuneSlider2Tone.UseVisualStyleBackColor = true;
+            this.radUseTuneSlider2Tone.CheckedChanged += new System.EventHandler(this.radUseTuneSlider2Tone_CheckedChanged);
+            // 
             // labelTS18
             // 
             this.labelTS18.Image = null;
-            this.labelTS18.Location = new System.Drawing.Point(10, 147);
+            this.labelTS18.Location = new System.Drawing.Point(10, 120);
             this.labelTS18.Name = "labelTS18";
             this.labelTS18.Size = new System.Drawing.Size(60, 20);
             this.labelTS18.TabIndex = 121;
@@ -60272,7 +60426,7 @@
             // labelTS17
             // 
             this.labelTS17.Image = null;
-            this.labelTS17.Location = new System.Drawing.Point(132, 152);
+            this.labelTS17.Location = new System.Drawing.Point(132, 125);
             this.labelTS17.Name = "labelTS17";
             this.labelTS17.Size = new System.Drawing.Size(24, 18);
             this.labelTS17.TabIndex = 91;
@@ -60285,7 +60439,7 @@
             0,
             0,
             0});
-            this.udFreq2Delay.Location = new System.Drawing.Point(70, 150);
+            this.udFreq2Delay.Location = new System.Drawing.Point(70, 123);
             this.udFreq2Delay.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -60306,18 +60460,6 @@
             0,
             0});
             // 
-            // chkTestIMDPower
-            // 
-            this.chkTestIMDPower.Checked = true;
-            this.chkTestIMDPower.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTestIMDPower.Image = null;
-            this.chkTestIMDPower.Location = new System.Drawing.Point(12, 179);
-            this.chkTestIMDPower.Name = "chkTestIMDPower";
-            this.chkTestIMDPower.Size = new System.Drawing.Size(108, 16);
-            this.chkTestIMDPower.TabIndex = 119;
-            this.chkTestIMDPower.Text = "Use Drive Power";
-            this.toolTip1.SetToolTip(this.chkTestIMDPower, "Use Drive Power for IMD Test");
-            // 
             // labelTS314
             // 
             this.labelTS314.AutoSize = true;
@@ -60335,7 +60477,7 @@
             this.chkInvertTones.Checked = true;
             this.chkInvertTones.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkInvertTones.Image = null;
-            this.chkInvertTones.Location = new System.Drawing.Point(12, 203);
+            this.chkInvertTones.Location = new System.Drawing.Point(13, 247);
             this.chkInvertTones.Name = "chkInvertTones";
             this.chkInvertTones.Size = new System.Drawing.Size(119, 17);
             this.chkInvertTones.TabIndex = 97;
@@ -60420,16 +60562,6 @@
             65536});
             this.udTestIMDFreq2.LostFocus += new System.EventHandler(this.udTestIMDFreq2_LostFocus);
             // 
-            // lblTestIMDPower
-            // 
-            this.lblTestIMDPower.Image = null;
-            this.lblTestIMDPower.Location = new System.Drawing.Point(9, 124);
-            this.lblTestIMDPower.Name = "lblTestIMDPower";
-            this.lblTestIMDPower.Size = new System.Drawing.Size(60, 16);
-            this.lblTestIMDPower.TabIndex = 86;
-            this.lblTestIMDPower.Text = "RF Power:";
-            this.lblTestIMDPower.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-            // 
             // udTestIMDPower
             // 
             this.udTestIMDPower.Increment = new decimal(new int[] {
@@ -60437,7 +60569,7 @@
             0,
             0,
             0});
-            this.udTestIMDPower.Location = new System.Drawing.Point(70, 124);
+            this.udTestIMDPower.Location = new System.Drawing.Point(68, 221);
             this.udTestIMDPower.Maximum = new decimal(new int[] {
             100,
             0,
@@ -60456,15 +60588,16 @@
             0,
             0,
             0});
+            this.udTestIMDPower.ValueChanged += new System.EventHandler(this.udTestIMDPower_ValueChanged);
             this.udTestIMDPower.LostFocus += new System.EventHandler(this.udTestIMDPower_LostFocus);
             // 
             // chkTestIMD
             // 
             this.chkTestIMD.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkTestIMD.Image = null;
-            this.chkTestIMD.Location = new System.Drawing.Point(43, 238);
+            this.chkTestIMD.Location = new System.Drawing.Point(72, 281);
             this.chkTestIMD.Name = "chkTestIMD";
-            this.chkTestIMD.Size = new System.Drawing.Size(60, 23);
+            this.chkTestIMD.Size = new System.Drawing.Size(76, 31);
             this.chkTestIMD.TabIndex = 84;
             this.chkTestIMD.Text = "Start";
             this.chkTestIMD.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -60580,6 +60713,16 @@
             this.btnTestAudioBalStart.Size = new System.Drawing.Size(75, 23);
             this.btnTestAudioBalStart.TabIndex = 0;
             this.btnTestAudioBalStart.Text = "Start";
+            // 
+            // lblTestIMDPower
+            // 
+            this.lblTestIMDPower.Image = null;
+            this.lblTestIMDPower.Location = new System.Drawing.Point(161, 391);
+            this.lblTestIMDPower.Name = "lblTestIMDPower";
+            this.lblTestIMDPower.Size = new System.Drawing.Size(60, 16);
+            this.lblTestIMDPower.TabIndex = 86;
+            this.lblTestIMDPower.Text = "RF Power:";
+            this.lblTestIMDPower.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // openFileDialog1
             // 
@@ -61700,19 +61843,6 @@
             this.tmrCFCOMPGain.Interval = 50;
             this.tmrCFCOMPGain.Tick += new System.EventHandler(this.tmrCFCOMPGain_Tick);
             // 
-            // chkEmulateExpertSDR3Protocol
-            // 
-            this.chkEmulateExpertSDR3Protocol.AutoSize = true;
-            this.chkEmulateExpertSDR3Protocol.Image = null;
-            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 181);
-            this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
-            this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
-            this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
-            this.chkEmulateExpertSDR3Protocol.Text = "Emulate ExpertSDR3 protocol";
-            this.toolTip1.SetToolTip(this.chkEmulateExpertSDR3Protocol, "Causes the TCI protocol message to send \'ExpertSDR3\' instead of \'Thetis\'");
-            this.chkEmulateExpertSDR3Protocol.UseVisualStyleBackColor = true;
-            this.chkEmulateExpertSDR3Protocol.CheckedChanged += new System.EventHandler(this.chkEmulateExpertSDR3Protocol_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -62478,6 +62608,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLowSave)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHighSave)).EndInit();
             this.grpBoxMic.ResumeLayout(false);
+            this.grpBoxMic.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udMicGainMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udMicGainMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udLineInBoost)).EndInit();
@@ -62489,6 +62620,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udTXAF)).EndInit();
             this.grpTXProfile.ResumeLayout(false);
             this.grpPATune.ResumeLayout(false);
+            this.grpPATune.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXTunePower)).EndInit();
             this.grpTXFilter.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).EndInit();
@@ -66732,5 +66864,14 @@
         private TabPage tbMIDIcat;
         private CheckBoxTS chkEmulateSunSDR2Pro;
         private CheckBoxTS chkEmulateExpertSDR3Protocol;
+        private CheckBoxTS chkDisableRearSpeakerJacksAudioAmplifier;
+        private LabelTS labelTS617;
+        private LabelTS labelTS616;
+        private RadioButtonTS radUseFixedDriveTune;
+        private RadioButtonTS radUseDriveSliderTune;
+        private RadioButtonTS radUseTuneSliderTune;
+        private RadioButtonTS radUseFixedDrive2Tone;
+        private RadioButtonTS radUseDriveSlider2Tone;
+        private RadioButtonTS radUseTuneSlider2Tone;
     }
 }

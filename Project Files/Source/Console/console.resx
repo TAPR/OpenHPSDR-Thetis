@@ -3256,7 +3256,7 @@
     <value>13</value>
   </data>
   <data name="comboAGC.Location" type="System.Drawing.Point, System.Drawing">
-    <value>2, 248</value>
+    <value>2, 293</value>
   </data>
   <data name="comboAGC.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 21</value>
@@ -3277,7 +3277,7 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;comboAGC.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="lblAGC.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -3286,7 +3286,7 @@
     <value>NoControl</value>
   </data>
   <data name="lblAGC.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 229</value>
+    <value>9, 274</value>
   </data>
   <data name="lblAGC.Size" type="System.Drawing.Size, System.Drawing">
     <value>30, 16</value>
@@ -3313,13 +3313,13 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblAGC.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>11</value>
   </data>
   <data name="comboPreamp.ItemHeight" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
   <data name="comboPreamp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>56, 248</value>
+    <value>56, 293</value>
   </data>
   <data name="comboPreamp.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 21</value>
@@ -3340,7 +3340,7 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;comboPreamp.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>15</value>
   </data>
   <data name="lblRF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -3376,7 +3376,7 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblRF.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>12</value>
   </data>
   <data name="chkShowTXFilter.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -4699,7 +4699,7 @@
     <value>Off</value>
   </data>
   <data name="chkSquelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 481</value>
+    <value>13, 524</value>
   </data>
   <data name="chkSquelch.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 23</value>
@@ -5933,7 +5933,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbPWR.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="ptbRF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -5969,7 +5969,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbRF.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>8</value>
   </data>
   <data name="ptbAF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -6005,7 +6005,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbAF.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>9</value>
   </data>
   <data name="ptbPanMainRX.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -7280,7 +7280,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbRX2AF.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="ptbRX1AF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -7316,7 +7316,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbRX1AF.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="chkVAC2.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -7394,7 +7394,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>9</value>
   </data>
   <data name="udRX1StepAttData.Location" type="System.Drawing.Point, System.Drawing">
-    <value>56, 249</value>
+    <value>56, 294</value>
   </data>
   <data name="udRX1StepAttData.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 20</value>
@@ -7418,7 +7418,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;udRX1StepAttData.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>16</value>
   </data>
   <data name="comboRX2Preamp.ItemHeight" type="System.Int32, mscorlib">
     <value>13</value>
@@ -8667,11 +8667,47 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;btnDisplayZTB.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="ptbTune.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbTune.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbTune.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 246</value>
+  </data>
+  <data name="ptbTune.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbTune.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbTune.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbTune.TabIndex" type="System.Int32, mscorlib">
+    <value>143</value>
+  </data>
+  <data name="ptbTune.ToolTip" xml:space="preserve">
+    <value>Tune Drive - This is a relative value and is not meant to imply watts.</value>
+  </data>
+  <data name="&gt;&gt;ptbTune.Name" xml:space="preserve">
+    <value>ptbTune</value>
+  </data>
+  <data name="&gt;&gt;ptbTune.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.9.0.4, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbTune.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;ptbTune.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="picSquelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>Off</value>
   </data>
   <data name="picSquelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>17, 524</value>
+    <value>17, 566</value>
   </data>
   <data name="picSquelch.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 3</value>
@@ -9939,7 +9975,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>None</value>
   </data>
   <data name="toolStripStatusLabel_Fill.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 15</value>
+    <value>204, 15</value>
   </data>
   <data name="toolStripStatusLabel_N1MMActive.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -13622,6 +13658,39 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="panelSoundControls.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="lblTune.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblTune.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblTune.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 227</value>
+  </data>
+  <data name="lblTune.Size" type="System.Drawing.Size, System.Drawing">
+    <value>88, 16</value>
+  </data>
+  <data name="lblTune.TabIndex" type="System.Int32, mscorlib">
+    <value>142</value>
+  </data>
+  <data name="lblTune.Text" xml:space="preserve">
+    <value>Tune:</value>
+  </data>
+  <data name="lblTune.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;lblTune.Name" xml:space="preserve">
+    <value>lblTune</value>
+  </data>
+  <data name="&gt;&gt;lblTune.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.9.0.4, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblTune.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;lblTune.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="lblRX2AF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -13653,7 +13722,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblRX2AF.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="lblRX1AF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -13686,7 +13755,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblRX1AF.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="lblAF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -13719,7 +13788,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblAF.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>10</value>
   </data>
   <data name="lblPWR.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -13752,7 +13821,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblPWR.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>13</value>
   </data>
   <data name="lblPreamp.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -13761,7 +13830,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblPreamp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>56, 229</value>
+    <value>56, 274</value>
   </data>
   <data name="lblPreamp.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 16</value>
@@ -13785,13 +13854,13 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblPreamp.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>14</value>
   </data>
   <data name="panelSoundControls.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 204</value>
   </data>
   <data name="panelSoundControls.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 270</value>
+    <value>115, 319</value>
   </data>
   <data name="panelSoundControls.TabIndex" type="System.Int32, mscorlib">
     <value>117</value>
@@ -16698,7 +16767,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="ptbSquelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 504</value>
+    <value>9, 547</value>
   </data>
   <data name="ptbSquelch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>

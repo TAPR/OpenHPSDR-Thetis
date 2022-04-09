@@ -411,5 +411,12 @@
         MOX_TUNE_TWOTONE,
         LAST
     }
+
+    public enum DrivePowerSource
+    {
+        DRIVE_SLIDER = 0,
+        TUNE_SLIDER = 1,
+        FIXED = 2
+    }
     #endregion
 }

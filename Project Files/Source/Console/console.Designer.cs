@@ -720,6 +720,7 @@
             this.chkQSK = new System.Windows.Forms.CheckBoxTS();
             this.comboAMTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.btnDisplayZTB = new System.Windows.Forms.ButtonTS();
+            this.ptbTune = new Thetis.PrettyTrackBar();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -1012,6 +1013,7 @@
             this.ucVAC2UnderOver = new Thetis.ucUnderOverFlowWarningViewer();
             this.ucVAC1UnderOver = new Thetis.ucUnderOverFlowWarningViewer();
             this.panelSoundControls = new System.Windows.Forms.PanelTS();
+            this.lblTune = new System.Windows.Forms.LabelTS();
             this.lblRX2AF = new System.Windows.Forms.LabelTS();
             this.lblRX1AF = new System.Windows.Forms.LabelTS();
             this.lblAF = new System.Windows.Forms.LabelTS();
@@ -1154,6 +1156,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
             this.contextMenuStripFilterRX1.SuspendLayout();
             this.contextMenuStripFilterRX2.SuspendLayout();
@@ -1235,6 +1238,8 @@
             this.ptbFilterShift.GreenThumb = false;
             this.ptbFilterShift.HeadImage = null;
             this.ptbFilterShift.LargeChange = 1;
+            this.ptbFilterShift.LimitEnabled = false;
+            this.ptbFilterShift.LimitValue = 0;
             this.ptbFilterShift.Maximum = 1000;
             this.ptbFilterShift.Minimum = -1000;
             this.ptbFilterShift.Name = "ptbFilterShift";
@@ -1251,6 +1256,8 @@
             this.ptbFilterWidth.GreenThumb = false;
             this.ptbFilterWidth.HeadImage = null;
             this.ptbFilterWidth.LargeChange = 1;
+            this.ptbFilterWidth.LimitEnabled = false;
+            this.ptbFilterWidth.LimitValue = 0;
             this.ptbFilterWidth.Maximum = 15000;
             this.ptbFilterWidth.Minimum = 0;
             this.ptbFilterWidth.Name = "ptbFilterWidth";
@@ -1338,6 +1345,8 @@
             this.ptbRX2RF.GreenThumb = false;
             this.ptbRX2RF.HeadImage = null;
             this.ptbRX2RF.LargeChange = 1;
+            this.ptbRX2RF.LimitEnabled = false;
+            this.ptbRX2RF.LimitValue = 0;
             this.ptbRX2RF.Maximum = 120;
             this.ptbRX2RF.Minimum = -20;
             this.ptbRX2RF.Name = "ptbRX2RF";
@@ -1633,6 +1642,8 @@
             this.ptbCWSpeed.GreenThumb = false;
             this.ptbCWSpeed.HeadImage = null;
             this.ptbCWSpeed.LargeChange = 1;
+            this.ptbCWSpeed.LimitEnabled = false;
+            this.ptbCWSpeed.LimitValue = 1;
             this.ptbCWSpeed.Maximum = 60;
             this.ptbCWSpeed.Minimum = 1;
             this.ptbCWSpeed.Name = "ptbCWSpeed";
@@ -2683,7 +2694,6 @@
             this.radBandGEN.UseVisualStyleBackColor = true;
             this.radBandGEN.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBandGEN.Click += new System.EventHandler(this.btnBandGEN_Click);
-            this.radBandGEN.PaddingChanged += new System.EventHandler(this.radBandGEN_Click);
             // 
             // radBandWWV
             // 
@@ -2843,6 +2853,8 @@
             this.ptbDisplayZoom.GreenThumb = false;
             this.ptbDisplayZoom.HeadImage = null;
             this.ptbDisplayZoom.LargeChange = 1;
+            this.ptbDisplayZoom.LimitEnabled = false;
+            this.ptbDisplayZoom.LimitValue = 10;
             this.ptbDisplayZoom.Maximum = 240;
             this.ptbDisplayZoom.Minimum = 10;
             this.ptbDisplayZoom.Name = "ptbDisplayZoom";
@@ -2859,6 +2871,8 @@
             this.ptbDisplayPan.GreenThumb = false;
             this.ptbDisplayPan.HeadImage = null;
             this.ptbDisplayPan.LargeChange = 1;
+            this.ptbDisplayPan.LimitEnabled = false;
+            this.ptbDisplayPan.LimitValue = 0;
             this.ptbDisplayPan.Maximum = 1000;
             this.ptbDisplayPan.Minimum = 0;
             this.ptbDisplayPan.Name = "ptbDisplayPan";
@@ -2875,6 +2889,8 @@
             this.ptbPWR.GreenThumb = false;
             this.ptbPWR.HeadImage = null;
             this.ptbPWR.LargeChange = 1;
+            this.ptbPWR.LimitEnabled = true;
+            this.ptbPWR.LimitValue = 50;
             this.ptbPWR.Maximum = 100;
             this.ptbPWR.Minimum = 0;
             this.ptbPWR.Name = "ptbPWR";
@@ -2884,6 +2900,7 @@
             this.toolTip1.SetToolTip(this.ptbPWR, resources.GetString("ptbPWR.ToolTip"));
             this.ptbPWR.Value = 50;
             this.ptbPWR.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPWR_Scroll);
+            this.ptbPWR.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbPWR_MouseUp);
             // 
             // ptbRF
             // 
@@ -2891,6 +2908,8 @@
             this.ptbRF.GreenThumb = false;
             this.ptbRF.HeadImage = null;
             this.ptbRF.LargeChange = 1;
+            this.ptbRF.LimitEnabled = false;
+            this.ptbRF.LimitValue = 0;
             this.ptbRF.Maximum = 120;
             this.ptbRF.Minimum = -20;
             this.ptbRF.Name = "ptbRF";
@@ -2909,6 +2928,8 @@
             this.ptbAF.GreenThumb = false;
             this.ptbAF.HeadImage = null;
             this.ptbAF.LargeChange = 1;
+            this.ptbAF.LimitEnabled = false;
+            this.ptbAF.LimitValue = 0;
             this.ptbAF.Maximum = 100;
             this.ptbAF.Minimum = 0;
             this.ptbAF.Name = "ptbAF";
@@ -2926,6 +2947,8 @@
             this.ptbPanMainRX.GreenThumb = false;
             this.ptbPanMainRX.HeadImage = null;
             this.ptbPanMainRX.LargeChange = 1;
+            this.ptbPanMainRX.LimitEnabled = false;
+            this.ptbPanMainRX.LimitValue = 0;
             this.ptbPanMainRX.Maximum = 100;
             this.ptbPanMainRX.Minimum = 0;
             this.ptbPanMainRX.Name = "ptbPanMainRX";
@@ -2943,6 +2966,8 @@
             this.ptbPanSubRX.GreenThumb = false;
             this.ptbPanSubRX.HeadImage = null;
             this.ptbPanSubRX.LargeChange = 1;
+            this.ptbPanSubRX.LimitEnabled = false;
+            this.ptbPanSubRX.LimitValue = 0;
             this.ptbPanSubRX.Maximum = 100;
             this.ptbPanSubRX.Minimum = 0;
             this.ptbPanSubRX.Name = "ptbPanSubRX";
@@ -2960,6 +2985,8 @@
             this.ptbRX2Gain.GreenThumb = false;
             this.ptbRX2Gain.HeadImage = null;
             this.ptbRX2Gain.LargeChange = 1;
+            this.ptbRX2Gain.LimitEnabled = false;
+            this.ptbRX2Gain.LimitValue = 0;
             this.ptbRX2Gain.Maximum = 100;
             this.ptbRX2Gain.Minimum = 0;
             this.ptbRX2Gain.Name = "ptbRX2Gain";
@@ -2976,6 +3003,8 @@
             this.ptbRX2Pan.GreenThumb = false;
             this.ptbRX2Pan.HeadImage = null;
             this.ptbRX2Pan.LargeChange = 1;
+            this.ptbRX2Pan.LimitEnabled = false;
+            this.ptbRX2Pan.LimitValue = 0;
             this.ptbRX2Pan.Maximum = 100;
             this.ptbRX2Pan.Minimum = 0;
             this.ptbRX2Pan.Name = "ptbRX2Pan";
@@ -2993,6 +3022,8 @@
             this.ptbRX0Gain.GreenThumb = false;
             this.ptbRX0Gain.HeadImage = null;
             this.ptbRX0Gain.LargeChange = 1;
+            this.ptbRX0Gain.LimitEnabled = false;
+            this.ptbRX0Gain.LimitValue = 0;
             this.ptbRX0Gain.Maximum = 100;
             this.ptbRX0Gain.Minimum = 0;
             this.ptbRX0Gain.Name = "ptbRX0Gain";
@@ -3009,6 +3040,8 @@
             this.ptbRX1Gain.GreenThumb = false;
             this.ptbRX1Gain.HeadImage = null;
             this.ptbRX1Gain.LargeChange = 1;
+            this.ptbRX1Gain.LimitEnabled = false;
+            this.ptbRX1Gain.LimitValue = 0;
             this.ptbRX1Gain.Maximum = 100;
             this.ptbRX1Gain.Minimum = 0;
             this.ptbRX1Gain.Name = "ptbRX1Gain";
@@ -3025,6 +3058,8 @@
             this.ptbVACRXGain.GreenThumb = false;
             this.ptbVACRXGain.HeadImage = null;
             this.ptbVACRXGain.LargeChange = 1;
+            this.ptbVACRXGain.LimitEnabled = false;
+            this.ptbVACRXGain.LimitValue = 0;
             this.ptbVACRXGain.Maximum = 40;
             this.ptbVACRXGain.Minimum = -40;
             this.ptbVACRXGain.Name = "ptbVACRXGain";
@@ -3041,6 +3076,8 @@
             this.ptbVACTXGain.GreenThumb = false;
             this.ptbVACTXGain.HeadImage = null;
             this.ptbVACTXGain.LargeChange = 1;
+            this.ptbVACTXGain.LimitEnabled = false;
+            this.ptbVACTXGain.LimitValue = 0;
             this.ptbVACTXGain.Maximum = 40;
             this.ptbVACTXGain.Minimum = -40;
             this.ptbVACTXGain.Name = "ptbVACTXGain";
@@ -3325,6 +3362,8 @@
             this.ptbRX2AF.GreenThumb = false;
             this.ptbRX2AF.HeadImage = null;
             this.ptbRX2AF.LargeChange = 1;
+            this.ptbRX2AF.LimitEnabled = false;
+            this.ptbRX2AF.LimitValue = 0;
             this.ptbRX2AF.Maximum = 100;
             this.ptbRX2AF.Minimum = 0;
             this.ptbRX2AF.Name = "ptbRX2AF";
@@ -3342,6 +3381,8 @@
             this.ptbRX1AF.GreenThumb = false;
             this.ptbRX1AF.HeadImage = null;
             this.ptbRX1AF.LargeChange = 1;
+            this.ptbRX1AF.LimitEnabled = false;
+            this.ptbRX1AF.LimitValue = 0;
             this.ptbRX1AF.Maximum = 100;
             this.ptbRX1AF.Minimum = 0;
             this.ptbRX1AF.Name = "ptbRX1AF";
@@ -3457,6 +3498,8 @@
             this.ptbCWAPFGain.GreenThumb = false;
             this.ptbCWAPFGain.HeadImage = null;
             this.ptbCWAPFGain.LargeChange = 1;
+            this.ptbCWAPFGain.LimitEnabled = false;
+            this.ptbCWAPFGain.LimitValue = 0;
             this.ptbCWAPFGain.Maximum = 100;
             this.ptbCWAPFGain.Minimum = 0;
             this.ptbCWAPFGain.Name = "ptbCWAPFGain";
@@ -3473,6 +3516,8 @@
             this.ptbCWAPFBandwidth.GreenThumb = false;
             this.ptbCWAPFBandwidth.HeadImage = null;
             this.ptbCWAPFBandwidth.LargeChange = 1;
+            this.ptbCWAPFBandwidth.LimitEnabled = false;
+            this.ptbCWAPFBandwidth.LimitValue = 10;
             this.ptbCWAPFBandwidth.Maximum = 150;
             this.ptbCWAPFBandwidth.Minimum = 10;
             this.ptbCWAPFBandwidth.Name = "ptbCWAPFBandwidth";
@@ -3489,6 +3534,8 @@
             this.ptbCWAPFFreq.GreenThumb = false;
             this.ptbCWAPFFreq.HeadImage = null;
             this.ptbCWAPFFreq.LargeChange = 1;
+            this.ptbCWAPFFreq.LimitEnabled = false;
+            this.ptbCWAPFFreq.LimitValue = 0;
             this.ptbCWAPFFreq.Maximum = 250;
             this.ptbCWAPFFreq.Minimum = -250;
             this.ptbCWAPFFreq.Name = "ptbCWAPFFreq";
@@ -3809,6 +3856,25 @@
             this.toolTip1.SetToolTip(this.btnDisplayZTB, resources.GetString("btnDisplayZTB.ToolTip"));
             this.btnDisplayZTB.Click += new System.EventHandler(this.btnDisplayZTB_Click);
             this.btnDisplayZTB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnDisplayZTB_MouseUp);
+            // 
+            // ptbTune
+            // 
+            resources.ApplyResources(this.ptbTune, "ptbTune");
+            this.ptbTune.GreenThumb = false;
+            this.ptbTune.HeadImage = null;
+            this.ptbTune.LargeChange = 1;
+            this.ptbTune.LimitEnabled = true;
+            this.ptbTune.LimitValue = 50;
+            this.ptbTune.Maximum = 100;
+            this.ptbTune.Minimum = 0;
+            this.ptbTune.Name = "ptbTune";
+            this.ptbTune.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbTune.SmallChange = 1;
+            this.ptbTune.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbTune, resources.GetString("ptbTune.ToolTip"));
+            this.ptbTune.Value = 50;
+            this.ptbTune.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbTune_Scroll);
+            this.ptbTune.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbTune_MouseUp);
             // 
             // picSquelch
             // 
@@ -5347,6 +5413,8 @@
             this.ptbRX2Squelch.GreenThumb = false;
             this.ptbRX2Squelch.HeadImage = null;
             this.ptbRX2Squelch.LargeChange = 1;
+            this.ptbRX2Squelch.LimitEnabled = false;
+            this.ptbRX2Squelch.LimitValue = 0;
             this.ptbRX2Squelch.Maximum = 0;
             this.ptbRX2Squelch.Minimum = -160;
             this.ptbRX2Squelch.Name = "ptbRX2Squelch";
@@ -6084,6 +6152,8 @@
             // 
             resources.ApplyResources(this.panelSoundControls, "panelSoundControls");
             this.panelSoundControls.BackColor = System.Drawing.Color.Transparent;
+            this.panelSoundControls.Controls.Add(this.ptbTune);
+            this.panelSoundControls.Controls.Add(this.lblTune);
             this.panelSoundControls.Controls.Add(this.ptbRX2AF);
             this.panelSoundControls.Controls.Add(this.lblRX2AF);
             this.panelSoundControls.Controls.Add(this.ptbRX1AF);
@@ -6101,6 +6171,12 @@
             this.panelSoundControls.Controls.Add(this.udRX1StepAttData);
             this.panelSoundControls.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelSoundControls.Name = "panelSoundControls";
+            // 
+            // lblTune
+            // 
+            this.lblTune.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.lblTune, "lblTune");
+            this.lblTune.Name = "lblTune";
             // 
             // lblRX2AF
             // 
@@ -6212,6 +6288,8 @@
             this.ptbNoiseGate.GreenThumb = false;
             this.ptbNoiseGate.HeadImage = null;
             this.ptbNoiseGate.LargeChange = 1;
+            this.ptbNoiseGate.LimitEnabled = false;
+            this.ptbNoiseGate.LimitValue = 0;
             this.ptbNoiseGate.Maximum = 0;
             this.ptbNoiseGate.Minimum = -160;
             this.ptbNoiseGate.Name = "ptbNoiseGate";
@@ -6235,6 +6313,8 @@
             this.ptbVOX.GreenThumb = false;
             this.ptbVOX.HeadImage = null;
             this.ptbVOX.LargeChange = 1;
+            this.ptbVOX.LimitEnabled = false;
+            this.ptbVOX.LimitValue = 0;
             this.ptbVOX.Maximum = 0;
             this.ptbVOX.Minimum = -80;
             this.ptbVOX.Name = "ptbVOX";
@@ -6256,6 +6336,8 @@
             this.ptbCPDR.GreenThumb = false;
             this.ptbCPDR.HeadImage = null;
             this.ptbCPDR.LargeChange = 1;
+            this.ptbCPDR.LimitEnabled = false;
+            this.ptbCPDR.LimitValue = 0;
             this.ptbCPDR.Maximum = 20;
             this.ptbCPDR.Minimum = 0;
             this.ptbCPDR.Name = "ptbCPDR";
@@ -6277,6 +6359,8 @@
             this.ptbDX.GreenThumb = false;
             this.ptbDX.HeadImage = null;
             this.ptbDX.LargeChange = 1;
+            this.ptbDX.LimitEnabled = false;
+            this.ptbDX.LimitValue = 0;
             this.ptbDX.Maximum = 10;
             this.ptbDX.Minimum = 0;
             this.ptbDX.Name = "ptbDX";
@@ -6304,6 +6388,8 @@
             this.ptbMic.GreenThumb = false;
             this.ptbMic.HeadImage = null;
             this.ptbMic.LargeChange = 1;
+            this.ptbMic.LimitEnabled = false;
+            this.ptbMic.LimitValue = 0;
             this.ptbMic.Maximum = 70;
             this.ptbMic.Minimum = -96;
             this.ptbMic.Name = "ptbMic";
@@ -7006,6 +7092,8 @@
             this.ptbSquelch.GreenThumb = false;
             this.ptbSquelch.HeadImage = null;
             this.ptbSquelch.LargeChange = 1;
+            this.ptbSquelch.LimitEnabled = false;
+            this.ptbSquelch.LimitValue = 0;
             this.ptbSquelch.Maximum = 0;
             this.ptbSquelch.Minimum = -160;
             this.ptbSquelch.Name = "ptbSquelch";
@@ -7047,6 +7135,8 @@
             this.ptbFMMic.GreenThumb = false;
             this.ptbFMMic.HeadImage = null;
             this.ptbFMMic.LargeChange = 1;
+            this.ptbFMMic.LimitEnabled = false;
+            this.ptbFMMic.LimitValue = 0;
             this.ptbFMMic.Maximum = 70;
             this.ptbFMMic.Minimum = -96;
             this.ptbFMMic.Name = "ptbFMMic";
@@ -7287,6 +7377,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
             this.contextMenuStripFilterRX1.ResumeLayout(false);
             this.contextMenuStripFilterRX2.ResumeLayout(false);
@@ -7490,5 +7581,7 @@
         private ucInfoBar infoBar;
         private ucUnderOverFlowWarningViewer ucVAC2UnderOver;
         private ucUnderOverFlowWarningViewer ucVAC1UnderOver;
+        private PrettyTrackBar ptbTune;
+        private LabelTS lblTune;
     }
 }

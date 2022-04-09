@@ -6174,15 +6174,38 @@ namespace Thetis
 				tl = Convert.ToInt32(s);
 				tl = Math.Max(0, tl);
 				tl = Math.Min(100, tl);
-				if (console.TXTunePower) console.PWR = tl;
-				else console.SetupForm.TunePower = tl;
+
+				//MW0LGE_22b changed
+				if (console.TuneDrivePowerOrigin == DrivePowerSource.DRIVE_SLIDER || console.TuneDrivePowerOrigin == DrivePowerSource.FIXED) //note: fixed is handled in PWR
+					console.PWR = tl;
+				else // must be DrivePowerSource.TUNE_SLIDER
+					console.TunePWR = tl;
+
+				//if (console.TXTunePower) console.PWR = tl; //MW0LGE_22b changed
+				//else console.SetupForm.TunePower = tl;
 		
 				return "";
 			}
 			else if(s.Length == parser.nGet)	// if this is a read command
 			{
-				if (console.TXTunePower) return AddLeadingZeros(console.PWR);
-				else return AddLeadingZeros(console.SetupForm.TunePower);
+				int tp = 0;
+                switch (console.TuneDrivePowerOrigin)
+                {
+					case DrivePowerSource.DRIVE_SLIDER:
+						tp = console.PWRConstrained;
+						break;
+					case DrivePowerSource.TUNE_SLIDER:
+						tp = console.TunePWRConstrained;
+						break;
+					case DrivePowerSource.FIXED:
+						tp = console.SetupForm.TunePower;
+						break;
+                }
+				return AddLeadingZeros(tp);
+
+				//MW0LGE_22b changed
+				//if (console.TXTunePower) return AddLeadingZeros(console.PWR);
+				//else return AddLeadingZeros(console.SetupForm.TunePower);
 			}
 			else
 			{
