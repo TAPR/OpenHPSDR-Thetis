@@ -196,10 +196,7 @@ namespace Thetis
 		public void DrivePowerChange(int rx, int newPower, bool tune)
         {
 			if (m_disconnected) return;
-			if (!tune)
-				sendDrivePower(rx - 1, newPower);
-			else
-				sendTunePower(rx - 1, newPower);
+			sendDrivePower(rx - 1, newPower);
 		}
 		public void TuneChange(int rx, bool oldTune, bool newTune)
         {
@@ -1183,7 +1180,7 @@ namespace Thetis
 					}
 				}
 			}
-			else if (args.Length == 1)
+			else if (bOK && args.Length == 1)
             {
 				//query
 				// single notion of tx in thetis
@@ -1320,7 +1317,7 @@ namespace Thetis
 					}
 				}
 			}
-			else if (args.Length == 1)
+			else if (bOK && args.Length == 1)
 			{
 				// query
 				if (bOK)
@@ -1515,7 +1512,7 @@ namespace Thetis
 					}
 				}
 			}
-            else if (args.Length == 1)
+            else if (bOK && args.Length == 1)
             {
                 //query
                 if (rx == 0)
@@ -1537,11 +1534,51 @@ namespace Thetis
         }
 		private void handleDrive(string[] args)
 		{
-			//todo
+			if (args.Length < 1) return;
+
+			bool bOK = int.TryParse(args[0], out int rx);
+
+			if (bOK && args.Length == 2)
+            {
+				//set
+				bOK = int.TryParse(args[1], out int pwr);
+                if (bOK)
+                {
+					console.ThreadSafeTCIAccessor.PWR = pwr;
+                }
+			}
+			else if (bOK && args.Length == 1)
+            {
+				//read
+				int pwr;
+				if (console.SendLimitedPowerLevels)
+					pwr = console.ThreadSafeTCIAccessor.PWRConstrained;
+				else
+					pwr = console.ThreadSafeTCIAccessor.PWR;
+
+				sendDrivePower(rx, pwr);
+            }
 		}
 		private void handleTuneDrive(string[] args)
         {
-			//todo
+			if (args.Length < 1) return;
+
+			bool bOK = int.TryParse(args[0], out int rx);
+
+			if (bOK && args.Length == 2)
+			{
+				//set
+				bOK = int.TryParse(args[1], out int pwr);
+				if (bOK)
+				{
+					console.ThreadSafeTCIAccessor.TunePWR = pwr;
+				}
+			}
+			else if (bOK && args.Length == 1)
+			{
+				//read
+				sendTunePower(rx, console.ThreadSafeTCIAccessor.TunePWRConstrained);
+			}
 		}
 		private void handleSpot(string[] args)
         {
@@ -1648,9 +1685,10 @@ namespace Thetis
 			int rx = 0;
 			bool enable = false;
 
+			bool bOK = int.TryParse(args[0], out rx);
+
 			if (args.Length == 2)
-			{
-				bool bOK = int.TryParse(args[0], out rx);
+			{				
 				if (bOK)
 					bOK = bool.TryParse(args[1], out enable);
 				if (bOK)
@@ -1663,7 +1701,7 @@ namespace Thetis
 					}
 				}
 			}
-			else if (args.Length == 1)
+			else if (bOK && args.Length == 1)
 			{
 				//query
 				if (rx == 0)

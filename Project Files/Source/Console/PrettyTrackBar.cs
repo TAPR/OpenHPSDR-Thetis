@@ -240,8 +240,9 @@ namespace Thetis
                     return _nLimitValue;
             }
         }
-        public int ConstrainValue(int value)
+        public int ConstrainAValue(int value)
         {
+            // takes the int passed and runs it through the current limit
             if (!_bLimitEnabled || (value <= _nLimitValue))
                 return value;
             else

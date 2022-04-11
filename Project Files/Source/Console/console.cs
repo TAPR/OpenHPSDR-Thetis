@@ -1913,7 +1913,7 @@ namespace Thetis
             non_qsk_breakin_delay = break_in_delay;
             RX1_band_change = RX1Band;
 
-            setupTuneSlider(); //MW0LGE_22b
+            setupTuneDriveSlider(); //MW0LGE_22b
 
             //setup info bar
             SetupInfoBar();
@@ -1957,7 +1957,8 @@ namespace Thetis
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.Leveler, SetupForm.TXLevelerOn, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.CFCeq, SetupForm.CFCPEQEnabled, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.ShowSpots, SetupForm.ShowTCISpots /*| other spots*/, false);
-                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.TuneDrive, SetupForm.TXTunePower, true); // <- last one needs to be true
+                //infoBar.UpdateButtonState(ucInfoBar.ActionTypes.TuneDrive, SetupForm.TXTunePower, true); // <- last one needs to be true
+                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.TuneDrive, TuneDrivePowerOrigin == DrivePowerSource.DRIVE_SLIDER, true); // <- last one needs to be true
             }
         }
         public void InfoBarFeedbackLevel(int level, bool bFeedbackLevelOk, bool bCorrectionsBeingApplied, bool bCalibrationAttemptsChanged, Color feedbackColour)
@@ -2016,22 +2017,28 @@ namespace Thetis
         {
             Debug.Print("TCPIP CAT Server Error : " + se.Message);
         }
+        private bool _bTCPIPcatDelegatesAdded = false;
         private void addTCPIPcatDelegates()
         {
+            if (_bTCPIPcatDelegatesAdded) return;
             m_tcpCATServer.ClientConnectedHandlers += OnTCPIIPcatClientConnect;
             m_tcpCATServer.ClientDisconnectedHandlers += OnTCPIIPcatClientDisconnect;
             m_tcpCATServer.ClientErrorHandlers += OnTCPIIPcatClientError;
             m_tcpCATServer.ServerErrorHandlers += OnTCPIIPcatServerError;
+            _bTCPIPcatDelegatesAdded = true;
         }
         private void removeTCPIPcatDelegates()
         {
-            m_tcpCATServer.ClientConnectedHandlers -= OnTCPIIPcatClientConnect;
-            m_tcpCATServer.ClientDisconnectedHandlers -= OnTCPIIPcatClientDisconnect;
-            m_tcpCATServer.ClientErrorHandlers -= OnTCPIIPcatClientError;
-            m_tcpCATServer.ServerErrorHandlers -= OnTCPIIPcatServerError;
+            if (_bTCPIPcatDelegatesAdded)
+            {
+                m_tcpCATServer.ClientConnectedHandlers -= OnTCPIIPcatClientConnect;
+                m_tcpCATServer.ClientDisconnectedHandlers -= OnTCPIIPcatClientDisconnect;
+                m_tcpCATServer.ClientErrorHandlers -= OnTCPIIPcatClientError;
+                m_tcpCATServer.ServerErrorHandlers -= OnTCPIIPcatServerError;
+                _bTCPIPcatDelegatesAdded = false;
+            }
         }
 
-        // tcpip cat
         private bool m_bTCPIPcatWelcomeMessage = false;
         public bool TCPIPcatWelcomeMessage
         {
@@ -2076,9 +2083,8 @@ namespace Thetis
                 if (m_tcpCATServer != null)
                 {
                     m_tcpCATServer.CloseLog();
-                    bool wasRunning = m_tcpCATServer.IsServerRunning;
                     m_tcpCATServer.StopServer();
-                    if(wasRunning) removeTCPIPcatDelegates();
+                    removeTCPIPcatDelegates();
                 }
             }
         }
@@ -2096,19 +2102,26 @@ namespace Thetis
             get { return m_sTCIAddress; }
             set { m_sTCIAddress = value; }
         }
+        private bool _bTCIDelegatesAdded = false;
         private void addTCIDelegates()
         {
+            if (_bTCIDelegatesAdded) return;
             m_tcpTCIServer.ClientConnectedHandlers += OnTCIClientConnect;
             m_tcpTCIServer.ClientDisconnectedHandlers += OnTCIClientDisconnect;
             m_tcpTCIServer.ClientErrorHandlers += OnTCIClientError;
             m_tcpTCIServer.ServerErrorHandlers += OnTCIServerError;
+            _bTCIDelegatesAdded = true;
         }
         private void removeTCIDelegates()
         {
-            m_tcpTCIServer.ClientConnectedHandlers -= OnTCIClientConnect;
-            m_tcpTCIServer.ClientDisconnectedHandlers -= OnTCIClientDisconnect;
-            m_tcpTCIServer.ClientErrorHandlers -= OnTCIClientError;
-            m_tcpTCIServer.ServerErrorHandlers -= OnTCIServerError;
+            if (_bTCIDelegatesAdded)
+            {
+                m_tcpTCIServer.ClientConnectedHandlers -= OnTCIClientConnect;
+                m_tcpTCIServer.ClientDisconnectedHandlers -= OnTCIClientDisconnect;
+                m_tcpTCIServer.ClientErrorHandlers -= OnTCIClientError;
+                m_tcpTCIServer.ServerErrorHandlers -= OnTCIServerError;
+                _bTCIDelegatesAdded = false;
+            }
         }
         private void OnTCIClientConnect()
         {
@@ -2227,9 +2240,8 @@ namespace Thetis
                 if (m_tcpTCIServer != null)
                 {
                     m_tcpTCIServer.CloseLog();
-                    bool wasRunning = m_tcpTCIServer.IsServerRunning;
                     m_tcpTCIServer.StopServer();
-                    if (wasRunning) removeTCIDelegates();
+                    removeTCIDelegates();
                 }
             }
         }
@@ -16541,6 +16553,13 @@ namespace Thetis
             }
             return sRet;
         }
+
+        public bool _bSendLimitedPowerLevels = false;
+        public bool SendLimitedPowerLevels
+        {
+            get { return _bSendLimitedPowerLevels; }
+            set { _bSendLimitedPowerLevels = value; }
+        }
         //-
 
         private int latch_delay = 0;
@@ -18014,17 +18033,18 @@ namespace Thetis
 
         #endregion
 
-        private bool tx_tune_power = true;
-        public bool TXTunePower
-        {
-            get { return tx_tune_power; }
-            set { 
-                tx_tune_power = value;
+        //MW0LGE_22b not used
+        //private bool tx_tune_power = true;
+        //public bool TXTunePower
+        //{
+        //    get { return tx_tune_power; }
+        //    set { 
+        //        tx_tune_power = value;
 
-                if (!IsSetupFormNull)
-                    SetupForm.TXTunePower = tx_tune_power;
-            }
-        }
+        //        if (!IsSetupFormNull)
+        //            SetupForm.TXTunePower = tx_tune_power;
+        //    }
+        //}
 
         private int tune_power;								// power setting to use when TUN button is pressed
         public int TunePower
@@ -18032,12 +18052,12 @@ namespace Thetis
             get { return tune_power; }
             set
             {
-                bool changed = (value != tune_power);
+                //bool changed = (value != tune_power);
                 tune_power = value;
                 if (!IsSetupFormNull)
                     SetupForm.TunePower = tune_power;
 
-                if (chkTUN.Checked)// && !tx_tune_power) // MW0LGE_22b now done it power handler
+                if (chkTUN.Checked)// && !tx_tune_power) // MW0LGE_22b now done in power handler
                     PWR = tune_power;
 
                 //if (changed) DrivePowerChangedHandlers?.Invoke(1, tune_power, true); // RX1 only MW0LGE_21k9d
@@ -18049,13 +18069,13 @@ namespace Thetis
             get { return twotone_tune_power; }
             set
             {
-                bool changed = (value != twotone_tune_power);
+                //bool changed = (value != twotone_tune_power);
                 twotone_tune_power = value;
                 if (!IsSetupFormNull)
-                    SetupForm.TunePower = twotone_tune_power;
+                    SetupForm.TwoTonePower = twotone_tune_power;
 
-                if (chk2TONE.Checked)// && !tx_tune_power) // MW0LGE_22b now done it power handler
-                    TunePWR = twotone_tune_power;
+                if (chk2TONE.Checked)// && !tx_tune_power) // MW0LGE_22b now done in power handler
+                    PWR = twotone_tune_power;
 
                 //if (changed) DrivePowerChangedHandlers?.Invoke(1, tune_power, true); // RX1 only MW0LGE_21k9d
             }
@@ -27127,13 +27147,54 @@ namespace Thetis
         //bool audio_amp_mute;
         private async void PollTXInhibit()
         {
+            //WIP bool b_andromeda_or_newIOboard = false;
             bool inhibit_input;
             while (chkPower.Checked)
             {
+                //WIP
+                //if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
+                //{
+                //    if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) // protocol 1
+                //    {
+                //        if ((current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D))
+                //        {
+                //            if (b_andromeda_or_newIOboard)
+                //                inhibit_input = NetworkIO.getUserI04(); // bit[4] of C1 where C0 = 00000000 (C&C)
+                //            else
+                //                inhibit_input = NetworkIO.getUserI01(); // bit[1] of C1 where C0 = 00000000 (C&C)
+                //        }
+                //        else
+                //            inhibit_input = NetworkIO.getUserI01(); // bit[4] of C1 where C0 = 00000000 (C&C)
+                //    }
+                //    else // protocol 2
+                //    {
+                //        if ((current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D))
+                //        {
+                //            if (b_andromeda_or_newIOboard)
+                //                inhibit_input = NetworkIO.getUserI04_p2(); // bit[0] of byte 59 from the HPSP 1025 packet
+                //            else
+                //                inhibit_input = NetworkIO.getUserI05_p2(); // bit[1] of byte 59 from the HPSP 1025 packet
+                //        }
+                //        else
+                //            inhibit_input = NetworkIO.getUserI04_p2(); // bit[0] of byte 59 from the HPSP 1025 packet
+                //    }
+
+                //    if (tx_inhibit_sense)
+                //    {
+                //        if (inhibit_input) TXInhibit = true;
+                //        else TXInhibit = false;
+                //    }
+                //    else
+                //    {
+                //        if (inhibit_input) TXInhibit = false;
+                //        else TXInhibit = true;
+                //    }
+                //}
+
                 if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
                 {
                     if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
-                        inhibit_input = NetworkIO.getUserI05_p2();//MW0LGE_22b
+                        inhibit_input = NetworkIO.getUserI02(); // same as NetworkIO.getUserI05_p2();
                     else
                         inhibit_input = NetworkIO.getUserI01(); // <- is this correct for all other radios? even P2's that are not 7k/8k's ?  //MW0LGE_22b
 
@@ -29273,6 +29334,7 @@ namespace Thetis
                 txtVFOALSD.ForeColor = small_vfo_color;
                 // cmaster.CMSetAudioMixerRX2();
                 //UpdateRXADCCtrl();
+                
                 UpdateDDCs(rx2_enabled);
                 UpdateVFOASub();
 
@@ -30525,7 +30587,7 @@ namespace Thetis
             if (!bShowLimitValue)
             {
                 if (ptbPWR.IsConstrained)
-                    lblPWR.Text = "Drive:  " + ptbPWR.ConstrainedValue.ToString() + " (lim)";
+                    lblPWR.Text = "Drive:  (" + ptbPWR.ConstrainedValue.ToString() + ")";
                 else
                     lblPWR.Text = "Drive:  " + ptbPWR.Value.ToString();
             }
@@ -30543,17 +30605,19 @@ namespace Thetis
         private double m_fDrivePower = -1;
         private void ptbPWR_Scroll(object sender, System.EventArgs e)
         {
-            PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
-            updateDriveLabel(lc != null, e);
-
             if (IsSetupFormNull)
                 return;
+
+            PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
 
             if (lc != null)
                     limitPower_by_band[(int)tx_band] = lc.LimitValue; // store the adjusted limit level
 
-            int new_pwr = setPowerWithHelper();
+            int new_pwr = setPowerWithHelper(out bool bUseConstrain);
             power_by_band[(int)tx_band] = ptbPWR.Value;
+
+            updateDriveLabel(lc != null && bUseConstrain, e);
+
             //if (!tuning || (tuning && tx_tune_power))
             //    new_pwr = ptbPWR.Value;
             //else
@@ -30622,7 +30686,7 @@ namespace Thetis
             if (m_fDrivePower != new_pwr)  // MW0LGE_21k9d
             {
                 m_fDrivePower = new_pwr;
-                DrivePowerChangedHandlers?.Invoke(1, (int)new_pwr, TUN); // only rx1
+                DrivePowerChangedHandlers?.Invoke(1, new_pwr, TUN); // only rx1
             }
         }
 
@@ -31864,7 +31928,7 @@ namespace Thetis
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED) 
                     PreviousPWR = ptbPWR.Value;
                 // set power
-                int new_pwr = setPowerWithHelper();
+                int new_pwr = setPowerWithHelper(out bool bUseConstrain);
                 //
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                 {
@@ -32016,7 +32080,7 @@ namespace Thetis
             if(AriesCATEnabled)
                 SetAriesTuneState(chkTUN.Checked);              // G8NJJ tell ARIES that tune is active
 
-            setupTuneSlider(); // MW0LGE_22b
+            setupTuneDriveSlider(); // MW0LGE_22b
 
             if (oldTune != tuning) TuneChangedHandlers?.Invoke(1, oldTune, tuning); //MW0LGE_21kd9 // just rx1
         }
@@ -32156,7 +32220,6 @@ namespace Thetis
             if (bandPopupForm != null) bandPopupForm.RepopulateForm();
             if (modePopupForm != null) modePopupForm.RepopulateForm();
             if (filterPopupForm != null) filterPopupForm.RepopulateForm();
-
         }
 
         private void btnBandGEN_Click(object sender, EventArgs e) // ke9ns add hf screen click on GEN button
@@ -50938,7 +51001,7 @@ namespace Thetis
                 chk2TONE.BackColor = SystemColors.Control;
             }
 
-            setupTuneSlider(); // MW0LGE_22b
+            setupTuneDriveSlider(); // MW0LGE_22b
         }
 
         private void ucQuickRecallPad_ButtonClicked(object sender, EventArgs e)
@@ -52147,38 +52210,34 @@ namespace Thetis
 
         private void handleInfoBarButtonClick(ucInfoBar.InfoBarAction e)
         {
+            if (IsSetupFormNull) return;
+
             switch (e.Action)
             {
                 case ucInfoBar.ActionTypes.ActivePeaks:
-                    if (!IsSetupFormNull)
-                        SetupForm.ActivePeakHoldsEnabled = e.ButtonState;
+                    SetupForm.ActivePeakHoldsEnabled = e.ButtonState;
                     break;
                 case ucInfoBar.ActionTypes.Blobs:
-                    if (!IsSetupFormNull)
-                        SetupForm.PeakBlobsEnabled = e.ButtonState;
+                    SetupForm.PeakBlobsEnabled = e.ButtonState;
                     break;
                 case ucInfoBar.ActionTypes.CFC:
                     CFCEnabled = e.ButtonState;
                     break;
                 case ucInfoBar.ActionTypes.CursorInfo:
-                    if (!IsSetupFormNull)
-                        SetupForm.ShowDisplayMHzCursorInfo = e.ButtonState;
+                    SetupForm.ShowDisplayMHzCursorInfo = e.ButtonState;
                     break;
                 case ucInfoBar.ActionTypes.Leveler:
-                    if (!IsSetupFormNull)
-                        SetupForm.TXLevelerOn = e.ButtonState;
+                    SetupForm.TXLevelerOn = e.ButtonState;
                     break;
                 case ucInfoBar.ActionTypes.CFCeq:
-                    if (!IsSetupFormNull)
-                        SetupForm.CFCPEQEnabled = e.ButtonState;
+                    SetupForm.CFCPEQEnabled = e.ButtonState;
                     break;
                 case ucInfoBar.ActionTypes.ShowSpots:
-                    if (!IsSetupFormNull)
-                        SetupForm.ShowTCISpots = e.ButtonState;
+                    SetupForm.ShowTCISpots = e.ButtonState;
                     break;
                 case ucInfoBar.ActionTypes.TuneDrive:
-                    if (!IsSetupFormNull)
-                        SetupForm.TXTunePower = e.ButtonState;
+                    //    SetupForm.TXTunePower = e.ButtonState;
+                    //TODO
                     break;
             }
         }
@@ -52330,37 +52389,41 @@ namespace Thetis
         }
         private void updateTuneLabel(bool bShowLimitValue, System.EventArgs e)
         {
-            string sHeader = "Tun2Ton";
+            string sHeader = "Tune|2Tone";
             if (_tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource != DrivePowerSource.TUNE_SLIDER) sHeader = "Tune";
             if (_tuneDrivePowerSource != DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER) sHeader = "2Tone";
 
             if (!bShowLimitValue)
             {
                 if (ptbTune.IsConstrained)
-                    lblTune.Text = sHeader + ":  " + ptbTune.ConstrainedValue.ToString() + " (lim)";
+                    lblTune.Text = sHeader + ":  (" + ptbTune.ConstrainedValue.ToString() + ")";
                 else
                     lblTune.Text = sHeader + ":  " + ptbTune.Value.ToString();
             }
             else
             {
                 PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
-                lblTune.Text = sHeader + " Limit: " + lc.LimitValue.ToString();
+                if (sHeader == "Tune|2Tone")
+                    lblTune.Text = "Tun|2To Lmt: " + lc.LimitValue.ToString();
+                else
+                    lblTune.Text = sHeader + " Limit: "+ lc.LimitValue.ToString();
             }
         }
         private double m_fTuneDrivePower = -1;
         private void ptbTune_Scroll(object sender, EventArgs e)
         {
-            PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
-            updateTuneLabel(lc != null, e);
-
             if (IsSetupFormNull)
-                return;
+                return; 
+            
+            PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
 
             if (lc != null)
                     limitTunePower_by_band[(int)tx_band] = lc.LimitValue; // store the adjusted limit level
 
-            int new_pwr = setPowerWithHelper();
+            int new_pwr = setPowerWithHelper(out bool bUseConstrain);
             tunePower_by_band[(int)tx_band] = ptbTune.Value;
+
+            updateTuneLabel(lc != null && bUseConstrain, e);
 
             if (sender.GetType() == typeof(PrettyTrackBar))
                 ptbTune.Focus();
@@ -52380,7 +52443,7 @@ namespace Thetis
             if (m_fTuneDrivePower != new_pwr)  // MW0LGE_21k9d
             {
                 m_fTuneDrivePower = new_pwr;
-                DrivePowerChangedHandlers?.Invoke(1, (int)new_pwr, true); // only rx1, and always tune
+                DrivePowerChangedHandlers?.Invoke(1, new_pwr, true); // only rx1, and always tune
             }
         }
         private DrivePowerSource _tuneDrivePowerSource = DrivePowerSource.DRIVE_SLIDER;
@@ -52394,16 +52457,19 @@ namespace Thetis
                 {
                     case DrivePowerSource.DRIVE_SLIDER:
                         ptbPWR_Scroll(this, EventArgs.Empty);
+                        SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, true);
                         break;
                     case DrivePowerSource.TUNE_SLIDER:
                         ptbTune_Scroll(this, EventArgs.Empty);
+                        SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, true);
                         break;
                     case DrivePowerSource.FIXED:
                         ptbPWR_Scroll(this, EventArgs.Empty);
+                        SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, false);
                         break;
                 }
 
-                setupTuneSlider();
+                setupTuneDriveSlider();
                 updateTuneLabel(false, EventArgs.Empty);
             }
         }
@@ -52425,34 +52491,47 @@ namespace Thetis
                         break;
                 }
 
-                setupTuneSlider();
+                setupTuneDriveSlider();
                 updateTuneLabel(false, EventArgs.Empty);
             }
         }
-        private void setupTuneSlider()
+        private void setupTuneDriveSlider()
         {
-            if(_tuneDrivePowerSource != DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource != DrivePowerSource.TUNE_SLIDER)
+            if (_tuneDrivePowerSource != DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource != DrivePowerSource.TUNE_SLIDER)
             {
                 // hide it
                 ptbTune.Visible = false;
                 lblTune.Visible = false;
-                return;
+            }
+            else
+            {
+                ptbTune.Visible = true;
+                lblTune.Visible = true;
             }
 
-            //position it
-            ptbTune.Visible = true;
-            lblTune.Visible = true;
-
-            if (chkTUN.Checked || chk2TONE.Checked)
-                ptbTune.Enabled = (_tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER && chkTUN.Checked) || (_2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER && chk2TONE.Checked);
+            if (chkTUN.Checked)
+            {
+                ptbPWR.Enabled = _tuneDrivePowerSource == DrivePowerSource.DRIVE_SLIDER;
+                ptbTune.Enabled = _tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER;
+            }
+            else if (chk2TONE.Checked)
+            {
+                ptbPWR.Enabled = _2ToneDrivePowerSource == DrivePowerSource.DRIVE_SLIDER;
+                ptbTune.Enabled = _2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER;
+            }
             else
+            {
+                ptbPWR.Enabled = true;
                 ptbTune.Enabled = true;
+            }
+
+            lblPWR.Enabled = ptbPWR.Enabled;
             lblTune.Enabled = ptbTune.Enabled;
         }
-        private int setPowerWithHelper()
+        private int setPowerWithHelper(out bool bConstrain)
         {
             PrettyTrackBar slider = ptbPWR;
-            bool bConstrain = true;
+            bConstrain = true;
             int new_pwr = 0;
 
             // tx mode
@@ -52510,7 +52589,7 @@ namespace Thetis
             }
 
             //constrain power
-            if(bConstrain) new_pwr = slider.ConstrainValue(new_pwr);
+            if(bConstrain) new_pwr = slider.ConstrainAValue(new_pwr);
             //
 
             double target_dbm = 10 * (double)Math.Log10((double)new_pwr * 1000);

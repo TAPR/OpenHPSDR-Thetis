@@ -4970,7 +4970,10 @@ namespace Thetis
 			}
 			else if(s.Length == parser.nGet)
 			{
-				return AddLeadingZeros(console.PWR);
+				if(console.SendLimitedPowerLevels) //MW0LGE_22b
+					return AddLeadingZeros(console.PWRConstrained);
+				else
+					return AddLeadingZeros(console.PWR);				
 			}
 			else
 			{
@@ -6176,7 +6179,7 @@ namespace Thetis
 				tl = Math.Min(100, tl);
 
 				//MW0LGE_22b changed
-				if (console.TuneDrivePowerOrigin == DrivePowerSource.DRIVE_SLIDER || console.TuneDrivePowerOrigin == DrivePowerSource.FIXED) //note: fixed is handled in PWR
+				if (console.TuneDrivePowerOrigin == DrivePowerSource.DRIVE_SLIDER || console.TuneDrivePowerOrigin == DrivePowerSource.FIXED) //note: tunepower fixed is handled in PWR
 					console.PWR = tl;
 				else // must be DrivePowerSource.TUNE_SLIDER
 					console.TunePWR = tl;
@@ -6192,10 +6195,16 @@ namespace Thetis
                 switch (console.TuneDrivePowerOrigin)
                 {
 					case DrivePowerSource.DRIVE_SLIDER:
-						tp = console.PWRConstrained;
+						if (console.SendLimitedPowerLevels)
+							tp = console.PWRConstrained;
+						else
+							tp = console.PWR;
 						break;
 					case DrivePowerSource.TUNE_SLIDER:
-						tp = console.TunePWRConstrained;
+						if (console.SendLimitedPowerLevels)
+							tp = console.TunePWRConstrained;
+						else
+							tp = console.TunePWR;
 						break;
 					case DrivePowerSource.FIXED:
 						tp = console.SetupForm.TunePower;

@@ -44,35 +44,39 @@ int rxreads_buf = 0;
 int rxreads_buf_after = 0;
 int rxreads_bf = 0;
 
+int WSA_inited = 0; //MW0LGE_22b moved here
+
 int initWSA(void) {
 	WSADATA data;
 	WORD wVersionRequested = 0x202;
 
 	if (WSAinitialized) {
-		WSACleanup();
+		if(WSA_inited) WSACleanup(); // MW0LGE_22b
 	}
 
-	WSAinitialized = 1;
+	//WSAinitialized = 1;//MW0LGE_22b
 	if (WSAStartup(wVersionRequested, &data) != 0) {
 		printf("Failed. Error Code : %d", WSAGetLastError());
 		return 1;
 	}
+	WSAinitialized = 1;
 
 	return 0;
 }
 
 u_long MetisAddr = 0;
 struct sockaddr_in MetisSockAddr;
-int WSA_inited = 0;
 struct fd_set readfds, writefds;
 
 PORT
 void DeInitMetisSockets() {
 	closesocket(listenSock);
 	listenSock = INVALID_SOCKET;
-	WSACleanup();
-	WSA_inited = 0;
-	WSAinitialized = 0;
+	if (WSA_inited) { // MW0LGE_22b
+		WSACleanup(); 
+		WSA_inited = 0;
+		WSAinitialized = 0;
+	}
 }
 
 /* returns 0 on success, != 0 otherwise */
@@ -88,23 +92,63 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol)
 
 	RadioProtocol = protocol;
 
-	if (!WSA_inited) {
-		rc = initWSA();
-		if (rc != 0) {
-			return rc;
-		}
-		WSA_inited = 1;
-		printf("initWSA ok!\n");
-	}
+	//if (!WSA_inited) {
+	//	rc = initWSA();
+	//	if (rc != 0) {
+	//		return rc;
+	//	}
+	//	WSA_inited = 1;
+	//	printf("initWSA ok!\n");
+	//}
 
 	local.sin_port = htons((u_short)localport);
 	local.sin_family = AF_INET;
 	local.sin_addr.s_addr = inet_addr(localaddr);
 
-	if ((listenSock = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
-		printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
-		WSACleanup();
-		return INVALID_SOCKET;
+	//if ((listenSock = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
+	//	printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
+	//	WSACleanup();
+	//	return INVALID_SOCKET;
+	//}
+
+	//MW0LGE_22b
+	//winsock dll can already by initialised externally for this process
+	//for example, by .NET, so we do not always need to do it
+	//we can check this by the return from creating a socket()
+	//Likewise, we only want to wsacleanup if we wsastarted 
+
+	int initState = 1;
+	while (initState > 0)
+	{
+		listenSock = socket(AF_INET, SOCK_DGRAM, 0);
+
+		if (listenSock == (SOCKET)WSANOTINITIALISED) {
+			WSA_inited = 0;
+
+			if (initState == 2) // we alrady tried, and we are still not initialised
+			{
+				printf("socket() still returns wsa not initialised!\n");
+				return 1;
+			}		
+
+			rc = initWSA();
+			if (rc != 0) {
+				printf("initWSA failed rc!\n");
+				return rc;
+			}
+			initState = 2;
+			WSA_inited = 1;
+			printf("initWSA ok!\n");
+			///
+		}
+		else if (listenSock == INVALID_SOCKET) {
+			printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
+			if(WSA_inited) WSACleanup(); //MW0LGE_22b
+			return INVALID_SOCKET;
+		}
+		else {
+			initState = 0;
+		}
 	}
 
 	// bind to the local address
@@ -187,7 +231,7 @@ int StartReadThread(void) {
 	return myrc;
 }
 
-void StopReadThread(void) {
+void StopReadThread() {
 	PrintTimeHack();
 	printf("- StopReadThread()\n");
 	fflush(stdout);

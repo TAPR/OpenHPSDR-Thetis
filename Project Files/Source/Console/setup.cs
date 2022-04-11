@@ -301,8 +301,10 @@ namespace Thetis
             chkTCIsendInitialStateOnConnect.Checked = true;            
             // some default tcpipcat server states
             chkWelcomeMessageTCPIPCat.Checked = true;
+            // some default tcpipcat + tci
+            chkLimitPowerCATTCIMsgs.Checked = true;
             //
-
+            
             console.QSOTimerAudioPlayer.LoadCompletedEvent += audioFileLoaded;
 
             RefreshSkinList(); //moved down the initialisation order, so we at least know if we are gdi or dx, only build the list
@@ -1340,6 +1342,13 @@ namespace Thetis
             a.Add("chkRadioProtocolSelect_checkstate", chkRadioProtocolSelect.CheckState.ToString());
             a.Add("lgLinearGradientRX1", lgLinearGradientRX1.Text);
 
+            // remove any old settings we dont use any more
+            List<string> oldSettings = new List<string>();
+            oldSettings.Add("chkTestIMDPower");
+            oldSettings.Add("chkTXTunePower");
+            DB.RemoveVarsList("Options", oldSettings);
+            //
+
             DB.SaveVarsDictionary("Options", ref a);
             DB.WriteCurrentDB(console.DBFileName);
         }
@@ -1362,6 +1371,24 @@ namespace Thetis
 
             //MW0LGE_21k8 converted to dictionary
             Dictionary<string, string> a = DB.GetVarsDictionary("Options");
+
+            // deal with out dated settings //MW0LGE_22b
+            // these will be removed in saveOptions
+            if (a.ContainsKey("chkTXTunePower"))
+            {
+                if (bool.Parse(a["chkTXTunePower"]))
+                    radUseDriveSliderTune.Checked = true;
+                else
+                    radUseFixedDriveTune.Checked = true;
+            }
+            if (a.ContainsKey("chkTestIMDPower"))
+            {
+                if (bool.Parse(a["chkTestIMDPower"]))
+                    radUseDriveSlider2Tone.Checked = true;
+                else
+                    radUseFixedDrive2Tone.Checked = true;
+            }
+            //
 
             List<string> sortedList = a.Keys.ToList();
             sortedList.Sort();
@@ -1930,7 +1957,7 @@ namespace Thetis
             udTXFilterHigh_ValueChanged(this, e);
             udTXFilterLow_ValueChanged(this, e);
             udTransmitTunePower_ValueChanged(this, e);
-            chkTXTunePower_CheckedChanged(this, e);
+            //chkTXTunePower_CheckedChanged(this, e); //MW0LGE_22b not used now
             udPAGain_ValueChanged(this, e);
             radMicIn_CheckedChanged(this, e);
             radLineIn_CheckedChanged(this, e);
@@ -5890,6 +5917,11 @@ namespace Thetis
             get { return (int)udTXTunePower.Value; }
             set { udTXTunePower.Value = (decimal)value; }
         }
+        public int TwoTonePower
+        {
+            get { return (int)udTestIMDPower.Value; }
+            set { udTestIMDPower.Value = (decimal)value; }
+        }
 
         public bool DigUIsUSB
         {
@@ -9672,18 +9704,18 @@ namespace Thetis
             console.TunePower = (int)udTXTunePower.Value;
         }
 
-        private void chkTXTunePower_CheckedChanged(object sender, System.EventArgs e)
-        {
-            console.TXTunePower = chkTXTunePower.Checked;
+        //private void chkTXTunePower_CheckedChanged(object sender, System.EventArgs e)
+        //{
+        //    console.TXTunePower = chkTXTunePower.Checked;
 
-            //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, chkTXTunePower.Checked);
-        }
-        public bool TXTunePower
-        {
-            get { return chkTXTunePower.Checked; }
-            set { chkTXTunePower.Checked = value; }
-        }
+        //    //
+        //    console.SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, chkTXTunePower.Checked);
+        //}
+        //public bool TXTunePower
+        //{
+        //    get { return chkTXTunePower.Checked; }
+        //    set { chkTXTunePower.Checked = value; }
+        //}
         private bool loadTXProfile(String sProfileName)
         {
             //
@@ -11802,6 +11834,10 @@ namespace Thetis
                 {
                     console.PreviousPWR = console.PWR;
                     console.PWR = (int)udTestIMDPower.Value;
+                }
+                else
+                {
+                    console.PWR = console.PWR; // cause update to power limits etc
                 }
                 //if (!chkTestIMDPower.Checked)
                 //{
@@ -23320,6 +23356,10 @@ namespace Thetis
         private void radUseFixedDrive2Tone_CheckedChanged(object sender, EventArgs e)
         {
             console.TwoToneDrivePowerOrigin = DrivePowerSource.FIXED;
+        }
+        private void chkLimitPowerCATTCIMsgs_CheckedChanged(object sender, EventArgs e)
+        {
+            console.SendLimitedPowerLevels = chkLimitPowerCATTCIMsgs.Checked;
         }
     }
 

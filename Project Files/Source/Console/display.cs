@@ -6323,7 +6323,7 @@ namespace Thetis
             //MW0LGE_21k8 reworked
             if(rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU)
             {
-                if ((bIsWaterfall && m_bShowTXFilterOnWaterfall) || !bIsWaterfall)
+                if ((bIsWaterfall && m_bShowTXFilterOnRXWaterfall/*m_bShowTXFilterOnWaterfall*/) || !bIsWaterfall)
                 {
                     int filter_left_x;
                     int filter_right_x;

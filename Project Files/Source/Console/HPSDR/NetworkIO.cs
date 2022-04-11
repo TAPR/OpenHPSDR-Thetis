@@ -84,7 +84,7 @@ namespace Thetis
         public static RadioProtocol RadioProtocolSelected { get; set; } = RadioProtocol.ETH;
 
         private const int IP_SUCCESS = 0;
-        private const short VERSION = 2;
+        private const short VERSION = 0x202;//2;  //MW0LGE_22b
         public static int initRadio()
         {
             int rc;

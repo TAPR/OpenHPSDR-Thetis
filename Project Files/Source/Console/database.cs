@@ -8811,7 +8811,29 @@ namespace Thetis
                     row.Delete();
             }
         }
+        public static void RemoveVarsList(string tableName, List<string> list)
+        {
+            if (!ds.Tables.Contains(tableName))
+                AddFormTable(tableName);
 
+            checkForPrimaryKeys(tableName);
+
+            foreach(string key in list)
+            {
+                DataRow r = null;
+                try
+                {
+                    r = ds.Tables[tableName].Rows.Find(key);
+                }
+                catch
+                {
+                }
+                if(r != null)
+                {
+                    r.Delete();
+                }
+            }
+        }
         public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict)
         {
             if (!ds.Tables.Contains(tableName))
