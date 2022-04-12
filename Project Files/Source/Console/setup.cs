@@ -1349,11 +1349,11 @@ namespace Thetis
             if (_PAProfiles != null)
             {
                 int nIndex = 0;
-                a.Add("ProfileCount", _PAProfiles.Count.ToString());
+                a.Add("PAProfileCount", _PAProfiles.Count.ToString());
                 foreach (KeyValuePair<string, PAProfile> kvp in _PAProfiles)
                 {
                     string sData = kvp.Value.DataToString();
-                    a.Add("Profile_" + nIndex.ToString(), sData);
+                    a.Add("PAProfile_" + nIndex.ToString(), sData);
                     nIndex++;
                 }
             }
@@ -1399,7 +1399,7 @@ namespace Thetis
                     _oldSettings.Add("chkTestIMDPower");
                 }
 
-                handleOldPAGainSettings(getDict);
+                handleOldPAGainSettings(ref getDict);
             }
             else
             {
@@ -1530,6 +1530,10 @@ namespace Thetis
                     {
                         chkRadioProtocolSelect.CheckState = (CheckState)(Enum.Parse(typeof(CheckState), val));
                     }
+                    else if (name.StartsWith("PAProfile_") || name == "PAProfileCount")
+                    {
+                        // ignore
+                    }
                     else
                     {
                         Debug.WriteLine("Control not found: " + name);
@@ -1539,12 +1543,12 @@ namespace Thetis
 
             //MW0LGE_22b
             // get PA profiles, use dictionary directly and not the sorted list
-            if (_PAProfiles != null && a.ContainsKey("ProfileCount"))
+            if (_PAProfiles != null && a.ContainsKey("PAProfileCount"))
             {
-                int nProfiles = int.Parse(a["ProfileCount"]);
+                int nProfiles = int.Parse(a["PAProfileCount"]);
                 for (int n = 0; n < nProfiles; n++)
                 {
-                    string sDataKey = "Profile_" + n.ToString();
+                    string sDataKey = "PAProfile_" + n.ToString();
                     if (a.ContainsKey(sDataKey))
                     {
                         string sData = a[sDataKey];
@@ -23791,9 +23795,9 @@ namespace Thetis
                 }
             }
         }
-        private float updateFromOld(string sKey, ref Dictionary<string, string> getDict)
+        private float getOldVariablePAgain(string sKey, ref Dictionary<string, string> getDict)
         {
-            if (getDict.ContainsKey(sKey)) return 1000;
+            if (!getDict.ContainsKey(sKey)) return 1000;
             return float.Parse(getDict[sKey]);
         }
         private void handleOldPAGainSettings(ref Dictionary<string, string> getDict)
@@ -23802,67 +23806,203 @@ namespace Thetis
             // here we have to map all the old settings, ~200 variables into the new profile system, and remove them
 
             // use the existance of ProfileCount as a check to see we have already done this
-            if (getDict.ContainsKey(""))
+            if (getDict.ContainsKey("PAProfileCount")) return;
+
+            bool bRemoveOld = true; // set to true if you want the old variables removed from the db
+            
+            foreach (KeyValuePair<string, PAProfile> kvp in _PAProfiles)
             {
-                foreach (KeyValuePair<string, PAProfile> kvp in _PAProfiles)
+                PAProfile p = kvp.Value;
+                switch (p.Model)
                 {
-                    PAProfile p = kvp.Value;
-                    switch (p.Model)
-                    {
-                        case HPSDRModel.ANAN10:
-                        case HPSDRModel.ANAN10E:
-                            for (int n = 0; n < (int)Band.LAST; n++)
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udANAN10PAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udANAN10PAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.ANAN100:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udANAN100PAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udANAN100PAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.ANAN100B:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udANAN100BPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udANAN100BPAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.ANAN100D:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udANANPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udANANPAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.ANAN200D:                            
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udOrionPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udOrionPAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.ANAN7000D:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udANAN7000DPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udANAN7000DPAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udANAN8000DPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udANAN8000DPAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.HERMES:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udHermesPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udHermesPAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.FIRST: // special case for bypass
+                    case HPSDRModel.HPSDR:
+                        if (p.Model == HPSDRModel.HPSDR || (p.Model == HPSDRModel.FIRST && p.ProfileName == "Default - PA BYPASS"))
+                        {
+                            for (int n = 0; n <= (int)Band.B6M; n++)
                             {
                                 Band b = (Band)((int)Band.B160M + n);
-                                string sSetting = "udANAN10PAGain" + mapBandToMeters(b).ToString();
-                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
+                                string sSetting = "udPAGain" + mapBandToMeters(b).ToString();
+                                float g = getOldVariablePAgain(sSetting, ref getDict);
+                                if (g != 1000) p.SetGainForBand(b, g);
+                                //if (g != 1000 && bRemoveOld) _oldSettings.Add(sSetting); // dont remove atm as used by gain calibrate
                             }
-                            break;
-                        case HPSDRModel.ANAN100:
-                            for (int n = 0; n < (int)Band.LAST; n++)
+                            for (int n = 0; n <= (int)Band.VHF13; n++)
                             {
-                                Band b = (Band)((int)Band.B160M + n);
-                                string sSetting = "udANAN100PAGain" + mapBandToMeters(b).ToString();
-                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
+                                Band b = (Band)((int)Band.VHF0 + n);
+                                string sSetting = "udPAGainVHF" + n.ToString();
+                                float g = getOldVariablePAgain(sSetting, ref getDict);
+                                if (g != 1000) p.SetGainForBand(b, g);
+                                if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                             }
-                            break;
-                        case HPSDRModel.ANAN100B:
-                            for (int n = 0; n < (int)Band.LAST; n++)
-                            {
-                                Band b = (Band)((int)Band.B160M + n);
-                                string sSetting = "udANAN100BPAGain" + mapBandToMeters(b).ToString();
-                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
-                            }
-                            break;
-                        case HPSDRModel.ANAN100D:
-                            for (int n = 0; n < (int)Band.LAST; n++)
-                            {
-                                Band b = (Band)((int)Band.B160M + n);
-                                string sSetting = "udANANPAGain" + mapBandToMeters(b).ToString();
-                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
-                            }
-                            break;
-                        case HPSDRModel.ANAN200D:                            
-                            for (int n = 0; n < (int)Band.LAST; n++)
-                            {
-                                Band b = (Band)((int)Band.B160M + n);
-                                string sSetting = "udOrionPAGain" + mapBandToMeters(b).ToString();
-                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
-                            }
-                            break;
-                        case HPSDRModel.ANAN7000D:
-                            break;
-                        case HPSDRModel.ANAN8000D:
-                            break;
-                        case HPSDRModel.HERMES:
-                            break;
-                        case HPSDRModel.HPSDR:
-                            break;
-                        case HPSDRModel.ORIONMKII:
-                            break;
-                    }
+                        }
+                        break;
+                    case HPSDRModel.ORIONMKII:
+                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)((int)Band.B160M + n);
+                            string sSetting = "udORIONMKIIPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)((int)Band.VHF0 + n);
+                            string sSetting = "udORIONMKIIPAGainVHF" + n.ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                        }
+                        break;
                 }
             }
+            Debug.Print(_oldSettings.Count.ToString());
         }
 
         public class PAProfile
