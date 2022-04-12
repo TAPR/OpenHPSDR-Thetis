@@ -31,8 +31,6 @@ using System;
 using Midi2Cat.IO; //-W2PA Necessary for changes to support Behringer PL-1 (and others)
 using System.Diagnostics;
 
-// MW0LGE de W2PA - how copy?
-
 namespace Thetis
 {
     public class Midi2CatCommands
