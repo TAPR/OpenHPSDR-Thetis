@@ -5845,857 +5845,861 @@ namespace Thetis
 
         private float GainByBand(Band b)
         {
-            float retval = 0;
-            if (current_hpsdr_model == HPSDRModel.ANAN10 || current_hpsdr_model == HPSDRModel.ANAN10E)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.ANAN10PAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.ANAN10PAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.ANAN10PAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.ANAN10PAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.ANAN10PAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.ANAN10PAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.ANAN10PAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.ANAN10PAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.ANAN10PAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.ANAN10PAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.ANAN10PAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.ANAN10PAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.ANAN10PAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.ANAN10PAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.ANAN10PAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.ANAN10PAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.ANAN10PAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.ANAN10PAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.ANAN10PAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.ANAN10PAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.ANAN10PAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.ANAN10PAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.ANAN10PAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.ANAN10PAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.ANAN10PAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            if (IsSetupFormNull) return 1000;
 
-            if (current_hpsdr_model == HPSDRModel.ANAN100B)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.ANAN100BPAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.ANAN100BPAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.ANAN100BPAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.ANAN100BPAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.ANAN100BPAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.ANAN100BPAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.ANAN100BPAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.ANAN100BPAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.ANAN100BPAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.ANAN100BPAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.ANAN100BPAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.ANAN100BPAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.ANAN100BPAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.ANAN100BPAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.ANAN100BPAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.ANAN100BPAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.ANAN100BPAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.ANAN100BPAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.ANAN100BPAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.ANAN100BPAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.ANAN100BPAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.ANAN100BPAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.ANAN100BPAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.ANAN100BPAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.ANAN100BPAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            return SetupForm.GetPAGain(b);
 
-            if (current_hpsdr_model == HPSDRModel.ANAN100)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.ANAN100PAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.ANAN100PAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.ANAN100PAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.ANAN100PAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.ANAN100PAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.ANAN100PAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.ANAN100PAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.ANAN100PAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.ANAN100PAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.ANAN100PAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.ANAN100PAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.ANAN100PAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.ANAN100PAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.ANAN100PAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.ANAN100PAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.ANAN100PAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.ANAN100PAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.ANAN100PAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.ANAN100PAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.ANAN100PAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.ANAN100PAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.ANAN100PAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.ANAN100PAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.ANAN100PAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.ANAN100PAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            //float retval = 0;
+            //if (current_hpsdr_model == HPSDRModel.ANAN10 || current_hpsdr_model == HPSDRModel.ANAN10E)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.ANAN10PAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.ANAN10PAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.ANAN10PAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.ANAN10PAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.ANAN10PAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.ANAN10PAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.ANAN10PAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.ANAN10PAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.ANAN10PAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.ANAN10PAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.ANAN10PAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.ANAN10PAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.ANAN10PAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.ANAN10PAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.ANAN10PAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.ANAN10PAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.ANAN10PAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.ANAN10PAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.ANAN10PAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.ANAN10PAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.ANAN10PAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.ANAN10PAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.ANAN10PAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.ANAN10PAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.ANAN10PAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
 
-            if (!SetupForm.chkBypassANANPASettings.Checked && current_hpsdr_model == HPSDRModel.ANAN100D)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.ANANPAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.ANANPAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.ANANPAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.ANANPAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.ANANPAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.ANANPAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.ANANPAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.ANANPAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.ANANPAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.ANANPAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.ANANPAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.ANANPAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.ANANPAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.ANANPAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.ANANPAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.ANANPAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.ANANPAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.ANANPAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.ANANPAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.ANANPAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.ANANPAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.ANANPAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.ANANPAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.ANANPAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.ANANPAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            //if (current_hpsdr_model == HPSDRModel.ANAN100B)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.ANAN100BPAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.ANAN100BPAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.ANAN100BPAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.ANAN100BPAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.ANAN100BPAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.ANAN100BPAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.ANAN100BPAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.ANAN100BPAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.ANAN100BPAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.ANAN100BPAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.ANAN100BPAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.ANAN100BPAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.ANAN100BPAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.ANAN100BPAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.ANAN100BPAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.ANAN100BPAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.ANAN100BPAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.ANAN100BPAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.ANAN100BPAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.ANAN100BPAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.ANAN100BPAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.ANAN100BPAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.ANAN100BPAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.ANAN100BPAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.ANAN100BPAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
 
-            if (current_hpsdr_model == HPSDRModel.ANAN200D)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.OrionPAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.OrionPAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.OrionPAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.OrionPAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.OrionPAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.OrionPAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.OrionPAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.OrionPAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.OrionPAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.OrionPAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.OrionPAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.OrionPAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.OrionPAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.OrionPAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.OrionPAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.OrionPAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.OrionPAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.OrionPAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.OrionPAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.OrionPAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.OrionPAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.OrionPAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.OrionPAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.OrionPAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.OrionPAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            //if (current_hpsdr_model == HPSDRModel.ANAN100)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.ANAN100PAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.ANAN100PAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.ANAN100PAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.ANAN100PAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.ANAN100PAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.ANAN100PAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.ANAN100PAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.ANAN100PAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.ANAN100PAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.ANAN100PAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.ANAN100PAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.ANAN100PAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.ANAN100PAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.ANAN100PAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.ANAN100PAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.ANAN100PAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.ANAN100PAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.ANAN100PAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.ANAN100PAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.ANAN100PAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.ANAN100PAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.ANAN100PAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.ANAN100PAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.ANAN100PAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.ANAN100PAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
 
-            if (current_hpsdr_model == HPSDRModel.ORIONMKII)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.ORIONMKIIPAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.ORIONMKIIPAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.ORIONMKIIPAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.ORIONMKIIPAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.ORIONMKIIPAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.ORIONMKIIPAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.ORIONMKIIPAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.ORIONMKIIPAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.ORIONMKIIPAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.ORIONMKIIPAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.ORIONMKIIPAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.ORIONMKIIPAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.ORIONMKIIPAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.ORIONMKIIPAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.ORIONMKIIPAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.ORIONMKIIPAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.ORIONMKIIPAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.ORIONMKIIPAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.ORIONMKIIPAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.ORIONMKIIPAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.ORIONMKIIPAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.ORIONMKIIPAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.ORIONMKIIPAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.ORIONMKIIPAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.ORIONMKIIPAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            //if (!SetupForm.chkBypassANANPASettings.Checked && current_hpsdr_model == HPSDRModel.ANAN100D)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.ANANPAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.ANANPAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.ANANPAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.ANANPAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.ANANPAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.ANANPAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.ANANPAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.ANANPAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.ANANPAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.ANANPAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.ANANPAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.ANANPAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.ANANPAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.ANANPAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.ANANPAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.ANANPAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.ANANPAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.ANANPAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.ANANPAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.ANANPAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.ANANPAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.ANANPAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.ANANPAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.ANANPAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.ANANPAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
 
-            if (current_hpsdr_model == HPSDRModel.ANAN7000D)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.ANAN7000DPAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.ANAN7000DPAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.ANAN7000DPAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.ANAN7000DPAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.ANAN7000DPAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.ANAN7000DPAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.ANAN7000DPAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.ANAN7000DPAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.ANAN7000DPAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.ANAN7000DPAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.ANAN7000DPAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.ANAN7000DPAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.ANAN7000DPAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.ANAN7000DPAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.ANAN7000DPAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.ANAN7000DPAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.ANAN7000DPAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.ANAN7000DPAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.ANAN7000DPAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.ANAN7000DPAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.ANAN7000DPAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.ANAN7000DPAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.ANAN7000DPAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.ANAN7000DPAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.ANAN7000DPAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            //if (current_hpsdr_model == HPSDRModel.ANAN200D)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.OrionPAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.OrionPAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.OrionPAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.OrionPAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.OrionPAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.OrionPAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.OrionPAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.OrionPAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.OrionPAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.OrionPAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.OrionPAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.OrionPAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.OrionPAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.OrionPAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.OrionPAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.OrionPAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.OrionPAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.OrionPAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.OrionPAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.OrionPAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.OrionPAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.OrionPAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.OrionPAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.OrionPAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.OrionPAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
 
-            if (current_hpsdr_model == HPSDRModel.ANAN8000D)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.ANAN8000DPAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.ANAN8000DPAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.ANAN8000DPAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.ANAN8000DPAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.ANAN8000DPAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.ANAN8000DPAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.ANAN8000DPAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.ANAN8000DPAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.ANAN8000DPAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.ANAN8000DPAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.ANAN8000DPAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.ANAN8000DPAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.ANAN8000DPAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.ANAN8000DPAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.ANAN8000DPAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.ANAN8000DPAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.ANAN8000DPAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.ANAN8000DPAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.ANAN8000DPAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.ANAN8000DPAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.ANAN8000DPAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.ANAN8000DPAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.ANAN8000DPAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.ANAN8000DPAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.ANAN8000DPAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            //if (current_hpsdr_model == HPSDRModel.ORIONMKII)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.ORIONMKIIPAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.ORIONMKIIPAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.ORIONMKIIPAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.ORIONMKIIPAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.ORIONMKIIPAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.ORIONMKIIPAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.ORIONMKIIPAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.ORIONMKIIPAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.ORIONMKIIPAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.ORIONMKIIPAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.ORIONMKIIPAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.ORIONMKIIPAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
 
-            if (current_hpsdr_model == HPSDRModel.HERMES)
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.HermesPAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.HermesPAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.HermesPAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.HermesPAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.HermesPAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.HermesPAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.HermesPAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.HermesPAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.HermesPAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.HermesPAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.HermesPAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.HermesPAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.HermesPAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.HermesPAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.HermesPAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.HermesPAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.HermesPAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.HermesPAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.HermesPAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.HermesPAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.HermesPAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.HermesPAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.HermesPAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.HermesPAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.HermesPAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
+            //if (current_hpsdr_model == HPSDRModel.ANAN7000D)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.ANAN7000DPAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.ANAN7000DPAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.ANAN7000DPAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.ANAN7000DPAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.ANAN7000DPAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.ANAN7000DPAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.ANAN7000DPAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.ANAN7000DPAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.ANAN7000DPAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.ANAN7000DPAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.ANAN7000DPAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.ANAN7000DPAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.ANAN7000DPAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.ANAN7000DPAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.ANAN7000DPAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.ANAN7000DPAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.ANAN7000DPAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.ANAN7000DPAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.ANAN7000DPAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.ANAN7000DPAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.ANAN7000DPAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.ANAN7000DPAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.ANAN7000DPAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.ANAN7000DPAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.ANAN7000DPAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
 
-            if (current_hpsdr_model == HPSDRModel.HPSDR || (SetupForm.chkBypassANANPASettings.Checked && current_hpsdr_model == HPSDRModel.ANAN100D))
-            {
-                switch (b)
-                {
-                    case Band.B160M:
-                        retval = SetupForm.PAGain160;
-                        break;
-                    case Band.B80M:
-                        retval = SetupForm.PAGain80;
-                        break;
-                    case Band.B60M:
-                        retval = SetupForm.PAGain60;
-                        break;
-                    case Band.B40M:
-                        retval = SetupForm.PAGain40;
-                        break;
-                    case Band.B30M:
-                        retval = SetupForm.PAGain30;
-                        break;
-                    case Band.B20M:
-                        retval = SetupForm.PAGain20;
-                        break;
-                    case Band.B17M:
-                        retval = SetupForm.PAGain17;
-                        break;
-                    case Band.B15M:
-                        retval = SetupForm.PAGain15;
-                        break;
-                    case Band.B12M:
-                        retval = SetupForm.PAGain12;
-                        break;
-                    case Band.B10M:
-                        retval = SetupForm.PAGain10;
-                        break;
-                    case Band.B6M:
-                        retval = SetupForm.PAGain6;
-                        break;
-                    case Band.VHF0:
-                        retval = SetupForm.PAGainVHF0;
-                        break;
-                    case Band.VHF1:
-                        retval = SetupForm.PAGainVHF1;
-                        break;
-                    case Band.VHF2:
-                        retval = SetupForm.PAGainVHF2;
-                        break;
-                    case Band.VHF3:
-                        retval = SetupForm.PAGainVHF3;
-                        break;
-                    case Band.VHF4:
-                        retval = SetupForm.PAGainVHF4;
-                        break;
-                    case Band.VHF5:
-                        retval = SetupForm.PAGainVHF5;
-                        break;
-                    case Band.VHF6:
-                        retval = SetupForm.PAGainVHF6;
-                        break;
-                    case Band.VHF7:
-                        retval = SetupForm.PAGainVHF7;
-                        break;
-                    case Band.VHF8:
-                        retval = SetupForm.PAGainVHF8;
-                        break;
-                    case Band.VHF9:
-                        retval = SetupForm.PAGainVHF9;
-                        break;
-                    case Band.VHF10:
-                        retval = SetupForm.PAGainVHF10;
-                        break;
-                    case Band.VHF11:
-                        retval = SetupForm.PAGainVHF11;
-                        break;
-                    case Band.VHF12:
-                        retval = SetupForm.PAGainVHF12;
-                        break;
-                    case Band.VHF13:
-                        retval = SetupForm.PAGainVHF13;
-                        break;
-                    default:
-                        retval = 1000;
-                        break;
-                }
-            }
-            return retval;
+            //if (current_hpsdr_model == HPSDRModel.ANAN8000D)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.ANAN8000DPAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.ANAN8000DPAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.ANAN8000DPAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.ANAN8000DPAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.ANAN8000DPAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.ANAN8000DPAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.ANAN8000DPAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.ANAN8000DPAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.ANAN8000DPAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.ANAN8000DPAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.ANAN8000DPAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.ANAN8000DPAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.ANAN8000DPAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.ANAN8000DPAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.ANAN8000DPAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.ANAN8000DPAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.ANAN8000DPAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.ANAN8000DPAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.ANAN8000DPAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.ANAN8000DPAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.ANAN8000DPAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.ANAN8000DPAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.ANAN8000DPAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.ANAN8000DPAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.ANAN8000DPAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
+
+            //if (current_hpsdr_model == HPSDRModel.HERMES)
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.HermesPAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.HermesPAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.HermesPAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.HermesPAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.HermesPAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.HermesPAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.HermesPAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.HermesPAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.HermesPAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.HermesPAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.HermesPAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.HermesPAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.HermesPAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.HermesPAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.HermesPAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.HermesPAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.HermesPAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.HermesPAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.HermesPAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.HermesPAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.HermesPAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.HermesPAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.HermesPAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.HermesPAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.HermesPAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
+
+            //if (current_hpsdr_model == HPSDRModel.HPSDR || (SetupForm.chkBypassANANPASettings.Checked && current_hpsdr_model == HPSDRModel.ANAN100D))
+            //{
+            //    switch (b)
+            //    {
+            //        case Band.B160M:
+            //            retval = SetupForm.PAGain160;
+            //            break;
+            //        case Band.B80M:
+            //            retval = SetupForm.PAGain80;
+            //            break;
+            //        case Band.B60M:
+            //            retval = SetupForm.PAGain60;
+            //            break;
+            //        case Band.B40M:
+            //            retval = SetupForm.PAGain40;
+            //            break;
+            //        case Band.B30M:
+            //            retval = SetupForm.PAGain30;
+            //            break;
+            //        case Band.B20M:
+            //            retval = SetupForm.PAGain20;
+            //            break;
+            //        case Band.B17M:
+            //            retval = SetupForm.PAGain17;
+            //            break;
+            //        case Band.B15M:
+            //            retval = SetupForm.PAGain15;
+            //            break;
+            //        case Band.B12M:
+            //            retval = SetupForm.PAGain12;
+            //            break;
+            //        case Band.B10M:
+            //            retval = SetupForm.PAGain10;
+            //            break;
+            //        case Band.B6M:
+            //            retval = SetupForm.PAGain6;
+            //            break;
+            //        case Band.VHF0:
+            //            retval = SetupForm.PAGainVHF0;
+            //            break;
+            //        case Band.VHF1:
+            //            retval = SetupForm.PAGainVHF1;
+            //            break;
+            //        case Band.VHF2:
+            //            retval = SetupForm.PAGainVHF2;
+            //            break;
+            //        case Band.VHF3:
+            //            retval = SetupForm.PAGainVHF3;
+            //            break;
+            //        case Band.VHF4:
+            //            retval = SetupForm.PAGainVHF4;
+            //            break;
+            //        case Band.VHF5:
+            //            retval = SetupForm.PAGainVHF5;
+            //            break;
+            //        case Band.VHF6:
+            //            retval = SetupForm.PAGainVHF6;
+            //            break;
+            //        case Band.VHF7:
+            //            retval = SetupForm.PAGainVHF7;
+            //            break;
+            //        case Band.VHF8:
+            //            retval = SetupForm.PAGainVHF8;
+            //            break;
+            //        case Band.VHF9:
+            //            retval = SetupForm.PAGainVHF9;
+            //            break;
+            //        case Band.VHF10:
+            //            retval = SetupForm.PAGainVHF10;
+            //            break;
+            //        case Band.VHF11:
+            //            retval = SetupForm.PAGainVHF11;
+            //            break;
+            //        case Band.VHF12:
+            //            retval = SetupForm.PAGainVHF12;
+            //            break;
+            //        case Band.VHF13:
+            //            retval = SetupForm.PAGainVHF13;
+            //            break;
+            //        default:
+            //            retval = 1000;
+            //            break;
+            //    }
+            //}
+            //return retval;
         }
 
         public void CheckSelectedButtonColor()
@@ -51734,6 +51738,8 @@ namespace Thetis
 
             updateOCTXPins(newMox);
             //
+
+            if (!IsSetupFormNull) SetupForm.PAProfileEnableControls(newMox);
 
             //reset smeter pixel history //MW0LGE_21a
             clearRXSignalPixels(1);

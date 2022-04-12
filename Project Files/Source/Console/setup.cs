@@ -78,7 +78,7 @@ namespace Thetis
             // timeout stuff
             lblTimeout.Visible = Common.IsTimeOutEnabled;
             lblShowTimeoutText.Visible = Common.IsTimeOutEnabled;
-            if(Common.IsTimeOutEnabled) lblTimeout.Text = Common.DaysToTimeOut().ToString() + " days";
+            if (Common.IsTimeOutEnabled) lblTimeout.Text = Common.DaysToTimeOut().ToString() + " days";
             //
 
             //MW0LGE_21i
@@ -96,7 +96,7 @@ namespace Thetis
 
             udDisplayFPS.Maximum = Console.MAX_FPS;
 
-            Skin.SetConsole(console); 
+            Skin.SetConsole(console);
             openFileDialog1.InitialDirectory = console.AppDataPath;
 
 #if(!DEBUG)
@@ -298,13 +298,13 @@ namespace Thetis
             // some default tci server states MW0LGE_21k9d
             chkCopyRX2VFObToVFOa.Checked = true;
             chkUseRX1vfoaForRX2vfoa.Checked = true;
-            chkTCIsendInitialStateOnConnect.Checked = true;            
+            chkTCIsendInitialStateOnConnect.Checked = true;
             // some default tcpipcat server states
             chkWelcomeMessageTCPIPCat.Checked = true;
             // some default tcpipcat + tci
             chkLimitPowerCATTCIMsgs.Checked = true;
             //
-            
+
             console.QSOTimerAudioPlayer.LoadCompletedEvent += audioFileLoaded;
 
             RefreshSkinList(); //moved down the initialisation order, so we at least know if we are gdi or dx, only build the list
@@ -312,6 +312,10 @@ namespace Thetis
             //display defaults
             chkVSyncDX.Enabled = true;
             //chkLegacyDXBuffers_CheckedChanged(this, EventArgs.Empty);
+            //
+
+            //MW0LGE_22b PA Profiles
+            initPAProfiles();
             //
 
             getOptions();
@@ -521,7 +525,7 @@ namespace Thetis
             comboDSPFMRXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPFMTXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPCWRXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
-            comboDSPDigRXFiltType_SelectedIndexChanged(this, EventArgs.Empty);            
+            comboDSPDigRXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPDigTXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
             console.DeferUpdateDSP = false;  //MW0LGE_21k9d
 
@@ -544,9 +548,6 @@ namespace Thetis
 
             //MW0LGE_21h
             updateNetworkThrottleCheckBox();
-
-            //chkTCPIPCatServerListening_CheckedChanged(this, EventArgs.Empty);
-            //chkTCIServerListening_CheckedChanged(this, EventArgs.Empty);
         }
         #endregion
 
@@ -562,7 +563,7 @@ namespace Thetis
             if (needsRecovering(recoveryList, "chkWheelTunesOutsideSpectral")) chkWheelTunesOutsideSpectral.Checked = console.WheelTunesOutsideSpectral;
             if (needsRecovering(recoveryList, "chkAlsoUseSpecificMouseWheel")) chkAlsoUseSpecificMouseWheel.Checked = console.AlsoUseSpecificMouseWheel;
             if (needsRecovering(recoveryList, "chkZoomShiftModifier")) chkZoomShiftModifier.Checked = console.ZoomShiftModifier;
-            if (needsRecovering(recoveryList, "chkExtended")) chkExtended.Checked = console.Extended; 
+            if (needsRecovering(recoveryList, "chkExtended")) chkExtended.Checked = console.Extended;
         }
 
         private void InitADC(List<string> recoveryList = null)
@@ -623,7 +624,7 @@ namespace Thetis
             if (needsRecovering(recoveryList, "radP1DDC6ADC1")) radP1DDC6ADC1.Checked = false;
             if (needsRecovering(recoveryList, "radP1DDC6ADC2")) radP1DDC6ADC2.Checked = false;
         }
-        
+
         public void InitAudioTab(List<string> recoveryList = null)
         {
             if (!comboAudioSampleRate1.Items.Contains(96000))
@@ -1008,7 +1009,7 @@ namespace Thetis
                 comboAppSkin.Text = skin;
             else comboAppSkin.Text = "IK3VIG Special";
         }
-    
+
         private void GetHosts()
         {
             // comboAudioDriver1.Items.Clear();
@@ -1087,7 +1088,7 @@ namespace Thetis
             // shadow method to always clear the list if someone somewhere shows the form
 
             // this may not be 100%, but best effort, we only want to do this if we come from a 'hidden' state
-            if(!m_bShown) clearUpdatedClickControlList();
+            if (!m_bShown) clearUpdatedClickControlList();
 
             m_bShown = true;
 
@@ -1103,9 +1104,11 @@ namespace Thetis
             base.Hide();
         }
         // shadow property to unset m_bShown when .Visible called from anywhere
-        public new bool Visible {
+        public new bool Visible
+        {
             get { return base.Visible; }
-            set {             
+            set
+            {
                 m_bShown = value;
                 base.Visible = value;
             }
@@ -1144,15 +1147,15 @@ namespace Thetis
 
             // also remove any that make no sense to track/update MW0LGE_21j
             toRemove.Clear();
-            
+
             toRemove.Add("txtVAC1OldVarIn");
             toRemove.Add("txtVAC1OldVarOut");
             toRemove.Add("txtVAC2OldVarIn");
             toRemove.Add("txtVAC2OldVarOut");
-            
+
             foreach (string sControlName in toRemove)
             {
-                if(m_lstUpdatedControls.Contains(sControlName)) m_lstUpdatedControls.Remove(sControlName);
+                if (m_lstUpdatedControls.Contains(sControlName)) m_lstUpdatedControls.Remove(sControlName);
             }
         }
         private bool needsRecovering(List<string> recoveryList, string s)
@@ -1168,9 +1171,9 @@ namespace Thetis
         }
         private void listUpdatedControls()
         {
-            foreach(string s in m_lstUpdatedControls)
+            foreach (string s in m_lstUpdatedControls)
             {
-                Debug.Print("CONTROL UPDATED -> "+ s);
+                Debug.Print("CONTROL UPDATED -> " + s);
             }
         }
         private void clearUpdatedClickControlList()
@@ -1242,7 +1245,7 @@ namespace Thetis
             //Debug.Print("colourButton CHANGED = " + ((Control)sender).Name);
             string sName = ((Control)sender).Name;
             if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }        
+        }
         private void registerAllControlsForStateMonitoring()
         {
             Dictionary<string, Control> controls = new Dictionary<string, Control>();
@@ -1342,12 +1345,22 @@ namespace Thetis
             a.Add("chkRadioProtocolSelect_checkstate", chkRadioProtocolSelect.CheckState.ToString());
             a.Add("lgLinearGradientRX1", lgLinearGradientRX1.Text);
 
-            // remove any old settings we dont use any more
-            List<string> oldSettings = new List<string>();
-            oldSettings.Add("chkTestIMDPower");
-            oldSettings.Add("chkTXTunePower");
-            DB.RemoveVarsList("Options", oldSettings);
+            // store PA profiles
+            if (_PAProfiles != null)
+            {
+                int nIndex = 0;
+                a.Add("ProfileCount", _PAProfiles.Count.ToString());
+                foreach (KeyValuePair<string, PAProfile> kvp in _PAProfiles)
+                {
+                    string sData = kvp.Value.DataToString();
+                    a.Add("Profile_" + nIndex.ToString(), sData);
+                    nIndex++;
+                }
+            }
             //
+
+            // remove any outdated options from the DB MW0LGE_22b
+            handleOutdatedOptions(false);
 
             DB.SaveVarsDictionary("Options", ref a);
             DB.WriteCurrentDB(console.DBFileName);
@@ -1357,7 +1370,44 @@ namespace Thetis
         {
             if (needsRecovering(recoveryList, "comboTXTUNMeter")) comboTXTUNMeter.Text = "Fwd SWR"; // this needs to be setup in the case of new database and we havent hit tx/tune yet // MW0LGE_21a
         }
+        List<string> _oldSettings = new List<string>();
+        private void handleOutdatedOptions(bool bGet)
+        {
+            Dictionary<string, string> temp = new Dictionary<string, string>();
+            handleOutdatedOptions(bGet, ref temp);
+        }
+        private void handleOutdatedOptions(bool bGet, ref Dictionary<string, string> getDict)
+        {
+            if (bGet)
+            {
+                _oldSettings.Clear();
 
+                if (getDict.ContainsKey("chkTXTunePower"))
+                {
+                    if (bool.Parse(getDict["chkTXTunePower"]))
+                        radUseDriveSliderTune.Checked = true;
+                    else
+                        radUseFixedDriveTune.Checked = true;
+                    _oldSettings.Add("chkTXTunePower");
+                }
+                if (getDict.ContainsKey("chkTestIMDPower"))
+                {
+                    if (bool.Parse(getDict["chkTestIMDPower"]))
+                        radUseDriveSlider2Tone.Checked = true;
+                    else
+                        radUseFixedDrive2Tone.Checked = true;
+                    _oldSettings.Add("chkTestIMDPower");
+                }
+
+                handleOldPAGainSettings(getDict);
+            }
+            else
+            {
+                // remove any old settings we dont use any more
+                DB.RemoveVarsList("Options", _oldSettings);
+                _oldSettings.Clear();
+            }
+        }
         private void getOptions(List<string> recoveryList = null)
         {
             //MW0LGE_21d
@@ -1374,21 +1424,7 @@ namespace Thetis
 
             // deal with out dated settings //MW0LGE_22b
             // these will be removed in saveOptions
-            if (a.ContainsKey("chkTXTunePower"))
-            {
-                if (bool.Parse(a["chkTXTunePower"]))
-                    radUseDriveSliderTune.Checked = true;
-                else
-                    radUseFixedDriveTune.Checked = true;
-            }
-            if (a.ContainsKey("chkTestIMDPower"))
-            {
-                if (bool.Parse(a["chkTestIMDPower"]))
-                    radUseDriveSlider2Tone.Checked = true;
-                else
-                    radUseFixedDrive2Tone.Checked = true;
-            }
-            //
+            handleOutdatedOptions(true, ref a);
 
             List<string> sortedList = a.Keys.ToList();
             sortedList.Sort();
@@ -1406,7 +1442,9 @@ namespace Thetis
                 InitADC(recoveryList);
             }
 
-            foreach(string sKey in sortedList) 
+            if (sortedList.Contains("comboPAProfile")) sortedList.Remove("comboPAProfile"); // this is done after the PA profiles are recovered // MW0LGE_22b
+
+            foreach (string sKey in sortedList)
             {
                 string name = sKey;
                 string val = a[sKey];
@@ -1498,6 +1536,32 @@ namespace Thetis
                     }
                 }
             }
+
+            //MW0LGE_22b
+            // get PA profiles, use dictionary directly and not the sorted list
+            if (_PAProfiles != null && a.ContainsKey("ProfileCount"))
+            {
+                int nProfiles = int.Parse(a["ProfileCount"]);
+                for (int n = 0; n < nProfiles; n++)
+                {
+                    string sDataKey = "Profile_" + n.ToString();
+                    if (a.ContainsKey(sDataKey))
+                    {
+                        string sData = a[sDataKey];
+
+                        PAProfile p = new PAProfile("", HPSDRModel.FIRST, false);
+                        p.DataFromString(sData); // this will fully update p
+
+                        if (_PAProfiles.ContainsKey(p.ProfileName)) _PAProfiles.Remove(p.ProfileName); // scrap any dupes, this will be true for defaults for example
+
+                        _PAProfiles.Add(p.ProfileName, p);
+                    }
+                }
+            }
+
+            if (a.ContainsKey("comboPAProfile"))
+                comboPAProfile.Text = a["comboPAProfile"];
+            //
 
             //MW0LGE We have overwritten controls with data that might not match the current profile
             //load in current profile
@@ -1601,12 +1665,12 @@ namespace Thetis
             {
                 if (c.GetType() == typeof(GroupBoxTS))
                 {
-                    
+
                     foreach (Control c2 in c.Controls)
                     {
                         if (c2.GetType() != typeof(ComboBoxTS)) continue;
                         ComboBoxTS combo = (ComboBoxTS)c2;
-                        
+
                         combo.Items.Clear();
                         foreach (Keys k in KeyList)
                         {
@@ -1621,7 +1685,7 @@ namespace Thetis
                     combo.Items.Clear();
                     foreach (Keys k in KeyList)
                     {
-                        if(!combo.Items.Contains(k.ToString()))
+                        if (!combo.Items.Contains(k.ToString()))
                             combo.Items.Add(k.ToString());
                     }
                 }
@@ -1807,7 +1871,7 @@ namespace Thetis
             chkAccurateFrameTiming_CheckedChanged(this, e);
             clrbtnSignalHistoryColour_Changed(this, e);
             chkSignalHistory_CheckedChanged(this, e);
-            chkVSyncDX_CheckedChanged(this, e);            
+            chkVSyncDX_CheckedChanged(this, e);
             chkBlobPeakHold_CheckedChanged(this, e);
             udSignalHistoryDuration_ValueChanged(this, e);
             udBlobPeakHoldMS_ValueChanged(this, e);
@@ -1967,7 +2031,7 @@ namespace Thetis
             udTXAMCarrierLevel_ValueChanged(this, e);
             chkLimitExtAmpOnOverload_CheckedChanged(this, e);
             chkBPF2Gnd_CheckedChanged(this, e);
-            chkSaveTXProfileOnExit_CheckedChanged(this, e); 
+            chkSaveTXProfileOnExit_CheckedChanged(this, e);
             ForceTXProfileUpdate();
 
             // Keyboard Tab
@@ -2052,7 +2116,7 @@ namespace Thetis
             udDSPNBLead_ValueChanged(this, e);
             udDSPNBLag_ValueChanged(this, e);
             comboMeterType_SelectedIndexChanged(this, e);
-            comboAppSkin_SelectedIndexChanged(this, e); 
+            comboAppSkin_SelectedIndexChanged(this, e);
             chkDisablePicDisplayBackgroundImage_CheckedChanged(this, e);
 
             clrbtnActiveSpectralPeak_Changed(this, e);
@@ -2122,7 +2186,7 @@ namespace Thetis
             udDSPSNBThresh2_ValueChanged(this, e);
             // MNF
             chkMNFAutoIncrease_CheckedChanged(this, e);
-			chkEnableXVTRHF_CheckedChanged(this, e);
+            chkEnableXVTRHF_CheckedChanged(this, e);
 
             // CFCompressor
             chkCFCEnable_CheckedChanged(this, e);
@@ -2135,7 +2199,7 @@ namespace Thetis
             chkPHROTEnable_CheckedChanged(this, e);
             udPhRotFreq_ValueChanged(this, e);
             udPHROTStages_ValueChanged(this, e);
-        
+
             // TXEQ
             console.EQForm.setTXEQProfile(this, e);
 
@@ -2177,6 +2241,9 @@ namespace Thetis
 
             //OC tab
             chkAllowHotSwitching_CheckedChanged(this, e);
+
+            //PA
+            comboPAProfile_SelectedIndexChanged(this, e); //MW0LGE_22b
         }
 
         public string[] GetTXProfileStrings()
@@ -2230,7 +2297,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'","''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
                 if (rows.Length != 1)
                     return false;
@@ -2308,8 +2375,8 @@ namespace Thetis
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_On"]) != (bool)chkAudioEnableVAC.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_Auto_On"]) != (bool)chkAudioVACAutoEnable.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC1_RX_GAIN"]) != (int)udAudioVACGainRX.Value) return true;
-            if(DB.ConvertFromDBVal<int>(dr["VAC1_TX_GAIN"]) != (int)udAudioVACGainTX.Value) return true;
-            if(DB.ConvertFromDBVal<bool>(dr["VAC1_Stereo_On"]) != (bool)chkAudio2Stereo.Checked) return true;
+            if (DB.ConvertFromDBVal<int>(dr["VAC1_TX_GAIN"]) != (int)udAudioVACGainTX.Value) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Stereo_On"]) != (bool)chkAudio2Stereo.Checked) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC1_Sample_Rate"]) != (string)comboAudioSampleRate2.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC1_Buffer_Size"]) != (string)comboAudioBuffer2.Text) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_IQ_Output"]) != (bool)chkAudioIQtoVAC.Checked) return true;
@@ -2319,22 +2386,22 @@ namespace Thetis
             if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_On"]) != (bool)chkAudioLatencyManual2.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_Duration"]) != (int)udAudioLatency2.Value) return true;
 
-            if(DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_RBOut_On"]) != (bool)chkAudioLatencyManual2_Out.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_RBOut_On"]) != (bool)chkAudioLatencyManual2_Out.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_RBOut_Duration"]) != (int)udAudioLatency2_Out.Value) return true;
-            if(DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_PAIn_On"]) != (bool)chkAudioLatencyPAInManual.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_PAIn_On"]) != (bool)chkAudioLatencyPAInManual.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_PAIn_Duration"]) != (int)udAudioLatencyPAIn.Value) return true;
-            if(DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_PAOut_On"]) != (bool)chkAudioLatencyPAOutManual.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_PAOut_On"]) != (bool)chkAudioLatencyPAOutManual.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_PAOut_Duration"]) != (int)udAudioLatencyPAOut.Value) return true;
 
-            if(DB.ConvertFromDBVal<string>(dr["VAC1_AudioDriver"]) != (string)comboAudioDriver2.Text) return true;
+            if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioDriver"]) != (string)comboAudioDriver2.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioInput"]) != (string)comboAudioInput2.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioOutput"]) != (string)comboAudioOutput2.Text) return true;
 
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_On"]) != (bool)chkVAC2Enable.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_Auto_On"]) != (bool)chkVAC2AutoEnable.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC2_RX_GAIN"]) != (int)udVAC2GainRX.Value) return true;
-            if(DB.ConvertFromDBVal<int>(dr["VAC2_TX_GAIN"]) != (int)udVAC2GainTX.Value) return true;
-            if(DB.ConvertFromDBVal<bool>(dr["VAC2_Stereo_On"]) != (bool)chkAudioStereo3.Checked) return true;
+            if (DB.ConvertFromDBVal<int>(dr["VAC2_TX_GAIN"]) != (int)udVAC2GainTX.Value) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Stereo_On"]) != (bool)chkAudioStereo3.Checked) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC2_Sample_Rate"]) != (string)comboAudioSampleRate3.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC2_Buffer_Size"]) != (string)comboAudioBuffer3.Text) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_IQ_Output"]) != (bool)chkVAC2DirectIQ.Checked) return true;
@@ -2343,14 +2410,14 @@ namespace Thetis
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_On"]) != (bool)chkVAC2LatencyManual.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_Duration"]) != (int)udVAC2Latency.Value) return true;
 
-            if(DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_RBOut_On"]) != (bool)chkVAC2LatencyOutManual.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_RBOut_On"]) != (bool)chkVAC2LatencyOutManual.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_RBOut_Duration"]) != (int)udVAC2LatencyOut.Value) return true;
-            if(DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_PAIn_On"]) != (bool)chkVAC2LatencyPAInManual.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_PAIn_On"]) != (bool)chkVAC2LatencyPAInManual.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_PAIn_Duration"]) != (int)udVAC2LatencyPAIn.Value) return true;
-            if(DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_PAOut_On"]) != (bool)chkVAC2LatencyPAOutManual.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_PAOut_On"]) != (bool)chkVAC2LatencyPAOutManual.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_PAOut_Duration"]) != (int)udVAC2LatencyPAOut.Value) return true;
 
-            if(DB.ConvertFromDBVal<string>(dr["VAC2_AudioDriver"]) != (string)comboAudioDriver3.Text) return true;
+            if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioDriver"]) != (string)comboAudioDriver3.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioInput"]) != (string)comboAudioInput3.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioOutput"]) != (string)comboAudioOutput3.Text) return true;
 
@@ -2436,7 +2503,7 @@ namespace Thetis
 
         //    return false;
         //}
-        
+
         private void highlightTXProfileSaveItems(bool bHighlight)
         {
             if (initializing) return;
@@ -2460,7 +2527,7 @@ namespace Thetis
             Common.HightlightControl(udDSPALCAttack, bHighlight);
             Common.HightlightControl(udDSPALCDecay, bHighlight);
             Common.HightlightControl(udDSPALCHangTime, bHighlight);
-            Common.HightlightControl(tbDSPALCHangThreshold, bHighlight);            
+            Common.HightlightControl(tbDSPALCHangThreshold, bHighlight);
 
             Common.HightlightControl(chkVOXEnable, bHighlight);
             Common.HightlightControl(chkDEXPEnable, bHighlight);
@@ -2919,7 +2986,7 @@ namespace Thetis
 
         public void UpdateTXDisplayFFT()
         {
-             tbTXDisplayFFTSize_Scroll(this, EventArgs.Empty);
+            tbTXDisplayFFTSize_Scroll(this, EventArgs.Empty);
         }
 
         #endregion
@@ -3026,12 +3093,15 @@ namespace Thetis
                 if (udHermesStepAttenuatorData != null) udHermesStepAttenuatorData.Value = value;
             }
         }
-        public int HermesAttenuatorDataRX2 {
-            get {
+        public int HermesAttenuatorDataRX2
+        {
+            get
+            {
                 if (udHermesStepAttenuatorDataRX2 != null) return (int)udHermesStepAttenuatorDataRX2.Value;
                 else return -1;
             }
-            set {
+            set
+            {
                 if (udHermesStepAttenuatorDataRX2 != null) udHermesStepAttenuatorDataRX2.Value = value;
             }
         }
@@ -3718,10 +3788,10 @@ namespace Thetis
                 {
                     if (chkCWBreakInEnabled.CheckState == value) chkCWBreakInEnabled_CheckStateChanged(this, EventArgs.Empty);
                     chkCWBreakInEnabled.CheckState = value;
-                 }
+                }
 
             }
-            }
+        }
 
         public bool RX1APFEnable
         {
@@ -4094,7 +4164,7 @@ namespace Thetis
                 }
             }
         }
-        
+
         public int DisplayFFTSize
         {
             get { return (int)tbDisplayFFTSize.Value; }
@@ -4288,7 +4358,7 @@ namespace Thetis
             set { chkAlexPresent.Checked = value; }
         }
 
-         public bool MercuryPresent
+        public bool MercuryPresent
         {
             get { return chkMercuryPresent.Checked; }
             set { chkMercuryPresent.Checked = value; }
@@ -4474,1442 +4544,1442 @@ namespace Thetis
             set { udPAGain6.Value = (decimal)value; }
         }
 
-        public float PAGainVHF0
-        {
-            get { return (float)udPAGainVHF0.Value; }
-            set { udPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF1
-        {
-            get { return (float)udPAGainVHF1.Value; }
-            set { udPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF2
-        {
-            get { return (float)udPAGainVHF2.Value; }
-            set { udPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF3
-        {
-            get { return (float)udPAGainVHF3.Value; }
-            set { udPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF4
-        {
-            get { return (float)udPAGainVHF4.Value; }
-            set { udPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF5
-        {
-            get { return (float)udPAGainVHF5.Value; }
-            set { udPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF6
-        {
-            get { return (float)udPAGainVHF6.Value; }
-            set { udPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF7
-        {
-            get { return (float)udPAGainVHF7.Value; }
-            set { udPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF8
-        {
-            get { return (float)udPAGainVHF8.Value; }
-            set { udPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF9
-        {
-            get { return (float)udPAGainVHF9.Value; }
-            set { udPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF10
-        {
-            get { return (float)udPAGainVHF10.Value; }
-            set { udPAGainVHF10.Value = (decimal)value; }
-        }
-        public float PAGainVHF11
-        {
-            get { return (float)udPAGainVHF11.Value; }
-            set { udPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF12
-        {
-            get { return (float)udPAGainVHF12.Value; }
-            set { udPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float PAGainVHF13
-        {
-            get { return (float)udPAGainVHF13.Value; }
-            set { udPAGainVHF13.Value = (decimal)value; }
-        }
-
-        // PAGain for Hermes
-        public float HermesPAGain160
-        {
-            get { return (float)udHermesPAGain160.Value; }
-            set { udHermesPAGain160.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain80
-        {
-            get { return (float)udHermesPAGain80.Value; }
-            set { udHermesPAGain80.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain60
-        {
-            get { return (float)udHermesPAGain60.Value; }
-            set { udHermesPAGain60.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain40
-        {
-            get { return (float)udHermesPAGain40.Value; }
-            set { udHermesPAGain40.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain30
-        {
-            get { return (float)udHermesPAGain30.Value; }
-            set { udHermesPAGain30.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain20
-        {
-            get { return (float)udHermesPAGain20.Value; }
-            set { udHermesPAGain20.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain17
-        {
-            get { return (float)udHermesPAGain17.Value; }
-            set { udHermesPAGain17.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain15
-        {
-            get { return (float)udHermesPAGain15.Value; }
-            set { udHermesPAGain15.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain12
-        {
-            get { return (float)udHermesPAGain12.Value; }
-            set { udHermesPAGain12.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain10
-        {
-            get { return (float)udHermesPAGain10.Value; }
-            set { udHermesPAGain10.Value = (decimal)value; }
-        }
-
-        public float HermesPAGain6
-        {
-            get { return (float)udHermesPAGain6.Value; }
-            set { udHermesPAGain6.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF0
-        {
-            get { return (float)udHermesPAGainVHF0.Value; }
-            set { udHermesPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF1
-        {
-            get { return (float)udHermesPAGainVHF1.Value; }
-            set { udHermesPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF2
-        {
-            get { return (float)udHermesPAGainVHF2.Value; }
-            set { udHermesPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF3
-        {
-            get { return (float)udHermesPAGainVHF3.Value; }
-            set { udHermesPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF4
-        {
-            get { return (float)udHermesPAGainVHF4.Value; }
-            set { udHermesPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF5
-        {
-            get { return (float)udHermesPAGainVHF5.Value; }
-            set { udHermesPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF6
-        {
-            get { return (float)udHermesPAGainVHF6.Value; }
-            set { udHermesPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF7
-        {
-            get { return (float)udHermesPAGainVHF7.Value; }
-            set { udHermesPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF8
-        {
-            get { return (float)udHermesPAGainVHF8.Value; }
-            set { udHermesPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF9
-        {
-            get { return (float)udHermesPAGainVHF9.Value; }
-            set { udHermesPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF10
-        {
-            get { return (float)udHermesPAGainVHF10.Value; }
-            set { udHermesPAGainVHF10.Value = (decimal)value; }
-        }
-        public float HermesPAGainVHF11
-        {
-            get { return (float)udHermesPAGainVHF11.Value; }
-            set { udHermesPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF12
-        {
-            get { return (float)udHermesPAGainVHF12.Value; }
-            set { udHermesPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float HermesPAGainVHF13
-        {
-            get { return (float)udHermesPAGainVHF13.Value; }
-            set { udHermesPAGainVHF13.Value = (decimal)value; }
-        }
-
-        // PAGain ANAN-10
-        public float ANAN10PAGain160
-        {
-            get { return (float)udANAN10PAGain160.Value; }
-            set { udANAN10PAGain160.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain80
-        {
-            get { return (float)udANAN10PAGain80.Value; }
-            set { udANAN10PAGain80.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain60
-        {
-            get { return (float)udANAN10PAGain60.Value; }
-            set { udANAN10PAGain60.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain40
-        {
-            get { return (float)udANAN10PAGain40.Value; }
-            set { udANAN10PAGain40.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain30
-        {
-            get { return (float)udANAN10PAGain30.Value; }
-            set { udANAN10PAGain30.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain20
-        {
-            get { return (float)udANAN10PAGain20.Value; }
-            set { udANAN10PAGain20.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain17
-        {
-            get { return (float)udANAN10PAGain17.Value; }
-            set { udANAN10PAGain17.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain15
-        {
-            get { return (float)udANAN10PAGain15.Value; }
-            set { udANAN10PAGain15.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain12
-        {
-            get { return (float)udANAN10PAGain12.Value; }
-            set { udANAN10PAGain12.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain10
-        {
-            get { return (float)udANAN10PAGain10.Value; }
-            set { udANAN10PAGain10.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGain6
-        {
-            get { return (float)udANAN10PAGain6.Value; }
-            set { udANAN10PAGain6.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF0
-        {
-            get { return (float)udANAN10PAGainVHF0.Value; }
-            set { udANAN10PAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF1
-        {
-            get { return (float)udANAN10PAGainVHF1.Value; }
-            set { udANAN10PAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF2
-        {
-            get { return (float)udANAN10PAGainVHF2.Value; }
-            set { udANAN10PAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF3
-        {
-            get { return (float)udANAN10PAGainVHF3.Value; }
-            set { udANAN10PAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF4
-        {
-            get { return (float)udANAN10PAGainVHF4.Value; }
-            set { udANAN10PAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF5
-        {
-            get { return (float)udANAN10PAGainVHF5.Value; }
-            set { udANAN10PAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF6
-        {
-            get { return (float)udANAN10PAGainVHF6.Value; }
-            set { udANAN10PAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF7
-        {
-            get { return (float)udANAN10PAGainVHF7.Value; }
-            set { udANAN10PAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF8
-        {
-            get { return (float)udANAN10PAGainVHF8.Value; }
-            set { udANAN10PAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF9
-        {
-            get { return (float)udANAN10PAGainVHF9.Value; }
-            set { udANAN10PAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF10
-        {
-            get { return (float)udANAN10PAGainVHF10.Value; }
-            set { udANAN10PAGainVHF10.Value = (decimal)value; }
-        }
-        public float ANAN10PAGainVHF11
-        {
-            get { return (float)udANAN10PAGainVHF11.Value; }
-            set { udANAN10PAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF12
-        {
-            get { return (float)udANAN10PAGainVHF12.Value; }
-            set { udANAN10PAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float ANAN10PAGainVHF13
-        {
-            get { return (float)udANAN10PAGainVHF13.Value; }
-            set { udANAN10PAGainVHF13.Value = (decimal)value; }
-        }
-
-        //PAGain ANAN-100B
-        public float ANAN100BPAGain160
-        {
-            get { return (float)udANAN100BPAGain160.Value; }
-            set { udANAN100BPAGain160.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain80
-        {
-            get { return (float)udANAN100BPAGain80.Value; }
-            set { udANAN100BPAGain80.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain60
-        {
-            get { return (float)udANAN100BPAGain60.Value; }
-            set { udANAN100BPAGain60.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain40
-        {
-            get { return (float)udANAN100BPAGain40.Value; }
-            set { udANAN100BPAGain40.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain30
-        {
-            get { return (float)udANAN100BPAGain30.Value; }
-            set { udANAN100BPAGain30.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain20
-        {
-            get { return (float)udANAN100BPAGain20.Value; }
-            set { udANAN100BPAGain20.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain17
-        {
-            get { return (float)udANAN100BPAGain17.Value; }
-            set { udANAN100BPAGain17.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain15
-        {
-            get { return (float)udANAN100BPAGain15.Value; }
-            set { udANAN100BPAGain15.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain12
-        {
-            get { return (float)udANAN100BPAGain12.Value; }
-            set { udANAN100BPAGain12.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain10
-        {
-            get { return (float)udANAN100BPAGain10.Value; }
-            set { udANAN100BPAGain10.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGain6
-        {
-            get { return (float)udANAN100BPAGain6.Value; }
-            set { udANAN100BPAGain6.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF0
-        {
-            get { return (float)udANAN100BPAGainVHF0.Value; }
-            set { udANAN100BPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF1
-        {
-            get { return (float)udANAN100BPAGainVHF1.Value; }
-            set { udANAN100BPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF2
-        {
-            get { return (float)udANAN100BPAGainVHF2.Value; }
-            set { udANAN100BPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF3
-        {
-            get { return (float)udANAN100BPAGainVHF3.Value; }
-            set { udANAN100BPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF4
-        {
-            get { return (float)udANAN100BPAGainVHF4.Value; }
-            set { udANAN100BPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF5
-        {
-            get { return (float)udANAN100BPAGainVHF5.Value; }
-            set { udANAN100BPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF6
-        {
-            get { return (float)udANAN100BPAGainVHF6.Value; }
-            set { udANAN100BPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF7
-        {
-            get { return (float)udANAN100BPAGainVHF7.Value; }
-            set { udANAN100BPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF8
-        {
-            get { return (float)udANAN100BPAGainVHF8.Value; }
-            set { udANAN100BPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF9
-        {
-            get { return (float)udANAN100BPAGainVHF9.Value; }
-            set { udANAN100BPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF10
-        {
-            get { return (float)udANAN100BPAGainVHF10.Value; }
-            set { udANAN100BPAGainVHF10.Value = (decimal)value; }
-        }
-        public float ANAN100BPAGainVHF11
-        {
-            get { return (float)udANAN100BPAGainVHF11.Value; }
-            set { udANAN100BPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF12
-        {
-            get { return (float)udANAN100BPAGainVHF12.Value; }
-            set { udANAN100BPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float ANAN100BPAGainVHF13
-        {
-            get { return (float)udANAN100BPAGainVHF13.Value; }
-            set { udANAN100BPAGainVHF13.Value = (decimal)value; }
-        }
-
-        //PAGain ANAN-100
-        public float ANAN100PAGain160
-        {
-            get { return (float)udANAN100PAGain160.Value; }
-            set { udANAN100PAGain160.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain80
-        {
-            get { return (float)udANAN100PAGain80.Value; }
-            set { udANAN100PAGain80.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain60
-        {
-            get { return (float)udANAN100PAGain60.Value; }
-            set { udANAN100PAGain60.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain40
-        {
-            get { return (float)udANAN100PAGain40.Value; }
-            set { udANAN100PAGain40.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain30
-        {
-            get { return (float)udANAN100PAGain30.Value; }
-            set { udANAN100PAGain30.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain20
-        {
-            get { return (float)udANAN100PAGain20.Value; }
-            set { udANAN100PAGain20.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain17
-        {
-            get { return (float)udANAN100PAGain17.Value; }
-            set { udANAN100PAGain17.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain15
-        {
-            get { return (float)udANAN100PAGain15.Value; }
-            set { udANAN100PAGain15.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain12
-        {
-            get { return (float)udANAN100PAGain12.Value; }
-            set { udANAN100PAGain12.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain10
-        {
-            get { return (float)udANAN100PAGain10.Value; }
-            set { udANAN100PAGain10.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGain6
-        {
-            get { return (float)udANAN100PAGain6.Value; }
-            set { udANAN100PAGain6.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF0
-        {
-            get { return (float)udANAN100PAGainVHF0.Value; }
-            set { udANAN100PAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF1
-        {
-            get { return (float)udANAN100PAGainVHF1.Value; }
-            set { udANAN100PAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF2
-        {
-            get { return (float)udANAN100PAGainVHF2.Value; }
-            set { udANAN100PAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF3
-        {
-            get { return (float)udANAN100PAGainVHF3.Value; }
-            set { udANAN100PAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF4
-        {
-            get { return (float)udANAN100PAGainVHF4.Value; }
-            set { udANAN100PAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF5
-        {
-            get { return (float)udANAN100PAGainVHF5.Value; }
-            set { udANAN100PAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF6
-        {
-            get { return (float)udANAN100PAGainVHF6.Value; }
-            set { udANAN100PAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF7
-        {
-            get { return (float)udANAN100PAGainVHF7.Value; }
-            set { udANAN100PAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF8
-        {
-            get { return (float)udANAN100PAGainVHF8.Value; }
-            set { udANAN100PAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF9
-        {
-            get { return (float)udANAN100PAGainVHF9.Value; }
-            set { udANAN100PAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF10
-        {
-            get { return (float)udANAN100PAGainVHF10.Value; }
-            set { udANAN100PAGainVHF10.Value = (decimal)value; }
-        }
-        public float ANAN100PAGainVHF11
-        {
-            get { return (float)udANAN100PAGainVHF11.Value; }
-            set { udANAN100PAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF12
-        {
-            get { return (float)udANAN100PAGainVHF12.Value; }
-            set { udANAN100PAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float ANAN100PAGainVHF13
-        {
-            get { return (float)udANAN100PAGainVHF13.Value; }
-            set { udANAN100PAGainVHF13.Value = (decimal)value; }
-        }
-
-        //PAGain ANAN-100D
-        public float ANANPAGain160
-        {
-            get { return (float)udANANPAGain160.Value; }
-            set { udANANPAGain160.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain80
-        {
-            get { return (float)udANANPAGain80.Value; }
-            set { udANANPAGain80.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain60
-        {
-            get { return (float)udANANPAGain60.Value; }
-            set { udANANPAGain60.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain40
-        {
-            get { return (float)udANANPAGain40.Value; }
-            set { udANANPAGain40.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain30
-        {
-            get { return (float)udANANPAGain30.Value; }
-            set { udANANPAGain30.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain20
-        {
-            get { return (float)udANANPAGain20.Value; }
-            set { udANANPAGain20.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain17
-        {
-            get { return (float)udANANPAGain17.Value; }
-            set { udANANPAGain17.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain15
-        {
-            get { return (float)udANANPAGain15.Value; }
-            set { udANANPAGain15.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain12
-        {
-            get { return (float)udANANPAGain12.Value; }
-            set { udANANPAGain12.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain10
-        {
-            get { return (float)udANANPAGain10.Value; }
-            set { udANANPAGain10.Value = (decimal)value; }
-        }
-
-        public float ANANPAGain6
-        {
-            get { return (float)udANANPAGain6.Value; }
-            set { udANANPAGain6.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF0
-        {
-            get { return (float)udANANPAGainVHF0.Value; }
-            set { udANANPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF1
-        {
-            get { return (float)udANANPAGainVHF1.Value; }
-            set { udANANPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF2
-        {
-            get { return (float)udANANPAGainVHF2.Value; }
-            set { udANANPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF3
-        {
-            get { return (float)udANANPAGainVHF3.Value; }
-            set { udANANPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF4
-        {
-            get { return (float)udANANPAGainVHF4.Value; }
-            set { udANANPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF5
-        {
-            get { return (float)udANANPAGainVHF5.Value; }
-            set { udANANPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF6
-        {
-            get { return (float)udANANPAGainVHF6.Value; }
-            set { udANANPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF7
-        {
-            get { return (float)udANANPAGainVHF7.Value; }
-            set { udANANPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF8
-        {
-            get { return (float)udANANPAGainVHF8.Value; }
-            set { udANANPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF9
-        {
-            get { return (float)udANANPAGainVHF9.Value; }
-            set { udANANPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF10
-        {
-            get { return (float)udANANPAGainVHF10.Value; }
-            set { udANANPAGainVHF10.Value = (decimal)value; }
-        }
-        public float ANANPAGainVHF11
-        {
-            get { return (float)udANANPAGainVHF11.Value; }
-            set { udANANPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF12
-        {
-            get { return (float)udANANPAGainVHF12.Value; }
-            set { udANANPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float ANANPAGainVHF13
-        {
-            get { return (float)udANANPAGainVHF13.Value; }
-            set { udANANPAGainVHF13.Value = (decimal)value; }
-        }
-
-        //PAGain ANAN-7000DLE
-        public float ANAN7000DPAGain160
-        {
-            get { return (float)udANAN7000DPAGain160.Value; }
-            set { udANAN7000DPAGain160.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain80
-        {
-            get { return (float)udANAN7000DPAGain80.Value; }
-            set { udANAN7000DPAGain80.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain60
-        {
-            get { return (float)udANAN7000DPAGain60.Value; }
-            set { udANAN7000DPAGain60.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain40
-        {
-            get { return (float)udANAN7000DPAGain40.Value; }
-            set { udANAN7000DPAGain40.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain30
-        {
-            get { return (float)udANAN7000DPAGain30.Value; }
-            set { udANAN7000DPAGain30.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain20
-        {
-            get { return (float)udANAN7000DPAGain20.Value; }
-            set { udANAN7000DPAGain20.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain17
-        {
-            get { return (float)udANAN7000DPAGain17.Value; }
-            set { udANAN7000DPAGain17.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain15
-        {
-            get { return (float)udANAN7000DPAGain15.Value; }
-            set { udANAN7000DPAGain15.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain12
-        {
-            get { return (float)udANAN7000DPAGain12.Value; }
-            set { udANAN7000DPAGain12.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain10
-        {
-            get { return (float)udANAN7000DPAGain10.Value; }
-            set { udANAN7000DPAGain10.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGain6
-        {
-            get { return (float)udANAN7000DPAGain6.Value; }
-            set { udANAN7000DPAGain6.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF0
-        {
-            get { return (float)udANAN7000DPAGainVHF0.Value; }
-            set { udANAN7000DPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF1
-        {
-            get { return (float)udANAN7000DPAGainVHF1.Value; }
-            set { udANAN7000DPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF2
-        {
-            get { return (float)udANAN7000DPAGainVHF2.Value; }
-            set { udANAN7000DPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF3
-        {
-            get { return (float)udANAN7000DPAGainVHF3.Value; }
-            set { udANAN7000DPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF4
-        {
-            get { return (float)udANAN7000DPAGainVHF4.Value; }
-            set { udANAN7000DPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF5
-        {
-            get { return (float)udANAN7000DPAGainVHF5.Value; }
-            set { udANAN7000DPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF6
-        {
-            get { return (float)udANAN7000DPAGainVHF6.Value; }
-            set { udANAN7000DPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF7
-        {
-            get { return (float)udANAN7000DPAGainVHF7.Value; }
-            set { udANAN7000DPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF8
-        {
-            get { return (float)udANAN7000DPAGainVHF8.Value; }
-            set { udANAN7000DPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF9
-        {
-            get { return (float)udANAN7000DPAGainVHF9.Value; }
-            set { udANAN7000DPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF10
-        {
-            get { return (float)udANAN7000DPAGainVHF10.Value; }
-            set { udANAN7000DPAGainVHF10.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF11
-        {
-            get { return (float)udANAN7000DPAGainVHF11.Value; }
-            set { udANAN7000DPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF12
-        {
-            get { return (float)udANAN7000DPAGainVHF12.Value; }
-            set { udANAN7000DPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float ANAN7000DPAGainVHF13
-        {
-            get { return (float)udANAN7000DPAGainVHF13.Value; }
-            set { udANAN7000DPAGainVHF13.Value = (decimal)value; }
-        }
-
-        //PAGain Orion
-        public float OrionPAGain160
-        {
-            get { return (float)udOrionPAGain160.Value; }
-            set { udOrionPAGain160.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain80
-        {
-            get { return (float)udOrionPAGain80.Value; }
-            set { udOrionPAGain80.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain60
-        {
-            get { return (float)udOrionPAGain60.Value; }
-            set { udOrionPAGain60.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain40
-        {
-            get { return (float)udOrionPAGain40.Value; }
-            set { udOrionPAGain40.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain30
-        {
-            get { return (float)udOrionPAGain30.Value; }
-            set { udOrionPAGain30.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain20
-        {
-            get { return (float)udOrionPAGain20.Value; }
-            set { udOrionPAGain20.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain17
-        {
-            get { return (float)udOrionPAGain17.Value; }
-            set { udOrionPAGain17.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain15
-        {
-            get { return (float)udOrionPAGain15.Value; }
-            set { udOrionPAGain15.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain12
-        {
-            get { return (float)udOrionPAGain12.Value; }
-            set { udOrionPAGain12.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain10
-        {
-            get { return (float)udOrionPAGain10.Value; }
-            set { udOrionPAGain10.Value = (decimal)value; }
-        }
-
-        public float OrionPAGain6
-        {
-            get { return (float)udOrionPAGain6.Value; }
-            set { udOrionPAGain6.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF0
-        {
-            get { return (float)udOrionPAGainVHF0.Value; }
-            set { udOrionPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF1
-        {
-            get { return (float)udOrionPAGainVHF1.Value; }
-            set { udOrionPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF2
-        {
-            get { return (float)udOrionPAGainVHF2.Value; }
-            set { udOrionPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF3
-        {
-            get { return (float)udOrionPAGainVHF3.Value; }
-            set { udOrionPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF4
-        {
-            get { return (float)udOrionPAGainVHF4.Value; }
-            set { udOrionPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF5
-        {
-            get { return (float)udOrionPAGainVHF5.Value; }
-            set { udOrionPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF6
-        {
-            get { return (float)udOrionPAGainVHF6.Value; }
-            set { udOrionPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF7
-        {
-            get { return (float)udOrionPAGainVHF7.Value; }
-            set { udOrionPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF8
-        {
-            get { return (float)udOrionPAGainVHF8.Value; }
-            set { udOrionPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF9
-        {
-            get { return (float)udOrionPAGainVHF9.Value; }
-            set { udOrionPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF10
-        {
-            get { return (float)udOrionPAGainVHF10.Value; }
-            set { udOrionPAGainVHF10.Value = (decimal)value; }
-        }
-        public float OrionPAGainVHF11
-        {
-            get { return (float)udOrionPAGainVHF11.Value; }
-            set { udOrionPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF12
-        {
-            get { return (float)udOrionPAGainVHF12.Value; }
-            set { udOrionPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float OrionPAGainVHF13
-        {
-            get { return (float)udOrionPAGainVHF13.Value; }
-            set { udOrionPAGainVHF13.Value = (decimal)value; }
-        }
-
-        //PAGain ORION MKII
-        public float ORIONMKIIPAGain160
-        {
-            get { return (float)udORIONMKIIPAGain160.Value; }
-            set { udORIONMKIIPAGain160.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain80
-        {
-            get { return (float)udORIONMKIIPAGain80.Value; }
-            set { udORIONMKIIPAGain80.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain60
-        {
-            get { return (float)udORIONMKIIPAGain60.Value; }
-            set { udORIONMKIIPAGain60.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain40
-        {
-            get { return (float)udORIONMKIIPAGain40.Value; }
-            set { udORIONMKIIPAGain40.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain30
-        {
-            get { return (float)udORIONMKIIPAGain30.Value; }
-            set { udORIONMKIIPAGain30.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain20
-        {
-            get { return (float)udORIONMKIIPAGain20.Value; }
-            set { udORIONMKIIPAGain20.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain17
-        {
-            get { return (float)udORIONMKIIPAGain17.Value; }
-            set { udORIONMKIIPAGain17.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain15
-        {
-            get { return (float)udORIONMKIIPAGain15.Value; }
-            set { udORIONMKIIPAGain15.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain12
-        {
-            get { return (float)udORIONMKIIPAGain12.Value; }
-            set { udORIONMKIIPAGain12.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain10
-        {
-            get { return (float)udORIONMKIIPAGain10.Value; }
-            set { udORIONMKIIPAGain10.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGain6
-        {
-            get { return (float)udORIONMKIIPAGain6.Value; }
-            set { udORIONMKIIPAGain6.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF0
-        {
-            get { return (float)udORIONMKIIPAGainVHF0.Value; }
-            set { udORIONMKIIPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF1
-        {
-            get { return (float)udORIONMKIIPAGainVHF1.Value; }
-            set { udORIONMKIIPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF2
-        {
-            get { return (float)udORIONMKIIPAGainVHF2.Value; }
-            set { udORIONMKIIPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF3
-        {
-            get { return (float)udORIONMKIIPAGainVHF3.Value; }
-            set { udORIONMKIIPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF4
-        {
-            get { return (float)udORIONMKIIPAGainVHF4.Value; }
-            set { udORIONMKIIPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF5
-        {
-            get { return (float)udORIONMKIIPAGainVHF5.Value; }
-            set { udORIONMKIIPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF6
-        {
-            get { return (float)udORIONMKIIPAGainVHF6.Value; }
-            set { udORIONMKIIPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF7
-        {
-            get { return (float)udORIONMKIIPAGainVHF7.Value; }
-            set { udORIONMKIIPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF8
-        {
-            get { return (float)udORIONMKIIPAGainVHF8.Value; }
-            set { udORIONMKIIPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF9
-        {
-            get { return (float)udORIONMKIIPAGainVHF9.Value; }
-            set { udORIONMKIIPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF10
-        {
-            get { return (float)udORIONMKIIPAGainVHF10.Value; }
-            set { udORIONMKIIPAGainVHF10.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF11
-        {
-            get { return (float)udORIONMKIIPAGainVHF11.Value; }
-            set { udORIONMKIIPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF12
-        {
-            get { return (float)udORIONMKIIPAGainVHF12.Value; }
-            set { udORIONMKIIPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float ORIONMKIIPAGainVHF13
-        {
-            get { return (float)udORIONMKIIPAGainVHF13.Value; }
-            set { udORIONMKIIPAGainVHF13.Value = (decimal)value; }
-        }
-
-
-        //PAGain ANAN-8000DLE
-        public float ANAN8000DPAGain160
-        {
-            get { return (float)udANAN8000DPAGain160.Value; }
-            set { udANAN8000DPAGain160.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain80
-        {
-            get { return (float)udANAN8000DPAGain80.Value; }
-            set { udANAN8000DPAGain80.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain60
-        {
-            get { return (float)udANAN8000DPAGain60.Value; }
-            set { udANAN8000DPAGain60.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain40
-        {
-            get { return (float)udANAN8000DPAGain40.Value; }
-            set { udANAN8000DPAGain40.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain30
-        {
-            get { return (float)udANAN8000DPAGain30.Value; }
-            set { udANAN8000DPAGain30.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain20
-        {
-            get { return (float)udANAN8000DPAGain20.Value; }
-            set { udANAN8000DPAGain20.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain17
-        {
-            get { return (float)udANAN8000DPAGain17.Value; }
-            set { udANAN8000DPAGain17.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain15
-        {
-            get { return (float)udANAN8000DPAGain15.Value; }
-            set { udANAN8000DPAGain15.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain12
-        {
-            get { return (float)udANAN8000DPAGain12.Value; }
-            set { udANAN8000DPAGain12.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain10
-        {
-            get { return (float)udANAN8000DPAGain10.Value; }
-            set { udANAN8000DPAGain10.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGain6
-        {
-            get { return (float)udANAN8000DPAGain6.Value; }
-            set { udANAN8000DPAGain6.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF0
-        {
-            get { return (float)udANAN8000DPAGainVHF0.Value; }
-            set { udANAN8000DPAGainVHF0.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF1
-        {
-            get { return (float)udANAN8000DPAGainVHF1.Value; }
-            set { udANAN8000DPAGainVHF1.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF2
-        {
-            get { return (float)udANAN8000DPAGainVHF2.Value; }
-            set { udANAN8000DPAGainVHF2.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF3
-        {
-            get { return (float)udANAN8000DPAGainVHF3.Value; }
-            set { udANAN8000DPAGainVHF3.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF4
-        {
-            get { return (float)udANAN8000DPAGainVHF4.Value; }
-            set { udANAN8000DPAGainVHF4.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF5
-        {
-            get { return (float)udANAN8000DPAGainVHF5.Value; }
-            set { udANAN8000DPAGainVHF5.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF6
-        {
-            get { return (float)udANAN8000DPAGainVHF6.Value; }
-            set { udANAN8000DPAGainVHF6.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF7
-        {
-            get { return (float)udANAN8000DPAGainVHF7.Value; }
-            set { udANAN8000DPAGainVHF7.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF8
-        {
-            get { return (float)udANAN8000DPAGainVHF8.Value; }
-            set { udANAN8000DPAGainVHF8.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF9
-        {
-            get { return (float)udANAN8000DPAGainVHF9.Value; }
-            set { udANAN8000DPAGainVHF9.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF10
-        {
-            get { return (float)udANAN8000DPAGainVHF10.Value; }
-            set { udANAN8000DPAGainVHF10.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF11
-        {
-            get { return (float)udANAN8000DPAGainVHF11.Value; }
-            set { udANAN8000DPAGainVHF11.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF12
-        {
-            get { return (float)udANAN8000DPAGainVHF12.Value; }
-            set { udANAN8000DPAGainVHF12.Value = (decimal)value; }
-        }
-
-        public float ANAN8000DPAGainVHF13
-        {
-            get { return (float)udANAN8000DPAGainVHF13.Value; }
-            set { udANAN8000DPAGainVHF13.Value = (decimal)value; }
-        }
+        //public float PAGainVHF0
+        //{
+        //    get { return (float)udPAGainVHF0.Value; }
+        //    set { udPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF1
+        //{
+        //    get { return (float)udPAGainVHF1.Value; }
+        //    set { udPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF2
+        //{
+        //    get { return (float)udPAGainVHF2.Value; }
+        //    set { udPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF3
+        //{
+        //    get { return (float)udPAGainVHF3.Value; }
+        //    set { udPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF4
+        //{
+        //    get { return (float)udPAGainVHF4.Value; }
+        //    set { udPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF5
+        //{
+        //    get { return (float)udPAGainVHF5.Value; }
+        //    set { udPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF6
+        //{
+        //    get { return (float)udPAGainVHF6.Value; }
+        //    set { udPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF7
+        //{
+        //    get { return (float)udPAGainVHF7.Value; }
+        //    set { udPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF8
+        //{
+        //    get { return (float)udPAGainVHF8.Value; }
+        //    set { udPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF9
+        //{
+        //    get { return (float)udPAGainVHF9.Value; }
+        //    set { udPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF10
+        //{
+        //    get { return (float)udPAGainVHF10.Value; }
+        //    set { udPAGainVHF10.Value = (decimal)value; }
+        //}
+        //public float PAGainVHF11
+        //{
+        //    get { return (float)udPAGainVHF11.Value; }
+        //    set { udPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF12
+        //{
+        //    get { return (float)udPAGainVHF12.Value; }
+        //    set { udPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float PAGainVHF13
+        //{
+        //    get { return (float)udPAGainVHF13.Value; }
+        //    set { udPAGainVHF13.Value = (decimal)value; }
+        //}
+
+        //// PAGain for Hermes
+        //public float HermesPAGain160
+        //{
+        //    get { return (float)udHermesPAGain160.Value; }
+        //    set { udHermesPAGain160.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain80
+        //{
+        //    get { return (float)udHermesPAGain80.Value; }
+        //    set { udHermesPAGain80.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain60
+        //{
+        //    get { return (float)udHermesPAGain60.Value; }
+        //    set { udHermesPAGain60.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain40
+        //{
+        //    get { return (float)udHermesPAGain40.Value; }
+        //    set { udHermesPAGain40.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain30
+        //{
+        //    get { return (float)udHermesPAGain30.Value; }
+        //    set { udHermesPAGain30.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain20
+        //{
+        //    get { return (float)udHermesPAGain20.Value; }
+        //    set { udHermesPAGain20.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain17
+        //{
+        //    get { return (float)udHermesPAGain17.Value; }
+        //    set { udHermesPAGain17.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain15
+        //{
+        //    get { return (float)udHermesPAGain15.Value; }
+        //    set { udHermesPAGain15.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain12
+        //{
+        //    get { return (float)udHermesPAGain12.Value; }
+        //    set { udHermesPAGain12.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain10
+        //{
+        //    get { return (float)udHermesPAGain10.Value; }
+        //    set { udHermesPAGain10.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGain6
+        //{
+        //    get { return (float)udHermesPAGain6.Value; }
+        //    set { udHermesPAGain6.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF0
+        //{
+        //    get { return (float)udHermesPAGainVHF0.Value; }
+        //    set { udHermesPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF1
+        //{
+        //    get { return (float)udHermesPAGainVHF1.Value; }
+        //    set { udHermesPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF2
+        //{
+        //    get { return (float)udHermesPAGainVHF2.Value; }
+        //    set { udHermesPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF3
+        //{
+        //    get { return (float)udHermesPAGainVHF3.Value; }
+        //    set { udHermesPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF4
+        //{
+        //    get { return (float)udHermesPAGainVHF4.Value; }
+        //    set { udHermesPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF5
+        //{
+        //    get { return (float)udHermesPAGainVHF5.Value; }
+        //    set { udHermesPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF6
+        //{
+        //    get { return (float)udHermesPAGainVHF6.Value; }
+        //    set { udHermesPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF7
+        //{
+        //    get { return (float)udHermesPAGainVHF7.Value; }
+        //    set { udHermesPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF8
+        //{
+        //    get { return (float)udHermesPAGainVHF8.Value; }
+        //    set { udHermesPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF9
+        //{
+        //    get { return (float)udHermesPAGainVHF9.Value; }
+        //    set { udHermesPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF10
+        //{
+        //    get { return (float)udHermesPAGainVHF10.Value; }
+        //    set { udHermesPAGainVHF10.Value = (decimal)value; }
+        //}
+        //public float HermesPAGainVHF11
+        //{
+        //    get { return (float)udHermesPAGainVHF11.Value; }
+        //    set { udHermesPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF12
+        //{
+        //    get { return (float)udHermesPAGainVHF12.Value; }
+        //    set { udHermesPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float HermesPAGainVHF13
+        //{
+        //    get { return (float)udHermesPAGainVHF13.Value; }
+        //    set { udHermesPAGainVHF13.Value = (decimal)value; }
+        //}
+
+        //// PAGain ANAN-10
+        //public float ANAN10PAGain160
+        //{
+        //    get { return (float)udANAN10PAGain160.Value; }
+        //    set { udANAN10PAGain160.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain80
+        //{
+        //    get { return (float)udANAN10PAGain80.Value; }
+        //    set { udANAN10PAGain80.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain60
+        //{
+        //    get { return (float)udANAN10PAGain60.Value; }
+        //    set { udANAN10PAGain60.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain40
+        //{
+        //    get { return (float)udANAN10PAGain40.Value; }
+        //    set { udANAN10PAGain40.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain30
+        //{
+        //    get { return (float)udANAN10PAGain30.Value; }
+        //    set { udANAN10PAGain30.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain20
+        //{
+        //    get { return (float)udANAN10PAGain20.Value; }
+        //    set { udANAN10PAGain20.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain17
+        //{
+        //    get { return (float)udANAN10PAGain17.Value; }
+        //    set { udANAN10PAGain17.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain15
+        //{
+        //    get { return (float)udANAN10PAGain15.Value; }
+        //    set { udANAN10PAGain15.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain12
+        //{
+        //    get { return (float)udANAN10PAGain12.Value; }
+        //    set { udANAN10PAGain12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain10
+        //{
+        //    get { return (float)udANAN10PAGain10.Value; }
+        //    set { udANAN10PAGain10.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGain6
+        //{
+        //    get { return (float)udANAN10PAGain6.Value; }
+        //    set { udANAN10PAGain6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF0
+        //{
+        //    get { return (float)udANAN10PAGainVHF0.Value; }
+        //    set { udANAN10PAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF1
+        //{
+        //    get { return (float)udANAN10PAGainVHF1.Value; }
+        //    set { udANAN10PAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF2
+        //{
+        //    get { return (float)udANAN10PAGainVHF2.Value; }
+        //    set { udANAN10PAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF3
+        //{
+        //    get { return (float)udANAN10PAGainVHF3.Value; }
+        //    set { udANAN10PAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF4
+        //{
+        //    get { return (float)udANAN10PAGainVHF4.Value; }
+        //    set { udANAN10PAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF5
+        //{
+        //    get { return (float)udANAN10PAGainVHF5.Value; }
+        //    set { udANAN10PAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF6
+        //{
+        //    get { return (float)udANAN10PAGainVHF6.Value; }
+        //    set { udANAN10PAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF7
+        //{
+        //    get { return (float)udANAN10PAGainVHF7.Value; }
+        //    set { udANAN10PAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF8
+        //{
+        //    get { return (float)udANAN10PAGainVHF8.Value; }
+        //    set { udANAN10PAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF9
+        //{
+        //    get { return (float)udANAN10PAGainVHF9.Value; }
+        //    set { udANAN10PAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF10
+        //{
+        //    get { return (float)udANAN10PAGainVHF10.Value; }
+        //    set { udANAN10PAGainVHF10.Value = (decimal)value; }
+        //}
+        //public float ANAN10PAGainVHF11
+        //{
+        //    get { return (float)udANAN10PAGainVHF11.Value; }
+        //    set { udANAN10PAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF12
+        //{
+        //    get { return (float)udANAN10PAGainVHF12.Value; }
+        //    set { udANAN10PAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN10PAGainVHF13
+        //{
+        //    get { return (float)udANAN10PAGainVHF13.Value; }
+        //    set { udANAN10PAGainVHF13.Value = (decimal)value; }
+        //}
+
+        ////PAGain ANAN-100B
+        //public float ANAN100BPAGain160
+        //{
+        //    get { return (float)udANAN100BPAGain160.Value; }
+        //    set { udANAN100BPAGain160.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain80
+        //{
+        //    get { return (float)udANAN100BPAGain80.Value; }
+        //    set { udANAN100BPAGain80.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain60
+        //{
+        //    get { return (float)udANAN100BPAGain60.Value; }
+        //    set { udANAN100BPAGain60.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain40
+        //{
+        //    get { return (float)udANAN100BPAGain40.Value; }
+        //    set { udANAN100BPAGain40.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain30
+        //{
+        //    get { return (float)udANAN100BPAGain30.Value; }
+        //    set { udANAN100BPAGain30.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain20
+        //{
+        //    get { return (float)udANAN100BPAGain20.Value; }
+        //    set { udANAN100BPAGain20.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain17
+        //{
+        //    get { return (float)udANAN100BPAGain17.Value; }
+        //    set { udANAN100BPAGain17.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain15
+        //{
+        //    get { return (float)udANAN100BPAGain15.Value; }
+        //    set { udANAN100BPAGain15.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain12
+        //{
+        //    get { return (float)udANAN100BPAGain12.Value; }
+        //    set { udANAN100BPAGain12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain10
+        //{
+        //    get { return (float)udANAN100BPAGain10.Value; }
+        //    set { udANAN100BPAGain10.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGain6
+        //{
+        //    get { return (float)udANAN100BPAGain6.Value; }
+        //    set { udANAN100BPAGain6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF0
+        //{
+        //    get { return (float)udANAN100BPAGainVHF0.Value; }
+        //    set { udANAN100BPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF1
+        //{
+        //    get { return (float)udANAN100BPAGainVHF1.Value; }
+        //    set { udANAN100BPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF2
+        //{
+        //    get { return (float)udANAN100BPAGainVHF2.Value; }
+        //    set { udANAN100BPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF3
+        //{
+        //    get { return (float)udANAN100BPAGainVHF3.Value; }
+        //    set { udANAN100BPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF4
+        //{
+        //    get { return (float)udANAN100BPAGainVHF4.Value; }
+        //    set { udANAN100BPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF5
+        //{
+        //    get { return (float)udANAN100BPAGainVHF5.Value; }
+        //    set { udANAN100BPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF6
+        //{
+        //    get { return (float)udANAN100BPAGainVHF6.Value; }
+        //    set { udANAN100BPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF7
+        //{
+        //    get { return (float)udANAN100BPAGainVHF7.Value; }
+        //    set { udANAN100BPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF8
+        //{
+        //    get { return (float)udANAN100BPAGainVHF8.Value; }
+        //    set { udANAN100BPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF9
+        //{
+        //    get { return (float)udANAN100BPAGainVHF9.Value; }
+        //    set { udANAN100BPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF10
+        //{
+        //    get { return (float)udANAN100BPAGainVHF10.Value; }
+        //    set { udANAN100BPAGainVHF10.Value = (decimal)value; }
+        //}
+        //public float ANAN100BPAGainVHF11
+        //{
+        //    get { return (float)udANAN100BPAGainVHF11.Value; }
+        //    set { udANAN100BPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF12
+        //{
+        //    get { return (float)udANAN100BPAGainVHF12.Value; }
+        //    set { udANAN100BPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100BPAGainVHF13
+        //{
+        //    get { return (float)udANAN100BPAGainVHF13.Value; }
+        //    set { udANAN100BPAGainVHF13.Value = (decimal)value; }
+        //}
+
+        ////PAGain ANAN-100
+        //public float ANAN100PAGain160
+        //{
+        //    get { return (float)udANAN100PAGain160.Value; }
+        //    set { udANAN100PAGain160.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain80
+        //{
+        //    get { return (float)udANAN100PAGain80.Value; }
+        //    set { udANAN100PAGain80.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain60
+        //{
+        //    get { return (float)udANAN100PAGain60.Value; }
+        //    set { udANAN100PAGain60.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain40
+        //{
+        //    get { return (float)udANAN100PAGain40.Value; }
+        //    set { udANAN100PAGain40.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain30
+        //{
+        //    get { return (float)udANAN100PAGain30.Value; }
+        //    set { udANAN100PAGain30.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain20
+        //{
+        //    get { return (float)udANAN100PAGain20.Value; }
+        //    set { udANAN100PAGain20.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain17
+        //{
+        //    get { return (float)udANAN100PAGain17.Value; }
+        //    set { udANAN100PAGain17.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain15
+        //{
+        //    get { return (float)udANAN100PAGain15.Value; }
+        //    set { udANAN100PAGain15.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain12
+        //{
+        //    get { return (float)udANAN100PAGain12.Value; }
+        //    set { udANAN100PAGain12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain10
+        //{
+        //    get { return (float)udANAN100PAGain10.Value; }
+        //    set { udANAN100PAGain10.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGain6
+        //{
+        //    get { return (float)udANAN100PAGain6.Value; }
+        //    set { udANAN100PAGain6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF0
+        //{
+        //    get { return (float)udANAN100PAGainVHF0.Value; }
+        //    set { udANAN100PAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF1
+        //{
+        //    get { return (float)udANAN100PAGainVHF1.Value; }
+        //    set { udANAN100PAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF2
+        //{
+        //    get { return (float)udANAN100PAGainVHF2.Value; }
+        //    set { udANAN100PAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF3
+        //{
+        //    get { return (float)udANAN100PAGainVHF3.Value; }
+        //    set { udANAN100PAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF4
+        //{
+        //    get { return (float)udANAN100PAGainVHF4.Value; }
+        //    set { udANAN100PAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF5
+        //{
+        //    get { return (float)udANAN100PAGainVHF5.Value; }
+        //    set { udANAN100PAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF6
+        //{
+        //    get { return (float)udANAN100PAGainVHF6.Value; }
+        //    set { udANAN100PAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF7
+        //{
+        //    get { return (float)udANAN100PAGainVHF7.Value; }
+        //    set { udANAN100PAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF8
+        //{
+        //    get { return (float)udANAN100PAGainVHF8.Value; }
+        //    set { udANAN100PAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF9
+        //{
+        //    get { return (float)udANAN100PAGainVHF9.Value; }
+        //    set { udANAN100PAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF10
+        //{
+        //    get { return (float)udANAN100PAGainVHF10.Value; }
+        //    set { udANAN100PAGainVHF10.Value = (decimal)value; }
+        //}
+        //public float ANAN100PAGainVHF11
+        //{
+        //    get { return (float)udANAN100PAGainVHF11.Value; }
+        //    set { udANAN100PAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF12
+        //{
+        //    get { return (float)udANAN100PAGainVHF12.Value; }
+        //    set { udANAN100PAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN100PAGainVHF13
+        //{
+        //    get { return (float)udANAN100PAGainVHF13.Value; }
+        //    set { udANAN100PAGainVHF13.Value = (decimal)value; }
+        //}
+
+        ////PAGain ANAN-100D
+        //public float ANANPAGain160
+        //{
+        //    get { return (float)udANANPAGain160.Value; }
+        //    set { udANANPAGain160.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain80
+        //{
+        //    get { return (float)udANANPAGain80.Value; }
+        //    set { udANANPAGain80.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain60
+        //{
+        //    get { return (float)udANANPAGain60.Value; }
+        //    set { udANANPAGain60.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain40
+        //{
+        //    get { return (float)udANANPAGain40.Value; }
+        //    set { udANANPAGain40.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain30
+        //{
+        //    get { return (float)udANANPAGain30.Value; }
+        //    set { udANANPAGain30.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain20
+        //{
+        //    get { return (float)udANANPAGain20.Value; }
+        //    set { udANANPAGain20.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain17
+        //{
+        //    get { return (float)udANANPAGain17.Value; }
+        //    set { udANANPAGain17.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain15
+        //{
+        //    get { return (float)udANANPAGain15.Value; }
+        //    set { udANANPAGain15.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain12
+        //{
+        //    get { return (float)udANANPAGain12.Value; }
+        //    set { udANANPAGain12.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain10
+        //{
+        //    get { return (float)udANANPAGain10.Value; }
+        //    set { udANANPAGain10.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGain6
+        //{
+        //    get { return (float)udANANPAGain6.Value; }
+        //    set { udANANPAGain6.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF0
+        //{
+        //    get { return (float)udANANPAGainVHF0.Value; }
+        //    set { udANANPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF1
+        //{
+        //    get { return (float)udANANPAGainVHF1.Value; }
+        //    set { udANANPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF2
+        //{
+        //    get { return (float)udANANPAGainVHF2.Value; }
+        //    set { udANANPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF3
+        //{
+        //    get { return (float)udANANPAGainVHF3.Value; }
+        //    set { udANANPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF4
+        //{
+        //    get { return (float)udANANPAGainVHF4.Value; }
+        //    set { udANANPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF5
+        //{
+        //    get { return (float)udANANPAGainVHF5.Value; }
+        //    set { udANANPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF6
+        //{
+        //    get { return (float)udANANPAGainVHF6.Value; }
+        //    set { udANANPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF7
+        //{
+        //    get { return (float)udANANPAGainVHF7.Value; }
+        //    set { udANANPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF8
+        //{
+        //    get { return (float)udANANPAGainVHF8.Value; }
+        //    set { udANANPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF9
+        //{
+        //    get { return (float)udANANPAGainVHF9.Value; }
+        //    set { udANANPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF10
+        //{
+        //    get { return (float)udANANPAGainVHF10.Value; }
+        //    set { udANANPAGainVHF10.Value = (decimal)value; }
+        //}
+        //public float ANANPAGainVHF11
+        //{
+        //    get { return (float)udANANPAGainVHF11.Value; }
+        //    set { udANANPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF12
+        //{
+        //    get { return (float)udANANPAGainVHF12.Value; }
+        //    set { udANANPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float ANANPAGainVHF13
+        //{
+        //    get { return (float)udANANPAGainVHF13.Value; }
+        //    set { udANANPAGainVHF13.Value = (decimal)value; }
+        //}
+
+        ////PAGain ANAN-7000DLE
+        //public float ANAN7000DPAGain160
+        //{
+        //    get { return (float)udANAN7000DPAGain160.Value; }
+        //    set { udANAN7000DPAGain160.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain80
+        //{
+        //    get { return (float)udANAN7000DPAGain80.Value; }
+        //    set { udANAN7000DPAGain80.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain60
+        //{
+        //    get { return (float)udANAN7000DPAGain60.Value; }
+        //    set { udANAN7000DPAGain60.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain40
+        //{
+        //    get { return (float)udANAN7000DPAGain40.Value; }
+        //    set { udANAN7000DPAGain40.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain30
+        //{
+        //    get { return (float)udANAN7000DPAGain30.Value; }
+        //    set { udANAN7000DPAGain30.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain20
+        //{
+        //    get { return (float)udANAN7000DPAGain20.Value; }
+        //    set { udANAN7000DPAGain20.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain17
+        //{
+        //    get { return (float)udANAN7000DPAGain17.Value; }
+        //    set { udANAN7000DPAGain17.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain15
+        //{
+        //    get { return (float)udANAN7000DPAGain15.Value; }
+        //    set { udANAN7000DPAGain15.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain12
+        //{
+        //    get { return (float)udANAN7000DPAGain12.Value; }
+        //    set { udANAN7000DPAGain12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain10
+        //{
+        //    get { return (float)udANAN7000DPAGain10.Value; }
+        //    set { udANAN7000DPAGain10.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGain6
+        //{
+        //    get { return (float)udANAN7000DPAGain6.Value; }
+        //    set { udANAN7000DPAGain6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF0
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF0.Value; }
+        //    set { udANAN7000DPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF1
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF1.Value; }
+        //    set { udANAN7000DPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF2
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF2.Value; }
+        //    set { udANAN7000DPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF3
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF3.Value; }
+        //    set { udANAN7000DPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF4
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF4.Value; }
+        //    set { udANAN7000DPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF5
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF5.Value; }
+        //    set { udANAN7000DPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF6
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF6.Value; }
+        //    set { udANAN7000DPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF7
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF7.Value; }
+        //    set { udANAN7000DPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF8
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF8.Value; }
+        //    set { udANAN7000DPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF9
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF9.Value; }
+        //    set { udANAN7000DPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF10
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF10.Value; }
+        //    set { udANAN7000DPAGainVHF10.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF11
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF11.Value; }
+        //    set { udANAN7000DPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF12
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF12.Value; }
+        //    set { udANAN7000DPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN7000DPAGainVHF13
+        //{
+        //    get { return (float)udANAN7000DPAGainVHF13.Value; }
+        //    set { udANAN7000DPAGainVHF13.Value = (decimal)value; }
+        //}
+
+        ////PAGain Orion
+        //public float OrionPAGain160
+        //{
+        //    get { return (float)udOrionPAGain160.Value; }
+        //    set { udOrionPAGain160.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain80
+        //{
+        //    get { return (float)udOrionPAGain80.Value; }
+        //    set { udOrionPAGain80.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain60
+        //{
+        //    get { return (float)udOrionPAGain60.Value; }
+        //    set { udOrionPAGain60.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain40
+        //{
+        //    get { return (float)udOrionPAGain40.Value; }
+        //    set { udOrionPAGain40.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain30
+        //{
+        //    get { return (float)udOrionPAGain30.Value; }
+        //    set { udOrionPAGain30.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain20
+        //{
+        //    get { return (float)udOrionPAGain20.Value; }
+        //    set { udOrionPAGain20.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain17
+        //{
+        //    get { return (float)udOrionPAGain17.Value; }
+        //    set { udOrionPAGain17.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain15
+        //{
+        //    get { return (float)udOrionPAGain15.Value; }
+        //    set { udOrionPAGain15.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain12
+        //{
+        //    get { return (float)udOrionPAGain12.Value; }
+        //    set { udOrionPAGain12.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain10
+        //{
+        //    get { return (float)udOrionPAGain10.Value; }
+        //    set { udOrionPAGain10.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGain6
+        //{
+        //    get { return (float)udOrionPAGain6.Value; }
+        //    set { udOrionPAGain6.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF0
+        //{
+        //    get { return (float)udOrionPAGainVHF0.Value; }
+        //    set { udOrionPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF1
+        //{
+        //    get { return (float)udOrionPAGainVHF1.Value; }
+        //    set { udOrionPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF2
+        //{
+        //    get { return (float)udOrionPAGainVHF2.Value; }
+        //    set { udOrionPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF3
+        //{
+        //    get { return (float)udOrionPAGainVHF3.Value; }
+        //    set { udOrionPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF4
+        //{
+        //    get { return (float)udOrionPAGainVHF4.Value; }
+        //    set { udOrionPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF5
+        //{
+        //    get { return (float)udOrionPAGainVHF5.Value; }
+        //    set { udOrionPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF6
+        //{
+        //    get { return (float)udOrionPAGainVHF6.Value; }
+        //    set { udOrionPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF7
+        //{
+        //    get { return (float)udOrionPAGainVHF7.Value; }
+        //    set { udOrionPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF8
+        //{
+        //    get { return (float)udOrionPAGainVHF8.Value; }
+        //    set { udOrionPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF9
+        //{
+        //    get { return (float)udOrionPAGainVHF9.Value; }
+        //    set { udOrionPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF10
+        //{
+        //    get { return (float)udOrionPAGainVHF10.Value; }
+        //    set { udOrionPAGainVHF10.Value = (decimal)value; }
+        //}
+        //public float OrionPAGainVHF11
+        //{
+        //    get { return (float)udOrionPAGainVHF11.Value; }
+        //    set { udOrionPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF12
+        //{
+        //    get { return (float)udOrionPAGainVHF12.Value; }
+        //    set { udOrionPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float OrionPAGainVHF13
+        //{
+        //    get { return (float)udOrionPAGainVHF13.Value; }
+        //    set { udOrionPAGainVHF13.Value = (decimal)value; }
+        //}
+
+        ////PAGain ORION MKII
+        //public float ORIONMKIIPAGain160
+        //{
+        //    get { return (float)udORIONMKIIPAGain160.Value; }
+        //    set { udORIONMKIIPAGain160.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain80
+        //{
+        //    get { return (float)udORIONMKIIPAGain80.Value; }
+        //    set { udORIONMKIIPAGain80.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain60
+        //{
+        //    get { return (float)udORIONMKIIPAGain60.Value; }
+        //    set { udORIONMKIIPAGain60.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain40
+        //{
+        //    get { return (float)udORIONMKIIPAGain40.Value; }
+        //    set { udORIONMKIIPAGain40.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain30
+        //{
+        //    get { return (float)udORIONMKIIPAGain30.Value; }
+        //    set { udORIONMKIIPAGain30.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain20
+        //{
+        //    get { return (float)udORIONMKIIPAGain20.Value; }
+        //    set { udORIONMKIIPAGain20.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain17
+        //{
+        //    get { return (float)udORIONMKIIPAGain17.Value; }
+        //    set { udORIONMKIIPAGain17.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain15
+        //{
+        //    get { return (float)udORIONMKIIPAGain15.Value; }
+        //    set { udORIONMKIIPAGain15.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain12
+        //{
+        //    get { return (float)udORIONMKIIPAGain12.Value; }
+        //    set { udORIONMKIIPAGain12.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain10
+        //{
+        //    get { return (float)udORIONMKIIPAGain10.Value; }
+        //    set { udORIONMKIIPAGain10.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGain6
+        //{
+        //    get { return (float)udORIONMKIIPAGain6.Value; }
+        //    set { udORIONMKIIPAGain6.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF0
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF0.Value; }
+        //    set { udORIONMKIIPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF1
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF1.Value; }
+        //    set { udORIONMKIIPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF2
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF2.Value; }
+        //    set { udORIONMKIIPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF3
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF3.Value; }
+        //    set { udORIONMKIIPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF4
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF4.Value; }
+        //    set { udORIONMKIIPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF5
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF5.Value; }
+        //    set { udORIONMKIIPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF6
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF6.Value; }
+        //    set { udORIONMKIIPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF7
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF7.Value; }
+        //    set { udORIONMKIIPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF8
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF8.Value; }
+        //    set { udORIONMKIIPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF9
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF9.Value; }
+        //    set { udORIONMKIIPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF10
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF10.Value; }
+        //    set { udORIONMKIIPAGainVHF10.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF11
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF11.Value; }
+        //    set { udORIONMKIIPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF12
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF12.Value; }
+        //    set { udORIONMKIIPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float ORIONMKIIPAGainVHF13
+        //{
+        //    get { return (float)udORIONMKIIPAGainVHF13.Value; }
+        //    set { udORIONMKIIPAGainVHF13.Value = (decimal)value; }
+        //}
+
+
+        ////PAGain ANAN-8000DLE
+        //public float ANAN8000DPAGain160
+        //{
+        //    get { return (float)udANAN8000DPAGain160.Value; }
+        //    set { udANAN8000DPAGain160.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain80
+        //{
+        //    get { return (float)udANAN8000DPAGain80.Value; }
+        //    set { udANAN8000DPAGain80.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain60
+        //{
+        //    get { return (float)udANAN8000DPAGain60.Value; }
+        //    set { udANAN8000DPAGain60.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain40
+        //{
+        //    get { return (float)udANAN8000DPAGain40.Value; }
+        //    set { udANAN8000DPAGain40.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain30
+        //{
+        //    get { return (float)udANAN8000DPAGain30.Value; }
+        //    set { udANAN8000DPAGain30.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain20
+        //{
+        //    get { return (float)udANAN8000DPAGain20.Value; }
+        //    set { udANAN8000DPAGain20.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain17
+        //{
+        //    get { return (float)udANAN8000DPAGain17.Value; }
+        //    set { udANAN8000DPAGain17.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain15
+        //{
+        //    get { return (float)udANAN8000DPAGain15.Value; }
+        //    set { udANAN8000DPAGain15.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain12
+        //{
+        //    get { return (float)udANAN8000DPAGain12.Value; }
+        //    set { udANAN8000DPAGain12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain10
+        //{
+        //    get { return (float)udANAN8000DPAGain10.Value; }
+        //    set { udANAN8000DPAGain10.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGain6
+        //{
+        //    get { return (float)udANAN8000DPAGain6.Value; }
+        //    set { udANAN8000DPAGain6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF0
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF0.Value; }
+        //    set { udANAN8000DPAGainVHF0.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF1
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF1.Value; }
+        //    set { udANAN8000DPAGainVHF1.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF2
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF2.Value; }
+        //    set { udANAN8000DPAGainVHF2.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF3
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF3.Value; }
+        //    set { udANAN8000DPAGainVHF3.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF4
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF4.Value; }
+        //    set { udANAN8000DPAGainVHF4.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF5
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF5.Value; }
+        //    set { udANAN8000DPAGainVHF5.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF6
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF6.Value; }
+        //    set { udANAN8000DPAGainVHF6.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF7
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF7.Value; }
+        //    set { udANAN8000DPAGainVHF7.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF8
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF8.Value; }
+        //    set { udANAN8000DPAGainVHF8.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF9
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF9.Value; }
+        //    set { udANAN8000DPAGainVHF9.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF10
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF10.Value; }
+        //    set { udANAN8000DPAGainVHF10.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF11
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF11.Value; }
+        //    set { udANAN8000DPAGainVHF11.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF12
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF12.Value; }
+        //    set { udANAN8000DPAGainVHF12.Value = (decimal)value; }
+        //}
+
+        //public float ANAN8000DPAGainVHF13
+        //{
+        //    get { return (float)udANAN8000DPAGainVHF13.Value; }
+        //    set { udANAN8000DPAGainVHF13.Value = (decimal)value; }
+        //}
 
 
         public int TunePower
@@ -5967,7 +6037,7 @@ namespace Thetis
         public float DisplayGridMin
         {
             get { return (float)udDisplayGridMin.Value; }
-            set 
+            set
             {
                 if (udDisplayGridMin != null)
                 {
@@ -6055,7 +6125,7 @@ namespace Thetis
                 }
             }
         }
-        
+
         public float PA10W
         {
             get
@@ -6723,9 +6793,9 @@ namespace Thetis
             set { tcSetup = value; }
         }
 
-        public TabControl TabGeneral 
-        { 
-            get { return tcGeneral; } 
+        public TabControl TabGeneral
+        {
+            get { return tcGeneral; }
             set { tcGeneral = value; }
         }
         public TabControl TabDisplay
@@ -6766,7 +6836,7 @@ namespace Thetis
                 AddHPSDRPages();
 
             grpFRSRegion.Visible = true;
-            grpPAGainByBand.Visible = true;
+            //grpPAGainByBand.Visible = true; //MW0LGE_22b
             grpGenCalRXImage.Visible = false;
             lblMoxDelay.Visible = true;
             udMoxDelay.Visible = true;
@@ -6800,7 +6870,7 @@ namespace Thetis
             {
                 chkLPFBypass.Checked = false;
                 chkLPFBypass.Visible = false;
-               // console.MKIIBPFPresent = true;
+                // console.MKIIBPFPresent = true;
                 chkDisableRXOut.Visible = false;
                 chkBPF2Gnd.Visible = true;
                 chkEnableXVTRHF.Visible = true;
@@ -6809,7 +6879,7 @@ namespace Thetis
             else
             {
                 chkLPFBypass.Visible = true;
-               // console.MKIIBPFPresent = false;
+                // console.MKIIBPFPresent = false;
                 chkDisableRXOut.Visible = true;
                 chkBPF2Gnd.Visible = false;
                 chkEnableXVTRHF.Visible = false;
@@ -6872,7 +6942,7 @@ namespace Thetis
                 chkEXT1OutOnTx.Visible = true;
                 chkEXT2OutOnTx.Enabled = true;
                 chkEXT2OutOnTx.Visible = true;
-               // panelAlex1HPFControl.Visible = true;
+                // panelAlex1HPFControl.Visible = true;
                 tpAlexFilterControl.Text = "HPF/LPF";
                 labelAlex1FilterHPF.Text = "HPF";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
@@ -6885,7 +6955,7 @@ namespace Thetis
                 chkEnableXVTRHF.Visible = false;
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES || 
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMES ||
                (console.CurrentHPSDRModel == HPSDRModel.HPSDR))
             {
                 tpAlexControl.Text = "Alex";
@@ -6958,23 +7028,23 @@ namespace Thetis
                     Common.TabControlInsert(tcGeneral, tpADC, 2);
                 }
 
-//                 else
-//                 {
-//                     if (tcGeneral.TabPages.IndexOf(tpADC) != 2)
-//                     {
-//                         tcGeneral.TabPages.Remove(tpADC);
-//                         Common.TabControlInsert(tcGeneral, tpADC, 2);
-//                     }
-//                 }
+                //                 else
+                //                 {
+                //                     if (tcGeneral.TabPages.IndexOf(tpADC) != 2)
+                //                     {
+                //                         tcGeneral.TabPages.Remove(tpADC);
+                //                         Common.TabControlInsert(tcGeneral, tpADC, 2);
+                //                     }
+                //                 }
             }
-//             else
-//             {
-//                 if (tcGeneral.TabPages.Contains(tpADC))
-//                 {
-//                     tcGeneral.TabPages.Remove(tpADC);
-//                     tcGeneral.SelectedIndex = 0;
-//                 }
-//             }
+            //             else
+            //             {
+            //                 if (tcGeneral.TabPages.Contains(tpADC))
+            //                 {
+            //                     tcGeneral.TabPages.Remove(tpADC);
+            //                     tcGeneral.SelectedIndex = 0;
+            //                 }
+            //             }
 
             if (!tcGeneral.TabPages.Contains(tpPennyCtrl))
             {
@@ -7163,7 +7233,7 @@ namespace Thetis
         private void comboGeneralProcessPriority_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             Process p = Process.GetCurrentProcess();
-            
+
             if (comboGeneralProcessPriority.Text == "Real Time" &&
                 comboGeneralProcessPriority.Focused)
             {
@@ -7626,7 +7696,7 @@ namespace Thetis
                         // wait for samples at the new rate to be received
                         Thread.Sleep(1);
                         // add the audio streams to the mix set
-                        unsafe { cmaster.SetAAudioMixStates((void*)0, 0, 3, 3); }                       
+                        unsafe { cmaster.SetAAudioMixStates((void*)0, 0, 3, 3); }
 
                         // enable VAC
                         if (console.PowerOn && console.VACEnabled && !initializing) Audio.EnableVAC1(true);
@@ -7665,7 +7735,7 @@ namespace Thetis
                         unsafe { cmaster.SetAAudioMixStates((void*)0, 0, 15, 0); }
 
                         // disable VAC
-                        if (console.PowerOn && console.VACEnabled  && !initializing) Audio.EnableVAC1(false);
+                        if (console.PowerOn && console.VACEnabled && !initializing) Audio.EnableVAC1(false);
                         if (console.PowerOn && console.VAC2Enabled && !initializing) Audio.EnableVAC2(false);
 
                         // turn OFF the DDC(s) [SendStopToMetis]
@@ -7705,12 +7775,12 @@ namespace Thetis
                             unsafe { cmaster.SetAAudioMixState((void*)0, 0, 2, true); }
 
                         // enable VAC
-                        if (console.PowerOn && console.VACEnabled  && !initializing) Audio.EnableVAC1(true);
+                        if (console.PowerOn && console.VACEnabled && !initializing) Audio.EnableVAC1(true);
                         if (console.PowerOn && console.VAC2Enabled && !initializing) Audio.EnableVAC2(true);
 
                         // turn ON the DSP channels
                         WDSP.SetChannelState(0, 1, 0);              // RX1_main
-                        if (console.radio.GetDSPRX(0, 1).Active) 
+                        if (console.radio.GetDSPRX(0, 1).Active)
                             WDSP.SetChannelState(1, 1, 0);          // RX1_sub
                         if (console.RX2Enabled)
                             WDSP.SetChannelState(2, 1, 0);          // RX2_main
@@ -7723,10 +7793,10 @@ namespace Thetis
                         // set displayed RX2 rate equal to RX1 Rate
                         comboAudioSampleRateRX2.Enabled = false;
                         comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
-                        
+
                         break;
                 }
-                
+
             }
 
             //if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
@@ -8434,7 +8504,7 @@ namespace Thetis
 
         private void udDisplayGridMin_ValueChanged(object sender, System.EventArgs e)
         {
- 
+
             UpdateDisplayGridBandInfo();
             switch (console.RX1Band)
             {
@@ -9329,13 +9399,13 @@ namespace Thetis
         private void chkCWBreakInEnabled_CheckStateChanged(object sender, EventArgs e)
         {
             console.BreakInEnabledState = chkCWBreakInEnabled.CheckState;
-     
+
             switch (chkCWBreakInEnabled.CheckState)
             {
                 case CheckState.Checked:
                     console.BreakInEnabledState = chkCWBreakInEnabled.CheckState;
                     chkCWBreakInEnabled.Text = "SEMI";
-                    console.CurrentBreakInMode = BreakIn.Semi;                   
+                    console.CurrentBreakInMode = BreakIn.Semi;
                     break;
                 case CheckState.Unchecked:
                     console.BreakInEnabledState = chkCWBreakInEnabled.CheckState;
@@ -9343,7 +9413,7 @@ namespace Thetis
                     console.CurrentBreakInMode = BreakIn.Manual;
                     break;
                 case CheckState.Indeterminate:
-                    if ((console.CurrentHPSDRHardware == HPSDRHW.Orion || console.CurrentHPSDRHardware == HPSDRHW.OrionMKII) && 
+                    if ((console.CurrentHPSDRHardware == HPSDRHW.Orion || console.CurrentHPSDRHardware == HPSDRHW.OrionMKII) &&
                         (NetworkIO.FWCodeVersion >= 17) &&
                         !Alex.trx_ant_not_same)
                     {
@@ -9351,7 +9421,7 @@ namespace Thetis
                         chkCWBreakInEnabled.Text = "QSK";
                         console.CurrentBreakInMode = BreakIn.QSK;
                     }
-                    else 
+                    else
                     {
                         console.BreakInEnabledState = chkCWBreakInEnabled.CheckState;
                         chkCWBreakInEnabled.Text = "SEMI";
@@ -9415,7 +9485,7 @@ namespace Thetis
             else
             {
                 if (console.Siolisten != null) console.Siolisten.UseForKeyPTT = false;
-                
+
             }
 
             if (!CWInput.SetSecondaryInput(comboKeyerConnSecondary.Text))
@@ -9723,7 +9793,7 @@ namespace Thetis
             //
             //
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + sProfileName.Replace("'","''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length != 1)
             {
@@ -9789,7 +9859,7 @@ namespace Thetis
             tbDSPALCHangThreshold.Value = (int)dr["ALC_HangThreshold"];
 
             //console.PWR = (int)dr["Power"];  // MW0LGE power is stored per band, leaving this in will prevent the power per band from being recalled
-                                                // leaving in save incase we want to use this at some point
+            // leaving in save incase we want to use this at some point
 
             chkVOXEnable.Checked = (bool)dr["VOX_On"];
             chkDEXPEnable.Checked = (bool)dr["Dexp_On"];
@@ -9896,7 +9966,7 @@ namespace Thetis
             comboDSPDigRXFiltType.Text = (string)dr["Digi_RX_DSP_Filter_Type"];
             comboDSPDigTXFiltType.Text = (string)dr["Digi_TX_DSP_Filter_Type"];
             comboDSPCWRXFiltType.Text = (string)dr["CW_RX_DSP_Filter_Type"];
-            if(!initializing) console.DeferUpdateDSP = false;  //MW0LGE_21k9d  we dont want to undo this if we are initalising
+            if (!initializing) console.DeferUpdateDSP = false;  //MW0LGE_21k9d  we dont want to undo this if we are initalising
 
             radMicIn.Checked = (bool)dr["Mic_Input_On"];
             chk20dbMicBoost.Checked = (bool)dr["Mic_Input_Boost"];
@@ -10288,8 +10358,8 @@ namespace Thetis
                 switch (FWCAnt.ANT1)
                 {
                     case FWCAnt.ANT1: s += "ANT 1"; break;
-                    /*case FWCAnt.ANT2: s += "ANT 2"; break;
-                    case FWCAnt.ANT3: s += "ANT 3"; break;*/
+                        /*case FWCAnt.ANT2: s += "ANT 2"; break;
+                        case FWCAnt.ANT3: s += "ANT 3"; break;*/
                 }
                 s += ")?\nFailure to connect a dummy load properly could cause damage to the radio.";
             }
@@ -10351,155 +10421,155 @@ namespace Thetis
 
         private void btnPAGainReset_Click(object sender, System.EventArgs e)
         {
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN10 || console.CurrentHPSDRModel == HPSDRModel.ANAN10E)
-            {
-                ANAN10PAGain160 = 41.0f;
-                ANAN10PAGain80 = 41.2f;
-                ANAN10PAGain60 = 41.3f;
-                ANAN10PAGain40 = 41.3f;
-                ANAN10PAGain30 = 41.0f;
-                ANAN10PAGain20 = 40.5f;
-                ANAN10PAGain17 = 39.9f;
-                ANAN10PAGain15 = 38.8f;
-                ANAN10PAGain12 = 38.8f;
-                ANAN10PAGain10 = 38.8f;
-                ANAN10PAGain6 = 38.8f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.ANAN10 || console.CurrentHPSDRModel == HPSDRModel.ANAN10E)
+            //{
+            //    ANAN10PAGain160 = 41.0f;
+            //    ANAN10PAGain80 = 41.2f;
+            //    ANAN10PAGain60 = 41.3f;
+            //    ANAN10PAGain40 = 41.3f;
+            //    ANAN10PAGain30 = 41.0f;
+            //    ANAN10PAGain20 = 40.5f;
+            //    ANAN10PAGain17 = 39.9f;
+            //    ANAN10PAGain15 = 38.8f;
+            //    ANAN10PAGain12 = 38.8f;
+            //    ANAN10PAGain10 = 38.8f;
+            //    ANAN10PAGain6 = 38.8f;
 
-                udANAN10PAGainVHF0.Value = 56.2M;
-                udANAN10PAGainVHF1.Value = 56.2M;
-                udANAN10PAGainVHF2.Value = 56.2M;
-                udANAN10PAGainVHF3.Value = 56.2M;
-                udANAN10PAGainVHF4.Value = 56.2M;
-                udANAN10PAGainVHF5.Value = 56.2M;
-                udANAN10PAGainVHF6.Value = 56.2M;
-                udANAN10PAGainVHF7.Value = 56.2M;
-                udANAN10PAGainVHF8.Value = 56.2M;
-                udANAN10PAGainVHF9.Value = 56.2M;
-                udANAN10PAGainVHF10.Value = 56.2M;
-                udANAN10PAGainVHF11.Value = 56.2M;
-                udANAN10PAGainVHF12.Value = 56.2M;
-                udANAN10PAGainVHF13.Value = 56.2M;
-            }
+            //    udANAN10PAGainVHF0.Value = 56.2M;
+            //    udANAN10PAGainVHF1.Value = 56.2M;
+            //    udANAN10PAGainVHF2.Value = 56.2M;
+            //    udANAN10PAGainVHF3.Value = 56.2M;
+            //    udANAN10PAGainVHF4.Value = 56.2M;
+            //    udANAN10PAGainVHF5.Value = 56.2M;
+            //    udANAN10PAGainVHF6.Value = 56.2M;
+            //    udANAN10PAGainVHF7.Value = 56.2M;
+            //    udANAN10PAGainVHF8.Value = 56.2M;
+            //    udANAN10PAGainVHF9.Value = 56.2M;
+            //    udANAN10PAGainVHF10.Value = 56.2M;
+            //    udANAN10PAGainVHF11.Value = 56.2M;
+            //    udANAN10PAGainVHF12.Value = 56.2M;
+            //    udANAN10PAGainVHF13.Value = 56.2M;
+            //}
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN100B)
-            {
-                ANAN100BPAGain160 = 50.0f;
-                ANAN100BPAGain80 = 50.5f;
-                ANAN100BPAGain60 = 50.5f;
-                ANAN100BPAGain40 = 50.0f;
-                ANAN100BPAGain30 = 49.5f;
-                ANAN100BPAGain20 = 48.5f;
-                ANAN100BPAGain17 = 48.0f;
-                ANAN100BPAGain15 = 47.5f;
-                ANAN100BPAGain12 = 46.5f;
-                ANAN100BPAGain10 = 42.0f;
-                ANAN100BPAGain6 = 43.0f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.ANAN100B)
+            //{
+            //    ANAN100BPAGain160 = 50.0f;
+            //    ANAN100BPAGain80 = 50.5f;
+            //    ANAN100BPAGain60 = 50.5f;
+            //    ANAN100BPAGain40 = 50.0f;
+            //    ANAN100BPAGain30 = 49.5f;
+            //    ANAN100BPAGain20 = 48.5f;
+            //    ANAN100BPAGain17 = 48.0f;
+            //    ANAN100BPAGain15 = 47.5f;
+            //    ANAN100BPAGain12 = 46.5f;
+            //    ANAN100BPAGain10 = 42.0f;
+            //    ANAN100BPAGain6 = 43.0f;
 
-                udANAN100BPAGainVHF0.Value = 56.2M;
-                udANAN100BPAGainVHF1.Value = 56.2M;
-                udANAN100BPAGainVHF2.Value = 56.2M;
-                udANAN100BPAGainVHF3.Value = 56.2M;
-                udANAN100BPAGainVHF4.Value = 56.2M;
-                udANAN100BPAGainVHF5.Value = 56.2M;
-                udANAN100BPAGainVHF6.Value = 56.2M;
-                udANAN100BPAGainVHF7.Value = 56.2M;
-                udANAN100BPAGainVHF8.Value = 56.2M;
-                udANAN100BPAGainVHF9.Value = 56.2M;
-                udANAN100BPAGainVHF10.Value = 56.2M;
-                udANAN100BPAGainVHF11.Value = 56.2M;
-                udANAN100BPAGainVHF12.Value = 56.2M;
-                udANAN100BPAGainVHF13.Value = 56.2M;
-            }
+            //    udANAN100BPAGainVHF0.Value = 56.2M;
+            //    udANAN100BPAGainVHF1.Value = 56.2M;
+            //    udANAN100BPAGainVHF2.Value = 56.2M;
+            //    udANAN100BPAGainVHF3.Value = 56.2M;
+            //    udANAN100BPAGainVHF4.Value = 56.2M;
+            //    udANAN100BPAGainVHF5.Value = 56.2M;
+            //    udANAN100BPAGainVHF6.Value = 56.2M;
+            //    udANAN100BPAGainVHF7.Value = 56.2M;
+            //    udANAN100BPAGainVHF8.Value = 56.2M;
+            //    udANAN100BPAGainVHF9.Value = 56.2M;
+            //    udANAN100BPAGainVHF10.Value = 56.2M;
+            //    udANAN100BPAGainVHF11.Value = 56.2M;
+            //    udANAN100BPAGainVHF12.Value = 56.2M;
+            //    udANAN100BPAGainVHF13.Value = 56.2M;
+            //}
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN100)
-            {
-                ANAN100PAGain160 = 50.0f;
-                ANAN100PAGain80 = 50.5f;
-                ANAN100PAGain60 = 50.5f;
-                ANAN100PAGain40 = 50.0f;
-                ANAN100PAGain30 = 49.5f;
-                ANAN100PAGain20 = 48.5f;
-                ANAN100PAGain17 = 48.0f;
-                ANAN100PAGain15 = 47.5f;
-                ANAN100PAGain12 = 46.5f;
-                ANAN100PAGain10 = 42.0f;
-                ANAN100PAGain6 = 43.0f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.ANAN100)
+            //{
+            //    ANAN100PAGain160 = 50.0f;
+            //    ANAN100PAGain80 = 50.5f;
+            //    ANAN100PAGain60 = 50.5f;
+            //    ANAN100PAGain40 = 50.0f;
+            //    ANAN100PAGain30 = 49.5f;
+            //    ANAN100PAGain20 = 48.5f;
+            //    ANAN100PAGain17 = 48.0f;
+            //    ANAN100PAGain15 = 47.5f;
+            //    ANAN100PAGain12 = 46.5f;
+            //    ANAN100PAGain10 = 42.0f;
+            //    ANAN100PAGain6 = 43.0f;
 
-                udANAN100PAGainVHF0.Value = 56.2M;
-                udANAN100PAGainVHF1.Value = 56.2M;
-                udANAN100PAGainVHF2.Value = 56.2M;
-                udANAN100PAGainVHF3.Value = 56.2M;
-                udANAN100PAGainVHF4.Value = 56.2M;
-                udANAN100PAGainVHF5.Value = 56.2M;
-                udANAN100PAGainVHF6.Value = 56.2M;
-                udANAN100PAGainVHF7.Value = 56.2M;
-                udANAN100PAGainVHF8.Value = 56.2M;
-                udANAN100PAGainVHF9.Value = 56.2M;
-                udANAN100PAGainVHF10.Value = 56.2M;
-                udANAN100PAGainVHF11.Value = 56.2M;
-                udANAN100PAGainVHF12.Value = 56.2M;
-                udANAN100PAGainVHF13.Value = 56.2M;
-            }
+            //    udANAN100PAGainVHF0.Value = 56.2M;
+            //    udANAN100PAGainVHF1.Value = 56.2M;
+            //    udANAN100PAGainVHF2.Value = 56.2M;
+            //    udANAN100PAGainVHF3.Value = 56.2M;
+            //    udANAN100PAGainVHF4.Value = 56.2M;
+            //    udANAN100PAGainVHF5.Value = 56.2M;
+            //    udANAN100PAGainVHF6.Value = 56.2M;
+            //    udANAN100PAGainVHF7.Value = 56.2M;
+            //    udANAN100PAGainVHF8.Value = 56.2M;
+            //    udANAN100PAGainVHF9.Value = 56.2M;
+            //    udANAN100PAGainVHF10.Value = 56.2M;
+            //    udANAN100PAGainVHF11.Value = 56.2M;
+            //    udANAN100PAGainVHF12.Value = 56.2M;
+            //    udANAN100PAGainVHF13.Value = 56.2M;
+            //}
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN100D&& !chkBypassANANPASettings.Checked)
-            {
-                ANANPAGain160 = 49.5f;
-                ANANPAGain80 = 50.5f;
-                ANANPAGain60 = 50.5f;
-                ANANPAGain40 = 50.0f;
-                ANANPAGain30 = 49.0f;
-                ANANPAGain20 = 48.0f;
-                ANANPAGain17 = 47.0f;
-                ANANPAGain15 = 46.5f;
-                ANANPAGain12 = 46.0f;
-                ANANPAGain10 = 43.5f;
-                ANANPAGain6 = 43.0f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.ANAN100D&& !chkBypassANANPASettings.Checked)
+            //{
+            //    ANANPAGain160 = 49.5f;
+            //    ANANPAGain80 = 50.5f;
+            //    ANANPAGain60 = 50.5f;
+            //    ANANPAGain40 = 50.0f;
+            //    ANANPAGain30 = 49.0f;
+            //    ANANPAGain20 = 48.0f;
+            //    ANANPAGain17 = 47.0f;
+            //    ANANPAGain15 = 46.5f;
+            //    ANANPAGain12 = 46.0f;
+            //    ANANPAGain10 = 43.5f;
+            //    ANANPAGain6 = 43.0f;
 
-                udANANPAGainVHF0.Value = 56.2M;
-                udANANPAGainVHF1.Value = 56.2M;
-                udANANPAGainVHF2.Value = 56.2M;
-                udANANPAGainVHF3.Value = 56.2M;
-                udANANPAGainVHF4.Value = 56.2M;
-                udANANPAGainVHF5.Value = 56.2M;
-                udANANPAGainVHF6.Value = 56.2M;
-                udANANPAGainVHF7.Value = 56.2M;
-                udANANPAGainVHF8.Value = 56.2M;
-                udANANPAGainVHF9.Value = 56.2M;
-                udANANPAGainVHF10.Value = 56.2M;
-                udANANPAGainVHF11.Value = 56.2M;
-                udANANPAGainVHF12.Value = 56.2M;
-                udANANPAGainVHF13.Value = 56.2M;
-            }
+            //    udANANPAGainVHF0.Value = 56.2M;
+            //    udANANPAGainVHF1.Value = 56.2M;
+            //    udANANPAGainVHF2.Value = 56.2M;
+            //    udANANPAGainVHF3.Value = 56.2M;
+            //    udANANPAGainVHF4.Value = 56.2M;
+            //    udANANPAGainVHF5.Value = 56.2M;
+            //    udANANPAGainVHF6.Value = 56.2M;
+            //    udANANPAGainVHF7.Value = 56.2M;
+            //    udANANPAGainVHF8.Value = 56.2M;
+            //    udANANPAGainVHF9.Value = 56.2M;
+            //    udANANPAGainVHF10.Value = 56.2M;
+            //    udANANPAGainVHF11.Value = 56.2M;
+            //    udANANPAGainVHF12.Value = 56.2M;
+            //    udANANPAGainVHF13.Value = 56.2M;
+            //}
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN200D && !chkBypassANANPASettings.Checked)
-            {
-                OrionPAGain160 = 49.5f;
-                OrionPAGain80 = 50.5f;
-                OrionPAGain60 = 50.5f;
-                OrionPAGain40 = 50.0f;
-                OrionPAGain30 = 49.0f;
-                OrionPAGain20 = 48.0f;
-                OrionPAGain17 = 47.0f;
-                OrionPAGain15 = 46.5f;
-                OrionPAGain12 = 46.0f;
-                OrionPAGain10 = 43.5f;
-                OrionPAGain6 = 43.0f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.ANAN200D && !chkBypassANANPASettings.Checked)
+            //{
+            //    OrionPAGain160 = 49.5f;
+            //    OrionPAGain80 = 50.5f;
+            //    OrionPAGain60 = 50.5f;
+            //    OrionPAGain40 = 50.0f;
+            //    OrionPAGain30 = 49.0f;
+            //    OrionPAGain20 = 48.0f;
+            //    OrionPAGain17 = 47.0f;
+            //    OrionPAGain15 = 46.5f;
+            //    OrionPAGain12 = 46.0f;
+            //    OrionPAGain10 = 43.5f;
+            //    OrionPAGain6 = 43.0f;
 
-                udOrionPAGainVHF0.Value = 56.2M;
-                udOrionPAGainVHF1.Value = 56.2M;
-                udOrionPAGainVHF2.Value = 56.2M;
-                udOrionPAGainVHF3.Value = 56.2M;
-                udOrionPAGainVHF4.Value = 56.2M;
-                udOrionPAGainVHF5.Value = 56.2M;
-                udOrionPAGainVHF6.Value = 56.2M;
-                udOrionPAGainVHF7.Value = 56.2M;
-                udOrionPAGainVHF8.Value = 56.2M;
-                udOrionPAGainVHF9.Value = 56.2M;
-                udOrionPAGainVHF10.Value = 56.2M;
-                udOrionPAGainVHF11.Value = 56.2M;
-                udOrionPAGainVHF12.Value = 56.2M;
-                udOrionPAGainVHF13.Value = 56.2M;
-            }
+            //    udOrionPAGainVHF0.Value = 56.2M;
+            //    udOrionPAGainVHF1.Value = 56.2M;
+            //    udOrionPAGainVHF2.Value = 56.2M;
+            //    udOrionPAGainVHF3.Value = 56.2M;
+            //    udOrionPAGainVHF4.Value = 56.2M;
+            //    udOrionPAGainVHF5.Value = 56.2M;
+            //    udOrionPAGainVHF6.Value = 56.2M;
+            //    udOrionPAGainVHF7.Value = 56.2M;
+            //    udOrionPAGainVHF8.Value = 56.2M;
+            //    udOrionPAGainVHF9.Value = 56.2M;
+            //    udOrionPAGainVHF10.Value = 56.2M;
+            //    udOrionPAGainVHF11.Value = 56.2M;
+            //    udOrionPAGainVHF12.Value = 56.2M;
+            //    udOrionPAGainVHF13.Value = 56.2M;
+            //}
 
             if (console.CurrentHPSDRModel == HPSDRModel.HERMES || (console.CurrentHPSDRModel == HPSDRModel.ANAN100D && chkBypassANANPASettings.Checked))
             {
@@ -10531,95 +10601,95 @@ namespace Thetis
                 udPAGainVHF13.Value = 56.2M;
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN8000D)
-            {
-                ANAN8000DPAGain160 = 50.0f;
-                ANAN8000DPAGain80 = 50.5f;
-                ANAN8000DPAGain60 = 50.5f;
-                ANAN8000DPAGain40 = 50.0f;
-                ANAN8000DPAGain30 = 49.5f;
-                ANAN8000DPAGain20 = 48.5f;
-                ANAN8000DPAGain17 = 48.0f;
-                ANAN8000DPAGain15 = 47.5f;
-                ANAN8000DPAGain12 = 46.5f;
-                ANAN8000DPAGain10 = 42.0f;
-                ANAN8000DPAGain6 = 43.0f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.ANAN8000D)
+            //{
+            //    ANAN8000DPAGain160 = 50.0f;
+            //    ANAN8000DPAGain80 = 50.5f;
+            //    ANAN8000DPAGain60 = 50.5f;
+            //    ANAN8000DPAGain40 = 50.0f;
+            //    ANAN8000DPAGain30 = 49.5f;
+            //    ANAN8000DPAGain20 = 48.5f;
+            //    ANAN8000DPAGain17 = 48.0f;
+            //    ANAN8000DPAGain15 = 47.5f;
+            //    ANAN8000DPAGain12 = 46.5f;
+            //    ANAN8000DPAGain10 = 42.0f;
+            //    ANAN8000DPAGain6 = 43.0f;
 
-                udANAN8000DPAGainVHF0.Value = 56.2M;
-                udANAN8000DPAGainVHF1.Value = 56.2M;
-                udANAN8000DPAGainVHF2.Value = 56.2M;
-                udANAN8000DPAGainVHF3.Value = 56.2M;
-                udANAN8000DPAGainVHF4.Value = 56.2M;
-                udANAN8000DPAGainVHF5.Value = 56.2M;
-                udANAN8000DPAGainVHF6.Value = 56.2M;
-                udANAN8000DPAGainVHF7.Value = 56.2M;
-                udANAN8000DPAGainVHF8.Value = 56.2M;
-                udANAN8000DPAGainVHF9.Value = 56.2M;
-                udANAN8000DPAGainVHF10.Value = 56.2M;
-                udANAN8000DPAGainVHF11.Value = 56.2M;
-                udANAN8000DPAGainVHF12.Value = 56.2M;
-                udANAN8000DPAGainVHF13.Value = 56.2M;
-            }
+            //    udANAN8000DPAGainVHF0.Value = 56.2M;
+            //    udANAN8000DPAGainVHF1.Value = 56.2M;
+            //    udANAN8000DPAGainVHF2.Value = 56.2M;
+            //    udANAN8000DPAGainVHF3.Value = 56.2M;
+            //    udANAN8000DPAGainVHF4.Value = 56.2M;
+            //    udANAN8000DPAGainVHF5.Value = 56.2M;
+            //    udANAN8000DPAGainVHF6.Value = 56.2M;
+            //    udANAN8000DPAGainVHF7.Value = 56.2M;
+            //    udANAN8000DPAGainVHF8.Value = 56.2M;
+            //    udANAN8000DPAGainVHF9.Value = 56.2M;
+            //    udANAN8000DPAGainVHF10.Value = 56.2M;
+            //    udANAN8000DPAGainVHF11.Value = 56.2M;
+            //    udANAN8000DPAGainVHF12.Value = 56.2M;
+            //    udANAN8000DPAGainVHF13.Value = 56.2M;
+            //}
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D)
-            {
-                ANAN7000DPAGain160 = 47.9f;
-                ANAN7000DPAGain80 = 50.5f;
-                ANAN7000DPAGain60 = 50.8f;
-                ANAN7000DPAGain40 = 50.8f;
-                ANAN7000DPAGain30 = 50.9f;
-                ANAN7000DPAGain20 = 50.9f;
-                ANAN7000DPAGain17 = 50.5f;
-                ANAN7000DPAGain15 = 47.0f;
-                ANAN7000DPAGain12 = 47.9f;
-                ANAN7000DPAGain10 = 46.5f;
-                ANAN7000DPAGain6 = 44.6f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D)
+            //{
+            //    ANAN7000DPAGain160 = 47.9f;
+            //    ANAN7000DPAGain80 = 50.5f;
+            //    ANAN7000DPAGain60 = 50.8f;
+            //    ANAN7000DPAGain40 = 50.8f;
+            //    ANAN7000DPAGain30 = 50.9f;
+            //    ANAN7000DPAGain20 = 50.9f;
+            //    ANAN7000DPAGain17 = 50.5f;
+            //    ANAN7000DPAGain15 = 47.0f;
+            //    ANAN7000DPAGain12 = 47.9f;
+            //    ANAN7000DPAGain10 = 46.5f;
+            //    ANAN7000DPAGain6 = 44.6f;
 
-                udANAN7000DPAGainVHF0.Value = 63.1M;
-                udANAN7000DPAGainVHF1.Value = 63.1M;
-                udANAN7000DPAGainVHF2.Value = 63.1M;
-                udANAN7000DPAGainVHF3.Value = 63.1M;
-                udANAN7000DPAGainVHF4.Value = 63.1M;
-                udANAN7000DPAGainVHF5.Value = 63.1M;
-                udANAN7000DPAGainVHF6.Value = 63.1M;
-                udANAN7000DPAGainVHF7.Value = 63.1M;
-                udANAN7000DPAGainVHF8.Value = 63.1M;
-                udANAN7000DPAGainVHF9.Value = 63.1M;
-                udANAN7000DPAGainVHF10.Value = 63.1M;
-                udANAN7000DPAGainVHF11.Value = 63.1M;
-                udANAN7000DPAGainVHF12.Value = 63.1M;
-                udANAN7000DPAGainVHF13.Value = 63.1M;
-            }
+            //    udANAN7000DPAGainVHF0.Value = 63.1M;
+            //    udANAN7000DPAGainVHF1.Value = 63.1M;
+            //    udANAN7000DPAGainVHF2.Value = 63.1M;
+            //    udANAN7000DPAGainVHF3.Value = 63.1M;
+            //    udANAN7000DPAGainVHF4.Value = 63.1M;
+            //    udANAN7000DPAGainVHF5.Value = 63.1M;
+            //    udANAN7000DPAGainVHF6.Value = 63.1M;
+            //    udANAN7000DPAGainVHF7.Value = 63.1M;
+            //    udANAN7000DPAGainVHF8.Value = 63.1M;
+            //    udANAN7000DPAGainVHF9.Value = 63.1M;
+            //    udANAN7000DPAGainVHF10.Value = 63.1M;
+            //    udANAN7000DPAGainVHF11.Value = 63.1M;
+            //    udANAN7000DPAGainVHF12.Value = 63.1M;
+            //    udANAN7000DPAGainVHF13.Value = 63.1M;
+            //}
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES)
-            {
-                HermesPAGain160 = 41.0f;
-                HermesPAGain80 = 41.2f;
-                HermesPAGain60 = 41.3f;
-                HermesPAGain40 = 41.3f;
-                HermesPAGain30 = 41.0f;
-                HermesPAGain20 = 40.5f;
-                HermesPAGain17 = 39.9f;
-                HermesPAGain15 = 38.8f;
-                HermesPAGain12 = 38.8f;
-                HermesPAGain10 = 38.8f;
-                HermesPAGain6 = 38.8f;
+            //if (console.CurrentHPSDRModel == HPSDRModel.HERMES)
+            //{
+            //    HermesPAGain160 = 41.0f;
+            //    HermesPAGain80 = 41.2f;
+            //    HermesPAGain60 = 41.3f;
+            //    HermesPAGain40 = 41.3f;
+            //    HermesPAGain30 = 41.0f;
+            //    HermesPAGain20 = 40.5f;
+            //    HermesPAGain17 = 39.9f;
+            //    HermesPAGain15 = 38.8f;
+            //    HermesPAGain12 = 38.8f;
+            //    HermesPAGain10 = 38.8f;
+            //    HermesPAGain6 = 38.8f;
 
-                udHermesPAGainVHF0.Value = 56.2M;
-                udHermesPAGainVHF1.Value = 56.2M;
-                udHermesPAGainVHF2.Value = 56.2M;
-                udHermesPAGainVHF3.Value = 56.2M;
-                udHermesPAGainVHF4.Value = 56.2M;
-                udHermesPAGainVHF5.Value = 56.2M;
-                udHermesPAGainVHF6.Value = 56.2M;
-                udHermesPAGainVHF7.Value = 56.2M;
-                udHermesPAGainVHF8.Value = 56.2M;
-                udHermesPAGainVHF9.Value = 56.2M;
-                udHermesPAGainVHF10.Value = 56.2M;
-                udHermesPAGainVHF11.Value = 56.2M;
-                udHermesPAGainVHF12.Value = 56.2M;
-                udHermesPAGainVHF13.Value = 56.2M;
-            }
+            //    udHermesPAGainVHF0.Value = 56.2M;
+            //    udHermesPAGainVHF1.Value = 56.2M;
+            //    udHermesPAGainVHF2.Value = 56.2M;
+            //    udHermesPAGainVHF3.Value = 56.2M;
+            //    udHermesPAGainVHF4.Value = 56.2M;
+            //    udHermesPAGainVHF5.Value = 56.2M;
+            //    udHermesPAGainVHF6.Value = 56.2M;
+            //    udHermesPAGainVHF7.Value = 56.2M;
+            //    udHermesPAGainVHF8.Value = 56.2M;
+            //    udHermesPAGainVHF9.Value = 56.2M;
+            //    udHermesPAGainVHF10.Value = 56.2M;
+            //    udHermesPAGainVHF11.Value = 56.2M;
+            //    udHermesPAGainVHF12.Value = 56.2M;
+            //    udHermesPAGainVHF13.Value = 56.2M;
+            //}
         }
 
         #endregion
@@ -11190,7 +11260,7 @@ namespace Thetis
             }
             else
             {
-                 console.CAT2Enabled = false;
+                console.CAT2Enabled = false;
             }
         }
 
@@ -11244,7 +11314,7 @@ namespace Thetis
             }
             else
             {
-                 console.CAT3Enabled = false;
+                console.CAT3Enabled = false;
             }
         }
 
@@ -11298,11 +11368,11 @@ namespace Thetis
             }
             else
             {
-                 console.CAT4Enabled = false;
+                console.CAT4Enabled = false;
             }
         }
 
-		private void ChkEnableAndromeda_CheckedChanged(object sender, EventArgs e)
+        private void ChkEnableAndromeda_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
@@ -12033,7 +12103,7 @@ namespace Thetis
 
             // prevent users from cancel when saving etc
             // give some feedback that save or load is occurring
-            
+
             bool bEnabled = !(bSaving || bLoading);
 
             // disable/enable anything that can save/load settings
@@ -12067,15 +12137,18 @@ namespace Thetis
         }
 
         private Thread m_objSaveLoadThread = null;
-        public Thread SaveLoadThread {
+        public Thread SaveLoadThread
+        {
             get { return m_objSaveLoadThread; }
-            set {                 
+            set
+            {
             }
         }
         private bool m_bIgnoreButtonState = false;
-        public bool IgnoreButtonState {
+        public bool IgnoreButtonState
+        {
             get { return m_bIgnoreButtonState; }
-            set { m_bIgnoreButtonState = value;  }
+            set { m_bIgnoreButtonState = value; }
         }
         public void WaitForSaveLoad()
         {
@@ -12085,7 +12158,7 @@ namespace Thetis
         private void btnOK_Click(object sender, System.EventArgs e)
         {
             setButtonState(true, false);
-            console.SetFocusMaster(true);          
+            console.SetFocusMaster(true);
             WaitForSaveLoad();
             m_objSaveLoadThread = null;
 
@@ -12098,7 +12171,7 @@ namespace Thetis
                 Priority = ThreadPriority.Lowest
             };
             m_objSaveLoadThread.Start();
-         }
+        }
 
         private void btnCancel_Click(object sender, System.EventArgs e)
         {
@@ -12189,7 +12262,7 @@ namespace Thetis
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-           // CompleteImport();
+            // CompleteImport();
         }
 
         private bool mergingdb = false;
@@ -12220,7 +12293,7 @@ namespace Thetis
                 File.Delete(console.DBFileName);
                 DB.WriteCurrentDB(console.DBFileName);
                 mergingdb = true;
-             }
+            }
 
             return success;
         }
@@ -12764,7 +12837,7 @@ namespace Thetis
         {
             Display.ShowZeroLine = chkShowZeroLine.Checked;
         }
-        
+
         private void clrbtnBandEdge_Changed(object sender, System.EventArgs e)
         {
             Display.BandEdgeColor = clrbtnBandEdge.Color;
@@ -13133,7 +13206,8 @@ namespace Thetis
             console.WheelReverse = chkWheelReverse.Checked;
         }
 
-        public string CustomTitle {
+        public string CustomTitle
+        {
             get { return txtGenCustomTitle.Text; }
         }
         //MW0LGE_21a;
@@ -13226,8 +13300,8 @@ namespace Thetis
                         break;
                     case MeterTXMode.REVERSE_POWER:
                         comboTXTUNMeter.Text = "Ref Pwr";
-                        break;                        
-                   case MeterTXMode.SWR_POWER: // MW0LGE re-added 
+                        break;
+                    case MeterTXMode.SWR_POWER: // MW0LGE re-added 
                         comboTXTUNMeter.Text = "Fwd SWR";
                         break;
                     case MeterTXMode.SWR:
@@ -13316,7 +13390,7 @@ namespace Thetis
             {
                 // console.PowerOn = false;
                 //Thread.Sleep(100);
-                Audio.EnableVAC1(false);                
+                Audio.EnableVAC1(false);
             }
 
             Audio.VACOutputIQ = chkAudioIQtoVAC.Checked;
@@ -13397,7 +13471,7 @@ namespace Thetis
                 return;
 
             string name = lstTXProfileDef.Text;
-            DataRow[] rows = DB.ds.Tables["TxProfileDef"].Select("Name = '" + name.Replace("'","''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TxProfileDef"].Select("Name = '" + name.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length != 1)
             {
@@ -13463,13 +13537,14 @@ namespace Thetis
 
             int i = 1;
             string tempFN = fileName;
-            while (File.Exists(tempFN + ".xml")) {
+            while (File.Exists(tempFN + ".xml"))
+            {
                 tempFN = fileName + Convert.ToString(i);  // Get a slightly different file name if it already exists.
-                i++;           
+                i++;
             }
             fileName = tempFN + ".xml";
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'","''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
             DataRow exportRow = null;
             if (rows.Length > 0)
             {
@@ -13517,15 +13592,16 @@ namespace Thetis
                     case Keys.A:
                         chkPANewCal.Visible = true;
                         grpPAGainByBand.Visible = true;
+                        grpGainByBandPA.Visible = false; //MW0LGE_22b the profile based group
                         break;
                     case Keys.O:
                         break;
                     case Keys.P:
                         chkAutoPACalibrate.Visible = true;
                         break;
-                    case Keys.V:
-                        grpDisplayDriverEngine.Visible = true;
-                        break;
+                        //case Keys.V: //MW0LGE_22b always shown
+                        //    grpDisplayDriverEngine.Visible = true;
+                        //    break;
                 }
             }
         }
@@ -13548,19 +13624,19 @@ namespace Thetis
             if (Directory.Exists(path + comboAppSkin.Text))
                 Skin.Restore(comboAppSkin.Text, path, console);
             else
-            path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-                    "\\OpenHPSDR\\Skins\\";
+                path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                        "\\OpenHPSDR\\Skins\\";
 
             if (Directory.Exists(path + comboAppSkin.Text))
                 Skin.Restore(comboAppSkin.Text, path, console);
-                
+
             console.CurrentSkin = comboAppSkin.Text;
             console.RadarColorUpdate = true;
         }
 
         private void btnSkinExport_Click(object sender, EventArgs e)
         {
- 
+
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                     "\\OpenHPSDR\\Skins\\";
 
@@ -13635,45 +13711,45 @@ namespace Thetis
 
         private void chkPennyLane_CheckedChanged(object sender, System.EventArgs e)
         {
-           // int bits = NetworkIO.GetC1Bits();
-           // if (!chkPennyLane.Checked)
-           // {
-           //   //  bits &= 0xdf;  // 11011111
-           //     //console.PennyLanePresent = false;
-           //     radPenny10MHz.Checked = false;
-           //     radPenny10MHz.Enabled = false;
-           //     radPennyMic.Checked = false;
-           //     radPennyMic.Enabled = false;
-           //     rad12288MHzPenny.Checked = false;
-           //     rad12288MHzPenny.Enabled = false;
-           //     grpPennyExtCtrl.Enabled = false;
-           //     chkPennyExtCtrl.Checked = false;
-           //     chkPennyExtCtrl.Enabled = false;
-           // }
-           // else
-           // {
-           //    // bits |= 0x20;   // 00100000
+            // int bits = NetworkIO.GetC1Bits();
+            // if (!chkPennyLane.Checked)
+            // {
+            //   //  bits &= 0xdf;  // 11011111
+            //     //console.PennyLanePresent = false;
+            //     radPenny10MHz.Checked = false;
+            //     radPenny10MHz.Enabled = false;
+            //     radPennyMic.Checked = false;
+            //     radPennyMic.Enabled = false;
+            //     rad12288MHzPenny.Checked = false;
+            //     rad12288MHzPenny.Enabled = false;
+            //     grpPennyExtCtrl.Enabled = false;
+            //     chkPennyExtCtrl.Checked = false;
+            //     chkPennyExtCtrl.Enabled = false;
+            // }
+            // else
+            // {
+            //    // bits |= 0x20;   // 00100000
 
-           //     chkPennyPresent.Checked = false;
-           //     radPenny10MHz.Enabled = true;
-           //     radPennyMic.Enabled = true;
-           //     rad12288MHzPenny.Enabled = true;
+            //     chkPennyPresent.Checked = false;
+            //     radPenny10MHz.Enabled = true;
+            //     radPennyMic.Enabled = true;
+            //     rad12288MHzPenny.Enabled = true;
 
-           //     chkPennyExtCtrl.Enabled = true;
-           //     if (chkPennyExtCtrl.Checked)
-           //     {
-           //         grpPennyExtCtrl.Enabled = true;
-           //     }
-           //     console.PennyPresent = false;
-           //     //console.PennyLanePresent = true;
-           //     chkGeneralRXOnly.Enabled = true;
-           //     // chkGeneralRXOnly.Enabled = false;
+            //     chkPennyExtCtrl.Enabled = true;
+            //     if (chkPennyExtCtrl.Checked)
+            //     {
+            //         grpPennyExtCtrl.Enabled = true;
+            //     }
+            //     console.PennyPresent = false;
+            //     //console.PennyLanePresent = true;
+            //     chkGeneralRXOnly.Enabled = true;
+            //     // chkGeneralRXOnly.Enabled = false;
 
-           // }
-           // console.PennyLanePresent = true; // chkPennyLane.Checked;
-           //// NetworkIO.SetC1Bits(bits);
-           // checkHPSDRDefaults(sender, e);
-           // NetworkIO.fwVersionsChecked = false;
+            // }
+            // console.PennyLanePresent = true; // chkPennyLane.Checked;
+            //// NetworkIO.SetC1Bits(bits);
+            // checkHPSDRDefaults(sender, e);
+            // NetworkIO.fwVersionsChecked = false;
         }
 
         private void chkPennyPresent_CheckedChanged(object sender, System.EventArgs e)
@@ -14259,8 +14335,8 @@ namespace Thetis
         private void chkPennyExtCtrl_CheckedChanged(object sender, System.EventArgs e)
         {
             grpPennyExtCtrl.Enabled = chkPennyExtCtrl.Checked;
-            grpPennyExtCtrlVHF.Enabled =  chkPennyExtCtrl.Checked;
-            grpExtCtrlSWL.Enabled =  chkPennyExtCtrl.Checked;
+            grpPennyExtCtrlVHF.Enabled = chkPennyExtCtrl.Checked;
+            grpExtCtrlSWL.Enabled = chkPennyExtCtrl.Checked;
             console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;
         }
 
@@ -14291,45 +14367,45 @@ namespace Thetis
         private void InitAlexAntTables()
         {
 
-            AlexRxOnlyAntCheckBoxes = new[] { new CheckBoxTS[]  { chkAlex160R1, chkAlex160R2, chkAlex160XV }, 
-													   	 new[] { chkAlex80R1, chkAlex80R2, chkAlex80XV }, 
-													   	 new[] { chkAlex60R1, chkAlex60R2, chkAlex60XV }, 
-													   	 new[] { chkAlex40R1, chkAlex40R2, chkAlex40XV }, 
-													   	 new[] { chkAlex30R1, chkAlex30R2, chkAlex30XV }, 
-													   	 new[] { chkAlex20R1, chkAlex20R2, chkAlex20XV }, 
-													   	 new[] { chkAlex17R1, chkAlex17R2, chkAlex17XV }, 
-													   	 new[] { chkAlex15R1, chkAlex15R2, chkAlex15XV }, 
-													   	 new[] { chkAlex12R1, chkAlex12R2, chkAlex12XV }, 
-													   	 new[] { chkAlex10R1, chkAlex10R2, chkAlex10XV }, 
-													   	 new[] { chkAlex6R1, chkAlex6R2, chkAlex6XV } 
-													 };
+            AlexRxOnlyAntCheckBoxes = new[] { new CheckBoxTS[]  { chkAlex160R1, chkAlex160R2, chkAlex160XV },
+                                                            new[] { chkAlex80R1, chkAlex80R2, chkAlex80XV },
+                                                            new[] { chkAlex60R1, chkAlex60R2, chkAlex60XV },
+                                                            new[] { chkAlex40R1, chkAlex40R2, chkAlex40XV },
+                                                            new[] { chkAlex30R1, chkAlex30R2, chkAlex30XV },
+                                                            new[] { chkAlex20R1, chkAlex20R2, chkAlex20XV },
+                                                            new[] { chkAlex17R1, chkAlex17R2, chkAlex17XV },
+                                                            new[] { chkAlex15R1, chkAlex15R2, chkAlex15XV },
+                                                            new[] { chkAlex12R1, chkAlex12R2, chkAlex12XV },
+                                                            new[] { chkAlex10R1, chkAlex10R2, chkAlex10XV },
+                                                            new[] { chkAlex6R1, chkAlex6R2, chkAlex6XV }
+                                                     };
 
 
-            AlexRxAntButtons = new[] { new RadioButtonTS[] { radAlexR1_160,  radAlexR2_160, radAlexR3_160 }, 
-														 new[] { radAlexR1_80,  radAlexR2_80, radAlexR3_80 },
-														 new[] { radAlexR1_60,  radAlexR2_60, radAlexR3_60 },
-														 new[] { radAlexR1_40,  radAlexR2_40, radAlexR3_40 },
-														 new[] { radAlexR1_30,  radAlexR2_30, radAlexR3_30 },
-														 new[] { radAlexR1_20,  radAlexR2_20, radAlexR3_20 },
-														 new[] { radAlexR1_17,  radAlexR2_17, radAlexR3_17 },
-														 new[] { radAlexR1_15,  radAlexR2_15, radAlexR3_15 },
-														 new[] { radAlexR1_12,  radAlexR2_12, radAlexR3_12 },
-														 new[] { radAlexR1_10,  radAlexR2_10, radAlexR3_10 },
-														 new[] { radAlexR1_6,  radAlexR2_6, radAlexR3_6 }
-													 };
+            AlexRxAntButtons = new[] { new RadioButtonTS[] { radAlexR1_160,  radAlexR2_160, radAlexR3_160 },
+                                                         new[] { radAlexR1_80,  radAlexR2_80, radAlexR3_80 },
+                                                         new[] { radAlexR1_60,  radAlexR2_60, radAlexR3_60 },
+                                                         new[] { radAlexR1_40,  radAlexR2_40, radAlexR3_40 },
+                                                         new[] { radAlexR1_30,  radAlexR2_30, radAlexR3_30 },
+                                                         new[] { radAlexR1_20,  radAlexR2_20, radAlexR3_20 },
+                                                         new[] { radAlexR1_17,  radAlexR2_17, radAlexR3_17 },
+                                                         new[] { radAlexR1_15,  radAlexR2_15, radAlexR3_15 },
+                                                         new[] { radAlexR1_12,  radAlexR2_12, radAlexR3_12 },
+                                                         new[] { radAlexR1_10,  radAlexR2_10, radAlexR3_10 },
+                                                         new[] { radAlexR1_6,  radAlexR2_6, radAlexR3_6 }
+                                                     };
 
-            AlexTxAntButtons = new[] { new RadioButtonTS[] { radAlexT1_160, radAlexT2_160, radAlexT3_160 }, 
-														 new[] { radAlexT1_80,  radAlexT2_80, radAlexT3_80 },
-														 new[] { radAlexT1_60,  radAlexT2_60, radAlexT3_60 },
-														 new[] { radAlexT1_40,  radAlexT2_40, radAlexT3_40 },
-														 new[] { radAlexT1_30,  radAlexT2_30, radAlexT3_30 },
-														 new[] { radAlexT1_20,  radAlexT2_20, radAlexT3_20 },
-														 new[] { radAlexT1_17,  radAlexT2_17, radAlexT3_17 },
-														 new[] { radAlexT1_15,  radAlexT2_15, radAlexT3_15 },
-														 new[] { radAlexT1_12,  radAlexT2_12, radAlexT3_12 },
-														 new[] { radAlexT1_10,  radAlexT2_10, radAlexT3_10 },
-														 new[] { radAlexT1_6,  radAlexT2_6, radAlexT3_6 }
-													 };
+            AlexTxAntButtons = new[] { new RadioButtonTS[] { radAlexT1_160, radAlexT2_160, radAlexT3_160 },
+                                                         new[] { radAlexT1_80,  radAlexT2_80, radAlexT3_80 },
+                                                         new[] { radAlexT1_60,  radAlexT2_60, radAlexT3_60 },
+                                                         new[] { radAlexT1_40,  radAlexT2_40, radAlexT3_40 },
+                                                         new[] { radAlexT1_30,  radAlexT2_30, radAlexT3_30 },
+                                                         new[] { radAlexT1_20,  radAlexT2_20, radAlexT3_20 },
+                                                         new[] { radAlexT1_17,  radAlexT2_17, radAlexT3_17 },
+                                                         new[] { radAlexT1_15,  radAlexT2_15, radAlexT3_15 },
+                                                         new[] { radAlexT1_12,  radAlexT2_12, radAlexT3_12 },
+                                                         new[] { radAlexT1_10,  radAlexT2_10, radAlexT3_10 },
+                                                         new[] { radAlexT1_6,  radAlexT2_6, radAlexT3_6 }
+                                                     };
         }
 
         public bool SetAlexAntEnabled(bool state)
@@ -14881,25 +14957,25 @@ namespace Thetis
         // this must also cancel any ext input check boxes
         public void SetRXAntenna(int Antenna, Band band)
         {
-            if((band >=Band.B160M) && (band <=Band.B6M))
+            if ((band >= Band.B160M) && (band <= Band.B6M))
             {
-            int idx = (int)band - (int)Band.B160M;
-            int Btn;
-            // change to new radio button and clear all ext input checkboxes
-            RadioButtonTS[] buttons = AlexRxAntButtons[idx];
-            for (Btn = 0; Btn < 3; Btn++)
-            {
-                if (Btn == Antenna - 1)
-                    buttons[Btn].Checked = true;
-                else
-                    buttons[Btn].Checked = false;
-            }
+                int idx = (int)band - (int)Band.B160M;
+                int Btn;
+                // change to new radio button and clear all ext input checkboxes
+                RadioButtonTS[] buttons = AlexRxAntButtons[idx];
+                for (Btn = 0; Btn < 3; Btn++)
+                {
+                    if (Btn == Antenna - 1)
+                        buttons[Btn].Checked = true;
+                    else
+                        buttons[Btn].Checked = false;
+                }
 
-            CheckBoxTS[] cboxes = AlexRxOnlyAntCheckBoxes[idx];
-            for (Btn = 0; Btn < 3; Btn++)
-            {
+                CheckBoxTS[] cboxes = AlexRxOnlyAntCheckBoxes[idx];
+                for (Btn = 0; Btn < 3; Btn++)
+                {
                     cboxes[Btn].Checked = false;
-            }
+                }
             }
         }
 
@@ -14909,33 +14985,33 @@ namespace Thetis
         {
             if ((band >= Band.B160M) && (band <= Band.B6M))
             {
-            int idx = (int)band - (int)Band.B160M;
-            int Btn;
-            bool TXAllowed = true;
+                int idx = (int)band - (int)Band.B160M;
+                int Btn;
+                bool TXAllowed = true;
 
-            if (Antenna == 2)
-            {
-                if (chkBlockTxAnt2.Checked)
-                    TXAllowed = false;
-            }
-            else if (Antenna == 3)
-            {
-                if (chkBlockTxAnt3.Checked)
-                    TXAllowed = false;
-            }
+                if (Antenna == 2)
+                {
+                    if (chkBlockTxAnt2.Checked)
+                        TXAllowed = false;
+                }
+                else if (Antenna == 3)
+                {
+                    if (chkBlockTxAnt3.Checked)
+                        TXAllowed = false;
+                }
 
-            RadioButtonTS[] buttons = AlexTxAntButtons[idx];
-            if(TXAllowed)
-            {
-            for(Btn=0; Btn<3; Btn++)
-            {
-                if (Btn == Antenna - 1)
-                    buttons[Btn].Checked = true;
-                else
-                    buttons[Btn].Checked = false;
+                RadioButtonTS[] buttons = AlexTxAntButtons[idx];
+                if (TXAllowed)
+                {
+                    for (Btn = 0; Btn < 3; Btn++)
+                    {
+                        if (Btn == Antenna - 1)
+                            buttons[Btn].Checked = true;
+                        else
+                            buttons[Btn].Checked = false;
+                    }
+                }
             }
-        }
-        }
         }
 
         private void btnHPSDRFreqCalReset_Click(object sender, System.EventArgs e)
@@ -15055,7 +15131,7 @@ namespace Thetis
         {
             string sRet = "";
 
-            if (NetworkIO.getHaveSync()==1)
+            if (NetworkIO.getHaveSync() == 1)
             {
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
                 {
@@ -15883,7 +15959,7 @@ namespace Thetis
             Penny.getPenny().setBandABitMask(Band.VHF11, (byte)val, true);
             console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code
         }
-        
+
         private void chkOCrcvLMW_CheckedChanged(object sender, EventArgs e)
         {
             int val = 0;
@@ -16107,7 +16183,7 @@ namespace Thetis
             Penny.getPenny().setBandABitMask(Band.B11M, (byte)val, false);
             console.PennyExtCtrlEnabled = chkPennyExtCtrl.Checked;  // need side effect of this to push change to native code 
         }
-        
+
         private void chkOCxmitLMW_CheckedChanged(object sender, EventArgs e)
         {
             int val = 0;
@@ -16474,7 +16550,8 @@ namespace Thetis
             console.SWRProtection = chkSWRProtection.Checked;
         }
 
-        public bool ATTOnTXChecked {
+        public bool ATTOnTXChecked
+        {
             get { return chkATTOnTX.Checked; }
             set { }
         }
@@ -16701,8 +16778,18 @@ namespace Thetis
 
         private void chkAutoPACalibrate_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkAutoPACalibrate.Checked) panelAutoPACalibrate.Visible = true;
-            else panelAutoPACalibrate.Visible = false;
+            if (chkAutoPACalibrate.Checked)
+            {
+                grpGainByBandPA.Visible = false;
+                panelAutoPACalibrate.Visible = true;
+                grpPAGainByBand.Visible = true;
+            }
+            else
+            {
+                panelAutoPACalibrate.Visible = false;
+                grpPAGainByBand.Visible = false;
+                grpGainByBandPA.Visible = true;
+            }
         }
         ////MW0LGE_21d step atten
         //private bool adcsLinked()
@@ -16776,7 +16863,7 @@ namespace Thetis
                 console.CurrentHPSDRModel != HPSDRModel.ANAN7000D &&
                 console.CurrentHPSDRModel != HPSDRModel.ANAN8000D &&
                 console.CurrentHPSDRModel != HPSDRModel.ORIONMKII)
-            udHermesStepAttenuatorDataRX2.Maximum = (decimal)61;
+                udHermesStepAttenuatorDataRX2.Maximum = (decimal)61;
             else udHermesStepAttenuatorDataRX2.Maximum = (decimal)31;
 
             //if (!initializing && adcsLinked() && (udHermesStepAttenuatorData.Value != udHermesStepAttenuatorDataRX2.Value)) udHermesStepAttenuatorData.Value = udHermesStepAttenuatorDataRX2.Value;
@@ -18488,7 +18575,8 @@ namespace Thetis
         public bool NotchAdminBusy
         {
             // returns true if in middle of edit or add MW0LGE
-            get{
+            get
+            {
                 return AddActive | EditActive;
             }
         }
@@ -18859,7 +18947,7 @@ namespace Thetis
         private void tbTXDisplayFFTSize_Scroll(object sender, EventArgs e)
         {
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbTXDisplayFFTSize.Value))));
-            console.UpdateTXSpectrumDisplayVars(); 
+            console.UpdateTXSpectrumDisplayVars();
             double bin_width = (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).SampleRate / (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize;
             lblTXDispBinWidth.Text = bin_width.ToString("N3");
         }
@@ -19173,7 +19261,7 @@ namespace Thetis
             if (chkBoxHttp2.Checked == true)
             {
                 chkBoxHTTP.Checked = false;
-               
+
                 Http.terminate();
 
                 console.startHttpServer((int)udHttpPort.Value);
@@ -19267,7 +19355,7 @@ namespace Thetis
             // front end isplay of overflow/underflow MW0LGE_21k9rc5
             if (overflows != _oldVAC1OutOverflows)
             {
-                if(overflows != 0) console.VAC1UnderOver.OutOverflow = true;
+                if (overflows != 0) console.VAC1UnderOver.OutOverflow = true;
                 _oldVAC1OutOverflows = overflows;
             }
             if (underflows != _oldVAC1OutUnderflows)
@@ -19289,7 +19377,7 @@ namespace Thetis
                 lblVAC1RingPerc1.Text = dP.ToString("000");
                 if (chkAudioEnableVAC.Checked) ucVAC1VARGrapherOut.AddDataPoint(var - 1f);
             }
-            if(Audio.VAC1ControlFlagOut)
+            if (Audio.VAC1ControlFlagOut)
                 txtVAC1OldVarOut.Text = var.ToString("F6");
 
             unsafe
@@ -19419,7 +19507,7 @@ namespace Thetis
 
                     m_nAverageCount = 0;
                 }
-            }            
+            }
         }
 
         private void chkVAC1_Force_CheckedChanged(object sender, EventArgs e)
@@ -19560,7 +19648,7 @@ namespace Thetis
         private void chkVAC2onSplit_CheckedChanged(object sender, EventArgs e)
         {
             console.VAC2onSplit = chkVAC2onSplit.Checked;
-		}
+        }
 
         // DEXP-VOX
 
@@ -19699,17 +19787,17 @@ namespace Thetis
         {
             toolTip1.SetToolTip(tbDataFillAlpha, tbDataFillAlpha.Value.ToString());
             clrbtnDataFill_Changed(this, EventArgs.Empty);
-            if(!initializing) lgLinearGradientRX1.ApplyGlobalAlpha(tbDataFillAlpha.Value); // also adjust LG alpha values, always do this even if disabled MW0LGE_21a
+            if (!initializing) lgLinearGradientRX1.ApplyGlobalAlpha(tbDataFillAlpha.Value); // also adjust LG alpha values, always do this even if disabled MW0LGE_21a
         }
 
         private void chkWheelTunesOutsideSpectral_CheckedChanged(object sender, EventArgs e)
         {
             console.WheelTunesOutsideSpectral = chkWheelTunesOutsideSpectral.Checked;
         }
-        
+
         private void ComboHIDMouseWheel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(!(comboHIDMouseWheel.SelectedItem is HIDComboItem)) return;
+            if (!(comboHIDMouseWheel.SelectedItem is HIDComboItem)) return;
 
             HIDComboItem objItem = comboHIDMouseWheel.SelectedItem as HIDComboItem;
 
@@ -19750,7 +19838,7 @@ namespace Thetis
         }
 
         public void UpdateRawInputMouseDevices(Dictionary<IntPtr, MouseEvent> mouseDevices)
-        {            
+        {
             comboHIDMouseWheel.Items.Clear();
 
             foreach (KeyValuePair<IntPtr, MouseEvent> entry in mouseDevices)
@@ -19760,7 +19848,7 @@ namespace Thetis
                 HIDComboItem objItem = new HIDComboItem(me.Name, me.DeviceHandle, me.DeviceName);
                 int nIndex = comboHIDMouseWheel.Items.Add(objItem);
 
-                if(me.DeviceName == txtDeviceHID_hidden.Text) comboHIDMouseWheel.SelectedIndex = nIndex;
+                if (me.DeviceName == txtDeviceHID_hidden.Text) comboHIDMouseWheel.SelectedIndex = nIndex;
             }
         }
 
@@ -19790,18 +19878,23 @@ namespace Thetis
 
             public IntPtr DeviceHandle
             {
-                get {
+                get
+                {
                     return m_nValue;
                 }
-                private set {
+                private set
+                {
 
                 }
             }
-            public String DeviceID {
-                get {
+            public String DeviceID
+            {
+                get
+                {
                     return m_sID;
                 }
-                private set {
+                private set
+                {
 
                 }
             }
@@ -20007,14 +20100,14 @@ namespace Thetis
 
         public bool ActivePeakHoldsEnabled
         {
-            get 
+            get
             {
                 return chkActivePeakHoldRX1.Checked || (chkActivePeakHoldRX2.Checked && console.RX2Enabled);
             }
             set
             {
                 chkActivePeakHoldRX1.Checked = value;
-                if(console.RX2Enabled) chkActivePeakHoldRX2.Checked = value;
+                if (console.RX2Enabled) chkActivePeakHoldRX2.Checked = value;
             }
         }
         private void chkPeakBlobsEnabled_CheckedChanged(object sender, EventArgs e)
@@ -20104,7 +20197,7 @@ namespace Thetis
         {
             console.EditAndromedaDataSet();
         }
-     
+
         private void LabelTS528_Click(object sender, EventArgs e)
         {
 
@@ -20418,7 +20511,7 @@ namespace Thetis
 
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {
-           // if (initializing) return; // forceallevents will call this
+            // if (initializing) return; // forceallevents will call this
 
             bool power = console.PowerOn;
             HPSDRModel old_model = console.CurrentHPSDRModel;
@@ -20428,15 +20521,15 @@ namespace Thetis
             {
                 case "HERMES":
                     console.CurrentHPSDRModel = HPSDRModel.HERMES;
-                   // chkPennyPresent.Checked = false;
-                   // chkPennyPresent.Enabled = false;
-                   // chkPennyPresent.Visible = false;
-                   // chkMercuryPresent.Checked = true;
-                   // chkMercuryPresent.Enabled = false;
-                   // chkMercuryPresent.Visible = false;
-                   // chkPennyLane.Checked = true;
-                   // chkPennyLane.Enabled = false;
-                   // chkPennyLane.Visible = false;
+                    // chkPennyPresent.Checked = false;
+                    // chkPennyPresent.Enabled = false;
+                    // chkPennyPresent.Visible = false;
+                    // chkMercuryPresent.Checked = true;
+                    // chkMercuryPresent.Enabled = false;
+                    // chkMercuryPresent.Visible = false;
+                    // chkPennyLane.Checked = true;
+                    // chkPennyLane.Enabled = false;
+                    // chkPennyLane.Visible = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Enabled = true;
                     chkApolloPresent.Visible = true;
@@ -20449,11 +20542,11 @@ namespace Thetis
                     groupBoxRXOptions.Text = "Hermes Options";
                     grpMetisAddr.Text = "Hermes Address";
                     grpHermesStepAttenuator.Text = "Hermes Step Attenuator";
-                   // chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
-                   // chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
+                    // chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
+                    // chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
-                    grpHermesPAGainByBand.BringToFront();
+                    //grpHermesPAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = "  RX1   RX2    XVTR";
                     RXAntChk1Name = "RX1";
                     RXAntChk2Name = "RX2";
@@ -20494,7 +20587,7 @@ namespace Thetis
                     tpAlexControl.Text = "Ant/Filters";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
-                    grpANAN10PAGainByBand.BringToFront();
+                    //grpANAN10PAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = "  RX1   RX2    XVTR";
                     RXAntChk1Name = "RX1";
                     RXAntChk2Name = "RX2";
@@ -20538,7 +20631,7 @@ namespace Thetis
                     tpAlexControl.Text = "Ant/Filters";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
-                    grpANAN10PAGainByBand.BringToFront();
+                    //grpANAN10PAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = "  RX1   RX2    XVTR";
                     RXAntChk1Name = "RX1";
                     RXAntChk2Name = "RX2";
@@ -20579,7 +20672,7 @@ namespace Thetis
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
-                    grpANAN100PAGainByBand.BringToFront();
+                    //grpANAN100PAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = " EXT2  EXT1  XVTR";
                     RXAntChk1Name = "EXT2";
                     RXAntChk2Name = "EXT1";
@@ -20627,7 +20720,7 @@ namespace Thetis
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
-                    grpANAN100BPAGainByBand.BringToFront();
+                    //grpANAN100BPAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = " EXT2  EXT1  XVTR";
                     RXAntChk1Name = "EXT2";
                     RXAntChk2Name = "EXT1";
@@ -20672,9 +20765,10 @@ namespace Thetis
                     chkAutoPACalibrate.Visible = false;
                     chkBypassANANPASettings.Visible = true;
 
-                    if (!chkBypassANANPASettings.Checked)
-                        grpANANPAGainByBand.BringToFront();
-                    else grpPAGainByBand.BringToFront();
+                    //MW0LGE_22b new PA system
+                    //if (!chkBypassANANPASettings.Checked)
+                    //    grpANANPAGainByBand.BringToFront();
+                    //else grpPAGainByBand.BringToFront();
 
                     labelRXAntControl.Text = " EXT2  EXT1  XVTR";
                     RXAntChk1Name = "EXT2";
@@ -20726,14 +20820,14 @@ namespace Thetis
                     groupBoxRXOptions.Text = "ANAN Options";
                     grpMetisAddr.Text = "ANAN Address";
                     grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
-                   // chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
-                   // chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
+                    // chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
+                    // chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     chkBypassANANPASettings.Visible = true;
                     chkDisableRXOut.Visible = true;
                     chkBPF2Gnd.Visible = false;
-                    grpOrionPAGainByBand.BringToFront();
+                    //grpOrionPAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = " EXT2  EXT1  XVTR";
                     RXAntChk1Name = "EXT2";
                     RXAntChk2Name = "EXT1";
@@ -20747,8 +20841,8 @@ namespace Thetis
                     chkEXT2OutOnTx.Visible = true;
                     chkAlexPresent.Parent = grpGeneralHardwareORION;
                     chkAlexPresent.Location = new Point(43, 120);
-                  //  chkApolloPresent.Parent = grpGeneralHardwareORION;
-                   // chkApolloPresent.Location = new Point(43, 140);
+                    //  chkApolloPresent.Parent = grpGeneralHardwareORION;
+                    // chkApolloPresent.Location = new Point(43, 140);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20783,7 +20877,7 @@ namespace Thetis
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     chkBypassANANPASettings.Visible = true;
-                    grpANAN7000DPAGainByBand.BringToFront();
+                    //grpANAN7000DPAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = "  BYPS  EXT1  XVTR";
                     RXAntChk1Name = "BYPS";
                     RXAntChk2Name = "EXT1";
@@ -20841,7 +20935,7 @@ namespace Thetis
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     chkBypassANANPASettings.Visible = true;
-                    grpANAN8000DPAGainByBand.BringToFront();
+                    //grpANAN8000DPAGainByBand.BringToFront(); //MW0LGE_22b new PA system
                     labelRXAntControl.Text = "  BYPS  EXT1  XVTR";
                     RXAntChk1Name = "BYPS";
                     RXAntChk2Name = "EXT1";
@@ -20880,10 +20974,12 @@ namespace Thetis
             }
 
             if (old_model != console.CurrentHPSDRModel)
-            {                
+            {
                 setupADCRadioButtions();
                 btnResetP2ADC_Click(this, EventArgs.Empty);
                 btnResetP1ADC_Click(this, EventArgs.Empty);
+
+                updatePAProfileCombo("Default - " + console.CurrentHPSDRModel.ToString()); //MW0LGE_22b
             }
 
             InitHPSDR();
@@ -20930,7 +21026,8 @@ namespace Thetis
                 if (c.GetType() == typeof(RadioButtonTS))
                 {
                     RadioButtonTS rb = c as RadioButtonTS;
-                    if (rb.Name.EndsWith("ADC0")) { 
+                    if (rb.Name.EndsWith("ADC0"))
+                    {
                         rb.Visible = bADC0;
                         // check if ADC1 and ADC2 are false, if so then this will be an 10,10E,100 or 100B, so select this ADC
                         if (!bADC1 && !bADC2) rb.Checked = true;
@@ -21058,14 +21155,14 @@ namespace Thetis
                 case CheckState.Checked:
                     RadioProtocolSelected = RadioProtocol.Auto;
                     NetworkIO.RadioProtocolSelected = RadioProtocol.Auto;
-                    chkRadioProtocolSelect.Text = "Auto Detect Protocol";                   
+                    chkRadioProtocolSelect.Text = "Auto Detect Protocol";
                     break;
                 case CheckState.Indeterminate:
                     RadioProtocolSelected = RadioProtocol.USB;
                     NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
                     chkRadioProtocolSelect.Text = "Protocol 1";
                     break;
-                case CheckState.Unchecked:                   
+                case CheckState.Unchecked:
                     RadioProtocolSelected = RadioProtocol.ETH;
                     NetworkIO.RadioProtocolSelected = RadioProtocol.ETH;
                     chkRadioProtocolSelect.Text = "Protocol 2";
@@ -21208,7 +21305,8 @@ namespace Thetis
         }
 
         //LG
-        public ucLGPicker RX1GradPicker {
+        public ucLGPicker RX1GradPicker
+        {
             get { return lgLinearGradientRX1; }
             set { }
         }
@@ -21232,7 +21330,7 @@ namespace Thetis
         private void lgPickerRX1_GripperSelected(object sender, ColourEventArgs e)
         {
             btnDeleteColourGripper.Enabled = true;
-            clrbtnGripperColour.Color = Color.FromArgb(255,e.Colour);
+            clrbtnGripperColour.Color = Color.FromArgb(255, e.Colour);
         }
 
         private void clrbtnGripperColour_Changed(object sender, EventArgs e)
@@ -21329,7 +21427,7 @@ namespace Thetis
             else
             {
                 lblPLLLock.Text = "";
-            }    
+            }
         }
 
         private void comboFRSRegion_MouseEnter(object sender, EventArgs e)
@@ -21450,7 +21548,7 @@ namespace Thetis
         {
             if (chkShowControlDebug.Checked) chkShowDisplayDebug.Checked = false;
 
-            console.EnableControlDebug = chkShowControlDebug.Checked;            
+            console.EnableControlDebug = chkShowControlDebug.Checked;
         }
 
         public void UpdateDDCTab()
@@ -21571,7 +21669,7 @@ namespace Thetis
                         break;
                 }
             }
-            else if(NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) // P1
+            else if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) // P1
             {
                 lblP2assignment.ForeColor = SystemColors.ControlText;
                 lblP2assignment.Font = new Font(lblP2assignment.Font, FontStyle.Regular);
@@ -21718,7 +21816,8 @@ namespace Thetis
             bool bUpdate = rx1 != -1 || rx2 != -1 || sync1 != -1 || sync2 != -1 || psrx != -1 || pstx != -1;
             //
 
-            if (bUpdate) {
+            if (bUpdate)
+            {
                 foreach (Control c in tpADC.Controls)
                 {
                     LabelTS l = c as LabelTS;
@@ -21759,7 +21858,7 @@ namespace Thetis
                             l.BackColor = Color.Transparent;
                         }
                     }
-                } 
+                }
             }
         }
 
@@ -21805,7 +21904,7 @@ namespace Thetis
 
         private void udVAC1SlewTimeOut_ValueChanged(object sender, EventArgs e)
         {
-            Audio.VAC1SlewTimeOut = (double)udVAC1SlewTimeOut.Value;            
+            Audio.VAC1SlewTimeOut = (double)udVAC1SlewTimeOut.Value;
         }
 
         private void btnVAC2AdvancedDefault_Click(object sender, EventArgs e)
@@ -21967,7 +22066,7 @@ namespace Thetis
 
             if (!isPowerOfTwo(tmp))
             {
-                if(tmp > old)
+                if (tmp > old)
                 {
                     // inc
                     tmp = findNextPowerOf2(tmp);
@@ -22344,7 +22443,7 @@ namespace Thetis
 
         private void chkPin1TXPAHF_CheckedChanged(object sender, EventArgs e)
         {
-            if(sender is CheckBoxTS)
+            if (sender is CheckBoxTS)
             {
                 CheckBoxTS chkbox = sender as CheckBoxTS;
                 bool bOk = int.TryParse(chkbox.Name.Substring(6, 1), out int pin);
@@ -22391,12 +22490,12 @@ namespace Thetis
         {
             bool bAtLeastOneChecked = false;
 
-            foreach(Control c in grpExtPAControlHF.Controls)
+            foreach (Control c in grpExtPAControlHF.Controls)
             {
-                if(c is CheckBoxTS)
+                if (c is CheckBoxTS)
                 {
                     CheckBoxTS cb = c as CheckBoxTS;
-                    if (cb!= null && cb.Checked)
+                    if (cb != null && cb.Checked)
                     {
                         bAtLeastOneChecked = true;
                         break;
@@ -22460,14 +22559,14 @@ namespace Thetis
             foreach (Control c in grpPennyExtCtrl.Controls)
             {
                 CheckBox cb = c as CheckBoxTS;
-                if(cb != null) 
-                    if(cb.Name.Length >= 12 && cb.Name.Substring(0, 12) == "chkPenOCxmit") cb.Enabled = enable;
+                if (cb != null)
+                    if (cb.Name.Length >= 12 && cb.Name.Substring(0, 12) == "chkPenOCxmit") cb.Enabled = enable;
             }
             foreach (Control c in grpPennyExtCtrlVHF.Controls)
             {
                 CheckBox cb = c as CheckBoxTS;
                 if (cb != null)
-                    if (cb.Name.Length >=12 && cb.Name.Substring(0, 12) == "chkPenOCxmit") cb.Enabled = enable;
+                    if (cb.Name.Length >= 12 && cb.Name.Substring(0, 12) == "chkPenOCxmit") cb.Enabled = enable;
             }
             foreach (Control c in grpExtCtrlSWL.Controls)
             {
@@ -22500,7 +22599,8 @@ namespace Thetis
         public bool AutoAGCRX1
         {
             get { return chkAutoAGCRX1.Checked; }
-            set {
+            set
+            {
                 chkAutoAGCRX1.Checked = value;
             }
         }
@@ -22650,7 +22750,7 @@ namespace Thetis
             int height = picCFC.Height;
 
             float binsPerHz = 1025 / 48000f;// (float)console.SampleRateTX;
-            
+
             int endFreqIndex = (int)((double)udCFC9.Value * binsPerHz);
             int startFreqIndex = (int)((double)udCFC0.Value * binsPerHz);
             int span = endFreqIndex - startFreqIndex;
@@ -22678,7 +22778,7 @@ namespace Thetis
 
             int tenDBs = (int)Math.Floor(max / 10f) + 1;
             float scale = height / (tenDBs * 10f);
-             
+
             float penWidth = (float)Math.Ceiling((double)step);
 
             using (Pen p = new Pen(Brushes.Red, penWidth))
@@ -22831,7 +22931,7 @@ namespace Thetis
             //check ip is valid
             bIPOk = IPAddress.TryParse(sTmp, out address);
 
-            if(bIPOk && bPortOk)
+            if (bIPOk && bPortOk)
             {
                 txtTCPIPCATServerBindIPPort.BackColor = SystemColors.Window;
                 console.TCPIPCatPort = port;
@@ -22900,8 +23000,9 @@ namespace Thetis
         }
         public long DSPChangeDuration
         {
-            set { 
-                lblTimeToMakeDSPChange.Text = value.ToString() + " ms @ " + DateTime.UtcNow.ToString() + " utc"; 
+            set
+            {
+                lblTimeToMakeDSPChange.Text = value.ToString() + " ms @ " + DateTime.UtcNow.ToString() + " utc";
             }
         }
 
@@ -23360,6 +23461,774 @@ namespace Thetis
         private void chkLimitPowerCATTCIMsgs_CheckedChanged(object sender, EventArgs e)
         {
             console.SendLimitedPowerLevels = chkLimitPowerCATTCIMsgs.Checked;
+        }
+
+        private void updateControls(PAProfile p)
+        {
+            if (p == null) return;
+
+            if (p.IsDefault && p.Model != HPSDRModel.FIRST)
+                grpGainByBandPA.Text = p.Model.ToString() + " - PA Gain By Band (dB)";
+            else
+                grpGainByBandPA.Text = p.ProfileName + " - PA Gain By Band (dB)";
+
+            btnDeletePAProfile.Enabled = p.ProfileName.StartsWith("Default") ? false : true; // unable to delete Default
+        }
+        private void comboPAProfile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+
+            if (p != null)
+            {
+                updateControls(p);
+                updateNUDgains(p);
+            }
+        }
+
+        private void btnNewPAProfile_Click(object sender, EventArgs e)
+        {
+            string sProfileName = InputBox.Show("New Profile", "Please enter a profile name:", "");
+
+            if (sProfileName == "") return;
+
+            if (sProfileName.StartsWith("Default"))
+            {
+                DialogResult dr = MessageBox.Show(
+                    "The PA profile name " + sProfileName + " can not start with 'Default'.",
+                    "PA Profile Name",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+            if (_PAProfiles.ContainsKey(sProfileName))
+            {
+                DialogResult dr = MessageBox.Show(
+                    "The PA profile name " + sProfileName + " already exists.",
+                    "PA Profile Name",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            PAProfile p = new PAProfile(sProfileName, HPSDRModel.FIRST, false); // we dont really want it associated with a model
+            p.ResetGainDefaultsForModel(console.CurrentHPSDRModel); // set the initial values based on current model, all we can do
+
+            _PAProfiles.Add(sProfileName, p);
+
+            updatePAProfileCombo(sProfileName);
+        }
+
+        private void btnDeletePAProfile_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show(
+                "Are you sure you want to delete the " + comboPAProfile.Text + " PA Profile?\n\n" +
+                "The Default profile will be selected if you do.",
+                "Delete Profile?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (dr == DialogResult.No) return;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return;
+
+            _PAProfiles.Remove(p.ProfileName);
+
+            updatePAProfileCombo();
+
+            for (int n = 0; n < comboPAProfile.Items.Count; n++)
+            {
+                string sName = (string)comboPAProfile.Items[n];
+                if (sName.StartsWith("Default"))
+                {
+                    comboPAProfile.SelectedIndex = n;
+                    break;
+                }
+            }
+        }
+
+        private void updateNUDgains(PAProfile p)
+        {
+            if (p == null) return;
+            // set every nud
+            nud160M.Value = (decimal)p.GetGainForBand(Band.B160M);
+            nud80M.Value = (decimal)p.GetGainForBand(Band.B80M);
+            nud60M.Value = (decimal)p.GetGainForBand(Band.B60M);
+            nud40M.Value = (decimal)p.GetGainForBand(Band.B40M);
+            nud30M.Value = (decimal)p.GetGainForBand(Band.B30M);
+            nud20M.Value = (decimal)p.GetGainForBand(Band.B20M);
+            nud17M.Value = (decimal)p.GetGainForBand(Band.B17M);
+            nud15M.Value = (decimal)p.GetGainForBand(Band.B15M);
+            nud12M.Value = (decimal)p.GetGainForBand(Band.B12M);
+            nud10M.Value = (decimal)p.GetGainForBand(Band.B10M);
+            nud6M.Value = (decimal)p.GetGainForBand(Band.B6M);
+
+            nudVHF0.Value = (decimal)p.GetGainForBand(Band.VHF0);
+            nudVHF1.Value = (decimal)p.GetGainForBand(Band.VHF1);
+            nudVHF2.Value = (decimal)p.GetGainForBand(Band.VHF2);
+            nudVHF3.Value = (decimal)p.GetGainForBand(Band.VHF3);
+            nudVHF4.Value = (decimal)p.GetGainForBand(Band.VHF4);
+            nudVHF5.Value = (decimal)p.GetGainForBand(Band.VHF5);
+            nudVHF6.Value = (decimal)p.GetGainForBand(Band.VHF6);
+            nudVHF7.Value = (decimal)p.GetGainForBand(Band.VHF7);
+            nudVHF8.Value = (decimal)p.GetGainForBand(Band.VHF8);
+            nudVHF9.Value = (decimal)p.GetGainForBand(Band.VHF9);
+            nudVHF10.Value = (decimal)p.GetGainForBand(Band.VHF10);
+            nudVHF11.Value = (decimal)p.GetGainForBand(Band.VHF11);
+            nudVHF12.Value = (decimal)p.GetGainForBand(Band.VHF12);
+            nudVHF13.Value = (decimal)p.GetGainForBand(Band.VHF13);
+        }
+        private void btnResetPAProfile_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show(
+                "Are you sure you want to reset the " + comboPAProfile.Text + " PA Profile?\n\n" +
+                "The Default settings for this radio model will be applied if you do.",
+                "Reset Profile?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (dr == DialogResult.No) return;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return;
+
+            p.ResetGainDefaultsForModel(p.Model, chkBypassANANPASettings.Checked);
+
+            updateNUDgains(p);
+        }
+        private int mapBandMetersToIndex(int nMeters)
+        {
+            switch (nMeters)
+            {
+                case 160:
+                    return 0;
+                case 80:
+                    return 1;
+                case 60:
+                    return 2;
+                case 40:
+                    return 3;
+                case 30:
+                    return 4;
+                case 20:
+                    return 5;
+                case 17:
+                    return 6;
+                case 15:
+                    return 7;
+                case 12:
+                    return 8;
+                case 10:
+                    return 9;
+                case 6:
+                    return 10;
+            }
+            return 0;
+        }
+        private int mapBandToMeters(Band b)
+        {
+            switch (b)
+            {
+                case Band.B160M:
+                    return 160;
+                case Band.B80M:
+                    return 80;
+                case Band.B60M:
+                    return 60;
+                case Band.B40M:
+                    return 40;
+                case Band.B30M:
+                    return 30;
+                case Band.B20M:
+                    return 20;
+                case Band.B17M:
+                    return 17;
+                case Band.B15M:
+                    return 15;
+                case Band.B12M:
+                    return 12;
+                case Band.B10M:
+                    return 10;
+                case Band.B6M:
+                    return 6;
+            }
+            return 0;
+        }
+        private void nudPAProfileGain_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing || _PAProfiles == null) return;
+
+            NumericUpDownTS nud = sender as NumericUpDownTS;
+            if (nud == null) return;
+
+            //nud160M
+            //nudVHF0
+
+            bool bVHF = nud.Name.StartsWith("nudVHF");
+            int nNumber = bVHF ? int.Parse(nud.Name.Substring(6)) : int.Parse(nud.Name.Substring(3, nud.Name.Length - 4));
+
+            //Debug.Print("{0} {1}", bVHF, nNumber);
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return;
+
+            Band b;
+            if (bVHF)
+                b = (Band)((int)Band.VHF0 + nNumber);
+            else
+                b = (Band)((int)Band.B160M + mapBandMetersToIndex(nNumber));
+
+            float fOld = p.GetGainForBand(b);
+            p.SetGainForBand(b, (float)nud.Value);
+
+            if (p.GetGainForBand(b) != fOld) console.PWR = console.PWR; // update the power, which causes these gain values to be queried
+        }
+        public float GetPAGain(Band b)
+        {
+            if (_PAProfiles == null) return 1000;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return 1000;
+
+            return p.GetGainForBand(b);
+        }
+
+        private Dictionary<string, PAProfile> _PAProfiles;
+        private void initPAProfiles()
+        {
+            if (_PAProfiles == null)
+                _PAProfiles = new Dictionary<string, PAProfile>();
+            else
+                _PAProfiles.Clear();
+
+            PAProfile p;
+
+            // add a default profile for every radio model
+            for (int n = 0; n < (int)HPSDRModel.LAST; n++)
+            {
+                HPSDRModel model = (HPSDRModel)n;
+                p = new PAProfile("Default - " + model.ToString(), model, true);
+                _PAProfiles.Add(p.ProfileName, p);
+            }
+
+            // add a bypass default, which is used when in PAbypass (part of special calibrate)
+            p = new PAProfile("Default - PA BYPASS", HPSDRModel.FIRST, true); // no specific model for this
+            p.ResetGainDefaultsForModel(p.Model, true);
+            _PAProfiles.Add(p.ProfileName, p);
+
+            updatePAProfileCombo();
+        }
+        private PAProfile getPAProfile(string sName)
+        {
+            if (_PAProfiles == null || _PAProfiles.Count == 0 || !_PAProfiles.ContainsKey(sName)) return null;
+
+            return _PAProfiles[sName];
+        }
+        private void updatePAProfileCombo(string sSelectProfile = "")
+        {
+            if (_PAProfiles == null) return;
+
+            // update combo
+            comboPAProfile.Items.Clear();
+
+            foreach (KeyValuePair<string, PAProfile> pair in _PAProfiles)
+            {
+                PAProfile p = pair.Value;
+
+                if ((p.IsDefault && p.Model == console.CurrentHPSDRModel) || !p.IsDefault) // add any that are default for this current model, or are not default, ie user added
+                    comboPAProfile.Items.Add(p.ProfileName);
+            }
+
+            // select specific profile, or first Default if nothing selected
+            if (comboPAProfile.Text == "" || sSelectProfile != "")
+            {
+                for (int n = 0; n < comboPAProfile.Items.Count; n++)
+                {
+                    string sName = (string)comboPAProfile.Items[n];
+
+                    if (sSelectProfile == "" && sName.StartsWith("Default"))
+                    {
+                        comboPAProfile.SelectedIndex = n;
+                        break;
+                    }
+                    else if (sSelectProfile == sName)
+                    {
+                        comboPAProfile.SelectedIndex = n;
+                        break;
+                    }
+                }
+            }
+        }
+        public void PAProfileEnableControls(bool tx)
+        {
+            //prevent profile switch during a tx
+            //user can only tweak the NUD's
+
+            //TODO: swap to delegate for mox, but not used at all in setup yet
+            //
+            if (_PAProfiles == null) return;
+
+            comboPAProfile.Enabled = !tx;
+            btnNewPAProfile.Enabled = !tx;
+
+            if (tx)
+            {
+                btnDeletePAProfile.Enabled = false;
+                btnResetPAProfile.Enabled = false;
+            }
+            else
+            {
+                PAProfile p = getPAProfile(comboPAProfile.Text);
+                if (p == null)
+                {
+                    btnDeletePAProfile.Enabled = false;
+                    btnResetPAProfile.Enabled = false;
+                }
+                else
+                {
+                    btnDeletePAProfile.Enabled = p.ProfileName.StartsWith("Default") ? false : true; // unable to delete Default
+                    btnResetPAProfile.Enabled = true;
+                }
+            }
+        }
+        private float updateFromOld(string sKey, ref Dictionary<string, string> getDict)
+        {
+            if (getDict.ContainsKey(sKey)) return 1000;
+            return float.Parse(getDict[sKey]);
+        }
+        private void handleOldPAGainSettings(ref Dictionary<string, string> getDict)
+        {
+            if (getDict == null) return;
+            // here we have to map all the old settings, ~200 variables into the new profile system, and remove them
+
+            // use the existance of ProfileCount as a check to see we have already done this
+            if (getDict.ContainsKey(""))
+            {
+                foreach (KeyValuePair<string, PAProfile> kvp in _PAProfiles)
+                {
+                    PAProfile p = kvp.Value;
+                    switch (p.Model)
+                    {
+                        case HPSDRModel.ANAN10:
+                        case HPSDRModel.ANAN10E:
+                            for (int n = 0; n < (int)Band.LAST; n++)
+                            {
+                                Band b = (Band)((int)Band.B160M + n);
+                                string sSetting = "udANAN10PAGain" + mapBandToMeters(b).ToString();
+                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
+                            }
+                            break;
+                        case HPSDRModel.ANAN100:
+                            for (int n = 0; n < (int)Band.LAST; n++)
+                            {
+                                Band b = (Band)((int)Band.B160M + n);
+                                string sSetting = "udANAN100PAGain" + mapBandToMeters(b).ToString();
+                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
+                            }
+                            break;
+                        case HPSDRModel.ANAN100B:
+                            for (int n = 0; n < (int)Band.LAST; n++)
+                            {
+                                Band b = (Band)((int)Band.B160M + n);
+                                string sSetting = "udANAN100BPAGain" + mapBandToMeters(b).ToString();
+                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
+                            }
+                            break;
+                        case HPSDRModel.ANAN100D:
+                            for (int n = 0; n < (int)Band.LAST; n++)
+                            {
+                                Band b = (Band)((int)Band.B160M + n);
+                                string sSetting = "udANANPAGain" + mapBandToMeters(b).ToString();
+                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
+                            }
+                            break;
+                        case HPSDRModel.ANAN200D:                            
+                            for (int n = 0; n < (int)Band.LAST; n++)
+                            {
+                                Band b = (Band)((int)Band.B160M + n);
+                                string sSetting = "udOrionPAGain" + mapBandToMeters(b).ToString();
+                                p.SetGainForBand(b, updateFromOld(sSetting, ref getDict));
+                            }
+                            break;
+                        case HPSDRModel.ANAN7000D:
+                            break;
+                        case HPSDRModel.ANAN8000D:
+                            break;
+                        case HPSDRModel.HERMES:
+                            break;
+                        case HPSDRModel.HPSDR:
+                            break;
+                        case HPSDRModel.ORIONMKII:
+                            break;
+                    }
+                }
+            }
+        }
+
+        public class PAProfile
+        {
+            private string _sName = "";
+            private HPSDRModel _model;
+            private bool _default;
+
+            public string ProfileName
+            {
+                get { return _sName; }
+            }
+            public bool IsDefault
+            {
+                get { return _default; }
+            }
+            public HPSDRModel Model
+            {
+                get { return _model; }
+            }
+            private float[] _gainValues;            
+
+            public PAProfile(string sName, HPSDRModel model, bool isDefault)
+            {
+                _sName = sName;
+                _model = model;
+                _default = isDefault;
+                _gainValues = new float[(int)Band.LAST];
+
+                // set to 0dB
+                for (int n = 0; n < (int)Band.LAST; n++)
+                    _gainValues[n] = 1000;
+
+                ResetGainDefaultsForModel(_model);
+            }
+
+            public void DataFromString(string sData)
+            {
+                string[] sSplit = sData.Split('|');
+                if(sSplit.Length == (int)Band.LAST + 3) // +3 as we have 3 previous settings and the gains
+                {
+                    _sName = sSplit[0];
+                    _model = (HPSDRModel)Enum.Parse(typeof(HPSDRModel), sSplit[1]);
+                    _default = bool.Parse(sSplit[2]);
+
+                    for (int n = 0; n < (int)Band.LAST; n++)
+                        _gainValues[n] = float.Parse(sSplit[n + 3]);  // +3 as we have 3 previous settings, name, model, default
+                }
+            }
+            public string DataToString()
+            {
+                string sData = _sName + "|";
+                sData += ((int)_model).ToString() + "|";
+                sData += _default.ToString() + "|";
+
+                for (int n = 0; n < (int)Band.LAST; n++)
+                    sData += _gainValues[n].ToString() + "|";
+
+                sData = sData.TrimEnd('|');
+
+                return sData;
+            }
+            public float GetGainForBand(Band b)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return 1000;
+
+                return _gainValues[(int)b];
+            }
+            public void SetGainForBand(Band b, float gain)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return;
+
+                _gainValues[(int)b] = gain;
+            }            
+            public void ResetGainDefaultsForModel(HPSDRModel model, bool bypasPASettings = false)
+            {
+                _model = model;
+
+                if (model == HPSDRModel.HERMES || model == HPSDRModel.HPSDR || model == HPSDRModel.ORIONMKII || bypasPASettings)// || (model == HPSDRModel.ANAN100D && bypasPASettings))
+                {
+                    SetGainForBand(Band.B160M, 41.0f);
+                    SetGainForBand(Band.B80M, 41.2f);
+                    SetGainForBand(Band.B60M, 41.3f);
+                    SetGainForBand(Band.B40M, 41.3f);
+                    SetGainForBand(Band.B30M, 41.0f);
+                    SetGainForBand(Band.B20M, 40.5f);
+                    SetGainForBand(Band.B17M, 39.9f);
+                    SetGainForBand(Band.B15M, 38.8f);
+                    SetGainForBand(Band.B12M, 38.8f);
+                    SetGainForBand(Band.B10M, 38.8f);
+                    SetGainForBand(Band.B6M, 38.8f);
+
+                    SetGainForBand(Band.VHF0, 56.2f);
+                    SetGainForBand(Band.VHF1, 56.2f);
+                    SetGainForBand(Band.VHF2, 56.2f);
+                    SetGainForBand(Band.VHF3, 56.2f);
+                    SetGainForBand(Band.VHF4, 56.2f);
+                    SetGainForBand(Band.VHF5, 56.2f);
+                    SetGainForBand(Band.VHF6, 56.2f);
+                    SetGainForBand(Band.VHF7, 56.2f);
+                    SetGainForBand(Band.VHF8, 56.2f);
+                    SetGainForBand(Band.VHF9, 56.2f);
+                    SetGainForBand(Band.VHF10, 56.2f);
+                    SetGainForBand(Band.VHF11, 56.2f);
+                    SetGainForBand(Band.VHF12, 56.2f);
+                    SetGainForBand(Band.VHF13, 56.2f);
+
+                    return;
+                }
+
+                if (model == HPSDRModel.ANAN10 || model == HPSDRModel.ANAN10E)
+                {
+                    SetGainForBand(Band.B160M, 41.0f);
+                    SetGainForBand(Band.B80M, 41.2f);
+                    SetGainForBand(Band.B60M, 41.3f);
+                    SetGainForBand(Band.B40M, 41.3f);
+                    SetGainForBand(Band.B30M, 41.0f);
+                    SetGainForBand(Band.B20M, 40.5f);
+                    SetGainForBand(Band.B17M, 39.9f);
+                    SetGainForBand(Band.B15M, 38.8f);
+                    SetGainForBand(Band.B12M, 38.8f);
+                    SetGainForBand(Band.B10M, 38.8f);
+                    SetGainForBand(Band.B6M, 38.8f);
+
+                    SetGainForBand(Band.VHF0, 56.2f);
+                    SetGainForBand(Band.VHF1, 56.2f);
+                    SetGainForBand(Band.VHF2, 56.2f);
+                    SetGainForBand(Band.VHF3, 56.2f);
+                    SetGainForBand(Band.VHF4, 56.2f);
+                    SetGainForBand(Band.VHF5, 56.2f);
+                    SetGainForBand(Band.VHF6, 56.2f);
+                    SetGainForBand(Band.VHF7, 56.2f);
+                    SetGainForBand(Band.VHF8, 56.2f);
+                    SetGainForBand(Band.VHF9, 56.2f);
+                    SetGainForBand(Band.VHF10, 56.2f);
+                    SetGainForBand(Band.VHF11, 56.2f);
+                    SetGainForBand(Band.VHF12, 56.2f);
+                    SetGainForBand(Band.VHF13, 56.2f);
+
+                    return;
+                }
+
+                if (model == HPSDRModel.ANAN100)
+                {
+                    SetGainForBand(Band.B160M, 50.0f);
+                    SetGainForBand(Band.B80M, 50.5f);
+                    SetGainForBand(Band.B60M, 50.5f);
+                    SetGainForBand(Band.B40M, 50.0f);
+                    SetGainForBand(Band.B30M, 49.5f);
+                    SetGainForBand(Band.B20M, 48.5f);
+                    SetGainForBand(Band.B17M, 48.0f);
+                    SetGainForBand(Band.B15M, 47.5f);
+                    SetGainForBand(Band.B12M, 46.5f);
+                    SetGainForBand(Band.B10M, 42.0f);
+                    SetGainForBand(Band.B6M, 43.0f);
+
+                    SetGainForBand(Band.VHF0, 56.2f);
+                    SetGainForBand(Band.VHF1, 56.2f);
+                    SetGainForBand(Band.VHF2, 56.2f);
+                    SetGainForBand(Band.VHF3, 56.2f);
+                    SetGainForBand(Band.VHF4, 56.2f);
+                    SetGainForBand(Band.VHF5, 56.2f);
+                    SetGainForBand(Band.VHF6, 56.2f);
+                    SetGainForBand(Band.VHF7, 56.2f);
+                    SetGainForBand(Band.VHF8, 56.2f);
+                    SetGainForBand(Band.VHF9, 56.2f);
+                    SetGainForBand(Band.VHF10, 56.2f);
+                    SetGainForBand(Band.VHF11, 56.2f);
+                    SetGainForBand(Band.VHF12, 56.2f);
+                    SetGainForBand(Band.VHF13, 56.2f);
+
+                    return;
+                }
+
+                if (model == HPSDRModel.ANAN100B)
+                {
+                    SetGainForBand(Band.B160M, 50.0f);
+                    SetGainForBand(Band.B80M, 50.5f);
+                    SetGainForBand(Band.B60M, 50.5f);
+                    SetGainForBand(Band.B40M, 50.0f);
+                    SetGainForBand(Band.B30M, 49.5f);
+                    SetGainForBand(Band.B20M, 48.5f);
+                    SetGainForBand(Band.B17M, 48.0f);
+                    SetGainForBand(Band.B15M, 47.5f);
+                    SetGainForBand(Band.B12M, 46.5f);
+                    SetGainForBand(Band.B10M, 42.0f);
+                    SetGainForBand(Band.B6M, 43.0f);
+
+                    SetGainForBand(Band.VHF0, 56.2f);
+                    SetGainForBand(Band.VHF1, 56.2f);
+                    SetGainForBand(Band.VHF2, 56.2f);
+                    SetGainForBand(Band.VHF3, 56.2f);
+                    SetGainForBand(Band.VHF4, 56.2f);
+                    SetGainForBand(Band.VHF5, 56.2f);
+                    SetGainForBand(Band.VHF6, 56.2f);
+                    SetGainForBand(Band.VHF7, 56.2f);
+                    SetGainForBand(Band.VHF8, 56.2f);
+                    SetGainForBand(Band.VHF9, 56.2f);
+                    SetGainForBand(Band.VHF10, 56.2f);
+                    SetGainForBand(Band.VHF11, 56.2f);
+                    SetGainForBand(Band.VHF12, 56.2f);
+                    SetGainForBand(Band.VHF13, 56.2f);
+
+                    return;
+                }
+
+                if (model == HPSDRModel.ANAN100D)// && !bypasPASettings)
+                {
+                    SetGainForBand(Band.B160M, 49.5f);
+                    SetGainForBand(Band.B80M, 50.5f);
+                    SetGainForBand(Band.B60M, 50.5f);
+                    SetGainForBand(Band.B40M, 50.0f);
+                    SetGainForBand(Band.B30M, 49.0f);
+                    SetGainForBand(Band.B20M, 48.0f);
+                    SetGainForBand(Band.B17M, 47.0f);
+                    SetGainForBand(Band.B15M, 46.5f);
+                    SetGainForBand(Band.B12M, 46.0f);
+                    SetGainForBand(Band.B10M, 43.5f);
+                    SetGainForBand(Band.B6M, 43.0f);
+
+                    SetGainForBand(Band.VHF0, 56.2f);
+                    SetGainForBand(Band.VHF1, 56.2f);
+                    SetGainForBand(Band.VHF2, 56.2f);
+                    SetGainForBand(Band.VHF3, 56.2f);
+                    SetGainForBand(Band.VHF4, 56.2f);
+                    SetGainForBand(Band.VHF5, 56.2f);
+                    SetGainForBand(Band.VHF6, 56.2f);
+                    SetGainForBand(Band.VHF7, 56.2f);
+                    SetGainForBand(Band.VHF8, 56.2f);
+                    SetGainForBand(Band.VHF9, 56.2f);
+                    SetGainForBand(Band.VHF10, 56.2f);
+                    SetGainForBand(Band.VHF11, 56.2f);
+                    SetGainForBand(Band.VHF12, 56.2f);
+                    SetGainForBand(Band.VHF13, 56.2f);
+
+                    return;
+                }
+
+                if (model == HPSDRModel.ANAN200D)// && !bypasPASettings)
+                {
+                    SetGainForBand(Band.B160M, 49.5f);
+                    SetGainForBand(Band.B80M, 50.5f);
+                    SetGainForBand(Band.B60M, 50.5f);
+                    SetGainForBand(Band.B40M, 50.0f);
+                    SetGainForBand(Band.B30M, 49.0f);
+                    SetGainForBand(Band.B20M, 48.0f);
+                    SetGainForBand(Band.B17M, 47.0f);
+                    SetGainForBand(Band.B15M, 46.5f);
+                    SetGainForBand(Band.B12M, 46.0f);
+                    SetGainForBand(Band.B10M, 43.5f);
+                    SetGainForBand(Band.B6M, 43.0f);
+
+                    SetGainForBand(Band.VHF0, 56.2f);
+                    SetGainForBand(Band.VHF1, 56.2f);
+                    SetGainForBand(Band.VHF2, 56.2f);
+                    SetGainForBand(Band.VHF3, 56.2f);
+                    SetGainForBand(Band.VHF4, 56.2f);
+                    SetGainForBand(Band.VHF5, 56.2f);
+                    SetGainForBand(Band.VHF6, 56.2f);
+                    SetGainForBand(Band.VHF7, 56.2f);
+                    SetGainForBand(Band.VHF8, 56.2f);
+                    SetGainForBand(Band.VHF9, 56.2f);
+                    SetGainForBand(Band.VHF10, 56.2f);
+                    SetGainForBand(Band.VHF11, 56.2f);
+                    SetGainForBand(Band.VHF12, 56.2f);
+                    SetGainForBand(Band.VHF13, 56.2f);
+
+                    return;
+                }
+
+                if (model == HPSDRModel.ANAN8000D)
+                {
+                    SetGainForBand(Band.B160M, 50.0f);
+                    SetGainForBand(Band.B80M, 50.5f);
+                    SetGainForBand(Band.B60M, 50.5f);
+                    SetGainForBand(Band.B40M, 50.0f);
+                    SetGainForBand(Band.B30M, 49.5f);
+                    SetGainForBand(Band.B20M, 48.5f);
+                    SetGainForBand(Band.B17M, 48.0f);
+                    SetGainForBand(Band.B15M, 47.5f);
+                    SetGainForBand(Band.B12M, 46.5f);
+                    SetGainForBand(Band.B10M, 42.0f);
+                    SetGainForBand(Band.B6M, 43.0f);
+
+                    SetGainForBand(Band.VHF0, 56.2f);
+                    SetGainForBand(Band.VHF1, 56.2f);
+                    SetGainForBand(Band.VHF2, 56.2f);
+                    SetGainForBand(Band.VHF3, 56.2f);
+                    SetGainForBand(Band.VHF4, 56.2f);
+                    SetGainForBand(Band.VHF5, 56.2f);
+                    SetGainForBand(Band.VHF6, 56.2f);
+                    SetGainForBand(Band.VHF7, 56.2f);
+                    SetGainForBand(Band.VHF8, 56.2f);
+                    SetGainForBand(Band.VHF9, 56.2f);
+                    SetGainForBand(Band.VHF10, 56.2f);
+                    SetGainForBand(Band.VHF11, 56.2f);
+                    SetGainForBand(Band.VHF12, 56.2f);
+                    SetGainForBand(Band.VHF13, 56.2f);
+
+                    return;
+                }
+
+                if (model == HPSDRModel.ANAN7000D)
+                {
+                    SetGainForBand(Band.B160M, 47.9f);
+                    SetGainForBand(Band.B80M, 50.5f);
+                    SetGainForBand(Band.B60M, 50.8f);
+                    SetGainForBand(Band.B40M, 50.8f);
+                    SetGainForBand(Band.B30M, 50.9f);
+                    SetGainForBand(Band.B20M, 50.9f);
+                    SetGainForBand(Band.B17M, 50.5f);
+                    SetGainForBand(Band.B15M, 47.0f);
+                    SetGainForBand(Band.B12M, 47.9f);
+                    SetGainForBand(Band.B10M, 46.5f);
+                    SetGainForBand(Band.B6M, 44.6f);
+
+                    SetGainForBand(Band.VHF0, 63.1f);
+                    SetGainForBand(Band.VHF1, 63.1f);
+                    SetGainForBand(Band.VHF2, 63.1f);
+                    SetGainForBand(Band.VHF3, 63.1f);
+                    SetGainForBand(Band.VHF4, 63.1f);
+                    SetGainForBand(Band.VHF5, 63.1f);
+                    SetGainForBand(Band.VHF6, 63.1f);
+                    SetGainForBand(Band.VHF7, 63.1f);
+                    SetGainForBand(Band.VHF8, 63.1f);
+                    SetGainForBand(Band.VHF9, 63.1f);
+                    SetGainForBand(Band.VHF10, 63.1f);
+                    SetGainForBand(Band.VHF11, 63.1f);
+                    SetGainForBand(Band.VHF12, 63.1f);
+                    SetGainForBand(Band.VHF13, 63.1f);
+
+                    //return;
+                }
+
+                //if (model == HPSDRModel.HERMES)
+                //{
+                //    SetGainForBand(Band.B160M, 41.0f);
+                //    SetGainForBand(Band.B80M, 41.2f);
+                //    SetGainForBand(Band.B60M, 41.3f);
+                //    SetGainForBand(Band.B40M, 41.3f);
+                //    SetGainForBand(Band.B30M, 41.0f);
+                //    SetGainForBand(Band.B20M, 40.5f);
+                //    SetGainForBand(Band.B17M, 39.9f);
+                //    SetGainForBand(Band.B15M, 38.8f);
+                //    SetGainForBand(Band.B12M, 38.8f);
+                //    SetGainForBand(Band.B10M, 38.8f);
+                //    SetGainForBand(Band.B6M, 38.8f);
+
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
+
+                //    //return;
+                //}
+            }
         }
     }
 
