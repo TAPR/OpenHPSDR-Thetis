@@ -1379,6 +1379,7 @@ namespace Thetis
             if (bGet)
             {
                 _oldSettings.Clear();
+
                 if (getDict.ContainsKey("chkTXTunePower"))
                 {
                     if (bool.Parse(getDict["chkTXTunePower"]))
@@ -1395,6 +1396,8 @@ namespace Thetis
                         radUseFixedDrive2Tone.Checked = true;
                     _oldSettings.Add("chkTestIMDPower");
                 }
+
+                handleOldPAGainSettings();
             }
             else
             {
@@ -23737,6 +23740,41 @@ namespace Thetis
                 }
             }
         }
+        private void handleOldPAGainSettings()
+        {
+            // here we have to map all the old settings, ~200 variables into the new profile system
+
+            foreach (KeyValuePair<string, PAProfile> kvp in _PAProfiles)
+            {
+                PAProfile p = kvp.Value;
+                switch (p.Model)
+                {
+                    case HPSDRModel.ANAN10:
+                        break;
+                    case HPSDRModel.ANAN100:
+                        break;
+                    case HPSDRModel.ANAN100B:
+                        break;
+                    case HPSDRModel.ANAN100D:
+                        break;
+                    case HPSDRModel.ANAN10E:
+                        break;
+                    case HPSDRModel.ANAN200D:
+                        break;
+                    case HPSDRModel.ANAN7000D:
+                        break;
+                    case HPSDRModel.ANAN8000D:
+                        break;
+                    case HPSDRModel.HERMES:
+                        break;
+                    case HPSDRModel.HPSDR:
+                        break;
+                    case HPSDRModel.ORIONMKII:
+                        break;
+                }
+            }
+        }
+
         public class PAProfile
         {
             private string _sName = "";
