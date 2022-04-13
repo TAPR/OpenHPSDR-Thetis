@@ -24161,13 +24161,42 @@ namespace Thetis
 
                 ResetGainDefaultsForModel(_model);
             }
-
+            private string base64Encode(string plainText)
+            {
+                try
+                {
+                    byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+                    return Convert.ToBase64String(plainTextBytes);
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+            private string base64Decode(string base64EncodedData)
+            {
+                try
+                {
+                    byte[] base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+                    return Encoding.UTF8.GetString(base64EncodedBytes);
+                }
+                catch
+                {
+                    return "";
+                }
+            }
             public void DataFromString(string sData)
             {
                 string[] sSplit = sData.Split('|');
                 if(sSplit.Length == (int)Band.LAST + 3) // +3 as we have 3 previous settings and the gains
                 {
-                    _sName = sSplit[0];
+                    if (base64Encode(base64Decode(sSplit[0])) == sSplit[0])
+                    {
+                        _sName = base64Decode(sSplit[0]);
+                    }
+                    else
+                        _sName = sSplit[0];
+
                     _model = (HPSDRModel)Enum.Parse(typeof(HPSDRModel), sSplit[1]);
                     _default = bool.Parse(sSplit[2]);
 
@@ -24177,7 +24206,7 @@ namespace Thetis
             }
             public string DataToString()
             {
-                string sData = _sName + "|";
+                string sData = base64Encode(_sName) + "|";
                 sData += ((int)_model).ToString() + "|";
                 sData += _default.ToString() + "|";
 
