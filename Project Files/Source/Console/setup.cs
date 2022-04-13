@@ -16825,7 +16825,7 @@ namespace Thetis
                 //grpPAGainByBand.Visible = true;
 
                 _sAutoCailbratePAOldSelectedProfile = comboPAProfile.Text;
-                updatePAProfileCombo("Default - PA BYPASS"); //MW0LGE_22b
+                updatePAProfileCombo(_sPA_PROFILE_BYPASS); //MW0LGE_22b
             }
             else
             {
@@ -23508,7 +23508,8 @@ namespace Thetis
             console.SendLimitedPowerLevels = chkLimitPowerCATTCIMsgs.Checked;
         }
 
-        private void updateControls(PAProfile p)
+        private const string _sPA_PROFILE_BYPASS = "Default - PA BYPASS";
+        private void updatePAControls(PAProfile p)
         {
             if (p == null) return;
 
@@ -23518,6 +23519,17 @@ namespace Thetis
                 grpGainByBandPA.Text = p.ProfileName + " - PA Gain By Band (dB)";
 
             btnDeletePAProfile.Enabled = p.ProfileName.StartsWith("Default") ? false : true; // unable to delete Default
+
+            if(p.ProfileName == _sPA_PROFILE_BYPASS)
+            {
+                btnNewPAProfile.Enabled = false;
+                btnCopyPAProfile.Enabled = false;
+            }
+            else
+            {
+                btnNewPAProfile.Enabled = true;
+                btnCopyPAProfile.Enabled = true;
+            }
         }
         private void comboPAProfile_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -23525,17 +23537,13 @@ namespace Thetis
 
             if (p != null)
             {
-                updateControls(p);
+                updatePAControls(p);
                 updateNUDgains(p);
             }
         }
 
-        private void btnNewPAProfile_Click(object sender, EventArgs e)
+        private bool validatePAProfileName(string sProfileName)
         {
-            string sProfileName = InputBox.Show("New Profile", "Please enter a profile name:", "");
-
-            if (sProfileName == "") return;
-
             if (sProfileName.StartsWith("Default"))
             {
                 DialogResult dr = MessageBox.Show(
@@ -23543,7 +23551,7 @@ namespace Thetis
                     "PA Profile Name",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-                return;
+                return false;
             }
             if (_PAProfiles.ContainsKey(sProfileName))
             {
@@ -23552,8 +23560,34 @@ namespace Thetis
                     "PA Profile Name",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-                return;
+                return false;
             }
+
+            return true;
+        }
+        private void btnCopyPAProfile_Click(object sender, EventArgs e)
+        {
+            PAProfile curP = getPAProfile(comboPAProfile.Text);
+            if (curP == null) return;
+
+            string sProfileName = InputBox.Show("Copy Profile - " + curP.ProfileName, "Please enter a profile name:", "");
+
+            if (sProfileName == "") return;
+            if (!validatePAProfileName(sProfileName)) return;
+
+            PAProfile newP = new PAProfile(sProfileName, HPSDRModel.FIRST, false); // we dont really want it associated with a model
+            newP.CopyGains(curP);
+
+            _PAProfiles.Add(sProfileName, newP);
+
+            updatePAProfileCombo(sProfileName);
+        }
+        private void btnNewPAProfile_Click(object sender, EventArgs e)
+        {
+            string sProfileName = InputBox.Show("New Profile", "Please enter a profile name:", "");
+
+            if (sProfileName == "") return;
+            if (!validatePAProfileName(sProfileName)) return;
 
             PAProfile p = new PAProfile(sProfileName, HPSDRModel.FIRST, false); // we dont really want it associated with a model
             p.ResetGainDefaultsForModel(console.CurrentHPSDRModel); // set the initial values based on current model, all we can do
@@ -23565,6 +23599,9 @@ namespace Thetis
 
         private void btnDeletePAProfile_Click(object sender, EventArgs e)
         {
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return;
+
             DialogResult dr = MessageBox.Show(
                 "Are you sure you want to delete the " + comboPAProfile.Text + " PA Profile?\n\n" +
                 "The Default profile will be selected if you do.",
@@ -23573,9 +23610,6 @@ namespace Thetis
                 MessageBoxIcon.Warning);
 
             if (dr == DialogResult.No) return;
-
-            PAProfile p = getPAProfile(comboPAProfile.Text);
-            if (p == null) return;
 
             _PAProfiles.Remove(p.ProfileName);
 
@@ -23763,7 +23797,7 @@ namespace Thetis
             }
 
             // add a bypass default, which is used when in PAbypass (part of special calibrate)
-            p = new PAProfile("Default - PA BYPASS", HPSDRModel.FIRST, true); // no specific model for this
+            p = new PAProfile(_sPA_PROFILE_BYPASS, HPSDRModel.FIRST, true); // no specific model for this
             p.ResetGainDefaultsForModel(p.Model, true);
             _PAProfiles.Add(p.ProfileName, p);
         }
@@ -23784,9 +23818,9 @@ namespace Thetis
             {
                 PAProfile p = pair.Value;
 
-                if(sSelectProfile == "Default - PA BYPASS")
+                if(sSelectProfile == _sPA_PROFILE_BYPASS)
                 {
-                    if(p.ProfileName == "Default - PA BYPASS")
+                    if(p.ProfileName == _sPA_PROFILE_BYPASS)
                         comboPAProfile.Items.Add(p.ProfileName);
                 }
                 else
@@ -23856,6 +23890,7 @@ namespace Thetis
             {
                 btnDeletePAProfile.Enabled = false;
                 btnResetPAProfile.Enabled = false;
+                btnCopyPAProfile.Enabled = false;
             }
             else
             {
@@ -23864,11 +23899,21 @@ namespace Thetis
                 {
                     btnDeletePAProfile.Enabled = false;
                     btnResetPAProfile.Enabled = false;
+                    btnCopyPAProfile.Enabled = false;
                 }
                 else
                 {
                     btnDeletePAProfile.Enabled = p.ProfileName.StartsWith("Default") ? false : true; // unable to delete Default
-                    btnResetPAProfile.Enabled = true;
+                    if (p.ProfileName == _sPA_PROFILE_BYPASS)
+                    {
+                        btnNewPAProfile.Enabled = false;
+                        btnCopyPAProfile.Enabled = false;
+                    }
+                    else
+                    {
+                        btnNewPAProfile.Enabled = true;
+                        btnCopyPAProfile.Enabled = true;
+                    }
                 }
             }
         }
@@ -24039,7 +24084,7 @@ namespace Thetis
                         break;
                     case HPSDRModel.FIRST: // special case for bypass
                     case HPSDRModel.HPSDR:
-                        if (p.Model == HPSDRModel.HPSDR || (p.Model == HPSDRModel.FIRST && p.ProfileName == "Default - PA BYPASS"))
+                        if (p.Model == HPSDRModel.HPSDR || (p.Model == HPSDRModel.FIRST && p.ProfileName == _sPA_PROFILE_BYPASS))
                         {
                             for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                             {
@@ -24111,7 +24156,7 @@ namespace Thetis
 
                 // set to 0dB
                 for (int n = 0; n < (int)Band.LAST; n++)
-                    _gainValues[n] = 1000;
+                    _gainValues[n] = 100;
 
                 ResetGainDefaultsForModel(_model);
             }
@@ -24154,6 +24199,15 @@ namespace Thetis
 
                 _gainValues[(int)b] = gain;
             }            
+            public void CopyGains(PAProfile sourceProfile)
+            {
+                if (sourceProfile == null) return;
+
+                for(int n = 0; n < _gainValues.Length; n++)
+                {
+                    _gainValues[n] = sourceProfile._gainValues[n];
+                }
+            }
             public void ResetGainDefaultsForModel(HPSDRModel model, bool bypasPASettings = false)
             {
                 _model = model;

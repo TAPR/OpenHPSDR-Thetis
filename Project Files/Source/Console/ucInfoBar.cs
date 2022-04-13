@@ -361,12 +361,17 @@ namespace Thetis
         }
         private void onWarning(object sender, System.Timers.ElapsedEventArgs e)
         {
+            if (_shutDown) return;
+            if (this.IsDisposed || this.Disposing) return;
+            if (lblWarning.IsDisposed || lblWarning.Disposing) return;
+            
             lblWarning.Visible = false;
         }
         private Color _lastColor = Color.SeaGreen;
         private void onTick(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (!_psEnabled || _shutDown) return;
+            if (this.IsDisposed || this.Disposing) return;
 
             Color c = lblFB.BackColor;
 

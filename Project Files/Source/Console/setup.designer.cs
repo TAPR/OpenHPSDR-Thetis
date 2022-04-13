@@ -3270,6 +3270,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.btnCopyPAProfile = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -40261,6 +40262,7 @@
             // 
             // grpGainByBandPA
             // 
+            this.grpGainByBandPA.Controls.Add(this.btnCopyPAProfile);
             this.grpGainByBandPA.Controls.Add(this.btnNewPAProfile);
             this.grpGainByBandPA.Controls.Add(this.labelTS618);
             this.grpGainByBandPA.Controls.Add(this.nudVHF13);
@@ -40317,7 +40319,7 @@
             this.grpGainByBandPA.Controls.Add(this.comboPAProfile);
             this.grpGainByBandPA.Location = new System.Drawing.Point(25, 25);
             this.grpGainByBandPA.Name = "grpGainByBandPA";
-            this.grpGainByBandPA.Size = new System.Drawing.Size(383, 335);
+            this.grpGainByBandPA.Size = new System.Drawing.Size(401, 335);
             this.grpGainByBandPA.TabIndex = 119;
             this.grpGainByBandPA.TabStop = false;
             this.grpGainByBandPA.Text = "PA Gain By Band (dB)";
@@ -51367,6 +51369,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // btnCopyPAProfile
+            // 
+            this.btnCopyPAProfile.Image = null;
+            this.btnCopyPAProfile.Location = new System.Drawing.Point(319, 27);
+            this.btnCopyPAProfile.Name = "btnCopyPAProfile";
+            this.btnCopyPAProfile.Size = new System.Drawing.Size(65, 23);
+            this.btnCopyPAProfile.TabIndex = 166;
+            this.btnCopyPAProfile.Text = "Copy";
+            this.toolTip1.SetToolTip(this.btnCopyPAProfile, "Copy a profile to a new name");
+            this.btnCopyPAProfile.UseVisualStyleBackColor = true;
+            this.btnCopyPAProfile.Click += new System.EventHandler(this.btnCopyPAProfile_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55687,5 +55701,6 @@
         private ComboBoxTS comboPAProfile;
         private ButtonTS btnNewPAProfile;
         private CheckBoxTS chkPANewCal;
+        private ButtonTS btnCopyPAProfile;
     }
 }
