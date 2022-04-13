@@ -10876,20 +10876,29 @@ namespace Thetis
             progress.SetPercent(0.0f);
 
             float[] band_freqs = { 1.85f, 3.75f, 5.3715f, 7.15f, 10.125f, 14.175f, 18.1f, 21.300f, 24.9f, 28.4f, 50.4f };
-
+            Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M, Band.B17M, Band.B15M, Band.B12M, Band.B10M, Band.B6M }; //MW0LGE_22b
             int[] max_pwr = { 100, 100, 100, 100, 100, 100, 100, 100, 75, 75, 75 };
 
-            if (run[0]) SetupForm.PAGain160 = 49.0f;
-            if (run[1]) SetupForm.PAGain80 = 49.0f;
-            if (run[2]) SetupForm.PAGain60 = 49.0f;
-            if (run[3]) SetupForm.PAGain40 = 49.0f;
-            if (run[4]) SetupForm.PAGain30 = 49.0f;
-            if (run[5]) SetupForm.PAGain20 = 49.0f;
-            if (run[6]) SetupForm.PAGain17 = 49.0f;
-            if (run[7]) SetupForm.PAGain15 = 49.0f;
-            if (run[8]) SetupForm.PAGain12 = 49.0f;
-            if (run[9]) SetupForm.PAGain10 = 49.0f;
-            if (run[10]) SetupForm.PAGain6 = 49.0f;
+            //if (run[0]) SetupForm.PAGain160 = 49.0f;
+            //if (run[1]) SetupForm.PAGain80 = 49.0f;
+            //if (run[2]) SetupForm.PAGain60 = 49.0f;
+            //if (run[3]) SetupForm.PAGain40 = 49.0f;
+            //if (run[4]) SetupForm.PAGain30 = 49.0f;
+            //if (run[5]) SetupForm.PAGain20 = 49.0f;
+            //if (run[6]) SetupForm.PAGain17 = 49.0f;
+            //if (run[7]) SetupForm.PAGain15 = 49.0f;
+            //if (run[8]) SetupForm.PAGain12 = 49.0f;
+            //if (run[9]) SetupForm.PAGain10 = 49.0f;
+            //if (run[10]) SetupForm.PAGain6 = 49.0f;
+
+            //MW0LGE_22b
+            for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++) 
+            {
+                Band b = (Band)n;
+                int ndx = n - (int)Band.B160M;
+
+                if (run[ndx]) SetupForm.SetBypassGain(b, 49.0f);
+            }
 
             for (int i = 0; i < band_freqs.Length; i++)
             {
@@ -10945,119 +10954,133 @@ namespace Thetis
                             // convert to dBm
                             float diff_dBm = (float)Math.Round((WattsTodBm(watts) - WattsTodBm((double)target)), 3);
 
-                            switch (i)										// fix gain value
+                            //switch (i)										// fix gain value
+                            //{
+                            //    case 0:
+                            //        if (SetupForm.PAGain160 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain160 = (float)Math.Max(38.8, SetupForm.PAGain160 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain160 += diff_dBm;
+                            //        break;
+                            //    case 1:
+                            //        if (SetupForm.PAGain80 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain80 = (float)Math.Max(38.8, SetupForm.PAGain80 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain80 += diff_dBm;
+                            //        break;
+                            //    case 2:
+                            //        if (SetupForm.PAGain60 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain60 = (float)Math.Max(38.8, SetupForm.PAGain60 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain60 += diff_dBm;
+                            //        break;
+                            //    case 3:
+                            //        if (SetupForm.PAGain40 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain40 = (float)Math.Max(38.8, SetupForm.PAGain40 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain40 += diff_dBm;
+                            //        break;
+                            //    case 4:
+                            //        if (SetupForm.PAGain30 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain30 = (float)Math.Max(38.8, SetupForm.PAGain30 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain30 += diff_dBm;
+                            //        break;
+                            //    case 5:
+                            //        if (SetupForm.PAGain20 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain20 = (float)Math.Max(38.8, SetupForm.PAGain20 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain20 += diff_dBm;
+                            //        break;
+                            //    case 6:
+                            //        if (SetupForm.PAGain17 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain17 = (float)Math.Max(38.8, SetupForm.PAGain17 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain17 += diff_dBm;
+                            //        break;
+                            //    case 7:
+                            //        if (SetupForm.PAGain15 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain15 = (float)Math.Max(38.8, SetupForm.PAGain15 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain15 += diff_dBm;
+                            //        break;
+                            //    case 8:
+                            //        if (SetupForm.PAGain12 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain12 = (float)Math.Max(38.8, SetupForm.PAGain12 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain12 += diff_dBm;
+                            //        break;
+                            //    case 9:
+                            //        if (SetupForm.PAGain10 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain10 = (float)Math.Max(38.8, SetupForm.PAGain10 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain10 += diff_dBm;
+                            //        break;
+                            //    case 10:
+                            //        if (SetupForm.PAGain6 + diff_dBm < 38.8)
+                            //        {
+                            //            if (++error_count > 6)
+                            //                goto error;
+
+                            //            SetupForm.PAGain6 = (float)Math.Max(38.8, SetupForm.PAGain6 - 2.0);
+                            //        }
+                            //        else SetupForm.PAGain6 += diff_dBm;
+                            //        break;
+                            //}
+
+                            //MW0LGE_22b
+                            float g = SetupForm.GetBypassGain(bands[i]);
+                            if(g + diff_dBm < 38.8)
                             {
-                                case 0:
-                                    if (SetupForm.PAGain160 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
+                                if (++error_count > 6) 
+                                    goto error;
 
-                                        SetupForm.PAGain160 = (float)Math.Max(38.8, SetupForm.PAGain160 - 2.0);
-                                    }
-                                    else SetupForm.PAGain160 += diff_dBm;
-                                    break;
-                                case 1:
-                                    if (SetupForm.PAGain80 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain80 = (float)Math.Max(38.8, SetupForm.PAGain80 - 2.0);
-                                    }
-                                    else SetupForm.PAGain80 += diff_dBm;
-                                    break;
-                                case 2:
-                                    if (SetupForm.PAGain60 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain60 = (float)Math.Max(38.8, SetupForm.PAGain60 - 2.0);
-                                    }
-                                    else SetupForm.PAGain60 += diff_dBm;
-                                    break;
-                                case 3:
-                                    if (SetupForm.PAGain40 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain40 = (float)Math.Max(38.8, SetupForm.PAGain40 - 2.0);
-                                    }
-                                    else SetupForm.PAGain40 += diff_dBm;
-                                    break;
-                                case 4:
-                                    if (SetupForm.PAGain30 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain30 = (float)Math.Max(38.8, SetupForm.PAGain30 - 2.0);
-                                    }
-                                    else SetupForm.PAGain30 += diff_dBm;
-                                    break;
-                                case 5:
-                                    if (SetupForm.PAGain20 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain20 = (float)Math.Max(38.8, SetupForm.PAGain20 - 2.0);
-                                    }
-                                    else SetupForm.PAGain20 += diff_dBm;
-                                    break;
-                                case 6:
-                                    if (SetupForm.PAGain17 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain17 = (float)Math.Max(38.8, SetupForm.PAGain17 - 2.0);
-                                    }
-                                    else SetupForm.PAGain17 += diff_dBm;
-                                    break;
-                                case 7:
-                                    if (SetupForm.PAGain15 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain15 = (float)Math.Max(38.8, SetupForm.PAGain15 - 2.0);
-                                    }
-                                    else SetupForm.PAGain15 += diff_dBm;
-                                    break;
-                                case 8:
-                                    if (SetupForm.PAGain12 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain12 = (float)Math.Max(38.8, SetupForm.PAGain12 - 2.0);
-                                    }
-                                    else SetupForm.PAGain12 += diff_dBm;
-                                    break;
-                                case 9:
-                                    if (SetupForm.PAGain10 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain10 = (float)Math.Max(38.8, SetupForm.PAGain10 - 2.0);
-                                    }
-                                    else SetupForm.PAGain10 += diff_dBm;
-                                    break;
-                                case 10:
-                                    if (SetupForm.PAGain6 + diff_dBm < 38.8)
-                                    {
-                                        if (++error_count > 6)
-                                            goto error;
-
-                                        SetupForm.PAGain6 = (float)Math.Max(38.8, SetupForm.PAGain6 - 2.0);
-                                    }
-                                    else SetupForm.PAGain6 += diff_dBm;
-                                    break;
+                                float newG = (float)Math.Max(38.8, g - 2.0);
+                                SetupForm.SetBypassGain(bands[i], g);
                             }
+                            else
+                                SetupForm.SetBypassGain(bands[i], g + diff_dBm);
+
                         }
                         else good_result = true;
                         for (int j = 0; j < off_time / 100; j++)

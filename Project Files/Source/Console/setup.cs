@@ -1563,8 +1563,28 @@ namespace Thetis
                 }
             }
 
+            updatePAProfileCombo();
+
             if (a.ContainsKey("comboPAProfile"))
-                comboPAProfile.Text = a["comboPAProfile"];
+            {
+                string sPAProfileName = a["comboPAProfile"];
+                PAProfile p = getPAProfile(sPAProfileName);
+                if (p != null)
+                {
+                    // check in list
+                    bool bFound = false;
+                    for (int n = 0; n < comboPAProfile.Items.Count; n++)
+                    {
+                        string s = (string)comboPAProfile.Items[n];
+                        if(s == sPAProfileName)
+                        {
+                            bFound = true;
+                            break;
+                        }
+                    }
+                    if(bFound) comboPAProfile.Text = sPAProfileName;
+                }
+            }
             //
 
             //MW0LGE We have overwritten controls with data that might not match the current profile
@@ -4481,72 +4501,72 @@ namespace Thetis
         }
 
 
-        // PAGain for HPSDR
-        public float PAGain160
-        {
-            get { return (float)udPAGain160.Value; }
-            set { udPAGain160.Value = (decimal)value; }
-        }
+        //// PAGain for HPSDR
+        //public float PAGain160
+        //{
+        //    get { return (float)udPAGain160.Value; }
+        //    set { udPAGain160.Value = (decimal)value; }
+        //}
 
-        public float PAGain80
-        {
-            get { return (float)udPAGain80.Value; }
-            set { udPAGain80.Value = (decimal)value; }
-        }
+        //public float PAGain80
+        //{
+        //    get { return (float)udPAGain80.Value; }
+        //    set { udPAGain80.Value = (decimal)value; }
+        //}
 
-        public float PAGain60
-        {
-            get { return (float)udPAGain60.Value; }
-            set { udPAGain60.Value = (decimal)value; }
-        }
+        //public float PAGain60
+        //{
+        //    get { return (float)udPAGain60.Value; }
+        //    set { udPAGain60.Value = (decimal)value; }
+        //}
 
-        public float PAGain40
-        {
-            get { return (float)udPAGain40.Value; }
-            set { udPAGain40.Value = (decimal)value; }
-        }
+        //public float PAGain40
+        //{
+        //    get { return (float)udPAGain40.Value; }
+        //    set { udPAGain40.Value = (decimal)value; }
+        //}
 
-        public float PAGain30
-        {
-            get { return (float)udPAGain30.Value; }
-            set { udPAGain30.Value = (decimal)value; }
-        }
+        //public float PAGain30
+        //{
+        //    get { return (float)udPAGain30.Value; }
+        //    set { udPAGain30.Value = (decimal)value; }
+        //}
 
-        public float PAGain20
-        {
-            get { return (float)udPAGain20.Value; }
-            set { udPAGain20.Value = (decimal)value; }
-        }
+        //public float PAGain20
+        //{
+        //    get { return (float)udPAGain20.Value; }
+        //    set { udPAGain20.Value = (decimal)value; }
+        //}
 
-        public float PAGain17
-        {
-            get { return (float)udPAGain17.Value; }
-            set { udPAGain17.Value = (decimal)value; }
-        }
+        //public float PAGain17
+        //{
+        //    get { return (float)udPAGain17.Value; }
+        //    set { udPAGain17.Value = (decimal)value; }
+        //}
 
-        public float PAGain15
-        {
-            get { return (float)udPAGain15.Value; }
-            set { udPAGain15.Value = (decimal)value; }
-        }
+        //public float PAGain15
+        //{
+        //    get { return (float)udPAGain15.Value; }
+        //    set { udPAGain15.Value = (decimal)value; }
+        //}
 
-        public float PAGain12
-        {
-            get { return (float)udPAGain12.Value; }
-            set { udPAGain12.Value = (decimal)value; }
-        }
+        //public float PAGain12
+        //{
+        //    get { return (float)udPAGain12.Value; }
+        //    set { udPAGain12.Value = (decimal)value; }
+        //}
 
-        public float PAGain10
-        {
-            get { return (float)udPAGain10.Value; }
-            set { udPAGain10.Value = (decimal)value; }
-        }
+        //public float PAGain10
+        //{
+        //    get { return (float)udPAGain10.Value; }
+        //    set { udPAGain10.Value = (decimal)value; }
+        //}
 
-        public float PAGain6
-        {
-            get { return (float)udPAGain6.Value; }
-            set { udPAGain6.Value = (decimal)value; }
-        }
+        //public float PAGain6
+        //{
+        //    get { return (float)udPAGain6.Value; }
+        //    set { udPAGain6.Value = (decimal)value; }
+        //}
 
         //public float PAGainVHF0
         //{
@@ -10575,35 +10595,35 @@ namespace Thetis
             //    udOrionPAGainVHF13.Value = 56.2M;
             //}
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES || (console.CurrentHPSDRModel == HPSDRModel.ANAN100D && chkBypassANANPASettings.Checked))
-            {
-                udPAGain160.Value = 41.0M;
-                udPAGain80.Value = 41.2M;
-                udPAGain60.Value = 41.3M;
-                udPAGain40.Value = 41.3M;
-                udPAGain30.Value = 41.0M;
-                udPAGain20.Value = 40.5M;
-                udPAGain17.Value = 39.9M;
-                udPAGain15.Value = 38.8M;
-                udPAGain12.Value = 38.8M;
-                udPAGain10.Value = 38.8M;
-                udPAGain6.Value = 38.8M;
+            //if (console.CurrentHPSDRModel == HPSDRModel.HERMES || (console.CurrentHPSDRModel == HPSDRModel.ANAN100D && chkBypassANANPASettings.Checked))
+            //{
+            //    udPAGain160.Value = 41.0M;
+            //    udPAGain80.Value = 41.2M;
+            //    udPAGain60.Value = 41.3M;
+            //    udPAGain40.Value = 41.3M;
+            //    udPAGain30.Value = 41.0M;
+            //    udPAGain20.Value = 40.5M;
+            //    udPAGain17.Value = 39.9M;
+            //    udPAGain15.Value = 38.8M;
+            //    udPAGain12.Value = 38.8M;
+            //    udPAGain10.Value = 38.8M;
+            //    udPAGain6.Value = 38.8M;
 
-                udPAGainVHF0.Value = 56.2M;
-                udPAGainVHF1.Value = 56.2M;
-                udPAGainVHF2.Value = 56.2M;
-                udPAGainVHF3.Value = 56.2M;
-                udPAGainVHF4.Value = 56.2M;
-                udPAGainVHF5.Value = 56.2M;
-                udPAGainVHF6.Value = 56.2M;
-                udPAGainVHF7.Value = 56.2M;
-                udPAGainVHF8.Value = 56.2M;
-                udPAGainVHF9.Value = 56.2M;
-                udPAGainVHF10.Value = 56.2M;
-                udPAGainVHF11.Value = 56.2M;
-                udPAGainVHF12.Value = 56.2M;
-                udPAGainVHF13.Value = 56.2M;
-            }
+            //    udPAGainVHF0.Value = 56.2M;
+            //    udPAGainVHF1.Value = 56.2M;
+            //    udPAGainVHF2.Value = 56.2M;
+            //    udPAGainVHF3.Value = 56.2M;
+            //    udPAGainVHF4.Value = 56.2M;
+            //    udPAGainVHF5.Value = 56.2M;
+            //    udPAGainVHF6.Value = 56.2M;
+            //    udPAGainVHF7.Value = 56.2M;
+            //    udPAGainVHF8.Value = 56.2M;
+            //    udPAGainVHF9.Value = 56.2M;
+            //    udPAGainVHF10.Value = 56.2M;
+            //    udPAGainVHF11.Value = 56.2M;
+            //    udPAGainVHF12.Value = 56.2M;
+            //    udPAGainVHF13.Value = 56.2M;
+            //}
 
             //if (console.CurrentHPSDRModel == HPSDRModel.ANAN8000D)
             //{
@@ -12725,55 +12745,55 @@ namespace Thetis
             udMicGainMin.Value = udMicGainMin.Value;
         }
 
-        private void udPAGain10_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain10.Value = udPAGain10.Value;
-        }
+        //private void udPAGain10_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain10.Value = udPAGain10.Value;
+        //}
 
-        private void udPAGain12_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain12.Value = udPAGain12.Value;
-        }
+        //private void udPAGain12_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain12.Value = udPAGain12.Value;
+        //}
 
-        private void udPAGain15_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain15.Value = udPAGain15.Value;
-        }
+        //private void udPAGain15_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain15.Value = udPAGain15.Value;
+        //}
 
-        private void udPAGain17_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain17.Value = udPAGain17.Value;
-        }
+        //private void udPAGain17_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain17.Value = udPAGain17.Value;
+        //}
 
-        private void udPAGain20_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain20.Value = udPAGain20.Value;
-        }
+        //private void udPAGain20_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain20.Value = udPAGain20.Value;
+        //}
 
-        private void udPAGain30_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain30.Value = udPAGain30.Value;
-        }
+        //private void udPAGain30_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain30.Value = udPAGain30.Value;
+        //}
 
-        private void udPAGain40_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain40.Value = udPAGain40.Value;
-        }
+        //private void udPAGain40_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain40.Value = udPAGain40.Value;
+        //}
 
-        private void udPAGain60_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain60.Value = udPAGain60.Value;
-        }
+        //private void udPAGain60_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain60.Value = udPAGain60.Value;
+        //}
 
-        private void udPAGain80_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain80.Value = udPAGain80.Value;
-        }
+        //private void udPAGain80_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain80.Value = udPAGain80.Value;
+        //}
 
-        private void udPAGain160_LostFocus(object sender, EventArgs e)
-        {
-            udPAGain160.Value = udPAGain160.Value;
-        }
+        //private void udPAGain160_LostFocus(object sender, EventArgs e)
+        //{
+        //    udPAGain160.Value = udPAGain160.Value;
+        //}
 
         private void udPACalPower_LostFocus(object sender, EventArgs e)
         {
@@ -13164,34 +13184,50 @@ namespace Thetis
 
             console.NewPowerCal = b;
 
-            lblPAGainByBand160.Visible = !b;
-            lblPAGainByBand80.Visible = !b;
-            lblPAGainByBand60.Visible = !b;
-            lblPAGainByBand40.Visible = !b;
-            lblPAGainByBand30.Visible = !b;
-            lblPAGainByBand20.Visible = !b;
-            lblPAGainByBand17.Visible = !b;
-            lblPAGainByBand15.Visible = !b;
-            lblPAGainByBand12.Visible = !b;
-            lblPAGainByBand10.Visible = !b;
+            //lblPAGainByBand160.Visible = !b;
+            //lblPAGainByBand80.Visible = !b;
+            //lblPAGainByBand60.Visible = !b;
+            //lblPAGainByBand40.Visible = !b;
+            //lblPAGainByBand30.Visible = !b;
+            //lblPAGainByBand20.Visible = !b;
+            //lblPAGainByBand17.Visible = !b;
+            //lblPAGainByBand15.Visible = !b;
+            //lblPAGainByBand12.Visible = !b;
+            //lblPAGainByBand10.Visible = !b;
 
-            udPAGain160.Visible = !b;
-            udPAGain80.Visible = !b;
-            udPAGain60.Visible = !b;
-            udPAGain40.Visible = !b;
-            udPAGain30.Visible = !b;
-            udPAGain20.Visible = !b;
-            udPAGain17.Visible = !b;
-            udPAGain15.Visible = !b;
-            udPAGain12.Visible = !b;
-            udPAGain10.Visible = !b;
-            udPAGain6.Visible = !b;
+            //udPAGain160.Visible = !b;
+            //udPAGain80.Visible = !b;
+            //udPAGain60.Visible = !b;
+            //udPAGain40.Visible = !b;
+            //udPAGain30.Visible = !b;
+            //udPAGain20.Visible = !b;
+            //udPAGain17.Visible = !b;
+            //udPAGain15.Visible = !b;
+            //udPAGain12.Visible = !b;
+            //udPAGain10.Visible = !b;
+            //udPAGain6.Visible = !b;
+
+            //MW0LGE_22b
+            nud160M.Visible = !b;
+            nud80M.Visible = !b;
+            nud60M.Visible = !b;
+            nud40M.Visible = !b;
+            nud30M.Visible = !b;
+            nud20M.Visible = !b;
+            nud17M.Visible = !b;
+            nud15M.Visible = !b;
+            nud12M.Visible = !b;
+            nud10M.Visible = !b;
+            nud6M.Visible = !b;
 
             // if (!radGenModelFLEX5000.Checked)
             {
                 lblPACalTarget.Visible = !b;
                 udPACalPower.Visible = !b;
-                btnPAGainReset.Visible = !b;
+                //btnPAGainReset.Visible = !b;
+
+                //MW0LGE_22b
+                btnResetPAProfile.Visible = !b;
             }
         }
 
@@ -13595,8 +13631,8 @@ namespace Thetis
                 {
                     case Keys.A:
                         chkPANewCal.Visible = true;
-                        grpPAGainByBand.Visible = true;
-                        grpGainByBandPA.Visible = false; //MW0LGE_22b the profile based group
+                        //grpPAGainByBand.Visible = true; //MW0LGE_22b need to switch profile here
+                        chkAutoPACalibrate.Visible = true; //MW0LGE_22b
                         break;
                     case Keys.O:
                         break;
@@ -16779,20 +16815,25 @@ namespace Thetis
                 console.radio.GetDSPRX(1, 1).RXAMDSBMode = 2;
             }
         }
-
+        private string _sAutoCailbratePAOldSelectedProfile = "";
         private void chkAutoPACalibrate_CheckedChanged(object sender, EventArgs e)
         {
             if (chkAutoPACalibrate.Checked)
             {
-                grpGainByBandPA.Visible = false;
+                //grpGainByBandPA.Visible = false;
                 panelAutoPACalibrate.Visible = true;
-                grpPAGainByBand.Visible = true;
+                //grpPAGainByBand.Visible = true;
+
+                _sAutoCailbratePAOldSelectedProfile = comboPAProfile.Text;
+                updatePAProfileCombo("Default - PA BYPASS"); //MW0LGE_22b
             }
             else
             {
                 panelAutoPACalibrate.Visible = false;
-                grpPAGainByBand.Visible = false;
-                grpGainByBandPA.Visible = true;
+                //grpPAGainByBand.Visible = false;
+                //grpGainByBandPA.Visible = true;
+
+                updatePAProfileCombo(_sAutoCailbratePAOldSelectedProfile); //MW0LGE_22b
             }
         }
         ////MW0LGE_21d step atten
@@ -20983,7 +21024,7 @@ namespace Thetis
                 btnResetP2ADC_Click(this, EventArgs.Empty);
                 btnResetP1ADC_Click(this, EventArgs.Empty);
 
-                updatePAProfileCombo("Default - " + console.CurrentHPSDRModel.ToString()); //MW0LGE_22b
+                if(!initializing) updatePAProfileCombo("Default - " + console.CurrentHPSDRModel.ToString()); //MW0LGE_22b
             }
 
             InitHPSDR();
@@ -23596,7 +23637,7 @@ namespace Thetis
             PAProfile p = getPAProfile(comboPAProfile.Text);
             if (p == null) return;
 
-            p.ResetGainDefaultsForModel(p.Model, chkBypassANANPASettings.Checked);
+            p.ResetGainDefaultsForModel(p.Model);
 
             updateNUDgains(p);
         }
@@ -23719,8 +23760,6 @@ namespace Thetis
             p = new PAProfile("Default - PA BYPASS", HPSDRModel.FIRST, true); // no specific model for this
             p.ResetGainDefaultsForModel(p.Model, true);
             _PAProfiles.Add(p.ProfileName, p);
-
-            updatePAProfileCombo();
         }
         private PAProfile getPAProfile(string sName)
         {
@@ -23739,29 +23778,61 @@ namespace Thetis
             {
                 PAProfile p = pair.Value;
 
-                if ((p.IsDefault && p.Model == console.CurrentHPSDRModel) || !p.IsDefault) // add any that are default for this current model, or are not default, ie user added
-                    comboPAProfile.Items.Add(p.ProfileName);
+                if(sSelectProfile == "Default - PA BYPASS")
+                {
+                    if(p.ProfileName == "Default - PA BYPASS")
+                        comboPAProfile.Items.Add(p.ProfileName);
+                }
+                else
+                {
+                    if ((p.IsDefault && p.Model == console.CurrentHPSDRModel) || !p.IsDefault) // add any that are default for this current model, or are not default, ie user added
+                        comboPAProfile.Items.Add(p.ProfileName);
+                }                                    
             }
 
-            // select specific profile, or first Default if nothing selected
-            if (comboPAProfile.Text == "" || sSelectProfile != "")
+            // 
+            bool bSelected = false;
+            if (sSelectProfile != "")
             {
                 for (int n = 0; n < comboPAProfile.Items.Count; n++)
                 {
                     string sName = (string)comboPAProfile.Items[n];
-
-                    if (sSelectProfile == "" && sName.StartsWith("Default"))
+                    if (sSelectProfile == sName)
                     {
-                        comboPAProfile.SelectedIndex = n;
-                        break;
-                    }
-                    else if (sSelectProfile == sName)
-                    {
+                        bSelected = true;
                         comboPAProfile.SelectedIndex = n;
                         break;
                     }
                 }
             }
+            if(!bSelected && comboPAProfile.Text == "")
+            {
+                for (int n = 0; n < comboPAProfile.Items.Count; n++)
+                {
+                    string sName = (string)comboPAProfile.Items[n];
+
+                    if (sName.StartsWith("Default"))
+                    {
+                        //bSelected = true;
+                        comboPAProfile.SelectedIndex = n;
+                        break;
+                    }
+                }
+            }
+        }
+        public float GetBypassGain(Band b)
+        {
+            PAProfile p = getPAProfile("Dafault - PA BYPASS");
+            if (p == null) return 1000;
+
+            return p.GetGainForBand(b);
+        }
+        public void SetBypassGain(Band b, float gain)
+        {
+            PAProfile p = getPAProfile("Dafault - PA BYPASS");
+            if (p == null) return;
+
+            p.SetGainForBand(b, gain);
         }
         public void PAProfileEnableControls(bool tx)
         {
@@ -23817,17 +23888,17 @@ namespace Thetis
                 {
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN10PAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN10PAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23835,17 +23906,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.ANAN100:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN100PAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN100PAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23853,17 +23924,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.ANAN100B:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN100BPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN100BPAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23871,17 +23942,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.ANAN100D:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udANANPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udANANPAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23889,17 +23960,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.ANAN200D:                            
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udOrionPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udOrionPAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23907,17 +23978,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.ANAN7000D:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN7000DPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN7000DPAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23925,17 +23996,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.ANAN8000D:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN8000DPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udANAN8000DPAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23943,17 +24014,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.HERMES:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udHermesPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udHermesPAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -23964,17 +24035,17 @@ namespace Thetis
                     case HPSDRModel.HPSDR:
                         if (p.Model == HPSDRModel.HPSDR || (p.Model == HPSDRModel.FIRST && p.ProfileName == "Default - PA BYPASS"))
                         {
-                            for (int n = 0; n <= (int)Band.B6M; n++)
+                            for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                             {
-                                Band b = (Band)((int)Band.B160M + n);
+                                Band b = (Band)n;
                                 string sSetting = "udPAGain" + mapBandToMeters(b).ToString();
                                 float g = getOldVariablePAgain(sSetting, ref getDict);
                                 if (g != 1000) p.SetGainForBand(b, g);
                                 //if (g != 1000 && bRemoveOld) _oldSettings.Add(sSetting); // dont remove atm as used by gain calibrate
                             }
-                            for (int n = 0; n <= (int)Band.VHF13; n++)
+                            for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                             {
-                                Band b = (Band)((int)Band.VHF0 + n);
+                                Band b = (Band)n;
                                 string sSetting = "udPAGainVHF" + n.ToString();
                                 float g = getOldVariablePAgain(sSetting, ref getDict);
                                 if (g != 1000) p.SetGainForBand(b, g);
@@ -23983,17 +24054,17 @@ namespace Thetis
                         }
                         break;
                     case HPSDRModel.ORIONMKII:
-                        for (int n = 0; n <= (int)Band.B6M; n++)
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
                         {
-                            Band b = (Band)((int)Band.B160M + n);
+                            Band b = (Band)n;
                             string sSetting = "udORIONMKIIPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
                         }
-                        for (int n = 0; n <= (int)Band.VHF13; n++)
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
-                            Band b = (Band)((int)Band.VHF0 + n);
+                            Band b = (Band)n;
                             string sSetting = "udORIONMKIIPAGainVHF" + n.ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
@@ -24369,6 +24440,11 @@ namespace Thetis
                 //    //return;
                 //}
             }
+        }
+
+        private void comboPAProfile_TextChanged(object sender, EventArgs e)
+        {
+            Debug.Print(comboPAProfile.Text);
         }
     }
 
