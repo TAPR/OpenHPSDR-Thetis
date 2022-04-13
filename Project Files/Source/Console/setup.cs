@@ -80,7 +80,7 @@ namespace Thetis
             lblShowTimeoutText.Visible = Common.IsTimeOutEnabled;
             if (Common.IsTimeOutEnabled) lblTimeout.Text = Common.DaysToTimeOut().ToString() + " days";
             //
-
+            
             //MW0LGE_21i
             ucVAC1VARGrapherIn.MaxPoints = ucVAC1VARGrapherIn.Width;
             ucVAC1VARGrapherOut.MaxPoints = ucVAC1VARGrapherOut.Width;
@@ -23914,6 +23914,7 @@ namespace Thetis
                         btnNewPAProfile.Enabled = true;
                         btnCopyPAProfile.Enabled = true;
                     }
+                    btnResetPAProfile.Enabled = true;
                 }
             }
         }
