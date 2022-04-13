@@ -23591,11 +23591,13 @@ namespace Thetis
                 }
             }
         }
-
+        private bool _bIgnoreNUDGainUpdate = false;
         private void updateNUDgains(PAProfile p)
         {
             if (p == null) return;
             // set every nud
+            _bIgnoreNUDGainUpdate = true; // stop the valuechanged event on these nuds
+
             nud160M.Value = (decimal)p.GetGainForBand(Band.B160M);
             nud80M.Value = (decimal)p.GetGainForBand(Band.B80M);
             nud60M.Value = (decimal)p.GetGainForBand(Band.B60M);
@@ -23622,6 +23624,10 @@ namespace Thetis
             nudVHF11.Value = (decimal)p.GetGainForBand(Band.VHF11);
             nudVHF12.Value = (decimal)p.GetGainForBand(Band.VHF12);
             nudVHF13.Value = (decimal)p.GetGainForBand(Band.VHF13);
+
+            _bIgnoreNUDGainUpdate = false;
+
+            console.PWR = console.PWR; // force the use of these new values;
         }
         private void btnResetPAProfile_Click(object sender, EventArgs e)
         {
@@ -23701,7 +23707,7 @@ namespace Thetis
         }
         private void nudPAProfileGain_ValueChanged(object sender, EventArgs e)
         {
-            if (initializing || _PAProfiles == null) return;
+            if (_bIgnoreNUDGainUpdate || initializing || _PAProfiles == null) return;
 
             NumericUpDownTS nud = sender as NumericUpDownTS;
             if (nud == null) return;
