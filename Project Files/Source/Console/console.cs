@@ -27176,7 +27176,6 @@ namespace Thetis
             }
         }
 
-        bool tmp;
         //bool audio_amp_mute;
         private async void PollTXInhibit()
         {
@@ -27227,9 +27226,9 @@ namespace Thetis
                 if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
                 {
                     if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
-                        inhibit_input = NetworkIO.getUserI02(); // same as NetworkIO.getUserI05_p2();
+                        inhibit_input = NetworkIO.getUserI02();
                     else
-                        inhibit_input = NetworkIO.getUserI01(); // <- is this correct for all other radios? even P2's that are not 7k/8k's ?  //MW0LGE_22b
+                        inhibit_input = NetworkIO.getUserI01();
 
                     if (tx_inhibit_sense)
                     {
@@ -27241,13 +27240,6 @@ namespace Thetis
                         if (inhibit_input) TXInhibit = false;
                         else TXInhibit = true;
                     }
-                }
-
-                bool b = NetworkIO.getUserI04_p2();
-                if (b != tmp)
-                {
-                    tmp = b;
-                    Debug.Print("changed to : " + b.ToString());
                 }
 
                 await Task.Delay(100);
@@ -30616,25 +30608,50 @@ namespace Thetis
             return false;
         }
 
-        private void updateDriveLabel(bool bShowLimitValue, System.EventArgs e)
+        public void UpdateDriveLabel(bool bShowLimitValue, System.EventArgs e)
         {
-            if (!bShowLimitValue)
+            if (IsSetupFormNull) return;
+
+            bool bUsePower = SetupForm.GetPABandUsesMaxPower(TXBand);
+
+            int drv;
+            if (bShowLimitValue)
             {
-                if (ptbPWR.IsConstrained)
-                    lblPWR.Text = "Drive:  (" + ptbPWR.ConstrainedValue.ToString() + ")";
-                else
-                    lblPWR.Text = "Drive:  " + ptbPWR.Value.ToString();
+                PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
+                drv = lc.LimitValue;
+            }
+            else if (ptbPWR.IsConstrained)
+                drv = ptbPWR.ConstrainedValue;
+            else
+                drv = ptbPWR.Value;
+
+            string sValue;
+            if (bUsePower)
+            {
+                int nValue = (int)( (drv / (float)(ptbPWR.Maximum - ptbPWR.Minimum)) * SetupForm.GetPABandMaxPower(TXBand) );
+                sValue = nValue.ToString() + "w";
             }
             else
             {
-                PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
-                lblPWR.Text = "Drive Limit: " + lc.LimitValue.ToString();
+                sValue = drv.ToString();
+            }
+
+            if (!bShowLimitValue)
+            {
+                if (ptbPWR.IsConstrained)
+                    lblPWR.Text = "Drive:  (" + sValue + ")";
+                else
+                    lblPWR.Text = "Drive:  " + sValue;
+            }
+            else
+            {
+                lblPWR.Text = "Limit: " + sValue;
             }
         }
 
         private void ptbPWR_MouseUp(object sender, MouseEventArgs e)
         {
-            updateDriveLabel(false, EventArgs.Empty);
+            UpdateDriveLabel(false, EventArgs.Empty);
         }
         private double m_fDrivePower = -1;
         private void ptbPWR_Scroll(object sender, System.EventArgs e)
@@ -30650,7 +30667,7 @@ namespace Thetis
             int new_pwr = setPowerWithHelper(out bool bUseConstrain);
             power_by_band[(int)tx_band] = ptbPWR.Value;
 
-            updateDriveLabel(lc != null && bUseConstrain, e);
+            UpdateDriveLabel(lc != null && bUseConstrain, e);
 
             //if (!tuning || (tuning && tx_tune_power))
             //    new_pwr = ptbPWR.Value;
@@ -52428,26 +52445,62 @@ namespace Thetis
                 }
             }
         }
-        private void updateTuneLabel(bool bShowLimitValue, System.EventArgs e)
+        private Color _limitSliderBarColor = Color.Red;
+        public Color LimitSliderColor
         {
-            string sHeader = "Tune|2Tone";
+            get
+            {
+                return _limitSliderBarColor;
+            }
+            set
+            {
+                _limitSliderBarColor = value;
+                ptbPWR.LimitBarColor = _limitSliderBarColor;
+                ptbTune.LimitBarColor = _limitSliderBarColor;
+            }
+        }
+        public void UpdateTuneLabel(bool bShowLimitValue, System.EventArgs e)
+        {
+            if (IsSetupFormNull) return;
+
+            string sHeader = "Tu | 2T";
             if (_tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource != DrivePowerSource.TUNE_SLIDER) sHeader = "Tune";
             if (_tuneDrivePowerSource != DrivePowerSource.TUNE_SLIDER && _2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER) sHeader = "2Tone";
 
-            if (!bShowLimitValue)
+            bool bUsePower = SetupForm.GetPABandUsesMaxPower(TXBand);
+
+            int drv;
+            if (bShowLimitValue) 
             {
-                if (ptbTune.IsConstrained)
-                    lblTune.Text = sHeader + ":  (" + ptbTune.ConstrainedValue.ToString() + ")";
-                else
-                    lblTune.Text = sHeader + ":  " + ptbTune.Value.ToString();
+                PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
+                drv = lc.LimitValue;
+            }
+            else if (ptbTune.IsConstrained)
+                drv = ptbTune.ConstrainedValue;
+            else
+                drv = ptbTune.Value;
+
+            string sValue;
+            if (bUsePower)
+            {
+                int nValue = (int)( (drv / (float)(ptbTune.Maximum - ptbTune.Minimum)) * SetupForm.GetPABandMaxPower(TXBand) );
+                sValue = nValue.ToString() + "w";
             }
             else
             {
-                PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
-                if (sHeader == "Tune|2Tone")
-                    lblTune.Text = "Tun|2To Lmt: " + lc.LimitValue.ToString();
+                sValue = drv.ToString();
+            }
+
+            if (!bShowLimitValue)
+            {                
+                if (ptbTune.IsConstrained)
+                    lblTune.Text = sHeader + ":  (" + sValue + ")";
                 else
-                    lblTune.Text = sHeader + " Limit: "+ lc.LimitValue.ToString();
+                    lblTune.Text = sHeader + ":  " + sValue;
+            }
+            else
+            {
+                lblTune.Text = "Limit: "+ sValue;
             }
         }
         private double m_fTuneDrivePower = -1;
@@ -52464,7 +52517,7 @@ namespace Thetis
             int new_pwr = setPowerWithHelper(out bool bUseConstrain);
             tunePower_by_band[(int)tx_band] = ptbTune.Value;
 
-            updateTuneLabel(lc != null && bUseConstrain, e);
+            UpdateTuneLabel(lc != null && bUseConstrain, e);
 
             if (sender.GetType() == typeof(PrettyTrackBar))
                 ptbTune.Focus();
@@ -52511,7 +52564,7 @@ namespace Thetis
                 }
 
                 setupTuneDriveSlider();
-                updateTuneLabel(false, EventArgs.Empty);
+                UpdateTuneLabel(false, EventArgs.Empty);
             }
         }
         public DrivePowerSource TwoToneDrivePowerOrigin
@@ -52533,7 +52586,7 @@ namespace Thetis
                 }
 
                 setupTuneDriveSlider();
-                updateTuneLabel(false, EventArgs.Empty);
+                UpdateTuneLabel(false, EventArgs.Empty);
             }
         }
         private void setupTuneDriveSlider()
@@ -52687,7 +52740,7 @@ namespace Thetis
 
         private void ptbTune_MouseUp(object sender, MouseEventArgs e)
         {
-            updateTuneLabel(false, EventArgs.Empty);
+            UpdateTuneLabel(false, EventArgs.Empty);
         }
     }
 

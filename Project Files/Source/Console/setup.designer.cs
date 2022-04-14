@@ -2522,18 +2522,23 @@
             this.tpGainByBand = new System.Windows.Forms.TabPage();
             this.chkPANewCal = new System.Windows.Forms.CheckBoxTS();
             this.grpGainByBandPA = new System.Windows.Forms.GroupBoxTS();
+            this.panelTS1 = new System.Windows.Forms.PanelTS();
+            this.chkUsePowerOnDrvTunPA = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS165 = new System.Windows.Forms.LabelTS();
+            this.nudMaxPowerForBandPA = new System.Windows.Forms.NumericUpDownTS();
+            this.lblMaxPowerForBandPA = new System.Windows.Forms.LabelTS();
             this.panelAdjustGain = new System.Windows.Forms.PanelTS();
-            this.labelTS163 = new System.Windows.Forms.LabelTS();
+            this.lblDriveHeader = new System.Windows.Forms.LabelTS();
             this.lblAdjustBand = new System.Windows.Forms.LabelTS();
-            this.labelTS161 = new System.Windows.Forms.LabelTS();
-            this.labelTS162 = new System.Windows.Forms.LabelTS();
-            this.labelTS8 = new System.Windows.Forms.LabelTS();
-            this.labelTS155 = new System.Windows.Forms.LabelTS();
-            this.labelTS156 = new System.Windows.Forms.LabelTS();
-            this.labelTS157 = new System.Windows.Forms.LabelTS();
-            this.labelTS158 = new System.Windows.Forms.LabelTS();
-            this.labelTS159 = new System.Windows.Forms.LabelTS();
-            this.labelTS160 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust90 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust80 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust70 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust60 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust50 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust40 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust30 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust20 = new System.Windows.Forms.LabelTS();
+            this.lblPAAdjust10 = new System.Windows.Forms.LabelTS();
             this.nudAdjustGain90 = new System.Windows.Forms.NumericUpDownTS();
             this.nudAdjustGain80 = new System.Windows.Forms.NumericUpDownTS();
             this.nudAdjustGain70 = new System.Windows.Forms.NumericUpDownTS();
@@ -2735,6 +2740,8 @@
             this.tpAppearance = new System.Windows.Forms.TabPage();
             this.tcAppearance = new System.Windows.Forms.TabControl();
             this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
+            this.labelTS8 = new System.Windows.Forms.LabelTS();
+            this.clrbtnSliderLimitBar = new Thetis.ColorButton();
             this.groupBoxTS12 = new System.Windows.Forms.GroupBoxTS();
             this.clrbtnStatusBarText = new Thetis.ColorButton();
             this.nlblStatusBarTextColour = new System.Windows.Forms.LabelTS();
@@ -3934,6 +3941,8 @@
             this.tcPowerAmplifier.SuspendLayout();
             this.tpGainByBand.SuspendLayout();
             this.grpGainByBandPA.SuspendLayout();
+            this.panelTS1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).BeginInit();
             this.panelAdjustGain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain90)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain80)).BeginInit();
@@ -40293,6 +40302,7 @@
             // 
             // grpGainByBandPA
             // 
+            this.grpGainByBandPA.Controls.Add(this.panelTS1);
             this.grpGainByBandPA.Controls.Add(this.panelAdjustGain);
             this.grpGainByBandPA.Controls.Add(this.btnCopyPAProfile);
             this.grpGainByBandPA.Controls.Add(this.btnNewPAProfile);
@@ -40349,29 +40359,108 @@
             this.grpGainByBandPA.Controls.Add(this.btnResetPAProfile);
             this.grpGainByBandPA.Controls.Add(this.btnDeletePAProfile);
             this.grpGainByBandPA.Controls.Add(this.comboPAProfile);
-            this.grpGainByBandPA.Location = new System.Drawing.Point(25, 25);
+            this.grpGainByBandPA.Location = new System.Drawing.Point(14, 18);
             this.grpGainByBandPA.Name = "grpGainByBandPA";
-            this.grpGainByBandPA.Size = new System.Drawing.Size(529, 364);
+            this.grpGainByBandPA.Size = new System.Drawing.Size(540, 389);
             this.grpGainByBandPA.TabIndex = 119;
             this.grpGainByBandPA.TabStop = false;
             this.grpGainByBandPA.Text = "PA Gain By Band (dB)";
+            // 
+            // panelTS1
+            // 
+            this.panelTS1.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS1.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelTS1.Controls.Add(this.chkUsePowerOnDrvTunPA);
+            this.panelTS1.Controls.Add(this.labelTS165);
+            this.panelTS1.Controls.Add(this.nudMaxPowerForBandPA);
+            this.panelTS1.Controls.Add(this.lblMaxPowerForBandPA);
+            this.panelTS1.Location = new System.Drawing.Point(269, 314);
+            this.panelTS1.Name = "panelTS1";
+            this.panelTS1.Size = new System.Drawing.Size(252, 69);
+            this.panelTS1.TabIndex = 168;
+            // 
+            // chkUsePowerOnDrvTunPA
+            // 
+            this.chkUsePowerOnDrvTunPA.Image = null;
+            this.chkUsePowerOnDrvTunPA.Location = new System.Drawing.Point(12, 25);
+            this.chkUsePowerOnDrvTunPA.Name = "chkUsePowerOnDrvTunPA";
+            this.chkUsePowerOnDrvTunPA.Size = new System.Drawing.Size(111, 39);
+            this.chkUsePowerOnDrvTunPA.TabIndex = 127;
+            this.chkUsePowerOnDrvTunPA.Text = "Use watts on Drive/Tune slider";
+            this.toolTip1.SetToolTip(this.chkUsePowerOnDrvTunPA, "Use watts on the drive/tune sliders. Requires a max 100% value to be assigned.");
+            this.chkUsePowerOnDrvTunPA.UseVisualStyleBackColor = true;
+            this.chkUsePowerOnDrvTunPA.CheckedChanged += new System.EventHandler(this.chkUsePowerOnDrvTunPA_CheckedChanged);
+            // 
+            // labelTS165
+            // 
+            this.labelTS165.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTS165.AutoSize = true;
+            this.labelTS165.Image = null;
+            this.labelTS165.Location = new System.Drawing.Point(206, 34);
+            this.labelTS165.Name = "labelTS165";
+            this.labelTS165.Size = new System.Drawing.Size(32, 13);
+            this.labelTS165.TabIndex = 126;
+            this.labelTS165.Text = "watts";
+            // 
+            // nudMaxPowerForBandPA
+            // 
+            this.nudMaxPowerForBandPA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.nudMaxPowerForBandPA.DecimalPlaces = 1;
+            this.nudMaxPowerForBandPA.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudMaxPowerForBandPA.Location = new System.Drawing.Point(139, 32);
+            this.nudMaxPowerForBandPA.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.nudMaxPowerForBandPA.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMaxPowerForBandPA.Name = "nudMaxPowerForBandPA";
+            this.nudMaxPowerForBandPA.Size = new System.Drawing.Size(61, 20);
+            this.nudMaxPowerForBandPA.TabIndex = 125;
+            this.toolTip1.SetToolTip(this.nudMaxPowerForBandPA, "If this is non zero, it can be used for the Drive/Tune sliders");
+            this.nudMaxPowerForBandPA.Value = new decimal(new int[] {
+            1500,
+            0,
+            0,
+            0});
+            this.nudMaxPowerForBandPA.ValueChanged += new System.EventHandler(this.nudMaxPowerForBandPA_ValueChanged);
+            // 
+            // lblMaxPowerForBandPA
+            // 
+            this.lblMaxPowerForBandPA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblMaxPowerForBandPA.Image = null;
+            this.lblMaxPowerForBandPA.Location = new System.Drawing.Point(3, 9);
+            this.lblMaxPowerForBandPA.Name = "lblMaxPowerForBandPA";
+            this.lblMaxPowerForBandPA.Size = new System.Drawing.Size(244, 18);
+            this.lblMaxPowerForBandPA.TabIndex = 0;
+            this.lblMaxPowerForBandPA.Text = "Actual Power @ 100% slider: VHF13";
+            this.lblMaxPowerForBandPA.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // panelAdjustGain
             // 
             this.panelAdjustGain.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelAdjustGain.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.panelAdjustGain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelAdjustGain.Controls.Add(this.labelTS163);
+            this.panelAdjustGain.Controls.Add(this.lblDriveHeader);
             this.panelAdjustGain.Controls.Add(this.lblAdjustBand);
-            this.panelAdjustGain.Controls.Add(this.labelTS161);
-            this.panelAdjustGain.Controls.Add(this.labelTS162);
-            this.panelAdjustGain.Controls.Add(this.labelTS8);
-            this.panelAdjustGain.Controls.Add(this.labelTS155);
-            this.panelAdjustGain.Controls.Add(this.labelTS156);
-            this.panelAdjustGain.Controls.Add(this.labelTS157);
-            this.panelAdjustGain.Controls.Add(this.labelTS158);
-            this.panelAdjustGain.Controls.Add(this.labelTS159);
-            this.panelAdjustGain.Controls.Add(this.labelTS160);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust90);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust80);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust70);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust60);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust50);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust40);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust30);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust20);
+            this.panelAdjustGain.Controls.Add(this.lblPAAdjust10);
             this.panelAdjustGain.Controls.Add(this.nudAdjustGain90);
             this.panelAdjustGain.Controls.Add(this.nudAdjustGain80);
             this.panelAdjustGain.Controls.Add(this.nudAdjustGain70);
@@ -40381,20 +40470,20 @@
             this.panelAdjustGain.Controls.Add(this.nudAdjustGain30);
             this.panelAdjustGain.Controls.Add(this.nudAdjustGain20);
             this.panelAdjustGain.Controls.Add(this.nudAdjustGain10);
-            this.panelAdjustGain.Location = new System.Drawing.Point(381, 63);
+            this.panelAdjustGain.Location = new System.Drawing.Point(390, 27);
             this.panelAdjustGain.Name = "panelAdjustGain";
             this.panelAdjustGain.Size = new System.Drawing.Size(131, 288);
             this.panelAdjustGain.TabIndex = 167;
             // 
-            // labelTS163
+            // lblDriveHeader
             // 
-            this.labelTS163.AutoSize = true;
-            this.labelTS163.Image = null;
-            this.labelTS163.Location = new System.Drawing.Point(19, 37);
-            this.labelTS163.Name = "labelTS163";
-            this.labelTS163.Size = new System.Drawing.Size(32, 13);
-            this.labelTS163.TabIndex = 161;
-            this.labelTS163.Text = "Drive";
+            this.lblDriveHeader.Image = null;
+            this.lblDriveHeader.Location = new System.Drawing.Point(6, 35);
+            this.lblDriveHeader.Name = "lblDriveHeader";
+            this.lblDriveHeader.Size = new System.Drawing.Size(56, 13);
+            this.lblDriveHeader.TabIndex = 161;
+            this.lblDriveHeader.Text = "Drive";
+            this.lblDriveHeader.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lblAdjustBand
             // 
@@ -40406,104 +40495,104 @@
             this.lblAdjustBand.Text = "Offset for: VHF13";
             this.lblAdjustBand.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // labelTS161
+            // lblPAAdjust90
             // 
-            this.labelTS161.Image = null;
-            this.labelTS161.Location = new System.Drawing.Point(18, 259);
-            this.labelTS161.Name = "labelTS161";
-            this.labelTS161.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS161.Size = new System.Drawing.Size(40, 16);
-            this.labelTS161.TabIndex = 159;
-            this.labelTS161.Text = "90";
-            this.labelTS161.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust90.Image = null;
+            this.lblPAAdjust90.Location = new System.Drawing.Point(8, 260);
+            this.lblPAAdjust90.Name = "lblPAAdjust90";
+            this.lblPAAdjust90.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust90.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust90.TabIndex = 159;
+            this.lblPAAdjust90.Text = "9999.9w";
+            this.lblPAAdjust90.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS162
+            // lblPAAdjust80
             // 
-            this.labelTS162.Image = null;
-            this.labelTS162.Location = new System.Drawing.Point(18, 233);
-            this.labelTS162.Name = "labelTS162";
-            this.labelTS162.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS162.Size = new System.Drawing.Size(40, 16);
-            this.labelTS162.TabIndex = 158;
-            this.labelTS162.Text = "80";
-            this.labelTS162.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust80.Image = null;
+            this.lblPAAdjust80.Location = new System.Drawing.Point(8, 234);
+            this.lblPAAdjust80.Name = "lblPAAdjust80";
+            this.lblPAAdjust80.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust80.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust80.TabIndex = 158;
+            this.lblPAAdjust80.Text = "9999.9w";
+            this.lblPAAdjust80.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS8
+            // lblPAAdjust70
             // 
-            this.labelTS8.Image = null;
-            this.labelTS8.Location = new System.Drawing.Point(18, 207);
-            this.labelTS8.Name = "labelTS8";
-            this.labelTS8.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS8.Size = new System.Drawing.Size(40, 16);
-            this.labelTS8.TabIndex = 157;
-            this.labelTS8.Text = "70";
-            this.labelTS8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust70.Image = null;
+            this.lblPAAdjust70.Location = new System.Drawing.Point(8, 208);
+            this.lblPAAdjust70.Name = "lblPAAdjust70";
+            this.lblPAAdjust70.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust70.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust70.TabIndex = 157;
+            this.lblPAAdjust70.Text = "9999.9w";
+            this.lblPAAdjust70.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS155
+            // lblPAAdjust60
             // 
-            this.labelTS155.Image = null;
-            this.labelTS155.Location = new System.Drawing.Point(18, 181);
-            this.labelTS155.Name = "labelTS155";
-            this.labelTS155.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS155.Size = new System.Drawing.Size(40, 16);
-            this.labelTS155.TabIndex = 156;
-            this.labelTS155.Text = "60";
-            this.labelTS155.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust60.Image = null;
+            this.lblPAAdjust60.Location = new System.Drawing.Point(8, 182);
+            this.lblPAAdjust60.Name = "lblPAAdjust60";
+            this.lblPAAdjust60.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust60.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust60.TabIndex = 156;
+            this.lblPAAdjust60.Text = "9999.9w";
+            this.lblPAAdjust60.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS156
+            // lblPAAdjust50
             // 
-            this.labelTS156.Image = null;
-            this.labelTS156.Location = new System.Drawing.Point(18, 155);
-            this.labelTS156.Name = "labelTS156";
-            this.labelTS156.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS156.Size = new System.Drawing.Size(40, 16);
-            this.labelTS156.TabIndex = 155;
-            this.labelTS156.Text = "50";
-            this.labelTS156.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust50.Image = null;
+            this.lblPAAdjust50.Location = new System.Drawing.Point(8, 156);
+            this.lblPAAdjust50.Name = "lblPAAdjust50";
+            this.lblPAAdjust50.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust50.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust50.TabIndex = 155;
+            this.lblPAAdjust50.Text = "9999.9w";
+            this.lblPAAdjust50.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS157
+            // lblPAAdjust40
             // 
-            this.labelTS157.Image = null;
-            this.labelTS157.Location = new System.Drawing.Point(18, 129);
-            this.labelTS157.Name = "labelTS157";
-            this.labelTS157.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS157.Size = new System.Drawing.Size(40, 16);
-            this.labelTS157.TabIndex = 154;
-            this.labelTS157.Text = "40";
-            this.labelTS157.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust40.Image = null;
+            this.lblPAAdjust40.Location = new System.Drawing.Point(8, 130);
+            this.lblPAAdjust40.Name = "lblPAAdjust40";
+            this.lblPAAdjust40.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust40.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust40.TabIndex = 154;
+            this.lblPAAdjust40.Text = "9999.9w";
+            this.lblPAAdjust40.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS158
+            // lblPAAdjust30
             // 
-            this.labelTS158.Image = null;
-            this.labelTS158.Location = new System.Drawing.Point(18, 105);
-            this.labelTS158.Name = "labelTS158";
-            this.labelTS158.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS158.Size = new System.Drawing.Size(40, 16);
-            this.labelTS158.TabIndex = 153;
-            this.labelTS158.Text = "30";
-            this.labelTS158.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust30.Image = null;
+            this.lblPAAdjust30.Location = new System.Drawing.Point(8, 106);
+            this.lblPAAdjust30.Name = "lblPAAdjust30";
+            this.lblPAAdjust30.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust30.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust30.TabIndex = 153;
+            this.lblPAAdjust30.Text = "9999.9w";
+            this.lblPAAdjust30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS159
+            // lblPAAdjust20
             // 
-            this.labelTS159.Image = null;
-            this.labelTS159.Location = new System.Drawing.Point(18, 79);
-            this.labelTS159.Name = "labelTS159";
-            this.labelTS159.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS159.Size = new System.Drawing.Size(40, 16);
-            this.labelTS159.TabIndex = 152;
-            this.labelTS159.Text = "20";
-            this.labelTS159.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust20.Image = null;
+            this.lblPAAdjust20.Location = new System.Drawing.Point(8, 80);
+            this.lblPAAdjust20.Name = "lblPAAdjust20";
+            this.lblPAAdjust20.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust20.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust20.TabIndex = 152;
+            this.lblPAAdjust20.Text = "9999.9w";
+            this.lblPAAdjust20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labelTS160
+            // lblPAAdjust10
             // 
-            this.labelTS160.Image = null;
-            this.labelTS160.Location = new System.Drawing.Point(18, 55);
-            this.labelTS160.Name = "labelTS160";
-            this.labelTS160.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.labelTS160.Size = new System.Drawing.Size(40, 16);
-            this.labelTS160.TabIndex = 151;
-            this.labelTS160.Text = "10";
-            this.labelTS160.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPAAdjust10.Image = null;
+            this.lblPAAdjust10.Location = new System.Drawing.Point(8, 56);
+            this.lblPAAdjust10.Name = "lblPAAdjust10";
+            this.lblPAAdjust10.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblPAAdjust10.Size = new System.Drawing.Size(54, 16);
+            this.lblPAAdjust10.TabIndex = 151;
+            this.lblPAAdjust10.Text = "9999.9w";
+            this.lblPAAdjust10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // nudAdjustGain90
             // 
@@ -40513,7 +40602,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain90.Location = new System.Drawing.Point(64, 259);
+            this.nudAdjustGain90.Location = new System.Drawing.Point(68, 260);
             this.nudAdjustGain90.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40542,7 +40631,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain80.Location = new System.Drawing.Point(64, 233);
+            this.nudAdjustGain80.Location = new System.Drawing.Point(68, 234);
             this.nudAdjustGain80.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40571,7 +40660,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain70.Location = new System.Drawing.Point(64, 207);
+            this.nudAdjustGain70.Location = new System.Drawing.Point(68, 208);
             this.nudAdjustGain70.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40600,7 +40689,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain60.Location = new System.Drawing.Point(64, 181);
+            this.nudAdjustGain60.Location = new System.Drawing.Point(68, 182);
             this.nudAdjustGain60.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40629,7 +40718,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain50.Location = new System.Drawing.Point(64, 155);
+            this.nudAdjustGain50.Location = new System.Drawing.Point(68, 156);
             this.nudAdjustGain50.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40658,7 +40747,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain40.Location = new System.Drawing.Point(64, 129);
+            this.nudAdjustGain40.Location = new System.Drawing.Point(68, 130);
             this.nudAdjustGain40.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40687,7 +40776,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain30.Location = new System.Drawing.Point(64, 103);
+            this.nudAdjustGain30.Location = new System.Drawing.Point(68, 104);
             this.nudAdjustGain30.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40716,7 +40805,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain20.Location = new System.Drawing.Point(64, 77);
+            this.nudAdjustGain20.Location = new System.Drawing.Point(68, 78);
             this.nudAdjustGain20.Maximum = new decimal(new int[] {
             6,
             0,
@@ -40745,7 +40834,7 @@
             0,
             0,
             65536});
-            this.nudAdjustGain10.Location = new System.Drawing.Point(64, 51);
+            this.nudAdjustGain10.Location = new System.Drawing.Point(68, 52);
             this.nudAdjustGain10.Maximum = new decimal(new int[] {
             6,
             0,
@@ -41792,7 +41881,7 @@
             // btnResetPAProfile
             // 
             this.btnResetPAProfile.Image = null;
-            this.btnResetPAProfile.Location = new System.Drawing.Point(264, 271);
+            this.btnResetPAProfile.Location = new System.Drawing.Point(157, 271);
             this.btnResetPAProfile.Name = "btnResetPAProfile";
             this.btnResetPAProfile.Size = new System.Drawing.Size(90, 52);
             this.btnResetPAProfile.TabIndex = 2;
@@ -44171,6 +44260,8 @@
             // tpAppearanceGeneral
             // 
             this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceGeneral.Controls.Add(this.labelTS8);
+            this.tpAppearanceGeneral.Controls.Add(this.clrbtnSliderLimitBar);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS12);
             this.tpAppearanceGeneral.Controls.Add(this.chkEnableLEDFont);
             this.tpAppearanceGeneral.Controls.Add(this.btnSkinExport);
@@ -44186,6 +44277,29 @@
             this.tpAppearanceGeneral.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceGeneral.TabIndex = 0;
             this.tpAppearanceGeneral.Text = "General";
+            // 
+            // labelTS8
+            // 
+            this.labelTS8.Image = null;
+            this.labelTS8.Location = new System.Drawing.Point(22, 223);
+            this.labelTS8.Name = "labelTS8";
+            this.labelTS8.Size = new System.Drawing.Size(86, 23);
+            this.labelTS8.TabIndex = 91;
+            this.labelTS8.Text = "Slider Limit Bar:";
+            this.labelTS8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // clrbtnSliderLimitBar
+            // 
+            this.clrbtnSliderLimitBar.Automatic = "Automatic";
+            this.clrbtnSliderLimitBar.Color = System.Drawing.Color.Red;
+            this.clrbtnSliderLimitBar.Image = null;
+            this.clrbtnSliderLimitBar.Location = new System.Drawing.Point(108, 223);
+            this.clrbtnSliderLimitBar.MoreColors = "More Colors...";
+            this.clrbtnSliderLimitBar.Name = "clrbtnSliderLimitBar";
+            this.clrbtnSliderLimitBar.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnSliderLimitBar.TabIndex = 90;
+            this.toolTip1.SetToolTip(this.clrbtnSliderLimitBar, "Colour of the Limit bar area in the Drive/Tune sliders");
+            this.clrbtnSliderLimitBar.Changed += new System.EventHandler(this.clrbtnSliderLimitBar_Changed);
             // 
             // groupBoxTS12
             // 
@@ -52610,8 +52724,10 @@
             this.tpGainByBand.ResumeLayout(false);
             this.tpGainByBand.PerformLayout();
             this.grpGainByBandPA.ResumeLayout(false);
+            this.panelTS1.ResumeLayout(false);
+            this.panelTS1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).EndInit();
             this.panelAdjustGain.ResumeLayout(false);
-            this.panelAdjustGain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain90)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain80)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain70)).EndInit();
@@ -56156,13 +56272,13 @@
         private CheckBoxTS chkPANewCal;
         private ButtonTS btnCopyPAProfile;
         private PanelTS panelAdjustGain;
-        private LabelTS labelTS8;
-        private LabelTS labelTS155;
-        private LabelTS labelTS156;
-        private LabelTS labelTS157;
-        private LabelTS labelTS158;
-        private LabelTS labelTS159;
-        private LabelTS labelTS160;
+        private LabelTS lblPAAdjust70;
+        private LabelTS lblPAAdjust60;
+        private LabelTS lblPAAdjust50;
+        private LabelTS lblPAAdjust40;
+        private LabelTS lblPAAdjust30;
+        private LabelTS lblPAAdjust20;
+        private LabelTS lblPAAdjust10;
         private NumericUpDownTS nudAdjustGain90;
         private NumericUpDownTS nudAdjustGain80;
         private NumericUpDownTS nudAdjustGain70;
@@ -56172,9 +56288,16 @@
         private NumericUpDownTS nudAdjustGain30;
         private NumericUpDownTS nudAdjustGain20;
         private NumericUpDownTS nudAdjustGain10;
-        private LabelTS labelTS163;
+        private LabelTS lblDriveHeader;
         private LabelTS lblAdjustBand;
-        private LabelTS labelTS161;
-        private LabelTS labelTS162;
+        private LabelTS lblPAAdjust90;
+        private LabelTS lblPAAdjust80;
+        private PanelTS panelTS1;
+        private CheckBoxTS chkUsePowerOnDrvTunPA;
+        private LabelTS labelTS165;
+        private NumericUpDownTS nudMaxPowerForBandPA;
+        private LabelTS lblMaxPowerForBandPA;
+        private LabelTS labelTS8;
+        private ColorButton clrbtnSliderLimitBar;
     }
 }
