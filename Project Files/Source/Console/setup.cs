@@ -24817,14 +24817,17 @@ namespace Thetis
             //    /*if (p.GetGainForBand(_adjustingBand) != fOld)*/ console.PWR = console.PWR; // update the power, which causes these gain values to be queried
             //                                                                                 // we dont know drive level, so just set it
 
-            switch (console.TuneDrivePowerOrigin)
+            if (console.MOX)
             {
-                case DrivePowerSource.DRIVE_SLIDER:
-                    console.PWR = nNumber + 10; // set drive to the value we are adjusting
-                    break;
-                case DrivePowerSource.TUNE_SLIDER:
-                    console.TunePWR = nNumber + 10;
-                    break;
+                switch (console.TuneDrivePowerOrigin)
+                {
+                    case DrivePowerSource.DRIVE_SLIDER:
+                        console.PWR = nNumber + 10; // set drive to the value we are adjusting
+                        break;
+                    case DrivePowerSource.TUNE_SLIDER:
+                        console.TunePWR = nNumber + 10;
+                        break;
+                }
             }
         }
     }
