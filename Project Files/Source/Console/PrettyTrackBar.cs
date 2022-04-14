@@ -223,6 +223,15 @@ namespace Thetis
                 this.Invalidate();
             }
         }
+        private Color _limitBarColor = Color.Red;
+        public Color LimitBarColor
+        {
+            get { return _limitBarColor; }
+            set { 
+                _limitBarColor = value;
+                this.Invalidate();
+            }
+        }
         public bool IsConstrained
         {
             get
@@ -598,11 +607,17 @@ namespace Thetis
                 {
                     Brush b;
                     if (_limitSliding)
-                        b = new SolidBrush(Color.FromArgb(255, 255, 0, 0));
+                        b = new SolidBrush(Color.FromArgb(255, _limitBarColor));
                     else if (val > _nLimitValue)
-                        b = new SolidBrush(Color.FromArgb(255, 170, 0, 0));
+                    {
+                        float ratio = 170 / 255f;
+                        b = new SolidBrush(Color.FromArgb(255, (int)(_limitBarColor.R * ratio), (int)(_limitBarColor.G * ratio), (int)(_limitBarColor.B * ratio)));
+                    }
                     else
-                        b = new SolidBrush(Color.FromArgb(255, 110, 0, 0));
+                    {
+                        float ratio = 110 / 255f;
+                        b = new SolidBrush(Color.FromArgb(255, (int)(_limitBarColor.R * ratio), (int)(_limitBarColor.G * ratio), (int)(_limitBarColor.B * ratio)));
+                    }
 
                     g.FillRectangle(b, _limitBar_rect);
 

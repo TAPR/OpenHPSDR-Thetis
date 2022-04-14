@@ -1927,6 +1927,7 @@ namespace Thetis
             udSignalHistoryDuration_ValueChanged(this, e);
             udBlobPeakHoldMS_ValueChanged(this, e);
             chkPeakHoldDrop_CheckedChanged(this, e);
+            clrbtnSliderLimitBar_Changed(this, e); //MW0LGE_22b
 
             chkQSOTimerEnabled_CheckedChanged(this, e);
             chkQSOTimerOnlyDuringMOX_CheckedChanged(this, e);
@@ -2073,7 +2074,7 @@ namespace Thetis
             udTXFilterLow_ValueChanged(this, e);
             udTransmitTunePower_ValueChanged(this, e);
             //chkTXTunePower_CheckedChanged(this, e); //MW0LGE_22b not used now
-            udPAGain_ValueChanged(this, e);
+            //udPAGain_ValueChanged(this, e);
             radMicIn_CheckedChanged(this, e);
             radLineIn_CheckedChanged(this, e);
             udMicGainMax_ValueChanged(this, e);
@@ -10465,13 +10466,13 @@ namespace Thetis
             btnPAGainCalibration.Enabled = true;
         }
 
-        private void udPAGain_ValueChanged(object sender, System.EventArgs e)
-        {
-            console.PWR = console.PWR;
-        }
+        //private void udPAGain_ValueChanged(object sender, System.EventArgs e)
+        //{
+        //    console.PWR = console.PWR;
+        //}
 
-        private void btnPAGainReset_Click(object sender, System.EventArgs e)
-        {
+        //private void btnPAGainReset_Click(object sender, System.EventArgs e)
+        //{
             //if (console.CurrentHPSDRModel == HPSDRModel.ANAN10 || console.CurrentHPSDRModel == HPSDRModel.ANAN10E)
             //{
             //    ANAN10PAGain160 = 41.0f;
@@ -10741,7 +10742,7 @@ namespace Thetis
             //    udHermesPAGainVHF12.Value = 56.2M;
             //    udHermesPAGainVHF13.Value = 56.2M;
             //}
-        }
+        //}
 
         #endregion
 
@@ -23567,6 +23568,8 @@ namespace Thetis
                 updatePAControls(p);
                 updateNUDgains(p);
                 updateNUDAdjustgains(p);
+                updateMaxPower(p);
+                updateDriveLabels(p);
             }
         }
 
@@ -23604,7 +23607,7 @@ namespace Thetis
             if (!validatePAProfileName(sProfileName)) return;
 
             PAProfile newP = new PAProfile(sProfileName, HPSDRModel.FIRST, false); // we dont really want it associated with a model
-            newP.CopyGains(curP);
+            newP.CopySettings(curP);
 
             _PAProfiles.Add(sProfileName, newP);
 
@@ -23656,6 +23659,10 @@ namespace Thetis
         private bool _bIgnoreNUDGainUpdate = false;
         private void updateNUDgains(PAProfile p)
         {
+            if (_adjustingBand == Band.FIRST) return;
+            if (p == null)
+                p = getPAProfile(comboPAProfile.Text);
+
             if (p == null) return;
             // set every nud
             _bIgnoreNUDGainUpdate = true; // stop the valuechanged event on these nuds
@@ -23692,9 +23699,11 @@ namespace Thetis
             console.PWR = console.PWR; // force the use of these new values;
         }
         //
+        private Dictionary<string, LabelTS> _PADriveLabels = new Dictionary<string, LabelTS>();
         private bool _bIgnoreNUDAdjustUpdate = false;
         private void updateNUDAdjustgains(PAProfile p = null)
         {
+            if (_adjustingBand == Band.FIRST) return;
             if (p == null)
                 p = getPAProfile(comboPAProfile.Text);
 
@@ -23716,6 +23725,71 @@ namespace Thetis
 
             console.PWR = console.PWR; // force the use of these new values;
         }
+        private void updateDriveLabels(PAProfile p = null)
+        {
+            if (_adjustingBand == Band.FIRST) return;
+            if (p == null)
+                p = getPAProfile(comboPAProfile.Text);
+
+            // populate dict first time, it never gets cleared
+            if (_PADriveLabels.Count == 0)
+            {
+                foreach (Control c in panelAdjustGain.Controls)
+                {
+                    LabelTS lbl = c as LabelTS;
+                    if (lbl != null && lbl.Name.StartsWith("lblPAAdjust")) _PADriveLabels.Add(lbl.Name, lbl);
+                }
+            }
+
+            //update drive/watts display
+            if (p.GetMaxPowerUse(_adjustingBand))
+            {
+                // using watts
+                for (int n = 0; n < 9; n++)
+                {
+                    int num = (n * 10) + 10;
+                    string slblName = "lblPAAdjust" + num.ToString();
+                    if (_PADriveLabels.ContainsKey(slblName))
+                    {
+                        LabelTS lbl = _PADriveLabels[slblName];
+                        float watts = (num / 100f) * p.GetMaxPower(_adjustingBand);
+                        lbl.Text = watts.ToString("0.0") + "w";
+                        lbl.TextAlign = ContentAlignment.MiddleRight;
+                    }
+                }
+            }
+            else
+            {
+                //using drive
+                for (int n = 0; n < 9; n++)
+                {
+                    int num = (n * 10) + 10;
+                    string slblName = "lblPAAdjust" + num.ToString();
+                    if (_PADriveLabels.ContainsKey(slblName))
+                    {
+                        LabelTS lbl = _PADriveLabels[slblName];
+                        lbl.Text = num.ToString();
+                        lbl.TextAlign = ContentAlignment.MiddleCenter;
+                    }
+                }
+            }
+        }
+        private void updateMaxPower(PAProfile p = null)
+        {
+            if (_adjustingBand == Band.FIRST) return;
+            if (p == null)
+                p = getPAProfile(comboPAProfile.Text);
+
+            if (p == null) return;
+
+            nudMaxPowerForBandPA.Value = (decimal)p.GetMaxPower(_adjustingBand);
+            //chkUsePowerOnDrvTunPA.Checked = p.GetMaxPowerUse(_adjustingBand);
+
+            updateMaxPowerCheckbox(p);
+
+            console.UpdateDriveLabel(false, EventArgs.Empty);
+            console.UpdateTuneLabel(false, EventArgs.Empty);
+        }
         //
         private void btnResetPAProfile_Click(object sender, EventArgs e)
         {
@@ -23735,6 +23809,8 @@ namespace Thetis
 
             updateNUDgains(p);
             updateNUDAdjustgains(p);
+            updateMaxPower(p);
+            updateDriveLabels(p);
         }
         private int mapBandMetersToIndex(int nMeters)
         {
@@ -23831,6 +23907,24 @@ namespace Thetis
             if (p == null) return 1000;
 
             return p.GetGainForBand(b, nDriveValue);
+        }
+        public bool GetPABandUsesMaxPower(Band b)
+        {
+            if (_PAProfiles == null) return false;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return false;
+
+            return p.GetMaxPowerUse(b) && p.GetMaxPower(b) != 0;
+        }
+        public float GetPABandMaxPower(Band b)
+        {
+            if (_PAProfiles == null) return 0;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return 0;
+
+            return p.GetMaxPower(b);
         }
 
         private Dictionary<string, PAProfile> _PAProfiles;
@@ -24148,7 +24242,7 @@ namespace Thetis
                                 string sSetting = "udPAGain" + mapBandToMeters(b).ToString();
                                 float g = getOldVariablePAgain(sSetting, ref getDict);
                                 if (g != 1000) p.SetGainForBand(b, g);
-                                //if (g != 1000 && bRemoveOld) _oldSettings.Add(sSetting); // dont remove atm as used by gain calibrate
+                                if (g != 1000 && bRemoveOld) _oldSettings.Add(sSetting); // dont remove atm as used by gain calibrate
                             }
                             for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                             {
@@ -24196,23 +24290,6 @@ namespace Thetis
         {
             setAdjustingBand(console.TXBand);
         }
-        //private void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
-        //{
-        //    if (rx == 2)
-        //    {
-        //        if (!console.RX2Enabled || (console.RX2Enabled && !console.VFOBTX)) return; // rx2 is used, but we are not txing there
-        //    }
-        //    else
-        //    { // rx1
-        //        if (console.RX2Enabled && console.VFOBTX) return; // this info is for rx1 but we are txing on rx2 vfoB band
-        //    }
-
-        //    setAdjustingBand(newBand);
-        //}
-        //private void OnVFOTXChanged(bool vfoB, bool oldState, bool newState)
-        //{
-        //    setAdjustingBand(console.TXBand);
-        //}
         private void setAdjustingBand(Band b)
         {
             string sBand = b.ToString();
@@ -24225,17 +24302,21 @@ namespace Thetis
             {
                 enabledPAAdjust(false);
                 lblAdjustBand.Text = "Ignore for : " + sBand;
+                lblMaxPowerForBandPA.Text = "Ignore for : " + sBand;
                 return;
             }
             else
             {
                 enabledPAAdjust(true);
                 lblAdjustBand.Text = "Offset for : " + sBand;
+                lblMaxPowerForBandPA.Text = "Actual Power @ 100% slider for : " + sBand;
             }
 
             _adjustingBand = b;
 
             updateNUDAdjustgains();
+            updateMaxPower();
+            updateDriveLabels();
         }
         public class PAProfile
         {
@@ -24257,6 +24338,8 @@ namespace Thetis
             }
             private float[] _gainValues;
             private float[,] _gainAdjust;
+            private float[] _maxPower;
+            private bool[] _bUseMaxPower;
 
             public PAProfile(string sName, HPSDRModel model, bool isDefault)
             {
@@ -24265,18 +24348,21 @@ namespace Thetis
                 _default = isDefault;
                 _gainValues = new float[(int)Band.LAST];
                 _gainAdjust = new float[(int)Band.LAST, 9];
+                _maxPower = new float[(int)Band.LAST];
+                _bUseMaxPower = new bool[(int)Band.LAST];
 
-                // set to 0dB
+                // setup
                 for (int n = 0; n < (int)Band.LAST; n++)
                 {
                     for (int i = 0; i < 9; i++)
                     {
                         _gainAdjust[n, i] = 0;
                     }
-                }
-                // set to 100dB
-                for (int n = 0; n < (int)Band.LAST; n++)
+
                     _gainValues[n] = 100;
+                    _maxPower[n] = 0;
+                    _bUseMaxPower[n] = false;
+                }
 
                 ResetGainDefaultsForModel(_model);
             }
@@ -24307,7 +24393,10 @@ namespace Thetis
             public void DataFromString(string sData)
             {
                 string[] sSplit = sData.Split('|');
-                if((sSplit.Length == (int)Band.LAST + 3) || (sSplit.Length == (int)Band.LAST + 3 + 378)) // +3 as we have 3 previous settings and the gains, or everything + adjust
+                if((sSplit.Length == (int)Band.LAST + 3) || (sSplit.Length == (int)Band.LAST + 3 + 378) || (sSplit.Length == (int)Band.LAST + 3 + 378 + 84))
+                // + 3 = 3 initial settings
+                // + 378 = the new offsets
+                // + 84 = the new max power and in use
                 {
                     if (base64Encode(base64Decode(sSplit[0])) == sSplit[0])
                     {
@@ -24332,8 +24421,19 @@ namespace Thetis
                             for (int i = 0; i < 9; i++)
                             {
                                 _gainAdjust[n, i] = float.Parse(sSplit[index + 45]); // +45 to skip everything before
-
                                 index++;
+                            }
+                        }
+
+                        if(sSplit.Length > 423)
+                        {
+                            // we have max power
+                            index = 0;
+                            for (int n = 0; n < (int)Band.LAST; n++)
+                            {
+                                _bUseMaxPower[n] = bool.Parse(sSplit[index + 423]);
+                                _maxPower[n] = float.Parse(sSplit[index + 423 + 1]);
+                                index += 2;
                             }
                         }
                     }
@@ -24356,6 +24456,13 @@ namespace Thetis
                     {
                         sData += _gainAdjust[n, i].ToString("0.0") + "|";
                     }
+                }
+
+                // max power
+                for (int n = 0; n < (int)Band.LAST; n++)
+                {
+                    sData += _bUseMaxPower[n].ToString() + "|";
+                    sData += _maxPower[n].ToString("0.0") + "|";
                 }
 
                 sData = sData.TrimEnd('|');
@@ -24412,6 +24519,26 @@ namespace Thetis
             {
                 return a + frac * (b - a);
             }
+            public void SetMaxPower(Band b, float maxPower)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return;
+                _maxPower[(int)b] = maxPower;
+            }
+            public float GetMaxPower(Band b)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return 0;
+                return _maxPower[(int)b];
+            }
+            public void SetMaxPowerUse(Band b, bool bUse)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return;
+                _bUseMaxPower[(int)b] = bUse;
+            }
+            public bool GetMaxPowerUse(Band b)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return false;
+                return _bUseMaxPower[(int)b];
+            }
             public void SetAdjust(Band b, int stepIndex, float gain)
             {
                 if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return;
@@ -24432,11 +24559,11 @@ namespace Thetis
 
                 _gainValues[(int)b] = gain;
             }            
-            public void CopyGains(PAProfile sourceProfile)
+            public void CopySettings(PAProfile sourceProfile)
             {
                 if (sourceProfile == null) return;
 
-                for(int n = 0; n < _gainValues.Length; n++)
+                for(int n = 0; n < (int)Band.LAST; n++)
                 {
                     _gainValues[n] = sourceProfile._gainValues[n];
                 }
@@ -24448,18 +24575,27 @@ namespace Thetis
                         _gainAdjust[n, i] = sourceProfile._gainAdjust[n, i];
                     }
                 }
+                // max power
+                for (int n = 0; n < (int)Band.LAST; n++)
+                {
+                    _maxPower[n] = sourceProfile._maxPower[n];
+                    _bUseMaxPower[n] = sourceProfile._bUseMaxPower[n];
+                }
             }
             public void ResetGainDefaultsForModel(HPSDRModel model, bool bypasPASettings = false)
             {
                 _model = model;
 
-                //reset all adjusts as gains might change
+                //reset
                 for (int n = 0; n < (int)Band.LAST; n++)
                 {
                     for (int i = 0; i < 9; i++)
                     {
                         _gainAdjust[n, i] = 0;
                     }
+
+                    _maxPower[n] = 0;
+                    _bUseMaxPower[n] = false;
                 }
                 //
 
@@ -24763,6 +24899,9 @@ namespace Thetis
                         c.Enabled = bEnabled;
                 }
             }
+
+            chkUsePowerOnDrvTunPA.Enabled = bEnabled;
+            nudMaxPowerForBandPA.Enabled = bEnabled;
         }
         private void enabledAllPAnuds(bool bEnabled)
         {
@@ -24792,10 +24931,6 @@ namespace Thetis
                 }
             }
         }
-        private void comboPAProfile_TextChanged(object sender, EventArgs e)
-        {
-            Debug.Print(comboPAProfile.Text);
-        }
 
         private Band _adjustingBand = Band.FIRST;
         private void nudAdjustGain_ValueChanged(object sender, EventArgs e)
@@ -24811,11 +24946,7 @@ namespace Thetis
 
             int nNumber = int.Parse(nud.Name.Substring(13)) - 10;
 
-            //float fOld = p.GetGainForBand(_adjustingBand);
             p.SetAdjust(_adjustingBand, nNumber / 10, (float)nud.Value);
-
-            //    /*if (p.GetGainForBand(_adjustingBand) != fOld)*/ console.PWR = console.PWR; // update the power, which causes these gain values to be queried
-            //                                                                                 // we dont know drive level, so just set it
 
             if (console.MOX)
             {
@@ -24829,6 +24960,65 @@ namespace Thetis
                         break;
                 }
             }
+        }
+        private void updateMaxPowerCheckbox(PAProfile p = null)
+        {
+            if (_adjustingBand == Band.FIRST) return;
+            if (p == null)
+                p = getPAProfile(comboPAProfile.Text);
+
+            if (p == null) return;
+
+            if (nudMaxPowerForBandPA.Value == 0)
+            {
+                chkUsePowerOnDrvTunPA.Enabled = false;
+                _bIgnoreNUDAdjustUpdate = true; // prevent _checked event
+                chkUsePowerOnDrvTunPA.Checked = false;
+                _bIgnoreNUDAdjustUpdate = false;
+            }
+            else
+            {
+                chkUsePowerOnDrvTunPA.Enabled = true;
+                chkUsePowerOnDrvTunPA.Checked = p.GetMaxPowerUse(_adjustingBand);
+            }
+        }
+        private void nudMaxPowerForBandPA_ValueChanged(object sender, EventArgs e)
+        {
+            if (_bIgnoreNUDAdjustUpdate || initializing || _PAProfiles == null) return;
+            if (_adjustingBand == Band.FIRST) return;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return;
+
+            updateMaxPowerCheckbox(p);
+
+            p.SetMaxPower(_adjustingBand, (float)nudMaxPowerForBandPA.Value);
+
+            updateDriveLabels();
+
+            console.UpdateDriveLabel(false, EventArgs.Empty);
+            console.UpdateTuneLabel(false, EventArgs.Empty);
+        }
+
+        private void chkUsePowerOnDrvTunPA_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_bIgnoreNUDAdjustUpdate || initializing || _PAProfiles == null) return;
+            if (_adjustingBand == Band.FIRST) return;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return;
+
+            p.SetMaxPowerUse(_adjustingBand, chkUsePowerOnDrvTunPA.Checked);
+
+            updateDriveLabels(p);
+
+            console.UpdateDriveLabel(false, EventArgs.Empty);
+            console.UpdateTuneLabel(false, EventArgs.Empty);
+        }
+
+        private void clrbtnSliderLimitBar_Changed(object sender, EventArgs e)
+        {
+            console.LimitSliderColor = clrbtnSliderLimitBar.Color;
         }
     }
 

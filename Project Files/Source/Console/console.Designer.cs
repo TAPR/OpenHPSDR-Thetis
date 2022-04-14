@@ -1238,6 +1238,7 @@
             this.ptbFilterShift.GreenThumb = false;
             this.ptbFilterShift.HeadImage = null;
             this.ptbFilterShift.LargeChange = 1;
+            this.ptbFilterShift.LimitBarColor = System.Drawing.Color.Red;
             this.ptbFilterShift.LimitEnabled = false;
             this.ptbFilterShift.LimitValue = 0;
             this.ptbFilterShift.Maximum = 1000;
@@ -1256,6 +1257,7 @@
             this.ptbFilterWidth.GreenThumb = false;
             this.ptbFilterWidth.HeadImage = null;
             this.ptbFilterWidth.LargeChange = 1;
+            this.ptbFilterWidth.LimitBarColor = System.Drawing.Color.Red;
             this.ptbFilterWidth.LimitEnabled = false;
             this.ptbFilterWidth.LimitValue = 0;
             this.ptbFilterWidth.Maximum = 15000;
@@ -1345,6 +1347,7 @@
             this.ptbRX2RF.GreenThumb = false;
             this.ptbRX2RF.HeadImage = null;
             this.ptbRX2RF.LargeChange = 1;
+            this.ptbRX2RF.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX2RF.LimitEnabled = false;
             this.ptbRX2RF.LimitValue = 0;
             this.ptbRX2RF.Maximum = 120;
@@ -1642,6 +1645,7 @@
             this.ptbCWSpeed.GreenThumb = false;
             this.ptbCWSpeed.HeadImage = null;
             this.ptbCWSpeed.LargeChange = 1;
+            this.ptbCWSpeed.LimitBarColor = System.Drawing.Color.Red;
             this.ptbCWSpeed.LimitEnabled = false;
             this.ptbCWSpeed.LimitValue = 1;
             this.ptbCWSpeed.Maximum = 60;
@@ -2853,6 +2857,7 @@
             this.ptbDisplayZoom.GreenThumb = false;
             this.ptbDisplayZoom.HeadImage = null;
             this.ptbDisplayZoom.LargeChange = 1;
+            this.ptbDisplayZoom.LimitBarColor = System.Drawing.Color.Red;
             this.ptbDisplayZoom.LimitEnabled = false;
             this.ptbDisplayZoom.LimitValue = 10;
             this.ptbDisplayZoom.Maximum = 240;
@@ -2871,6 +2876,7 @@
             this.ptbDisplayPan.GreenThumb = false;
             this.ptbDisplayPan.HeadImage = null;
             this.ptbDisplayPan.LargeChange = 1;
+            this.ptbDisplayPan.LimitBarColor = System.Drawing.Color.Red;
             this.ptbDisplayPan.LimitEnabled = false;
             this.ptbDisplayPan.LimitValue = 0;
             this.ptbDisplayPan.Maximum = 1000;
@@ -2889,6 +2895,7 @@
             this.ptbPWR.GreenThumb = false;
             this.ptbPWR.HeadImage = null;
             this.ptbPWR.LargeChange = 1;
+            this.ptbPWR.LimitBarColor = System.Drawing.Color.Red;
             this.ptbPWR.LimitEnabled = true;
             this.ptbPWR.LimitValue = 50;
             this.ptbPWR.Maximum = 100;
@@ -2908,6 +2915,7 @@
             this.ptbRF.GreenThumb = false;
             this.ptbRF.HeadImage = null;
             this.ptbRF.LargeChange = 1;
+            this.ptbRF.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRF.LimitEnabled = false;
             this.ptbRF.LimitValue = 0;
             this.ptbRF.Maximum = 120;
@@ -2928,6 +2936,7 @@
             this.ptbAF.GreenThumb = false;
             this.ptbAF.HeadImage = null;
             this.ptbAF.LargeChange = 1;
+            this.ptbAF.LimitBarColor = System.Drawing.Color.Red;
             this.ptbAF.LimitEnabled = false;
             this.ptbAF.LimitValue = 0;
             this.ptbAF.Maximum = 100;
@@ -2947,6 +2956,7 @@
             this.ptbPanMainRX.GreenThumb = false;
             this.ptbPanMainRX.HeadImage = null;
             this.ptbPanMainRX.LargeChange = 1;
+            this.ptbPanMainRX.LimitBarColor = System.Drawing.Color.Red;
             this.ptbPanMainRX.LimitEnabled = false;
             this.ptbPanMainRX.LimitValue = 0;
             this.ptbPanMainRX.Maximum = 100;
@@ -2966,6 +2976,7 @@
             this.ptbPanSubRX.GreenThumb = false;
             this.ptbPanSubRX.HeadImage = null;
             this.ptbPanSubRX.LargeChange = 1;
+            this.ptbPanSubRX.LimitBarColor = System.Drawing.Color.Red;
             this.ptbPanSubRX.LimitEnabled = false;
             this.ptbPanSubRX.LimitValue = 0;
             this.ptbPanSubRX.Maximum = 100;
@@ -2985,6 +2996,7 @@
             this.ptbRX2Gain.GreenThumb = false;
             this.ptbRX2Gain.HeadImage = null;
             this.ptbRX2Gain.LargeChange = 1;
+            this.ptbRX2Gain.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX2Gain.LimitEnabled = false;
             this.ptbRX2Gain.LimitValue = 0;
             this.ptbRX2Gain.Maximum = 100;
@@ -3003,6 +3015,7 @@
             this.ptbRX2Pan.GreenThumb = false;
             this.ptbRX2Pan.HeadImage = null;
             this.ptbRX2Pan.LargeChange = 1;
+            this.ptbRX2Pan.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX2Pan.LimitEnabled = false;
             this.ptbRX2Pan.LimitValue = 0;
             this.ptbRX2Pan.Maximum = 100;
@@ -3022,6 +3035,7 @@
             this.ptbRX0Gain.GreenThumb = false;
             this.ptbRX0Gain.HeadImage = null;
             this.ptbRX0Gain.LargeChange = 1;
+            this.ptbRX0Gain.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX0Gain.LimitEnabled = false;
             this.ptbRX0Gain.LimitValue = 0;
             this.ptbRX0Gain.Maximum = 100;
@@ -3040,6 +3054,7 @@
             this.ptbRX1Gain.GreenThumb = false;
             this.ptbRX1Gain.HeadImage = null;
             this.ptbRX1Gain.LargeChange = 1;
+            this.ptbRX1Gain.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX1Gain.LimitEnabled = false;
             this.ptbRX1Gain.LimitValue = 0;
             this.ptbRX1Gain.Maximum = 100;
@@ -3058,6 +3073,7 @@
             this.ptbVACRXGain.GreenThumb = false;
             this.ptbVACRXGain.HeadImage = null;
             this.ptbVACRXGain.LargeChange = 1;
+            this.ptbVACRXGain.LimitBarColor = System.Drawing.Color.Red;
             this.ptbVACRXGain.LimitEnabled = false;
             this.ptbVACRXGain.LimitValue = 0;
             this.ptbVACRXGain.Maximum = 40;
@@ -3076,6 +3092,7 @@
             this.ptbVACTXGain.GreenThumb = false;
             this.ptbVACTXGain.HeadImage = null;
             this.ptbVACTXGain.LargeChange = 1;
+            this.ptbVACTXGain.LimitBarColor = System.Drawing.Color.Red;
             this.ptbVACTXGain.LimitEnabled = false;
             this.ptbVACTXGain.LimitValue = 0;
             this.ptbVACTXGain.Maximum = 40;
@@ -3362,6 +3379,7 @@
             this.ptbRX2AF.GreenThumb = false;
             this.ptbRX2AF.HeadImage = null;
             this.ptbRX2AF.LargeChange = 1;
+            this.ptbRX2AF.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX2AF.LimitEnabled = false;
             this.ptbRX2AF.LimitValue = 0;
             this.ptbRX2AF.Maximum = 100;
@@ -3381,6 +3399,7 @@
             this.ptbRX1AF.GreenThumb = false;
             this.ptbRX1AF.HeadImage = null;
             this.ptbRX1AF.LargeChange = 1;
+            this.ptbRX1AF.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX1AF.LimitEnabled = false;
             this.ptbRX1AF.LimitValue = 0;
             this.ptbRX1AF.Maximum = 100;
@@ -3498,6 +3517,7 @@
             this.ptbCWAPFGain.GreenThumb = false;
             this.ptbCWAPFGain.HeadImage = null;
             this.ptbCWAPFGain.LargeChange = 1;
+            this.ptbCWAPFGain.LimitBarColor = System.Drawing.Color.Red;
             this.ptbCWAPFGain.LimitEnabled = false;
             this.ptbCWAPFGain.LimitValue = 0;
             this.ptbCWAPFGain.Maximum = 100;
@@ -3516,6 +3536,7 @@
             this.ptbCWAPFBandwidth.GreenThumb = false;
             this.ptbCWAPFBandwidth.HeadImage = null;
             this.ptbCWAPFBandwidth.LargeChange = 1;
+            this.ptbCWAPFBandwidth.LimitBarColor = System.Drawing.Color.Red;
             this.ptbCWAPFBandwidth.LimitEnabled = false;
             this.ptbCWAPFBandwidth.LimitValue = 10;
             this.ptbCWAPFBandwidth.Maximum = 150;
@@ -3534,6 +3555,7 @@
             this.ptbCWAPFFreq.GreenThumb = false;
             this.ptbCWAPFFreq.HeadImage = null;
             this.ptbCWAPFFreq.LargeChange = 1;
+            this.ptbCWAPFFreq.LimitBarColor = System.Drawing.Color.Red;
             this.ptbCWAPFFreq.LimitEnabled = false;
             this.ptbCWAPFFreq.LimitValue = 0;
             this.ptbCWAPFFreq.Maximum = 250;
@@ -3863,6 +3885,7 @@
             this.ptbTune.GreenThumb = false;
             this.ptbTune.HeadImage = null;
             this.ptbTune.LargeChange = 1;
+            this.ptbTune.LimitBarColor = System.Drawing.Color.Red;
             this.ptbTune.LimitEnabled = true;
             this.ptbTune.LimitValue = 50;
             this.ptbTune.Maximum = 100;
@@ -5413,6 +5436,7 @@
             this.ptbRX2Squelch.GreenThumb = false;
             this.ptbRX2Squelch.HeadImage = null;
             this.ptbRX2Squelch.LargeChange = 1;
+            this.ptbRX2Squelch.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX2Squelch.LimitEnabled = false;
             this.ptbRX2Squelch.LimitValue = 0;
             this.ptbRX2Squelch.Maximum = 0;
@@ -6288,6 +6312,7 @@
             this.ptbNoiseGate.GreenThumb = false;
             this.ptbNoiseGate.HeadImage = null;
             this.ptbNoiseGate.LargeChange = 1;
+            this.ptbNoiseGate.LimitBarColor = System.Drawing.Color.Red;
             this.ptbNoiseGate.LimitEnabled = false;
             this.ptbNoiseGate.LimitValue = 0;
             this.ptbNoiseGate.Maximum = 0;
@@ -6313,6 +6338,7 @@
             this.ptbVOX.GreenThumb = false;
             this.ptbVOX.HeadImage = null;
             this.ptbVOX.LargeChange = 1;
+            this.ptbVOX.LimitBarColor = System.Drawing.Color.Red;
             this.ptbVOX.LimitEnabled = false;
             this.ptbVOX.LimitValue = 0;
             this.ptbVOX.Maximum = 0;
@@ -6336,6 +6362,7 @@
             this.ptbCPDR.GreenThumb = false;
             this.ptbCPDR.HeadImage = null;
             this.ptbCPDR.LargeChange = 1;
+            this.ptbCPDR.LimitBarColor = System.Drawing.Color.Red;
             this.ptbCPDR.LimitEnabled = false;
             this.ptbCPDR.LimitValue = 0;
             this.ptbCPDR.Maximum = 20;
@@ -6359,6 +6386,7 @@
             this.ptbDX.GreenThumb = false;
             this.ptbDX.HeadImage = null;
             this.ptbDX.LargeChange = 1;
+            this.ptbDX.LimitBarColor = System.Drawing.Color.Red;
             this.ptbDX.LimitEnabled = false;
             this.ptbDX.LimitValue = 0;
             this.ptbDX.Maximum = 10;
@@ -6388,6 +6416,7 @@
             this.ptbMic.GreenThumb = false;
             this.ptbMic.HeadImage = null;
             this.ptbMic.LargeChange = 1;
+            this.ptbMic.LimitBarColor = System.Drawing.Color.Red;
             this.ptbMic.LimitEnabled = false;
             this.ptbMic.LimitValue = 0;
             this.ptbMic.Maximum = 70;
@@ -7092,6 +7121,7 @@
             this.ptbSquelch.GreenThumb = false;
             this.ptbSquelch.HeadImage = null;
             this.ptbSquelch.LargeChange = 1;
+            this.ptbSquelch.LimitBarColor = System.Drawing.Color.Red;
             this.ptbSquelch.LimitEnabled = false;
             this.ptbSquelch.LimitValue = 0;
             this.ptbSquelch.Maximum = 0;
@@ -7135,6 +7165,7 @@
             this.ptbFMMic.GreenThumb = false;
             this.ptbFMMic.HeadImage = null;
             this.ptbFMMic.LargeChange = 1;
+            this.ptbFMMic.LimitBarColor = System.Drawing.Color.Red;
             this.ptbFMMic.LimitEnabled = false;
             this.ptbFMMic.LimitValue = 0;
             this.ptbFMMic.Maximum = 70;
