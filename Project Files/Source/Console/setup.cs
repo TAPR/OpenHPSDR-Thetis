@@ -75,6 +75,9 @@ namespace Thetis
             InitializeComponent();
             console = c;
 
+            //
+            addDelegates();
+
             // timeout stuff
             lblTimeout.Visible = Common.IsTimeOutEnabled;
             lblShowTimeoutText.Visible = Common.IsTimeOutEnabled;
@@ -548,6 +551,30 @@ namespace Thetis
 
             //MW0LGE_21h
             updateNetworkThrottleCheckBox();
+        }
+        private bool _bAddedDelegates = false;
+        private void addDelegates()
+        {            
+            if (console == null || _bAddedDelegates) return;
+
+            console.MoxChangeHandlers += OnMoxChangeHandler;
+            //console.BandChangeHandlers += OnBandChangeHandler;
+            //console.VFOTXChangedHandlers += OnVFOTXChanged;
+            console.TXBandChangeHandlers += OnTXBandChanged;
+
+            _bAddedDelegates = true;
+        }
+        public void RemoveDelegates()
+        {
+            if (console == null || !_bAddedDelegates) return;
+
+            // used outside by console exit
+            console.MoxChangeHandlers -= OnMoxChangeHandler;
+            //console.BandChangeHandlers -= OnBandChangeHandler;
+            //console.VFOTXChangedHandlers -= OnVFOTXChanged;
+            console.TXBandChangeHandlers -= OnTXBandChanged;
+
+            _bAddedDelegates = false;
         }
         #endregion
 
@@ -23539,6 +23566,7 @@ namespace Thetis
             {
                 updatePAControls(p);
                 updateNUDgains(p);
+                updateNUDAdjustgains(p);
             }
         }
 
@@ -23663,6 +23691,32 @@ namespace Thetis
 
             console.PWR = console.PWR; // force the use of these new values;
         }
+        //
+        private bool _bIgnoreNUDAdjustUpdate = false;
+        private void updateNUDAdjustgains(PAProfile p = null)
+        {
+            if (p == null)
+                p = getPAProfile(comboPAProfile.Text);
+
+            if (p == null) return;
+            // set every nud
+            _bIgnoreNUDAdjustUpdate = true; // stop the valuechanged event on these nuds
+
+            nudAdjustGain10.Value = (decimal)p.GetAdjust(_adjustingBand, 0);
+            nudAdjustGain20.Value = (decimal)p.GetAdjust(_adjustingBand, 1);
+            nudAdjustGain30.Value = (decimal)p.GetAdjust(_adjustingBand, 2);
+            nudAdjustGain40.Value = (decimal)p.GetAdjust(_adjustingBand, 3);
+            nudAdjustGain50.Value = (decimal)p.GetAdjust(_adjustingBand, 4);
+            nudAdjustGain60.Value = (decimal)p.GetAdjust(_adjustingBand, 5);
+            nudAdjustGain70.Value = (decimal)p.GetAdjust(_adjustingBand, 6);
+            nudAdjustGain80.Value = (decimal)p.GetAdjust(_adjustingBand, 7);
+            nudAdjustGain90.Value = (decimal)p.GetAdjust(_adjustingBand, 8);
+
+            _bIgnoreNUDAdjustUpdate = false;
+
+            console.PWR = console.PWR; // force the use of these new values;
+        }
+        //
         private void btnResetPAProfile_Click(object sender, EventArgs e)
         {
             DialogResult dr = MessageBox.Show(
@@ -23680,6 +23734,7 @@ namespace Thetis
             p.ResetGainDefaultsForModel(p.Model);
 
             updateNUDgains(p);
+            updateNUDAdjustgains(p);
         }
         private int mapBandMetersToIndex(int nMeters)
         {
@@ -23768,14 +23823,14 @@ namespace Thetis
 
             if (p.GetGainForBand(b) != fOld) console.PWR = console.PWR; // update the power, which causes these gain values to be queried
         }
-        public float GetPAGain(Band b)
+        public float GetPAGain(Band b, int nDriveValue)
         {
             if (_PAProfiles == null) return 1000;
 
             PAProfile p = getPAProfile(comboPAProfile.Text);
             if (p == null) return 1000;
 
-            return p.GetGainForBand(b);
+            return p.GetGainForBand(b, nDriveValue);
         }
 
         private Dictionary<string, PAProfile> _PAProfiles;
@@ -23874,7 +23929,7 @@ namespace Thetis
 
             p.SetGainForBand(b, gain);
         }
-        public void PAProfileEnableControls(bool tx)
+        private void PAProfileEnableControls(bool tx)
         {
             //prevent profile switch during a tx
             //user can only tweak the NUD's
@@ -24128,6 +24183,60 @@ namespace Thetis
             Debug.Print(_oldSettings.Count.ToString());
         }
 
+        private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
+        {
+            PAProfileEnableControls(newMox);
+
+            if (newMox)
+                enabledAllPAnuds(false);
+            else
+                enabledAllPAnuds(true);
+        }
+        private void OnTXBandChanged(Band oldBand, Band newBand)
+        {
+            setAdjustingBand(console.TXBand);
+        }
+        //private void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
+        //{
+        //    if (rx == 2)
+        //    {
+        //        if (!console.RX2Enabled || (console.RX2Enabled && !console.VFOBTX)) return; // rx2 is used, but we are not txing there
+        //    }
+        //    else
+        //    { // rx1
+        //        if (console.RX2Enabled && console.VFOBTX) return; // this info is for rx1 but we are txing on rx2 vfoB band
+        //    }
+
+        //    setAdjustingBand(newBand);
+        //}
+        //private void OnVFOTXChanged(bool vfoB, bool oldState, bool newState)
+        //{
+        //    setAdjustingBand(console.TXBand);
+        //}
+        private void setAdjustingBand(Band b)
+        {
+            string sBand = b.ToString();
+            if (sBand.EndsWith("M"))
+            {
+                if (sBand.StartsWith("B")) sBand = sBand.Remove(0, 1);
+            }
+
+            if (!((b >= Band.B160M && b <= Band.B6M) || (b >= Band.VHF0 && b <= Band.VHF13)))
+            {
+                enabledPAAdjust(false);
+                lblAdjustBand.Text = "Ignore for : " + sBand;
+                return;
+            }
+            else
+            {
+                enabledPAAdjust(true);
+                lblAdjustBand.Text = "Offset for : " + sBand;
+            }
+
+            _adjustingBand = b;
+
+            updateNUDAdjustgains();
+        }
         public class PAProfile
         {
             private string _sName = "";
@@ -24146,7 +24255,8 @@ namespace Thetis
             {
                 get { return _model; }
             }
-            private float[] _gainValues;            
+            private float[] _gainValues;
+            private float[,] _gainAdjust;
 
             public PAProfile(string sName, HPSDRModel model, bool isDefault)
             {
@@ -24154,8 +24264,17 @@ namespace Thetis
                 _model = model;
                 _default = isDefault;
                 _gainValues = new float[(int)Band.LAST];
+                _gainAdjust = new float[(int)Band.LAST, 9];
 
                 // set to 0dB
+                for (int n = 0; n < (int)Band.LAST; n++)
+                {
+                    for (int i = 0; i < 9; i++)
+                    {
+                        _gainAdjust[n, i] = 0;
+                    }
+                }
+                // set to 100dB
                 for (int n = 0; n < (int)Band.LAST; n++)
                     _gainValues[n] = 100;
 
@@ -24188,7 +24307,7 @@ namespace Thetis
             public void DataFromString(string sData)
             {
                 string[] sSplit = sData.Split('|');
-                if(sSplit.Length == (int)Band.LAST + 3) // +3 as we have 3 previous settings and the gains
+                if((sSplit.Length == (int)Band.LAST + 3) || (sSplit.Length == (int)Band.LAST + 3 + 378)) // +3 as we have 3 previous settings and the gains, or everything + adjust
                 {
                     if (base64Encode(base64Decode(sSplit[0])) == sSplit[0])
                     {
@@ -24200,8 +24319,24 @@ namespace Thetis
                     _model = (HPSDRModel)Enum.Parse(typeof(HPSDRModel), sSplit[1]);
                     _default = bool.Parse(sSplit[2]);
 
+                    // gains
                     for (int n = 0; n < (int)Band.LAST; n++)
                         _gainValues[n] = float.Parse(sSplit[n + 3]);  // +3 as we have 3 previous settings, name, model, default
+
+                    if (sSplit.Length > 45)
+                    {
+                        // we have the gain adjust
+                        int index = 0;
+                        for (int n = 0; n < (int)Band.LAST; n++)
+                        {
+                            for (int i = 0; i < 9; i++)
+                            {
+                                _gainAdjust[n, i] = float.Parse(sSplit[index + 45]); // +45 to skip everything before
+
+                                index++;
+                            }
+                        }
+                    }
                 }
             }
             public string DataToString()
@@ -24210,18 +24345,86 @@ namespace Thetis
                 sData += ((int)_model).ToString() + "|";
                 sData += _default.ToString() + "|";
 
+                // gains
                 for (int n = 0; n < (int)Band.LAST; n++)
-                    sData += _gainValues[n].ToString() + "|";
+                    sData += _gainValues[n].ToString("0.0") + "|";
+
+                // gain adjust
+                for (int n = 0; n < (int)Band.LAST; n++)
+                {
+                    for (int i = 0; i < 9; i++)
+                    {
+                        sData += _gainAdjust[n, i].ToString("0.0") + "|";
+                    }
+                }
 
                 sData = sData.TrimEnd('|');
 
                 return sData;
             }
-            public float GetGainForBand(Band b)
+            public float GetGainForBand(Band b, int nDriveValue = -1)
             {
                 if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return 1000;
 
-                return _gainValues[(int)b];
+                if (nDriveValue == -1)
+                    return _gainValues[(int)b];
+                else
+                    return _gainValues[(int)b] - calcDriveAdjust(b, nDriveValue);
+            }
+            private float calcDriveAdjust(Band b, int nDriveValue)
+            {
+                int nBand = (int)b;
+                int nLIndex = nDriveValue / 10;
+
+                if (nDriveValue % 10 == 0)
+                {
+                    if (nLIndex == 0 || nLIndex == 10) return 0;
+                    // exact
+                    return _gainAdjust[nBand, nLIndex - 1];
+                }
+                else
+                {
+                    float low;
+                    float high;
+
+                    if (nLIndex == 0)
+                    {
+                        low = 0;
+                        high = _gainAdjust[nBand, 0];
+                    }
+                    else if (nLIndex == 9)
+                    {
+                        low = _gainAdjust[nBand, 8];
+                        high = 0;
+                    }
+                    else
+                    {
+                        low = _gainAdjust[nBand, nLIndex - 1];
+                        high = _gainAdjust[nBand, nLIndex];
+                    }
+
+                    float frac = (nDriveValue - (nLIndex * 10)) / 10f;
+
+                    return lerp(low, high, frac);
+                }
+            }
+            private float lerp(float a, float b, float frac)
+            {
+                return a + frac * (b - a);
+            }
+            public void SetAdjust(Band b, int stepIndex, float gain)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return;
+                if (stepIndex < 0 || stepIndex > 8) return;
+
+                _gainAdjust[(int)b, stepIndex] = gain;
+            }
+            public float GetAdjust(Band b, int stepIndex)
+            {
+                if (!((int)b > (int)Band.FIRST && (int)b < (int)Band.LAST)) return 0;
+                if (stepIndex < 0 || stepIndex > 8) return 0;
+
+                return _gainAdjust[(int)b, stepIndex];
             }
             public void SetGainForBand(Band b, float gain)
             {
@@ -24237,10 +24440,28 @@ namespace Thetis
                 {
                     _gainValues[n] = sourceProfile._gainValues[n];
                 }
+                // adjusts
+                for (int n = 0; n < (int)Band.LAST; n++)
+                {
+                    for (int i = 0; i < 9; i++)
+                    {
+                        _gainAdjust[n, i] = sourceProfile._gainAdjust[n, i];
+                    }
+                }
             }
             public void ResetGainDefaultsForModel(HPSDRModel model, bool bypasPASettings = false)
             {
                 _model = model;
+
+                //reset all adjusts as gains might change
+                for (int n = 0; n < (int)Band.LAST; n++)
+                {
+                    for (int i = 0; i < 9; i++)
+                    {
+                        _gainAdjust[n, i] = 0;
+                    }
+                }
+                //
 
                 if (model == HPSDRModel.HERMES || model == HPSDRModel.HPSDR || model == HPSDRModel.ORIONMKII || bypasPASettings)// || (model == HPSDRModel.ANAN100D && bypasPASettings))
                 {
@@ -24531,10 +24752,83 @@ namespace Thetis
                 //}
             }
         }
+        private void enabledPAAdjust(bool bEnabled)
+        {
+            foreach (Control c in panelAdjustGain.Controls)
+            {
+                NumericUpDownTS nud = c as NumericUpDownTS;
+                if (c != null)
+                {
+                    if (c.Name.StartsWith("nudAdjustGain"))
+                        c.Enabled = bEnabled;
+                }
+            }
+        }
+        private void enabledAllPAnuds(bool bEnabled)
+        {
+            foreach(Control c in grpGainByBandPA.Controls)
+            {
+                NumericUpDownTS nud = c as NumericUpDownTS;
+                if(c != null)
+                {
+                    if (c.Name.StartsWith("nud"))
+                    {
+                        bool bVHF = nud.Name.StartsWith("nudVHF");
+                        int nNumber = bVHF ? int.Parse(nud.Name.Substring(6)) : int.Parse(nud.Name.Substring(3, nud.Name.Length - 4));
+                        Band b;
+                        if (bVHF)
+                            b = (Band)((int)Band.VHF0 + nNumber);
+                        else
+                            b = (Band)((int)Band.B160M + mapBandMetersToIndex(nNumber));
 
+                        if (!bEnabled)
+                        {
+                            // ignore current band
+                            if (b != _adjustingBand) c.Enabled = false;
+                        }
+                        else
+                            c.Enabled = true;
+                    }
+                }
+            }
+        }
         private void comboPAProfile_TextChanged(object sender, EventArgs e)
         {
             Debug.Print(comboPAProfile.Text);
+        }
+
+        private Band _adjustingBand = Band.FIRST;
+        private void nudAdjustGain_ValueChanged(object sender, EventArgs e)
+        {
+            if (_bIgnoreNUDAdjustUpdate || initializing || _PAProfiles == null) return;
+            if (_adjustingBand == Band.FIRST) return;
+
+            NumericUpDownTS nud = sender as NumericUpDownTS;
+            if (nud == null) return;
+
+            PAProfile p = getPAProfile(comboPAProfile.Text);
+            if (p == null) return;
+
+            int nNumber = int.Parse(nud.Name.Substring(13)) - 10;
+
+            //float fOld = p.GetGainForBand(_adjustingBand);
+            p.SetAdjust(_adjustingBand, nNumber / 10, (float)nud.Value);
+
+            //    /*if (p.GetGainForBand(_adjustingBand) != fOld)*/ console.PWR = console.PWR; // update the power, which causes these gain values to be queried
+            //                                                                                 // we dont know drive level, so just set it
+
+            if (console.MOX)
+            {
+                switch (console.TuneDrivePowerOrigin)
+                {
+                    case DrivePowerSource.DRIVE_SLIDER:
+                        console.PWR = nNumber + 10; // set drive to the value we are adjusting
+                        break;
+                    case DrivePowerSource.TUNE_SLIDER:
+                        console.TunePWR = nNumber + 10;
+                        break;
+                }
+            }
         }
     }
 
