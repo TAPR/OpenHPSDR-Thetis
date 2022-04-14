@@ -2522,6 +2522,28 @@
             this.tpGainByBand = new System.Windows.Forms.TabPage();
             this.chkPANewCal = new System.Windows.Forms.CheckBoxTS();
             this.grpGainByBandPA = new System.Windows.Forms.GroupBoxTS();
+            this.panelAdjustGain = new System.Windows.Forms.PanelTS();
+            this.labelTS163 = new System.Windows.Forms.LabelTS();
+            this.lblAdjustBand = new System.Windows.Forms.LabelTS();
+            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.labelTS162 = new System.Windows.Forms.LabelTS();
+            this.labelTS8 = new System.Windows.Forms.LabelTS();
+            this.labelTS155 = new System.Windows.Forms.LabelTS();
+            this.labelTS156 = new System.Windows.Forms.LabelTS();
+            this.labelTS157 = new System.Windows.Forms.LabelTS();
+            this.labelTS158 = new System.Windows.Forms.LabelTS();
+            this.labelTS159 = new System.Windows.Forms.LabelTS();
+            this.labelTS160 = new System.Windows.Forms.LabelTS();
+            this.nudAdjustGain90 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain80 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain70 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain60 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain50 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain40 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain30 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain20 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAdjustGain10 = new System.Windows.Forms.NumericUpDownTS();
+            this.btnCopyPAProfile = new System.Windows.Forms.ButtonTS();
             this.btnNewPAProfile = new System.Windows.Forms.ButtonTS();
             this.labelTS618 = new System.Windows.Forms.LabelTS();
             this.nudVHF13 = new System.Windows.Forms.NumericUpDownTS();
@@ -3270,7 +3292,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.btnCopyPAProfile = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3913,6 +3934,16 @@
             this.tcPowerAmplifier.SuspendLayout();
             this.tpGainByBand.SuspendLayout();
             this.grpGainByBandPA.SuspendLayout();
+            this.panelAdjustGain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain90)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain80)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain70)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain60)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain50)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain40)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain30)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain20)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain10)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVHF13)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVHF12)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVHF11)).BeginInit();
@@ -40262,6 +40293,7 @@
             // 
             // grpGainByBandPA
             // 
+            this.grpGainByBandPA.Controls.Add(this.panelAdjustGain);
             this.grpGainByBandPA.Controls.Add(this.btnCopyPAProfile);
             this.grpGainByBandPA.Controls.Add(this.btnNewPAProfile);
             this.grpGainByBandPA.Controls.Add(this.labelTS618);
@@ -40319,10 +40351,432 @@
             this.grpGainByBandPA.Controls.Add(this.comboPAProfile);
             this.grpGainByBandPA.Location = new System.Drawing.Point(25, 25);
             this.grpGainByBandPA.Name = "grpGainByBandPA";
-            this.grpGainByBandPA.Size = new System.Drawing.Size(401, 335);
+            this.grpGainByBandPA.Size = new System.Drawing.Size(529, 364);
             this.grpGainByBandPA.TabIndex = 119;
             this.grpGainByBandPA.TabStop = false;
             this.grpGainByBandPA.Text = "PA Gain By Band (dB)";
+            // 
+            // panelAdjustGain
+            // 
+            this.panelAdjustGain.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelAdjustGain.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelAdjustGain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelAdjustGain.Controls.Add(this.labelTS163);
+            this.panelAdjustGain.Controls.Add(this.lblAdjustBand);
+            this.panelAdjustGain.Controls.Add(this.labelTS161);
+            this.panelAdjustGain.Controls.Add(this.labelTS162);
+            this.panelAdjustGain.Controls.Add(this.labelTS8);
+            this.panelAdjustGain.Controls.Add(this.labelTS155);
+            this.panelAdjustGain.Controls.Add(this.labelTS156);
+            this.panelAdjustGain.Controls.Add(this.labelTS157);
+            this.panelAdjustGain.Controls.Add(this.labelTS158);
+            this.panelAdjustGain.Controls.Add(this.labelTS159);
+            this.panelAdjustGain.Controls.Add(this.labelTS160);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain90);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain80);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain70);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain60);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain50);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain40);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain30);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain20);
+            this.panelAdjustGain.Controls.Add(this.nudAdjustGain10);
+            this.panelAdjustGain.Location = new System.Drawing.Point(381, 63);
+            this.panelAdjustGain.Name = "panelAdjustGain";
+            this.panelAdjustGain.Size = new System.Drawing.Size(131, 288);
+            this.panelAdjustGain.TabIndex = 167;
+            // 
+            // labelTS163
+            // 
+            this.labelTS163.AutoSize = true;
+            this.labelTS163.Image = null;
+            this.labelTS163.Location = new System.Drawing.Point(19, 37);
+            this.labelTS163.Name = "labelTS163";
+            this.labelTS163.Size = new System.Drawing.Size(32, 13);
+            this.labelTS163.TabIndex = 161;
+            this.labelTS163.Text = "Drive";
+            // 
+            // lblAdjustBand
+            // 
+            this.lblAdjustBand.Image = null;
+            this.lblAdjustBand.Location = new System.Drawing.Point(3, 13);
+            this.lblAdjustBand.Name = "lblAdjustBand";
+            this.lblAdjustBand.Size = new System.Drawing.Size(123, 15);
+            this.lblAdjustBand.TabIndex = 160;
+            this.lblAdjustBand.Text = "Offset for: VHF13";
+            this.lblAdjustBand.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // labelTS161
+            // 
+            this.labelTS161.Image = null;
+            this.labelTS161.Location = new System.Drawing.Point(18, 259);
+            this.labelTS161.Name = "labelTS161";
+            this.labelTS161.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS161.Size = new System.Drawing.Size(40, 16);
+            this.labelTS161.TabIndex = 159;
+            this.labelTS161.Text = "90";
+            this.labelTS161.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS162
+            // 
+            this.labelTS162.Image = null;
+            this.labelTS162.Location = new System.Drawing.Point(18, 233);
+            this.labelTS162.Name = "labelTS162";
+            this.labelTS162.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS162.Size = new System.Drawing.Size(40, 16);
+            this.labelTS162.TabIndex = 158;
+            this.labelTS162.Text = "80";
+            this.labelTS162.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS8
+            // 
+            this.labelTS8.Image = null;
+            this.labelTS8.Location = new System.Drawing.Point(18, 207);
+            this.labelTS8.Name = "labelTS8";
+            this.labelTS8.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS8.Size = new System.Drawing.Size(40, 16);
+            this.labelTS8.TabIndex = 157;
+            this.labelTS8.Text = "70";
+            this.labelTS8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS155
+            // 
+            this.labelTS155.Image = null;
+            this.labelTS155.Location = new System.Drawing.Point(18, 181);
+            this.labelTS155.Name = "labelTS155";
+            this.labelTS155.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS155.Size = new System.Drawing.Size(40, 16);
+            this.labelTS155.TabIndex = 156;
+            this.labelTS155.Text = "60";
+            this.labelTS155.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS156
+            // 
+            this.labelTS156.Image = null;
+            this.labelTS156.Location = new System.Drawing.Point(18, 155);
+            this.labelTS156.Name = "labelTS156";
+            this.labelTS156.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS156.Size = new System.Drawing.Size(40, 16);
+            this.labelTS156.TabIndex = 155;
+            this.labelTS156.Text = "50";
+            this.labelTS156.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS157
+            // 
+            this.labelTS157.Image = null;
+            this.labelTS157.Location = new System.Drawing.Point(18, 129);
+            this.labelTS157.Name = "labelTS157";
+            this.labelTS157.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS157.Size = new System.Drawing.Size(40, 16);
+            this.labelTS157.TabIndex = 154;
+            this.labelTS157.Text = "40";
+            this.labelTS157.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS158
+            // 
+            this.labelTS158.Image = null;
+            this.labelTS158.Location = new System.Drawing.Point(18, 105);
+            this.labelTS158.Name = "labelTS158";
+            this.labelTS158.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS158.Size = new System.Drawing.Size(40, 16);
+            this.labelTS158.TabIndex = 153;
+            this.labelTS158.Text = "30";
+            this.labelTS158.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS159
+            // 
+            this.labelTS159.Image = null;
+            this.labelTS159.Location = new System.Drawing.Point(18, 79);
+            this.labelTS159.Name = "labelTS159";
+            this.labelTS159.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS159.Size = new System.Drawing.Size(40, 16);
+            this.labelTS159.TabIndex = 152;
+            this.labelTS159.Text = "20";
+            this.labelTS159.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS160
+            // 
+            this.labelTS160.Image = null;
+            this.labelTS160.Location = new System.Drawing.Point(18, 55);
+            this.labelTS160.Name = "labelTS160";
+            this.labelTS160.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelTS160.Size = new System.Drawing.Size(40, 16);
+            this.labelTS160.TabIndex = 151;
+            this.labelTS160.Text = "10";
+            this.labelTS160.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // nudAdjustGain90
+            // 
+            this.nudAdjustGain90.DecimalPlaces = 1;
+            this.nudAdjustGain90.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain90.Location = new System.Drawing.Point(64, 259);
+            this.nudAdjustGain90.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain90.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain90.Name = "nudAdjustGain90";
+            this.nudAdjustGain90.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain90.TabIndex = 124;
+            this.nudAdjustGain90.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain90.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain80
+            // 
+            this.nudAdjustGain80.DecimalPlaces = 1;
+            this.nudAdjustGain80.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain80.Location = new System.Drawing.Point(64, 233);
+            this.nudAdjustGain80.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain80.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain80.Name = "nudAdjustGain80";
+            this.nudAdjustGain80.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain80.TabIndex = 123;
+            this.nudAdjustGain80.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain80.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain70
+            // 
+            this.nudAdjustGain70.DecimalPlaces = 1;
+            this.nudAdjustGain70.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain70.Location = new System.Drawing.Point(64, 207);
+            this.nudAdjustGain70.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain70.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain70.Name = "nudAdjustGain70";
+            this.nudAdjustGain70.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain70.TabIndex = 122;
+            this.nudAdjustGain70.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain70.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain60
+            // 
+            this.nudAdjustGain60.DecimalPlaces = 1;
+            this.nudAdjustGain60.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain60.Location = new System.Drawing.Point(64, 181);
+            this.nudAdjustGain60.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain60.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain60.Name = "nudAdjustGain60";
+            this.nudAdjustGain60.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain60.TabIndex = 121;
+            this.nudAdjustGain60.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain60.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain50
+            // 
+            this.nudAdjustGain50.DecimalPlaces = 1;
+            this.nudAdjustGain50.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain50.Location = new System.Drawing.Point(64, 155);
+            this.nudAdjustGain50.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain50.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain50.Name = "nudAdjustGain50";
+            this.nudAdjustGain50.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain50.TabIndex = 120;
+            this.nudAdjustGain50.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain50.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain40
+            // 
+            this.nudAdjustGain40.DecimalPlaces = 1;
+            this.nudAdjustGain40.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain40.Location = new System.Drawing.Point(64, 129);
+            this.nudAdjustGain40.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain40.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain40.Name = "nudAdjustGain40";
+            this.nudAdjustGain40.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain40.TabIndex = 119;
+            this.nudAdjustGain40.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain40.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain30
+            // 
+            this.nudAdjustGain30.DecimalPlaces = 1;
+            this.nudAdjustGain30.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain30.Location = new System.Drawing.Point(64, 103);
+            this.nudAdjustGain30.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain30.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain30.Name = "nudAdjustGain30";
+            this.nudAdjustGain30.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain30.TabIndex = 118;
+            this.nudAdjustGain30.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain30.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain20
+            // 
+            this.nudAdjustGain20.DecimalPlaces = 1;
+            this.nudAdjustGain20.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain20.Location = new System.Drawing.Point(64, 77);
+            this.nudAdjustGain20.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain20.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain20.Name = "nudAdjustGain20";
+            this.nudAdjustGain20.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain20.TabIndex = 117;
+            this.nudAdjustGain20.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain20.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // nudAdjustGain10
+            // 
+            this.nudAdjustGain10.DecimalPlaces = 1;
+            this.nudAdjustGain10.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudAdjustGain10.Location = new System.Drawing.Point(64, 51);
+            this.nudAdjustGain10.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudAdjustGain10.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudAdjustGain10.Name = "nudAdjustGain10";
+            this.nudAdjustGain10.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain10.TabIndex = 116;
+            this.nudAdjustGain10.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudAdjustGain10.ValueChanged += new System.EventHandler(this.nudAdjustGain_ValueChanged);
+            // 
+            // btnCopyPAProfile
+            // 
+            this.btnCopyPAProfile.Image = null;
+            this.btnCopyPAProfile.Location = new System.Drawing.Point(319, 27);
+            this.btnCopyPAProfile.Name = "btnCopyPAProfile";
+            this.btnCopyPAProfile.Size = new System.Drawing.Size(65, 23);
+            this.btnCopyPAProfile.TabIndex = 166;
+            this.btnCopyPAProfile.Text = "Copy";
+            this.toolTip1.SetToolTip(this.btnCopyPAProfile, "Copy a profile to a new name");
+            this.btnCopyPAProfile.UseVisualStyleBackColor = true;
+            this.btnCopyPAProfile.Click += new System.EventHandler(this.btnCopyPAProfile_Click);
             // 
             // btnNewPAProfile
             // 
@@ -51369,18 +51823,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // btnCopyPAProfile
-            // 
-            this.btnCopyPAProfile.Image = null;
-            this.btnCopyPAProfile.Location = new System.Drawing.Point(319, 27);
-            this.btnCopyPAProfile.Name = "btnCopyPAProfile";
-            this.btnCopyPAProfile.Size = new System.Drawing.Size(65, 23);
-            this.btnCopyPAProfile.TabIndex = 166;
-            this.btnCopyPAProfile.Text = "Copy";
-            this.toolTip1.SetToolTip(this.btnCopyPAProfile, "Copy a profile to a new name");
-            this.btnCopyPAProfile.UseVisualStyleBackColor = true;
-            this.btnCopyPAProfile.Click += new System.EventHandler(this.btnCopyPAProfile_Click);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -52168,6 +52610,17 @@
             this.tpGainByBand.ResumeLayout(false);
             this.tpGainByBand.PerformLayout();
             this.grpGainByBandPA.ResumeLayout(false);
+            this.panelAdjustGain.ResumeLayout(false);
+            this.panelAdjustGain.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain90)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain80)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain70)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain60)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain50)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain40)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain30)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain20)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain10)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVHF13)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVHF12)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVHF11)).EndInit();
@@ -55702,5 +56155,26 @@
         private ButtonTS btnNewPAProfile;
         private CheckBoxTS chkPANewCal;
         private ButtonTS btnCopyPAProfile;
+        private PanelTS panelAdjustGain;
+        private LabelTS labelTS8;
+        private LabelTS labelTS155;
+        private LabelTS labelTS156;
+        private LabelTS labelTS157;
+        private LabelTS labelTS158;
+        private LabelTS labelTS159;
+        private LabelTS labelTS160;
+        private NumericUpDownTS nudAdjustGain90;
+        private NumericUpDownTS nudAdjustGain80;
+        private NumericUpDownTS nudAdjustGain70;
+        private NumericUpDownTS nudAdjustGain60;
+        private NumericUpDownTS nudAdjustGain50;
+        private NumericUpDownTS nudAdjustGain40;
+        private NumericUpDownTS nudAdjustGain30;
+        private NumericUpDownTS nudAdjustGain20;
+        private NumericUpDownTS nudAdjustGain10;
+        private LabelTS labelTS163;
+        private LabelTS lblAdjustBand;
+        private LabelTS labelTS161;
+        private LabelTS labelTS162;
     }
 }
