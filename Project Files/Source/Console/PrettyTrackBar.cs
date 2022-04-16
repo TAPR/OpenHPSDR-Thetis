@@ -352,7 +352,7 @@ namespace Thetis
                                     if (new_val > max) new_val = max;
 
                                     Value = new_val;
-                                    OnScroll(this, EventArgs.Empty);
+                                    OnScroll(this, e);
                                 }
                                 break;
                             case Orientation.Vertical:
@@ -365,7 +365,7 @@ namespace Thetis
                                     if (new_val > max) new_val = max;
 
                                     Value = new_val;
-                                    OnScroll(this, EventArgs.Empty);
+                                    OnScroll(this, e);
                                 }
                                 break;
                         }
@@ -494,7 +494,7 @@ namespace Thetis
                     if (new_val != old_val)
                     {
                         val = new_val;
-                        OnScroll(this, EventArgs.Empty);
+                        OnScroll(this, e);
                     }
                     this.Invalidate();
                     //Debug.WriteLine("delta: "+delta+"  percent: "+percent.ToString("f4")+"  new_val: " + new_val+"  down_x: "+down_x+"  head_x: "+head_rect.X);

@@ -3955,28 +3955,28 @@ namespace Thetis
                         if (!m_bFastAttackNoiseFloorRX1 && !bPreviousRX1)
                         {
                             m_fActiveDisplayOffsetRX1 = fOffset;
-                            m_dNoiseFloorRX1 = m_fLerpAverageRX1;
+                            m_dNoiseFloorRX1 = m_fLerpAverageRX1 + _NFshiftDBM;
                             m_bNoiseFloorGoodRX1 = true;
                         }
 
-                        yPixelLerp = (int)dBToPixel(m_fLerpAverageRX1, H);
-                        yPixelActual = (int)dBToPixel(m_fFFTBinAverageRX1, H);
+                        yPixelLerp = (int)dBToPixel(m_fLerpAverageRX1 + _NFshiftDBM, H);
+                        yPixelActual = (int)dBToPixel(m_fFFTBinAverageRX1 + _NFshiftDBM, H);
 
-                        lerp = m_fLerpAverageRX1;
+                        lerp = m_fLerpAverageRX1 + _NFshiftDBM;
                     }
                     else
                     {
                         if (!m_bFastAttackNoiseFloorRX2 && !bPreviousRX2)
                         {
                             m_fActiveDisplayOffsetRX2 = fOffset;
-                            m_dNoiseFloorRX2 = m_fLerpAverageRX2;
+                            m_dNoiseFloorRX2 = m_fLerpAverageRX2 + _NFshiftDBM;
                             m_bNoiseFloorGoodRX2 = true;
                         }
 
-                        yPixelLerp = (int)dBToRX2Pixel(m_fLerpAverageRX2, H);
-                        yPixelActual = (int)dBToRX2Pixel(m_fFFTBinAverageRX2, H);
+                        yPixelLerp = (int)dBToRX2Pixel(m_fLerpAverageRX2 + _NFshiftDBM, H);
+                        yPixelActual = (int)dBToRX2Pixel(m_fFFTBinAverageRX2 + _NFshiftDBM, H);
 
-                        lerp = m_fLerpAverageRX2;
+                        lerp = m_fLerpAverageRX2 + _NFshiftDBM;
                     }
 
                     if ((rx == 1 && m_bShowRX1NoiseFloor) || (rx == 2 && m_bShowRX2NoiseFloor))
@@ -4083,6 +4083,18 @@ namespace Thetis
             if (_showTCISpots) drawSpots(rx, nVerticalShift, W, bottom);
 
             return true;
+        }
+        private static int _NFshiftDBM = 0;
+        public static int NFshiftDBM
+        {
+            get { return NFshiftDBM; }
+            set
+            {
+                int t = value;
+                if (t < -6) t = 6;
+                if (t > 6) t = 6;
+                _NFshiftDBM = t;
+            }
         }
         private static int _NFsensitivity = 3;
         public static int NFsensitivity
@@ -4384,7 +4396,7 @@ namespace Thetis
                             if (!m_bFastAttackNoiseFloorRX1 && !bPreviousRX1)
                             {
                                 m_fActiveDisplayOffsetRX1 = fOffset;
-                                m_dNoiseFloorRX1 = m_fLerpAverageRX1;
+                                m_dNoiseFloorRX1 = m_fLerpAverageRX1 + _NFshiftDBM;
                                 m_bNoiseFloorGoodRX1 = true;
                             }
                         }
@@ -4393,7 +4405,7 @@ namespace Thetis
                             if (!m_bFastAttackNoiseFloorRX2 && !bPreviousRX2)
                             {
                                 m_fActiveDisplayOffsetRX2 = fOffset;
-                                m_dNoiseFloorRX2 = m_fLerpAverageRX2;
+                                m_dNoiseFloorRX2 = m_fLerpAverageRX2 + _NFshiftDBM;
                                 m_bNoiseFloorGoodRX2 = true;
                             }
                         }
