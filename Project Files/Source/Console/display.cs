@@ -2241,8 +2241,7 @@ namespace Thetis
 
         private static float RX1waterfallPreviousMinValue = 0.0f;
         private static float RX2waterfallPreviousMinValue = 0.0f;
-
-        public static void ResetWaterfallBmp(/*int scale*/)
+        private static void ResetWaterfallBmp(/*int scale*/)
         {
             int H = displayTargetHeight;
             if (current_display_mode == DisplayMode.PANAFALL) H /= 2;
@@ -2297,8 +2296,7 @@ namespace Thetis
                 }
             }
         }
-
-        public static void ResetWaterfallBmp2(/*int scale*/)
+        private static void ResetWaterfallBmp2(/*int scale*/)
         {
             int H = displayTargetHeight;
             if (current_display_mode_bottom == DisplayMode.PANAFALL) H /= 2;
@@ -3751,7 +3749,6 @@ namespace Thetis
                 ResetBlobMaximums(rx);
                 if (m_bInsideFilterOnly) getFilterXPositions(rx, W, local_mox, displayduplex, out filter_left_x, out filter_right_x);
             }
-
             if (bSpectralPeakHold)
             {
 
@@ -3785,7 +3782,7 @@ namespace Thetis
             bool lookformax = true;
             //List <(int pos, float val)> maxtab_tmp = new List<(int pos, float val)>();
             float triggerDelta = 10; //db
-            
+
             unchecked // we dont expect any overflows
             {
                 float averageSum = 0;
@@ -4087,7 +4084,18 @@ namespace Thetis
 
             return true;
         }
-
+        private static int _NFsensitivity = 3;
+        public static int NFsensitivity
+        {
+            get { return _NFsensitivity; }
+            set 
+            {
+                int t = value;
+                if (t < 1) t = 1;
+                if (t > 19) t = 19;
+                _NFsensitivity = t;
+            }
+        }
         private static void processNoiseFloor(int rx, int averageCount, float averageSum, int width, bool waterfall)
         {
             if (rx == 1 && _bNoiseFloorAlreadyCalculatedRX1) return; // already done, ignore
@@ -4095,11 +4103,12 @@ namespace Thetis
 
             int fps = waterfall ? m_nFps / waterfall_update_period : m_nFps;
 
+            int requireSamples = (int)(width * (_NFsensitivity / 20f));
             if (rx == 1)
             {
-                if (averageCount > (width / 3))
+                if (averageCount >= requireSamples)//(width / _NFsensitivity))
                 {
-                    m_fFFTBinAverageRX1 = averageSum / (float)averageCount;
+                    m_fFFTBinAverageRX1 = (m_fFFTBinAverageRX1 + (averageSum / (float)averageCount)) / 2f;//averageSum / (float)averageCount;
                 }
                 else
                 {
@@ -4126,9 +4135,9 @@ namespace Thetis
             }
             else
             {
-                if (averageCount > (width / 3))
+                if (averageCount >= requireSamples)//(width / _NFsensitivity))
                 {
-                    m_fFFTBinAverageRX2 = averageSum / (float)averageCount;
+                    m_fFFTBinAverageRX2 = (m_fFFTBinAverageRX2 + (averageSum / (float)averageCount)) / 2f;//averageSum / (float)averageCount;
                 }
                 else
                 {

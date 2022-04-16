@@ -51,6 +51,7 @@ namespace Thetis
         public class LimitConstraint : EventArgs
         {
             public int LimitValue;
+            public bool MouseWheel;
         }
         #endregion
 
@@ -420,7 +421,7 @@ namespace Thetis
                         _nLimitValue = new_val;
                         UpdateLimitBar();
                     }
-                    OnScroll(this, new LimitConstraint() { LimitValue = _nLimitValue }); // always
+                    OnScroll(this, new LimitConstraint() { LimitValue = _nLimitValue, MouseWheel = false }); // always
                     this.Invalidate();
                 }
             }
@@ -549,7 +550,7 @@ namespace Thetis
                     {
                         _nLimitValue = new_val;
                         UpdateLimitBar();
-                        OnScroll(this, new LimitConstraint() { LimitValue = _nLimitValue });
+                        OnScroll(this, new LimitConstraint() { LimitValue = _nLimitValue, MouseWheel = false });
                     }
 
                     this.Invalidate();
@@ -697,21 +698,35 @@ namespace Thetis
         }
 
         #endregion
-
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            if (e.Delta >= 120 && this.Value + large_change <= this.Maximum)
+            if (Common.ShiftKeyDown)
             {
-                Value += large_change; 
-                OnScroll(this, e);//MW0LGE_22b EventArgs.Empty); // needed for filter width slider so we know if we are scrolling up or down based on the delta
+                if (e.Delta >= 120 && this.LimitValue + 1 <= this.Maximum)
+                {
+                    LimitValue += 1;
+                    OnScroll(this, new LimitConstraint() { LimitValue = _nLimitValue, MouseWheel = true });
+                }
+                else if (e.Delta <= -120 && this.LimitValue - 1 >= this.Minimum)
+                {
+                    LimitValue -= 1;
+                    OnScroll(this, new LimitConstraint() { LimitValue = _nLimitValue, MouseWheel = true });
+                }
             }
-            else if (e.Delta <= -120 && this.Value - large_change >= this.Minimum)
+            else
             {
-                Value -= large_change;
-                OnScroll(this, e);//MW0LGE_22b EventArgs.Empty); // needed for filter width slider so we know if we are scrolling up or down based on the delta
+                if (e.Delta >= 120 && this.Value + large_change <= this.Maximum)
+                {
+                    Value += large_change;
+                    OnScroll(this, e);//MW0LGE_22b EventArgs.Empty); // needed for filter width slider so we know if we are scrolling up or down based on the delta
+                }
+                else if (e.Delta <= -120 && this.Value - large_change >= this.Minimum)
+                {
+                    Value -= large_change;
+                    OnScroll(this, e);//MW0LGE_22b EventArgs.Empty); // needed for filter width slider so we know if we are scrolling up or down based on the delta
+                }
             }
             base.OnMouseWheel(e);
         }
-
     }
 }

@@ -328,7 +328,11 @@
             this.lblOptClickTuneDIGU = new System.Windows.Forms.LabelTS();
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS155 = new System.Windows.Forms.LabelTS();
+            this.nudNFsensitivity = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS23 = new System.Windows.Forms.GroupBoxTS();
+            this.chkUseSUnitsForPBNPPBSNR = new System.Windows.Forms.CheckBoxTS();
             this.chkIgnoreSeqErrors = new System.Windows.Forms.CheckBoxTS();
             this.chkHideFeebackLevel = new System.Windows.Forms.CheckBoxTS();
             this.chkSwapREDBluePSAColours = new System.Windows.Forms.CheckBoxTS();
@@ -3394,6 +3398,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).BeginInit();
             this.tpOptions2.SuspendLayout();
+            this.groupBoxTS26.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNFsensitivity)).BeginInit();
             this.groupBoxTS23.SuspendLayout();
             this.groupBoxTS22.SuspendLayout();
             this.groupBoxTS15.SuspendLayout();
@@ -8535,6 +8541,7 @@
             // tpOptions2
             // 
             this.tpOptions2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions2.Controls.Add(this.groupBoxTS26);
             this.tpOptions2.Controls.Add(this.groupBoxTS23);
             this.tpOptions2.Controls.Add(this.groupBoxTS22);
             this.tpOptions2.Controls.Add(this.groupBoxTS15);
@@ -8545,17 +8552,82 @@
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
             // 
+            // groupBoxTS26
+            // 
+            this.groupBoxTS26.Controls.Add(this.labelTS155);
+            this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
+            this.groupBoxTS26.Location = new System.Drawing.Point(436, 15);
+            this.groupBoxTS26.Name = "groupBoxTS26";
+            this.groupBoxTS26.Size = new System.Drawing.Size(212, 61);
+            this.groupBoxTS26.TabIndex = 35;
+            this.groupBoxTS26.TabStop = false;
+            this.groupBoxTS26.Text = "Noise Floor (wip)";
+            // 
+            // labelTS155
+            // 
+            this.labelTS155.AutoSize = true;
+            this.labelTS155.Image = null;
+            this.labelTS155.Location = new System.Drawing.Point(20, 32);
+            this.labelTS155.Name = "labelTS155";
+            this.labelTS155.Size = new System.Drawing.Size(52, 13);
+            this.labelTS155.TabIndex = 9;
+            this.labelTS155.Text = "sensitivity";
+            // 
+            // nudNFsensitivity
+            // 
+            this.nudNFsensitivity.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudNFsensitivity.Location = new System.Drawing.Point(78, 30);
+            this.nudNFsensitivity.Maximum = new decimal(new int[] {
+            19,
+            0,
+            0,
+            0});
+            this.nudNFsensitivity.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudNFsensitivity.Name = "nudNFsensitivity";
+            this.nudNFsensitivity.Size = new System.Drawing.Size(47, 20);
+            this.nudNFsensitivity.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.nudNFsensitivity, "Default 6. A low value will find very small areas of noise floor. Low values will" +
+        " help with a busy band.");
+            this.nudNFsensitivity.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudNFsensitivity.ValueChanged += new System.EventHandler(this.nudNFsensitivity_ValueChanged);
+            // 
             // groupBoxTS23
             // 
+            this.groupBoxTS23.Controls.Add(this.chkUseSUnitsForPBNPPBSNR);
             this.groupBoxTS23.Controls.Add(this.chkIgnoreSeqErrors);
             this.groupBoxTS23.Controls.Add(this.chkHideFeebackLevel);
             this.groupBoxTS23.Controls.Add(this.chkSwapREDBluePSAColours);
             this.groupBoxTS23.Location = new System.Drawing.Point(204, 13);
             this.groupBoxTS23.Name = "groupBoxTS23";
-            this.groupBoxTS23.Size = new System.Drawing.Size(212, 100);
+            this.groupBoxTS23.Size = new System.Drawing.Size(212, 132);
             this.groupBoxTS23.TabIndex = 34;
             this.groupBoxTS23.TabStop = false;
             this.groupBoxTS23.Text = "Info Bar (below spectrum)";
+            // 
+            // chkUseSUnitsForPBNPPBSNR
+            // 
+            this.chkUseSUnitsForPBNPPBSNR.AutoSize = true;
+            this.chkUseSUnitsForPBNPPBSNR.Image = null;
+            this.chkUseSUnitsForPBNPPBSNR.Location = new System.Drawing.Point(18, 92);
+            this.chkUseSUnitsForPBNPPBSNR.Name = "chkUseSUnitsForPBNPPBSNR";
+            this.chkUseSUnitsForPBNPPBSNR.Size = new System.Drawing.Size(167, 17);
+            this.chkUseSUnitsForPBNPPBSNR.TabIndex = 3;
+            this.chkUseSUnitsForPBNPPBSNR.Text = "PBNP and PBSNR as S-Units";
+            this.toolTip1.SetToolTip(this.chkUseSUnitsForPBNPPBSNR, "Use S-Units for Estimated Passband Noise Power and Estimated Passband SNR");
+            this.chkUseSUnitsForPBNPPBSNR.UseVisualStyleBackColor = true;
+            this.chkUseSUnitsForPBNPPBSNR.CheckedChanged += new System.EventHandler(this.chkUseSUnitsForPBNPPBSNR_CheckedChanged);
             // 
             // chkIgnoreSeqErrors
             // 
@@ -8599,9 +8671,9 @@
             // groupBoxTS22
             // 
             this.groupBoxTS22.Controls.Add(this.chkUseOutlinedCross);
-            this.groupBoxTS22.Location = new System.Drawing.Point(204, 125);
+            this.groupBoxTS22.Location = new System.Drawing.Point(204, 155);
             this.groupBoxTS22.Name = "groupBoxTS22";
-            this.groupBoxTS22.Size = new System.Drawing.Size(212, 114);
+            this.groupBoxTS22.Size = new System.Drawing.Size(212, 84);
             this.groupBoxTS22.TabIndex = 12;
             this.groupBoxTS22.TabStop = false;
             this.groupBoxTS22.Text = "Cursors";
@@ -52061,6 +52133,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).EndInit();
             this.tpOptions2.ResumeLayout(false);
+            this.groupBoxTS26.ResumeLayout(false);
+            this.groupBoxTS26.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNFsensitivity)).EndInit();
             this.groupBoxTS23.ResumeLayout(false);
             this.groupBoxTS23.PerformLayout();
             this.groupBoxTS22.ResumeLayout(false);
@@ -56299,5 +56374,9 @@
         private LabelTS lblMaxPowerForBandPA;
         private LabelTS labelTS8;
         private ColorButton clrbtnSliderLimitBar;
+        private CheckBoxTS chkUseSUnitsForPBNPPBSNR;
+        private GroupBoxTS groupBoxTS26;
+        private LabelTS labelTS155;
+        private NumericUpDownTS nudNFsensitivity;
     }
 }

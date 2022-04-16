@@ -20192,6 +20192,9 @@ namespace Thetis
             chkBlobPeakHold.Enabled = bEnabled;
             udBlobPeakHoldMS.Enabled = bEnabled && chkBlobPeakHold.Checked;
             chkPeakHoldDrop.Enabled = bEnabled && chkBlobPeakHold.Checked;
+            lblPeakBlobDropDBMs.Enabled = bEnabled && chkPeakHoldDrop.Checked;
+            udPeakBlobDropDBMs.Enabled = bEnabled && chkPeakHoldDrop.Checked;
+
             Display.ShowPeakBlobs = bEnabled;
 
             //
@@ -21337,7 +21340,7 @@ namespace Thetis
             lblActivePeakHoldDropRX1.Enabled = chkActivePeakHoldRX1.Checked;
             udActivePeakHoldDropRX1.Enabled = chkActivePeakHoldRX1.Checked;
             chkFillActivePeakHoldRX1.Enabled = chkActivePeakHoldRX1.Checked;
-
+            
             Display.SpectralPeakHoldRX1 = chkActivePeakHoldRX1.Checked;
             //
             console.SetupInfoBar(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked | (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
@@ -24072,6 +24075,10 @@ namespace Thetis
             if (!getDict.ContainsKey(sKey)) return 1000;
             return float.Parse(getDict[sKey]);
         }
+        private void removeOldPASetting(string sSetting)
+        {
+            if(!_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+        }
         private void handleOldPAGainSettings(ref Dictionary<string, string> getDict)
         {
             if (getDict == null) return;
@@ -24095,15 +24102,15 @@ namespace Thetis
                             string sSetting = "udANAN10PAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udANAN10PAGainVHF" + n.ToString();
+                            string sSetting = "udANAN10PAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.ANAN100:
@@ -24113,15 +24120,15 @@ namespace Thetis
                             string sSetting = "udANAN100PAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udANAN100PAGainVHF" + n.ToString();
+                            string sSetting = "udANAN100PAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.ANAN100B:
@@ -24131,15 +24138,15 @@ namespace Thetis
                             string sSetting = "udANAN100BPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udANAN100BPAGainVHF" + n.ToString();
+                            string sSetting = "udANAN100BPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.ANAN100D:
@@ -24149,15 +24156,15 @@ namespace Thetis
                             string sSetting = "udANANPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udANANPAGainVHF" + n.ToString();
+                            string sSetting = "udANANPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.ANAN200D:                            
@@ -24167,15 +24174,15 @@ namespace Thetis
                             string sSetting = "udOrionPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udOrionPAGainVHF" + n.ToString();
+                            string sSetting = "udOrionPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.ANAN7000D:
@@ -24185,15 +24192,15 @@ namespace Thetis
                             string sSetting = "udANAN7000DPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udANAN7000DPAGainVHF" + n.ToString();
+                            string sSetting = "udANAN7000DPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.ANAN8000D:
@@ -24203,15 +24210,15 @@ namespace Thetis
                             string sSetting = "udANAN8000DPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udANAN8000DPAGainVHF" + n.ToString();
+                            string sSetting = "udANAN8000DPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.HERMES:
@@ -24221,15 +24228,15 @@ namespace Thetis
                             string sSetting = "udHermesPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udHermesPAGainVHF" + n.ToString();
+                            string sSetting = "udHermesPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                     case HPSDRModel.FIRST: // special case for bypass
@@ -24242,15 +24249,15 @@ namespace Thetis
                                 string sSetting = "udPAGain" + mapBandToMeters(b).ToString();
                                 float g = getOldVariablePAgain(sSetting, ref getDict);
                                 if (g != 1000) p.SetGainForBand(b, g);
-                                if (g != 1000 && bRemoveOld) _oldSettings.Add(sSetting); // dont remove atm as used by gain calibrate
+                                if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                             }
                             for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                             {
                                 Band b = (Band)n;
-                                string sSetting = "udPAGainVHF" + n.ToString();
+                                string sSetting = "udPAGainVHF" + (n - (int)Band.VHF0).ToString();
                                 float g = getOldVariablePAgain(sSetting, ref getDict);
                                 if (g != 1000) p.SetGainForBand(b, g);
-                                if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                                if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                             }
                         }
                         break;
@@ -24261,20 +24268,20 @@ namespace Thetis
                             string sSetting = "udORIONMKIIPAGain" + mapBandToMeters(b).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
                         {
                             Band b = (Band)n;
-                            string sSetting = "udORIONMKIIPAGainVHF" + n.ToString();
+                            string sSetting = "udORIONMKIIPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
-                            if (g != 1000 && bRemoveOld && !_oldSettings.Contains(sSetting)) _oldSettings.Add(sSetting);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
                         }
                         break;
                 }
             }
-            Debug.Print(_oldSettings.Count.ToString());
+            //Debug.Print(_oldSettings.Count.ToString());
         }
 
         private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
@@ -25019,6 +25026,16 @@ namespace Thetis
         private void clrbtnSliderLimitBar_Changed(object sender, EventArgs e)
         {
             console.LimitSliderColor = clrbtnSliderLimitBar.Color;
+        }
+
+        private void chkUseSUnitsForPBNPPBSNR_CheckedChanged(object sender, EventArgs e)
+        {
+            console.UseSUnitsForPBNPPBSNR = chkUseSUnitsForPBNPPBSNR.Checked;
+        }
+
+        private void nudNFsensitivity_ValueChanged(object sender, EventArgs e)
+        {
+            Display.NFsensitivity = (int)nudNFsensitivity.Value;
         }
     }
 
