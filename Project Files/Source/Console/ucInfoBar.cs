@@ -67,12 +67,20 @@ namespace Thetis
         private string[] _right1;
         private string[] _right2;
         private string[] _right3;
+
         private int[] _left1BaseWidth;
         private int[] _left2BaseWidth;
         private int[] _left3BaseWidth;
         private int[] _left1Width;
         private int[] _left2Width;
         private int[] _left3Width;
+
+        private int[] _right1BaseWidth;
+        private int[] _right2BaseWidth;
+        private int[] _right3BaseWidth;
+        private int[] _right1Width;
+        private int[] _right2Width;
+        private int[] _right3Width;
 
         private frmInfoBarPopup _frmInfoBarPopup_Button1;
         private ToolStripDropDown _toolStripForm_Button1;
@@ -181,6 +189,13 @@ namespace Thetis
             _left2Width = new int[MAX_FLIP];
             _left3Width = new int[MAX_FLIP];
 
+            _right1BaseWidth = new int[MAX_FLIP];
+            _right2BaseWidth = new int[MAX_FLIP];
+            _right3BaseWidth = new int[MAX_FLIP];
+            _right1Width = new int[MAX_FLIP];
+            _right2Width = new int[MAX_FLIP];
+            _right3Width = new int[MAX_FLIP];
+
             for (int n=0; n<MAX_FLIP; n++)
             {
                 _left1BaseWidth[n] = lblLeft1.Width;
@@ -189,6 +204,13 @@ namespace Thetis
                 _left1Width[n] = lblLeft1.Width;
                 _left2Width[n] = lblLeft2.Width;
                 _left3Width[n] = lblLeft3.Width;
+
+                _right1BaseWidth[n] = lblRight1.Width;
+                _right2BaseWidth[n] = lblRight2.Width;
+                _right3BaseWidth[n] = lblRight3.Width;
+                _right1Width[n] = lblRight1.Width;
+                _right2Width[n] = lblRight2.Width;
+                _right3Width[n] = lblRight3.Width;
             }
 
             // add the actions
@@ -542,6 +564,7 @@ namespace Thetis
             {
                 base.BackColor = value;
                 // set all the labels
+                lblPageNo.BackColor = value;
                 lblLeft1.BackColor = value;
                 lblLeft2.BackColor = value;
                 lblLeft3.BackColor = value;
@@ -561,6 +584,7 @@ namespace Thetis
             {
                 base.ForeColor = value;
                 // set all the labels
+                lblPageNo.ForeColor = value;
                 lblLeft1.ForeColor = value;
                 lblLeft2.ForeColor = value;
                 lblLeft3.ForeColor = value;
@@ -624,22 +648,52 @@ namespace Thetis
 
             repositionControls();
         }
-        public void Right1(int flipLayer, string value)
+        public void Right1(int flipLayer, string value, int width = -1)
         {
             if (flipLayer < 0 || flipLayer > MAX_FLIP - 1) return;
             _right1[flipLayer] = value;
+
+            if (width == -1)
+            {
+                _right1Width[flipLayer] = _right1BaseWidth[flipLayer];
+            }
+            else
+            {
+                _right1Width[flipLayer] = width;
+            }
+
             lblRight1.Text = _right1[_currentFlip];
         }
-        public void Right2(int flipLayer, string value)
+        public void Right2(int flipLayer, string value, int width = -1)
         {
             if (flipLayer < 0 || flipLayer > MAX_FLIP - 1) return;
             _right2[flipLayer] = value;
+
+            if (width == -1)
+            {
+                _right2Width[flipLayer] = _right2BaseWidth[flipLayer];
+            }
+            else
+            {
+                _right2Width[flipLayer] = width;
+            }
+
             lblRight2.Text = _right2[_currentFlip];
         }
-        public void Right3(int flipLayer, string value)
+        public void Right3(int flipLayer, string value, int width = -1)
         {
             if (flipLayer < 0 || flipLayer > MAX_FLIP - 1) return;
             _right3[flipLayer] = value;
+
+            if (width == -1)
+            {
+                _right3Width[flipLayer] = _right3BaseWidth[flipLayer];
+            }
+            else
+            {
+                _right3Width[flipLayer] = width;
+            }
+
             lblRight3.Text = _right3[_currentFlip];
         }
 
@@ -799,6 +853,7 @@ namespace Thetis
 
         private void updateLabels()
         {
+            lblPageNo.Text = (_currentFlip + 1).ToString() + "/" + MAX_FLIP.ToString();
             lblLeft1.Text = _left1[_currentFlip];
             lblLeft2.Text = _left2[_currentFlip];
             lblLeft3.Text = _left3[_currentFlip];
@@ -1039,6 +1094,10 @@ namespace Thetis
             lblLeft3.Left = lblLeft2.Left + lblLeft2.Width;
 
             // now the right labels
+            lblRight1.Width = _right1Width[_currentFlip];
+            lblRight2.Width = _right2Width[_currentFlip];
+            lblRight3.Width = _right3Width[_currentFlip];
+
             int shift = lblRight1.Width + lblRight2.Width + lblRight3.Width + 4;
             lblRight1.Left = lblFB.Left - shift;
             lblRight2.Left = lblRight1.Left + lblRight1.Width;
@@ -1068,9 +1127,9 @@ namespace Thetis
             lblLeft3.Visible = lblLeft2.Visible && !lblSplitter.Bounds.IntersectsWith(lblLeft3.Bounds);
 
             // check for right hand side overlapping left hand side
-            lblRight1.Visible = !(lblRight1.Bounds.IntersectsWith(lblLeft3.Bounds) || lblRight1.Bounds.IntersectsWith(lblLeft2.Bounds) || lblRight1.Bounds.IntersectsWith(lblLeft1.Bounds));
-            lblRight2.Visible = !(lblRight2.Bounds.IntersectsWith(lblLeft3.Bounds) || lblRight2.Bounds.IntersectsWith(lblLeft2.Bounds) || lblRight2.Bounds.IntersectsWith(lblLeft1.Bounds));
-            lblRight3.Visible = !(lblRight3.Bounds.IntersectsWith(lblLeft3.Bounds) || lblRight3.Bounds.IntersectsWith(lblLeft2.Bounds) || lblRight3.Bounds.IntersectsWith(lblLeft1.Bounds));
+            lblRight1.Visible = !((lblLeft3.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft1.Bounds)));
+            lblRight2.Visible = !((lblLeft3.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft1.Bounds)));
+            lblRight3.Visible = !((lblLeft3.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft1.Bounds)));
         }
         private void lblSplitter_MouseUp(object sender, MouseEventArgs e)
         {

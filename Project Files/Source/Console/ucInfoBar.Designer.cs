@@ -42,6 +42,7 @@
             this.lblLeft3 = new System.Windows.Forms.LabelTS();
             this.lblLeft2 = new System.Windows.Forms.LabelTS();
             this.lblLeft1 = new System.Windows.Forms.LabelTS();
+            this.lblPageNo = new System.Windows.Forms.LabelTS();
             this.SuspendLayout();
             // 
             // lblFB
@@ -144,9 +145,9 @@
             this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWarning.ForeColor = System.Drawing.Color.Red;
             this.lblWarning.Image = null;
-            this.lblWarning.Location = new System.Drawing.Point(125, 0);
+            this.lblWarning.Location = new System.Drawing.Point(138, 0);
             this.lblWarning.Name = "lblWarning";
-            this.lblWarning.Size = new System.Drawing.Size(667, 24);
+            this.lblWarning.Size = new System.Drawing.Size(654, 24);
             this.lblWarning.TabIndex = 41;
             this.lblWarning.Text = "Warning";
             this.lblWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -203,7 +204,7 @@
             this.lblLeft3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLeft3.ForeColor = System.Drawing.Color.DodgerBlue;
             this.lblLeft3.Image = null;
-            this.lblLeft3.Location = new System.Drawing.Point(281, 4);
+            this.lblLeft3.Location = new System.Drawing.Point(294, 4);
             this.lblLeft3.Name = "lblLeft3";
             this.lblLeft3.Size = new System.Drawing.Size(112, 15);
             this.lblLeft3.TabIndex = 37;
@@ -217,7 +218,7 @@
             this.lblLeft2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLeft2.ForeColor = System.Drawing.Color.DodgerBlue;
             this.lblLeft2.Image = null;
-            this.lblLeft2.Location = new System.Drawing.Point(213, 4);
+            this.lblLeft2.Location = new System.Drawing.Point(226, 4);
             this.lblLeft2.Name = "lblLeft2";
             this.lblLeft2.Size = new System.Drawing.Size(68, 15);
             this.lblLeft2.TabIndex = 36;
@@ -231,7 +232,7 @@
             this.lblLeft1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLeft1.ForeColor = System.Drawing.Color.DodgerBlue;
             this.lblLeft1.Image = null;
-            this.lblLeft1.Location = new System.Drawing.Point(125, 4);
+            this.lblLeft1.Location = new System.Drawing.Point(138, 4);
             this.lblLeft1.Name = "lblLeft1";
             this.lblLeft1.Size = new System.Drawing.Size(88, 15);
             this.lblLeft1.TabIndex = 35;
@@ -239,11 +240,24 @@
             this.lblLeft1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblLeft1.Click += new System.EventHandler(this.InfoBar_Click);
             // 
-            // InfoBar
+            // lblPageNo
+            // 
+            this.lblPageNo.AutoSize = true;
+            this.lblPageNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPageNo.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblPageNo.Image = null;
+            this.lblPageNo.Location = new System.Drawing.Point(115, 6);
+            this.lblPageNo.Name = "lblPageNo";
+            this.lblPageNo.Size = new System.Drawing.Size(24, 13);
+            this.lblPageNo.TabIndex = 43;
+            this.lblPageNo.Text = "2/2";
+            // 
+            // ucInfoBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
+            this.Controls.Add(this.lblPageNo);
             this.Controls.Add(this.lblSplitter);
             this.Controls.Add(this.lblWarning);
             this.Controls.Add(this.lblRight3);
@@ -256,11 +270,12 @@
             this.Controls.Add(this.lblPS);
             this.Controls.Add(this.chkButton2);
             this.Controls.Add(this.chkButton1);
-            this.Name = "InfoBar";
+            this.Name = "ucInfoBar";
             this.Size = new System.Drawing.Size(889, 24);
             this.Click += new System.EventHandler(this.InfoBar_Click);
             this.Resize += new System.EventHandler(this.InfoBar_Resize);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -279,5 +294,6 @@
         private System.Windows.Forms.LabelTS lblWarning;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LabelTS lblSplitter;
+        private System.Windows.Forms.LabelTS lblPageNo;
     }
 }
