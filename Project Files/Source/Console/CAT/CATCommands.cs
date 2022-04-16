@@ -2414,31 +2414,32 @@ namespace Thetis
 				return parser.Error1;
 		}
 
-        //Reads or sets the DX threshold
-        public string ZZDY(string s)
-        {
-            int n = 0;
+		//MW0LGE_22b
+		////Reads or sets the DX threshold
+		//public string ZZDY(string s)
+		//{
+		//    int n = 0;
 
-            if (s != null && s != "")
-                n = Convert.ToInt32(s);
-            n = Math.Max(0, n);
-            n = Math.Min(10, n);
+		//    if (s != null && s != "")
+		//        n = Convert.ToInt32(s);
+		//    n = Math.Max(0, n);
+		//    n = Math.Min(10, n);
 
-            if (s.Length == parser.nSet)
-            {
-                console.DXLevel = n;
-                return "";
-            }
-            else if (s.Length == parser.nGet)
-            {
-                return AddLeadingZeros((int)console.DXLevel);
-            }
-            else
-            {
-                return parser.Error1;
-            }
+		//    if (s.Length == parser.nSet)
+		//    {
+		//        console.DXLevel = n;
+		//        return "";
+		//    }
+		//    else if (s.Length == parser.nGet)
+		//    {
+		//        return AddLeadingZeros((int)console.DXLevel);
+		//    }
+		//    else
+		//    {
+		//        return parser.Error1;
+		//    }
 
-        }
+		//}
 
 		/// <summary>
 		/// Reads or sets the RX equalizer.
@@ -6178,11 +6179,20 @@ namespace Thetis
 				tl = Math.Max(0, tl);
 				tl = Math.Min(100, tl);
 
-				//MW0LGE_22b changed
-				if (console.TuneDrivePowerOrigin == DrivePowerSource.DRIVE_SLIDER || console.TuneDrivePowerOrigin == DrivePowerSource.FIXED) //note: tunepower fixed is handled in PWR
-					console.PWR = tl;
-				else // must be DrivePowerSource.TUNE_SLIDER
-					console.TunePWR = tl;
+                //MW0LGE_22b changed
+                switch (console.TuneDrivePowerOrigin)
+                {
+					case DrivePowerSource.DRIVE_SLIDER:
+						console.PWR = tl;
+						break;
+					case DrivePowerSource.TUNE_SLIDER:
+						console.TunePWR = tl;
+						break;
+					case DrivePowerSource.FIXED:
+						if(!console.IsSetupFormNull)
+							console.SetupForm.FixedTunePower = tl;
+						break;
+                }
 
 				//if (console.TXTunePower) console.PWR = tl; //MW0LGE_22b changed
 				//else console.SetupForm.TunePower = tl;
@@ -6207,7 +6217,7 @@ namespace Thetis
 							tp = console.TunePWR;
 						break;
 					case DrivePowerSource.FIXED:
-						tp = console.SetupForm.TunePower;
+						tp = console.SetupForm.FixedTunePower;
 						break;
                 }
 				return AddLeadingZeros(tp);

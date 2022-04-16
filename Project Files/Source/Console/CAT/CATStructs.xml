@@ -2415,6 +2415,7 @@
     <ngetparms>0</ngetparms>
     <nansparms>3</nansparms>
   </catstruct>
+	<!-- MW0LGE_22b
   <catstruct code="ZZDY">
     <desc>DX Level</desc>
     <active>true</active>
@@ -2422,6 +2423,7 @@
     <ngetparms>0</ngetparms>
     <nansparms>2</nansparms>
   </catstruct>
+		-->
   <catstruct code="ZZPE">
     <desc>Display Pan Position</desc>
     <active>true</active>

@@ -26,7 +26,7 @@ namespace Thetis
             ActivePeaks,
             CursorInfo,
             ShowSpots,
-            TuneDrive,
+            DisplayFill,
             CFC,
             CFCeq,
             Leveler,
@@ -118,8 +118,8 @@ namespace Thetis
                             return "CFCeq";
                         case ActionTypes.ShowSpots:
                             return "Spots";
-                        case ActionTypes.TuneDrive:
-                            return "Tdrv";
+                        case ActionTypes.DisplayFill:
+                            return "Fill";
 
                     }
                     return "?";
@@ -146,8 +146,8 @@ namespace Thetis
                             return "Enable Post CFC EQ";
                         case ActionTypes.ShowSpots:
                             return "Show spots";
-                        case ActionTypes.TuneDrive:
-                            return "Tune uses drive power";
+                        case ActionTypes.DisplayFill:
+                            return "Fill the panadaptor";
                     }
                     return "";
                 }

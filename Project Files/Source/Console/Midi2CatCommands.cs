@@ -2862,22 +2862,23 @@ namespace Thetis
             }
         }
 
-        public void DXLevel(int msg, MidiDevice device)
-        {
-            parser.nSet = 0;
-            parser.nSet = 2;
+        //MW0LGE_22b
+        //public void DXLevel(int msg, MidiDevice device)
+        //{
+        //    parser.nSet = 0;
+        //    parser.nSet = 2;
 
-            try
-            {
-                double dx = msg * 0.078;
-                commands.ZZDY(dx.ToString("00"));
-                return;
-            }
-            catch
-            {
-                return;
-            }
-        }
+        //    try
+        //    {
+        //        double dx = msg * 0.078;
+        //        commands.ZZDY(dx.ToString("00"));
+        //        return;
+        //    }
+        //    catch
+        //    {
+        //        return;
+        //    }
+        //}
 
         public void VOXGain(int msg, MidiDevice device)
         {

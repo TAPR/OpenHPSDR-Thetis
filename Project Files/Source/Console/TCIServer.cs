@@ -196,7 +196,10 @@ namespace Thetis
 		public void DrivePowerChange(int rx, int newPower, bool tune)
         {
 			if (m_disconnected) return;
-			sendDrivePower(rx - 1, newPower);
+            if (tune)
+				sendTunePower(rx - 1, newPower);
+			else
+				sendDrivePower(rx - 1, newPower);
 		}
 		public void TuneChange(int rx, bool oldTune, bool newTune)
         {

@@ -1822,7 +1822,7 @@ namespace Thetis
             ptbAF_Scroll(this, EventArgs.Empty);
             ptbSquelch_Scroll(this, EventArgs.Empty);
             ptbMic_Scroll(this, EventArgs.Empty);
-            ptbDX_Scroll(this, EventArgs.Empty);
+            //ptbDX_Scroll(this, EventArgs.Empty);  //MW0LGE_22b
             ptbCPDR_Scroll(this, EventArgs.Empty);
             ptbVOX_Scroll(this, EventArgs.Empty);
             ptbNoiseGate_Scroll(this, EventArgs.Empty);
@@ -1963,8 +1963,7 @@ namespace Thetis
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.Leveler, SetupForm.TXLevelerOn, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.CFCeq, SetupForm.CFCPEQEnabled, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.ShowSpots, SetupForm.ShowTCISpots /*| other spots*/, false);
-                //infoBar.UpdateButtonState(ucInfoBar.ActionTypes.TuneDrive, SetupForm.TXTunePower, true); // <- last one needs to be true
-                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.TuneDrive, TuneDrivePowerOrigin == DrivePowerSource.DRIVE_SLIDER, true); // <- last one needs to be true
+                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.DisplayFill, SetupForm.DisplayPanFill, true); // <- last one needs to be true
             }
         }
         public void InfoBarFeedbackLevel(int level, bool bFeedbackLevelOk, bool bCorrectionsBeingApplied, bool bCalibrationAttemptsChanged, Color feedbackColour)
@@ -12559,7 +12558,7 @@ namespace Thetis
         public void HighlightTXProfileSaveItems(bool bHighlight)
         {
             Common.HightlightControl(chkDX, bHighlight);
-            Common.HightlightControl(ptbDX, bHighlight);
+            //Common.HightlightControl(ptbDX, bHighlight); //MW0LGE_22b
             Common.HightlightControl(chkCPDR, bHighlight);
             Common.HightlightControl(ptbCPDR, bHighlight);
             Common.HightlightControl(ptbMic, bHighlight);
@@ -12578,15 +12577,16 @@ namespace Thetis
             set { chkDX.Checked = value; }
         }
 
-        public int DXLevel
-        {
-            get { return ptbDX.Value; }
-            set
-            {
-                ptbDX.Value = value;
-                ptbDX_Scroll(this, EventArgs.Empty);
-            }
-        }
+        //MW0LGE_22b
+        //public int DXLevel
+        //{
+        //    get { return ptbDX.Value; }
+        //    set
+        //    {
+        //        ptbDX.Value = value;
+        //        ptbDX_Scroll(this, EventArgs.Empty);
+        //    }
+        //}
 
         public bool CFCEnabled
         {
@@ -18088,7 +18088,7 @@ namespace Thetis
                 //bool changed = (value != tune_power);
                 tune_power = value;
                 if (!IsSetupFormNull)
-                    SetupForm.TunePower = tune_power;
+                    SetupForm.FixedTunePower = tune_power;
 
                 if (chkTUN.Checked)// && !tx_tune_power) // MW0LGE_22b now done in power handler
                     PWR = tune_power;
@@ -22293,7 +22293,7 @@ namespace Thetis
                             num = _avNumRX2 = num * 0.2f + _avNumRX2 * 0.8f;
                         //
 
-                        estimated_snr = num - estimated_passband_noise_power;
+                        estimated_snr = _avNumRX2 - estimated_passband_noise_power;
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
@@ -30802,12 +30802,15 @@ namespace Thetis
                 lblPWR.Text = "Limit: " + sValue;
             }
         }
-
+        public string PAProfile
+        {
+            set { lblPAProfile.Text = value; }
+        }
         private void ptbPWR_MouseUp(object sender, MouseEventArgs e)
         {
             UpdateDriveLabel(false, EventArgs.Empty);
         }
-        private double m_fDrivePower = -1;
+        //private double m_fDrivePower = -1;
         private void ptbPWR_Scroll(object sender, System.EventArgs e)
         {
             if (IsSetupFormNull)
@@ -30888,11 +30891,11 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.TXDrive = ptbPWR.Value;
 
-            if (m_fDrivePower != new_pwr)  // MW0LGE_21k9d
-            {
-                m_fDrivePower = new_pwr;
-                DrivePowerChangedHandlers?.Invoke(1, new_pwr, TUN); // only rx1
-            }
+            //if (m_fDrivePower != new_pwr)  // MW0LGE_21k9d
+            //{
+            //    m_fDrivePower = new_pwr;
+                DrivePowerChangedHandlers?.Invoke(1, new_pwr, TUN || chk2TONE.Checked); // only rx1
+            //}
         }
 
         private void ptbAF_Scroll(object sender, System.EventArgs e)
@@ -32133,7 +32136,7 @@ namespace Thetis
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                     PreviousPWR = ptbPWR.Value;
                 // set power
-                int new_pwr = setPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm);
+                int new_pwr = setPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true);
                 //
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                 {
@@ -41754,17 +41757,17 @@ namespace Thetis
             //else radio.GetDSPTX(0).TXCompandOn = false;
         }
 
-        private void ptbDX_Scroll(object sender, System.EventArgs e)
-        {
-            lblDXVal.Text = ptbDX.Value.ToString();
-            if (sender.GetType() == typeof(PrettyTrackBar))
-            {
-                ptbDX.Focus();
-            }
-            //if (chkDX.Checked)
-            //    radio.GetDSPTX(0).TXCompandLevel = 1.0 + 0.4 * (double)ptbDX.Value;
-            //if (ptbDX.Focused) btnHidden.Focus();
-        }
+        //private void ptbDX_Scroll(object sender, System.EventArgs e)
+        //{
+        //    lblDXVal.Text = ptbDX.Value.ToString();
+        //    if (sender.GetType() == typeof(PrettyTrackBar))
+        //    {
+        //        ptbDX.Focus();
+        //    }
+        //    //if (chkDX.Checked)
+        //    //    radio.GetDSPTX(0).TXCompandLevel = 1.0 + 0.4 * (double)ptbDX.Value;
+        //    //if (ptbDX.Focused) btnHidden.Focus();
+        //}
 
         #endregion
 
@@ -52451,10 +52454,8 @@ namespace Thetis
                 case ucInfoBar.ActionTypes.ShowSpots:
                     SetupForm.ShowTCISpots = e.ButtonState;
                     break;
-                case ucInfoBar.ActionTypes.TuneDrive:
-                    //    SetupForm.TXTunePower = e.ButtonState;
-                    //TODO
-                    
+                case ucInfoBar.ActionTypes.DisplayFill:
+                    SetupForm.DisplayPanFill = e.ButtonState;
                     break;
             }
         }
@@ -52490,8 +52491,8 @@ namespace Thetis
                 case ucInfoBar.ActionTypes.Leveler:
                     SetupForm.ShowSetupTab(Setup.SetupTab.ALCAGC_Tab);
                     break;
-                case ucInfoBar.ActionTypes.TuneDrive:
-                    SetupForm.ShowSetupTab(Setup.SetupTab.Transmit_Tab);                    
+                case ucInfoBar.ActionTypes.DisplayFill:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.DISPGEN_Tab);                    
                     break;
                 case ucInfoBar.ActionTypes.CFCeq:
                     SetupForm.ShowSetupTab(Setup.SetupTab.CFC_Tab);
@@ -52679,7 +52680,7 @@ namespace Thetis
                 lblTune.Text = "Limit: "+ sValue;
             }
         }
-        private double m_fTuneDrivePower = -1;
+        //private double m_fTuneDrivePower = -1;
         private void ptbTune_Scroll(object sender, EventArgs e)
         {
             if (IsSetupFormNull)
@@ -52710,11 +52711,11 @@ namespace Thetis
             //if (sliderForm != null)
             //    sliderForm.TXDrive = ptbPWR.Value;
 
-            if (m_fTuneDrivePower != new_pwr)  // MW0LGE_21k9d
-            {
-                m_fTuneDrivePower = new_pwr;
+            //if (m_fTuneDrivePower != new_pwr)  // MW0LGE_21k9d
+            //{
+            //    m_fTuneDrivePower = new_pwr;
                 DrivePowerChangedHandlers?.Invoke(1, new_pwr, true); // only rx1, and always tune
-            }
+            //}
         }
         private DrivePowerSource _tuneDrivePowerSource = DrivePowerSource.DRIVE_SLIDER;
         private DrivePowerSource _2ToneDrivePowerSource = DrivePowerSource.DRIVE_SLIDER;
@@ -52727,15 +52728,12 @@ namespace Thetis
                 {
                     case DrivePowerSource.DRIVE_SLIDER:
                         ptbPWR_Scroll(this, EventArgs.Empty);
-                        SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, true);
                         break;
                     case DrivePowerSource.TUNE_SLIDER:
                         ptbTune_Scroll(this, EventArgs.Empty);
-                        SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, false);
                         break;
                     case DrivePowerSource.FIXED:
                         ptbPWR_Scroll(this, EventArgs.Empty);
-                        SetupInfoBar(ucInfoBar.ActionTypes.TuneDrive, false);
                         break;
                 }
 
@@ -52800,60 +52798,77 @@ namespace Thetis
         }
         private int setPowerFromDriveSlider(out bool bConstrain, bool bAdjustedBySliderControl)
         {
-            // tx mode
-            int txMode = 0;
-            if (chkTUN.Checked)
-                txMode = 1;
-            else if (chk2TONE.Checked)
-                txMode = 2;
-
             int nDrv;
-            if (txMode == 0 || !bAdjustedBySliderControl) 
+            if (chkTUN.Checked || chk2TONE.Checked)
             {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true);
+                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false);
+                bConstrain = bConstrainOut;
+                return nDrv;
+            }
+            else if (bAdjustedBySliderControl)
+            {
+                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, false, false);
                 bConstrain = bConstrainOut;
                 return nDrv;
             }
             else
             {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, false);
-                bConstrain = bConstrainOut;
-                return nDrv;
+                bConstrain = false;
+                return (int)ptbTune.Value;
             }
+
+            //// tx mode
+            //int txMode = 0;
+            //if (chkTUN.Checked)
+            //    txMode = 1;
+            //else if (chk2TONE.Checked)
+            //    txMode = 2;
+
+            //int nDrv;
+            //if (txMode == 0 || !bAdjustedBySliderControl) 
+            //{
+            //    nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false);
+            //    bConstrain = bConstrainOut;
+            //    return nDrv;
+            //}
+            //else
+            //{
+            //    nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, false, false);
+            //    bConstrain = bConstrainOut;
+            //    return nDrv;
+            //}
         }
         private int setPowerFromTuneSlider(out bool bConstrain, bool bAdjustedBySliderControl)
         {
-            // tx mode
-            int txMode = 0;
-            if (chkTUN.Checked)
-                txMode = 1;
-            else if (chk2TONE.Checked)
-                txMode = 2;
-
             int nDrv;
-            if (txMode != 0 || !bAdjustedBySliderControl)
+            if (chkTUN.Checked || chk2TONE.Checked)
             {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true);
+                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, true);
+                bConstrain = bConstrainOut;
+                return nDrv;
+            }
+            else if(bAdjustedBySliderControl)
+            {
+                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, false, true);
                 bConstrain = bConstrainOut;
                 return nDrv;
             }
             else
             {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, false);
-                bConstrain = bConstrainOut;
-                return nDrv;
+                bConstrain = false;
+                return (int)ptbTune.Value;
             }
         }
-        private int setPowerUsingTargetDBM(out bool bConstrain, out double targetdBm, bool bSetPower = true)
+        private int setPowerUsingTargetDBM(out bool bConstrain, out double targetdBm, bool bSetPower, bool bFromTune)
         {
             PrettyTrackBar slider = ptbPWR;
             bConstrain = true;
             int new_pwr = 0;
             // tx mode
             int txMode = 0;
-            if (chkTUN.Checked)
+            if (chkTUN.Checked || (!chk2TONE.Checked && bFromTune))
                 txMode = 1;
-            else if (chk2TONE.Checked)
+            else if (chk2TONE.Checked || (!chkTUN.Checked && bFromTune))
                 txMode = 2;
             
             switch (txMode)

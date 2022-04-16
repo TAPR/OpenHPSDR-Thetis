@@ -258,8 +258,6 @@
         private PrettyTrackBar ptbSquelch;
         private PrettyTrackBar ptbMic;
         private LabelTS lblMicVal;
-        private PrettyTrackBar ptbDX;
-        private LabelTS lblDXVal;
         private PrettyTrackBar ptbCPDR;
         private LabelTS lblCPDRVal;
         private PrettyTrackBar ptbVOX;
@@ -1022,6 +1020,8 @@
             this.lblAF2 = new System.Windows.Forms.LabelTS();
             this.lblPWR2 = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
+            this.labelTS2 = new System.Windows.Forms.LabelTS();
+            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.labelTS4 = new System.Windows.Forms.LabelTS();
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.picNoiseGate = new System.Windows.Forms.PictureBox();
@@ -1032,8 +1032,6 @@
             this.lblVOXVal = new System.Windows.Forms.LabelTS();
             this.ptbCPDR = new Thetis.PrettyTrackBar();
             this.lblCPDRVal = new System.Windows.Forms.LabelTS();
-            this.ptbDX = new Thetis.PrettyTrackBar();
-            this.lblDXVal = new System.Windows.Forms.LabelTS();
             this.lblMicVal = new System.Windows.Forms.LabelTS();
             this.ptbMic = new Thetis.PrettyTrackBar();
             this.lblMIC = new System.Windows.Forms.LabelTS();
@@ -1195,7 +1193,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picVOX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbVOX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCPDR)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbMic)).BeginInit();
             this.panelModeSpecificDigital.SuspendLayout();
             this.grpVACStereo.SuspendLayout();
@@ -6251,6 +6248,8 @@
             // 
             resources.ApplyResources(this.panelModeSpecificPhone, "panelModeSpecificPhone");
             this.panelModeSpecificPhone.BackColor = System.Drawing.Color.Transparent;
+            this.panelModeSpecificPhone.Controls.Add(this.labelTS2);
+            this.panelModeSpecificPhone.Controls.Add(this.lblPAProfile);
             this.panelModeSpecificPhone.Controls.Add(this.labelTS4);
             this.panelModeSpecificPhone.Controls.Add(this.labelTS3);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterLow);
@@ -6264,8 +6263,6 @@
             this.panelModeSpecificPhone.Controls.Add(this.lblVOXVal);
             this.panelModeSpecificPhone.Controls.Add(this.ptbCPDR);
             this.panelModeSpecificPhone.Controls.Add(this.lblCPDRVal);
-            this.panelModeSpecificPhone.Controls.Add(this.ptbDX);
-            this.panelModeSpecificPhone.Controls.Add(this.lblDXVal);
             this.panelModeSpecificPhone.Controls.Add(this.lblMicVal);
             this.panelModeSpecificPhone.Controls.Add(this.ptbMic);
             this.panelModeSpecificPhone.Controls.Add(this.lblMIC);
@@ -6279,6 +6276,18 @@
             this.panelModeSpecificPhone.Controls.Add(this.chkNoiseGate);
             this.panelModeSpecificPhone.Controls.Add(this.comboAMTXProfile);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
+            // 
+            // labelTS2
+            // 
+            resources.ApplyResources(this.labelTS2, "labelTS2");
+            this.labelTS2.ForeColor = System.Drawing.Color.White;
+            this.labelTS2.Name = "labelTS2";
+            // 
+            // lblPAProfile
+            // 
+            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
+            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
+            this.lblPAProfile.Name = "lblPAProfile";
             // 
             // labelTS4
             // 
@@ -6379,30 +6388,6 @@
             resources.ApplyResources(this.lblCPDRVal, "lblCPDRVal");
             this.lblCPDRVal.ForeColor = System.Drawing.Color.White;
             this.lblCPDRVal.Name = "lblCPDRVal";
-            // 
-            // ptbDX
-            // 
-            resources.ApplyResources(this.ptbDX, "ptbDX");
-            this.ptbDX.GreenThumb = false;
-            this.ptbDX.HeadImage = null;
-            this.ptbDX.LargeChange = 1;
-            this.ptbDX.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbDX.LimitEnabled = false;
-            this.ptbDX.LimitValue = 0;
-            this.ptbDX.Maximum = 10;
-            this.ptbDX.Minimum = 0;
-            this.ptbDX.Name = "ptbDX";
-            this.ptbDX.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbDX.SmallChange = 1;
-            this.ptbDX.TabStop = false;
-            this.ptbDX.Value = 10;
-            this.ptbDX.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDX_Scroll);
-            // 
-            // lblDXVal
-            // 
-            resources.ApplyResources(this.lblDXVal, "lblDXVal");
-            this.lblDXVal.ForeColor = System.Drawing.Color.White;
-            this.lblDXVal.Name = "lblDXVal";
             // 
             // lblMicVal
             // 
@@ -7453,7 +7438,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picVOX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbVOX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCPDR)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbMic)).EndInit();
             this.panelModeSpecificDigital.ResumeLayout(false);
             this.panelModeSpecificDigital.PerformLayout();
@@ -7614,5 +7598,7 @@
         private ucUnderOverFlowWarningViewer ucVAC1UnderOver;
         private PrettyTrackBar ptbTune;
         private LabelTS lblTune;
+        private LabelTS lblPAProfile;
+        private LabelTS labelTS2;
     }
 }

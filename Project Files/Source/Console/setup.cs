@@ -2375,7 +2375,7 @@ namespace Thetis
                     if (DB.ConvertFromDBVal<int>(dr["TxEqFreq" + (i - 10).ToString()]) != eq[i]) return true;
 
                 if (DB.ConvertFromDBVal<bool>(dr["DXOn"]) != console.DX) return true;
-                if (DB.ConvertFromDBVal<int>(dr["DXLevel"]) != console.DXLevel) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["DXLevel"]) != console.DXLevel) return true;  //MW0LGE_22b
                 if (DB.ConvertFromDBVal<bool>(dr["CompanderOn"]) != console.CPDR) return true;
                 if (DB.ConvertFromDBVal<int>(dr["CompanderLevel"]) != console.CPDRLevel) return true;
                 if (DB.ConvertFromDBVal<int>(dr["MicGain"]) != console.Mic) return true;
@@ -2739,7 +2739,7 @@ namespace Thetis
                 dr["TxEqFreq" + (i - 10).ToString()] = eq[i];
 
             dr["DXOn"] = console.DX;
-            dr["DXLevel"] = console.DXLevel;
+            //dr["DXLevel"] = console.DXLevel;  //MW0LGE_22b
             dr["CompanderOn"] = console.CPDR;
             dr["CompanderLevel"] = console.CPDRLevel;
             dr["MicGain"] = console.Mic;
@@ -6034,7 +6034,7 @@ namespace Thetis
         //}
 
 
-        public int TunePower
+        public int FixedTunePower
         {
             get { return (int)udTXTunePower.Value; }
             set { udTXTunePower.Value = (decimal)value; }
@@ -9886,7 +9886,7 @@ namespace Thetis
             console.TXFilterHigh = (int)udTXFilterHigh.Value;
 
             console.DX = (bool)dr["DXOn"];
-            console.DXLevel = (int)dr["DXLevel"];
+            //console.DXLevel = (int)dr["DXLevel"]; //MW0LGE_22b
 
             console.CPDR = (bool)dr["CompanderOn"];
             console.CPDRLevel = (int)dr["CompanderLevel"];
@@ -13673,10 +13673,17 @@ namespace Thetis
                 }
             }
         }
-
+        public bool DisplayPanFill
+        {
+            get { return chkDisplayPanFill.Checked; }
+            set { chkDisplayPanFill.Checked = value; }
+        }
         private void chkDisplayPanFill_CheckedChanged(object sender, System.EventArgs e)
         {
             Display.PanFill = chkDisplayPanFill.Checked;
+
+            //
+            console.SetupInfoBar(ucInfoBar.ActionTypes.DisplayFill, Display.PanFill);
         }
 
         private void chkTXPanFill_CheckedChanged(object sender, System.EventArgs e)
@@ -23573,6 +23580,8 @@ namespace Thetis
                 updateNUDAdjustgains(p);
                 updateMaxPower(p);
                 updateDriveLabels(p);
+
+                console.PAProfile = p.ProfileName;
             }
         }
 
@@ -25036,6 +25045,11 @@ namespace Thetis
         private void nudNFsensitivity_ValueChanged(object sender, EventArgs e)
         {
             Display.NFsensitivity = (int)nudNFsensitivity.Value;
+        }
+
+        private void nudNFshift_ValueChanged(object sender, EventArgs e)
+        {
+            Display.NFshiftDBM = (int)nudNFshift.Value;
         }
     }
 

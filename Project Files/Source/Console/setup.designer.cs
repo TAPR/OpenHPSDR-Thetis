@@ -329,6 +329,9 @@
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS157 = new System.Windows.Forms.LabelTS();
+            this.labelTS156 = new System.Windows.Forms.LabelTS();
+            this.nudNFshift = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS155 = new System.Windows.Forms.LabelTS();
             this.nudNFsensitivity = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS23 = new System.Windows.Forms.GroupBoxTS();
@@ -3399,6 +3402,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).BeginInit();
             this.tpOptions2.SuspendLayout();
             this.groupBoxTS26.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNFshift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFsensitivity)).BeginInit();
             this.groupBoxTS23.SuspendLayout();
             this.groupBoxTS22.SuspendLayout();
@@ -8554,20 +8558,73 @@
             // 
             // groupBoxTS26
             // 
+            this.groupBoxTS26.Controls.Add(this.labelTS157);
+            this.groupBoxTS26.Controls.Add(this.labelTS156);
+            this.groupBoxTS26.Controls.Add(this.nudNFshift);
             this.groupBoxTS26.Controls.Add(this.labelTS155);
             this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
-            this.groupBoxTS26.Location = new System.Drawing.Point(436, 15);
+            this.groupBoxTS26.Location = new System.Drawing.Point(15, 260);
             this.groupBoxTS26.Name = "groupBoxTS26";
-            this.groupBoxTS26.Size = new System.Drawing.Size(212, 61);
+            this.groupBoxTS26.Size = new System.Drawing.Size(166, 84);
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
-            this.groupBoxTS26.Text = "Noise Floor (wip)";
+            this.groupBoxTS26.Text = "Noise Floor";
+            // 
+            // labelTS157
+            // 
+            this.labelTS157.AutoSize = true;
+            this.labelTS157.Image = null;
+            this.labelTS157.Location = new System.Drawing.Point(123, 49);
+            this.labelTS157.Name = "labelTS157";
+            this.labelTS157.Size = new System.Drawing.Size(28, 13);
+            this.labelTS157.TabIndex = 12;
+            this.labelTS157.Text = "dBm";
+            // 
+            // labelTS156
+            // 
+            this.labelTS156.AutoSize = true;
+            this.labelTS156.Image = null;
+            this.labelTS156.Location = new System.Drawing.Point(38, 49);
+            this.labelTS156.Name = "labelTS156";
+            this.labelTS156.Size = new System.Drawing.Size(26, 13);
+            this.labelTS156.TabIndex = 11;
+            this.labelTS156.Text = "shift";
+            this.toolTip1.SetToolTip(this.labelTS156, "All band shift to the NF");
+            // 
+            // nudNFshift
+            // 
+            this.nudNFshift.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudNFshift.Location = new System.Drawing.Point(70, 47);
+            this.nudNFshift.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudNFshift.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            -2147483648});
+            this.nudNFshift.Name = "nudNFshift";
+            this.nudNFshift.Size = new System.Drawing.Size(47, 20);
+            this.nudNFshift.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.nudNFshift, "Default 0. Apply a shift.");
+            this.nudNFshift.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudNFshift.ValueChanged += new System.EventHandler(this.nudNFshift_ValueChanged);
             // 
             // labelTS155
             // 
             this.labelTS155.AutoSize = true;
             this.labelTS155.Image = null;
-            this.labelTS155.Location = new System.Drawing.Point(20, 32);
+            this.labelTS155.Location = new System.Drawing.Point(12, 23);
             this.labelTS155.Name = "labelTS155";
             this.labelTS155.Size = new System.Drawing.Size(52, 13);
             this.labelTS155.TabIndex = 9;
@@ -8580,7 +8637,7 @@
             0,
             0,
             0});
-            this.nudNFsensitivity.Location = new System.Drawing.Point(78, 30);
+            this.nudNFsensitivity.Location = new System.Drawing.Point(70, 21);
             this.nudNFsensitivity.Maximum = new decimal(new int[] {
             19,
             0,
@@ -52135,6 +52192,7 @@
             this.tpOptions2.ResumeLayout(false);
             this.groupBoxTS26.ResumeLayout(false);
             this.groupBoxTS26.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNFshift)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFsensitivity)).EndInit();
             this.groupBoxTS23.ResumeLayout(false);
             this.groupBoxTS23.PerformLayout();
@@ -56378,5 +56436,8 @@
         private GroupBoxTS groupBoxTS26;
         private LabelTS labelTS155;
         private NumericUpDownTS nudNFsensitivity;
+        private LabelTS labelTS157;
+        private LabelTS labelTS156;
+        private NumericUpDownTS nudNFshift;
     }
 }
