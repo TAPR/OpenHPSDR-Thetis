@@ -1201,5 +1201,35 @@ namespace System.Windows.Forms
 		}
 
 		#endregion
+
+		//MW0LGE_22b
+		private bool _tinyStep = false;
+		public bool TinyStep
+        {
+            get { return _tinyStep; }
+            set { _tinyStep = value; }
+        }
+		protected override void OnMouseWheel(MouseEventArgs e)
+		{
+			decimal newValue = this.Value;
+
+			decimal step = this.Increment;
+
+			if(this.DecimalPlaces > 0 && _tinyStep && step != (decimal)0.1f)
+				step = (decimal)0.1f;
+
+			if (e.Delta > 0)
+				newValue += step;
+			else
+				newValue -= step;
+
+			if (newValue > this.Maximum)
+				newValue = this.Maximum;
+			else
+				if (newValue < this.Minimum)
+				newValue = this.Minimum;
+
+			this.Value = newValue;
+		}
 	}
 }

@@ -1297,6 +1297,7 @@
             0,
             -2147483648});
             this.udFilterHigh.Name = "udFilterHigh";
+            this.udFilterHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udFilterHigh, resources.GetString("udFilterHigh.ToolTip"));
             this.udFilterHigh.Value = new decimal(new int[] {
             6000,
@@ -1328,6 +1329,7 @@
             0,
             -2147483648});
             this.udFilterLow.Name = "udFilterLow";
+            this.udFilterLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udFilterLow, resources.GetString("udFilterLow.ToolTip"));
             this.udFilterLow.Value = new decimal(new int[] {
             0,
@@ -1676,6 +1678,7 @@
             0,
             0});
             this.udCWPitch.Name = "udCWPitch";
+            this.udCWPitch.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWPitch, resources.GetString("udCWPitch.ToolTip"));
             this.udCWPitch.Value = new decimal(new int[] {
             600,
@@ -1705,6 +1708,7 @@
             0,
             0});
             this.udCWBreakInDelay.Name = "udCWBreakInDelay";
+            this.udCWBreakInDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWBreakInDelay, resources.GetString("udCWBreakInDelay.ToolTip"));
             this.udCWBreakInDelay.Value = new decimal(new int[] {
             300,
@@ -1753,6 +1757,7 @@
             0,
             -2147483648});
             this.udRX2FilterHigh.Name = "udRX2FilterHigh";
+            this.udRX2FilterHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2FilterHigh, resources.GetString("udRX2FilterHigh.ToolTip"));
             this.udRX2FilterHigh.Value = new decimal(new int[] {
             6000,
@@ -1782,6 +1787,7 @@
             0,
             -2147483648});
             this.udRX2FilterLow.Name = "udRX2FilterLow";
+            this.udRX2FilterLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2FilterLow, resources.GetString("udRX2FilterLow.ToolTip"));
             this.udRX2FilterLow.Value = new decimal(new int[] {
             0,
@@ -2077,6 +2083,7 @@
             0,
             -2147483648});
             this.udRIT.Name = "udRIT";
+            this.udRIT.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRIT, resources.GetString("udRIT.ToolTip"));
             this.udRIT.Value = new decimal(new int[] {
             0,
@@ -2151,6 +2158,7 @@
             0,
             -2147483648});
             this.udXIT.Name = "udXIT";
+            this.udXIT.TinyStep = false;
             this.toolTip1.SetToolTip(this.udXIT, resources.GetString("udXIT.ToolTip"));
             this.udXIT.Value = new decimal(new int[] {
             0,
@@ -3234,6 +3242,7 @@
             0,
             0});
             this.udFMOffset.Name = "udFMOffset";
+            this.udFMOffset.TinyStep = false;
             this.toolTip1.SetToolTip(this.udFMOffset, resources.GetString("udFMOffset.ToolTip"));
             this.udFMOffset.Value = new decimal(new int[] {
             1,
@@ -3450,6 +3459,7 @@
             0,
             0});
             this.udRX1StepAttData.Name = "udRX1StepAttData";
+            this.udRX1StepAttData.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX1StepAttData, resources.GetString("udRX1StepAttData.ToolTip"));
             this.udRX1StepAttData.Value = new decimal(new int[] {
             0,
@@ -3490,6 +3500,7 @@
             0,
             0});
             this.udRX2StepAttData.Name = "udRX2StepAttData";
+            this.udRX2StepAttData.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2StepAttData, resources.GetString("udRX2StepAttData.ToolTip"));
             this.udRX2StepAttData.Value = new decimal(new int[] {
             0,
@@ -3787,6 +3798,7 @@
             0,
             0});
             this.udTXFilterLow.Name = "udTXFilterLow";
+            this.udTXFilterLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterLow, resources.GetString("udTXFilterLow.ToolTip"));
             this.udTXFilterLow.Value = new decimal(new int[] {
             0,
@@ -3816,6 +3828,7 @@
             0,
             0});
             this.udTXFilterHigh.Name = "udTXFilterHigh";
+            this.udTXFilterHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterHigh, resources.GetString("udTXFilterHigh.ToolTip"));
             this.udTXFilterHigh.Value = new decimal(new int[] {
             6000,

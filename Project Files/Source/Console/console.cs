@@ -914,37 +914,39 @@ namespace Thetis
                 SaveState();
             }
 
-            if (rx1_meter_cal_offset == 0.0f)
-            {
-                switch (current_hpsdr_model)
-                {
-                    case HPSDRModel.ORIONMKII:
-                    case HPSDRModel.ANAN7000D:
-                    case HPSDRModel.ANAN8000D:
-                        rx1_meter_cal_offset = 4.841644f;
-                        rx2_meter_cal_offset = 4.841644f;
-                        break;
-                    default:
-                        rx1_meter_cal_offset = -2.44f;
-                        rx2_meter_cal_offset = -2.44f;
-                        break;
-                }
-            }
+            //MW0LGE_22b not actually needed as done just below in else section of resetForAutoMerge if statement
+            //also note, RX2DisplayCalOffset was not being done here anyway
+            //if (rx1_meter_cal_offset == 0.0f)
+            //{
+            //    switch (current_hpsdr_model)
+            //    {
+            //        case HPSDRModel.ORIONMKII:
+            //        case HPSDRModel.ANAN7000D:
+            //        case HPSDRModel.ANAN8000D:
+            //            rx1_meter_cal_offset = 4.841644f;
+            //            rx2_meter_cal_offset = 4.841644f;
+            //            break;
+            //        default:
+            //            rx1_meter_cal_offset = -2.44f;
+            //            rx2_meter_cal_offset = -2.44f;
+            //            break;
+            //    }
+            //}
 
-            if (rx1_display_cal_offset == 0.0f)
-            {
-                switch (current_hpsdr_model)
-                {
-                    case HPSDRModel.ORIONMKII:
-                    case HPSDRModel.ANAN7000D:
-                    case HPSDRModel.ANAN8000D:
-                        RX1DisplayCalOffset = 5.259f;
-                        break;
-                    default:
-                        RX1DisplayCalOffset = -2.1f;
-                        break;
-                }
-            }
+            //if (rx1_display_cal_offset == 0.0f)
+            //{
+            //    switch (current_hpsdr_model)
+            //    {
+            //        case HPSDRModel.ORIONMKII:
+            //        case HPSDRModel.ANAN7000D:
+            //        case HPSDRModel.ANAN8000D:
+            //            RX1DisplayCalOffset = 5.259f;
+            //            break;
+            //        default:
+            //            RX1DisplayCalOffset = -2.1f;
+            //            break;
+            //    }
+            //}
 
             initializing = false;
 
@@ -981,6 +983,9 @@ namespace Thetis
 
                 rx1_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
                 RX1DisplayCalOffset = rx_display_cal_offset_by_radio[(int)current_hpsdr_model];
+                //added rx2 //MW0LGE_22b
+                rx2_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
+                RX2DisplayCalOffset = rx_display_cal_offset_by_radio[(int)current_hpsdr_model];
 
                 //MW0LGE_21d fix isuse where controls that had been
                 //clicked and now unselected show as different text colour when disabled
@@ -8822,6 +8827,271 @@ namespace Thetis
             if (!IsSetupFormNull) SetupForm.UpdateDDCTab();
         }
 
+        public void getDDC(out int DDCrx1, out int DDCrx2)
+        {
+            bool moxEnabeld = MOX;
+            bool diversityEnabled = Diversity2;
+            bool puresignalEnabled = psform.PSEnabled;
+
+            int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+
+            int tot = 0;
+            tot += moxEnabeld ? 1 : 0;
+            tot += diversityEnabled ? 2 : 0;
+            tot += puresignalEnabled ? 4 : 0;
+
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) // P2
+            {
+                switch (CurrentHPSDRHardware)
+                {
+                    case HPSDRHW.Angelia: // ANAN-100D
+                    case HPSDRHW.Orion: // ANAN-200D
+                    case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+                        switch (tot)
+                        {
+                            case 0: // off off off
+                                rx1 = 2;
+                                rx2 = 3;
+                                break;
+                            case 1: // off off on
+                                rx1 = 2;
+                                rx2 = 3;
+                                break;
+                            case 2: // off on off
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx2 = 3;
+                                break;
+                            case 3: // off on on
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx2 = 3;
+                                break;
+                            case 4: // on off off
+                                rx1 = 2;
+                                rx2 = 3;
+                                break;
+                            case 5: // on off on
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx1 = 2;
+                                rx2 = 3;
+                                break;
+                            case 6: // on on off
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx2 = 3;
+                                break;
+                            case 7: // on on on
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx1 = 2;
+                                rx2 = 3;
+                                break;
+                        }
+                        break;
+                    //case HPSDRHW.Atlas: /// ???
+                    case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes
+                    case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII
+                        switch (tot)
+                        {
+                            case 0: // off off off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 1: // off off on
+                                sync1 = 0;
+                                sync2 = 1;
+                                break;
+                            case 2: // off on off
+                                sync1 = 0;
+                                sync2 = 1;
+                                break;
+                            case 3: // off on on
+                                sync1 = 0;
+                                sync2 = 1;
+                                break;
+                            case 4: // on off off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 5: // on off on
+                                sync1 = 0;
+                                sync2 = 1;
+                                break;
+                            case 6: // on on off
+                                sync1 = 0;
+                                sync2 = 1;
+                                break;
+                            case 7: // on on on
+                                sync1 = 0;
+                                sync2 = 1;
+                                break;
+                        }
+                        break;
+                }
+            }
+            else if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) // P1
+            {
+                switch (CurrentHPSDRHardware)
+                {
+                    case HPSDRHW.Angelia: // ANAN-100D (all 5 adc)
+                    case HPSDRHW.Orion: // ANAN-200D
+                    case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+                        switch (tot)
+                        {
+                            case 0: // off off off
+                                rx1 = 0;
+                                rx2 = 2;
+                                break;
+                            case 1: // off off on
+                                rx1 = 0;
+                                rx2 = 2;
+                                break;
+                            case 2: // off on off
+                                //rx1 = 0;
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx2 = 2;
+                                break;
+                            case 3: // off on on
+                                //rx1 = 0;
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx2 = 2;
+                                break;
+                            case 4: // on off off
+                                rx1 = 0;
+                                rx2 = 2;
+                                break;
+                            case 5: // on off on
+                                rx1 = 0;
+                                rx2 = 2;
+                                psrx = 3;
+                                pstx = 4;
+                                break;
+                            case 6: // on on off
+                                //rx1 = 0;
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx2 = 2;
+                                break;
+                            case 7: // on on on
+                                //rx1 = 0;
+                                sync1 = 0;
+                                sync2 = 1;
+                                rx2 = 2;
+                                psrx = 3;
+                                pstx = 4;
+                                break;
+                        }
+                        break;
+                    //                    case HPSDRHW.Atlas: /// ???
+                    case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes (4 adc)
+                        switch (tot)
+                        {
+                            case 0: // off off off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 1: // off off on
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 2: // off on off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 3: // off on on
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 4: // on off off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 5: // on off on
+                                rx1 = 0;
+                                rx2 = 1;
+                                psrx = 2;
+                                pstx = 3;
+                                break;
+                            case 6: // on on off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 7: // on on on
+                                rx1 = 0;
+                                rx2 = 1;
+                                psrx = 2;
+                                pstx = 3;
+                                break;
+                        }
+                        break;
+                    case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII (2 adc)
+                        switch (tot)
+                        {
+                            case 0: // off off off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 1: // off off on
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 2: // off on off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 3: // off on on
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 4: // on off off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 5: // on off on
+                                psrx = 0;
+                                pstx = 1;
+                                break;
+                            case 6: // on on off
+                                rx1 = 0;
+                                rx2 = 1;
+                                break;
+                            case 7: // on on on
+                                psrx = 0;
+                                pstx = 1;
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            if (diversityForm != null && diversityEnabled)
+            {
+                // check if we are using RX1+RX2, RX1 or RX2
+                switch (diversityForm.EXTDIVOutput)
+                {
+                    case 0: //rx1
+                        rx1 = sync1;
+                        break;
+                    case 1: //rx2
+                        rx1 = sync2;
+                        break;
+                    case 2: //rx1+rx2
+                        rx1 = sync1;
+                        break;
+                }
+            }
+            //if (rx2 == -1 && sync2 != -1) rx2 = sync2;
+
+            if (rx1 == -1 && psrx != -1) rx1 = psrx;
+            if (rx2 == -1) rx2 = rx1;
+
+            DDCrx1 = rx1;
+            DDCrx2 = rx2;
+        }
 
         private void UpdateDiversityValues()
         {
@@ -11780,9 +12050,10 @@ namespace Thetis
                     udRX1StepAttData.Maximum = (decimal)61;
                 else udRX1StepAttData.Maximum = (decimal)31;
 
-                //MW0LGE_21d step atten
-                //int nRX1ADCinUse = GetADCInUse(GetDDCForRX(1)); // (rx1)
-                //int nRX2ADCinUse = GetADCInUse(GetDDCForRX(2)); // (rx2)
+                //MW0LGE_22b step atten
+                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
+                int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
                 if (rx1_step_att_present)
                 {
@@ -11796,27 +12067,27 @@ namespace Thetis
                         if (rx1_attenuator_data <= 31)
                         {
                             NetworkIO.SetAlexAtten(0); // 0dB Alex Attenuator
-                            NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
-                            //if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
-                            //else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data);
-                            //else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data);
+                            //NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
+                            if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
+                            else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data);
+                            else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data);
                         }
                         else
                         {
                             NetworkIO.SetAlexAtten(3); // -30dB Alex Attenuator
-                            NetworkIO.SetADC1StepAttenData(rx1_attenuator_data + 2);
-                            //if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data + 2);
-                            //else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data + 2);
-                            //else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data + 2);
+                            //NetworkIO.SetADC1StepAttenData(rx1_attenuator_data + 2);
+                            if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data + 2);
+                            else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data + 2);
+                            else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data + 2);
                         }
                     }
                     else
                     {
                         NetworkIO.SetAlexAtten(0);
-                        NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
-                        //if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
-                        //else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data);
-                        //else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data);
+                        //NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
+                        if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
+                        else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data);
+                        else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data);
                     }
                 }
 
@@ -11830,6 +12101,13 @@ namespace Thetis
                     update_preamp = true;
                     UpdatePreamps();
                 }
+                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2AttenuatorData != rx1_attenuator_data)
+                {
+                    if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                    RX2AttenuatorData = rx1_attenuator_data;
+                }
+
                 UpdateRX1DisplayOffsets();
                 ////MW0LGE_21d atten
                 //if (nRX1ADCinUse == nRX2ADCinUse)
@@ -11897,6 +12175,17 @@ namespace Thetis
         //    }
         //}
 
+        private bool RX1RX2usingSameADC
+        {
+            get
+            {
+                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
+                int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
+
+                return nRX1ADCinUse == nRX2ADCinUse;
+            }
+        }
         private int rx2_attenuator_data = 0;
         public int RX2AttenuatorData
         {
@@ -11905,67 +12194,150 @@ namespace Thetis
             {
                 int oldData = rx2_attenuator_data;
                 rx2_attenuator_data = value;
+                if (initializing) return;
+
+                if (alexpresent &&
+                    current_hpsdr_model != HPSDRModel.ANAN10 &&
+                    current_hpsdr_model != HPSDRModel.ANAN10E &&
+                    current_hpsdr_model != HPSDRModel.ANAN7000D &&
+                    current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                    current_hpsdr_model != HPSDRModel.ORIONMKII)
+                    udRX1StepAttData.Maximum = (decimal)61;
+                else udRX1StepAttData.Maximum = (decimal)31;
+
+                //MW0LGE_22b step atten
+                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
+                int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
                 if (rx2_step_att_present)
                 {
-                    NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
+                    if (alexpresent &&
+                        current_hpsdr_model != HPSDRModel.ANAN10 &&
+                        current_hpsdr_model != HPSDRModel.ANAN10E &&
+                        current_hpsdr_model != HPSDRModel.ANAN7000D &&
+                        current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                        current_hpsdr_model != HPSDRModel.ORIONMKII)
+                    {
+                        if (rx2_attenuator_data <= 31)
+                        {
+                            //NetworkIO.SetAlexAtten(0); // 0dB Alex Attenuator
+                            //NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
+                            if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data);
+                            else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
+                            else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data);
+                        }
+                        else
+                        {
+                            //NetworkIO.SetAlexAtten(3); // -30dB Alex Attenuator
+                            //NetworkIO.SetADC2StepAttenData(rx2_attenuator_data + 2);
+                            if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data + 2);
+                            else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data + 2);
+                            else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data + 2);
+                        }
+                    }
+                    else
+                    {
+                        //NetworkIO.SetAlexAtten(0);
+                        //NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
+                        if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data);
+                        else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
+                        else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data);
+                    }
                 }
 
-                if (!initializing && !mox && rx2_step_att_present)
-                    rx2_step_attenuator_by_band[(int)rx2_band] = value;
+                if (!mox)
+                    rx2_step_attenuator_by_band[(int)rx2_band] = rx2_attenuator_data;
+
+                udRX2StepAttData.Value = rx2_attenuator_data;
+                lblRX2AttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
                 if (!mox)
                 {
                     update_preamp = true;
                     UpdatePreamps();
                 }
+
+                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                if (((nRX2ADCinUse == nRX1ADCinUse) || bRX1RX2diversity) && RX1AttenuatorData != rx2_attenuator_data)
+                {
+                    if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                    RX1AttenuatorData = rx2_attenuator_data;
+                }
                 UpdateRX2DisplayOffsets();
+                ////MW0LGE_21d atten
+                //if (nRX1ADCinUse == nRX2ADCinUse)
+                //{
+                //    if (RX2AttenuatorData != rx1_attenuator_data) RX2AttenuatorData = rx1_attenuator_data;
+                //    UpdateRX2DisplayOffsets();
+                //}
 
                 if (oldData != rx2_attenuator_data) AttenuatorDataChangedHandlers?.Invoke(2, oldData, rx2_attenuator_data);
 
-                ////rx2_attenuator_data = value;
 
-                //////MW0LGE_21d step atten
-                ////if (alexpresent &&
-                ////    current_hpsdr_model != HPSDRModel.ANAN10 &&
-                ////    current_hpsdr_model != HPSDRModel.ANAN10E &&
-                ////    current_hpsdr_model != HPSDRModel.ANAN7000D &&
-                ////    current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                ////    current_hpsdr_model != HPSDRModel.ORIONMKII)
-                ////    udRX2StepAttData.Maximum = (decimal)61;
-                ////else udRX2StepAttData.Maximum = (decimal)31;
+                // all commented MW0LGE21b
+                //int oldData = rx2_attenuator_data;
+                //rx2_attenuator_data = value;
 
-                //////int nRX1ADCinUse = GetADCInUse(GetDDCForRX(1)); // (rx1)
-                //////int nRX2ADCinUse = GetADCInUse(GetDDCForRX(2)); // (rx2)
+                //if (rx2_step_att_present)
+                //{
+                //    NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
+                //}
 
-                ////if (rx2_step_att_present)
-                ////{
-                ////    if (alexpresent) NetworkIO.SetAlexAtten(0);//MW0LGE_21d step atten?
-                ////    //if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data);
-                ////    //else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
-                ////    //else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data);
-                ////    NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
-                ////}
+                //if (!initializing && !mox && rx2_step_att_present)
+                //    rx2_step_attenuator_by_band[(int)rx2_band] = value;
+                //if (!mox)
+                //{
+                //    update_preamp = true;
+                //    UpdatePreamps();
+                //}
+                //UpdateRX2DisplayOffsets();
 
-                ////if (!initializing && !mox && rx2_step_att_present)
-                ////    rx2_step_attenuator_by_band[(int)rx2_band] = value;
+                //if (oldData != rx2_attenuator_data) AttenuatorDataChangedHandlers?.Invoke(2, oldData, rx2_attenuator_data);
 
-                //////MW0LGE_21d step atten
-                ////udRX2StepAttData.Value = rx2_attenuator_data;
-                //////lblAttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
-
-                ////if (!mox)
-                ////{
-                ////    update_preamp = true;
-                ////    UpdatePreamps();
-                ////}
+                //////rx2_attenuator_data = value;
 
                 ////////MW0LGE_21d step atten
-                //////if (nRX1ADCinUse == nRX2ADCinUse)
+                //////if (alexpresent &&
+                //////    current_hpsdr_model != HPSDRModel.ANAN10 &&
+                //////    current_hpsdr_model != HPSDRModel.ANAN10E &&
+                //////    current_hpsdr_model != HPSDRModel.ANAN7000D &&
+                //////    current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                //////    current_hpsdr_model != HPSDRModel.ORIONMKII)
+                //////    udRX2StepAttData.Maximum = (decimal)61;
+                //////else udRX2StepAttData.Maximum = (decimal)31;
+
+                ////////int nRX1ADCinUse = GetADCInUse(GetDDCForRX(1)); // (rx1)
+                ////////int nRX2ADCinUse = GetADCInUse(GetDDCForRX(2)); // (rx2)
+
+                //////if (rx2_step_att_present)
                 //////{
-                //////    if (RX1AttenuatorData != rx2_attenuator_data) RX1AttenuatorData = rx2_attenuator_data;
-                //////    UpdateRX1DisplayOffsets();
+                //////    if (alexpresent) NetworkIO.SetAlexAtten(0);//MW0LGE_21d step atten?
+                //////    //if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data);
+                //////    //else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
+                //////    //else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data);
+                //////    NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
                 //////}
-                ////UpdateRX2DisplayOffsets();
+
+                //////if (!initializing && !mox && rx2_step_att_present)
+                //////    rx2_step_attenuator_by_band[(int)rx2_band] = value;
+
+                ////////MW0LGE_21d step atten
+                //////udRX2StepAttData.Value = rx2_attenuator_data;
+                ////////lblAttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
+
+                //////if (!mox)
+                //////{
+                //////    update_preamp = true;
+                //////    UpdatePreamps();
+                //////}
+
+                //////////MW0LGE_21d step atten
+                ////////if (nRX1ADCinUse == nRX2ADCinUse)
+                ////////{
+                ////////    if (RX1AttenuatorData != rx2_attenuator_data) RX1AttenuatorData = rx2_attenuator_data;
+                ////////    UpdateRX1DisplayOffsets();
+                ////////}
+                //////UpdateRX2DisplayOffsets();
             }
         }
 
@@ -13028,6 +13400,7 @@ namespace Thetis
             if (rx2_step_att_present)
             {
                 Display.RX2PreampOffset = rx2_attenuator_data;
+
                 if (current_hpsdr_model != HPSDRModel.ANAN100D &&
                     current_hpsdr_model != HPSDRModel.ANAN200D &&
                     current_hpsdr_model != HPSDRModel.ORIONMKII &&
@@ -13595,6 +13968,8 @@ namespace Thetis
                 lblRX2MuteVFOB.ForeColor = value;
                 lblRX2ModeLabel.ForeColor = value;
                 lblRX2FilterLabel.ForeColor = value;
+                //MW0LGE_22b
+                lblRX2AttenLabel.ForeColor = value;
             }
         }
 
@@ -16018,6 +16393,7 @@ namespace Thetis
         //        {
         //            //ANAN-100D ANAN-200D 7000DLE 8000DLE
         //            case HPSDRHW.Angelia:
+        //            case HPSDRHW.Angelia:upip
         //            case HPSDRHW.Orion:
         //            case HPSDRHW.OrionMKII:
         //                if(rx==1)
@@ -16097,32 +16473,33 @@ namespace Thetis
         //    return nDDC;
         //}
 
-        //public int GetADCInUse(int ddc)
-        //{
-        //    //MW0LGE_21d returns the selected ADC number for a given DDC
-        //    //P2 = DDC0-3 uses RXADCCtrl1, DDC4-7 uses RXADCCtrl2
-        //    //P1 = DDC0-7 uses RXADCCtrl_P1
+        public int GetADCInUse(int ddc)
+        {
+            //MW0LGE_21d returns the selected ADC number for a given DDC
+            //P2 = DDC0-3 uses RXADCCtrl1, DDC4-7 uses RXADCCtrl2
+            //P1 = DDC0-7 uses RXADCCtrl_P1
 
-        //    if (ddc < 0 || ddc > 7) return -1;
+            if (ddc < 0 || ddc > 7) return -1;
 
-        //    int adcControl = 0;
-        //    if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
-        //    {
-        //        adcControl = ddc < 4 ? RXADCCtrl1 : RXADCCtrl2;
-        //        if (ddc >= 4) ddc -= 4; // ddc4 becomes the ddc0 point in rxdacctrl2
-        //    }
-        //    else if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
-        //    {
-        //        adcControl = RXADCCtrl_P1;
-        //    }
-        //    else return -1;
+            int adcControl = 0;
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            {
+                adcControl = ddc < 4 ? RXADCCtrl1 : RXADCCtrl2;
+                if (ddc >= 4) ddc -= 4; // ddc4 becomes the ddc0 point in rxdacctrl2
+            }
+            else if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
+            {
+                adcControl = RXADCCtrl_P1;
+            }
+            else return -1;
 
-        //    int mask = 3 << (ddc * 2);
-        //    int tmp = adcControl & mask;
-        //    tmp = tmp >> (ddc * 2);
+            int mask = 3 << (ddc * 2);
+            int tmp = adcControl & mask;
+            tmp = tmp >> (ddc * 2);
 
-        //    return tmp;
-        //}
+            return tmp;
+        }
+
         private int rx_adc_ctrl2 = 0;
         public int RXADCCtrl2
         {
@@ -20254,18 +20631,19 @@ namespace Thetis
                         break;
                 }
 
-                //MW0LGE_21d step atten
-                //int nRX1ADCinUse = GetADCInUse(GetDDCForRX(1)); // (rx1)
-                //int nRX2ADCinUse = GetADCInUse(GetDDCForRX(2)); // (rx2)
+                //MW0LGE_22b
+                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
+                int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
                 if (current_hpsdr_model != HPSDRModel.HPSDR)
                 {
                     if (!rx1_step_att_present)
                     {
-                        NetworkIO.SetADC1StepAttenData(rx1_att_value);
-                        //if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_att_value);
-                        //else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_att_value);
-                        //else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_att_value);
+                        //NetworkIO.SetADC1StepAttenData(rx1_att_value);
+                        if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_att_value);
+                        else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_att_value);
+                        else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_att_value);
                     }
                 }
                 else
@@ -20316,6 +20694,13 @@ namespace Thetis
                         break;
                 }
 
+                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2PreampMode != rx1_preamp_mode)
+                {
+                    if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                    RX2PreampMode = rx1_preamp_mode;
+                }
+
                 UpdateRX1DisplayOffsets();
                 //MW0LGE_21d step atten
                 //if (nRX1ADCinUse == nRX2ADCinUse)
@@ -20350,38 +20735,93 @@ namespace Thetis
                 int rx2_preamp = 0;
                 int rx2_att_value = 0;
 
+                //MW0LGE_22b
                 switch (rx2_preamp_mode)
                 {
-                    case PreampMode.HPSDR_ON: //0dB HPSDR_ON
-                        rx2_preamp = 1;
+                    case PreampMode.HPSDR_ON:  //0dB
                         rx2_att_value = 0;
+                        rx2_preamp = 1; //no attn
+                        //alex_atten = 0;
                         comboRX2Preamp.Text = "0dB";
                         break;
-                    case PreampMode.HPSDR_OFF: // -20dB HPSDR_OFF
-                        rx2_preamp = 0;
+                    case PreampMode.HPSDR_OFF: //-20dB
                         rx2_att_value = 20;
+                        rx2_preamp = 0; //attn inline
+                        //alex_atten = 0;
                         comboRX2Preamp.Text = "-20dB";
                         break;
-                    case PreampMode.SA_MINUS10: //MW0LGE_21d
                     case PreampMode.HPSDR_MINUS10:
                         rx2_att_value = 10;
+                        rx2_preamp = 1;
+                        //alex_atten = 1;
                         comboRX2Preamp.Text = "-10dB";
                         break;
-                    case PreampMode.SA_MINUS20: //MW0LGE_21d
                     case PreampMode.HPSDR_MINUS20:
                         rx2_att_value = 20;
+                        rx2_preamp = 1;
+                        //alex_atten = 2;
                         comboRX2Preamp.Text = "-20dB";
                         break;
-                    case PreampMode.SA_MINUS30: //MW0LGE_21d
                     case PreampMode.HPSDR_MINUS30:
                         rx2_att_value = 30;
+                        rx2_preamp = 1;
+                        //alex_atten = 3;
+                        comboRX2Preamp.Text = "-30dB";
+                        break;
+                    case PreampMode.SA_MINUS10:
+                        rx2_att_value = 10;
+                        rx2_preamp = 0;
+                        //alex_atten = 0;
+                        comboRX2Preamp.Text = "-10dB";
+                        break;
+                    case PreampMode.SA_MINUS20:
+                        rx2_att_value = 20;
+                        rx2_preamp = 0;
+                        //alex_atten = 0;
+                        comboRX2Preamp.Text = "-20dB";
+                        break;
+                    case PreampMode.SA_MINUS30:
+                        rx2_att_value = 30;
+                        rx2_preamp = 0;
+                        //alex_atten = 0;
                         comboRX2Preamp.Text = "-30dB";
                         break;
                 }
 
-                //MW0LGE_21d step atten
-                //int nRX1ADCinUse = GetADCInUse(GetDDCForRX(1)); // (rx1)
-                //int nRX2ADCinUse = GetADCInUse(GetDDCForRX(2)); // (rx2)
+                //MW0LGE_22b
+                //switch (rx2_preamp_mode)
+                //{
+                //    case PreampMode.HPSDR_ON: //0dB HPSDR_ON
+                //        rx2_preamp = 1;
+                //        rx2_att_value = 0;
+                //        comboRX2Preamp.Text = "0dB";
+                //        break;
+                //    case PreampMode.HPSDR_OFF: // -20dB HPSDR_OFF
+                //        rx2_preamp = 0;
+                //        rx2_att_value = 20;
+                //        comboRX2Preamp.Text = "-20dB";
+                //        break;
+                //    case PreampMode.SA_MINUS10: //MW0LGE_21d
+                //    case PreampMode.HPSDR_MINUS10:
+                //        rx2_att_value = 10;
+                //        comboRX2Preamp.Text = "-10dB";
+                //        break;
+                //    case PreampMode.SA_MINUS20: //MW0LGE_21d
+                //    case PreampMode.HPSDR_MINUS20:
+                //        rx2_att_value = 20;
+                //        comboRX2Preamp.Text = "-20dB";
+                //        break;
+                //    case PreampMode.SA_MINUS30: //MW0LGE_21d
+                //    case PreampMode.HPSDR_MINUS30:
+                //        rx2_att_value = 30;
+                //        comboRX2Preamp.Text = "-30dB";
+                //        break;
+                //}
+
+                //MW0LGE_22b
+                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
+                int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
                 if (current_hpsdr_model == HPSDRModel.ANAN100D ||
                     current_hpsdr_model == HPSDRModel.ANAN200D ||
@@ -20389,15 +20829,24 @@ namespace Thetis
                     current_hpsdr_model == HPSDRModel.ANAN7000D ||
                     current_hpsdr_model == HPSDRModel.ANAN8000D)
                 {
-                    NetworkIO.SetADC2StepAttenData(rx2_att_value);
-                    //if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_att_value);
-                    //else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_att_value);
-                    //else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_att_value);
+                    //NetworkIO.SetADC2StepAttenData(rx2_att_value);
+                    if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_att_value);
+                    else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_att_value);
+                    else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_att_value);
                 }
 
                 if (current_hpsdr_model == HPSDRModel.HPSDR)
                     NetworkIO.SetRX2Preamp(rx2_preamp);
+
                 rx2_preamp_by_band[(int)rx2_band] = rx2_preamp_mode;
+
+                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1PreampMode != rx2_preamp_mode)
+                {
+                    if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                    RX1PreampMode = rx2_preamp_mode;
+                }
+
                 UpdateRX2DisplayOffsets();
                 //MW0LGE_21d step atten
                 //if (nRX1ADCinUse == nRX2ADCinUse)
@@ -30810,7 +31259,7 @@ namespace Thetis
         {
             UpdateDriveLabel(false, EventArgs.Empty);
         }
-        //private double m_fDrivePower = -1;
+        private double m_fDrivePower = -1;
         private void ptbPWR_Scroll(object sender, System.EventArgs e)
         {
             if (IsSetupFormNull)
@@ -30891,11 +31340,11 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.TXDrive = ptbPWR.Value;
 
-            //if (m_fDrivePower != new_pwr)  // MW0LGE_21k9d
-            //{
-            //    m_fDrivePower = new_pwr;
+            if (m_fDrivePower != new_pwr)  // MW0LGE_21k9d
+            {
+                m_fDrivePower = new_pwr;
                 DrivePowerChangedHandlers?.Invoke(1, new_pwr, TUN || chk2TONE.Checked); // only rx1
-            //}
+            }
         }
 
         private void ptbAF_Scroll(object sender, System.EventArgs e)
@@ -31671,6 +32120,10 @@ namespace Thetis
 
             if (tx)                     // change to TX mode
             {
+                //
+                if(!chkTUN.Checked && !chk2TONE.Checked) ptbPWR_Scroll(this, EventArgs.Empty); //MW0LGE_22b need this here as we may have adjusted power via tune slider when not in mox
+                //
+
                 pause_DisplayThread = true; // MW0LGE_21k8 turn display off whilst everything is being setup, prevents flashes of pixels etc
 
                 if (!full_duplex)       // shutdown RX1 and RX2 as appropriate
@@ -32136,11 +32589,11 @@ namespace Thetis
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                     PreviousPWR = ptbPWR.Value;
                 // set power
-                int new_pwr = setPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true);
+                int new_pwr = SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true);
                 //
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                 {
-                    ptbPWR.LimitEnabled = false;
+                    PWRSliderLimitEnabled = false;
                     PWR = new_pwr;
                 }
                 //
@@ -32260,7 +32713,7 @@ namespace Thetis
                 //MW0LGE_22b
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                 {
-                    ptbPWR.LimitEnabled = true;
+                    PWRSliderLimitEnabled = true;
                     PWR = PreviousPWR;
                 }
 
@@ -32291,6 +32744,11 @@ namespace Thetis
             setupTuneDriveSlider(); // MW0LGE_22b
 
             if (oldTune != tuning) TuneChangedHandlers?.Invoke(1, oldTune, tuning); //MW0LGE_21kd9 // just rx1
+        }
+        public bool PWRSliderLimitEnabled
+        {
+            get { return ptbPWR.LimitEnabled; }
+            set { ptbPWR.LimitEnabled = value; }
         }
 
         private CancellationTokenSource ATUTunetokenSource;
@@ -32829,6 +33287,13 @@ namespace Thetis
 
         private void chkVAC1_CheckedChanged(object sender, System.EventArgs e)
         {
+            bool bSync = false;
+            if (!IsSetupFormNull && Common.ShiftKeyDown) //MW0LGE_22b
+            {
+                if(chkVAC2.Checked) chkVAC2.Checked = false;
+                bSync = true;
+            }
+
             if (!IsSetupFormNull) SetupForm.VACEnable = chkVAC1.Checked;
             if (chkVAC1.Checked)
             {
@@ -32843,6 +33308,11 @@ namespace Thetis
                 }
             }
             else chkVAC1.BackColor = SystemColors.Control;
+
+            if (bSync)
+            {
+                chkVAC2.Checked = chkVAC1.Checked;
+            }
         }
 
         private void chkVAC2_CheckedChanged(object sender, EventArgs e)
@@ -48818,11 +49288,11 @@ namespace Thetis
 
             if (!IsSetupFormNull)
             {
-                //if (mox)
-                //{
-                //    if (udRX2StepAttData.Value > 31) udRX2StepAttData.Value = 31;
-                //    SetupForm.ATTOnTX = (int)udRX2StepAttData.Value;
-                //}
+                if (mox && (RX2Enabled && VFOBTX))
+                {
+                    if (udRX2StepAttData.Value > 31) udRX2StepAttData.Value = 31;
+                    SetupForm.ATTOnTX = (int)udRX2StepAttData.Value;
+                }
                 SetupForm.HermesAttenuatorDataRX2 = (int)udRX2StepAttData.Value;
             }
             if (udRX2StepAttData.Focused) btnHidden.Focus();
@@ -48834,12 +49304,18 @@ namespace Thetis
         {
             if (current_hpsdr_model != HPSDRModel.HPSDR)
                 SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
+
+            if (RX1RX2usingSameADC) //MW0LGE_22b
+                if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
         }
 
         private void lblRX2Preamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (current_hpsdr_model != HPSDRModel.HPSDR)
                 SetupForm.RX2EnableAtt = !SetupForm.RX2EnableAtt;
+
+            if (RX1RX2usingSameADC) //MW0LGE_22b
+                if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
         }
 
         private byte n1mm_state = 0;
@@ -52680,7 +53156,7 @@ namespace Thetis
                 lblTune.Text = "Limit: "+ sValue;
             }
         }
-        //private double m_fTuneDrivePower = -1;
+        private double m_fTuneDrivePower = -1;
         private void ptbTune_Scroll(object sender, EventArgs e)
         {
             if (IsSetupFormNull)
@@ -52711,11 +53187,11 @@ namespace Thetis
             //if (sliderForm != null)
             //    sliderForm.TXDrive = ptbPWR.Value;
 
-            //if (m_fTuneDrivePower != new_pwr)  // MW0LGE_21k9d
-            //{
-            //    m_fTuneDrivePower = new_pwr;
+            if (m_fTuneDrivePower != new_pwr)  // MW0LGE_21k9d
+            {
+                m_fTuneDrivePower = new_pwr;
                 DrivePowerChangedHandlers?.Invoke(1, new_pwr, true); // only rx1, and always tune
-            //}
+            }
         }
         private DrivePowerSource _tuneDrivePowerSource = DrivePowerSource.DRIVE_SLIDER;
         private DrivePowerSource _2ToneDrivePowerSource = DrivePowerSource.DRIVE_SLIDER;
@@ -52799,23 +53275,29 @@ namespace Thetis
         private int setPowerFromDriveSlider(out bool bConstrain, bool bAdjustedBySliderControl)
         {
             int nDrv;
-            if (chkTUN.Checked || chk2TONE.Checked)
-            {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false);
-                bConstrain = bConstrainOut;
-                return nDrv;
-            }
-            else if (bAdjustedBySliderControl)
-            {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, false, false);
-                bConstrain = bConstrainOut;
-                return nDrv;
-            }
-            else
-            {
-                bConstrain = false;
-                return (int)ptbTune.Value;
-            }
+            nDrv = SetPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false);
+            bConstrain = bConstrainOut;
+            return nDrv;
+
+            //int nDrv;
+            //if (chkTUN.Checked || chk2TONE.Checked)
+            //{
+            //    nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false);
+            //    bConstrain = bConstrainOut;
+            //    return nDrv;
+            //}
+            //else// if (bAdjustedBySliderControl)
+            //{
+            //    nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false);
+            //    bConstrain = bConstrainOut;
+            //    return nDrv;
+            //}
+            //else
+            //{
+            //    // should not hit here
+            //    bConstrain = false;
+            //    return 0;
+            //}
 
             //// tx mode
             //int txMode = 0;
@@ -52841,36 +53323,57 @@ namespace Thetis
         private int setPowerFromTuneSlider(out bool bConstrain, bool bAdjustedBySliderControl)
         {
             int nDrv;
-            if (chkTUN.Checked || chk2TONE.Checked)
-            {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, true);
-                bConstrain = bConstrainOut;
-                return nDrv;
-            }
-            else if(bAdjustedBySliderControl)
-            {
-                nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, false, true);
-                bConstrain = bConstrainOut;
-                return nDrv;
-            }
-            else
-            {
-                bConstrain = false;
-                return (int)ptbTune.Value;
-            }
+            nDrv = SetPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, true);
+            bConstrain = bConstrainOut;
+            return nDrv;
+
+            //int nDrv;
+            //if (chkTUN.Checked || chk2TONE.Checked)
+            //{
+            //    nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, true);
+            //    bConstrain = bConstrainOut;
+            //    return nDrv;
+            //}
+            //else// if(bAdjustedBySliderControl)
+            //{
+            //    nDrv = setPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, true);
+            //    bConstrain = bConstrainOut;
+            //    return nDrv;
+            //}
+
+            //else
+            //{
+            //    bConstrain = false;
+            //    return (int)ptbTune.Value;
+            //}
         }
-        private int setPowerUsingTargetDBM(out bool bConstrain, out double targetdBm, bool bSetPower, bool bFromTune)
+        public int SetPowerUsingTargetDBM(out bool bConstrain, out double targetdBm, bool bSetPower, bool bFromTune)
         {
             PrettyTrackBar slider = ptbPWR;
             bConstrain = true;
             int new_pwr = 0;
-            // tx mode
+            //// tx mode
             int txMode = 0;
-            if (chkTUN.Checked || (!chk2TONE.Checked && bFromTune))
-                txMode = 1;
-            else if (chk2TONE.Checked || (!chkTUN.Checked && bFromTune))
-                txMode = 2;
-            
+            if (!MOX && !chkTUN.Checked && !chk2TONE.Checked)
+            {
+                if (bFromTune)
+                {
+                    if (_tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER)
+                        txMode = 1;
+                    else if (_2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER)
+                        txMode = 2;
+                    else
+                        txMode = 1;
+                }                
+            }
+            else
+            {
+                if (chkTUN.Checked)
+                    txMode = 1;
+                else if (chk2TONE.Checked)
+                    txMode = 2;
+            }
+
             switch (txMode)
             {
                 case 0: //normal
