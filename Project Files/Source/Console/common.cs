@@ -630,6 +630,7 @@ namespace Thetis
 		// MW0LGE moved here from titlebar.cs, and used by console.cs and others
 		private static string m_sVersionNumber = "";
 		private static string m_sFileVersion = "";
+		private static string m_sRevision = "";
 		public static string GetVerNum()
 		{
 			if (m_sVersionNumber != "") return m_sVersionNumber;
@@ -646,6 +647,14 @@ namespace Thetis
 
 			return m_sFileVersion;
 		}
+		public static string GetRevision()
+		{
+			if (m_sRevision != "") return m_sRevision;
+
+			setupVersions();
+
+			return m_sRevision;
+		}
 		private static void setupVersions()
 		{
 			//MW0LGE build version number string once and return that
@@ -659,6 +668,7 @@ namespace Thetis
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
 			m_sVersionNumber = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
 			m_sFileVersion = fvi.FileVersion;
+			m_sRevision = fvi.FileVersion.Substring(fvi.FileVersion.LastIndexOf(".") + 1);
 		}
 
 		public static int DaysToTimeOut()

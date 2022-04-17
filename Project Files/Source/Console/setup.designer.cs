@@ -4321,6 +4321,7 @@
             this.udATTOnTX.Name = "udATTOnTX";
             this.udATTOnTX.Size = new System.Drawing.Size(37, 20);
             this.udATTOnTX.TabIndex = 8;
+            this.udATTOnTX.TinyStep = false;
             this.udATTOnTX.Value = new decimal(new int[] {
             31,
             0,
@@ -6325,6 +6326,7 @@
             numericUpDownTS3.Name = "numericUpDownTS3";
             numericUpDownTS3.Size = new System.Drawing.Size(60, 20);
             numericUpDownTS3.TabIndex = 6;
+            numericUpDownTS3.TinyStep = false;
             numericUpDownTS3.Value = new decimal(new int[] {
             1,
             0,
@@ -6353,6 +6355,7 @@
             numericUpDownTS4.Name = "numericUpDownTS4";
             numericUpDownTS4.Size = new System.Drawing.Size(60, 20);
             numericUpDownTS4.TabIndex = 5;
+            numericUpDownTS4.TinyStep = false;
             numericUpDownTS4.Value = new decimal(new int[] {
             1,
             0,
@@ -6381,6 +6384,7 @@
             numericUpDownTS6.Name = "numericUpDownTS6";
             numericUpDownTS6.Size = new System.Drawing.Size(60, 20);
             numericUpDownTS6.TabIndex = 3;
+            numericUpDownTS6.TinyStep = false;
             numericUpDownTS6.Value = new decimal(new int[] {
             1,
             0,
@@ -6409,6 +6413,7 @@
             numericUpDownTS9.Name = "numericUpDownTS9";
             numericUpDownTS9.Size = new System.Drawing.Size(60, 20);
             numericUpDownTS9.TabIndex = 6;
+            numericUpDownTS9.TinyStep = false;
             numericUpDownTS9.Value = new decimal(new int[] {
             1,
             0,
@@ -6437,6 +6442,7 @@
             numericUpDownTS10.Name = "numericUpDownTS10";
             numericUpDownTS10.Size = new System.Drawing.Size(60, 20);
             numericUpDownTS10.TabIndex = 5;
+            numericUpDownTS10.TinyStep = false;
             numericUpDownTS10.Value = new decimal(new int[] {
             1,
             0,
@@ -6465,6 +6471,7 @@
             numericUpDownTS12.Name = "numericUpDownTS12";
             numericUpDownTS12.Size = new System.Drawing.Size(60, 20);
             numericUpDownTS12.TabIndex = 3;
+            numericUpDownTS12.TinyStep = false;
             numericUpDownTS12.Value = new decimal(new int[] {
             1,
             0,
@@ -6754,6 +6761,7 @@
             this.udStaticIP16.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP16.TabIndex = 19;
             this.udStaticIP16.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP16.TinyStep = false;
             this.udStaticIP16.Value = new decimal(new int[] {
             120,
             0,
@@ -6782,6 +6790,7 @@
             this.udStaticIP15.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP15.TabIndex = 18;
             this.udStaticIP15.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP15.TinyStep = false;
             this.udStaticIP15.Value = new decimal(new int[] {
             30,
             0,
@@ -6810,6 +6819,7 @@
             this.udStaticIP14.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP14.TabIndex = 17;
             this.udStaticIP14.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP14.TinyStep = false;
             this.udStaticIP14.Value = new decimal(new int[] {
             10,
             0,
@@ -6838,6 +6848,7 @@
             this.udStaticIP13.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP13.TabIndex = 16;
             this.udStaticIP13.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP13.TinyStep = false;
             this.udStaticIP13.Value = new decimal(new int[] {
             10,
             0,
@@ -6876,6 +6887,7 @@
             this.udStaticIP12.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP12.TabIndex = 14;
             this.udStaticIP12.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP12.TinyStep = false;
             this.udStaticIP12.Value = new decimal(new int[] {
             115,
             0,
@@ -6904,6 +6916,7 @@
             this.udStaticIP11.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP11.TabIndex = 13;
             this.udStaticIP11.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP11.TinyStep = false;
             this.udStaticIP11.Value = new decimal(new int[] {
             30,
             0,
@@ -6932,6 +6945,7 @@
             this.udStaticIP10.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP10.TabIndex = 12;
             this.udStaticIP10.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP10.TinyStep = false;
             this.udStaticIP10.Value = new decimal(new int[] {
             10,
             0,
@@ -6960,6 +6974,7 @@
             this.udStaticIP9.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP9.TabIndex = 11;
             this.udStaticIP9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP9.TinyStep = false;
             this.udStaticIP9.Value = new decimal(new int[] {
             10,
             0,
@@ -7011,6 +7026,7 @@
             this.udStaticIP8.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP8.TabIndex = 8;
             this.udStaticIP8.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP8.TinyStep = false;
             this.udStaticIP8.Value = new decimal(new int[] {
             110,
             0,
@@ -7039,6 +7055,7 @@
             this.udStaticIP7.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP7.TabIndex = 7;
             this.udStaticIP7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP7.TinyStep = false;
             this.udStaticIP7.Value = new decimal(new int[] {
             30,
             0,
@@ -7067,6 +7084,7 @@
             this.udStaticIP6.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP6.TabIndex = 6;
             this.udStaticIP6.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP6.TinyStep = false;
             this.udStaticIP6.Value = new decimal(new int[] {
             10,
             0,
@@ -7095,6 +7113,7 @@
             this.udStaticIP5.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP5.TabIndex = 5;
             this.udStaticIP5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP5.TinyStep = false;
             this.udStaticIP5.Value = new decimal(new int[] {
             10,
             0,
@@ -7134,6 +7153,7 @@
             this.udStaticIP4.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP4.TabIndex = 3;
             this.udStaticIP4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP4.TinyStep = false;
             this.udStaticIP4.Value = new decimal(new int[] {
             100,
             0,
@@ -7162,6 +7182,7 @@
             this.udStaticIP3.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP3.TabIndex = 2;
             this.udStaticIP3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP3.TinyStep = false;
             this.udStaticIP3.Value = new decimal(new int[] {
             30,
             0,
@@ -7190,6 +7211,7 @@
             this.udStaticIP2.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP2.TabIndex = 1;
             this.udStaticIP2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP2.TinyStep = false;
             this.udStaticIP2.Value = new decimal(new int[] {
             10,
             0,
@@ -7218,6 +7240,7 @@
             this.udStaticIP1.Size = new System.Drawing.Size(42, 20);
             this.udStaticIP1.TabIndex = 0;
             this.udStaticIP1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udStaticIP1.TinyStep = false;
             this.udStaticIP1.Value = new decimal(new int[] {
             10,
             0,
@@ -7773,6 +7796,7 @@
             this.udSpaceMoxDelay.Name = "udSpaceMoxDelay";
             this.udSpaceMoxDelay.Size = new System.Drawing.Size(48, 20);
             this.udSpaceMoxDelay.TabIndex = 28;
+            this.udSpaceMoxDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSpaceMoxDelay, "Sets the Hang time in mS.");
             this.udSpaceMoxDelay.Value = new decimal(new int[] {
             0,
@@ -7813,6 +7837,7 @@
             this.udRFDelay.Name = "udRFDelay";
             this.udRFDelay.Size = new System.Drawing.Size(48, 20);
             this.udRFDelay.TabIndex = 22;
+            this.udRFDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRFDelay, "Sets the Delay period to wait after TX before RF output except CW mode.");
             this.udRFDelay.Value = new decimal(new int[] {
             10,
@@ -7844,6 +7869,7 @@
             this.udMoxDelay.Name = "udMoxDelay";
             this.udMoxDelay.Size = new System.Drawing.Size(48, 20);
             this.udMoxDelay.TabIndex = 20;
+            this.udMoxDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udMoxDelay, "Sets the delay between carrier removal and PTT drops.");
             this.udMoxDelay.Value = new decimal(new int[] {
             15,
@@ -7885,6 +7911,7 @@
             this.udGenPTTOutDelay.Name = "udGenPTTOutDelay";
             this.udGenPTTOutDelay.Size = new System.Drawing.Size(48, 20);
             this.udGenPTTOutDelay.TabIndex = 17;
+            this.udGenPTTOutDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGenPTTOutDelay, "Delay between PTT Out drops to RX On.");
             this.udGenPTTOutDelay.Value = new decimal(new int[] {
             0,
@@ -7996,12 +8023,12 @@
             this.udHermesStepAttenuatorDataRX2.Size = new System.Drawing.Size(55, 20);
             this.udHermesStepAttenuatorDataRX2.TabIndex = 5;
             this.udHermesStepAttenuatorDataRX2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.udHermesStepAttenuatorDataRX2.TinyStep = false;
             this.udHermesStepAttenuatorDataRX2.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.udHermesStepAttenuatorDataRX2.Visible = false;
             this.udHermesStepAttenuatorDataRX2.ValueChanged += new System.EventHandler(this.udHermesStepAttenuatorDataRX2_ValueChanged);
             // 
             // chkRX2StepAtt
@@ -8013,7 +8040,6 @@
             this.chkRX2StepAtt.TabIndex = 4;
             this.chkRX2StepAtt.Text = "Enable RX2";
             this.toolTip1.SetToolTip(this.chkRX2StepAtt, "Enable the step attenuator.");
-            this.chkRX2StepAtt.Visible = false;
             this.chkRX2StepAtt.CheckedChanged += new System.EventHandler(this.chkRX2StepAtt_CheckedChanged);
             // 
             // udHermesStepAttenuatorData
@@ -8038,6 +8064,7 @@
             this.udHermesStepAttenuatorData.Size = new System.Drawing.Size(55, 20);
             this.udHermesStepAttenuatorData.TabIndex = 3;
             this.udHermesStepAttenuatorData.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.udHermesStepAttenuatorData.TinyStep = false;
             this.udHermesStepAttenuatorData.Value = new decimal(new int[] {
             0,
             0,
@@ -8110,6 +8137,7 @@
             this.udCWKeyUpDelay.Name = "udCWKeyUpDelay";
             this.udCWKeyUpDelay.Size = new System.Drawing.Size(48, 20);
             this.udCWKeyUpDelay.TabIndex = 37;
+            this.udCWKeyUpDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWKeyUpDelay, "Sets the delay between carrier removal and PTT Out drops.");
             this.udCWKeyUpDelay.Value = new decimal(new int[] {
             10,
@@ -8139,6 +8167,7 @@
             this.udHWKeyDownDelay.Name = "udHWKeyDownDelay";
             this.udHWKeyDownDelay.Size = new System.Drawing.Size(48, 20);
             this.udHWKeyDownDelay.TabIndex = 36;
+            this.udHWKeyDownDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHWKeyDownDelay, "Sets the Delay period to wait after Key-Down before RF output in CW mode.");
             this.udHWKeyDownDelay.Value = new decimal(new int[] {
             7,
@@ -8493,6 +8522,7 @@
             this.udOptClickTuneOffsetDIGL.Name = "udOptClickTuneOffsetDIGL";
             this.udOptClickTuneOffsetDIGL.Size = new System.Drawing.Size(56, 20);
             this.udOptClickTuneOffsetDIGL.TabIndex = 11;
+            this.udOptClickTuneOffsetDIGL.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptClickTuneOffsetDIGL, "Determines the frequency offset for click tuning and ");
             this.udOptClickTuneOffsetDIGL.Value = new decimal(new int[] {
             2210,
@@ -8533,6 +8563,7 @@
             this.udOptClickTuneOffsetDIGU.Name = "udOptClickTuneOffsetDIGU";
             this.udOptClickTuneOffsetDIGU.Size = new System.Drawing.Size(56, 20);
             this.udOptClickTuneOffsetDIGU.TabIndex = 0;
+            this.udOptClickTuneOffsetDIGU.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptClickTuneOffsetDIGU, "Determines the frequency offset for click tuning and ");
             this.udOptClickTuneOffsetDIGU.Value = new decimal(new int[] {
             1500,
@@ -8612,6 +8643,7 @@
             this.nudNFshift.Name = "nudNFshift";
             this.nudNFshift.Size = new System.Drawing.Size(47, 20);
             this.nudNFshift.TabIndex = 10;
+            this.nudNFshift.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudNFshift, "Default 0. Apply a shift.");
             this.nudNFshift.Value = new decimal(new int[] {
             0,
@@ -8651,6 +8683,7 @@
             this.nudNFsensitivity.Name = "nudNFsensitivity";
             this.nudNFsensitivity.Size = new System.Drawing.Size(47, 20);
             this.nudNFsensitivity.TabIndex = 0;
+            this.nudNFsensitivity.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudNFsensitivity, "Default 6. A low value will find very small areas of noise floor. Low values will" +
         " help with a busy band.");
             this.nudNFsensitivity.Value = new decimal(new int[] {
@@ -8862,6 +8895,7 @@
             this.udQSOTimerSeconds.Name = "udQSOTimerSeconds";
             this.udQSOTimerSeconds.Size = new System.Drawing.Size(40, 20);
             this.udQSOTimerSeconds.TabIndex = 6;
+            this.udQSOTimerSeconds.TinyStep = false;
             this.toolTip1.SetToolTip(this.udQSOTimerSeconds, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
         "flash");
             this.udQSOTimerSeconds.Value = new decimal(new int[] {
@@ -8892,6 +8926,7 @@
             this.udQSOTimerMinutes.Name = "udQSOTimerMinutes";
             this.udQSOTimerMinutes.Size = new System.Drawing.Size(40, 20);
             this.udQSOTimerMinutes.TabIndex = 5;
+            this.udQSOTimerMinutes.TinyStep = false;
             this.toolTip1.SetToolTip(this.udQSOTimerMinutes, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
         "flash");
             this.udQSOTimerMinutes.Value = new decimal(new int[] {
@@ -9015,6 +9050,7 @@
             this.udGeneralCalRX2Level.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.udGeneralCalRX2Level.Size = new System.Drawing.Size(50, 20);
             this.udGeneralCalRX2Level.TabIndex = 12;
+            this.udGeneralCalRX2Level.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalRX2Level, "Level calibration reference level");
             this.udGeneralCalRX2Level.Value = new decimal(new int[] {
             70,
@@ -9056,6 +9092,7 @@
             this.udGeneralCalRX2Freq2.Name = "udGeneralCalRX2Freq2";
             this.udGeneralCalRX2Freq2.Size = new System.Drawing.Size(75, 20);
             this.udGeneralCalRX2Freq2.TabIndex = 10;
+            this.udGeneralCalRX2Freq2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalRX2Freq2, "Level calibration reference frequency");
             this.udGeneralCalRX2Freq2.Value = new decimal(new int[] {
             10,
@@ -9116,6 +9153,7 @@
             this.udTXDisplayCalOffset.Name = "udTXDisplayCalOffset";
             this.udTXDisplayCalOffset.Size = new System.Drawing.Size(50, 20);
             this.udTXDisplayCalOffset.TabIndex = 12;
+            this.udTXDisplayCalOffset.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXDisplayCalOffset, "Level TX Display Offset");
             this.udTXDisplayCalOffset.Value = new decimal(new int[] {
             0,
@@ -9173,6 +9211,7 @@
             this.udHPSDRFreqCorrectFactor10MHz.Name = "udHPSDRFreqCorrectFactor10MHz";
             this.udHPSDRFreqCorrectFactor10MHz.Size = new System.Drawing.Size(84, 20);
             this.udHPSDRFreqCorrectFactor10MHz.TabIndex = 4;
+            this.udHPSDRFreqCorrectFactor10MHz.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHPSDRFreqCorrectFactor10MHz, "Frequency calibration reference frequency when the 10MHz ref is selected");
             this.udHPSDRFreqCorrectFactor10MHz.Value = new decimal(new int[] {
             1,
@@ -9227,6 +9266,7 @@
             this.udHPSDRFreqCorrectFactor.Name = "udHPSDRFreqCorrectFactor";
             this.udHPSDRFreqCorrectFactor.Size = new System.Drawing.Size(84, 20);
             this.udHPSDRFreqCorrectFactor.TabIndex = 1;
+            this.udHPSDRFreqCorrectFactor.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHPSDRFreqCorrectFactor, "Frequency calibration reference frequency");
             this.udHPSDRFreqCorrectFactor.Value = new decimal(new int[] {
             1,
@@ -9296,6 +9336,7 @@
             this.ud6mRx2LNAGainOffset.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ud6mRx2LNAGainOffset.Size = new System.Drawing.Size(50, 20);
             this.ud6mRx2LNAGainOffset.TabIndex = 18;
+            this.ud6mRx2LNAGainOffset.TinyStep = false;
             this.toolTip1.SetToolTip(this.ud6mRx2LNAGainOffset, "6m LNA gain offset for meter calibration");
             this.ud6mRx2LNAGainOffset.Value = new decimal(new int[] {
             13,
@@ -9337,6 +9378,7 @@
             this.ud6mLNAGainOffset.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ud6mLNAGainOffset.Size = new System.Drawing.Size(50, 20);
             this.ud6mLNAGainOffset.TabIndex = 14;
+            this.ud6mLNAGainOffset.TinyStep = false;
             this.toolTip1.SetToolTip(this.ud6mLNAGainOffset, "6m LNA gain offset for meter calibration");
             this.ud6mLNAGainOffset.Value = new decimal(new int[] {
             13,
@@ -9377,6 +9419,7 @@
             this.udGeneralCalLevel.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.udGeneralCalLevel.Size = new System.Drawing.Size(50, 20);
             this.udGeneralCalLevel.TabIndex = 3;
+            this.udGeneralCalLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalLevel, "Level calibration reference level");
             this.udGeneralCalLevel.Value = new decimal(new int[] {
             70,
@@ -9407,6 +9450,7 @@
             this.udGeneralCalFreq2.Name = "udGeneralCalFreq2";
             this.udGeneralCalFreq2.Size = new System.Drawing.Size(75, 20);
             this.udGeneralCalFreq2.TabIndex = 1;
+            this.udGeneralCalFreq2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalFreq2, "Level calibration reference frequency");
             this.udGeneralCalFreq2.Value = new decimal(new int[] {
             10,
@@ -9504,6 +9548,7 @@
             this.udGeneralCalFreq1.Name = "udGeneralCalFreq1";
             this.udGeneralCalFreq1.Size = new System.Drawing.Size(75, 20);
             this.udGeneralCalFreq1.TabIndex = 1;
+            this.udGeneralCalFreq1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalFreq1, "Frequency calibration reference frequency");
             this.udGeneralCalFreq1.Value = new decimal(new int[] {
             10,
@@ -9556,6 +9601,7 @@
             this.udGeneralCalFreq3.Name = "udGeneralCalFreq3";
             this.udGeneralCalFreq3.Size = new System.Drawing.Size(75, 20);
             this.udGeneralCalFreq3.TabIndex = 1;
+            this.udGeneralCalFreq3.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalFreq3, "RX Image calibration reference frequency");
             this.udGeneralCalFreq3.Value = new decimal(new int[] {
             10,
@@ -9649,6 +9695,7 @@
             this.udRX2FilterDefaultLowCut.Name = "udRX2FilterDefaultLowCut";
             this.udRX2FilterDefaultLowCut.Size = new System.Drawing.Size(48, 20);
             this.udRX2FilterDefaultLowCut.TabIndex = 17;
+            this.udRX2FilterDefaultLowCut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2FilterDefaultLowCut, "Sets the default low cut filter for filter changes");
             this.udRX2FilterDefaultLowCut.Value = new decimal(new int[] {
             100,
@@ -9687,6 +9734,7 @@
             this.udRX2OptMaxFilterShift.Name = "udRX2OptMaxFilterShift";
             this.udRX2OptMaxFilterShift.Size = new System.Drawing.Size(48, 20);
             this.udRX2OptMaxFilterShift.TabIndex = 13;
+            this.udRX2OptMaxFilterShift.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2OptMaxFilterShift, "Sets the maximum amount for the Shift control.  Set lower for finer resolution co" +
         "ntrol");
             this.udRX2OptMaxFilterShift.Value = new decimal(new int[] {
@@ -9752,6 +9800,7 @@
             this.udRX2OptMaxFilterWidth.Name = "udRX2OptMaxFilterWidth";
             this.udRX2OptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
             this.udRX2OptMaxFilterWidth.TabIndex = 0;
+            this.udRX2OptMaxFilterWidth.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2OptMaxFilterWidth, "Wets the maximum filter bandwidth");
             this.udRX2OptMaxFilterWidth.Value = new decimal(new int[] {
             9999,
@@ -9821,6 +9870,7 @@
             this.udFilterDefaultLowCut.Name = "udFilterDefaultLowCut";
             this.udFilterDefaultLowCut.Size = new System.Drawing.Size(48, 20);
             this.udFilterDefaultLowCut.TabIndex = 17;
+            this.udFilterDefaultLowCut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udFilterDefaultLowCut, "Sets the default low cut filter for filter changes");
             this.udFilterDefaultLowCut.Value = new decimal(new int[] {
             100,
@@ -9860,6 +9910,7 @@
             this.udOptMaxFilterShift.Name = "udOptMaxFilterShift";
             this.udOptMaxFilterShift.Size = new System.Drawing.Size(48, 20);
             this.udOptMaxFilterShift.TabIndex = 13;
+            this.udOptMaxFilterShift.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptMaxFilterShift, "Sets the maximum amount for the Shift control.  Set lower for finer resolution co" +
         "ntrol");
             this.udOptMaxFilterShift.Value = new decimal(new int[] {
@@ -9924,6 +9975,7 @@
             this.udOptMaxFilterWidth.Name = "udOptMaxFilterWidth";
             this.udOptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
             this.udOptMaxFilterWidth.TabIndex = 0;
+            this.udOptMaxFilterWidth.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptMaxFilterWidth, "Wets the maximum filter bandwidth");
             this.udOptMaxFilterWidth.Value = new decimal(new int[] {
             9999,
@@ -20458,6 +20510,7 @@
             this.udMaxFreq.Name = "udMaxFreq";
             this.udMaxFreq.Size = new System.Drawing.Size(60, 20);
             this.udMaxFreq.TabIndex = 3;
+            this.udMaxFreq.TinyStep = false;
             this.udMaxFreq.Value = new decimal(new int[] {
             6144,
             0,
@@ -20819,6 +20872,7 @@
             this.udAlex10mLPFEnd.Name = "udAlex10mLPFEnd";
             this.udAlex10mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex10mLPFEnd.TabIndex = 24;
+            this.udAlex10mLPFEnd.TinyStep = false;
             this.udAlex10mLPFEnd.Value = new decimal(new int[] {
             356,
             0,
@@ -20848,6 +20902,7 @@
             this.udAlex10mLPFStart.Name = "udAlex10mLPFStart";
             this.udAlex10mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex10mLPFStart.TabIndex = 23;
+            this.udAlex10mLPFStart.TinyStep = false;
             this.udAlex10mLPFStart.Value = new decimal(new int[] {
             24000001,
             0,
@@ -20877,6 +20932,7 @@
             this.udAlex6mLPFEnd.Name = "udAlex6mLPFEnd";
             this.udAlex6mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex6mLPFEnd.TabIndex = 22;
+            this.udAlex6mLPFEnd.TinyStep = false;
             this.udAlex6mLPFEnd.Value = new decimal(new int[] {
             6144,
             0,
@@ -20905,6 +20961,7 @@
             this.udAlex6mLPFStart.Name = "udAlex6mLPFStart";
             this.udAlex6mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex6mLPFStart.TabIndex = 21;
+            this.udAlex6mLPFStart.TinyStep = false;
             this.udAlex6mLPFStart.Value = new decimal(new int[] {
             35600001,
             0,
@@ -20934,6 +20991,7 @@
             this.udAlex20mLPFStart.Name = "udAlex20mLPFStart";
             this.udAlex20mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex20mLPFStart.TabIndex = 20;
+            this.udAlex20mLPFStart.TinyStep = false;
             this.udAlex20mLPFStart.Value = new decimal(new int[] {
             8000001,
             0,
@@ -20963,6 +21021,7 @@
             this.udAlex15mLPFStart.Name = "udAlex15mLPFStart";
             this.udAlex15mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex15mLPFStart.TabIndex = 19;
+            this.udAlex15mLPFStart.TinyStep = false;
             this.udAlex15mLPFStart.Value = new decimal(new int[] {
             16500001,
             0,
@@ -20992,6 +21051,7 @@
             this.udAlex20mLPFEnd.Name = "udAlex20mLPFEnd";
             this.udAlex20mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex20mLPFEnd.TabIndex = 18;
+            this.udAlex20mLPFEnd.TinyStep = false;
             this.udAlex20mLPFEnd.Value = new decimal(new int[] {
             165,
             0,
@@ -21021,6 +21081,7 @@
             this.udAlex15mLPFEnd.Name = "udAlex15mLPFEnd";
             this.udAlex15mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex15mLPFEnd.TabIndex = 17;
+            this.udAlex15mLPFEnd.TinyStep = false;
             this.udAlex15mLPFEnd.Value = new decimal(new int[] {
             24000000,
             0,
@@ -21050,6 +21111,7 @@
             this.udAlex40mLPFEnd.Name = "udAlex40mLPFEnd";
             this.udAlex40mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex40mLPFEnd.TabIndex = 16;
+            this.udAlex40mLPFEnd.TinyStep = false;
             this.udAlex40mLPFEnd.Value = new decimal(new int[] {
             8,
             0,
@@ -21079,6 +21141,7 @@
             this.udAlex40mLPFStart.Name = "udAlex40mLPFStart";
             this.udAlex40mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex40mLPFStart.TabIndex = 15;
+            this.udAlex40mLPFStart.TinyStep = false;
             this.udAlex40mLPFStart.Value = new decimal(new int[] {
             5000001,
             0,
@@ -21108,6 +21171,7 @@
             this.udAlex80mLPFEnd.Name = "udAlex80mLPFEnd";
             this.udAlex80mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex80mLPFEnd.TabIndex = 14;
+            this.udAlex80mLPFEnd.TinyStep = false;
             this.udAlex80mLPFEnd.Value = new decimal(new int[] {
             5,
             0,
@@ -21137,6 +21201,7 @@
             this.udAlex80mLPFStart.Name = "udAlex80mLPFStart";
             this.udAlex80mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex80mLPFStart.TabIndex = 13;
+            this.udAlex80mLPFStart.TinyStep = false;
             this.udAlex80mLPFStart.Value = new decimal(new int[] {
             2500001,
             0,
@@ -21166,6 +21231,7 @@
             this.udAlex160mLPFEnd.Name = "udAlex160mLPFEnd";
             this.udAlex160mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex160mLPFEnd.TabIndex = 12;
+            this.udAlex160mLPFEnd.TinyStep = false;
             this.udAlex160mLPFEnd.Value = new decimal(new int[] {
             25,
             0,
@@ -21195,6 +21261,7 @@
             this.udAlex160mLPFStart.Name = "udAlex160mLPFStart";
             this.udAlex160mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex160mLPFStart.TabIndex = 11;
+            this.udAlex160mLPFStart.TinyStep = false;
             this.udAlex160mLPFStart.Value = new decimal(new int[] {
             0,
             0,
@@ -21338,6 +21405,7 @@
             this.udAlex1_5HPFStart.Name = "udAlex1_5HPFStart";
             this.udAlex1_5HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex1_5HPFStart.TabIndex = 1;
+            this.udAlex1_5HPFStart.TinyStep = false;
             this.udAlex1_5HPFStart.Value = new decimal(new int[] {
             18,
             0,
@@ -21378,6 +21446,7 @@
             this.udAlex1_5HPFEnd.Name = "udAlex1_5HPFEnd";
             this.udAlex1_5HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex1_5HPFEnd.TabIndex = 2;
+            this.udAlex1_5HPFEnd.TinyStep = false;
             this.udAlex1_5HPFEnd.Value = new decimal(new int[] {
             6499999,
             0,
@@ -21418,6 +21487,7 @@
             this.udAlex6_5HPFStart.Name = "udAlex6_5HPFStart";
             this.udAlex6_5HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex6_5HPFStart.TabIndex = 3;
+            this.udAlex6_5HPFStart.TinyStep = false;
             this.udAlex6_5HPFStart.Value = new decimal(new int[] {
             65,
             0,
@@ -21458,6 +21528,7 @@
             this.udAlex6_5HPFEnd.Name = "udAlex6_5HPFEnd";
             this.udAlex6_5HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex6_5HPFEnd.TabIndex = 4;
+            this.udAlex6_5HPFEnd.TinyStep = false;
             this.udAlex6_5HPFEnd.Value = new decimal(new int[] {
             9499999,
             0,
@@ -21498,6 +21569,7 @@
             this.udAlex9_5HPFStart.Name = "udAlex9_5HPFStart";
             this.udAlex9_5HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex9_5HPFStart.TabIndex = 5;
+            this.udAlex9_5HPFStart.TinyStep = false;
             this.udAlex9_5HPFStart.Value = new decimal(new int[] {
             95,
             0,
@@ -21538,6 +21610,7 @@
             this.udAlex9_5HPFEnd.Name = "udAlex9_5HPFEnd";
             this.udAlex9_5HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex9_5HPFEnd.TabIndex = 6;
+            this.udAlex9_5HPFEnd.TinyStep = false;
             this.udAlex9_5HPFEnd.Value = new decimal(new int[] {
             12999999,
             0,
@@ -21567,6 +21640,7 @@
             this.udAlex20HPFEnd.Name = "udAlex20HPFEnd";
             this.udAlex20HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex20HPFEnd.TabIndex = 7;
+            this.udAlex20HPFEnd.TinyStep = false;
             this.udAlex20HPFEnd.Value = new decimal(new int[] {
             49999999,
             0,
@@ -21596,6 +21670,7 @@
             this.udAlex13HPFEnd.Name = "udAlex13HPFEnd";
             this.udAlex13HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex13HPFEnd.TabIndex = 8;
+            this.udAlex13HPFEnd.TinyStep = false;
             this.udAlex13HPFEnd.Value = new decimal(new int[] {
             19999999,
             0,
@@ -21625,6 +21700,7 @@
             this.udAlex20HPFStart.Name = "udAlex20HPFStart";
             this.udAlex20HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex20HPFStart.TabIndex = 9;
+            this.udAlex20HPFStart.TinyStep = false;
             this.udAlex20HPFStart.Value = new decimal(new int[] {
             20,
             0,
@@ -21773,6 +21849,7 @@
             this.udAlex13HPFStart.Name = "udAlex13HPFStart";
             this.udAlex13HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex13HPFStart.TabIndex = 10;
+            this.udAlex13HPFStart.TinyStep = false;
             this.udAlex13HPFStart.Value = new decimal(new int[] {
             13,
             0,
@@ -21824,6 +21901,7 @@
             this.udAlex6BPFStart.Name = "udAlex6BPFStart";
             this.udAlex6BPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex6BPFStart.TabIndex = 83;
+            this.udAlex6BPFStart.TinyStep = false;
             this.udAlex6BPFStart.Value = new decimal(new int[] {
             50,
             0,
@@ -21864,6 +21942,7 @@
             this.udAlex6BPFEnd.Name = "udAlex6BPFEnd";
             this.udAlex6BPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex6BPFEnd.TabIndex = 82;
+            this.udAlex6BPFEnd.TinyStep = false;
             this.udAlex6BPFEnd.Value = new decimal(new int[] {
             6144,
             0,
@@ -22020,6 +22099,7 @@
             this.ud1_5BPF1Start.Name = "ud1_5BPF1Start";
             this.ud1_5BPF1Start.Size = new System.Drawing.Size(75, 20);
             this.ud1_5BPF1Start.TabIndex = 1;
+            this.ud1_5BPF1Start.TinyStep = false;
             this.ud1_5BPF1Start.Value = new decimal(new int[] {
             15,
             0,
@@ -22060,6 +22140,7 @@
             this.ud1_5BPF1End.Name = "ud1_5BPF1End";
             this.ud1_5BPF1End.Size = new System.Drawing.Size(75, 20);
             this.ud1_5BPF1End.TabIndex = 2;
+            this.ud1_5BPF1End.TinyStep = false;
             this.ud1_5BPF1End.Value = new decimal(new int[] {
             2099999,
             0,
@@ -22100,6 +22181,7 @@
             this.ud6_5BPF1Start.Name = "ud6_5BPF1Start";
             this.ud6_5BPF1Start.Size = new System.Drawing.Size(75, 20);
             this.ud6_5BPF1Start.TabIndex = 3;
+            this.ud6_5BPF1Start.TinyStep = false;
             this.ud6_5BPF1Start.Value = new decimal(new int[] {
             21,
             0,
@@ -22140,6 +22222,7 @@
             this.ud6_5BPF1End.Name = "ud6_5BPF1End";
             this.ud6_5BPF1End.Size = new System.Drawing.Size(75, 20);
             this.ud6_5BPF1End.TabIndex = 4;
+            this.ud6_5BPF1End.TinyStep = false;
             this.ud6_5BPF1End.Value = new decimal(new int[] {
             5499999,
             0,
@@ -22180,6 +22263,7 @@
             this.ud9_5BPF1Start.Name = "ud9_5BPF1Start";
             this.ud9_5BPF1Start.Size = new System.Drawing.Size(75, 20);
             this.ud9_5BPF1Start.TabIndex = 5;
+            this.ud9_5BPF1Start.TinyStep = false;
             this.ud9_5BPF1Start.Value = new decimal(new int[] {
             55,
             0,
@@ -22220,6 +22304,7 @@
             this.ud9_5BPF1End.Name = "ud9_5BPF1End";
             this.ud9_5BPF1End.Size = new System.Drawing.Size(75, 20);
             this.ud9_5BPF1End.TabIndex = 6;
+            this.ud9_5BPF1End.TinyStep = false;
             this.ud9_5BPF1End.Value = new decimal(new int[] {
             10999999,
             0,
@@ -22249,6 +22334,7 @@
             this.ud20BPF1End.Name = "ud20BPF1End";
             this.ud20BPF1End.Size = new System.Drawing.Size(75, 20);
             this.ud20BPF1End.TabIndex = 7;
+            this.ud20BPF1End.TinyStep = false;
             this.ud20BPF1End.Value = new decimal(new int[] {
             34999999,
             0,
@@ -22278,6 +22364,7 @@
             this.ud13BPF1End.Name = "ud13BPF1End";
             this.ud13BPF1End.Size = new System.Drawing.Size(75, 20);
             this.ud13BPF1End.TabIndex = 8;
+            this.ud13BPF1End.TinyStep = false;
             this.ud13BPF1End.Value = new decimal(new int[] {
             21999999,
             0,
@@ -22307,6 +22394,7 @@
             this.ud20BPF1Start.Name = "ud20BPF1Start";
             this.ud20BPF1Start.Size = new System.Drawing.Size(75, 20);
             this.ud20BPF1Start.TabIndex = 9;
+            this.ud20BPF1Start.TinyStep = false;
             this.ud20BPF1Start.Value = new decimal(new int[] {
             22,
             0,
@@ -22455,6 +22543,7 @@
             this.ud13BPF1Start.Name = "ud13BPF1Start";
             this.ud13BPF1Start.Size = new System.Drawing.Size(75, 20);
             this.ud13BPF1Start.TabIndex = 10;
+            this.ud13BPF1Start.TinyStep = false;
             this.ud13BPF1Start.Value = new decimal(new int[] {
             11,
             0,
@@ -22495,6 +22584,7 @@
             this.ud6BPF1Start.Name = "ud6BPF1Start";
             this.ud6BPF1Start.Size = new System.Drawing.Size(75, 20);
             this.ud6BPF1Start.TabIndex = 83;
+            this.ud6BPF1Start.TinyStep = false;
             this.ud6BPF1Start.Value = new decimal(new int[] {
             35,
             0,
@@ -22535,6 +22625,7 @@
             this.ud6BPF1End.Name = "ud6BPF1End";
             this.ud6BPF1End.Size = new System.Drawing.Size(75, 20);
             this.ud6BPF1End.TabIndex = 82;
+            this.ud6BPF1End.TinyStep = false;
             this.ud6BPF1End.Value = new decimal(new int[] {
             6144,
             0,
@@ -22808,6 +22899,7 @@
             this.udAlex2160mLPFStart.Name = "udAlex2160mLPFStart";
             this.udAlex2160mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex2160mLPFStart.TabIndex = 172;
+            this.udAlex2160mLPFStart.TinyStep = false;
             this.udAlex2160mLPFStart.Value = new decimal(new int[] {
             18,
             0,
@@ -22836,6 +22928,7 @@
             this.udAlex2160mLPFEnd.Name = "udAlex2160mLPFEnd";
             this.udAlex2160mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex2160mLPFEnd.TabIndex = 173;
+            this.udAlex2160mLPFEnd.TinyStep = false;
             this.udAlex2160mLPFEnd.Value = new decimal(new int[] {
             2,
             0,
@@ -22864,6 +22957,7 @@
             this.udAlex280mLPFStart.Name = "udAlex280mLPFStart";
             this.udAlex280mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex280mLPFStart.TabIndex = 174;
+            this.udAlex280mLPFStart.TinyStep = false;
             this.udAlex280mLPFStart.Value = new decimal(new int[] {
             35,
             0,
@@ -22892,6 +22986,7 @@
             this.udAlex280mLPFEnd.Name = "udAlex280mLPFEnd";
             this.udAlex280mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex280mLPFEnd.TabIndex = 175;
+            this.udAlex280mLPFEnd.TinyStep = false;
             this.udAlex280mLPFEnd.Value = new decimal(new int[] {
             4,
             0,
@@ -22920,6 +23015,7 @@
             this.udAlex240mLPFStart.Name = "udAlex240mLPFStart";
             this.udAlex240mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex240mLPFStart.TabIndex = 176;
+            this.udAlex240mLPFStart.TinyStep = false;
             this.udAlex240mLPFStart.Value = new decimal(new int[] {
             5330,
             0,
@@ -22948,6 +23044,7 @@
             this.udAlex240mLPFEnd.Name = "udAlex240mLPFEnd";
             this.udAlex240mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex240mLPFEnd.TabIndex = 177;
+            this.udAlex240mLPFEnd.TinyStep = false;
             this.udAlex240mLPFEnd.Value = new decimal(new int[] {
             73,
             0,
@@ -22976,6 +23073,7 @@
             this.udAlex215mLPFEnd.Name = "udAlex215mLPFEnd";
             this.udAlex215mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex215mLPFEnd.TabIndex = 178;
+            this.udAlex215mLPFEnd.TinyStep = false;
             this.udAlex215mLPFEnd.Value = new decimal(new int[] {
             21450,
             0,
@@ -23004,6 +23102,7 @@
             this.udAlex220mLPFEnd.Name = "udAlex220mLPFEnd";
             this.udAlex220mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex220mLPFEnd.TabIndex = 179;
+            this.udAlex220mLPFEnd.TinyStep = false;
             this.udAlex220mLPFEnd.Value = new decimal(new int[] {
             1435,
             0,
@@ -23032,6 +23131,7 @@
             this.udAlex215mLPFStart.Name = "udAlex215mLPFStart";
             this.udAlex215mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex215mLPFStart.TabIndex = 180;
+            this.udAlex215mLPFStart.TinyStep = false;
             this.udAlex215mLPFStart.Value = new decimal(new int[] {
             18068,
             0,
@@ -23060,6 +23160,7 @@
             this.udAlex220mLPFStart.Name = "udAlex220mLPFStart";
             this.udAlex220mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex220mLPFStart.TabIndex = 181;
+            this.udAlex220mLPFStart.TinyStep = false;
             this.udAlex220mLPFStart.Value = new decimal(new int[] {
             101,
             0,
@@ -23088,6 +23189,7 @@
             this.udAlex26mLPFStart.Name = "udAlex26mLPFStart";
             this.udAlex26mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex26mLPFStart.TabIndex = 182;
+            this.udAlex26mLPFStart.TinyStep = false;
             this.udAlex26mLPFStart.Value = new decimal(new int[] {
             50,
             0,
@@ -23116,6 +23218,7 @@
             this.udAlex26mLPFEnd.Name = "udAlex26mLPFEnd";
             this.udAlex26mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex26mLPFEnd.TabIndex = 183;
+            this.udAlex26mLPFEnd.TinyStep = false;
             this.udAlex26mLPFEnd.Value = new decimal(new int[] {
             54,
             0,
@@ -23144,6 +23247,7 @@
             this.udAlex210mLPFStart.Name = "udAlex210mLPFStart";
             this.udAlex210mLPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex210mLPFStart.TabIndex = 184;
+            this.udAlex210mLPFStart.TinyStep = false;
             this.udAlex210mLPFStart.Value = new decimal(new int[] {
             24890,
             0,
@@ -23172,6 +23276,7 @@
             this.udAlex210mLPFEnd.Name = "udAlex210mLPFEnd";
             this.udAlex210mLPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex210mLPFEnd.TabIndex = 185;
+            this.udAlex210mLPFEnd.TinyStep = false;
             this.udAlex210mLPFEnd.Value = new decimal(new int[] {
             297,
             0,
@@ -23481,6 +23586,7 @@
             this.udAlex26BPFStart.Name = "udAlex26BPFStart";
             this.udAlex26BPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex26BPFStart.TabIndex = 202;
+            this.udAlex26BPFStart.TinyStep = false;
             this.udAlex26BPFStart.Value = new decimal(new int[] {
             35,
             0,
@@ -23510,6 +23616,7 @@
             this.udAlex26BPFEnd.Name = "udAlex26BPFEnd";
             this.udAlex26BPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex26BPFEnd.TabIndex = 201;
+            this.udAlex26BPFEnd.TinyStep = false;
             this.udAlex26BPFEnd.Value = new decimal(new int[] {
             6144,
             0,
@@ -23617,6 +23724,7 @@
             this.udAlex213HPFStart.Name = "udAlex213HPFStart";
             this.udAlex213HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex213HPFStart.TabIndex = 171;
+            this.udAlex213HPFStart.TinyStep = false;
             this.udAlex213HPFStart.Value = new decimal(new int[] {
             11,
             0,
@@ -23646,6 +23754,7 @@
             this.udAlex220HPFStart.Name = "udAlex220HPFStart";
             this.udAlex220HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex220HPFStart.TabIndex = 170;
+            this.udAlex220HPFStart.TinyStep = false;
             this.udAlex220HPFStart.Value = new decimal(new int[] {
             22,
             0,
@@ -23675,6 +23784,7 @@
             this.udAlex213HPFEnd.Name = "udAlex213HPFEnd";
             this.udAlex213HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex213HPFEnd.TabIndex = 169;
+            this.udAlex213HPFEnd.TinyStep = false;
             this.udAlex213HPFEnd.Value = new decimal(new int[] {
             21999999,
             0,
@@ -23704,6 +23814,7 @@
             this.udAlex220HPFEnd.Name = "udAlex220HPFEnd";
             this.udAlex220HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex220HPFEnd.TabIndex = 168;
+            this.udAlex220HPFEnd.TinyStep = false;
             this.udAlex220HPFEnd.Value = new decimal(new int[] {
             34999999,
             0,
@@ -23733,6 +23844,7 @@
             this.udAlex29_5HPFEnd.Name = "udAlex29_5HPFEnd";
             this.udAlex29_5HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex29_5HPFEnd.TabIndex = 167;
+            this.udAlex29_5HPFEnd.TinyStep = false;
             this.udAlex29_5HPFEnd.Value = new decimal(new int[] {
             10999999,
             0,
@@ -23762,6 +23874,7 @@
             this.udAlex29_5HPFStart.Name = "udAlex29_5HPFStart";
             this.udAlex29_5HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex29_5HPFStart.TabIndex = 166;
+            this.udAlex29_5HPFStart.TinyStep = false;
             this.udAlex29_5HPFStart.Value = new decimal(new int[] {
             55,
             0,
@@ -23791,6 +23904,7 @@
             this.udAlex26_5HPFEnd.Name = "udAlex26_5HPFEnd";
             this.udAlex26_5HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex26_5HPFEnd.TabIndex = 165;
+            this.udAlex26_5HPFEnd.TinyStep = false;
             this.udAlex26_5HPFEnd.Value = new decimal(new int[] {
             5499999,
             0,
@@ -23820,6 +23934,7 @@
             this.udAlex26_5HPFStart.Name = "udAlex26_5HPFStart";
             this.udAlex26_5HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex26_5HPFStart.TabIndex = 164;
+            this.udAlex26_5HPFStart.TinyStep = false;
             this.udAlex26_5HPFStart.Value = new decimal(new int[] {
             21,
             0,
@@ -23849,6 +23964,7 @@
             this.udAlex21_5HPFEnd.Name = "udAlex21_5HPFEnd";
             this.udAlex21_5HPFEnd.Size = new System.Drawing.Size(75, 20);
             this.udAlex21_5HPFEnd.TabIndex = 163;
+            this.udAlex21_5HPFEnd.TinyStep = false;
             this.udAlex21_5HPFEnd.Value = new decimal(new int[] {
             2099999,
             0,
@@ -23878,6 +23994,7 @@
             this.udAlex21_5HPFStart.Name = "udAlex21_5HPFStart";
             this.udAlex21_5HPFStart.Size = new System.Drawing.Size(75, 20);
             this.udAlex21_5HPFStart.TabIndex = 162;
+            this.udAlex21_5HPFStart.TinyStep = false;
             this.udAlex21_5HPFStart.Value = new decimal(new int[] {
             15,
             0,
@@ -24581,6 +24698,7 @@
             this.udVAC1GrapherSwing.Name = "udVAC1GrapherSwing";
             this.udVAC1GrapherSwing.Size = new System.Drawing.Size(72, 20);
             this.udVAC1GrapherSwing.TabIndex = 87;
+            this.udVAC1GrapherSwing.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1GrapherSwing, "Min/Max above the 0 point");
             this.udVAC1GrapherSwing.Value = new decimal(new int[] {
             4,
@@ -24866,6 +24984,7 @@
             this.udVAC1_Force2.Name = "udVAC1_Force2";
             this.udVAC1_Force2.Size = new System.Drawing.Size(72, 20);
             this.udVAC1_Force2.TabIndex = 17;
+            this.udVAC1_Force2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1_Force2, "Rate conversion ratio imposed when \"Force\" is checked");
             this.udVAC1_Force2.Value = new decimal(new int[] {
             10,
@@ -24994,6 +25113,7 @@
             this.udVAC1_Force.Name = "udVAC1_Force";
             this.udVAC1_Force.Size = new System.Drawing.Size(72, 20);
             this.udVAC1_Force.TabIndex = 8;
+            this.udVAC1_Force.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1_Force, "Rate conversion ratio imposed when \"Force\" is checked");
             this.udVAC1_Force.Value = new decimal(new int[] {
             10,
@@ -25261,6 +25381,7 @@
             this.udAudioVACGainTX.Name = "udAudioVACGainTX";
             this.udAudioVACGainTX.Size = new System.Drawing.Size(40, 20);
             this.udAudioVACGainTX.TabIndex = 38;
+            this.udAudioVACGainTX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udAudioVACGainTX, "Controls the gain on the audio coming from third party applications.");
             this.udAudioVACGainTX.Value = new decimal(new int[] {
             0,
@@ -25300,6 +25421,7 @@
             this.udAudioVACGainRX.Name = "udAudioVACGainRX";
             this.udAudioVACGainRX.Size = new System.Drawing.Size(40, 20);
             this.udAudioVACGainRX.TabIndex = 36;
+            this.udAudioVACGainRX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udAudioVACGainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
         "plication.");
             this.udAudioVACGainRX.Value = new decimal(new int[] {
@@ -25407,6 +25529,7 @@
             this.udAudioLatencyPAOut.Name = "udAudioLatencyPAOut";
             this.udAudioLatencyPAOut.Size = new System.Drawing.Size(40, 20);
             this.udAudioLatencyPAOut.TabIndex = 45;
+            this.udAudioLatencyPAOut.TinyStep = false;
             this.udAudioLatencyPAOut.Value = new decimal(new int[] {
             120,
             0,
@@ -25446,6 +25569,7 @@
             this.udAudioLatencyPAIn.Name = "udAudioLatencyPAIn";
             this.udAudioLatencyPAIn.Size = new System.Drawing.Size(40, 20);
             this.udAudioLatencyPAIn.TabIndex = 44;
+            this.udAudioLatencyPAIn.TinyStep = false;
             this.udAudioLatencyPAIn.Value = new decimal(new int[] {
             120,
             0,
@@ -25525,6 +25649,7 @@
             this.udAudioLatency2_Out.Name = "udAudioLatency2_Out";
             this.udAudioLatency2_Out.Size = new System.Drawing.Size(40, 20);
             this.udAudioLatency2_Out.TabIndex = 37;
+            this.udAudioLatency2_Out.TinyStep = false;
             this.udAudioLatency2_Out.Value = new decimal(new int[] {
             120,
             0,
@@ -25564,6 +25689,7 @@
             this.udAudioLatency2.Name = "udAudioLatency2";
             this.udAudioLatency2.Size = new System.Drawing.Size(40, 20);
             this.udAudioLatency2.TabIndex = 36;
+            this.udAudioLatency2.TinyStep = false;
             this.udAudioLatency2.Value = new decimal(new int[] {
             120,
             0,
@@ -25798,6 +25924,7 @@
             this.udVAC2GrapherSwing.Name = "udVAC2GrapherSwing";
             this.udVAC2GrapherSwing.Size = new System.Drawing.Size(72, 20);
             this.udVAC2GrapherSwing.TabIndex = 94;
+            this.udVAC2GrapherSwing.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2GrapherSwing, "Min/Max above the 0 point");
             this.udVAC2GrapherSwing.Value = new decimal(new int[] {
             4,
@@ -26084,6 +26211,7 @@
             this.udVAC2_Force2.Name = "udVAC2_Force2";
             this.udVAC2_Force2.Size = new System.Drawing.Size(72, 20);
             this.udVAC2_Force2.TabIndex = 17;
+            this.udVAC2_Force2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2_Force2, "Rate conversion ratio imposed when \"Force\" is checked");
             this.udVAC2_Force2.Value = new decimal(new int[] {
             10,
@@ -26212,6 +26340,7 @@
             this.udVAC2_Force.Name = "udVAC2_Force";
             this.udVAC2_Force.Size = new System.Drawing.Size(72, 20);
             this.udVAC2_Force.TabIndex = 8;
+            this.udVAC2_Force.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2_Force, "Rate conversion ratio imposed when \"Force\" is checked");
             this.udVAC2_Force.Value = new decimal(new int[] {
             10,
@@ -26443,6 +26572,7 @@
             this.udVAC2GainTX.Name = "udVAC2GainTX";
             this.udVAC2GainTX.Size = new System.Drawing.Size(40, 20);
             this.udVAC2GainTX.TabIndex = 38;
+            this.udVAC2GainTX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2GainTX, "Controls the gain on the audio coming from third party applications.");
             this.udVAC2GainTX.Value = new decimal(new int[] {
             0,
@@ -26481,6 +26611,7 @@
             this.udVAC2GainRX.Name = "udVAC2GainRX";
             this.udVAC2GainRX.Size = new System.Drawing.Size(40, 20);
             this.udVAC2GainRX.TabIndex = 36;
+            this.udVAC2GainRX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2GainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
         "plication.");
             this.udVAC2GainRX.Value = new decimal(new int[] {
@@ -26587,6 +26718,7 @@
             this.udVAC2LatencyPAOut.Name = "udVAC2LatencyPAOut";
             this.udVAC2LatencyPAOut.Size = new System.Drawing.Size(40, 20);
             this.udVAC2LatencyPAOut.TabIndex = 52;
+            this.udVAC2LatencyPAOut.TinyStep = false;
             this.udVAC2LatencyPAOut.Value = new decimal(new int[] {
             120,
             0,
@@ -26626,6 +26758,7 @@
             this.udVAC2LatencyPAIn.Name = "udVAC2LatencyPAIn";
             this.udVAC2LatencyPAIn.Size = new System.Drawing.Size(40, 20);
             this.udVAC2LatencyPAIn.TabIndex = 51;
+            this.udVAC2LatencyPAIn.TinyStep = false;
             this.udVAC2LatencyPAIn.Value = new decimal(new int[] {
             120,
             0,
@@ -26675,6 +26808,7 @@
             this.udVAC2LatencyOut.Name = "udVAC2LatencyOut";
             this.udVAC2LatencyOut.Size = new System.Drawing.Size(40, 20);
             this.udVAC2LatencyOut.TabIndex = 45;
+            this.udVAC2LatencyOut.TinyStep = false;
             this.udVAC2LatencyOut.Value = new decimal(new int[] {
             120,
             0,
@@ -26744,6 +26878,7 @@
             this.udVAC2Latency.Name = "udVAC2Latency";
             this.udVAC2Latency.Size = new System.Drawing.Size(40, 20);
             this.udVAC2Latency.TabIndex = 36;
+            this.udVAC2Latency.TinyStep = false;
             this.udVAC2Latency.Value = new decimal(new int[] {
             120,
             0,
@@ -27108,6 +27243,7 @@
             this.udVAC2FFMinOut.Name = "udVAC2FFMinOut";
             this.udVAC2FFMinOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FFMinOut.TabIndex = 94;
+            this.udVAC2FFMinOut.TinyStep = false;
             this.udVAC2FFMinOut.Value = new decimal(new int[] {
             0,
             0,
@@ -27136,6 +27272,7 @@
             this.udVAC2FFMinIn.Name = "udVAC2FFMinIn";
             this.udVAC2FFMinIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FFMinIn.TabIndex = 93;
+            this.udVAC2FFMinIn.TinyStep = false;
             this.udVAC2FFMinIn.Value = new decimal(new int[] {
             0,
             0,
@@ -27175,6 +27312,7 @@
             this.udVAC2PropMaxOut.Name = "udVAC2PropMaxOut";
             this.udVAC2PropMaxOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC2PropMaxOut.TabIndex = 91;
+            this.udVAC2PropMaxOut.TinyStep = false;
             this.udVAC2PropMaxOut.Value = new decimal(new int[] {
             0,
             0,
@@ -27203,6 +27341,7 @@
             this.udVAC2PropMaxIn.Name = "udVAC2PropMaxIn";
             this.udVAC2PropMaxIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC2PropMaxIn.TabIndex = 90;
+            this.udVAC2PropMaxIn.TinyStep = false;
             this.udVAC2PropMaxIn.Value = new decimal(new int[] {
             0,
             0,
@@ -27254,6 +27393,7 @@
             this.udVAC2FFAlphaOut.Name = "udVAC2FFAlphaOut";
             this.udVAC2FFAlphaOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FFAlphaOut.TabIndex = 87;
+            this.udVAC2FFAlphaOut.TinyStep = false;
             this.udVAC2FFAlphaOut.Value = new decimal(new int[] {
             0,
             0,
@@ -27283,6 +27423,7 @@
             this.udVAC2FFAlphaIn.Name = "udVAC2FFAlphaIn";
             this.udVAC2FFAlphaIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FFAlphaIn.TabIndex = 86;
+            this.udVAC2FFAlphaIn.TinyStep = false;
             this.udVAC2FFAlphaIn.Value = new decimal(new int[] {
             0,
             0,
@@ -27311,6 +27452,7 @@
             this.udVAC2FFMaxOut.Name = "udVAC2FFMaxOut";
             this.udVAC2FFMaxOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FFMaxOut.TabIndex = 85;
+            this.udVAC2FFMaxOut.TinyStep = false;
             this.udVAC2FFMaxOut.Value = new decimal(new int[] {
             0,
             0,
@@ -27339,6 +27481,7 @@
             this.udVAC2FFMaxIn.Name = "udVAC2FFMaxIn";
             this.udVAC2FFMaxIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FFMaxIn.TabIndex = 84;
+            this.udVAC2FFMaxIn.TinyStep = false;
             this.udVAC2FFMaxIn.Value = new decimal(new int[] {
             0,
             0,
@@ -27378,6 +27521,7 @@
             this.udVAC2PropMinOut.Name = "udVAC2PropMinOut";
             this.udVAC2PropMinOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC2PropMinOut.TabIndex = 82;
+            this.udVAC2PropMinOut.TinyStep = false;
             this.udVAC2PropMinOut.Value = new decimal(new int[] {
             0,
             0,
@@ -27417,6 +27561,7 @@
             this.udVAC2PropMinIn.Name = "udVAC2PropMinIn";
             this.udVAC2PropMinIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC2PropMinIn.TabIndex = 80;
+            this.udVAC2PropMinIn.TinyStep = false;
             this.udVAC2PropMinIn.Value = new decimal(new int[] {
             0,
             0,
@@ -27457,6 +27602,7 @@
             this.udVAC2SlewTimeOut.Name = "udVAC2SlewTimeOut";
             this.udVAC2SlewTimeOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC2SlewTimeOut.TabIndex = 48;
+            this.udVAC2SlewTimeOut.TinyStep = false;
             this.udVAC2SlewTimeOut.Value = new decimal(new int[] {
             3,
             0,
@@ -27496,6 +27642,7 @@
             this.udVAC2FeedbackGainOut.Name = "udVAC2FeedbackGainOut";
             this.udVAC2FeedbackGainOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FeedbackGainOut.TabIndex = 47;
+            this.udVAC2FeedbackGainOut.TinyStep = false;
             this.udVAC2FeedbackGainOut.Value = new decimal(new int[] {
             4,
             0,
@@ -27557,6 +27704,7 @@
             this.udVAC2SlewTimeIn.Name = "udVAC2SlewTimeIn";
             this.udVAC2SlewTimeIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC2SlewTimeIn.TabIndex = 3;
+            this.udVAC2SlewTimeIn.TinyStep = false;
             this.udVAC2SlewTimeIn.Value = new decimal(new int[] {
             3,
             0,
@@ -27597,6 +27745,7 @@
             this.udVAC2FeedbackGainIn.Name = "udVAC2FeedbackGainIn";
             this.udVAC2FeedbackGainIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC2FeedbackGainIn.TabIndex = 2;
+            this.udVAC2FeedbackGainIn.TinyStep = false;
             this.udVAC2FeedbackGainIn.Value = new decimal(new int[] {
             4,
             0,
@@ -27807,6 +27956,7 @@
             this.udVAC1FFMinOut.Name = "udVAC1FFMinOut";
             this.udVAC1FFMinOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FFMinOut.TabIndex = 66;
+            this.udVAC1FFMinOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMinOut, "VAC1 Feed-forward minimum");
             this.udVAC1FFMinOut.Value = new decimal(new int[] {
             0,
@@ -27836,6 +27986,7 @@
             this.udVAC1FFMinIn.Name = "udVAC1FFMinIn";
             this.udVAC1FFMinIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FFMinIn.TabIndex = 65;
+            this.udVAC1FFMinIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMinIn, "VAC1 Feed-forward minumum");
             this.udVAC1FFMinIn.Value = new decimal(new int[] {
             0,
@@ -27876,6 +28027,7 @@
             this.udVAC1PropMaxOut.Name = "udVAC1PropMaxOut";
             this.udVAC1PropMaxOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC1PropMaxOut.TabIndex = 63;
+            this.udVAC1PropMaxOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMaxOut, "VAC1 proportional maximum");
             this.udVAC1PropMaxOut.Value = new decimal(new int[] {
             0,
@@ -27905,6 +28057,7 @@
             this.udVAC1PropMaxIn.Name = "udVAC1PropMaxIn";
             this.udVAC1PropMaxIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC1PropMaxIn.TabIndex = 62;
+            this.udVAC1PropMaxIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMaxIn, "VAC1 proportional maximum");
             this.udVAC1PropMaxIn.Value = new decimal(new int[] {
             0,
@@ -27977,6 +28130,7 @@
             this.udVAC1FFAlphaOut.Name = "udVAC1FFAlphaOut";
             this.udVAC1FFAlphaOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FFAlphaOut.TabIndex = 55;
+            this.udVAC1FFAlphaOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFAlphaOut, "VAC1 Feed-forward smoothing");
             this.udVAC1FFAlphaOut.Value = new decimal(new int[] {
             0,
@@ -28007,6 +28161,7 @@
             this.udVAC1FFAlphaIn.Name = "udVAC1FFAlphaIn";
             this.udVAC1FFAlphaIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FFAlphaIn.TabIndex = 54;
+            this.udVAC1FFAlphaIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFAlphaIn, "VAC1 Feed-forward smoothing");
             this.udVAC1FFAlphaIn.Value = new decimal(new int[] {
             0,
@@ -28036,6 +28191,7 @@
             this.udVAC1FFMaxOut.Name = "udVAC1FFMaxOut";
             this.udVAC1FFMaxOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FFMaxOut.TabIndex = 52;
+            this.udVAC1FFMaxOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMaxOut, "VAC1 Feed-forward maximum");
             this.udVAC1FFMaxOut.Value = new decimal(new int[] {
             0,
@@ -28065,6 +28221,7 @@
             this.udVAC1FFMaxIn.Name = "udVAC1FFMaxIn";
             this.udVAC1FFMaxIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FFMaxIn.TabIndex = 50;
+            this.udVAC1FFMaxIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMaxIn, "VAC1 Feed-forward maximum");
             this.udVAC1FFMaxIn.Value = new decimal(new int[] {
             0,
@@ -28105,6 +28262,7 @@
             this.udVAC1PropMinOut.Name = "udVAC1PropMinOut";
             this.udVAC1PropMinOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC1PropMinOut.TabIndex = 48;
+            this.udVAC1PropMinOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMinOut, "VAC1 proportional minimum");
             this.udVAC1PropMinOut.Value = new decimal(new int[] {
             0,
@@ -28145,6 +28303,7 @@
             this.udVAC1PropMinIn.Name = "udVAC1PropMinIn";
             this.udVAC1PropMinIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC1PropMinIn.TabIndex = 46;
+            this.udVAC1PropMinIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMinIn, "VAC1 proportional minimum");
             this.udVAC1PropMinIn.Value = new decimal(new int[] {
             0,
@@ -28186,6 +28345,7 @@
             this.udVAC1SlewTimeOut.Name = "udVAC1SlewTimeOut";
             this.udVAC1SlewTimeOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC1SlewTimeOut.TabIndex = 43;
+            this.udVAC1SlewTimeOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1SlewTimeOut, "VAC1 resampler slew time in seconds");
             this.udVAC1SlewTimeOut.Value = new decimal(new int[] {
             3,
@@ -28216,6 +28376,7 @@
             this.udVAC1FeedbackGainOut.Name = "udVAC1FeedbackGainOut";
             this.udVAC1FeedbackGainOut.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FeedbackGainOut.TabIndex = 42;
+            this.udVAC1FeedbackGainOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FeedbackGainOut, "VAC1 resampler proportional feedback gain");
             this.udVAC1FeedbackGainOut.Value = new decimal(new int[] {
             4,
@@ -28290,6 +28451,7 @@
             this.udVAC1SlewTimeIn.Name = "udVAC1SlewTimeIn";
             this.udVAC1SlewTimeIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC1SlewTimeIn.TabIndex = 3;
+            this.udVAC1SlewTimeIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1SlewTimeIn, "VAC1 resampler slew time in seconds");
             this.udVAC1SlewTimeIn.Value = new decimal(new int[] {
             3,
@@ -28320,6 +28482,7 @@
             this.udVAC1FeedbackGainIn.Name = "udVAC1FeedbackGainIn";
             this.udVAC1FeedbackGainIn.Size = new System.Drawing.Size(84, 20);
             this.udVAC1FeedbackGainIn.TabIndex = 2;
+            this.udVAC1FeedbackGainIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FeedbackGainIn, "VAC1 resampler proportional feedback gain");
             this.udVAC1FeedbackGainIn.Value = new decimal(new int[] {
             4,
@@ -28469,6 +28632,7 @@
             this.udPeakBlobDropDBMs.Name = "udPeakBlobDropDBMs";
             this.udPeakBlobDropDBMs.Size = new System.Drawing.Size(48, 20);
             this.udPeakBlobDropDBMs.TabIndex = 70;
+            this.udPeakBlobDropDBMs.TinyStep = false;
             this.toolTip1.SetToolTip(this.udPeakBlobDropDBMs, "The speed of the drop in dBm per second");
             this.udPeakBlobDropDBMs.Value = new decimal(new int[] {
             6,
@@ -28531,6 +28695,7 @@
             this.udBlobPeakHoldMS.Name = "udBlobPeakHoldMS";
             this.udBlobPeakHoldMS.Size = new System.Drawing.Size(56, 20);
             this.udBlobPeakHoldMS.TabIndex = 4;
+            this.udBlobPeakHoldMS.TinyStep = false;
             this.toolTip1.SetToolTip(this.udBlobPeakHoldMS, "Controls how long the peak blobs are shown/held for");
             this.udBlobPeakHoldMS.Value = new decimal(new int[] {
             2000,
@@ -28585,6 +28750,7 @@
             this.udPeakBlobs.Name = "udPeakBlobs";
             this.udPeakBlobs.Size = new System.Drawing.Size(42, 20);
             this.udPeakBlobs.TabIndex = 1;
+            this.udPeakBlobs.TinyStep = false;
             this.udPeakBlobs.Value = new decimal(new int[] {
             3,
             0,
@@ -28822,6 +28988,7 @@
             this.udSignalHistoryDuration.Name = "udSignalHistoryDuration";
             this.udSignalHistoryDuration.Size = new System.Drawing.Size(48, 20);
             this.udSignalHistoryDuration.TabIndex = 46;
+            this.udSignalHistoryDuration.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSignalHistoryDuration, "Length of time history is recorded over");
             this.udSignalHistoryDuration.Value = new decimal(new int[] {
             2000,
@@ -28914,6 +29081,7 @@
             this.udMeterDigitalDelay.Name = "udMeterDigitalDelay";
             this.udMeterDigitalDelay.Size = new System.Drawing.Size(56, 20);
             this.udMeterDigitalDelay.TabIndex = 36;
+            this.udMeterDigitalDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udMeterDigitalDelay, "Digital (text) Multimeter Refresh Rate.");
             this.udMeterDigitalDelay.Value = new decimal(new int[] {
             200,
@@ -28952,6 +29120,7 @@
             this.udDisplayMeterAvg.Name = "udDisplayMeterAvg";
             this.udDisplayMeterAvg.Size = new System.Drawing.Size(56, 20);
             this.udDisplayMeterAvg.TabIndex = 8;
+            this.udDisplayMeterAvg.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMeterAvg, "Controls the length of time to average for the meter.");
             this.udDisplayMeterAvg.Value = new decimal(new int[] {
             400,
@@ -28992,6 +29161,7 @@
             this.udDisplayMultiTextHoldTime.Name = "udDisplayMultiTextHoldTime";
             this.udDisplayMultiTextHoldTime.Size = new System.Drawing.Size(56, 20);
             this.udDisplayMultiTextHoldTime.TabIndex = 4;
+            this.udDisplayMultiTextHoldTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMultiTextHoldTime, "Controls how long the meter will hold the digital peak value when in the Peak Pow" +
         "er mode.");
             this.udDisplayMultiTextHoldTime.Value = new decimal(new int[] {
@@ -29032,6 +29202,7 @@
             this.udDisplayMultiPeakHoldTime.Name = "udDisplayMultiPeakHoldTime";
             this.udDisplayMultiPeakHoldTime.Size = new System.Drawing.Size(56, 20);
             this.udDisplayMultiPeakHoldTime.TabIndex = 1;
+            this.udDisplayMultiPeakHoldTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMultiPeakHoldTime, "Controls how long the analog peak red line will be held on the multimeter.");
             this.udDisplayMultiPeakHoldTime.Value = new decimal(new int[] {
             500,
@@ -29071,6 +29242,7 @@
             this.udDisplayMeterDelay.Name = "udDisplayMeterDelay";
             this.udDisplayMeterDelay.Size = new System.Drawing.Size(56, 20);
             this.udDisplayMeterDelay.TabIndex = 34;
+            this.udDisplayMeterDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMeterDelay, "Analog Multimeter Refresh Rate.");
             this.udDisplayMeterDelay.Value = new decimal(new int[] {
             50,
@@ -29121,6 +29293,7 @@
             this.udDisplayScopeTime.Name = "udDisplayScopeTime";
             this.udDisplayScopeTime.Size = new System.Drawing.Size(64, 20);
             this.udDisplayScopeTime.TabIndex = 0;
+            this.udDisplayScopeTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayScopeTime, "Amount of time to display across the width of the scope display window.");
             this.udDisplayScopeTime.Value = new decimal(new int[] {
             10000,
@@ -29196,6 +29369,7 @@
             this.udDisplayPhasePtSize.Name = "udDisplayPhasePtSize";
             this.udDisplayPhasePtSize.Size = new System.Drawing.Size(48, 20);
             this.udDisplayPhasePtSize.TabIndex = 2;
+            this.udDisplayPhasePtSize.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayPhasePtSize, "Size of points to display in Phase Mode.");
             this.udDisplayPhasePtSize.Value = new decimal(new int[] {
             1,
@@ -29234,6 +29408,7 @@
             this.udDisplayPhasePts.Name = "udDisplayPhasePts";
             this.udDisplayPhasePts.Size = new System.Drawing.Size(48, 20);
             this.udDisplayPhasePts.TabIndex = 0;
+            this.udDisplayPhasePts.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayPhasePts, "Number of points to display in Phase Mode.");
             this.udDisplayPhasePts.Value = new decimal(new int[] {
             100,
@@ -29291,6 +29466,7 @@
             this.udDisplayDecimation.Name = "udDisplayDecimation";
             this.udDisplayDecimation.Size = new System.Drawing.Size(48, 20);
             this.udDisplayDecimation.TabIndex = 95;
+            this.udDisplayDecimation.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayDecimation, "Display decimation. Higher the number, the lower the resolution.");
             this.udDisplayDecimation.Value = new decimal(new int[] {
             1,
@@ -29331,6 +29507,7 @@
             this.udDisplayCPUMeter.Name = "udDisplayCPUMeter";
             this.udDisplayCPUMeter.Size = new System.Drawing.Size(48, 20);
             this.udDisplayCPUMeter.TabIndex = 38;
+            this.udDisplayCPUMeter.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayCPUMeter, "CPU Meter Refresh Rate.");
             this.udDisplayCPUMeter.Value = new decimal(new int[] {
             1000,
@@ -29370,6 +29547,7 @@
             this.udDisplayPeakText.Name = "udDisplayPeakText";
             this.udDisplayPeakText.Size = new System.Drawing.Size(48, 20);
             this.udDisplayPeakText.TabIndex = 36;
+            this.udDisplayPeakText.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayPeakText, "Peak Text Refresh Rate.");
             this.udDisplayPeakText.Value = new decimal(new int[] {
             500,
@@ -29409,6 +29587,7 @@
             this.udDisplayFPS.Name = "udDisplayFPS";
             this.udDisplayFPS.Size = new System.Drawing.Size(48, 20);
             this.udDisplayFPS.TabIndex = 32;
+            this.udDisplayFPS.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayFPS, "Frames Per Second (approximate)");
             this.udDisplayFPS.Value = new decimal(new int[] {
             60,
@@ -29493,6 +29672,7 @@
             this.udActivePeakHoldDropRX1.Name = "udActivePeakHoldDropRX1";
             this.udActivePeakHoldDropRX1.Size = new System.Drawing.Size(48, 20);
             this.udActivePeakHoldDropRX1.TabIndex = 68;
+            this.udActivePeakHoldDropRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX1, "The speed of the drop in dBm per second");
             this.udActivePeakHoldDropRX1.Value = new decimal(new int[] {
             6,
@@ -29556,6 +29736,7 @@
             this.udActivePeakHoldDurationRX1.Name = "udActivePeakHoldDurationRX1";
             this.udActivePeakHoldDurationRX1.Size = new System.Drawing.Size(48, 20);
             this.udActivePeakHoldDurationRX1.TabIndex = 66;
+            this.udActivePeakHoldDurationRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX1, "How long to hold the peaks");
             this.udActivePeakHoldDurationRX1.Value = new decimal(new int[] {
             100,
@@ -29654,6 +29835,7 @@
             this.udDisplayAVTimeWF.Name = "udDisplayAVTimeWF";
             this.udDisplayAVTimeWF.Size = new System.Drawing.Size(48, 20);
             this.udDisplayAVTimeWF.TabIndex = 2;
+            this.udDisplayAVTimeWF.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayAVTimeWF, "When averaging, use this number of buffers to calculate the average.");
             this.udDisplayAVTimeWF.Value = new decimal(new int[] {
             120,
@@ -29757,6 +29939,7 @@
             this.udDisplayGridStep.Name = "udDisplayGridStep";
             this.udDisplayGridStep.Size = new System.Drawing.Size(56, 20);
             this.udDisplayGridStep.TabIndex = 25;
+            this.udDisplayGridStep.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayGridStep, "Horizontal Grid Step Size in dB.");
             this.udDisplayGridStep.Value = new decimal(new int[] {
             2,
@@ -29787,6 +29970,7 @@
             this.udDisplayGridMin.Name = "udDisplayGridMin";
             this.udDisplayGridMin.Size = new System.Drawing.Size(56, 20);
             this.udDisplayGridMin.TabIndex = 24;
+            this.udDisplayGridMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayGridMin, "Signal Level at bottom of display in dB.");
             this.udDisplayGridMin.Value = new decimal(new int[] {
             140,
@@ -29817,6 +30001,7 @@
             this.udDisplayGridMax.Name = "udDisplayGridMax";
             this.udDisplayGridMax.Size = new System.Drawing.Size(56, 20);
             this.udDisplayGridMax.TabIndex = 23;
+            this.udDisplayGridMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayGridMax, "Signal level at top of display in dB.");
             this.udDisplayGridMax.Value = new decimal(new int[] {
             40,
@@ -29973,6 +30158,7 @@
             this.udDisplayAVGTime.Name = "udDisplayAVGTime";
             this.udDisplayAVGTime.Size = new System.Drawing.Size(48, 20);
             this.udDisplayAVGTime.TabIndex = 2;
+            this.udDisplayAVGTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayAVGTime, "When averaging, use this number of buffers to calculate the average.");
             this.udDisplayAVGTime.Value = new decimal(new int[] {
             30,
@@ -30180,6 +30366,7 @@
             this.udWaterfallAGCOffsetRX1.Name = "udWaterfallAGCOffsetRX1";
             this.udWaterfallAGCOffsetRX1.Size = new System.Drawing.Size(48, 20);
             this.udWaterfallAGCOffsetRX1.TabIndex = 90;
+            this.udWaterfallAGCOffsetRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX1, "Apply dBm offset if using AGC");
             this.udWaterfallAGCOffsetRX1.Value = new decimal(new int[] {
             0,
@@ -30374,6 +30561,7 @@
             this.udDisplayWaterfallUpdatePeriod.Name = "udDisplayWaterfallUpdatePeriod";
             this.udDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
             this.udDisplayWaterfallUpdatePeriod.TabIndex = 71;
+            this.udDisplayWaterfallUpdatePeriod.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
         "hat this is tamed by the FPS setting.");
             this.udDisplayWaterfallUpdatePeriod.Value = new decimal(new int[] {
@@ -30446,6 +30634,7 @@
             this.udDisplayWaterfallLowLevel.Name = "udDisplayWaterfallLowLevel";
             this.udDisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
             this.udDisplayWaterfallLowLevel.TabIndex = 2;
+            this.udDisplayWaterfallLowLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
             this.udDisplayWaterfallLowLevel.Value = new decimal(new int[] {
             120,
@@ -30485,6 +30674,7 @@
             this.udDisplayWaterfallHighLevel.Name = "udDisplayWaterfallHighLevel";
             this.udDisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
             this.udDisplayWaterfallHighLevel.TabIndex = 0;
+            this.udDisplayWaterfallHighLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
             this.udDisplayWaterfallHighLevel.Value = new decimal(new int[] {
             80,
@@ -30559,6 +30749,7 @@
             this.udActivePeakHoldDropRX2.Name = "udActivePeakHoldDropRX2";
             this.udActivePeakHoldDropRX2.Size = new System.Drawing.Size(48, 20);
             this.udActivePeakHoldDropRX2.TabIndex = 72;
+            this.udActivePeakHoldDropRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX2, "The speed of the drop in dBm per second");
             this.udActivePeakHoldDropRX2.Value = new decimal(new int[] {
             6,
@@ -30623,6 +30814,7 @@
             this.udActivePeakHoldDurationRX2.Name = "udActivePeakHoldDurationRX2";
             this.udActivePeakHoldDurationRX2.Size = new System.Drawing.Size(48, 20);
             this.udActivePeakHoldDurationRX2.TabIndex = 70;
+            this.udActivePeakHoldDurationRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX2, "How long to hold the peaks");
             this.udActivePeakHoldDurationRX2.Value = new decimal(new int[] {
             100,
@@ -30721,6 +30913,7 @@
             this.udRX2DisplayWFAVTime.Name = "udRX2DisplayWFAVTime";
             this.udRX2DisplayWFAVTime.Size = new System.Drawing.Size(48, 20);
             this.udRX2DisplayWFAVTime.TabIndex = 2;
+            this.udRX2DisplayWFAVTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWFAVTime, "When averaging, use this number of buffers to calculate the average.");
             this.udRX2DisplayWFAVTime.Value = new decimal(new int[] {
             120,
@@ -30816,6 +31009,7 @@
             this.udWaterfallAGCOffsetRX2.Name = "udWaterfallAGCOffsetRX2";
             this.udWaterfallAGCOffsetRX2.Size = new System.Drawing.Size(48, 20);
             this.udWaterfallAGCOffsetRX2.TabIndex = 93;
+            this.udWaterfallAGCOffsetRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX2, "Apply dBm offset if using AGC");
             this.udWaterfallAGCOffsetRX2.Value = new decimal(new int[] {
             0,
@@ -31010,6 +31204,7 @@
             this.udRX2DisplayWaterfallUpdatePeriod.Name = "udRX2DisplayWaterfallUpdatePeriod";
             this.udRX2DisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
             this.udRX2DisplayWaterfallUpdatePeriod.TabIndex = 71;
+            this.udRX2DisplayWaterfallUpdatePeriod.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
         "hat this is tamed by the FPS setting.");
             this.udRX2DisplayWaterfallUpdatePeriod.Value = new decimal(new int[] {
@@ -31082,6 +31277,7 @@
             this.udRX2DisplayWaterfallLowLevel.Name = "udRX2DisplayWaterfallLowLevel";
             this.udRX2DisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
             this.udRX2DisplayWaterfallLowLevel.TabIndex = 2;
+            this.udRX2DisplayWaterfallLowLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
             this.udRX2DisplayWaterfallLowLevel.Value = new decimal(new int[] {
             120,
@@ -31120,6 +31316,7 @@
             this.udRX2DisplayWaterfallHighLevel.Name = "udRX2DisplayWaterfallHighLevel";
             this.udRX2DisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
             this.udRX2DisplayWaterfallHighLevel.TabIndex = 0;
+            this.udRX2DisplayWaterfallHighLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
             this.udRX2DisplayWaterfallHighLevel.Value = new decimal(new int[] {
             80,
@@ -31215,6 +31412,7 @@
             this.udRX2DisplayGridStep.Name = "udRX2DisplayGridStep";
             this.udRX2DisplayGridStep.Size = new System.Drawing.Size(56, 20);
             this.udRX2DisplayGridStep.TabIndex = 25;
+            this.udRX2DisplayGridStep.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayGridStep, "Horizontal Grid Step Size in dB.");
             this.udRX2DisplayGridStep.Value = new decimal(new int[] {
             2,
@@ -31244,6 +31442,7 @@
             this.udRX2DisplayGridMin.Name = "udRX2DisplayGridMin";
             this.udRX2DisplayGridMin.Size = new System.Drawing.Size(56, 20);
             this.udRX2DisplayGridMin.TabIndex = 24;
+            this.udRX2DisplayGridMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayGridMin, "Signal Level at bottom of display in dB.");
             this.udRX2DisplayGridMin.Value = new decimal(new int[] {
             140,
@@ -31273,6 +31472,7 @@
             this.udRX2DisplayGridMax.Name = "udRX2DisplayGridMax";
             this.udRX2DisplayGridMax.Size = new System.Drawing.Size(56, 20);
             this.udRX2DisplayGridMax.TabIndex = 23;
+            this.udRX2DisplayGridMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayGridMax, "Signal level at top of display in dB.");
             this.udRX2DisplayGridMax.Value = new decimal(new int[] {
             40,
@@ -31428,6 +31628,7 @@
             this.udRX2DisplayAVGTime.Name = "udRX2DisplayAVGTime";
             this.udRX2DisplayAVGTime.Size = new System.Drawing.Size(48, 20);
             this.udRX2DisplayAVGTime.TabIndex = 2;
+            this.udRX2DisplayAVGTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayAVGTime, "When averaging, use this number of buffers to calculate the average.");
             this.udRX2DisplayAVGTime.Value = new decimal(new int[] {
             30,
@@ -31607,6 +31808,7 @@
             this.udTXWFAmpMin.Name = "udTXWFAmpMin";
             this.udTXWFAmpMin.Size = new System.Drawing.Size(45, 20);
             this.udTXWFAmpMin.TabIndex = 29;
+            this.udTXWFAmpMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXWFAmpMin, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
             this.udTXWFAmpMin.Value = new decimal(new int[] {
             70,
@@ -31637,6 +31839,7 @@
             this.udTXWFAmpMax.Name = "udTXWFAmpMax";
             this.udTXWFAmpMax.Size = new System.Drawing.Size(44, 20);
             this.udTXWFAmpMax.TabIndex = 28;
+            this.udTXWFAmpMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXWFAmpMax, "Waterfall High Signal - Show High Color above this value (gradient in between).");
             this.udTXWFAmpMax.Value = new decimal(new int[] {
             30,
@@ -31755,6 +31958,7 @@
             this.udTXDisplayAVTime.Name = "udTXDisplayAVTime";
             this.udTXDisplayAVTime.Size = new System.Drawing.Size(48, 20);
             this.udTXDisplayAVTime.TabIndex = 2;
+            this.udTXDisplayAVTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXDisplayAVTime, "When averaging, use this number of buffers to calculate the average.");
             this.udTXDisplayAVTime.Value = new decimal(new int[] {
             120,
@@ -31989,6 +32193,7 @@
             this.udTXDisplayAVGTime.Name = "udTXDisplayAVGTime";
             this.udTXDisplayAVGTime.Size = new System.Drawing.Size(48, 20);
             this.udTXDisplayAVGTime.TabIndex = 2;
+            this.udTXDisplayAVGTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXDisplayAVGTime, "When averaging, use this number of buffers to calculate the average.");
             this.udTXDisplayAVGTime.Value = new decimal(new int[] {
             30,
@@ -32099,6 +32304,7 @@
             this.udTXGridStep.Name = "udTXGridStep";
             this.udTXGridStep.Size = new System.Drawing.Size(56, 20);
             this.udTXGridStep.TabIndex = 25;
+            this.udTXGridStep.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGridStep, "Horizontal Grid Step Size in dB.");
             this.udTXGridStep.Value = new decimal(new int[] {
             2,
@@ -32128,6 +32334,7 @@
             this.udTXGridMin.Name = "udTXGridMin";
             this.udTXGridMin.Size = new System.Drawing.Size(56, 20);
             this.udTXGridMin.TabIndex = 24;
+            this.udTXGridMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGridMin, "Signal Level at bottom of display in dB.");
             this.udTXGridMin.Value = new decimal(new int[] {
             80,
@@ -32158,6 +32365,7 @@
             this.udTXGridMax.Name = "udTXGridMax";
             this.udTXGridMax.Size = new System.Drawing.Size(56, 20);
             this.udTXGridMax.TabIndex = 23;
+            this.udTXGridMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGridMax, "Signal level at top of display in dB.");
             this.udTXGridMax.Value = new decimal(new int[] {
             20,
@@ -33294,6 +33502,7 @@
             this.udDSPCWPitch.Name = "udDSPCWPitch";
             this.udDSPCWPitch.Size = new System.Drawing.Size(48, 20);
             this.udDSPCWPitch.TabIndex = 7;
+            this.udDSPCWPitch.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPCWPitch, "Selects the preferred CW tone frequency.");
             this.udDSPCWPitch.Value = new decimal(new int[] {
             600,
@@ -33341,6 +33550,7 @@
             this.udCWKeyerWeight.Name = "udCWKeyerWeight";
             this.udCWKeyerWeight.Size = new System.Drawing.Size(40, 20);
             this.udCWKeyerWeight.TabIndex = 40;
+            this.udCWKeyerWeight.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWKeyerWeight, "Sets the weight of the tones when sending Iambic.");
             this.udCWKeyerWeight.Value = new decimal(new int[] {
             50,
@@ -33497,6 +33707,7 @@
             this.udCWBreakInDelay.Name = "udCWBreakInDelay";
             this.udCWBreakInDelay.Size = new System.Drawing.Size(48, 20);
             this.udCWBreakInDelay.TabIndex = 35;
+            this.udCWBreakInDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWBreakInDelay, "Amount of time to stay in TX after the last detected CW signal.");
             this.udCWBreakInDelay.Value = new decimal(new int[] {
             300,
@@ -33558,6 +33769,7 @@
             this.udNoiseFloorAttackRX2.Name = "udNoiseFloorAttackRX2";
             this.udNoiseFloorAttackRX2.Size = new System.Drawing.Size(58, 20);
             this.udNoiseFloorAttackRX2.TabIndex = 137;
+            this.udNoiseFloorAttackRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udNoiseFloorAttackRX2, "Time it takes to reach the noise floor");
             this.udNoiseFloorAttackRX2.Value = new decimal(new int[] {
             2000,
@@ -33597,6 +33809,7 @@
             this.udNoiseFloorAttackRX1.Name = "udNoiseFloorAttackRX1";
             this.udNoiseFloorAttackRX1.Size = new System.Drawing.Size(58, 20);
             this.udNoiseFloorAttackRX1.TabIndex = 135;
+            this.udNoiseFloorAttackRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udNoiseFloorAttackRX1, "Time it takes to reach the noise floor");
             this.udNoiseFloorAttackRX1.Value = new decimal(new int[] {
             2000,
@@ -33636,6 +33849,7 @@
             this.udRX2AutoAGCOffset.Name = "udRX2AutoAGCOffset";
             this.udRX2AutoAGCOffset.Size = new System.Drawing.Size(40, 20);
             this.udRX2AutoAGCOffset.TabIndex = 133;
+            this.udRX2AutoAGCOffset.TinyStep = false;
             this.udRX2AutoAGCOffset.Value = new decimal(new int[] {
             20,
             0,
@@ -33675,6 +33889,7 @@
             this.udRX1AutoAGCOffset.Name = "udRX1AutoAGCOffset";
             this.udRX1AutoAGCOffset.Size = new System.Drawing.Size(40, 20);
             this.udRX1AutoAGCOffset.TabIndex = 130;
+            this.udRX1AutoAGCOffset.TinyStep = false;
             this.udRX1AutoAGCOffset.Value = new decimal(new int[] {
             20,
             0,
@@ -33773,6 +33988,7 @@
             this.udDSPLevelerHangTime.Name = "udDSPLevelerHangTime";
             this.udDSPLevelerHangTime.Size = new System.Drawing.Size(48, 20);
             this.udDSPLevelerHangTime.TabIndex = 15;
+            this.udDSPLevelerHangTime.TinyStep = false;
             this.udDSPLevelerHangTime.Value = new decimal(new int[] {
             500,
             0,
@@ -33812,6 +34028,7 @@
             this.udDSPLevelerThreshold.Name = "udDSPLevelerThreshold";
             this.udDSPLevelerThreshold.Size = new System.Drawing.Size(40, 20);
             this.udDSPLevelerThreshold.TabIndex = 6;
+            this.udDSPLevelerThreshold.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPLevelerThreshold, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
         "in over this Max Gain is applied.");
             this.udDSPLevelerThreshold.Value = new decimal(new int[] {
@@ -33844,6 +34061,7 @@
             this.udDSPLevelerSlope.Name = "udDSPLevelerSlope";
             this.udDSPLevelerSlope.Size = new System.Drawing.Size(40, 20);
             this.udDSPLevelerSlope.TabIndex = 13;
+            this.udDSPLevelerSlope.TinyStep = false;
             this.udDSPLevelerSlope.Value = new decimal(new int[] {
             0,
             0,
@@ -33873,6 +34091,7 @@
             this.udDSPLevelerDecay.Name = "udDSPLevelerDecay";
             this.udDSPLevelerDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPLevelerDecay.TabIndex = 12;
+            this.udDSPLevelerDecay.TinyStep = false;
             this.udDSPLevelerDecay.Value = new decimal(new int[] {
             100,
             0,
@@ -33914,6 +34133,7 @@
             this.udDSPLevelerAttack.Name = "udDSPLevelerAttack";
             this.udDSPLevelerAttack.Size = new System.Drawing.Size(40, 20);
             this.udDSPLevelerAttack.TabIndex = 10;
+            this.udDSPLevelerAttack.TinyStep = false;
             this.udDSPLevelerAttack.Value = new decimal(new int[] {
             2,
             0,
@@ -34029,6 +34249,7 @@
             this.udDSPALCHangTime.Name = "udDSPALCHangTime";
             this.udDSPALCHangTime.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCHangTime.TabIndex = 17;
+            this.udDSPALCHangTime.TinyStep = false;
             this.udDSPALCHangTime.Value = new decimal(new int[] {
             500,
             0,
@@ -34068,6 +34289,7 @@
             this.udDSPALCMaximumGain.Name = "udDSPALCMaximumGain";
             this.udDSPALCMaximumGain.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCMaximumGain.TabIndex = 6;
+            this.udDSPALCMaximumGain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPALCMaximumGain, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
         "in over this Max Gain is applied.");
             this.udDSPALCMaximumGain.Value = new decimal(new int[] {
@@ -34100,6 +34322,7 @@
             this.udDSPALCSlope.Name = "udDSPALCSlope";
             this.udDSPALCSlope.Size = new System.Drawing.Size(40, 20);
             this.udDSPALCSlope.TabIndex = 13;
+            this.udDSPALCSlope.TinyStep = false;
             this.udDSPALCSlope.Value = new decimal(new int[] {
             0,
             0,
@@ -34129,6 +34352,7 @@
             this.udDSPALCDecay.Name = "udDSPALCDecay";
             this.udDSPALCDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCDecay.TabIndex = 12;
+            this.udDSPALCDecay.TinyStep = false;
             this.udDSPALCDecay.Value = new decimal(new int[] {
             10,
             0,
@@ -34169,6 +34393,7 @@
             this.udDSPALCAttack.Name = "udDSPALCAttack";
             this.udDSPALCAttack.Size = new System.Drawing.Size(40, 20);
             this.udDSPALCAttack.TabIndex = 10;
+            this.udDSPALCAttack.TinyStep = false;
             this.udDSPALCAttack.Value = new decimal(new int[] {
             2,
             0,
@@ -34414,6 +34639,7 @@
             this.udDSPAGCRX2HangTime.Name = "udDSPAGCRX2HangTime";
             this.udDSPAGCRX2HangTime.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCRX2HangTime.TabIndex = 54;
+            this.udDSPAGCRX2HangTime.TinyStep = false;
             this.udDSPAGCRX2HangTime.Value = new decimal(new int[] {
             250,
             0,
@@ -34443,6 +34669,7 @@
             this.udDSPAGCRX2Decay.Name = "udDSPAGCRX2Decay";
             this.udDSPAGCRX2Decay.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCRX2Decay.TabIndex = 53;
+            this.udDSPAGCRX2Decay.TinyStep = false;
             this.udDSPAGCRX2Decay.Value = new decimal(new int[] {
             250,
             0,
@@ -34472,6 +34699,7 @@
             this.udDSPAGCRX2Attack.Name = "udDSPAGCRX2Attack";
             this.udDSPAGCRX2Attack.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCRX2Attack.TabIndex = 52;
+            this.udDSPAGCRX2Attack.TinyStep = false;
             this.udDSPAGCRX2Attack.Value = new decimal(new int[] {
             2,
             0,
@@ -34501,6 +34729,7 @@
             this.udDSPAGCRX2Slope.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCRX2Slope.TabIndex = 51;
             this.udDSPAGCRX2Slope.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udDSPAGCRX2Slope.TinyStep = false;
             this.udDSPAGCRX2Slope.Value = new decimal(new int[] {
             0,
             0,
@@ -34542,6 +34771,7 @@
             this.udDSPAGCRX2MaxGaindB.Name = "udDSPAGCRX2MaxGaindB";
             this.udDSPAGCRX2MaxGaindB.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCRX2MaxGaindB.TabIndex = 49;
+            this.udDSPAGCRX2MaxGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCRX2MaxGaindB, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
         "in over this Max Gain is applied.");
             this.udDSPAGCRX2MaxGaindB.Value = new decimal(new int[] {
@@ -34572,6 +34802,7 @@
             this.udDSPAGCRX2FixedGaindB.Name = "udDSPAGCRX2FixedGaindB";
             this.udDSPAGCRX2FixedGaindB.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCRX2FixedGaindB.TabIndex = 48;
+            this.udDSPAGCRX2FixedGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCRX2FixedGaindB, "When you choose Fixed AGC on the front panel, this number is used to multiply the" +
         " signal.");
             this.udDSPAGCRX2FixedGaindB.Value = new decimal(new int[] {
@@ -34634,6 +34865,7 @@
             this.udDSPAGCHangTime.Name = "udDSPAGCHangTime";
             this.udDSPAGCHangTime.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCHangTime.TabIndex = 44;
+            this.udDSPAGCHangTime.TinyStep = false;
             this.udDSPAGCHangTime.Value = new decimal(new int[] {
             250,
             0,
@@ -34663,6 +34895,7 @@
             this.udDSPAGCMaxGaindB.Name = "udDSPAGCMaxGaindB";
             this.udDSPAGCMaxGaindB.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCMaxGaindB.TabIndex = 6;
+            this.udDSPAGCMaxGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCMaxGaindB, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
         "in over this Max Gain is applied.");
             this.udDSPAGCMaxGaindB.Value = new decimal(new int[] {
@@ -34695,6 +34928,7 @@
             this.udDSPAGCSlope.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCSlope.TabIndex = 13;
             this.udDSPAGCSlope.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udDSPAGCSlope.TinyStep = false;
             this.udDSPAGCSlope.Value = new decimal(new int[] {
             0,
             0,
@@ -34725,6 +34959,7 @@
             this.udDSPAGCDecay.Name = "udDSPAGCDecay";
             this.udDSPAGCDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCDecay.TabIndex = 12;
+            this.udDSPAGCDecay.TinyStep = false;
             this.udDSPAGCDecay.Value = new decimal(new int[] {
             250,
             0,
@@ -34764,6 +34999,7 @@
             this.udDSPAGCAttack.Name = "udDSPAGCAttack";
             this.udDSPAGCAttack.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCAttack.TabIndex = 10;
+            this.udDSPAGCAttack.TinyStep = false;
             this.udDSPAGCAttack.Value = new decimal(new int[] {
             2,
             0,
@@ -34821,6 +35057,7 @@
             this.udDSPAGCFixedGaindB.Name = "udDSPAGCFixedGaindB";
             this.udDSPAGCFixedGaindB.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCFixedGaindB.TabIndex = 4;
+            this.udDSPAGCFixedGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCFixedGaindB, "When you choose Fixed AGC on the front panel, this number is used to multiply the" +
         " signal.");
             this.udDSPAGCFixedGaindB.Value = new decimal(new int[] {
@@ -34959,6 +35196,7 @@
             this.udRXAMSQMaxTail.Name = "udRXAMSQMaxTail";
             this.udRXAMSQMaxTail.Size = new System.Drawing.Size(38, 20);
             this.udRXAMSQMaxTail.TabIndex = 0;
+            this.udRXAMSQMaxTail.TinyStep = false;
             this.udRXAMSQMaxTail.Value = new decimal(new int[] {
             1,
             0,
@@ -35276,6 +35514,7 @@
             this.udDSPRX2DollyF1.Name = "udDSPRX2DollyF1";
             this.udDSPRX2DollyF1.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX2DollyF1.TabIndex = 3;
+            this.udDSPRX2DollyF1.TinyStep = false;
             this.udDSPRX2DollyF1.Value = new decimal(new int[] {
             2295,
             0,
@@ -35304,6 +35543,7 @@
             this.udDSPRX2DollyF0.Name = "udDSPRX2DollyF0";
             this.udDSPRX2DollyF0.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX2DollyF0.TabIndex = 2;
+            this.udDSPRX2DollyF0.TinyStep = false;
             this.udDSPRX2DollyF0.Value = new decimal(new int[] {
             2125,
             0,
@@ -35378,6 +35618,7 @@
             this.udDSPRX1SubDollyF1.Name = "udDSPRX1SubDollyF1";
             this.udDSPRX1SubDollyF1.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1SubDollyF1.TabIndex = 3;
+            this.udDSPRX1SubDollyF1.TinyStep = false;
             this.udDSPRX1SubDollyF1.Value = new decimal(new int[] {
             2295,
             0,
@@ -35406,6 +35647,7 @@
             this.udDSPRX1SubDollyF0.Name = "udDSPRX1SubDollyF0";
             this.udDSPRX1SubDollyF0.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1SubDollyF0.TabIndex = 2;
+            this.udDSPRX1SubDollyF0.TinyStep = false;
             this.udDSPRX1SubDollyF0.Value = new decimal(new int[] {
             2125,
             0,
@@ -35480,6 +35722,7 @@
             this.udDSPRX1DollyF1.Name = "udDSPRX1DollyF1";
             this.udDSPRX1DollyF1.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1DollyF1.TabIndex = 3;
+            this.udDSPRX1DollyF1.TinyStep = false;
             this.udDSPRX1DollyF1.Value = new decimal(new int[] {
             2295,
             0,
@@ -35508,6 +35751,7 @@
             this.udDSPRX1DollyF0.Name = "udDSPRX1DollyF0";
             this.udDSPRX1DollyF0.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1DollyF0.TabIndex = 2;
+            this.udDSPRX1DollyF0.TinyStep = false;
             this.udDSPRX1DollyF0.Value = new decimal(new int[] {
             2125,
             0,
@@ -36115,6 +36359,7 @@
             this.udDSPEERpwmMin.Name = "udDSPEERpwmMin";
             this.udDSPEERpwmMin.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERpwmMin.TabIndex = 7;
+            this.udDSPEERpwmMin.TinyStep = false;
             this.udDSPEERpwmMin.Value = new decimal(new int[] {
             100,
             0,
@@ -36143,6 +36388,7 @@
             this.udDSPEERpwmMax.Name = "udDSPEERpwmMax";
             this.udDSPEERpwmMax.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERpwmMax.TabIndex = 6;
+            this.udDSPEERpwmMax.TinyStep = false;
             this.udDSPEERpwmMax.Value = new decimal(new int[] {
             800,
             0,
@@ -36216,6 +36462,7 @@
             this.udDSPEERpdelay.Name = "udDSPEERpdelay";
             this.udDSPEERpdelay.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERpdelay.TabIndex = 8;
+            this.udDSPEERpdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERpdelay, "Sets software delay of the phase signal.");
             this.udDSPEERpdelay.Value = new decimal(new int[] {
             2000,
@@ -36271,6 +36518,7 @@
             this.udDSPEERmdelay.Name = "udDSPEERmdelay";
             this.udDSPEERmdelay.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERmdelay.TabIndex = 5;
+            this.udDSPEERmdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERmdelay, "Sets software delay of the magnitude (envelope) signal.");
             this.udDSPEERmdelay.Value = new decimal(new int[] {
             2000,
@@ -36311,6 +36559,7 @@
             this.udDSPEERpgain.Name = "udDSPEERpgain";
             this.udDSPEERpgain.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERpgain.TabIndex = 3;
+            this.udDSPEERpgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERpgain, "Sets maximum level of the I & Q signals.");
             this.udDSPEERpgain.Value = new decimal(new int[] {
             5,
@@ -36351,6 +36600,7 @@
             this.udDSPEERmgain.Name = "udDSPEERmgain";
             this.udDSPEERmgain.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERmgain.TabIndex = 1;
+            this.udDSPEERmgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERmgain, "Sets maximum level of the magnitude (envelope) signal.");
             this.udDSPEERmgain.Value = new decimal(new int[] {
             5,
@@ -36699,6 +36949,7 @@
             this.udLMSNRLeak.Name = "udLMSNRLeak";
             this.udLMSNRLeak.Size = new System.Drawing.Size(48, 20);
             this.udLMSNRLeak.TabIndex = 10;
+            this.udLMSNRLeak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRLeak, "Determines the adaptation rate of the filter.");
             this.udLMSNRLeak.Value = new decimal(new int[] {
             100,
@@ -36737,6 +36988,7 @@
             this.udLMSNRgain.Name = "udLMSNRgain";
             this.udLMSNRgain.Size = new System.Drawing.Size(48, 20);
             this.udLMSNRgain.TabIndex = 7;
+            this.udLMSNRgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRgain, "Determines the adaptation rate of the filter.");
             this.udLMSNRgain.Value = new decimal(new int[] {
             100,
@@ -36767,6 +37019,7 @@
             this.udLMSNRdelay.Name = "udLMSNRdelay";
             this.udLMSNRdelay.Size = new System.Drawing.Size(48, 20);
             this.udLMSNRdelay.TabIndex = 6;
+            this.udLMSNRdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRdelay, "Determines how far back you look in the signal before you begin to compute a cohe" +
         "rent signal enhancement filter.  ");
             this.udLMSNRdelay.Value = new decimal(new int[] {
@@ -36807,6 +37060,7 @@
             this.udLMSNRtaps.Name = "udLMSNRtaps";
             this.udLMSNRtaps.Size = new System.Drawing.Size(48, 20);
             this.udLMSNRtaps.TabIndex = 5;
+            this.udLMSNRtaps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRtaps, "Determines the length of the NR computed filter.  ");
             this.udLMSNRtaps.Value = new decimal(new int[] {
             64,
@@ -36908,6 +37162,7 @@
             this.udLMSANFLeak.Name = "udLMSANFLeak";
             this.udLMSANFLeak.Size = new System.Drawing.Size(48, 20);
             this.udLMSANFLeak.TabIndex = 8;
+            this.udLMSANFLeak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFLeak, "Determines the adaptation rate of the filter.");
             this.udLMSANFLeak.Value = new decimal(new int[] {
             100,
@@ -36946,6 +37201,7 @@
             this.udLMSANFgain.Name = "udLMSANFgain";
             this.udLMSANFgain.Size = new System.Drawing.Size(48, 20);
             this.udLMSANFgain.TabIndex = 3;
+            this.udLMSANFgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFgain, "Determines the adaptation rate of the filter.");
             this.udLMSANFgain.Value = new decimal(new int[] {
             100,
@@ -36985,6 +37241,7 @@
             this.udLMSANFdelay.Name = "udLMSANFdelay";
             this.udLMSANFdelay.Size = new System.Drawing.Size(48, 20);
             this.udLMSANFdelay.TabIndex = 2;
+            this.udLMSANFdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFdelay, "Determines how far back you look in the signal before you begin to compute a canc" +
         "ellation filter");
             this.udLMSANFdelay.Value = new decimal(new int[] {
@@ -37025,6 +37282,7 @@
             this.udLMSANFtaps.Name = "udLMSANFtaps";
             this.udLMSANFtaps.Size = new System.Drawing.Size(48, 20);
             this.udLMSANFtaps.TabIndex = 1;
+            this.udLMSANFtaps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFtaps, "Determines the length of the computed notch filter.");
             this.udLMSANFtaps.Value = new decimal(new int[] {
             64,
@@ -37081,6 +37339,7 @@
             this.udLMSANF2Leak.Name = "udLMSANF2Leak";
             this.udLMSANF2Leak.Size = new System.Drawing.Size(48, 20);
             this.udLMSANF2Leak.TabIndex = 8;
+            this.udLMSANF2Leak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2Leak, "Determines the adaptation rate of the filter.");
             this.udLMSANF2Leak.Value = new decimal(new int[] {
             100,
@@ -37119,6 +37378,7 @@
             this.udLMSANF2gain.Name = "udLMSANF2gain";
             this.udLMSANF2gain.Size = new System.Drawing.Size(48, 20);
             this.udLMSANF2gain.TabIndex = 3;
+            this.udLMSANF2gain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2gain, "Determines the adaptation rate of the filter.");
             this.udLMSANF2gain.Value = new decimal(new int[] {
             100,
@@ -37157,6 +37417,7 @@
             this.udLMSANF2delay.Name = "udLMSANF2delay";
             this.udLMSANF2delay.Size = new System.Drawing.Size(48, 20);
             this.udLMSANF2delay.TabIndex = 2;
+            this.udLMSANF2delay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2delay, "Determines how far back you look in the signal before you begin to compute a canc" +
         "ellation filter");
             this.udLMSANF2delay.Value = new decimal(new int[] {
@@ -37196,6 +37457,7 @@
             this.udLMSANF2taps.Name = "udLMSANF2taps";
             this.udLMSANF2taps.Size = new System.Drawing.Size(48, 20);
             this.udLMSANF2taps.TabIndex = 1;
+            this.udLMSANF2taps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2taps, "Determines the length of the computed notch filter.");
             this.udLMSANF2taps.Value = new decimal(new int[] {
             64,
@@ -37251,6 +37513,7 @@
             this.udLMSNR2Leak.Name = "udLMSNR2Leak";
             this.udLMSNR2Leak.Size = new System.Drawing.Size(48, 20);
             this.udLMSNR2Leak.TabIndex = 10;
+            this.udLMSNR2Leak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2Leak, "Determines the adaptation rate of the filter.");
             this.udLMSNR2Leak.Value = new decimal(new int[] {
             100,
@@ -37289,6 +37552,7 @@
             this.udLMSNR2gain.Name = "udLMSNR2gain";
             this.udLMSNR2gain.Size = new System.Drawing.Size(48, 20);
             this.udLMSNR2gain.TabIndex = 7;
+            this.udLMSNR2gain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2gain, "Determines the adaptation rate of the filter.");
             this.udLMSNR2gain.Value = new decimal(new int[] {
             100,
@@ -37318,6 +37582,7 @@
             this.udLMSNR2delay.Name = "udLMSNR2delay";
             this.udLMSNR2delay.Size = new System.Drawing.Size(48, 20);
             this.udLMSNR2delay.TabIndex = 6;
+            this.udLMSNR2delay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2delay, "Determines how far back you look in the signal before you begin to compute a cohe" +
         "rent signal enhancement filter.  ");
             this.udLMSNR2delay.Value = new decimal(new int[] {
@@ -37357,6 +37622,7 @@
             this.udLMSNR2taps.Name = "udLMSNR2taps";
             this.udLMSNR2taps.Size = new System.Drawing.Size(48, 20);
             this.udLMSNR2taps.TabIndex = 5;
+            this.udLMSNR2taps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2taps, "Determines the length of the NR computed filter.  ");
             this.udLMSNR2taps.Value = new decimal(new int[] {
             64,
@@ -37586,6 +37852,7 @@
             this.udMNFWidth.Name = "udMNFWidth";
             this.udMNFWidth.Size = new System.Drawing.Size(75, 20);
             this.udMNFWidth.TabIndex = 2;
+            this.udMNFWidth.TinyStep = false;
             this.udMNFWidth.Value = new decimal(new int[] {
             0,
             0,
@@ -37615,6 +37882,7 @@
             this.udMNFFreq.Name = "udMNFFreq";
             this.udMNFFreq.Size = new System.Drawing.Size(120, 20);
             this.udMNFFreq.TabIndex = 1;
+            this.udMNFFreq.TinyStep = false;
             this.udMNFFreq.Value = new decimal(new int[] {
             0,
             0,
@@ -37642,6 +37910,7 @@
             this.udMNFNotch.Name = "udMNFNotch";
             this.udMNFNotch.Size = new System.Drawing.Size(75, 20);
             this.udMNFNotch.TabIndex = 0;
+            this.udMNFNotch.TinyStep = false;
             this.udMNFNotch.Value = new decimal(new int[] {
             0,
             0,
@@ -37696,6 +37965,7 @@
             this.udDSPSNBThresh2.Name = "udDSPSNBThresh2";
             this.udDSPSNBThresh2.Size = new System.Drawing.Size(56, 20);
             this.udDSPSNBThresh2.TabIndex = 12;
+            this.udDSPSNBThresh2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPSNBThresh2, "Controls the detection threshold for impulse noise.  ");
             this.udDSPSNBThresh2.Value = new decimal(new int[] {
             200,
@@ -37735,6 +38005,7 @@
             this.udDSPSNBThresh1.Name = "udDSPSNBThresh1";
             this.udDSPSNBThresh1.Size = new System.Drawing.Size(56, 20);
             this.udDSPSNBThresh1.TabIndex = 10;
+            this.udDSPSNBThresh1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPSNBThresh1, "Controls the detection threshold for impulse noise.  ");
             this.udDSPSNBThresh1.Value = new decimal(new int[] {
             80,
@@ -37830,6 +38101,7 @@
             this.udDSPNBLag.Name = "udDSPNBLag";
             this.udDSPNBLag.Size = new System.Drawing.Size(64, 20);
             this.udDSPNBLag.TabIndex = 14;
+            this.udDSPNBLag.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNBLag, "Controls the detection threshold for impulse noise.  ");
             this.udDSPNBLag.Value = new decimal(new int[] {
             1,
@@ -37869,6 +38141,7 @@
             this.udDSPNBLead.Name = "udDSPNBLead";
             this.udDSPNBLead.Size = new System.Drawing.Size(64, 20);
             this.udDSPNBLead.TabIndex = 12;
+            this.udDSPNBLead.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNBLead, "Controls the detection threshold for impulse noise.  ");
             this.udDSPNBLead.Value = new decimal(new int[] {
             1,
@@ -37908,6 +38181,7 @@
             this.udDSPNBTransition.Name = "udDSPNBTransition";
             this.udDSPNBTransition.Size = new System.Drawing.Size(64, 20);
             this.udDSPNBTransition.TabIndex = 10;
+            this.udDSPNBTransition.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNBTransition, "Controls the detection threshold for impulse noise.  ");
             this.udDSPNBTransition.Value = new decimal(new int[] {
             1,
@@ -37946,6 +38220,7 @@
             this.udDSPNB.Name = "udDSPNB";
             this.udDSPNB.Size = new System.Drawing.Size(40, 20);
             this.udDSPNB.TabIndex = 0;
+            this.udDSPNB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNB, "Controls the detection threshold for impulse noise.  ");
             this.udDSPNB.Value = new decimal(new int[] {
             30,
@@ -38026,6 +38301,7 @@
             this.udAntiVoxTau.Name = "udAntiVoxTau";
             this.udAntiVoxTau.Size = new System.Drawing.Size(56, 20);
             this.udAntiVoxTau.TabIndex = 19;
+            this.udAntiVoxTau.TinyStep = false;
             this.udAntiVoxTau.Value = new decimal(new int[] {
             20,
             0,
@@ -38065,6 +38341,7 @@
             this.udAntiVoxGain.Name = "udAntiVoxGain";
             this.udAntiVoxGain.Size = new System.Drawing.Size(56, 20);
             this.udAntiVoxGain.TabIndex = 17;
+            this.udAntiVoxGain.TinyStep = false;
             this.udAntiVoxGain.Value = new decimal(new int[] {
             10,
             0,
@@ -38127,6 +38404,7 @@
             this.udDEXPLookAhead.Name = "udDEXPLookAhead";
             this.udDEXPLookAhead.Size = new System.Drawing.Size(57, 20);
             this.udDEXPLookAhead.TabIndex = 2;
+            this.udDEXPLookAhead.TinyStep = false;
             this.udDEXPLookAhead.Value = new decimal(new int[] {
             60,
             0,
@@ -38205,6 +38483,7 @@
             this.udDEXPHysteresisRatio.Name = "udDEXPHysteresisRatio";
             this.udDEXPHysteresisRatio.Size = new System.Drawing.Size(56, 20);
             this.udDEXPHysteresisRatio.TabIndex = 16;
+            this.udDEXPHysteresisRatio.TinyStep = false;
             this.udDEXPHysteresisRatio.Value = new decimal(new int[] {
             20,
             0,
@@ -38234,6 +38513,7 @@
             this.udDEXPExpansionRatio.Name = "udDEXPExpansionRatio";
             this.udDEXPExpansionRatio.Size = new System.Drawing.Size(56, 20);
             this.udDEXPExpansionRatio.TabIndex = 15;
+            this.udDEXPExpansionRatio.TinyStep = false;
             this.udDEXPExpansionRatio.Value = new decimal(new int[] {
             10,
             0,
@@ -38262,6 +38542,7 @@
             this.udDEXPThreshold.Name = "udDEXPThreshold";
             this.udDEXPThreshold.Size = new System.Drawing.Size(56, 20);
             this.udDEXPThreshold.TabIndex = 14;
+            this.udDEXPThreshold.TinyStep = false;
             this.udDEXPThreshold.Value = new decimal(new int[] {
             200,
             0,
@@ -38320,6 +38601,7 @@
             this.udDEXPRelease.Name = "udDEXPRelease";
             this.udDEXPRelease.Size = new System.Drawing.Size(57, 20);
             this.udDEXPRelease.TabIndex = 10;
+            this.udDEXPRelease.TinyStep = false;
             this.udDEXPRelease.Value = new decimal(new int[] {
             100,
             0,
@@ -38348,6 +38630,7 @@
             this.udDEXPHold.Name = "udDEXPHold";
             this.udDEXPHold.Size = new System.Drawing.Size(57, 20);
             this.udDEXPHold.TabIndex = 9;
+            this.udDEXPHold.TinyStep = false;
             this.udDEXPHold.Value = new decimal(new int[] {
             500,
             0,
@@ -38376,6 +38659,7 @@
             this.udDEXPAttack.Name = "udDEXPAttack";
             this.udDEXPAttack.Size = new System.Drawing.Size(57, 20);
             this.udDEXPAttack.TabIndex = 8;
+            this.udDEXPAttack.TinyStep = false;
             this.udDEXPAttack.Value = new decimal(new int[] {
             2,
             0,
@@ -38416,6 +38700,7 @@
             this.udDEXPDetTau.Name = "udDEXPDetTau";
             this.udDEXPDetTau.Size = new System.Drawing.Size(57, 20);
             this.udDEXPDetTau.TabIndex = 6;
+            this.udDEXPDetTau.TinyStep = false;
             this.udDEXPDetTau.Value = new decimal(new int[] {
             20,
             0,
@@ -38530,6 +38815,7 @@
             this.udSCFHighCut.Name = "udSCFHighCut";
             this.udSCFHighCut.Size = new System.Drawing.Size(55, 20);
             this.udSCFHighCut.TabIndex = 2;
+            this.udSCFHighCut.TinyStep = false;
             this.udSCFHighCut.Value = new decimal(new int[] {
             1500,
             0,
@@ -38558,6 +38844,7 @@
             this.udSCFLowCut.Name = "udSCFLowCut";
             this.udSCFLowCut.Size = new System.Drawing.Size(55, 20);
             this.udSCFLowCut.TabIndex = 1;
+            this.udSCFLowCut.TinyStep = false;
             this.udSCFLowCut.Value = new decimal(new int[] {
             500,
             0,
@@ -38683,6 +38970,7 @@
             this.udCFCPicDBPerLine.Name = "udCFCPicDBPerLine";
             this.udCFCPicDBPerLine.Size = new System.Drawing.Size(46, 20);
             this.udCFCPicDBPerLine.TabIndex = 177;
+            this.udCFCPicDBPerLine.TinyStep = false;
             this.udCFCPicDBPerLine.Value = new decimal(new int[] {
             10,
             0,
@@ -38805,6 +39093,7 @@
             this.udPHROTStages.Name = "udPHROTStages";
             this.udPHROTStages.Size = new System.Drawing.Size(58, 20);
             this.udPHROTStages.TabIndex = 155;
+            this.udPHROTStages.TinyStep = false;
             this.udPHROTStages.Value = new decimal(new int[] {
             8,
             0,
@@ -38844,6 +39133,7 @@
             this.udPhRotFreq.Name = "udPhRotFreq";
             this.udPhRotFreq.Size = new System.Drawing.Size(58, 20);
             this.udPhRotFreq.TabIndex = 153;
+            this.udPhRotFreq.TinyStep = false;
             this.udPhRotFreq.Value = new decimal(new int[] {
             338,
             0,
@@ -39147,6 +39437,7 @@
             this.udCFC9.Name = "udCFC9";
             this.udCFC9.Size = new System.Drawing.Size(50, 20);
             this.udCFC9.TabIndex = 146;
+            this.udCFC9.TinyStep = false;
             this.udCFC9.Value = new decimal(new int[] {
             10000,
             0,
@@ -39175,6 +39466,7 @@
             this.udCFC8.Name = "udCFC8";
             this.udCFC8.Size = new System.Drawing.Size(50, 20);
             this.udCFC8.TabIndex = 145;
+            this.udCFC8.TinyStep = false;
             this.udCFC8.Value = new decimal(new int[] {
             5000,
             0,
@@ -39203,6 +39495,7 @@
             this.udCFC7.Name = "udCFC7";
             this.udCFC7.Size = new System.Drawing.Size(50, 20);
             this.udCFC7.TabIndex = 144;
+            this.udCFC7.TinyStep = false;
             this.udCFC7.Value = new decimal(new int[] {
             4000,
             0,
@@ -39231,6 +39524,7 @@
             this.udCFC6.Name = "udCFC6";
             this.udCFC6.Size = new System.Drawing.Size(50, 20);
             this.udCFC6.TabIndex = 143;
+            this.udCFC6.TinyStep = false;
             this.udCFC6.Value = new decimal(new int[] {
             3000,
             0,
@@ -39259,6 +39553,7 @@
             this.udCFC5.Name = "udCFC5";
             this.udCFC5.Size = new System.Drawing.Size(50, 20);
             this.udCFC5.TabIndex = 142;
+            this.udCFC5.TinyStep = false;
             this.udCFC5.Value = new decimal(new int[] {
             2000,
             0,
@@ -39287,6 +39582,7 @@
             this.udCFC4.Name = "udCFC4";
             this.udCFC4.Size = new System.Drawing.Size(50, 20);
             this.udCFC4.TabIndex = 141;
+            this.udCFC4.TinyStep = false;
             this.udCFC4.Value = new decimal(new int[] {
             1000,
             0,
@@ -39315,6 +39611,7 @@
             this.udCFC3.Name = "udCFC3";
             this.udCFC3.Size = new System.Drawing.Size(50, 20);
             this.udCFC3.TabIndex = 140;
+            this.udCFC3.TinyStep = false;
             this.udCFC3.Value = new decimal(new int[] {
             500,
             0,
@@ -39343,6 +39640,7 @@
             this.udCFC2.Name = "udCFC2";
             this.udCFC2.Size = new System.Drawing.Size(50, 20);
             this.udCFC2.TabIndex = 139;
+            this.udCFC2.TinyStep = false;
             this.udCFC2.Value = new decimal(new int[] {
             250,
             0,
@@ -39371,6 +39669,7 @@
             this.udCFC1.Name = "udCFC1";
             this.udCFC1.Size = new System.Drawing.Size(50, 20);
             this.udCFC1.TabIndex = 138;
+            this.udCFC1.TinyStep = false;
             this.udCFC1.Value = new decimal(new int[] {
             125,
             0,
@@ -39399,6 +39698,7 @@
             this.udCFC0.Name = "udCFC0";
             this.udCFC0.Size = new System.Drawing.Size(50, 20);
             this.udCFC0.TabIndex = 137;
+            this.udCFC0.TinyStep = false;
             this.udCFC0.Value = new decimal(new int[] {
             0,
             0,
@@ -39738,6 +40038,7 @@
             this.udTXFilterLowSave.Name = "udTXFilterLowSave";
             this.udTXFilterLowSave.Size = new System.Drawing.Size(56, 20);
             this.udTXFilterLowSave.TabIndex = 60;
+            this.udTXFilterLowSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterLowSave, "Saved Low Frequency TX Filter Cutoff");
             this.udTXFilterLowSave.Value = new decimal(new int[] {
             200,
@@ -39767,6 +40068,7 @@
             this.udTXFilterHighSave.Name = "udTXFilterHighSave";
             this.udTXFilterHighSave.Size = new System.Drawing.Size(56, 20);
             this.udTXFilterHighSave.TabIndex = 59;
+            this.udTXFilterHighSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterHighSave, "Saved High Frequency TX Filter Cutoff");
             this.udTXFilterHighSave.Value = new decimal(new int[] {
             3100,
@@ -39864,6 +40166,7 @@
             this.udMicGainMin.Name = "udMicGainMin";
             this.udMicGainMin.Size = new System.Drawing.Size(40, 20);
             this.udMicGainMin.TabIndex = 10;
+            this.udMicGainMin.TinyStep = false;
             this.udMicGainMin.Value = new decimal(new int[] {
             40,
             0,
@@ -39893,6 +40196,7 @@
             this.udMicGainMax.Name = "udMicGainMax";
             this.udMicGainMax.Size = new System.Drawing.Size(40, 20);
             this.udMicGainMax.TabIndex = 9;
+            this.udMicGainMax.TinyStep = false;
             this.udMicGainMax.Value = new decimal(new int[] {
             10,
             0,
@@ -39945,6 +40249,7 @@
             this.udLineInBoost.Size = new System.Drawing.Size(48, 20);
             this.udLineInBoost.TabIndex = 10;
             this.udLineInBoost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udLineInBoost.TinyStep = false;
             this.udLineInBoost.Value = new decimal(new int[] {
             0,
             0,
@@ -40062,6 +40367,7 @@
             this.udTXAMCarrierLevel.Name = "udTXAMCarrierLevel";
             this.udTXAMCarrierLevel.Size = new System.Drawing.Size(56, 20);
             this.udTXAMCarrierLevel.TabIndex = 4;
+            this.udTXAMCarrierLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXAMCarrierLevel, "Adjusts the carrier level on AM (pecentage of full 1/4 carrier) .");
             this.udTXAMCarrierLevel.Value = new decimal(new int[] {
             100,
@@ -40126,6 +40432,7 @@
             this.udTXAF.Name = "udTXAF";
             this.udTXAF.Size = new System.Drawing.Size(48, 20);
             this.udTXAF.TabIndex = 4;
+            this.udTXAF.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXAF, "AF value to use when in TX mode (with the Delta 44 only).");
             this.udTXAF.Value = new decimal(new int[] {
             50,
@@ -40283,6 +40590,7 @@
             this.udTXTunePower.Name = "udTXTunePower";
             this.udTXTunePower.Size = new System.Drawing.Size(48, 20);
             this.udTXTunePower.TabIndex = 4;
+            this.udTXTunePower.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXTunePower, "Power used when using the TUN button on the front panel.");
             this.udTXTunePower.Value = new decimal(new int[] {
             0,
@@ -40335,6 +40643,7 @@
             this.udTXFilterLow.Name = "udTXFilterLow";
             this.udTXFilterLow.Size = new System.Drawing.Size(56, 20);
             this.udTXFilterLow.TabIndex = 2;
+            this.udTXFilterLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterLow, "Low Frequency TX Filter Cutoff");
             this.udTXFilterLow.Value = new decimal(new int[] {
             100,
@@ -40374,6 +40683,7 @@
             this.udTXFilterHigh.Name = "udTXFilterHigh";
             this.udTXFilterHigh.Size = new System.Drawing.Size(56, 20);
             this.udTXFilterHigh.TabIndex = 0;
+            this.udTXFilterHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterHigh, "High Frequency TX Filter Cutoff");
             this.udTXFilterHigh.Value = new decimal(new int[] {
             3000,
@@ -40555,6 +40865,7 @@
             this.nudMaxPowerForBandPA.Name = "nudMaxPowerForBandPA";
             this.nudMaxPowerForBandPA.Size = new System.Drawing.Size(61, 20);
             this.nudMaxPowerForBandPA.TabIndex = 125;
+            this.nudMaxPowerForBandPA.TinyStep = true;
             this.toolTip1.SetToolTip(this.nudMaxPowerForBandPA, "If this is non zero, it can be used for the Drive/Tune sliders");
             this.nudMaxPowerForBandPA.Value = new decimal(new int[] {
             1500,
@@ -40745,6 +41056,7 @@
             this.nudAdjustGain90.Name = "nudAdjustGain90";
             this.nudAdjustGain90.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain90.TabIndex = 124;
+            this.nudAdjustGain90.TinyStep = true;
             this.nudAdjustGain90.Value = new decimal(new int[] {
             0,
             0,
@@ -40774,6 +41086,7 @@
             this.nudAdjustGain80.Name = "nudAdjustGain80";
             this.nudAdjustGain80.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain80.TabIndex = 123;
+            this.nudAdjustGain80.TinyStep = true;
             this.nudAdjustGain80.Value = new decimal(new int[] {
             0,
             0,
@@ -40803,6 +41116,7 @@
             this.nudAdjustGain70.Name = "nudAdjustGain70";
             this.nudAdjustGain70.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain70.TabIndex = 122;
+            this.nudAdjustGain70.TinyStep = true;
             this.nudAdjustGain70.Value = new decimal(new int[] {
             0,
             0,
@@ -40832,6 +41146,7 @@
             this.nudAdjustGain60.Name = "nudAdjustGain60";
             this.nudAdjustGain60.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain60.TabIndex = 121;
+            this.nudAdjustGain60.TinyStep = true;
             this.nudAdjustGain60.Value = new decimal(new int[] {
             0,
             0,
@@ -40861,6 +41176,7 @@
             this.nudAdjustGain50.Name = "nudAdjustGain50";
             this.nudAdjustGain50.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain50.TabIndex = 120;
+            this.nudAdjustGain50.TinyStep = true;
             this.nudAdjustGain50.Value = new decimal(new int[] {
             0,
             0,
@@ -40890,6 +41206,7 @@
             this.nudAdjustGain40.Name = "nudAdjustGain40";
             this.nudAdjustGain40.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain40.TabIndex = 119;
+            this.nudAdjustGain40.TinyStep = true;
             this.nudAdjustGain40.Value = new decimal(new int[] {
             0,
             0,
@@ -40919,6 +41236,7 @@
             this.nudAdjustGain30.Name = "nudAdjustGain30";
             this.nudAdjustGain30.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain30.TabIndex = 118;
+            this.nudAdjustGain30.TinyStep = true;
             this.nudAdjustGain30.Value = new decimal(new int[] {
             0,
             0,
@@ -40948,6 +41266,7 @@
             this.nudAdjustGain20.Name = "nudAdjustGain20";
             this.nudAdjustGain20.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain20.TabIndex = 117;
+            this.nudAdjustGain20.TinyStep = true;
             this.nudAdjustGain20.Value = new decimal(new int[] {
             0,
             0,
@@ -40977,6 +41296,7 @@
             this.nudAdjustGain10.Name = "nudAdjustGain10";
             this.nudAdjustGain10.Size = new System.Drawing.Size(48, 20);
             this.nudAdjustGain10.TabIndex = 116;
+            this.nudAdjustGain10.TinyStep = true;
             this.nudAdjustGain10.Value = new decimal(new int[] {
             0,
             0,
@@ -41040,6 +41360,7 @@
             this.nudVHF13.Name = "nudVHF13";
             this.nudVHF13.Size = new System.Drawing.Size(48, 20);
             this.nudVHF13.TabIndex = 163;
+            this.nudVHF13.TinyStep = true;
             this.nudVHF13.Value = new decimal(new int[] {
             631,
             0,
@@ -41080,6 +41401,7 @@
             this.nudVHF12.Name = "nudVHF12";
             this.nudVHF12.Size = new System.Drawing.Size(48, 20);
             this.nudVHF12.TabIndex = 161;
+            this.nudVHF12.TinyStep = true;
             this.nudVHF12.Value = new decimal(new int[] {
             631,
             0,
@@ -41120,6 +41442,7 @@
             this.nudVHF11.Name = "nudVHF11";
             this.nudVHF11.Size = new System.Drawing.Size(48, 20);
             this.nudVHF11.TabIndex = 159;
+            this.nudVHF11.TinyStep = true;
             this.nudVHF11.Value = new decimal(new int[] {
             631,
             0,
@@ -41160,6 +41483,7 @@
             this.nudVHF10.Name = "nudVHF10";
             this.nudVHF10.Size = new System.Drawing.Size(48, 20);
             this.nudVHF10.TabIndex = 157;
+            this.nudVHF10.TinyStep = true;
             this.nudVHF10.Value = new decimal(new int[] {
             631,
             0,
@@ -41200,6 +41524,7 @@
             this.nudVHF9.Name = "nudVHF9";
             this.nudVHF9.Size = new System.Drawing.Size(48, 20);
             this.nudVHF9.TabIndex = 155;
+            this.nudVHF9.TinyStep = true;
             this.nudVHF9.Value = new decimal(new int[] {
             631,
             0,
@@ -41240,6 +41565,7 @@
             this.nudVHF8.Name = "nudVHF8";
             this.nudVHF8.Size = new System.Drawing.Size(48, 20);
             this.nudVHF8.TabIndex = 153;
+            this.nudVHF8.TinyStep = true;
             this.nudVHF8.Value = new decimal(new int[] {
             631,
             0,
@@ -41280,6 +41606,7 @@
             this.nudVHF7.Name = "nudVHF7";
             this.nudVHF7.Size = new System.Drawing.Size(48, 20);
             this.nudVHF7.TabIndex = 151;
+            this.nudVHF7.TinyStep = true;
             this.nudVHF7.Value = new decimal(new int[] {
             631,
             0,
@@ -41320,6 +41647,7 @@
             this.nudVHF6.Name = "nudVHF6";
             this.nudVHF6.Size = new System.Drawing.Size(48, 20);
             this.nudVHF6.TabIndex = 149;
+            this.nudVHF6.TinyStep = true;
             this.nudVHF6.Value = new decimal(new int[] {
             631,
             0,
@@ -41360,6 +41688,7 @@
             this.nudVHF5.Name = "nudVHF5";
             this.nudVHF5.Size = new System.Drawing.Size(48, 20);
             this.nudVHF5.TabIndex = 147;
+            this.nudVHF5.TinyStep = true;
             this.nudVHF5.Value = new decimal(new int[] {
             631,
             0,
@@ -41400,6 +41729,7 @@
             this.nudVHF4.Name = "nudVHF4";
             this.nudVHF4.Size = new System.Drawing.Size(48, 20);
             this.nudVHF4.TabIndex = 145;
+            this.nudVHF4.TinyStep = true;
             this.nudVHF4.Value = new decimal(new int[] {
             631,
             0,
@@ -41440,6 +41770,7 @@
             this.nudVHF3.Name = "nudVHF3";
             this.nudVHF3.Size = new System.Drawing.Size(48, 20);
             this.nudVHF3.TabIndex = 143;
+            this.nudVHF3.TinyStep = true;
             this.nudVHF3.Value = new decimal(new int[] {
             631,
             0,
@@ -41480,6 +41811,7 @@
             this.nudVHF2.Name = "nudVHF2";
             this.nudVHF2.Size = new System.Drawing.Size(48, 20);
             this.nudVHF2.TabIndex = 141;
+            this.nudVHF2.TinyStep = true;
             this.nudVHF2.Value = new decimal(new int[] {
             631,
             0,
@@ -41520,6 +41852,7 @@
             this.nudVHF1.Name = "nudVHF1";
             this.nudVHF1.Size = new System.Drawing.Size(48, 20);
             this.nudVHF1.TabIndex = 139;
+            this.nudVHF1.TinyStep = true;
             this.nudVHF1.Value = new decimal(new int[] {
             631,
             0,
@@ -41560,6 +41893,7 @@
             this.nudVHF0.Name = "nudVHF0";
             this.nudVHF0.Size = new System.Drawing.Size(48, 20);
             this.nudVHF0.TabIndex = 137;
+            this.nudVHF0.TinyStep = true;
             this.nudVHF0.Value = new decimal(new int[] {
             631,
             0,
@@ -41589,6 +41923,7 @@
             this.nud6M.Name = "nud6M";
             this.nud6M.Size = new System.Drawing.Size(48, 20);
             this.nud6M.TabIndex = 136;
+            this.nud6M.TinyStep = true;
             this.nud6M.Value = new decimal(new int[] {
             440,
             0,
@@ -41640,6 +41975,7 @@
             this.nud10M.Name = "nud10M";
             this.nud10M.Size = new System.Drawing.Size(48, 20);
             this.nud10M.TabIndex = 133;
+            this.nud10M.TinyStep = true;
             this.nud10M.Value = new decimal(new int[] {
             465,
             0,
@@ -41680,6 +42016,7 @@
             this.nud12M.Name = "nud12M";
             this.nud12M.Size = new System.Drawing.Size(48, 20);
             this.nud12M.TabIndex = 131;
+            this.nud12M.TinyStep = true;
             this.nud12M.Value = new decimal(new int[] {
             479,
             0,
@@ -41720,6 +42057,7 @@
             this.nud15M.Name = "nud15M";
             this.nud15M.Size = new System.Drawing.Size(48, 20);
             this.nud15M.TabIndex = 129;
+            this.nud15M.TinyStep = true;
             this.nud15M.Value = new decimal(new int[] {
             470,
             0,
@@ -41760,6 +42098,7 @@
             this.nud17M.Name = "nud17M";
             this.nud17M.Size = new System.Drawing.Size(48, 20);
             this.nud17M.TabIndex = 127;
+            this.nud17M.TinyStep = true;
             this.nud17M.Value = new decimal(new int[] {
             505,
             0,
@@ -41800,6 +42139,7 @@
             this.nud20M.Name = "nud20M";
             this.nud20M.Size = new System.Drawing.Size(48, 20);
             this.nud20M.TabIndex = 125;
+            this.nud20M.TinyStep = true;
             this.nud20M.Value = new decimal(new int[] {
             509,
             0,
@@ -41840,6 +42180,7 @@
             this.nud30M.Name = "nud30M";
             this.nud30M.Size = new System.Drawing.Size(48, 20);
             this.nud30M.TabIndex = 123;
+            this.nud30M.TinyStep = true;
             this.nud30M.Value = new decimal(new int[] {
             509,
             0,
@@ -41880,6 +42221,7 @@
             this.nud40M.Name = "nud40M";
             this.nud40M.Size = new System.Drawing.Size(48, 20);
             this.nud40M.TabIndex = 121;
+            this.nud40M.TinyStep = true;
             this.nud40M.Value = new decimal(new int[] {
             508,
             0,
@@ -41920,6 +42262,7 @@
             this.nud60M.Name = "nud60M";
             this.nud60M.Size = new System.Drawing.Size(48, 20);
             this.nud60M.TabIndex = 119;
+            this.nud60M.TinyStep = true;
             this.nud60M.Value = new decimal(new int[] {
             508,
             0,
@@ -41960,6 +42303,7 @@
             this.nud80M.Name = "nud80M";
             this.nud80M.Size = new System.Drawing.Size(48, 20);
             this.nud80M.TabIndex = 117;
+            this.nud80M.TinyStep = true;
             this.nud80M.Value = new decimal(new int[] {
             505,
             0,
@@ -42000,6 +42344,7 @@
             this.nud160M.Name = "nud160M";
             this.nud160M.Size = new System.Drawing.Size(48, 20);
             this.nud160M.TabIndex = 115;
+            this.nud160M.TinyStep = true;
             this.nud160M.Value = new decimal(new int[] {
             479,
             0,
@@ -42128,6 +42473,7 @@
             this.udPACalPower.Name = "udPACalPower";
             this.udPACalPower.Size = new System.Drawing.Size(50, 20);
             this.udPACalPower.TabIndex = 35;
+            this.udPACalPower.TinyStep = false;
             this.udPACalPower.Value = new decimal(new int[] {
             100,
             0,
@@ -42351,6 +42697,7 @@
             this.ud10PA1W.Name = "ud10PA1W";
             this.ud10PA1W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA1W.TabIndex = 87;
+            this.ud10PA1W.TinyStep = false;
             this.ud10PA1W.Value = new decimal(new int[] {
             1,
             0,
@@ -42379,6 +42726,7 @@
             this.ud10PA10W.Name = "ud10PA10W";
             this.ud10PA10W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA10W.TabIndex = 105;
+            this.ud10PA10W.TinyStep = false;
             this.ud10PA10W.Value = new decimal(new int[] {
             10,
             0,
@@ -42429,6 +42777,7 @@
             this.ud10PA9W.Name = "ud10PA9W";
             this.ud10PA9W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA9W.TabIndex = 103;
+            this.ud10PA9W.TinyStep = false;
             this.ud10PA9W.Value = new decimal(new int[] {
             9,
             0,
@@ -42480,6 +42829,7 @@
             this.ud10PA11W.Name = "ud10PA11W";
             this.ud10PA11W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA11W.TabIndex = 108;
+            this.ud10PA11W.TinyStep = false;
             this.ud10PA11W.Value = new decimal(new int[] {
             11,
             0,
@@ -42508,6 +42858,7 @@
             this.ud10PA8W.Name = "ud10PA8W";
             this.ud10PA8W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA8W.TabIndex = 101;
+            this.ud10PA8W.TinyStep = false;
             this.ud10PA8W.Value = new decimal(new int[] {
             8,
             0,
@@ -42536,6 +42887,7 @@
             this.ud10PA12W.Name = "ud10PA12W";
             this.ud10PA12W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA12W.TabIndex = 109;
+            this.ud10PA12W.TinyStep = false;
             this.ud10PA12W.Value = new decimal(new int[] {
             12,
             0,
@@ -42587,6 +42939,7 @@
             this.ud10PA7W.Name = "ud10PA7W";
             this.ud10PA7W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA7W.TabIndex = 99;
+            this.ud10PA7W.TinyStep = false;
             this.ud10PA7W.Value = new decimal(new int[] {
             7,
             0,
@@ -42615,6 +42968,7 @@
             this.ud10PA13W.Name = "ud10PA13W";
             this.ud10PA13W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA13W.TabIndex = 111;
+            this.ud10PA13W.TinyStep = false;
             this.ud10PA13W.Value = new decimal(new int[] {
             13,
             0,
@@ -42677,6 +43031,7 @@
             this.ud10PA6W.Name = "ud10PA6W";
             this.ud10PA6W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA6W.TabIndex = 97;
+            this.ud10PA6W.TinyStep = false;
             this.ud10PA6W.Value = new decimal(new int[] {
             6,
             0,
@@ -42705,6 +43060,7 @@
             this.ud10PA14W.Name = "ud10PA14W";
             this.ud10PA14W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA14W.TabIndex = 113;
+            this.ud10PA14W.TinyStep = false;
             this.ud10PA14W.Value = new decimal(new int[] {
             14,
             0,
@@ -42744,6 +43100,7 @@
             this.ud10PA2W.Name = "ud10PA2W";
             this.ud10PA2W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA2W.TabIndex = 89;
+            this.ud10PA2W.TinyStep = false;
             this.ud10PA2W.Value = new decimal(new int[] {
             2,
             0,
@@ -42784,6 +43141,7 @@
             this.ud10PA5W.Name = "ud10PA5W";
             this.ud10PA5W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA5W.TabIndex = 95;
+            this.ud10PA5W.TinyStep = false;
             this.ud10PA5W.Value = new decimal(new int[] {
             5,
             0,
@@ -42834,6 +43192,7 @@
             this.ud10PA4W.Name = "ud10PA4W";
             this.ud10PA4W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA4W.TabIndex = 93;
+            this.ud10PA4W.TinyStep = false;
             this.ud10PA4W.Value = new decimal(new int[] {
             4,
             0,
@@ -42862,6 +43221,7 @@
             this.ud10PA3W.Name = "ud10PA3W";
             this.ud10PA3W.Size = new System.Drawing.Size(48, 20);
             this.ud10PA3W.TabIndex = 91;
+            this.ud10PA3W.TinyStep = false;
             this.ud10PA3W.Value = new decimal(new int[] {
             3,
             0,
@@ -42938,6 +43298,7 @@
             this.ud100PA10W.Name = "ud100PA10W";
             this.ud100PA10W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA10W.TabIndex = 87;
+            this.ud100PA10W.TinyStep = false;
             this.ud100PA10W.Value = new decimal(new int[] {
             10,
             0,
@@ -42966,6 +43327,7 @@
             this.ud100PA100W.Name = "ud100PA100W";
             this.ud100PA100W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA100W.TabIndex = 105;
+            this.ud100PA100W.TinyStep = false;
             this.ud100PA100W.Value = new decimal(new int[] {
             100,
             0,
@@ -43016,6 +43378,7 @@
             this.ud100PA90W.Name = "ud100PA90W";
             this.ud100PA90W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA90W.TabIndex = 103;
+            this.ud100PA90W.TinyStep = false;
             this.ud100PA90W.Value = new decimal(new int[] {
             90,
             0,
@@ -43067,6 +43430,7 @@
             this.ud100PA110W.Name = "ud100PA110W";
             this.ud100PA110W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA110W.TabIndex = 108;
+            this.ud100PA110W.TinyStep = false;
             this.ud100PA110W.Value = new decimal(new int[] {
             110,
             0,
@@ -43096,6 +43460,7 @@
             this.ud100PA80W.Name = "ud100PA80W";
             this.ud100PA80W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA80W.TabIndex = 101;
+            this.ud100PA80W.TinyStep = false;
             this.ud100PA80W.Value = new decimal(new int[] {
             80,
             0,
@@ -43124,6 +43489,7 @@
             this.ud100PA120W.Name = "ud100PA120W";
             this.ud100PA120W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA120W.TabIndex = 109;
+            this.ud100PA120W.TinyStep = false;
             this.ud100PA120W.Value = new decimal(new int[] {
             120,
             0,
@@ -43176,6 +43542,7 @@
             this.ud100PA70W.Name = "ud100PA70W";
             this.ud100PA70W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA70W.TabIndex = 99;
+            this.ud100PA70W.TinyStep = false;
             this.ud100PA70W.Value = new decimal(new int[] {
             70,
             0,
@@ -43204,6 +43571,7 @@
             this.ud100PA130W.Name = "ud100PA130W";
             this.ud100PA130W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA130W.TabIndex = 111;
+            this.ud100PA130W.TinyStep = false;
             this.ud100PA130W.Value = new decimal(new int[] {
             130,
             0,
@@ -43267,6 +43635,7 @@
             this.ud100PA60W.Name = "ud100PA60W";
             this.ud100PA60W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA60W.TabIndex = 97;
+            this.ud100PA60W.TinyStep = false;
             this.ud100PA60W.Value = new decimal(new int[] {
             60,
             0,
@@ -43295,6 +43664,7 @@
             this.ud100PA140W.Name = "ud100PA140W";
             this.ud100PA140W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA140W.TabIndex = 113;
+            this.ud100PA140W.TinyStep = false;
             this.ud100PA140W.Value = new decimal(new int[] {
             140,
             0,
@@ -43335,6 +43705,7 @@
             this.ud100PA20W.Name = "ud100PA20W";
             this.ud100PA20W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA20W.TabIndex = 89;
+            this.ud100PA20W.TinyStep = false;
             this.ud100PA20W.Value = new decimal(new int[] {
             20,
             0,
@@ -43375,6 +43746,7 @@
             this.ud100PA50W.Name = "ud100PA50W";
             this.ud100PA50W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA50W.TabIndex = 95;
+            this.ud100PA50W.TinyStep = false;
             this.ud100PA50W.Value = new decimal(new int[] {
             50,
             0,
@@ -43425,6 +43797,7 @@
             this.ud100PA40W.Name = "ud100PA40W";
             this.ud100PA40W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA40W.TabIndex = 93;
+            this.ud100PA40W.TinyStep = false;
             this.ud100PA40W.Value = new decimal(new int[] {
             40,
             0,
@@ -43453,6 +43826,7 @@
             this.ud100PA30W.Name = "ud100PA30W";
             this.ud100PA30W.Size = new System.Drawing.Size(48, 20);
             this.ud100PA30W.TabIndex = 91;
+            this.ud100PA30W.TinyStep = false;
             this.ud100PA30W.Value = new decimal(new int[] {
             30,
             0,
@@ -43529,6 +43903,7 @@
             this.ud200PA20W.Name = "ud200PA20W";
             this.ud200PA20W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA20W.TabIndex = 87;
+            this.ud200PA20W.TinyStep = false;
             this.ud200PA20W.Value = new decimal(new int[] {
             20,
             0,
@@ -43557,6 +43932,7 @@
             this.ud200PA200W.Name = "ud200PA200W";
             this.ud200PA200W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA200W.TabIndex = 105;
+            this.ud200PA200W.TinyStep = false;
             this.ud200PA200W.Value = new decimal(new int[] {
             200,
             0,
@@ -43607,6 +43983,7 @@
             this.ud200PA180W.Name = "ud200PA180W";
             this.ud200PA180W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA180W.TabIndex = 103;
+            this.ud200PA180W.TinyStep = false;
             this.ud200PA180W.Value = new decimal(new int[] {
             180,
             0,
@@ -43658,6 +44035,7 @@
             this.ud200PA220W.Name = "ud200PA220W";
             this.ud200PA220W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA220W.TabIndex = 108;
+            this.ud200PA220W.TinyStep = false;
             this.ud200PA220W.Value = new decimal(new int[] {
             220,
             0,
@@ -43687,6 +44065,7 @@
             this.ud200PA160W.Name = "ud200PA160W";
             this.ud200PA160W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA160W.TabIndex = 101;
+            this.ud200PA160W.TinyStep = false;
             this.ud200PA160W.Value = new decimal(new int[] {
             160,
             0,
@@ -43715,6 +44094,7 @@
             this.ud200PA240W.Name = "ud200PA240W";
             this.ud200PA240W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA240W.TabIndex = 109;
+            this.ud200PA240W.TinyStep = false;
             this.ud200PA240W.Value = new decimal(new int[] {
             240,
             0,
@@ -43767,6 +44147,7 @@
             this.ud200PA140W.Name = "ud200PA140W";
             this.ud200PA140W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA140W.TabIndex = 99;
+            this.ud200PA140W.TinyStep = false;
             this.ud200PA140W.Value = new decimal(new int[] {
             140,
             0,
@@ -43795,6 +44176,7 @@
             this.ud200PA260W.Name = "ud200PA260W";
             this.ud200PA260W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA260W.TabIndex = 111;
+            this.ud200PA260W.TinyStep = false;
             this.ud200PA260W.Value = new decimal(new int[] {
             260,
             0,
@@ -43858,6 +44240,7 @@
             this.ud200PA120W.Name = "ud200PA120W";
             this.ud200PA120W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA120W.TabIndex = 97;
+            this.ud200PA120W.TinyStep = false;
             this.ud200PA120W.Value = new decimal(new int[] {
             120,
             0,
@@ -43886,6 +44269,7 @@
             this.ud200PA280W.Name = "ud200PA280W";
             this.ud200PA280W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA280W.TabIndex = 113;
+            this.ud200PA280W.TinyStep = false;
             this.ud200PA280W.Value = new decimal(new int[] {
             280,
             0,
@@ -43926,6 +44310,7 @@
             this.ud200PA40W.Name = "ud200PA40W";
             this.ud200PA40W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA40W.TabIndex = 89;
+            this.ud200PA40W.TinyStep = false;
             this.ud200PA40W.Value = new decimal(new int[] {
             40,
             0,
@@ -43966,6 +44351,7 @@
             this.ud200PA100W.Name = "ud200PA100W";
             this.ud200PA100W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA100W.TabIndex = 95;
+            this.ud200PA100W.TinyStep = false;
             this.ud200PA100W.Value = new decimal(new int[] {
             100,
             0,
@@ -44016,6 +44402,7 @@
             this.ud200PA80W.Name = "ud200PA80W";
             this.ud200PA80W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA80W.TabIndex = 93;
+            this.ud200PA80W.TinyStep = false;
             this.ud200PA80W.Value = new decimal(new int[] {
             80,
             0,
@@ -44044,6 +44431,7 @@
             this.ud200PA60W.Name = "ud200PA60W";
             this.ud200PA60W.Size = new System.Drawing.Size(48, 20);
             this.ud200PA60W.TabIndex = 91;
+            this.ud200PA60W.TinyStep = false;
             this.ud200PA60W.Value = new decimal(new int[] {
             60,
             0,
@@ -44907,6 +45295,7 @@
             this.udNoiseFloorLineWidth.Name = "udNoiseFloorLineWidth";
             this.udNoiseFloorLineWidth.Size = new System.Drawing.Size(40, 20);
             this.udNoiseFloorLineWidth.TabIndex = 95;
+            this.udNoiseFloorLineWidth.TinyStep = false;
             this.udNoiseFloorLineWidth.Value = new decimal(new int[] {
             1,
             0,
@@ -45616,6 +46005,7 @@
             this.udDisplayLineWidth.Name = "udDisplayLineWidth";
             this.udDisplayLineWidth.Size = new System.Drawing.Size(40, 20);
             this.udDisplayLineWidth.TabIndex = 42;
+            this.udDisplayLineWidth.TinyStep = false;
             this.udDisplayLineWidth.Value = new decimal(new int[] {
             10,
             0,
@@ -46276,6 +46666,7 @@
             this.udTXLineWidth.Name = "udTXLineWidth";
             this.udTXLineWidth.Size = new System.Drawing.Size(40, 20);
             this.udTXLineWidth.TabIndex = 42;
+            this.udTXLineWidth.TinyStep = false;
             this.udTXLineWidth.Value = new decimal(new int[] {
             10,
             0,
@@ -48380,6 +48771,7 @@
             this.udTCISpotLifetime.Name = "udTCISpotLifetime";
             this.udTCISpotLifetime.Size = new System.Drawing.Size(58, 20);
             this.udTCISpotLifetime.TabIndex = 24;
+            this.udTCISpotLifetime.TinyStep = false;
             this.udTCISpotLifetime.Value = new decimal(new int[] {
             10,
             0,
@@ -48408,6 +48800,7 @@
             this.udMaxTCISpots.Name = "udMaxTCISpots";
             this.udMaxTCISpots.Size = new System.Drawing.Size(58, 20);
             this.udMaxTCISpots.TabIndex = 23;
+            this.udMaxTCISpots.TinyStep = false;
             this.udMaxTCISpots.Value = new decimal(new int[] {
             100,
             0,
@@ -48505,6 +48898,7 @@
             this.udTCIRateLimit.Name = "udTCIRateLimit";
             this.udTCIRateLimit.Size = new System.Drawing.Size(62, 20);
             this.udTCIRateLimit.TabIndex = 16;
+            this.udTCIRateLimit.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTCIRateLimit, "The maximum rate VFO/IF/DDS messages can be sent to clients");
             this.udTCIRateLimit.Value = new decimal(new int[] {
             100,
@@ -48759,6 +49153,7 @@
             this.udN1MMSendRate.Name = "udN1MMSendRate";
             this.udN1MMSendRate.Size = new System.Drawing.Size(49, 20);
             this.udN1MMSendRate.TabIndex = 7;
+            this.udN1MMSendRate.TinyStep = false;
             this.udN1MMSendRate.Value = new decimal(new int[] {
             5,
             0,
@@ -48798,6 +49193,7 @@
             this.udN1MMRX2Scaling.Name = "udN1MMRX2Scaling";
             this.udN1MMRX2Scaling.Size = new System.Drawing.Size(58, 20);
             this.udN1MMRX2Scaling.TabIndex = 5;
+            this.udN1MMRX2Scaling.TinyStep = false;
             this.udN1MMRX2Scaling.Value = new decimal(new int[] {
             3,
             0,
@@ -48827,6 +49223,7 @@
             this.udN1MMRX1Scaling.Name = "udN1MMRX1Scaling";
             this.udN1MMRX1Scaling.Size = new System.Drawing.Size(58, 20);
             this.udN1MMRX1Scaling.TabIndex = 4;
+            this.udN1MMRX1Scaling.TinyStep = false;
             this.udN1MMRX1Scaling.Value = new decimal(new int[] {
             3,
             0,
@@ -48923,6 +49320,7 @@
             this.udUpdatesPerStepMin.Name = "udUpdatesPerStepMin";
             this.udUpdatesPerStepMin.Size = new System.Drawing.Size(31, 20);
             this.udUpdatesPerStepMin.TabIndex = 112;
+            this.udUpdatesPerStepMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udUpdatesPerStepMin, "Minimum number of MIDI wheel updates required to produce one frequency step - det" +
         "ermines the highest sensitivity to wheel rotation.");
             this.udUpdatesPerStepMin.Value = new decimal(new int[] {
@@ -48983,6 +49381,7 @@
             this.udUpdatesPerStepMax.Name = "udUpdatesPerStepMax";
             this.udUpdatesPerStepMax.Size = new System.Drawing.Size(34, 20);
             this.udUpdatesPerStepMax.TabIndex = 109;
+            this.udUpdatesPerStepMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udUpdatesPerStepMax, "Maximum number of MIDI wheel updates required to produce one frequency step - det" +
         "ermines the lowest sensitivity to wheel rotation.");
             this.udUpdatesPerStepMax.Value = new decimal(new int[] {
@@ -49198,6 +49597,7 @@
             this.udRTTYU.Name = "udRTTYU";
             this.udRTTYU.Size = new System.Drawing.Size(48, 20);
             this.udRTTYU.TabIndex = 99;
+            this.udRTTYU.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRTTYU, "Sets the DIGU frequency offset");
             this.udRTTYU.Value = new decimal(new int[] {
             2125,
@@ -49227,6 +49627,7 @@
             this.udRTTYL.Name = "udRTTYL";
             this.udRTTYL.Size = new System.Drawing.Size(48, 20);
             this.udRTTYL.TabIndex = 98;
+            this.udRTTYL.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRTTYL, "Sets the DIGL frequency offset");
             this.udRTTYL.Value = new decimal(new int[] {
             2125,
@@ -49341,6 +49742,7 @@
             this.udHttpRefresh.Name = "udHttpRefresh";
             this.udHttpRefresh.Size = new System.Drawing.Size(75, 20);
             this.udHttpRefresh.TabIndex = 12;
+            this.udHttpRefresh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHttpRefresh, resources.GetString("udHttpRefresh.ToolTip"));
             this.udHttpRefresh.Value = new decimal(new int[] {
             300,
@@ -49419,6 +49821,7 @@
             this.udHttpPort.Name = "udHttpPort";
             this.udHttpPort.Size = new System.Drawing.Size(54, 20);
             this.udHttpPort.TabIndex = 7;
+            this.udHttpPort.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHttpPort, resources.GetString("udHttpPort.ToolTip"));
             this.udHttpPort.Value = new decimal(new int[] {
             8081,
@@ -49553,6 +49956,7 @@
             this.udSpeedPM.Name = "udSpeedPM";
             this.udSpeedPM.Size = new System.Drawing.Size(54, 20);
             this.udSpeedPM.TabIndex = 4;
+            this.udSpeedPM.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSpeedPM, "Speed of Freq Change");
             this.udSpeedPM.Value = new decimal(new int[] {
             2,
@@ -49957,6 +50361,7 @@
             this.udTXGenPulseTransition.Name = "udTXGenPulseTransition";
             this.udTXGenPulseTransition.Size = new System.Drawing.Size(56, 20);
             this.udTXGenPulseTransition.TabIndex = 115;
+            this.udTXGenPulseTransition.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenPulseTransition, "Tone Frequency.");
             this.udTXGenPulseTransition.Value = new decimal(new int[] {
             5,
@@ -49996,6 +50401,7 @@
             this.udTXGenPulseDutyCycle.Name = "udTXGenPulseDutyCycle";
             this.udTXGenPulseDutyCycle.Size = new System.Drawing.Size(56, 20);
             this.udTXGenPulseDutyCycle.TabIndex = 113;
+            this.udTXGenPulseDutyCycle.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenPulseDutyCycle, "Tone Frequency.");
             this.udTXGenPulseDutyCycle.Value = new decimal(new int[] {
             1,
@@ -50035,6 +50441,7 @@
             this.udTXGenPulseFreq.Name = "udTXGenPulseFreq";
             this.udTXGenPulseFreq.Size = new System.Drawing.Size(56, 20);
             this.udTXGenPulseFreq.TabIndex = 111;
+            this.udTXGenPulseFreq.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenPulseFreq, "Tone Frequency.");
             this.udTXGenPulseFreq.Value = new decimal(new int[] {
             10,
@@ -50108,6 +50515,7 @@
             this.udTXGenSweepRate.Name = "udTXGenSweepRate";
             this.udTXGenSweepRate.Size = new System.Drawing.Size(56, 20);
             this.udTXGenSweepRate.TabIndex = 89;
+            this.udTXGenSweepRate.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenSweepRate, "See the Sweep Button to the right.");
             this.udTXGenSweepRate.Value = new decimal(new int[] {
             100,
@@ -50146,6 +50554,7 @@
             this.udTXGenSweepHigh.Name = "udTXGenSweepHigh";
             this.udTXGenSweepHigh.Size = new System.Drawing.Size(56, 20);
             this.udTXGenSweepHigh.TabIndex = 87;
+            this.udTXGenSweepHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenSweepHigh, "See the Sweep Button to the right.");
             this.udTXGenSweepHigh.Value = new decimal(new int[] {
             4000,
@@ -50184,6 +50593,7 @@
             this.udTXGenSweepLow.Name = "udTXGenSweepLow";
             this.udTXGenSweepLow.Size = new System.Drawing.Size(56, 20);
             this.udTXGenSweepLow.TabIndex = 85;
+            this.udTXGenSweepLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenSweepLow, "See the Sweep Button to the right.");
             this.udTXGenSweepLow.Value = new decimal(new int[] {
             0,
@@ -50213,6 +50623,7 @@
             this.udTXGenFreq.Name = "udTXGenFreq";
             this.udTXGenFreq.Size = new System.Drawing.Size(56, 20);
             this.udTXGenFreq.TabIndex = 109;
+            this.udTXGenFreq.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenFreq, "Tone Frequency.");
             this.udTXGenFreq.Value = new decimal(new int[] {
             1000,
@@ -50252,6 +50663,7 @@
             this.udTXGenScale.Name = "udTXGenScale";
             this.udTXGenScale.Size = new System.Drawing.Size(56, 20);
             this.udTXGenScale.TabIndex = 102;
+            this.udTXGenScale.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenScale, "Sets the amplitude of the signal (typically between 0 and 1.0)");
             this.udTXGenScale.Value = new decimal(new int[] {
             0,
@@ -50385,6 +50797,7 @@
             this.udRXGenSweepRate.Name = "udRXGenSweepRate";
             this.udRXGenSweepRate.Size = new System.Drawing.Size(56, 20);
             this.udRXGenSweepRate.TabIndex = 89;
+            this.udRXGenSweepRate.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenSweepRate, "See the Sweep Button to the right.");
             this.udRXGenSweepRate.Value = new decimal(new int[] {
             100,
@@ -50423,6 +50836,7 @@
             this.udRXGenSweepHigh.Name = "udRXGenSweepHigh";
             this.udRXGenSweepHigh.Size = new System.Drawing.Size(56, 20);
             this.udRXGenSweepHigh.TabIndex = 87;
+            this.udRXGenSweepHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenSweepHigh, "See the Sweep Button to the right.");
             this.udRXGenSweepHigh.Value = new decimal(new int[] {
             4000,
@@ -50461,6 +50875,7 @@
             this.udRXGenSweepLow.Name = "udRXGenSweepLow";
             this.udRXGenSweepLow.Size = new System.Drawing.Size(56, 20);
             this.udRXGenSweepLow.TabIndex = 85;
+            this.udRXGenSweepLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenSweepLow, "See the Sweep Button to the right.");
             this.udRXGenSweepLow.Value = new decimal(new int[] {
             0,
@@ -50490,6 +50905,7 @@
             this.udRXGenFreq.Name = "udRXGenFreq";
             this.udRXGenFreq.Size = new System.Drawing.Size(56, 20);
             this.udRXGenFreq.TabIndex = 114;
+            this.udRXGenFreq.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenFreq, "Tone Frequency.");
             this.udRXGenFreq.Value = new decimal(new int[] {
             1000,
@@ -50529,6 +50945,7 @@
             this.udRXGenScale.Name = "udRXGenScale";
             this.udRXGenScale.Size = new System.Drawing.Size(56, 20);
             this.udRXGenScale.TabIndex = 112;
+            this.udRXGenScale.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenScale, "Sets the amplitude of the signal (typically between 0 and 1.0)");
             this.udRXGenScale.Value = new decimal(new int[] {
             500,
@@ -50686,6 +51103,7 @@
             this.udFreq2Delay.Name = "udFreq2Delay";
             this.udFreq2Delay.Size = new System.Drawing.Size(56, 20);
             this.udFreq2Delay.TabIndex = 120;
+            this.udFreq2Delay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udFreq2Delay, "Applies a wait delay before Freq#2 is enabled");
             this.udFreq2Delay.Value = new decimal(new int[] {
             0,
@@ -50749,6 +51167,7 @@
             this.udTwoToneLevel.Name = "udTwoToneLevel";
             this.udTwoToneLevel.Size = new System.Drawing.Size(56, 20);
             this.udTwoToneLevel.TabIndex = 95;
+            this.udTwoToneLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTwoToneLevel, "Sets the amplitude of the two tone test.");
             this.udTwoToneLevel.Value = new decimal(new int[] {
             0,
@@ -50788,6 +51207,7 @@
             this.udTestIMDFreq2.Name = "udTestIMDFreq2";
             this.udTestIMDFreq2.Size = new System.Drawing.Size(56, 20);
             this.udTestIMDFreq2.TabIndex = 87;
+            this.udTestIMDFreq2.TinyStep = false;
             this.udTestIMDFreq2.Value = new decimal(new int[] {
             19000,
             0,
@@ -50816,6 +51236,7 @@
             this.udTestIMDPower.Name = "udTestIMDPower";
             this.udTestIMDPower.Size = new System.Drawing.Size(56, 20);
             this.udTestIMDPower.TabIndex = 85;
+            this.udTestIMDPower.TinyStep = false;
             this.udTestIMDPower.Value = new decimal(new int[] {
             10,
             0,
@@ -50867,6 +51288,7 @@
             this.udTestIMDFreq1.Name = "udTestIMDFreq1";
             this.udTestIMDFreq1.Size = new System.Drawing.Size(56, 20);
             this.udTestIMDFreq1.TabIndex = 82;
+            this.udTestIMDFreq1.TinyStep = false;
             this.udTestIMDFreq1.Value = new decimal(new int[] {
             700,
             0,
@@ -50909,6 +51331,7 @@
             this.udImpulseNum.Name = "udImpulseNum";
             this.udImpulseNum.Size = new System.Drawing.Size(40, 20);
             this.udImpulseNum.TabIndex = 92;
+            this.udImpulseNum.TinyStep = false;
             this.udImpulseNum.Value = new decimal(new int[] {
             20,
             0,
@@ -51118,6 +51541,7 @@
             this.numericUpDownTS5.Name = "numericUpDownTS5";
             this.numericUpDownTS5.Size = new System.Drawing.Size(60, 20);
             this.numericUpDownTS5.TabIndex = 4;
+            this.numericUpDownTS5.TinyStep = false;
             this.numericUpDownTS5.Value = new decimal(new int[] {
             1,
             0,
@@ -51146,6 +51570,7 @@
             this.numericUpDownTS7.Name = "numericUpDownTS7";
             this.numericUpDownTS7.Size = new System.Drawing.Size(59, 20);
             this.numericUpDownTS7.TabIndex = 2;
+            this.numericUpDownTS7.TinyStep = false;
             this.numericUpDownTS7.Value = new decimal(new int[] {
             2,
             0,
@@ -51174,6 +51599,7 @@
             this.numericUpDownTS8.Name = "numericUpDownTS8";
             this.numericUpDownTS8.Size = new System.Drawing.Size(60, 20);
             this.numericUpDownTS8.TabIndex = 1;
+            this.numericUpDownTS8.TinyStep = false;
             this.numericUpDownTS8.Value = new decimal(new int[] {
             1,
             0,
@@ -51238,6 +51664,7 @@
             this.numericUpDownTS11.Name = "numericUpDownTS11";
             this.numericUpDownTS11.Size = new System.Drawing.Size(60, 20);
             this.numericUpDownTS11.TabIndex = 4;
+            this.numericUpDownTS11.TinyStep = false;
             this.numericUpDownTS11.Value = new decimal(new int[] {
             1,
             0,
@@ -51266,6 +51693,7 @@
             this.numericUpDownTS13.Name = "numericUpDownTS13";
             this.numericUpDownTS13.Size = new System.Drawing.Size(59, 20);
             this.numericUpDownTS13.TabIndex = 2;
+            this.numericUpDownTS13.TinyStep = false;
             this.numericUpDownTS13.Value = new decimal(new int[] {
             2,
             0,
@@ -51294,6 +51722,7 @@
             this.numericUpDownTS14.Name = "numericUpDownTS14";
             this.numericUpDownTS14.Size = new System.Drawing.Size(60, 20);
             this.numericUpDownTS14.TabIndex = 1;
+            this.numericUpDownTS14.TinyStep = false;
             this.numericUpDownTS14.Value = new decimal(new int[] {
             1,
             0,
@@ -51380,6 +51809,7 @@
             this.numericUpDownTS1.Name = "numericUpDownTS1";
             this.numericUpDownTS1.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS1.TabIndex = 24;
+            this.numericUpDownTS1.TinyStep = false;
             this.numericUpDownTS1.Value = new decimal(new int[] {
             297,
             0,
@@ -51408,6 +51838,7 @@
             this.numericUpDownTS2.Name = "numericUpDownTS2";
             this.numericUpDownTS2.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS2.TabIndex = 23;
+            this.numericUpDownTS2.TinyStep = false;
             this.numericUpDownTS2.Value = new decimal(new int[] {
             28,
             0,
@@ -51436,6 +51867,7 @@
             this.numericUpDownTS15.Name = "numericUpDownTS15";
             this.numericUpDownTS15.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS15.TabIndex = 22;
+            this.numericUpDownTS15.TinyStep = false;
             this.numericUpDownTS15.Value = new decimal(new int[] {
             54,
             0,
@@ -51464,6 +51896,7 @@
             this.numericUpDownTS16.Name = "numericUpDownTS16";
             this.numericUpDownTS16.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS16.TabIndex = 21;
+            this.numericUpDownTS16.TinyStep = false;
             this.numericUpDownTS16.Value = new decimal(new int[] {
             50,
             0,
@@ -51492,6 +51925,7 @@
             this.numericUpDownTS17.Name = "numericUpDownTS17";
             this.numericUpDownTS17.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS17.TabIndex = 20;
+            this.numericUpDownTS17.TinyStep = false;
             this.numericUpDownTS17.Value = new decimal(new int[] {
             1,
             0,
@@ -51520,6 +51954,7 @@
             this.numericUpDownTS18.Name = "numericUpDownTS18";
             this.numericUpDownTS18.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS18.TabIndex = 19;
+            this.numericUpDownTS18.TinyStep = false;
             this.numericUpDownTS18.Value = new decimal(new int[] {
             1,
             0,
@@ -51548,6 +51983,7 @@
             this.numericUpDownTS19.Name = "numericUpDownTS19";
             this.numericUpDownTS19.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS19.TabIndex = 18;
+            this.numericUpDownTS19.TinyStep = false;
             this.numericUpDownTS19.Value = new decimal(new int[] {
             1,
             0,
@@ -51576,6 +52012,7 @@
             this.numericUpDownTS20.Name = "numericUpDownTS20";
             this.numericUpDownTS20.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS20.TabIndex = 17;
+            this.numericUpDownTS20.TinyStep = false;
             this.numericUpDownTS20.Value = new decimal(new int[] {
             1,
             0,
@@ -51604,6 +52041,7 @@
             this.numericUpDownTS21.Name = "numericUpDownTS21";
             this.numericUpDownTS21.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS21.TabIndex = 16;
+            this.numericUpDownTS21.TinyStep = false;
             this.numericUpDownTS21.Value = new decimal(new int[] {
             1,
             0,
@@ -51632,6 +52070,7 @@
             this.numericUpDownTS22.Name = "numericUpDownTS22";
             this.numericUpDownTS22.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS22.TabIndex = 15;
+            this.numericUpDownTS22.TinyStep = false;
             this.numericUpDownTS22.Value = new decimal(new int[] {
             1,
             0,
@@ -51660,6 +52099,7 @@
             this.numericUpDownTS23.Name = "numericUpDownTS23";
             this.numericUpDownTS23.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS23.TabIndex = 14;
+            this.numericUpDownTS23.TinyStep = false;
             this.numericUpDownTS23.Value = new decimal(new int[] {
             1,
             0,
@@ -51688,6 +52128,7 @@
             this.numericUpDownTS24.Name = "numericUpDownTS24";
             this.numericUpDownTS24.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS24.TabIndex = 13;
+            this.numericUpDownTS24.TinyStep = false;
             this.numericUpDownTS24.Value = new decimal(new int[] {
             1,
             0,
@@ -51716,6 +52157,7 @@
             this.numericUpDownTS25.Name = "numericUpDownTS25";
             this.numericUpDownTS25.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS25.TabIndex = 12;
+            this.numericUpDownTS25.TinyStep = false;
             this.numericUpDownTS25.Value = new decimal(new int[] {
             2,
             0,
@@ -51744,6 +52186,7 @@
             this.numericUpDownTS26.Name = "numericUpDownTS26";
             this.numericUpDownTS26.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS26.TabIndex = 11;
+            this.numericUpDownTS26.TinyStep = false;
             this.numericUpDownTS26.Value = new decimal(new int[] {
             18,
             0,
@@ -51772,6 +52215,7 @@
             this.numericUpDownTS27.Name = "numericUpDownTS27";
             this.numericUpDownTS27.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS27.TabIndex = 10;
+            this.numericUpDownTS27.TinyStep = false;
             this.numericUpDownTS27.Value = new decimal(new int[] {
             13,
             0,
@@ -51800,6 +52244,7 @@
             this.numericUpDownTS28.Name = "numericUpDownTS28";
             this.numericUpDownTS28.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS28.TabIndex = 9;
+            this.numericUpDownTS28.TinyStep = false;
             this.numericUpDownTS28.Value = new decimal(new int[] {
             20,
             0,
@@ -51828,6 +52273,7 @@
             this.numericUpDownTS29.Name = "numericUpDownTS29";
             this.numericUpDownTS29.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS29.TabIndex = 8;
+            this.numericUpDownTS29.TinyStep = false;
             this.numericUpDownTS29.Value = new decimal(new int[] {
             19999999,
             0,
@@ -51856,6 +52302,7 @@
             this.numericUpDownTS30.Name = "numericUpDownTS30";
             this.numericUpDownTS30.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS30.TabIndex = 7;
+            this.numericUpDownTS30.TinyStep = false;
             this.numericUpDownTS30.Value = new decimal(new int[] {
             54,
             0,
@@ -51884,6 +52331,7 @@
             this.numericUpDownTS31.Name = "numericUpDownTS31";
             this.numericUpDownTS31.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS31.TabIndex = 6;
+            this.numericUpDownTS31.TinyStep = false;
             this.numericUpDownTS31.Value = new decimal(new int[] {
             12999999,
             0,
@@ -51912,6 +52360,7 @@
             this.numericUpDownTS32.Name = "numericUpDownTS32";
             this.numericUpDownTS32.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS32.TabIndex = 5;
+            this.numericUpDownTS32.TinyStep = false;
             this.numericUpDownTS32.Value = new decimal(new int[] {
             95,
             0,
@@ -51940,6 +52389,7 @@
             this.numericUpDownTS33.Name = "numericUpDownTS33";
             this.numericUpDownTS33.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS33.TabIndex = 4;
+            this.numericUpDownTS33.TinyStep = false;
             this.numericUpDownTS33.Value = new decimal(new int[] {
             9499999,
             0,
@@ -51968,6 +52418,7 @@
             this.numericUpDownTS34.Name = "numericUpDownTS34";
             this.numericUpDownTS34.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS34.TabIndex = 3;
+            this.numericUpDownTS34.TinyStep = false;
             this.numericUpDownTS34.Value = new decimal(new int[] {
             65,
             0,
@@ -51996,6 +52447,7 @@
             this.numericUpDownTS35.Name = "numericUpDownTS35";
             this.numericUpDownTS35.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS35.TabIndex = 2;
+            this.numericUpDownTS35.TinyStep = false;
             this.numericUpDownTS35.Value = new decimal(new int[] {
             6499999,
             0,
@@ -52024,6 +52476,7 @@
             this.numericUpDownTS36.Name = "numericUpDownTS36";
             this.numericUpDownTS36.Size = new System.Drawing.Size(75, 20);
             this.numericUpDownTS36.TabIndex = 1;
+            this.numericUpDownTS36.TinyStep = false;
             this.numericUpDownTS36.Value = new decimal(new int[] {
             15,
             0,

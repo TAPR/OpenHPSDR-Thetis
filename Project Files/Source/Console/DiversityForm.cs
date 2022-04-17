@@ -1914,12 +1914,20 @@ namespace Thetis
             }
 
         }
-
+        private int _extDivOutput = 0;
+        public int EXTDIVOutput
+        {
+            //0 = rx1
+            //1 = rx2
+            //2 = rx1+rx2
+            get { return _extDivOutput; }
+        }
         private void radRxSource1_CheckedChanged(object sender, EventArgs e)
         {
             if (radRxSource1.Checked)
             // Audio.IQSource = 1;
             {
+                _extDivOutput = 0;
                 //JanusAudio.SetMercSource(1);
                 WDSP.SetEXTDIVOutput(0, 0);
             }
@@ -1930,6 +1938,7 @@ namespace Thetis
             if (radRxSource2.Checked)
             // Audio.IQSource = 2;
             {
+                _extDivOutput = 1;
                 //JanusAudio.SetMercSource(2);
                 WDSP.SetEXTDIVOutput(0, 1);
             }
@@ -1940,6 +1949,7 @@ namespace Thetis
             if (radRxSourceRx1Rx2.Checked)
             // Audio.IQSource = 3;
             {
+                _extDivOutput = 2;
                 //JanusAudio.SetMercSource(3);
                 WDSP.SetEXTDIVOutput(0, 2);
             }

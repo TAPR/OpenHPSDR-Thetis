@@ -11952,15 +11952,19 @@ namespace Thetis
                 console.radio.GetDSPTX(0).TXPostGenRun = 1;
 
                 //MW0LGE_22b
+                // remember old power //MW0LGE_22b
+                if (console.TwoToneDrivePowerOrigin == DrivePowerSource.FIXED)
+                    console.PreviousPWR = console.PWR;
+                // set power
+                int new_pwr = console.SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true);
+                //
                 if (console.TwoToneDrivePowerOrigin == DrivePowerSource.FIXED)
                 {
-                    console.PreviousPWR = console.PWR;
-                    console.PWR = (int)udTestIMDPower.Value;
+                    console.PWRSliderLimitEnabled = false;
+                    console.PWR = new_pwr;
                 }
-                else
-                {
-                    console.PWR = console.PWR; // cause update to power limits etc
-                }
+                //
+
                 //if (!chkTestIMDPower.Checked)
                 //{
                 //    console.PreviousPWR = console.PWR;
@@ -12003,7 +12007,8 @@ namespace Thetis
                 //MW0LGE_22b
                 if (console.TwoToneDrivePowerOrigin == DrivePowerSource.FIXED)
                 {
-                    udTestIMDPower.Value = console.PWR;
+                    console.PWRSliderLimitEnabled = true;
+                    //udTestIMDPower.Value = console.PWR;
                     console.PWR = console.PreviousPWR;
                 }
                 //if (!chkTestIMDPower.Checked)
