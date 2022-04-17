@@ -22910,11 +22910,6 @@ namespace Thetis
             console.EnableDisplayDebug = chkShowDisplayDebug.Checked;
         }
 
-        private void chkFillEnergyView_CheckedChanged(object sender, EventArgs e)
-        {
-            //Display.FillEnergyView = chkFillEnergyView.Checked;
-        }
-
         private void chkCTLimitDragToSpectral_CheckedChanged(object sender, EventArgs e)
         {
             chkCTLimitDragMouseOnly.Enabled = chkCTLimitDragToSpectral.Checked;
@@ -25055,6 +25050,11 @@ namespace Thetis
         private void nudNFshift_ValueChanged(object sender, EventArgs e)
         {
             Display.NFshiftDBM = (int)nudNFshift.Value;
+        }
+
+        private void chkNFShowDecimal_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.NoiseFloorDecimal = chkNFShowDecimal.Checked;
         }
     }
 
