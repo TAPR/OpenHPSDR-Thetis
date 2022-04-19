@@ -21648,257 +21648,276 @@ namespace Thetis
             lblRxDDC4.Text = "";
             lblRxDDC5.Text = "";
             lblRxDDC6.Text = "";
-
-            bool moxEnabeld = console.MOX;
-            bool diversityEnabled = console.Diversity2;
-            bool puresignalEnabled = console.psform.PSEnabled;
-
+            
             int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
-
-            int tot = 0;
-            tot += moxEnabeld ? 1 : 0;
-            tot += diversityEnabled ? 2 : 0;
-            tot += puresignalEnabled ? 4 : 0;
+            console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) // P2
             {
                 lblP1assignment.ForeColor = SystemColors.ControlText;
                 lblP1assignment.Font = new Font(lblP1assignment.Font, FontStyle.Regular);
 
-                lblP2assignment.ForeColor = Color.Green;
+                lblP2assignment.ForeColor = Color.LimeGreen;
                 lblP2assignment.Font = new Font(lblP2assignment.Font, FontStyle.Bold);
-
-                switch (console.CurrentHPSDRHardware)
-                {
-                    case HPSDRHW.Angelia: // ANAN-100D
-                    case HPSDRHW.Orion: // ANAN-200D
-                    case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
-                        switch (tot)
-                        {
-                            case 0: // off off off
-                                rx1 = 2;
-                                rx2 = 3;
-                                break;
-                            case 1: // off off on
-                                rx1 = 2;
-                                rx2 = 3;
-                                break;
-                            case 2: // off on off
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx2 = 3;
-                                break;
-                            case 3: // off on on
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx2 = 3;
-                                break;
-                            case 4: // on off off
-                                rx1 = 2;
-                                rx2 = 3;
-                                break;
-                            case 5: // on off on
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx1 = 2;
-                                rx2 = 3;
-                                break;
-                            case 6: // on on off
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx2 = 3;
-                                break;
-                            case 7: // on on on
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx1 = 2;
-                                rx2 = 3;
-                                break;
-                        }
-                        break;
-                    //case HPSDRHW.Atlas: /// ???
-                    case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes
-                    case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII
-                        switch (tot)
-                        {
-                            case 0: // off off off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 1: // off off on
-                                sync1 = 0;
-                                sync2 = 1;
-                                break;
-                            case 2: // off on off
-                                sync1 = 0;
-                                sync2 = 1;
-                                break;
-                            case 3: // off on on
-                                sync1 = 0;
-                                sync2 = 1;
-                                break;
-                            case 4: // on off off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 5: // on off on
-                                sync1 = 0;
-                                sync2 = 1;
-                                break;
-                            case 6: // on on off
-                                sync1 = 0;
-                                sync2 = 1;
-                                break;
-                            case 7: // on on on
-                                sync1 = 0;
-                                sync2 = 1;
-                                break;
-                        }
-                        break;
-                }
             }
             else if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) // P1
             {
                 lblP2assignment.ForeColor = SystemColors.ControlText;
                 lblP2assignment.Font = new Font(lblP2assignment.Font, FontStyle.Regular);
 
-                lblP1assignment.ForeColor = Color.Green;
+                lblP1assignment.ForeColor = Color.LimeGreen;
                 lblP1assignment.Font = new Font(lblP1assignment.Font, FontStyle.Bold);
-
-                switch (console.CurrentHPSDRHardware)
-                {
-                    case HPSDRHW.Angelia: // ANAN-100D (all 5 adc)
-                    case HPSDRHW.Orion: // ANAN-200D
-                    case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
-                        switch (tot)
-                        {
-                            case 0: // off off off
-                                rx1 = 0;
-                                rx2 = 2;
-                                break;
-                            case 1: // off off on
-                                rx1 = 0;
-                                rx2 = 2;
-                                break;
-                            case 2: // off on off
-                                //rx1 = 0;
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx2 = 2;
-                                break;
-                            case 3: // off on on
-                                //rx1 = 0;
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx2 = 2;
-                                break;
-                            case 4: // on off off
-                                rx1 = 0;
-                                rx2 = 2;
-                                break;
-                            case 5: // on off on
-                                rx1 = 0;
-                                rx2 = 2;
-                                psrx = 3;
-                                pstx = 4;
-                                break;
-                            case 6: // on on off
-                                //rx1 = 0;
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx2 = 2;
-                                break;
-                            case 7: // on on on
-                                //rx1 = 0;
-                                sync1 = 0;
-                                sync2 = 1;
-                                rx2 = 2;
-                                psrx = 3;
-                                pstx = 4;
-                                break;
-                        }
-                        break;
-                    //                    case HPSDRHW.Atlas: /// ???
-                    case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes (4 adc)
-                        switch (tot)
-                        {
-                            case 0: // off off off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 1: // off off on
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 2: // off on off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 3: // off on on
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 4: // on off off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 5: // on off on
-                                rx1 = 0;
-                                rx2 = 1;
-                                psrx = 2;
-                                pstx = 3;
-                                break;
-                            case 6: // on on off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 7: // on on on
-                                rx1 = 0;
-                                rx2 = 1;
-                                psrx = 2;
-                                pstx = 3;
-                                break;
-                        }
-                        break;
-                    case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII (2 adc)
-                        switch (tot)
-                        {
-                            case 0: // off off off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 1: // off off on
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 2: // off on off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 3: // off on on
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 4: // on off off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 5: // on off on
-                                psrx = 0;
-                                pstx = 1;
-                                break;
-                            case 6: // on on off
-                                rx1 = 0;
-                                rx2 = 1;
-                                break;
-                            case 7: // on on on
-                                psrx = 0;
-                                pstx = 1;
-                                break;
-                        }
-                        break;
-                }
             }
+            //bool moxEnabeld = console.MOX;
+            //bool diversityEnabled = console.Diversity2;
+            //bool puresignalEnabled = console.psform.PSEnabled;
+
+            //int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+
+            //int tot = 0;
+            //tot += moxEnabeld ? 1 : 0;
+            //tot += diversityEnabled ? 2 : 0;
+            //tot += puresignalEnabled ? 4 : 0;
+
+            //if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) // P2
+            //{
+            //    lblP1assignment.ForeColor = SystemColors.ControlText;
+            //    lblP1assignment.Font = new Font(lblP1assignment.Font, FontStyle.Regular);
+
+            //    lblP2assignment.ForeColor = Color.Green;
+            //    lblP2assignment.Font = new Font(lblP2assignment.Font, FontStyle.Bold);
+
+            //    switch (console.CurrentHPSDRHardware)
+            //    {
+            //        case HPSDRHW.Angelia: // ANAN-100D
+            //        case HPSDRHW.Orion: // ANAN-200D
+            //        case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+            //            switch (tot)
+            //            {
+            //                case 0: // off off off
+            //                    rx1 = 2;
+            //                    rx2 = 3;
+            //                    break;
+            //                case 1: // off off on
+            //                    rx1 = 2;
+            //                    rx2 = 3;
+            //                    break;
+            //                case 2: // off on off
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx2 = 3;
+            //                    break;
+            //                case 3: // off on on
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx2 = 3;
+            //                    break;
+            //                case 4: // on off off
+            //                    rx1 = 2;
+            //                    rx2 = 3;
+            //                    break;
+            //                case 5: // on off on
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx1 = 2;
+            //                    rx2 = 3;
+            //                    break;
+            //                case 6: // on on off
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx2 = 3;
+            //                    break;
+            //                case 7: // on on on
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx1 = 2;
+            //                    rx2 = 3;
+            //                    break;
+            //            }
+            //            break;
+            //        //case HPSDRHW.Atlas: /// ???
+            //        case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes
+            //        case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII
+            //            switch (tot)
+            //            {
+            //                case 0: // off off off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 1: // off off on
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    break;
+            //                case 2: // off on off
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    break;
+            //                case 3: // off on on
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    break;
+            //                case 4: // on off off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 5: // on off on
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    break;
+            //                case 6: // on on off
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    break;
+            //                case 7: // on on on
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    break;
+            //            }
+            //            break;
+            //    }
+            //}
+            //else if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) // P1
+            //{
+            //    lblP2assignment.ForeColor = SystemColors.ControlText;
+            //    lblP2assignment.Font = new Font(lblP2assignment.Font, FontStyle.Regular);
+
+            //    lblP1assignment.ForeColor = Color.Green;
+            //    lblP1assignment.Font = new Font(lblP1assignment.Font, FontStyle.Bold);
+
+            //    switch (console.CurrentHPSDRHardware)
+            //    {
+            //        case HPSDRHW.Angelia: // ANAN-100D (all 5 adc)
+            //        case HPSDRHW.Orion: // ANAN-200D
+            //        case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+            //            switch (tot)
+            //            {
+            //                case 0: // off off off
+            //                    rx1 = 0;
+            //                    rx2 = 2;
+            //                    break;
+            //                case 1: // off off on
+            //                    rx1 = 0;
+            //                    rx2 = 2;
+            //                    break;
+            //                case 2: // off on off
+            //                    //rx1 = 0;
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx2 = 2;
+            //                    break;
+            //                case 3: // off on on
+            //                    //rx1 = 0;
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx2 = 2;
+            //                    break;
+            //                case 4: // on off off
+            //                    rx1 = 0;
+            //                    rx2 = 2;
+            //                    break;
+            //                case 5: // on off on
+            //                    rx1 = 0;
+            //                    rx2 = 2;
+            //                    psrx = 3;
+            //                    pstx = 4;
+            //                    break;
+            //                case 6: // on on off
+            //                    //rx1 = 0;
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx2 = 2;
+            //                    break;
+            //                case 7: // on on on
+            //                    //rx1 = 0;
+            //                    sync1 = 0;
+            //                    sync2 = 1;
+            //                    rx2 = 2;
+            //                    psrx = 3;
+            //                    pstx = 4;
+            //                    break;
+            //            }
+            //            break;
+            //        //                    case HPSDRHW.Atlas: /// ???
+            //        case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes (4 adc)
+            //            switch (tot)
+            //            {
+            //                case 0: // off off off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 1: // off off on
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 2: // off on off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 3: // off on on
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 4: // on off off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 5: // on off on
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    psrx = 2;
+            //                    pstx = 3;
+            //                    break;
+            //                case 6: // on on off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 7: // on on on
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    psrx = 2;
+            //                    pstx = 3;
+            //                    break;
+            //            }
+            //            break;
+            //        case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII (2 adc)
+            //            switch (tot)
+            //            {
+            //                case 0: // off off off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 1: // off off on
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 2: // off on off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 3: // off on on
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 4: // on off off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 5: // on off on
+            //                    psrx = 0;
+            //                    pstx = 1;
+            //                    break;
+            //                case 6: // on on off
+            //                    rx1 = 0;
+            //                    rx2 = 1;
+            //                    break;
+            //                case 7: // on on on
+            //                    psrx = 0;
+            //                    pstx = 1;
+            //                    break;
+            //            }
+            //            break;
+            //    }
+            //}
 
             //
             bool bUpdate = rx1 != -1 || rx2 != -1 || sync1 != -1 || sync2 != -1 || psrx != -1 || pstx != -1;
