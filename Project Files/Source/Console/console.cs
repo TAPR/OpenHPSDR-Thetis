@@ -8827,18 +8827,17 @@ namespace Thetis
             if (!IsSetupFormNull) SetupForm.UpdateDDCTab();
         }
 
-        public void getDDC(out int DDCrx1, out int DDCrx2)
+        public void GetDDC(out int DDCrx1, out int DDCrx2, out int DDCsync1, out int DDCsync2, out int DDCpsrx, out int DDCpstx)
         {
-            bool moxEnabeld = MOX;
-            bool diversityEnabled = Diversity2;
-            bool puresignalEnabled = psform.PSEnabled;
+            //https://docs.google.com/spreadsheets/d/1DbOAXuhHRE1hMBwz8PyxL5FblW5BoiAUzksPaGM0NXY
 
             int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
 
-            int tot = 0;
-            tot += moxEnabeld ? 1 : 0;
-            tot += diversityEnabled ? 2 : 0;
-            tot += puresignalEnabled ? 4 : 0;
+            int nME = MOX ? 1 : 0; // [0]
+            int nDE = diversityForm != null && Diversity2 ? 1 : 0; // [1]
+            int nPSE = psform.PSEnabled ? 1 : 0; // [2]
+
+            int tot = nME + (nDE << 1) + (nPSE << 2);
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) // P2
             {
@@ -8849,7 +8848,7 @@ namespace Thetis
                     case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
                         switch (tot)
                         {
-                            case 0: // off off off
+                            case 0: // off[2] off[1] off[0]
                                 rx1 = 2;
                                 rx2 = 3;
                                 break;
@@ -8872,8 +8871,8 @@ namespace Thetis
                                 rx2 = 3;
                                 break;
                             case 5: // on off on
-                                sync1 = 0;
-                                sync2 = 1;
+                                //sync1 = 0; //MW0LGE_22b no sync in map
+                                //sync2 = 1;
                                 rx1 = 2;
                                 rx2 = 3;
                                 break;
@@ -8883,8 +8882,8 @@ namespace Thetis
                                 rx2 = 3;
                                 break;
                             case 7: // on on on
-                                sync1 = 0;
-                                sync2 = 1;
+                                //sync1 = 0; //MW0LGE_22b no sync in map
+                                //sync2 = 1;
                                 rx1 = 2;
                                 rx2 = 3;
                                 break;
@@ -8900,8 +8899,10 @@ namespace Thetis
                                 rx2 = 1;
                                 break;
                             case 1: // off off on
-                                sync1 = 0;
-                                sync2 = 1;
+                                //sync1 = 0;  //MW0LGE_22b no sync in map
+                                //sync2 = 1;
+                                rx1 = 0;   //MW0LGE_22b missed out
+                                rx2 = 1;
                                 break;
                             case 2: // off on off
                                 sync1 = 0;
@@ -8916,16 +8917,16 @@ namespace Thetis
                                 rx2 = 1;
                                 break;
                             case 5: // on off on
-                                sync1 = 0;
-                                sync2 = 1;
+                                //sync1 = 0;  //MW0LGE_22b no sync in map
+                                //sync2 = 1;
                                 break;
                             case 6: // on on off
                                 sync1 = 0;
                                 sync2 = 1;
                                 break;
                             case 7: // on on on
-                                sync1 = 0;
-                                sync2 = 1;
+                                //sync1 = 0;  //MW0LGE_22b no sync in map
+                                //sync2 = 1;
                                 break;
                         }
                         break;
@@ -9068,31 +9069,42 @@ namespace Thetis
                 }
             }
 
-            if (diversityForm != null && diversityEnabled)
+            if (diversityForm != null && Diversity2)
             {
                 // check if we are using RX1+RX2, RX1 or RX2
                 switch (diversityForm.EXTDIVOutput)
                 {
                     case 0: //rx1
-                        rx1 = sync1;
+                    case 2: //rx1+rx2
+                        if(sync1 != -1) rx1 = sync1;
                         break;
                     case 1: //rx2
-                        rx1 = sync2;
-                        break;
-                    case 2: //rx1+rx2
-                        rx1 = sync1;
+                        if (sync2 != -1) rx1 = sync2;
                         break;
                 }
             }
-            //if (rx2 == -1 && sync2 != -1) rx2 = sync2;
 
-            if (rx1 == -1 && psrx != -1) rx1 = psrx;
+            if (!MOX && rx1 == -1 && psrx != -1) rx1 = psrx;
+            if (MOX && rx1 == -1 && pstx != -1) rx1 = pstx;
+
             if (rx2 == -1) rx2 = rx1;
 
             DDCrx1 = rx1;
             DDCrx2 = rx2;
+            DDCsync1 = sync1;
+            DDCsync2 = sync2;
+            DDCpsrx = psrx;
+            DDCpstx = pstx;
         }
 
+        public void UpdateDiversityMenuItem()
+        {
+            bool bDivOn = diversityForm != null && Diversity2;
+            if (bDivOn)
+                eSCToolStripMenuItem.ForeColor = Color.LimeGreen;
+            else
+                eSCToolStripMenuItem.ForeColor = SystemColors.ControlLightLight;
+        }
         private void UpdateDiversityValues()
         {
             if (!initializing && diversityForm != null)
@@ -11835,6 +11847,8 @@ namespace Thetis
                     UpdateAAudioMixerStates();
                     // chkRX2.Enabled = true;
                 }
+
+                UpdateDiversityMenuItem(); //MW0LGE_22b
             }
         }
 
@@ -12052,7 +12066,9 @@ namespace Thetis
                 else udRX1StepAttData.Maximum = (decimal)31;
 
                 //MW0LGE_22b step atten
-                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+
                 int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
                 int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
@@ -12190,7 +12206,9 @@ namespace Thetis
         {
             get
             {
-                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+
                 int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
                 int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
@@ -12217,7 +12235,9 @@ namespace Thetis
                 else udRX1StepAttData.Maximum = (decimal)31;
 
                 //MW0LGE_22b step atten
-                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+
                 int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
                 int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
@@ -20656,7 +20676,9 @@ namespace Thetis
                 }
 
                 //MW0LGE_22b
-                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+
                 int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
                 int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
@@ -20849,7 +20871,9 @@ namespace Thetis
                 //}
 
                 //MW0LGE_22b
-                getDDC(out int nRX1DDCinUse, out int nRX2DDCinUse);
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+
                 int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
                 int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 

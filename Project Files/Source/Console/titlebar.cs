@@ -34,19 +34,22 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "MW0LGE <REV>";
-        public const string BUILD_DATE = "(4/4/22)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
+        public const string BUILD_NAME = "MW0LGE pre-1";
+        public const string BUILD_DATE = "(4/19/22)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
 
         public static string GetString()
         {
-            string version = Common.GetVerNum();
+            string sRevision = "." + Common.GetRevision(); //MW0LGE_22b
+            if (sRevision == ".0") sRevision = "";
+
+            string version = Common.GetVerNum() + sRevision;
             string s = "Thetis";
 
             string sBits = Common.Is64Bit ? " x64" : " x86";
 
             s += " v" + version + sBits;
             if (BUILD_DATE != "") s += " " + BUILD_DATE;
-            if (BUILD_NAME != "") s += " " + BUILD_NAME.Replace("<REV>", "rev" + Common.GetRevision());
+            if (BUILD_NAME != "") s += " " + BUILD_NAME;
 
             return s;
         }
