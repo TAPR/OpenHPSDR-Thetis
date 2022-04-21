@@ -32721,7 +32721,7 @@ namespace Thetis
                 current_ptt_mode = PTTMode.MANUAL;
                 manual_mox = true;
 
-                NetworkIO.SetUserOut0(1);
+                NetworkIO.SetUserOut0(1);       // <--- love the way this is commented MW0LGE_22b - why are we switching DB9 pins? 1 & 3 ?
                 NetworkIO.SetUserOut2(1);
 
                 if (apollopresent && apollo_tuner_enabled)
@@ -52764,24 +52764,24 @@ namespace Thetis
             //
             if (!IsSetupFormNull)
             { 
-                if (GridMinFollowsNFRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER ||
+                if (bRX1Good && GridMinFollowsNFRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER ||
                                             Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
                                             Display.CurrentDisplayMode == DisplayMode.PANAFALL ||
                                             Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
                                             Display.CurrentDisplayMode == DisplayMode.WATERFALL))
                 {
-                    float setPoint = Display.ActiveNoiseFloorRX1 - _RX1NFoffsetGridFollow; // ActiveNoiseFloorRX1 ignores fast attack / good status
+                    float setPoint = _lastRX1NoiseFloor - _RX1NFoffsetGridFollow;
                     if (Math.Abs(SetupForm.DisplayGridMin - setPoint) >= 2) SetupForm.DisplayGridMin = setPoint;
                 }
 
-                if (RX2Enabled && GridMinFollowsNFRX2 &&
+                if (bRX2Good && RX2Enabled && GridMinFollowsNFRX2 &&
                                            (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER ||
                                             Display.CurrentDisplayModeBottom == DisplayMode.SPECTRUM ||
                                             Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL ||
                                             Display.CurrentDisplayModeBottom == DisplayMode.PANASCOPE ||
                                             Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL))
                 {
-                    float setPoint = Display.ActiveNoiseFloorRX2 - _RX2NFoffsetGridFollow; // ActiveNoiseFloorRX2 ignores fast attack / good status
+                    float setPoint = _lastRX2NoiseFloor - _RX2NFoffsetGridFollow;
                     if (Math.Abs(SetupForm.RX2DisplayGridMin - setPoint) >= 2) SetupForm.RX2DisplayGridMin = setPoint; // at least 2dB to move
                 }
             }
