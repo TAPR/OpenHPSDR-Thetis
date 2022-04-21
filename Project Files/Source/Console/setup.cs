@@ -16876,15 +16876,11 @@ namespace Thetis
                 updatePAProfileCombo(_sAutoCailbratePAOldSelectedProfile); //MW0LGE_22b
             }
         }
-        ////MW0LGE_21d step atten
-        //private bool adcsLinked()
-        //{
-        //    bool bRet = console.GetADCInUse(console.GetDDCForRX(1)) == console.GetADCInUse(console.GetDDCForRX(2));
-
-        //    lblADCLinked.Visible = bRet;
-
-        //    return bRet;
-        //}
+        //MW0LGE_22b
+        private bool ADCsLinked
+        {
+            set { lblADCLinked.Visible = value; }
+        }
 
         private void updateConsoleWithAttenuationInfo()
         {
@@ -16906,7 +16902,12 @@ namespace Thetis
                 udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
             }
 
-            //if (!initializing && adcsLinked() && (chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked)) chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked;
+            int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+            console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+
+            int nRX1ADCinUse = console.GetADCInUse(rx1);
+            int nRX2ADCinUse = console.GetADCInUse(rx2);
+            if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked) chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked;
         }
 
         private void udHermesStepAttenuatorData_ValueChanged(object sender, EventArgs e)
@@ -16922,8 +16923,6 @@ namespace Thetis
                 console.CurrentHPSDRModel != HPSDRModel.ORIONMKII)
                 udHermesStepAttenuatorData.Maximum = (decimal)61;
             else udHermesStepAttenuatorData.Maximum = (decimal)31;
-
-            //if (!initializing && adcsLinked() && (udHermesStepAttenuatorDataRX2.Value != udHermesStepAttenuatorData.Value)) udHermesStepAttenuatorDataRX2.Value = udHermesStepAttenuatorData.Value;
         }
 
         private void chkRX2StepAtt_CheckedChanged(object sender, EventArgs e)
@@ -16935,7 +16934,12 @@ namespace Thetis
                 udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty);
             }
 
-            //if (!initializing && adcsLinked() && (chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked)) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+            int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+            console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+
+            int nRX1ADCinUse = console.GetADCInUse(rx1);
+            int nRX2ADCinUse = console.GetADCInUse(rx2);
+            if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
         }
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
@@ -16950,8 +16954,6 @@ namespace Thetis
                 console.CurrentHPSDRModel != HPSDRModel.ORIONMKII)
                 udHermesStepAttenuatorDataRX2.Maximum = (decimal)61;
             else udHermesStepAttenuatorDataRX2.Maximum = (decimal)31;
-
-            //if (!initializing && adcsLinked() && (udHermesStepAttenuatorData.Value != udHermesStepAttenuatorDataRX2.Value)) udHermesStepAttenuatorData.Value = udHermesStepAttenuatorDataRX2.Value;
         }
 
         private void udAlex160mLPFStart_ValueChanged(object sender, EventArgs e)
@@ -17937,7 +17939,6 @@ namespace Thetis
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();
 
-            //adcsLinked(); //MW0LGE_21d step atten
             //updateConsoleWithAttenuationInfo();
         }
 
@@ -17978,7 +17979,6 @@ namespace Thetis
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();
 
-            //adcsLinked();  //MW0LGE_21d step atten
             //updateConsoleWithAttenuationInfo();
         }
 
@@ -21651,6 +21651,10 @@ namespace Thetis
             
             int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
             console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+
+            int nRX1ADCinUse = console.GetADCInUse(rx1);
+            int nRX2ADCinUse = console.GetADCInUse(rx2);
+            ADCsLinked = nRX1ADCinUse == nRX2ADCinUse;
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) // P2
             {

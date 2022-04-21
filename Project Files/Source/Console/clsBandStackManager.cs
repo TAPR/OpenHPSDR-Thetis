@@ -1034,8 +1034,11 @@ namespace Thetis
             switch (m_Region)
             {
                 case FRSRegion.Australia:
-                case FRSRegion.US:
                     AddRegion2BandStack();
+                    break;
+                case FRSRegion.US:
+                    AddRegion2BandStack(true);
+                    AddUS_PlusBandStack();
                     break;
                 case FRSRegion.Japan:
                     //AddRegionJapanBandStack();
@@ -1859,7 +1862,7 @@ namespace Thetis
 
             return b;
         }
-        private static void addBSObjectToEntries(object[] o)
+        private static void addBSObjectToEntries(object[] o, bool bIgnore60m = false)
         {
             for (int i = 0; i < o.Length / 7; i++)
             {
@@ -1876,6 +1879,8 @@ namespace Thetis
                     CentreFrequency = (double)o[i * 7 + 6],
                     Locked = false                                    
                 };
+
+                if (bIgnore60m && bse.Band == Band.B60M) continue;
                 
                 if (m_Region == FRSRegion.US && bse.Band == Band.B60M) bse.Locked = true; //pre-lock 60m band entries for the US
                 if (bse.Band == Band.WWV) bse.Locked = true; // pre-lock the WWV's
@@ -1975,7 +1980,7 @@ namespace Thetis
 
             addBSObjectToEntries(data);
         }
-        private static void AddRegion2BandStack()
+        private static void AddRegion2BandStack(bool bIgnore60m = false)
         {
             object[] data = {
                                 "160M", "CWL", "F5", 1.810000, false, 150, 0.0,
@@ -2051,7 +2056,7 @@ namespace Thetis
                                 "GEN", "SAM", "F4", 0.590000, false, 150, 0.0,
             };
 
-        addBSObjectToEntries(data);
+            addBSObjectToEntries(data, bIgnore60m);
         }
 
         private static void AddRegion3BandStack()
@@ -2276,6 +2281,18 @@ namespace Thetis
             addBSObjectToEntries(data);
         }
 
+        private static void AddUS_PlusBandStack()
+        {
+            object[] data = {
+                                "60M", "USB", "F6", 5.332000 - (0.002800 / 2f), false, 150, 0.0,
+                                "60M", "USB", "F6", 5.348000 - (0.002800 / 2f), false, 150, 0.0,
+                                "60M", "USB", "F6", 5.358500 - (0.002800 / 2f), false, 150, 0.0,
+                                "60M", "USB", "F6", 5.373000 - (0.002800 / 2f), false, 150, 0.0,
+                                "60M", "USB", "F6", 5.405000 - (0.002800 / 2f), false, 150, 0.0,
+            };
+
+            addBSObjectToEntries(data);
+        }
         private static void AddSwedenBandStack()
         {
             object[] data = {
