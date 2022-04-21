@@ -16902,12 +16902,15 @@ namespace Thetis
                 udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
             }
 
-            int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
-            console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+            if (!initializing && e != EventArgs.Empty)
+            {
+                int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
 
-            int nRX1ADCinUse = console.GetADCInUse(rx1);
-            int nRX2ADCinUse = console.GetADCInUse(rx2);
-            if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked) chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked;
+                int nRX1ADCinUse = console.GetADCInUse(rx1);
+                int nRX2ADCinUse = console.GetADCInUse(rx2);
+                if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked) chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked;
+            }
         }
 
         private void udHermesStepAttenuatorData_ValueChanged(object sender, EventArgs e)
@@ -16934,12 +16937,15 @@ namespace Thetis
                 udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty);
             }
 
-            int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
-            console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+            if (!initializing && e != EventArgs.Empty)
+            {
+                int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
 
-            int nRX1ADCinUse = console.GetADCInUse(rx1);
-            int nRX2ADCinUse = console.GetADCInUse(rx2);
-            if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+                int nRX1ADCinUse = console.GetADCInUse(rx1);
+                int nRX2ADCinUse = console.GetADCInUse(rx2);
+                if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+            }
         }
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
