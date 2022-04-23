@@ -62,18 +62,7 @@ namespace Thetis
 
 		public static MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
 
-		#region WindowDropShadow
-		private const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
-		[DllImport("dwmapi.dll")]
-		private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
-		[StructLayout(LayoutKind.Sequential)]
-		private struct RECT
-		{
-			public int left;
-			public int top;
-			public int right;
-			public int bottom;
-		}
+		#region HiglightControls
 		private static Dictionary<string, Color> m_backgroundColours = new Dictionary<string, Color>();
 		private static Dictionary<string, Color> m_foregoundColours = new Dictionary<string, Color>();
 		private static Dictionary<string, FlatStyle> m_flatStyle = new Dictionary<string, FlatStyle>();
@@ -154,6 +143,20 @@ namespace Thetis
 
 			c.Invalidate();
 		}
+		#endregion
+		#region WindowDropShadow
+		private const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
+		[StructLayout(LayoutKind.Sequential)]
+		private struct RECT
+		{
+			public int left;
+			public int top;
+			public int right;
+			public int bottom;
+		}
+		
 		public static Size DropShadowSize(Form f)
 		{
 			// this only works on a visibile form
@@ -757,6 +760,22 @@ namespace Thetis
 			}
 
 			return bRet;
+		}
+
+		public static void DoubleBuffered(Control c, bool bEnabled)
+        {
+			// MW0LGE_[2.9.0.6]
+			// not all controls (such as panels) have double buffered method
+			// try to use reflection, so we can keep the base panel
+			try
+			{
+				c.GetType().InvokeMember("DoubleBuffered",
+								System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+								null, c, new object[] { bEnabled });
+			}
+			catch 
+			{ 
+			}
 		}
 	}
 }

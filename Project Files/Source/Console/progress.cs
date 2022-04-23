@@ -55,6 +55,9 @@ namespace Thetis
 			this.SetStyle(ControlStyles.DoubleBuffer, true);
 			this.Text = s;
 			percent_done = 0.0f;
+
+			//MW0LGE_[2.9.0.6]
+			Common.DoubleBuffered(this.panel1, true);
 		}
 
 		protected override void Dispose( bool disposing )
@@ -75,41 +78,42 @@ namespace Thetis
 
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Progress));
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.btnAbort = new System.Windows.Forms.ButtonTS();
-			this.SuspendLayout();
-			// 
-			// panel1
-			// 
-			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.panel1.Location = new System.Drawing.Point(16, 16);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(208, 24);
-			this.panel1.TabIndex = 0;
-			this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
-			// 
-			// btnAbort
-			// 
-			this.btnAbort.Location = new System.Drawing.Point(240, 16);
-			this.btnAbort.Name = "btnAbort";
-			this.btnAbort.TabIndex = 1;
-			this.btnAbort.Text = "Abort";
-			this.btnAbort.Click += new System.EventHandler(this.btnAbort_Click);
-			// 
-			// Progress
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(5, 13);
-			this.ClientSize = new System.Drawing.Size(330, 56);
-			this.Controls.Add(this.btnAbort);
-			this.Controls.Add(this.panel1);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "Progress";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "progress";
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.Progress_Closing);
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Progress));
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnAbort = new System.Windows.Forms.ButtonTS();
+            this.SuspendLayout();
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Location = new System.Drawing.Point(16, 16);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(208, 24);
+            this.panel1.TabIndex = 0;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // btnAbort
+            // 
+            this.btnAbort.Image = null;
+            this.btnAbort.Location = new System.Drawing.Point(240, 16);
+            this.btnAbort.Name = "btnAbort";
+            this.btnAbort.Size = new System.Drawing.Size(75, 23);
+            this.btnAbort.TabIndex = 1;
+            this.btnAbort.Text = "Abort";
+            this.btnAbort.Click += new System.EventHandler(this.btnAbort_Click);
+            // 
+            // Progress
+            // 
+            this.ClientSize = new System.Drawing.Size(330, 56);
+            this.Controls.Add(this.btnAbort);
+            this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "Progress";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "progress";
+            this.Closing += new System.ComponentModel.CancelEventHandler(this.Progress_Closing);
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -175,6 +179,12 @@ namespace Thetis
 			sf.LineAlignment = StringAlignment.Center;
 
 			g.DrawString(s,	f, b2, new RectangleF(0, 0, panel1.Width, panel1.Height), sf);
+
+			//clear up //MW0LGE_[2.9.0.6]
+			b.Dispose();
+			b2.Dispose();
+			f.Dispose();
+			sf.Dispose();
 		}
 
 		private void Progress_Closing(object sender, System.ComponentModel.CancelEventArgs e)

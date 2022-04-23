@@ -972,6 +972,10 @@ namespace Thetis
             }
             else
             {
+                // fix flicker with panels/groups MW0LGE_[2.9.0.6]
+                Common.DoubleBuffered(grpMultimeter, true);
+                //
+
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
                 chkSquelch_CheckedChanged(this, EventArgs.Empty);
@@ -1129,11 +1133,13 @@ namespace Thetis
         private void SuspendDrawing(Control parent)
         {
             if (initializing) return;
+            parent.SuspendLayout();
             SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
         }
         private void ResumeDrawing(Control parent, bool refresh = true)
         {
             if (initializing) return;
+            parent.ResumeLayout();
             SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
             if (refresh) parent.Refresh();
         }
@@ -1477,22 +1483,23 @@ namespace Thetis
 
             rx_meter_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
             rx_display_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
-            for (int i = 0; i < (int)HPSDRModel.LAST; i++)
-            {
-                switch ((HPSDRModel)i)
-                {
-                    case HPSDRModel.ANAN7000D:
-                    case HPSDRModel.ANAN8000D:
-                    case HPSDRModel.ORIONMKII:
-                        rx_meter_cal_offset_by_radio[i] = 4.841644f;
-                        rx_display_cal_offset_by_radio[i] = 5.259f;
-                        break;
-                    default:
-                        rx_meter_cal_offset_by_radio[i] = 0.98f;
-                        rx_display_cal_offset_by_radio[i] = -2.1f;
-                        break;
-                }
-            }
+            ResetLevelCalibration(true); // MW0LGE_[2.9.0.6] removed code below, call reset so that code is in one place
+            //for (int i = 0; i < (int)HPSDRModel.LAST; i++)
+            //{
+            //    switch ((HPSDRModel)i)
+            //    {
+            //        case HPSDRModel.ANAN7000D:
+            //        case HPSDRModel.ANAN8000D:
+            //        case HPSDRModel.ORIONMKII:
+            //            rx_meter_cal_offset_by_radio[i] = 4.841644f;
+            //            rx_display_cal_offset_by_radio[i] = 5.259f;
+            //            break;
+            //        default:
+            //            rx_meter_cal_offset_by_radio[i] = 0.98f;
+            //            rx_display_cal_offset_by_radio[i] = -2.1f;
+            //            break;
+            //    }
+            //}
 
             ztb_data_by_band = new ztb_data[2][];// 2 rx
             ztb_data_by_band[0] = new ztb_data[(int)Band.LAST];
@@ -10317,6 +10324,11 @@ namespace Thetis
                     MessageBoxButtons.OK, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 return false;
             }
+
+            //MW0LGE_[2.9.0.6] turn off min grid
+            bool bOldMinGridFollowNF = GridMinFollowsNFRX1;
+            GridMinFollowsNFRX1 = false;
+
             calibration_running = true;
             // JanusAudio.FreqCorrectionFactor = 1.0;
             SetupForm.HPSDRFreqCorrectFactorViaAutoCalibration = 1.0;         // TURN-OFF CORRECTION
@@ -10369,6 +10381,8 @@ namespace Thetis
             VFOAFreq = float.Parse(vfo_freq_text);			// restore frequency
             calibration_running = false;
 
+            GridMinFollowsNFRX1 = bOldMinGridFollowNF;
+
             return true;
         }
 
@@ -10387,6 +10401,12 @@ namespace Thetis
                 calibration_running = false;
                 return false;
             }
+
+            //MW0LGE_[2.9.0.6] turn off min grid
+            bool bOldMinGridFollowNF = GridMinFollowsNFRX1;
+            bool bOldMinGridFollowNFrx2 = GridMinFollowsNFRX2;
+            GridMinFollowsNFRX1 = false;
+            GridMinFollowsNFRX2 = false;
 
             int ss = 0;
             int fft_size = specRX.GetSpecRX(0).FFTSize;     // get fft_size
@@ -10428,9 +10448,13 @@ namespace Thetis
             //  RX1Filter = Filter.F2;						   // set filter to 500Hz
 
             bool step_attn = SetupForm.HermesEnableAttenuator;
+            bool step_attnRX2 = SetupForm.RX2EnableAtt; //MW0LGE_[2.9.0.6]
             SetupForm.HermesEnableAttenuator = false;
+            SetupForm.RX2EnableAtt = false; //MW0LGE_[2.9.0.6]
             PreampMode preamp = RX1PreampMode;				// save current preamp mode
+            PreampMode preampRX2 = RX2PreampMode;				// save current preamp mode
             RX1PreampMode = PreampMode.HPSDR_ON;			// set to high
+            RX2PreampMode = PreampMode.HPSDR_ON;        //MW0LGE_[2.9.0.6]
 
             MeterRXMode rx_meter = CurrentMeterRXMode;			// save current RX Meter mode
             CurrentMeterRXMode = MeterRXMode.OFF;				// turn RX Meter off
@@ -10440,6 +10464,8 @@ namespace Thetis
 
             float old_multimeter_cal = rx1_meter_cal_offset;
             float old_display_cal = rx1_display_cal_offset;
+            float old_multimeter_cal_rx2 = rx2_meter_cal_offset; //MW0LGE_[2.9.0.6]
+            float old_display_cal_rx2 = rx2_display_cal_offset; //MW0LGE_[2.9.0.6]
 
             int progress_divisor;
             if (alexpresent)
@@ -10545,6 +10571,10 @@ namespace Thetis
             // RX1DisplayCalOffset = 0.0f;
             rx1_meter_cal_offset = 0.0f;
             rx1_display_cal_offset = 0.0f;
+            //MW0LGE_[2.9.0.6]
+            rx2_meter_cal_offset = 0.0f;
+            rx2_display_cal_offset = 0.0f;
+            //
             float num = 0.0f, num2 = 0.0f, avg2 = 0.0f;
             float avg = 0.0f;
             // get the value of the signal strength meter
@@ -10746,13 +10776,14 @@ namespace Thetis
 
             // calculate the difference between the current value and the correct multimeter value
             float diff = level - (avg + rx1_meter_cal_offset + rx1_preamp_offset[(int)rx1_preamp_mode]);
+            float diffRX2 = level - (avg + rx2_meter_cal_offset + rx2_preamp_offset[(int)rx2_preamp_mode]); // MW0LGE_[2.9.0.6]
             rx1_meter_cal_offset += diff;
-            rx2_meter_cal_offset = rx1_meter_cal_offset;
-            rx_meter_cal_offset_by_radio[(int)current_hpsdr_model] = rx1_meter_cal_offset;
+            rx2_meter_cal_offset += diffRX2; //rx1_meter_cal_offset;
+            //rx_meter_cal_offset_by_radio[(int)current_hpsdr_model] = rx1_meter_cal_offset;  // MW0LGE_[2.9.0.6] done below
 
             // calculate the difference between the current value and the correct spectrum value
             diff = level - (avg2 + rx1_display_cal_offset + rx1_preamp_offset[(int)rx1_preamp_mode]);
-
+            diffRX2 = level - (avg2 + rx2_display_cal_offset + rx2_preamp_offset[(int)rx2_preamp_mode]); // MW0LGE_[2.9.0.6]
             /*     for (int i = 0; i < (int)Band.LAST; i++)
                  {
                      rx1_level_table[i][0] = (float)Math.Round(diff, 3);
@@ -10768,6 +10799,7 @@ namespace Thetis
                  } */
 
             RX1DisplayCalOffset += diff;
+            RX2DisplayCalOffset += diffRX2; // MW0LGE_[2.9.0.6]
             rx_display_cal_offset_by_radio[(int)current_hpsdr_model] = RX1DisplayCalOffset;
 
             //   if (!rx2_preamp_present)
@@ -10789,6 +10821,8 @@ namespace Thetis
             {
                 rx1_meter_cal_offset = old_multimeter_cal;
                 rx1_display_cal_offset = old_display_cal;
+                rx2_meter_cal_offset = old_multimeter_cal_rx2; //MW0LGE_[2.9.0.6]
+                rx2_display_cal_offset = old_display_cal_rx2;
             }
 
             comboDisplayMode.Text = display;
@@ -10797,7 +10831,9 @@ namespace Thetis
             //SetupForm.RXOnly = rx_only;						// restore RX Only			
             //  DisplayAVG = display_avg;							// restore AVG value
             RX1PreampMode = preamp;					        	// restore preamp value
+            RX2PreampMode = preampRX2;					        	// restore preamp value MW0LGE_[2.9.0.6]
             SetupForm.HermesEnableAttenuator = step_attn;
+            SetupForm.RX2EnableAtt = step_attnRX2;   //MW0LGE_[2.9.0.6] 
             // RX1Filter = am_filter;							// restore AM filter
             RX1DSPMode = dsp_mode;						    	// restore DSP mode
             // RX1Filter = filter;								// restore filter
@@ -10823,6 +10859,15 @@ namespace Thetis
             // }
 
             calibration_running = false;
+
+            GridMinFollowsNFRX1 = bOldMinGridFollowNF; //MW0LGE_[2.9.0.6]
+            GridMinFollowsNFRX2 = bOldMinGridFollowNFrx2;
+
+            if (ret_val) //MW0LGE_[2.9.0.6]
+            {
+                UpdateRX1DisplayOffsets();
+                UpdateRX2DisplayOffsets();
+            }
             return ret_val;
         }
 
@@ -14713,7 +14758,7 @@ namespace Thetis
             set
             {
                 rx1_display_cal_offset = value;
-                RX2DisplayCalOffset = value;
+                //RX2DisplayCalOffset = value; //MW0LGE_[2.9.0.6] seperated from RX1
                 //  UpdateDisplayOffsets();
             }
         }
@@ -31990,7 +32035,6 @@ namespace Thetis
         private bool mox = false;
         private PreampMode temp_mode = PreampMode.HPSDR_OFF; // HPSDR preamp mode
         private PreampMode temp_mode2 = PreampMode.HPSDR_OFF; // HPSDR preamp mode
-
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
             bool bOldMox = mox; //MW0LGE_21b used for state change delgates at end of fn
@@ -32025,7 +32069,7 @@ namespace Thetis
 
             if (tx) mox = tx;
             double freq = 0.0;
-
+            /*  //MW0LGE [2.9.0.6] removed as peformed in UIMOXChangedTrue/UIMOXChangedFalse
             if (tx)                          // change to TX mode
             {
                 DisableAllModes();      //Disallow mode changes in transmit mode               
@@ -32036,8 +32080,7 @@ namespace Thetis
                 {
                     EnableAllModes();    //Re-enable mode changes in receive mode                     
                 }
-            }
-
+            }*/
             if (tx)
             {
                 //FM Offsets
@@ -32178,14 +32221,12 @@ namespace Thetis
                 }
             }
 
+            pause_DisplayThread = true; // MW0LGE_21k8 turn display off whilst everything is being setup, prevents flashes of pixels etc
             if (tx)                     // change to TX mode
             {
                 //
-                if(!chkTUN.Checked && !chk2TONE.Checked) ptbPWR_Scroll(this, EventArgs.Empty); //MW0LGE_22b need this here as we may have adjusted power via tune slider when not in mox
+                if (!chkTUN.Checked && !chk2TONE.Checked) ptbPWR_Scroll(this, EventArgs.Empty); //MW0LGE_22b need this here as we may have adjusted power via tune slider when not in mox
                 //
-
-                pause_DisplayThread = true; // MW0LGE_21k8 turn display off whilst everything is being setup, prevents flashes of pixels etc
-
                 if (!full_duplex)       // shutdown RX1 and RX2 as appropriate
                 {
                     bool RX1_shutdown = chkVFOATX.Checked || (chkVFOBTX.Checked && !RX2Enabled) || mute_rx1_on_vfob_tx || (chkVFOBTX.Checked && current_hpsdr_model == HPSDRModel.ANAN10E && psform.PSEnabled);
@@ -32203,7 +32244,6 @@ namespace Thetis
                         WDSP.SetChannelState(WDSP.id(0, 0), 0, 0);
                         WDSP.SetChannelState(WDSP.id(2, 0), 0, 1);
                     }
-
                 }
 
                 if (m_bAttontx)
@@ -32255,8 +32295,6 @@ namespace Thetis
             }
             else                        // change to RX mode
             {
-                pause_DisplayThread = true; // MW0LGE_21k8 turn display off whilst everything is being setup, prevents flashes of pixels etc
-
                 if (space_mox_delay > 0)
                     Thread.Sleep(space_mox_delay); // default 0 // from PSDR MW0LGE
 
@@ -40841,7 +40879,7 @@ namespace Thetis
                     break;
             }
         }
-
+        private int _oldFilterShiftCentre = -1;
         private void ptbFilterShift_Scroll(object sender, System.EventArgs e)
         {
             MouseEventArgs mouseEvent = e as MouseEventArgs;
@@ -40895,11 +40933,10 @@ namespace Thetis
             }
 
             int range = ptbFilterShift.Maximum - ptbFilterShift.Minimum;
-            //int new_center = default_center + (int)((float)ptbFilterShift.Value / (range / 2) * adjusted_max);
-            //MW0LGE_22b above line changed to the following 3, to fix issue where mouse wheel would not change in the +ve direciton, due to (int) rounding towards lower int
-            float tmp = ((float)ptbFilterShift.Value / (range / 2f) * adjusted_max);
-            int shift = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
-            int new_center = default_center + shift;
+            int new_center = default_center + (int)((float)ptbFilterShift.Value / (range / 2) * adjusted_max);
+
+            if (new_center == _oldFilterShiftCentre) return; // if the new_center hasnt changed, ignore it MW0LGE_[2.9.0.6]
+            _oldFilterShiftCentre = new_center;
 
             // stop filter moving over 0 MW0LGE_21k9
             int nNewLow = new_center - bw / 2;
@@ -41141,6 +41178,7 @@ namespace Thetis
         }
 
         private bool beyondLimit = false;
+        private int _oldFilterBW = -1;
         private void ptbFilterWidth_Scroll(object sender, System.EventArgs e)
         {
             if (rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC)
@@ -41155,34 +41193,36 @@ namespace Thetis
 
             int range = ptbFilterWidth.Maximum - ptbFilterWidth.Minimum;
             int new_bw = 0;
-            float tmp;
-
+            double tmp = 0;
             switch (current_filter_width_mode)
             {
                 case FilterWidthMode.Linear:
-                    //new_bw = (int)((float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * max_filter_width); //MW0LGE_22b changed to the following to fix +ve direciton issue
+                    //new_bw = (int)((float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * max_filter_width);
                     tmp = (float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * max_filter_width;
-                    new_bw = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
                     break;
                 case FilterWidthMode.Log:
                     double max_log = Math.Log(ptbFilterWidth.Maximum);
                     double temp = Math.Log(Math.Max((ptbFilterWidth.Maximum - ptbFilterWidth.Value), 1.0));
                     temp = max_log - temp;
-                    //new_bw = (int)((float)(temp / max_log * max_filter_width)); //MW0LGE_22b
+                    //new_bw = (int)((float)(temp / max_log * max_filter_width));
                     tmp = (float)(temp / max_log * max_filter_width);
-                    new_bw = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
                     break;
                 case FilterWidthMode.Log10:
                     max_log = Math.Log10(ptbFilterWidth.Maximum);
                     temp = Math.Log10(Math.Max((ptbFilterWidth.Maximum - ptbFilterWidth.Value), 1.0));
                     temp = max_log - temp;
-                    //new_bw = (int)((float)(temp / max_log * max_filter_width)); //MW0LGE_22b
+                    //new_bw = (int)((float)(temp / max_log * max_filter_width));
                     tmp = (float)(temp / max_log * max_filter_width);
-                    new_bw = bScrollUp ? (int)Math.Ceiling(tmp) : (int)Math.Floor(tmp);
                     break;
             }
+            tmp = bScrollUp ? Math.Ceiling(tmp + 0.5f) : Math.Ceiling(tmp - 0.5); // MW0LGE_[2.9.0.6]  fix for mouse wheel
+            new_bw = (int)tmp;
 
             new_bw = Math.Max(new_bw, 10);
+
+            if (new_bw == _oldFilterBW) return; // if the new_center hasnt changed, ignore it MW0LGE_[2.9.0.6]
+            _oldFilterBW = new_bw;
+
             int current_center = ((int)udFilterLow.Value + (int)udFilterHigh.Value) / 2;
             int low = 0, high = 0;
             switch (rx1_dsp_mode)
@@ -53622,6 +53662,37 @@ namespace Thetis
         private void ptbTune_MouseUp(object sender, MouseEventArgs e)
         {
             UpdateTuneLabel(false, EventArgs.Empty);
+        }
+
+        public void ResetLevelCalibration(bool ignoreSet = false)
+        {
+            for (int i = 0; i < (int)HPSDRModel.LAST; i++)
+            {
+                switch ((HPSDRModel)i)
+                {
+                    case HPSDRModel.ANAN7000D:
+                    case HPSDRModel.ANAN8000D:
+                    case HPSDRModel.ORIONMKII:
+                        rx_meter_cal_offset_by_radio[i] = 4.841644f;
+                        rx_display_cal_offset_by_radio[i] = 5.259f;
+                        break;
+                    default:
+                        rx_meter_cal_offset_by_radio[i] = 0.98f;
+                        rx_display_cal_offset_by_radio[i] = -2.1f;
+                        break;
+                }
+            }
+
+            if (ignoreSet) return;
+
+            rx1_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
+            rx2_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
+
+            RX1DisplayCalOffset = rx_display_cal_offset_by_radio[(int)current_hpsdr_model];
+            RX2DisplayCalOffset = rx_display_cal_offset_by_radio[(int)current_hpsdr_model];
+
+            UpdateRX1DisplayOffsets();
+            UpdateRX2DisplayOffsets();
         }
     }
 
