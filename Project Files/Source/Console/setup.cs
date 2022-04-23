@@ -7208,7 +7208,15 @@ namespace Thetis
 
         private void btnGeneralCalLevelStart_Click(object sender, System.EventArgs e)
         {
+            DialogResult dr = MessageBox.Show(
+            "Is the calibrated signal present at the correct frequency?",
+            "Level Calibration Check",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
+            if (dr == DialogResult.No) return; //MW0LGE_[2.9.0.6] double check we want to do this, prevents accidental click from changing config
+
             btnGeneralCalLevelStart.Enabled = false;
+            btnResetLevelCal.Enabled = false;
             progress = new Progress("Calibrate RX Level");
 
             Thread t = new Thread(new ThreadStart(CalibrateLevel))
@@ -7258,8 +7266,10 @@ namespace Thetis
                 (float)udGeneralCalFreq2.Value,
                 progress,
                 false);
+
             if (done) MessageBox.Show("Level Calibration complete.");
             btnGeneralCalLevelStart.Enabled = true;
+            btnResetLevelCal.Enabled = true;
         }
 
         private void CalibrateRX2Level()
@@ -16902,7 +16912,8 @@ namespace Thetis
                 udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
             }
 
-            if (!initializing && e != EventArgs.Empty)
+            CheckBoxTS chk = sender as CheckBoxTS;
+            if (chk != null) // only if we click it //MW0LGE [2.9.0.6]
             {
                 int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
                 console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
@@ -16937,7 +16948,8 @@ namespace Thetis
                 udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty);
             }
 
-            if (!initializing && e != EventArgs.Empty)
+            CheckBoxTS chk = sender as CheckBoxTS;
+            if (chk != null) // only if we click it //MW0LGE [2.9.0.6]
             {
                 int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
                 console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
@@ -25106,6 +25118,18 @@ namespace Thetis
         private void nudRX1NFoffsetGridFollow_ValueChanged(object sender, EventArgs e)
         {
             console.RX1NFoffsetGridFollow = (float)nudRX1NFoffsetGridFollow.Value;
+        }
+
+        private void btnResetLevelCal_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show(
+                "Do you want to reset Level Calibration back to defaults ?",
+                "Level Defaults",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (dr == DialogResult.Yes)
+                console.ResetLevelCalibration();
         }
     }
 

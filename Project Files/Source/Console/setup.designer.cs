@@ -3310,6 +3310,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.btnResetLevelCal = new System.Windows.Forms.Button();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -9019,7 +9020,7 @@
             this.panelRX2LevelCal.Controls.Add(this.btnCalLevel);
             this.panelRX2LevelCal.Controls.Add(this.udGeneralCalRX2Freq2);
             this.panelRX2LevelCal.Controls.Add(this.labelTS136);
-            this.panelRX2LevelCal.Location = new System.Drawing.Point(188, 212);
+            this.panelRX2LevelCal.Location = new System.Drawing.Point(188, 265);
             this.panelRX2LevelCal.Name = "panelRX2LevelCal";
             this.panelRX2LevelCal.Size = new System.Drawing.Size(151, 100);
             this.panelRX2LevelCal.TabIndex = 14;
@@ -9303,6 +9304,7 @@
             // 
             // grpGenCalLevel
             // 
+            this.grpGenCalLevel.Controls.Add(this.btnResetLevelCal);
             this.grpGenCalLevel.Controls.Add(this.ud6mRx2LNAGainOffset);
             this.grpGenCalLevel.Controls.Add(this.lblRx26mLNA);
             this.grpGenCalLevel.Controls.Add(this.ud6mLNAGainOffset);
@@ -9314,7 +9316,7 @@
             this.grpGenCalLevel.Controls.Add(this.btnGeneralCalLevelStart);
             this.grpGenCalLevel.Location = new System.Drawing.Point(184, 8);
             this.grpGenCalLevel.Name = "grpGenCalLevel";
-            this.grpGenCalLevel.Size = new System.Drawing.Size(168, 198);
+            this.grpGenCalLevel.Size = new System.Drawing.Size(168, 227);
             this.grpGenCalLevel.TabIndex = 8;
             this.grpGenCalLevel.TabStop = false;
             this.grpGenCalLevel.Text = "Level Cal";
@@ -9327,7 +9329,7 @@
             0,
             0,
             0});
-            this.ud6mRx2LNAGainOffset.Location = new System.Drawing.Point(101, 165);
+            this.ud6mRx2LNAGainOffset.Location = new System.Drawing.Point(101, 190);
             this.ud6mRx2LNAGainOffset.Maximum = new decimal(new int[] {
             25,
             0,
@@ -9354,7 +9356,7 @@
             // lblRx26mLNA
             // 
             this.lblRx26mLNA.Image = null;
-            this.lblRx26mLNA.Location = new System.Drawing.Point(16, 162);
+            this.lblRx26mLNA.Location = new System.Drawing.Point(16, 187);
             this.lblRx26mLNA.Name = "lblRx26mLNA";
             this.lblRx26mLNA.Size = new System.Drawing.Size(88, 23);
             this.lblRx26mLNA.TabIndex = 17;
@@ -9369,7 +9371,7 @@
             0,
             0,
             0});
-            this.ud6mLNAGainOffset.Location = new System.Drawing.Point(101, 130);
+            this.ud6mLNAGainOffset.Location = new System.Drawing.Point(101, 155);
             this.ud6mLNAGainOffset.Maximum = new decimal(new int[] {
             25,
             0,
@@ -9396,7 +9398,7 @@
             // labelTS324
             // 
             this.labelTS324.Image = null;
-            this.labelTS324.Location = new System.Drawing.Point(16, 127);
+            this.labelTS324.Location = new System.Drawing.Point(16, 152);
             this.labelTS324.Name = "labelTS324";
             this.labelTS324.Size = new System.Drawing.Size(88, 23);
             this.labelTS324.TabIndex = 13;
@@ -52616,6 +52618,17 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // btnResetLevelCal
+            // 
+            this.btnResetLevelCal.Location = new System.Drawing.Point(42, 109);
+            this.btnResetLevelCal.Name = "btnResetLevelCal";
+            this.btnResetLevelCal.Size = new System.Drawing.Size(75, 23);
+            this.btnResetLevelCal.TabIndex = 19;
+            this.btnResetLevelCal.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnResetLevelCal, "Click to reset the freq  correction factor");
+            this.btnResetLevelCal.UseVisualStyleBackColor = true;
+            this.btnResetLevelCal.Click += new System.EventHandler(this.btnResetLevelCal_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -56995,5 +57008,6 @@
         private CheckBoxTS chkAdjustGridMinToNFRX2;
         private NumericUpDownTS nudRX1NFoffsetGridFollow;
         private NumericUpDownTS nudRX2NFoffsetGridFollow;
+        private Button btnResetLevelCal;
     }
 }
