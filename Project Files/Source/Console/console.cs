@@ -2990,8 +2990,8 @@ namespace Thetis
             //
 
             a.Add("infoBar_flip/" + infoBar.CurrentFlip.ToString()); //MW0LGE_21k9rc4 info bar currentflip
-            a.Add("infoBar_button1/" + infoBar.Button1Action.ToString());
-            a.Add("infoBar_button2/" + infoBar.Button2Action.ToString());
+            a.Add("infoBar_button1/" + ((int)infoBar.Button1Action).ToString()); //MW0LGE_[2.9.0.6] change to in, to prevent getstate issues if enaum names change
+            a.Add("infoBar_button2/" + ((int)infoBar.Button2Action).ToString());
             a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("0.0000")); //MW0LGE_21k9c changed format
 
             a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
@@ -3869,10 +3869,24 @@ namespace Thetis
                         infoBar.CurrentFlip = int.Parse(val);
                         break;
                     case "infoBar_button1":
-                        infoBar.Button1Action = (ucInfoBar.ActionTypes)Enum.Parse(typeof(ucInfoBar.ActionTypes), val);
+                        {
+                            //infoBar.Button1Action = (ucInfoBar.ActionTypes)Enum.Parse(typeof(ucInfoBar.ActionTypes), val);  //MW0LGE_[2.9.0.6] fix issue where Tdrv was saved, now works on numberic value of the enum
+                            bool bOk = Enum.TryParse<ucInfoBar.ActionTypes>(val, out ucInfoBar.ActionTypes action);
+                            if (bOk)
+                                infoBar.Button1Action = action;
+                            else
+                                infoBar.Button1Action = ucInfoBar.ActionTypes.Blobs;
+                        }
                         break;
                     case "infoBar_button2":
-                        infoBar.Button2Action = (ucInfoBar.ActionTypes)Enum.Parse(typeof(ucInfoBar.ActionTypes), val);
+                        {
+                            //infoBar.Button2Action = (ucInfoBar.ActionTypes)Enum.Parse(typeof(ucInfoBar.ActionTypes), val);
+                            bool bOk = Enum.TryParse<ucInfoBar.ActionTypes>(val, out ucInfoBar.ActionTypes action);
+                            if (bOk)
+                                infoBar.Button2Action = action;
+                            else
+                                infoBar.Button2Action = ucInfoBar.ActionTypes.ActivePeaks;
+                        }
                         break;
                     case "infoBar_splitter_ratio":
                         infoBar.SplitterRatio = float.Parse(val);
@@ -17371,7 +17385,9 @@ namespace Thetis
         {
             set
             {
-                btnZeroBeat.PerformClick();
+                //btnZeroBeat.PerformClick(); //MW0LGE_[2.9.0.6] will not happen if the button is hidden (ie in collapsed view)
+                                              // why it is in a setter is another matter that should be changed at some point
+                btnZeroBeat_Click(this, EventArgs.Empty);
             }
         }
 
