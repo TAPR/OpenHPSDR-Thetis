@@ -373,6 +373,7 @@
             this.labelTS10 = new System.Windows.Forms.LabelTS();
             this.chkCalExpert = new System.Windows.Forms.CheckBoxTS();
             this.grpGenCalLevel = new System.Windows.Forms.GroupBoxTS();
+            this.btnResetLevelCal = new System.Windows.Forms.Button();
             this.ud6mRx2LNAGainOffset = new System.Windows.Forms.NumericUpDownTS();
             this.lblRx26mLNA = new System.Windows.Forms.LabelTS();
             this.ud6mLNAGainOffset = new System.Windows.Forms.NumericUpDownTS();
@@ -2634,9 +2635,9 @@
             this.chkPA10 = new System.Windows.Forms.CheckBoxTS();
             this.chkPA6 = new System.Windows.Forms.CheckBoxTS();
             this.tpWattMeter = new System.Windows.Forms.TabPage();
-            this.btnResetWattMeterValues = new System.Windows.Forms.ButtonTS();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.grp10WattMeterTrim = new System.Windows.Forms.GroupBox();
+            this.btnResetWattMeterValues = new System.Windows.Forms.ButtonTS();
             this.ud10PA1W = new System.Windows.Forms.NumericUpDownTS();
             this.ud10PA10W = new System.Windows.Forms.NumericUpDownTS();
             this.label10PA9W = new System.Windows.Forms.LabelTS();
@@ -3310,7 +3311,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.btnResetLevelCal = new System.Windows.Forms.Button();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -9320,6 +9320,17 @@
             this.grpGenCalLevel.TabIndex = 8;
             this.grpGenCalLevel.TabStop = false;
             this.grpGenCalLevel.Text = "Level Cal";
+            // 
+            // btnResetLevelCal
+            // 
+            this.btnResetLevelCal.Location = new System.Drawing.Point(42, 109);
+            this.btnResetLevelCal.Name = "btnResetLevelCal";
+            this.btnResetLevelCal.Size = new System.Drawing.Size(75, 23);
+            this.btnResetLevelCal.TabIndex = 19;
+            this.btnResetLevelCal.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnResetLevelCal, "Click to reset the freq  correction factor");
+            this.btnResetLevelCal.UseVisualStyleBackColor = true;
+            this.btnResetLevelCal.Click += new System.EventHandler(this.btnResetLevelCal_Click);
             // 
             // ud6mRx2LNAGainOffset
             // 
@@ -40982,7 +40993,7 @@
             this.lblMaxPowerForBandPA.Name = "lblMaxPowerForBandPA";
             this.lblMaxPowerForBandPA.Size = new System.Drawing.Size(244, 18);
             this.lblMaxPowerForBandPA.TabIndex = 0;
-            this.lblMaxPowerForBandPA.Text = "Actual Power @ 100% slider: VHF13";
+            this.lblMaxPowerForBandPA.Text = "Actual Power @ 100% slider:      ";
             this.lblMaxPowerForBandPA.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // panelAdjustGain
@@ -41032,7 +41043,7 @@
             this.lblAdjustBand.Name = "lblAdjustBand";
             this.lblAdjustBand.Size = new System.Drawing.Size(123, 15);
             this.lblAdjustBand.TabIndex = 160;
-            this.lblAdjustBand.Text = "Offset for: VHF13";
+            this.lblAdjustBand.Text = "Offset for:";
             this.lblAdjustBand.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lblPAAdjust90
@@ -41043,7 +41054,7 @@
             this.lblPAAdjust90.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust90.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust90.TabIndex = 159;
-            this.lblPAAdjust90.Text = "9999.9w";
+            this.lblPAAdjust90.Text = "90";
             this.lblPAAdjust90.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust80
@@ -41054,7 +41065,7 @@
             this.lblPAAdjust80.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust80.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust80.TabIndex = 158;
-            this.lblPAAdjust80.Text = "9999.9w";
+            this.lblPAAdjust80.Text = "80";
             this.lblPAAdjust80.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust70
@@ -41065,7 +41076,7 @@
             this.lblPAAdjust70.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust70.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust70.TabIndex = 157;
-            this.lblPAAdjust70.Text = "9999.9w";
+            this.lblPAAdjust70.Text = "70";
             this.lblPAAdjust70.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust60
@@ -41076,7 +41087,7 @@
             this.lblPAAdjust60.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust60.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust60.TabIndex = 156;
-            this.lblPAAdjust60.Text = "9999.9w";
+            this.lblPAAdjust60.Text = "60";
             this.lblPAAdjust60.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust50
@@ -41087,7 +41098,7 @@
             this.lblPAAdjust50.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust50.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust50.TabIndex = 155;
-            this.lblPAAdjust50.Text = "9999.9w";
+            this.lblPAAdjust50.Text = "50";
             this.lblPAAdjust50.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust40
@@ -41098,7 +41109,7 @@
             this.lblPAAdjust40.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust40.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust40.TabIndex = 154;
-            this.lblPAAdjust40.Text = "9999.9w";
+            this.lblPAAdjust40.Text = "40";
             this.lblPAAdjust40.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust30
@@ -41109,7 +41120,7 @@
             this.lblPAAdjust30.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust30.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust30.TabIndex = 153;
-            this.lblPAAdjust30.Text = "9999.9w";
+            this.lblPAAdjust30.Text = "30";
             this.lblPAAdjust30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust20
@@ -41120,7 +41131,7 @@
             this.lblPAAdjust20.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust20.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust20.TabIndex = 152;
-            this.lblPAAdjust20.Text = "9999.9w";
+            this.lblPAAdjust20.Text = "20";
             this.lblPAAdjust20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPAAdjust10
@@ -41131,7 +41142,7 @@
             this.lblPAAdjust10.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPAAdjust10.Size = new System.Drawing.Size(54, 16);
             this.lblPAAdjust10.TabIndex = 151;
-            this.lblPAAdjust10.Text = "9999.9w";
+            this.lblPAAdjust10.Text = "10";
             this.lblPAAdjust10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // nudAdjustGain90
@@ -42703,7 +42714,6 @@
             // tpWattMeter
             // 
             this.tpWattMeter.BackColor = System.Drawing.SystemColors.Control;
-            this.tpWattMeter.Controls.Add(this.btnResetWattMeterValues);
             this.tpWattMeter.Controls.Add(this.richTextBox1);
             this.tpWattMeter.Controls.Add(this.grp10WattMeterTrim);
             this.tpWattMeter.Controls.Add(this.grp100WattMeterTrim);
@@ -42717,18 +42727,6 @@
             this.tpWattMeter.TabIndex = 1;
             this.tpWattMeter.Text = "Watt Meter";
             // 
-            // btnResetWattMeterValues
-            // 
-            this.btnResetWattMeterValues.Image = null;
-            this.btnResetWattMeterValues.Location = new System.Drawing.Point(165, 216);
-            this.btnResetWattMeterValues.Name = "btnResetWattMeterValues";
-            this.btnResetWattMeterValues.Size = new System.Drawing.Size(50, 23);
-            this.btnResetWattMeterValues.TabIndex = 6;
-            this.btnResetWattMeterValues.Text = "Reset";
-            this.toolTip1.SetToolTip(this.btnResetWattMeterValues, "Reset trim values to default.");
-            this.btnResetWattMeterValues.UseVisualStyleBackColor = true;
-            this.btnResetWattMeterValues.Click += new System.EventHandler(this.btnResetWattMeterValues_Click);
-            // 
             // richTextBox1
             // 
             this.richTextBox1.Location = new System.Drawing.Point(68, 275);
@@ -42740,6 +42738,7 @@
             // 
             // grp10WattMeterTrim
             // 
+            this.grp10WattMeterTrim.Controls.Add(this.btnResetWattMeterValues);
             this.grp10WattMeterTrim.Controls.Add(this.ud10PA1W);
             this.grp10WattMeterTrim.Controls.Add(this.ud10PA10W);
             this.grp10WattMeterTrim.Controls.Add(this.label10PA9W);
@@ -42770,10 +42769,22 @@
             this.grp10WattMeterTrim.Controls.Add(this.label10PA3W);
             this.grp10WattMeterTrim.Location = new System.Drawing.Point(71, 19);
             this.grp10WattMeterTrim.Name = "grp10WattMeterTrim";
-            this.grp10WattMeterTrim.Size = new System.Drawing.Size(249, 198);
+            this.grp10WattMeterTrim.Size = new System.Drawing.Size(249, 231);
             this.grp10WattMeterTrim.TabIndex = 23;
             this.grp10WattMeterTrim.TabStop = false;
             this.grp10WattMeterTrim.Text = "10 Watt Meter Trim";
+            // 
+            // btnResetWattMeterValues
+            // 
+            this.btnResetWattMeterValues.Image = null;
+            this.btnResetWattMeterValues.Location = new System.Drawing.Point(100, 197);
+            this.btnResetWattMeterValues.Name = "btnResetWattMeterValues";
+            this.btnResetWattMeterValues.Size = new System.Drawing.Size(50, 23);
+            this.btnResetWattMeterValues.TabIndex = 6;
+            this.btnResetWattMeterValues.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnResetWattMeterValues, "Reset trim values to default.");
+            this.btnResetWattMeterValues.UseVisualStyleBackColor = true;
+            this.btnResetWattMeterValues.Click += new System.EventHandler(this.btnResetWattMeterValues_Click);
             // 
             // ud10PA1W
             // 
@@ -44578,7 +44589,7 @@
             this.panelPAValues.Controls.Add(this.labelTS270);
             this.panelPAValues.Location = new System.Drawing.Point(326, 12);
             this.panelPAValues.Name = "panelPAValues";
-            this.panelPAValues.Size = new System.Drawing.Size(309, 189);
+            this.panelPAValues.Size = new System.Drawing.Size(309, 195);
             this.panelPAValues.TabIndex = 2;
             this.panelPAValues.Visible = false;
             // 
@@ -44843,7 +44854,7 @@
             this.chkPAValues.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkPAValues.AutoSize = true;
             this.chkPAValues.Image = null;
-            this.chkPAValues.Location = new System.Drawing.Point(334, 207);
+            this.chkPAValues.Location = new System.Drawing.Point(569, 216);
             this.chkPAValues.Name = "chkPAValues";
             this.chkPAValues.Size = new System.Drawing.Size(66, 23);
             this.chkPAValues.TabIndex = 1;
@@ -52617,17 +52628,6 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
-            // 
-            // btnResetLevelCal
-            // 
-            this.btnResetLevelCal.Location = new System.Drawing.Point(42, 109);
-            this.btnResetLevelCal.Name = "btnResetLevelCal";
-            this.btnResetLevelCal.Size = new System.Drawing.Size(75, 23);
-            this.btnResetLevelCal.TabIndex = 19;
-            this.btnResetLevelCal.Text = "Reset";
-            this.toolTip1.SetToolTip(this.btnResetLevelCal, "Click to reset the freq  correction factor");
-            this.btnResetLevelCal.UseVisualStyleBackColor = true;
-            this.btnResetLevelCal.Click += new System.EventHandler(this.btnResetLevelCal_Click);
             // 
             // Setup
             // 

@@ -996,7 +996,7 @@ namespace Thetis
                     "Appearance will suffer until this is rectified.\n",
                     "Skins files not found",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]);
                 return;
             }
 
@@ -1013,7 +1013,7 @@ namespace Thetis
                     "Appearance will suffer until this is rectified.\n",
                     "Skins files not found",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]);
                 return;
             }
         }
@@ -1390,7 +1390,8 @@ namespace Thetis
             handleOutdatedOptions(false);
 
             DB.SaveVarsDictionary("Options", ref a);
-            DB.WriteCurrentDB(console.DBFileName);
+            //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
+            DB.WriteDB(console.DBFileName);
         }
 
         private void InitTransmitTab(List<string> recoveryList = null)
@@ -7181,7 +7182,7 @@ namespace Thetis
                     "to enable transmit?",
                     "Warning: Enable Transmit?",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]);
                 if (dr == DialogResult.No)
                 {
                     chkGeneralRXOnly.Checked = true;
@@ -7305,7 +7306,7 @@ namespace Thetis
                     "Are you sure you want to change to Realtime?",
                     "Warning: Realtime Not Recommended",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]);
                 if (dr == DialogResult.No)
                 {
                     switch (p.PriorityClass)
@@ -9518,7 +9519,7 @@ namespace Thetis
                     "The port may already be in use by another application.",
                     "Error using " + comboKeyerConnPrimary.Text,
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 comboKeyerConnPrimary.Text = CWInput.PrimaryInput;
             }
         }
@@ -9534,7 +9535,7 @@ namespace Thetis
                     MessageBox.Show("CAT is not Enabled.  Please enable the CAT interface before selecting this option.",
                         "CAT not enabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Hand);
+                        MessageBoxIcon.Hand, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                     comboKeyerConnSecondary.Text = CWInput.SecondaryInput;
                     return;
                 }
@@ -9556,7 +9557,7 @@ namespace Thetis
                     "The port may already be in use by another application.",
                     "Error using " + comboKeyerConnSecondary.Text,
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]);
 
                 comboKeyerConnSecondary.Text = CWInput.SecondaryInput;
                 return;
@@ -11220,7 +11221,7 @@ namespace Thetis
                 (comboCATPort.Text == comboCATPTTPort.Text))
             {
                 MessageBox.Show("CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 chkCATEnable.Checked = false;
             }
 
@@ -11242,7 +11243,7 @@ namespace Thetis
                     chkCATEnable.Checked = false;
                     MessageBox.Show("Could not initialize CAT control.  Exception was:\n\n " + ex.Message +
                         "\n\nCAT control has been disabled.", "Error Initializing CAT control",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 }
             }
             else
@@ -11252,7 +11253,7 @@ namespace Thetis
                     MessageBox.Show("The Secondary Keyer option has been changed to None since CAT has been disabled.",
                         "CAT Disabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                     comboKeyerConnSecondary.Text = "None";
                 }
 
@@ -11261,7 +11262,7 @@ namespace Thetis
                     MessageBox.Show("The PTT Control Port option has been changed to None since CAT has been disabled.",
                         "CAT Disabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
 
                     chkCATPTT_RTS.Checked = false;
                     chkCATPTT_DTR.Checked = false;
@@ -11295,7 +11296,7 @@ namespace Thetis
                 (comboCAT2Port.Text == comboCATPTTPort.Text))
             {
                 MessageBox.Show("CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 chkCAT2Enable.Checked = false;
             }
 
@@ -11317,7 +11318,7 @@ namespace Thetis
                     chkCAT2Enable.Checked = false;
                     MessageBox.Show("Could not initialize CAT control.  Exception was:\n\n " + ex.Message +
                         "\n\nCAT control has been disabled.", "Error Initializing CAT control",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 }
             }
             else
@@ -11349,7 +11350,7 @@ namespace Thetis
                 (comboCAT3Port.Text == comboCATPTTPort.Text))
             {
                 MessageBox.Show("CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 chkCAT3Enable.Checked = false;
             }
 
@@ -11371,7 +11372,7 @@ namespace Thetis
                     chkCAT3Enable.Checked = false;
                     MessageBox.Show("Could not initialize CAT control.  Exception was:\n\n " + ex.Message +
                         "\n\nCAT control has been disabled.", "Error Initializing CAT control",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 }
             }
             else
@@ -11403,7 +11404,7 @@ namespace Thetis
                 (comboCAT4Port.Text == comboCATPTTPort.Text))
             {
                 MessageBox.Show("CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 chkCAT4Enable.Checked = false;
             }
 
@@ -11425,7 +11426,7 @@ namespace Thetis
                     chkCAT4Enable.Checked = false;
                     MessageBox.Show("Could not initialize CAT control.  Exception was:\n\n " + ex.Message +
                         "\n\nCAT control has been disabled.", "Error Initializing CAT control",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 }
             }
             else
@@ -11457,7 +11458,7 @@ namespace Thetis
                 (comboAndromedaCATPort.Text == comboCATPTTPort.Text))
             {
                 MessageBox.Show("Andromeda CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 chkEnableAndromeda.Checked = false;
             }
 
@@ -11477,7 +11478,7 @@ namespace Thetis
                     chkEnableAndromeda.Checked = false;
                     MessageBox.Show("Could not initialize Andromeda control.  Exception was:\n\n " + ex.Message +
                         "\n\nAndromeda control has been disabled.", "Error Initializing Andromeda control",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 }
             }
             else
@@ -11487,7 +11488,7 @@ namespace Thetis
                     MessageBox.Show("The Secondary Keyer option has been changed to None since CAT has been disabled.",
                         "CAT Disabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                     comboKeyerConnSecondary.Text = "None";
                 }
 
@@ -11496,7 +11497,7 @@ namespace Thetis
                     MessageBox.Show("The PTT Control Port option has been changed to None since CAT has been disabled.",
                         "CAT Disabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
 
                     chkCATPTT_RTS.Checked = false;
                     chkCATPTT_DTR.Checked = false;
@@ -11591,7 +11592,7 @@ namespace Thetis
                 if (chkCATPTTEnabled.Focused)
                 {
                     MessageBox.Show("CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                     chkCATPTTEnabled.Checked = false;
                 }
                 return;
@@ -11757,7 +11758,7 @@ namespace Thetis
                     MessageBox.Show("CAT is not Enabled.  Please enable the CAT interface before selecting this option.",
                         "CAT not enabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Hand);
+                        MessageBoxIcon.Hand, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                     comboCATPTTPort.Text = "None";
                     return;
                 }
@@ -12358,7 +12359,8 @@ namespace Thetis
                 string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
                 File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + ".xml");
                 File.Delete(console.DBFileName);
-                DB.WriteCurrentDB(console.DBFileName);
+                //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
+                DB.WriteDB(console.DBFileName);
                 mergingdb = true;
             }
 
@@ -13796,7 +13798,8 @@ namespace Thetis
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-            DB.ds.WriteXml(saveFileDialog1.FileName, XmlWriteMode.WriteSchema);
+            //DB.ds.WriteXml(saveFileDialog1.FileName, XmlWriteMode.WriteSchema);//MW0LGE_[2.9.0.7]
+            DB.WriteDB(saveFileDialog1.FileName);
         }
 
         private void chkPennyLane_CheckedChanged(object sender, System.EventArgs e)
@@ -20369,7 +20372,7 @@ namespace Thetis
                 (comboGanymedeCATPort.Text == comboCATPTTPort.Text))
             {
                 MessageBox.Show("Ganymede CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 chkEnableGanymede.Checked = false;
             }
 
@@ -20389,7 +20392,7 @@ namespace Thetis
                     chkEnableGanymede.Checked = false;
                     MessageBox.Show("Could not initialize Ganymede control.  Exception was:\n\n " + ex.Message +
                         "\n\nGanymede control has been disabled.", "Error Initializing Ganymede control",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 }
             }
             else
@@ -20419,7 +20422,7 @@ namespace Thetis
                 (comboAriesCATPort.Text == comboCATPTTPort.Text))
             {
                 MessageBox.Show("Aries CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 chkEnableAries.Checked = false;
             }
 
@@ -20439,7 +20442,7 @@ namespace Thetis
                     chkEnableAries.Checked = false;
                     MessageBox.Show("Could not initialize Aries control.  Exception was:\n\n " + ex.Message +
                         "\n\nAries control has been disabled.", "Error Initializing Aries control",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST); //MW0LGE_[2.9.0.7]
                 }
             }
             else
@@ -23712,7 +23715,7 @@ namespace Thetis
         private bool _bIgnoreNUDGainUpdate = false;
         private void updateNUDgains(PAProfile p)
         {
-            if (_adjustingBand == Band.FIRST) return;
+            //if (_adjustingBand == Band.FIRST) return;  //MW0LGE_[2.9.7.0] fix issue where changing global gains would not take when out of ham band
             if (p == null)
                 p = getPAProfile(comboPAProfile.Text);
 
@@ -24357,6 +24360,7 @@ namespace Thetis
 
             if (!((b >= Band.B160M && b <= Band.B6M) || (b >= Band.VHF0 && b <= Band.VHF13)))
             {
+                _adjustingBand = Band.FIRST; // MW0LGE_[2.9.0.7] reset
                 enabledPAAdjust(false);
                 lblAdjustBand.Text = "Ignore for : " + sBand;
                 lblMaxPowerForBandPA.Text = "Ignore for : " + sBand;

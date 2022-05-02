@@ -29,6 +29,8 @@ namespace Thetis
             
             Common.RestoreForm(this, "PureSignal", false); // will also restore txtPSpeak //MW0LGE_21k9rc5
 
+            _advancedON = chkAdvancedViewHidden.Checked; //MW0LGE_[2.9.0.6]
+
             startPSThread(); // MW0LGE_21k8 removed the winform timers, now using dedicated thread
         }
 
@@ -301,7 +303,7 @@ namespace Thetis
         #region event handlers
         private void PSForm_Load(object sender, EventArgs e)
         {
-            SetupForm(e); // all moved into function that can be used outside as we now do not dispose the form each time
+            SetupForm();// e); // all moved into function that can be used outside as we now do not dispose the form each time   //MW0LGE_[2.9.0.7]
 
             //if (ttgenON == true)
             //    btnPSTwoToneGen.BackColor = Color.FromArgb(gcolor);
@@ -319,7 +321,7 @@ namespace Thetis
             //btnPSAdvanced_Click(this, e);
         }
 
-        public void SetupForm(EventArgs e)
+        public void SetupForm()//EventArgs e)  //MW0LGE_[2.9.0.7]
         {
             if (_ttgenON == true)
                 btnPSTwoToneGen.BackColor = Color.FromArgb(_gcolor);
@@ -332,7 +334,7 @@ namespace Thetis
 
             txtPSpeak.Text = _PShwpeak.ToString();
 
-            btnPSAdvanced_Click(this, e);
+            setAdvancedView();  //MW0LGE_[2.9.0.7]
         }
 
         private void PSForm_Closing(object sender, FormClosingEventArgs e)
@@ -344,8 +346,8 @@ namespace Thetis
                 ampv.Close();
                 ampv = null;
             }
-            _advancedON = true;
-            btnPSAdvanced_Click(this, e);
+            //_advancedON = true;//MW0LGE_[2.9.0.7]
+            //btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
             this.Hide();
             e.Cancel = true;
             Common.SaveForm(this, "PureSignal");
@@ -772,21 +774,21 @@ namespace Thetis
             }
         }
 
-        private bool _advancedON = true;
+        private bool _advancedON = false; //MW0LGE_[2.9.0.7]
         private void btnPSAdvanced_Click(object sender, EventArgs e)
         {
-            if (_advancedON)
-            {
-                _advancedON = false;
-                console.psform.ClientSize = new System.Drawing.Size(560, 60);
-            }
-            else
-            {
-                _advancedON = true;
-                console.psform.ClientSize = new System.Drawing.Size(560, 300);
-            }
+            _advancedON = !_advancedON;
+            setAdvancedView();
         }
+        private void setAdvancedView()
+        {
+            if (_advancedON)
+                console.psform.ClientSize = new System.Drawing.Size(560, 60);
+            else
+                console.psform.ClientSize = new System.Drawing.Size(560, 300);
 
+            chkAdvancedViewHidden.Checked = _advancedON;
+        }
         private void chkPSOnTop_CheckedChanged(object sender, EventArgs e)
         {
             _topmost = chkPSOnTop.Checked;
@@ -924,6 +926,15 @@ namespace Thetis
         public static int[] Info = new int[16];
         private static int[] oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
+        private static bool _validGetInfo = false;
+        static puresignal()
+        {
+            for(int i = 0; i < 16; i++)
+            {
+                Info[i] = 0;
+                oldInfo[i] = Info[i];
+            }
+        }
         public static void GetInfo(int txachannel)
         {
             //make copy of old, used in HasInfoChanged & CalibrationAttemptsChanged MW0LGE
@@ -933,6 +944,8 @@ namespace Thetis
 
             fixed (int* ptr = &(Info[0]))
                 GetPSInfo(txachannel, ptr);
+
+            _validGetInfo = true;
         }       
         public static bool HasInfoChanged 
         {
