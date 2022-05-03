@@ -1,3 +1,8 @@
+# NOTE
+My distro is in a state of flux whilst I work on multi-meters, and may not actually build or run as expected. The releases section contains source that will run/compile. I am using this a dumping ground at the moment for a backup in-case something untoward happens.
+
+I will update this note when everything has settled. Richie.
+
 
 # Latest Release v2.9.0 April 03, 2022
 
