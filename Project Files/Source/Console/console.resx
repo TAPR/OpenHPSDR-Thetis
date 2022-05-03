@@ -10118,9 +10118,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="picMultiMeterDigital.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
   </data>
-  <data name="picMultiMeterDigital.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="picMultiMeterDigital.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>Off</value>
   </data>
@@ -16018,9 +16015,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="picRX2Meter.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
-  </data>
-  <data name="picRX2Meter.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="picRX2Meter.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>Off</value>

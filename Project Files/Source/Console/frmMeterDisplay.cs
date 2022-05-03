@@ -36,6 +36,7 @@ namespace Thetis
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 this.Hide();
+                e.Cancel = true;
             }
             else
             {
