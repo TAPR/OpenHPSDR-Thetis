@@ -309,6 +309,12 @@
     <Compile Include="frmInfoBarPopup.Designer.cs">
       <DependentUpon>frmInfoBarPopup.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmMeterDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMeterDisplay.Designer.cs">
+      <DependentUpon>frmMeterDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmNotchPopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -327,6 +333,7 @@
     <Compile Include="frmSeqLog.designer.cs">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
     </Compile>
+    <Compile Include="MeterManager.cs" />
     <Compile Include="ucInfoBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -666,6 +673,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmInfoBarPopup.resx">
       <DependentUpon>frmInfoBarPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMeterDisplay.resx">
+      <DependentUpon>frmMeterDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmNotchPopup.resx">
       <DependentUpon>frmNotchPopup.cs</DependentUpon>

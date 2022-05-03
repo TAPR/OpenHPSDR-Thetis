@@ -65,6 +65,11 @@ namespace Thetis
     using System.Collections.Concurrent;
     public partial class Console : Form
     {
+        //MULTIMETERS MW0LGE [2.9.0.7]
+        //just so that we can use this without them. Will eventually be removed
+        private const bool USE_MULTIMETERS = false;
+        //
+
         private const bool ENABLE_DB_FORCE_UPDATE = true;
 
         public const int MAX_FPS = 144;
@@ -510,6 +515,8 @@ namespace Thetis
         private bool m_bDisplayLoopRunning = false;
         private frmNotchPopup m_frmNotchPopup;
         private frmSeqLog m_frmSeqLog;
+        private frmMeterDisplay _frmRX1Meter;
+        private frmMeterDisplay _frmRX2Meter;
 
         public CWX CWXForm
         {
@@ -734,7 +741,8 @@ namespace Thetis
                                     string versionName = TitleBar.GetString();
                                     versionName = versionName.Remove(versionName.LastIndexOf("("));  // strip off date                                    
                                     File.Delete(autoMergeFileName);
-                                    DB.WriteCurrentDB(db_file_name);
+                                    //DB.WriteCurrentDB(db_file_name);//MW0LGE_[2.9.0.7]
+                                    DB.WriteDB(db_file_name);
                                     DB.Init();
                                     versionName = versionName.Replace("<FW>", "");
                                     MessageBox.Show("Your database from a different version was imported successfully into a new one.\n\n"
@@ -975,7 +983,6 @@ namespace Thetis
                 // fix flicker with panels/groups MW0LGE_[2.9.0.6]
                 Common.DoubleBuffered(grpMultimeter, true);
                 //
-
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
                 chkSquelch_CheckedChanged(this, EventArgs.Empty);
@@ -1071,6 +1078,12 @@ namespace Thetis
                         autoStartTimer.Enabled = true;
                         break;
                     }
+                }
+
+                //test
+                if (USE_MULTIMETERS)
+                {
+                    _frmRX1Meter.Show();
                 }
             }
         }
@@ -1500,6 +1513,22 @@ namespace Thetis
             //            break;
             //    }
             //}
+
+            // MW0LGE_[2.9.0.7] setup the multi meter
+            if (USE_MULTIMETERS)
+            {
+                _RX1MeterValues = new Dictionary<Reading, float>();
+                _RX2MeterValues = new Dictionary<Reading, float>();
+                for (int n = 0; n < (int)Reading.LAST; n++)
+                {
+                    _RX1MeterValues.Add((Reading)n, -200f);
+                    _RX2MeterValues.Add((Reading)n, -200f);
+                }
+                _frmRX1Meter = new frmMeterDisplay(this, 1);
+                _frmRX2Meter = new frmMeterDisplay(this, 2);
+                MeterManager.Init(this, _frmRX1Meter.DisplayContainer, _frmRX2Meter.DisplayContainer);
+            }
+            //
 
             ztb_data_by_band = new ztb_data[2][];// 2 rx
             ztb_data_by_band[0] = new ztb_data[(int)Band.LAST];
@@ -2423,6 +2452,11 @@ namespace Thetis
 
         public void ExitConsole()
         {
+            if (USE_MULTIMETERS)
+            {
+                MeterManager.Shutdown();
+            }
+
             if (infoBar != null)
                 infoBar.ShutDown();
 
@@ -4961,10 +4995,11 @@ namespace Thetis
             {
                 if (c is RadioButtonTS b)
                 {
-                    b.Enabled = b.Text != "2" || XVTRPresent;
+                    //b.Enabled = b.Text != "2" || XVTRPresent; //MW0LGE_[2.9.0.7] 2 not used in this button any more, instead we ignore LFMF
+                    b.Enabled = c != radBand2;
 
                     if (b.BackColor == vfo_text_dark_color)
-                        b.BackColor = button_selected_color;
+                    b.BackColor = button_selected_color;
                 }
                 else c.Enabled = true;
             }
@@ -26700,38 +26735,153 @@ namespace Thetis
         //}
 
         private HiPerfTimer meter_timer = new HiPerfTimer();
+        private Dictionary<Reading, float> _RX1MeterValues;
+        private Dictionary<Reading, float> _RX2MeterValues;
+
         private async void UpdateMultimeter()
         {
-            //float num = 0.0f;
-            //float rx1PreampOffset = 0.0f;
-
-            //if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-            //else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-
-            //if (!mox)
+            HiPerfTimer meterDelay = new HiPerfTimer();
+            //while (chkPower.Checked)
             //{
-            //    if (m_MeterManagers[0].GetRXMeterInUse(MeterRXMode.SIGNAL_AVERAGE))
+            //    if (!mox)
             //    {
-            //        num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-            //        num = num +
-            //             rx1_meter_cal_offset +
-            //             rx1PreampOffset +
-            //             rx1_xvtr_gain_offset +
-            //             rx1_6m_gain_offset;
-            //        m_MeterManagers[0].SetRXMeterData(MeterRXMode.SIGNAL_AVERAGE, num);
+            //        meterDelay.Reset();
+
+            //        float offset = rx1_step_att_present ? (float)rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
+            //        offset += rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+
+            //        // get all readings
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.SIGNAL_STRENGTH)) _RX1MeterValues[ReadingType.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.AVG_SIGNAL_STRENGTH)) _RX1MeterValues[ReadingType.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.ADC_REAL)) _RX1MeterValues[ReadingType.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.ADC_IMAG)) _RX1MeterValues[ReadingType.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
+            //        //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_REAL)) _RX1MeterValues[ReadingType.ADC2_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
+            //        //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_IMAG)) _RX1MeterValues[ReadingType.ADC2_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+
+            //        MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
+            //        meterDelay.Stop();
+
+            //        // get quickest RX updating meter from MeterManager
+            //        int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
+            //        if (delayMS < 1) delayMS = 1;
+            //        await Task.Delay(delayMS);
+            //    }
+            //    else
+            //    {
+            //        meterDelay.Reset();
+            //        // get all readings
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.MIC_PK)) _RX1MeterValues[ReadingType.MIC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.MIC_PK));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.EQ_PK)) _RX1MeterValues[ReadingType.EQ_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ_PK));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.LEVELER_PK)) _RX1MeterValues[ReadingType.LEVELER_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.LEVELER_PK));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.LVL_G)) _RX1MeterValues[ReadingType.LVL_G] = (float)Math.Max(0, WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.CFC_PK)) _RX1MeterValues[ReadingType.CFC_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_PK));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.CFC_G)) _RX1MeterValues[ReadingType.CFC_G] = (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_G));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.CPDR_PK)) _RX1MeterValues[ReadingType.CPDR_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.CPDR)) _RX1MeterValues[ReadingType.CPDR] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
+
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.ALC_PK)) _RX1MeterValues[ReadingType.ALC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.ALC)) _RX1MeterValues[ReadingType.ALC] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.ALC_G)) _RX1MeterValues[ReadingType.ALC_G] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.PWR)) _RX1MeterValues[ReadingType.PWR] = (alexpresent || apollopresent) && current_hpsdr_model == HPSDRModel.ANAN8000D && tx_xvtr_index >= 0 ? drivepwr : calfwdpower;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.REVERSE_PWR)) _RX1MeterValues[ReadingType.REVERSE_PWR] = (alexpresent || apollopresent) ? alex_rev : -200f;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.SWR)) _RX1MeterValues[ReadingType.SWR] = alex_swr;
+
+            //        // pa
+            //        // note: there are others distributed around the console.cs, search for MeterManager.RequiresUpdate. Also, all assigned to RX1
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.DRIVE_FWD_ADC)) _RX1MeterValues[ReadingType.DRIVE_FWD_ADC] = average_drvadc;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.FWD_ADC)) _RX1MeterValues[ReadingType.FWD_ADC] = average_fwdadc;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.REV_ADC)) _RX1MeterValues[ReadingType.REV_ADC] = average_revadc;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.DRIVE_PWR)) _RX1MeterValues[ReadingType.DRIVE_PWR] = average_drivepwr;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.PA_FWD_PWR)) _RX1MeterValues[ReadingType.PA_FWD_PWR] = alex_fwd;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.PA_REV_PWR)) _RX1MeterValues[ReadingType.PA_REV_PWR] = alex_rev;
+            //        if (MeterManager.RequiresUpdate(1, ReadingType.CAL_FWD_PWR)) _RX1MeterValues[ReadingType.CAL_FWD_PWR] = calfwdpower;
+            //        //
+
+            //        MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
+            //        meterDelay.Stop();
+
+            //        // get quickest TX updating meter from MeterManager
+            //        int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
+            //        if (delayMS < 1) delayMS = 1;
+            //        await Task.Delay(delayMS);
             //    }
             //}
-            //else
-            //{
-
-            //}
-
-            //await Task.Delay(m_MeterManagers[0].GetShortestMeterWaitTimeMS);
-
+            //meterDelay.Stop();
             //return;
+
             meter_timer.Start();
             while (chkPower.Checked)
             {
+                if (USE_MULTIMETERS)
+                {
+                    //
+                    if (!mox)
+                    {
+                        meterDelay.Reset();
+
+                        float offset = rx1_step_att_present ? (float)rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
+                        offset += rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+
+                        // get all readings
+                        if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+                        if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                        if (MeterManager.RequiresUpdate(1, Reading.ADC_REAL)) _RX1MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
+                        if (MeterManager.RequiresUpdate(1, Reading.ADC_IMAG)) _RX1MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
+                        //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_REAL)) _RX1MeterValues[ReadingType.ADC2_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
+                        //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_IMAG)) _RX1MeterValues[ReadingType.ADC2_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+
+                        MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
+                        meterDelay.Stop();
+
+                        // get quickest RX updating meter from MeterManager
+                        int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
+                        if (delayMS < 1) delayMS = 1;
+                        await Task.Delay(delayMS);
+                    }
+                    else
+                    {
+                        meterDelay.Reset();
+                        // get all readings
+                        if (MeterManager.RequiresUpdate(1, Reading.MIC_PK)) _RX1MeterValues[Reading.MIC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.MIC_PK));
+                        if (MeterManager.RequiresUpdate(1, Reading.EQ_PK)) _RX1MeterValues[Reading.EQ_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ_PK));
+                        if (MeterManager.RequiresUpdate(1, Reading.LEVELER_PK)) _RX1MeterValues[Reading.LEVELER_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.LEVELER_PK));
+                        if (MeterManager.RequiresUpdate(1, Reading.LVL_G)) _RX1MeterValues[Reading.LVL_G] = (float)Math.Max(0, WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
+                        if (MeterManager.RequiresUpdate(1, Reading.CFC_PK)) _RX1MeterValues[Reading.CFC_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_PK));
+                        if (MeterManager.RequiresUpdate(1, Reading.CFC_G)) _RX1MeterValues[Reading.CFC_G] = (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_G));
+                        if (MeterManager.RequiresUpdate(1, Reading.CPDR_PK)) _RX1MeterValues[Reading.CPDR_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK));
+                        if (MeterManager.RequiresUpdate(1, Reading.CPDR)) _RX1MeterValues[Reading.CPDR] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
+
+                        if (MeterManager.RequiresUpdate(1, Reading.ALC_PK)) _RX1MeterValues[Reading.ALC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK));
+                        if (MeterManager.RequiresUpdate(1, Reading.ALC)) _RX1MeterValues[Reading.ALC] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
+                        if (MeterManager.RequiresUpdate(1, Reading.ALC_G)) _RX1MeterValues[Reading.ALC_G] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+
+                        if (MeterManager.RequiresUpdate(1, Reading.PWR)) _RX1MeterValues[Reading.PWR] = (alexpresent || apollopresent) && current_hpsdr_model == HPSDRModel.ANAN8000D && tx_xvtr_index >= 0 ? drivepwr : calfwdpower;
+                        if (MeterManager.RequiresUpdate(1, Reading.REVERSE_PWR)) _RX1MeterValues[Reading.REVERSE_PWR] = (alexpresent || apollopresent) ? alex_rev : -200f;
+                        if (MeterManager.RequiresUpdate(1, Reading.SWR)) _RX1MeterValues[Reading.SWR] = alex_swr;
+
+                        // pa
+                        // note: there are others distributed around the console.cs, search for MeterManager.RequiresUpdate. Also, all assigned to RX1
+                        if (MeterManager.RequiresUpdate(1, Reading.DRIVE_FWD_ADC)) _RX1MeterValues[Reading.DRIVE_FWD_ADC] = average_drvadc;
+                        if (MeterManager.RequiresUpdate(1, Reading.FWD_ADC)) _RX1MeterValues[Reading.FWD_ADC] = average_fwdadc;
+                        if (MeterManager.RequiresUpdate(1, Reading.REV_ADC)) _RX1MeterValues[Reading.REV_ADC] = average_revadc;
+                        if (MeterManager.RequiresUpdate(1, Reading.DRIVE_PWR)) _RX1MeterValues[Reading.DRIVE_PWR] = average_drivepwr;
+                        if (MeterManager.RequiresUpdate(1, Reading.PA_FWD_PWR)) _RX1MeterValues[Reading.PA_FWD_PWR] = alex_fwd;
+                        if (MeterManager.RequiresUpdate(1, Reading.PA_REV_PWR)) _RX1MeterValues[Reading.PA_REV_PWR] = alex_rev;
+                        if (MeterManager.RequiresUpdate(1, Reading.CAL_FWD_PWR)) _RX1MeterValues[Reading.CAL_FWD_PWR] = calfwdpower;
+                        //
+
+                        MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
+                        meterDelay.Stop();
+
+                        // get quickest TX updating meter from MeterManager
+                        int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
+                        if (delayMS < 1) delayMS = 1;
+                        await Task.Delay(delayMS);
+                    }
+                    //
+                }
+
                 if (!meter_data_ready)
                 {
                     if (!mox)
@@ -26792,7 +26942,7 @@ namespace Thetis
                                 //output = "";
                                 new_meter_data = -200.0f;
                                 break;
-                        }
+                        }                        
                     }
                     else
                     {
@@ -26873,7 +27023,6 @@ namespace Thetis
                                 if (current_meter_tx_mode == MeterTXMode.SWR_POWER) new_swrmeter_data = alex_swr;
                                 break;
                             case MeterTXMode.REVERSE_POWER:
-
                                 if (alexpresent || apollopresent)
                                 {
                                     new_meter_data = (float)alex_rev;
@@ -26907,7 +27056,10 @@ namespace Thetis
                     picMultiMeterDigital.Invalidate();
                 }
 
-                await Task.Delay(Math.Min(meter_delay, meter_dig_delay));
+                if (!USE_MULTIMETERS)
+                {
+                    await Task.Delay(Math.Min(meter_delay, meter_dig_delay));
+                }
             }
         }
 
@@ -26915,9 +27067,94 @@ namespace Thetis
         //private float rx2_meter_avg = Display.CLEAR_FLAG;
         private async void UpdateRX2MeterData()
         {
+            HiPerfTimer meterDelay = new HiPerfTimer();
+            //while (chkPower.Checked && rx2_enabled)
+            //{
+            //    //if (!mox)
+            //    //{
+            //        meterDelay.Reset();
+
+            //        float offset = rx2_step_att_present ? (float)rx2_attenuator_data : rx2_preamp_offset[(int)rx1_preamp_mode];
+            //        offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset + rx2_6m_gain_offset;
+
+            //        // get all readings
+            //        if (MeterManager.RequiresUpdate(2, ReadingType.SIGNAL_STRENGTH)) _RX2MeterValues[ReadingType.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+            //        if (MeterManager.RequiresUpdate(2, ReadingType.AVG_SIGNAL_STRENGTH)) _RX2MeterValues[ReadingType.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+            //        //if (MeterManager.RequiresUpdate(2, ReadingType.ADC_REAL)) _RX2MeterValues[ReadingType.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
+            //        //if (MeterManager.RequiresUpdate(2, ReadingType.ADC_IMAG)) _RX2MeterValues[ReadingType.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
+            //        if (MeterManager.RequiresUpdate(2, ReadingType.ADC_REAL)) _RX2MeterValues[ReadingType.ADC_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
+            //        if (MeterManager.RequiresUpdate(2, ReadingType.ADC_IMAG)) _RX2MeterValues[ReadingType.ADC_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+
+            //        MeterReadingsChangedHandlers?.Invoke(2, mox, ref _RX2MeterValues);
+            //        meterDelay.Stop();
+
+            //        // get quickest RX updating meter from MeterManager
+            //        int delayMS = MeterManager.QuickestUpdateInterval(2, mox) - (int)meterDelay.DurationMsec;
+            //        if (delayMS < 1) delayMS = 1;
+            //        await Task.Delay(delayMS);
+            //    //}
+            //    //else
+            //    //{
+            //    //    meterDelay.Reset();
+            //    //    // get all readings
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.MIC_PK)) _RX1MeterValues[ReadingType.MIC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.MIC_PK));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.EQ_PK)) _RX1MeterValues[ReadingType.EQ_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ_PK));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.LEVELER_PK)) _RX1MeterValues[ReadingType.LEVELER_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.LEVELER_PK));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.LVL_G)) _RX1MeterValues[ReadingType.LVL_G] = (float)Math.Max(0, WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.CFC_PK)) _RX1MeterValues[ReadingType.CFC_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_PK));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.CFC_G)) _RX1MeterValues[ReadingType.CFC_G] = (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_G));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.CPDR_PK)) _RX1MeterValues[ReadingType.CPDR_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.CPDR)) _RX1MeterValues[ReadingType.CPDR] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
+
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.ALC_PK)) _RX1MeterValues[ReadingType.ALC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.ALC)) _RX1MeterValues[ReadingType.ALC] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.ALC_G)) _RX1MeterValues[ReadingType.ALC_G] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.PWR)) _RX1MeterValues[ReadingType.PWR] = (alexpresent || apollopresent) && current_hpsdr_model == HPSDRModel.ANAN8000D && tx_xvtr_index >= 0 ? drivepwr : calfwdpower;
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.REVERSE_PWR)) _RX1MeterValues[ReadingType.REVERSE_PWR] = (alexpresent || apollopresent) ? alex_rev : -200f;
+            //    //    if (MeterManager.RequiresUpdate(2, ReadingType.SWR)) _RX1MeterValues[ReadingType.SWR] = alex_swr;
+
+            //    //    MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
+            //    //    meterDelay.Stop();
+
+            //    //    // get quickest TX updating meter from MeterManager
+            //    //    int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
+            //    //    if (delayMS < 1) delayMS = 1;
+            //    //    await Task.Delay(delayMS);
+            //    //}
+            //}
+            //meterDelay.Stop();
+            //return;
+
             rx2_meter_timer.Start();
             while (chkPower.Checked && rx2_enabled)
             {
+                if (USE_MULTIMETERS)
+                {
+                    // new meter
+                    meterDelay.Reset();
+
+                    float offset = rx2_step_att_present ? (float)rx2_attenuator_data : rx2_preamp_offset[(int)rx1_preamp_mode];
+                    offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset + rx2_6m_gain_offset;
+
+                    // get all readings
+                    if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH)) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+                    if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH)) _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                    //if (MeterManager.RequiresUpdate(2, ReadingType.ADC_REAL)) _RX2MeterValues[ReadingType.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
+                    //if (MeterManager.RequiresUpdate(2, ReadingType.ADC_IMAG)) _RX2MeterValues[ReadingType.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
+                    if (MeterManager.RequiresUpdate(2, Reading.ADC_REAL)) _RX2MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
+                    if (MeterManager.RequiresUpdate(2, Reading.ADC_IMAG)) _RX2MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+
+                    MeterReadingsChangedHandlers?.Invoke(2, mox, ref _RX2MeterValues);
+                    meterDelay.Stop();
+
+                    // get quickest RX updating meter from MeterManager
+                    int delayMS = MeterManager.QuickestUpdateInterval(2, mox) - (int)meterDelay.DurationMsec;
+                    if (delayMS < 1) delayMS = 1;
+                    await Task.Delay(delayMS);
+                    //
+                }
+
                 if (!rx2_meter_data_ready)
                 {
                     //MW0LGE_21d step atten
@@ -27002,7 +27239,10 @@ namespace Thetis
                     picRX2Meter.Invalidate();
                 }
 
-                await Task.Delay(Math.Min(meter_delay, meter_dig_delay));
+                if (!USE_MULTIMETERS)
+                {
+                    await Task.Delay(Math.Min(meter_delay, meter_dig_delay));
+                }
             }
         }
 
@@ -27207,6 +27447,7 @@ namespace Thetis
             float watts = (float)(Math.Pow(volts, 2) / bridge_volt);
             if (watts < 0) watts = 0;
 
+            if (MeterManager.RequiresUpdate(1, Reading.REV_VOLT)) _RX1MeterValues[Reading.REV_VOLT] = volts; //MW0LGE_[2.9.0.7]
             if (PAValues)
             {
                 average_revadc = alpha * average_revadc + (1.0f - alpha) * adc;
@@ -27277,6 +27518,7 @@ namespace Thetis
             if (volts < 0) volts = 0;
             float watts = (float)(Math.Pow(volts, 2) / bridge_volt);
 
+            if (MeterManager.RequiresUpdate(1, Reading.FWD_VOLT)) _RX1MeterValues[Reading.FWD_VOLT] = volts; //MW0LGE_[2.9.0.7]
             if (PAValues)
             {
                 average_fwdadc = alpha * average_fwdadc + (1.0f - alpha) * adc;
@@ -27294,6 +27536,7 @@ namespace Thetis
             double power_f = (double)power_int;
             double result = 0.0;
 
+            if (MeterManager.RequiresUpdate(1, Reading.FWD_ADC)) _RX1MeterValues[Reading.FWD_ADC] = (float)power_int; //MW0LGE_[2.9.0.7]
             if (PAValues)
             {
                 SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
@@ -27353,6 +27596,7 @@ namespace Thetis
             double power_f = (double)power_int;
             double result = 0.0;
 
+            if (MeterManager.RequiresUpdate(1, Reading.FWD_ADC)) _RX1MeterValues[Reading.FWD_ADC] = (float)power_int; //MW0LGE_[2.9.0.7]
             if (PAValues)
             {
                 SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
@@ -27411,6 +27655,7 @@ namespace Thetis
             double power_f = (double)power_int;
             double result = 0.0;
 
+            if (MeterManager.RequiresUpdate(1, Reading.FWD_ADC)) _RX1MeterValues[Reading.FWD_ADC] = (float)power_int; //MW0LGE_[2.9.0.7]
             if (PAValues)
             {
                 SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
@@ -27519,6 +27764,7 @@ namespace Thetis
                 }
             }
 
+            if (MeterManager.RequiresUpdate(1, Reading.FWD_ADC)) _RX1MeterValues[Reading.FWD_ADC] = (float)power_int; //MW0LGE_[2.9.0.7]
             if (PAValues)
             {
                 SetupForm.textFwdADCValue.Text = power_int.ToString();
@@ -49552,7 +49798,7 @@ namespace Thetis
             //if (psform.IsDisposed)
             //    psform = new PSForm(this);
             if (psform == null) return;
-            psform.SetupForm(EventArgs.Empty); //MW0LGE_21k9d (rc3)
+            psform.SetupForm();//EventArgs.Empty); //MW0LGE_21k9d (rc3) //MW0LGE_[2.9.0.7]
             psform.Show();
             psform.Focus();
         }
@@ -51951,6 +52197,8 @@ namespace Thetis
         public delegate void TCPIPcatClientError(SocketException se);
         public delegate void TCPIPcatServerError(SocketException se);
 
+        public delegate void MeterReadings(int rx, bool tx, ref Dictionary<Reading, float> readings);
+
         public BandPreChange BandBeforeChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -51981,6 +52229,8 @@ namespace Thetis
 
         public VFOTXChanged VFOTXChangedHandlers;
         public TXBandChanged TXBandChangeHandlers;
+
+        public MeterReadings MeterReadingsChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -52025,6 +52275,8 @@ namespace Thetis
             VFOTXChangedHandlers += OnVFOTXChanged;
             TXBandChangeHandlers += OnTXBandChanged;
 
+            MeterReadingsChangedHandlers += OnMeterReadings;
+
             Display.SetupDelegates();
         }
         private void removeDelegates()
@@ -52065,6 +52317,8 @@ namespace Thetis
             VFOTXChangedHandlers -= OnVFOTXChanged;
             TXBandChangeHandlers -= OnTXBandChanged;
 
+            MeterReadingsChangedHandlers -= OnMeterReadings;
+
             if (m_frmBandStack2 != null) // dont use the singleton accessor as we dont want to make one if one does not exist
             {
                 BandStack2Form.EntrySelectedHandlers -= OnEntryClicked; // added in the forms Singleton function BandStack2Form
@@ -52079,6 +52333,10 @@ namespace Thetis
             Display.RemoveDelegates();
         }
         //
+        private void OnMeterReadings(int rx, bool mox, ref Dictionary<Reading, float> readings)
+        {
+
+        }
         private void OnTXBandChanged(Band oldBand, Band newBand)
         {
         }
@@ -53709,7 +53967,7 @@ namespace Thetis
 
             UpdateRX1DisplayOffsets();
             UpdateRX2DisplayOffsets();
-        }
+        }     
     }
 
     public class DigiMode

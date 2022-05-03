@@ -193,26 +193,15 @@ namespace Thetis
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.picRadar = new System.Windows.Forms.PictureBox();
             this.panelDivControls = new System.Windows.Forms.GroupBoxTS();
+            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableDiversity = new System.Windows.Forms.CheckBoxTS();
             this.grpRxSource = new System.Windows.Forms.GroupBoxTS();
             this.radRxSourceRx1Rx2 = new System.Windows.Forms.RadioButtonTS();
             this.radRxSource2 = new System.Windows.Forms.RadioButtonTS();
             this.radRxSource1 = new System.Windows.Forms.RadioButtonTS();
-            this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS41 = new System.Windows.Forms.LabelTS();
-            this.labelTS30 = new System.Windows.Forms.LabelTS();
-            this.labelTS40 = new System.Windows.Forms.LabelTS();
-            this.label_d = new System.Windows.Forms.LabelTS();
-            this.udAntSpacing = new System.Windows.Forms.NumericUpDownTS();
-            this.udR = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS5 = new System.Windows.Forms.LabelTS();
-            this.udCalib = new System.Windows.Forms.NumericUpDownTS();
-            this.labelDirection = new System.Windows.Forms.LabelTS();
             this.btnShiftDwn45 = new System.Windows.Forms.ButtonTS();
-            this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
             this.btnShift180 = new System.Windows.Forms.ButtonTS();
             this.labelTS6 = new System.Windows.Forms.LabelTS();
-            this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.groupBox_refMerc = new System.Windows.Forms.GroupBoxTS();
             this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.udGainMulti = new System.Windows.Forms.NumericUpDownTS();
@@ -228,21 +217,32 @@ namespace Thetis
             this.radioButtonMerc2 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonMerc1 = new System.Windows.Forms.RadioButtonTS();
             this.btnShiftUp45 = new System.Windows.Forms.ButtonTS();
+            this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS41 = new System.Windows.Forms.LabelTS();
+            this.labelTS30 = new System.Windows.Forms.LabelTS();
+            this.labelTS40 = new System.Windows.Forms.LabelTS();
+            this.label_d = new System.Windows.Forms.LabelTS();
+            this.udAntSpacing = new System.Windows.Forms.NumericUpDownTS();
+            this.udR = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS5 = new System.Windows.Forms.LabelTS();
+            this.udCalib = new System.Windows.Forms.NumericUpDownTS();
+            this.labelDirection = new System.Windows.Forms.LabelTS();
+            this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.udAngle = new System.Windows.Forms.NumericUpDownTS();
-            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
             this.panelDivControls.SuspendLayout();
             this.grpRxSource.SuspendLayout();
-            this.groupBoxTS1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udR)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
             this.groupBox_refMerc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGainMulti)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFineNull)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR1)).BeginInit();
+            this.groupBoxTS1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udR)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle)).BeginInit();
             this.SuspendLayout();
             // 
@@ -250,7 +250,7 @@ namespace Thetis
             // 
             this.chkAuto.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.chkAuto.Enabled = false;
-            this.chkAuto.Location = new System.Drawing.Point(399, 659);
+            this.chkAuto.Location = new System.Drawing.Point(323, 589);
             this.chkAuto.Name = "chkAuto";
             this.chkAuto.Size = new System.Drawing.Size(48, 24);
             this.chkAuto.TabIndex = 1;
@@ -283,7 +283,7 @@ namespace Thetis
             // 
             this.textBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(208, 659);
+            this.textBox1.Location = new System.Drawing.Point(132, 589);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 4;
@@ -297,7 +297,7 @@ namespace Thetis
             this.picRadar.BackColor = System.Drawing.SystemColors.Control;
             this.picRadar.Location = new System.Drawing.Point(2, 266);
             this.picRadar.Name = "picRadar";
-            this.picRadar.Size = new System.Drawing.Size(494, 412);
+            this.picRadar.Size = new System.Drawing.Size(342, 343);
             this.picRadar.TabIndex = 0;
             this.picRadar.TabStop = false;
             this.picRadar.Paint += new System.Windows.Forms.PaintEventHandler(this.picRadar_Paint);
@@ -311,25 +311,31 @@ namespace Thetis
             this.panelDivControls.Controls.Add(this.chkAlwaysOnTop);
             this.panelDivControls.Controls.Add(this.chkEnableDiversity);
             this.panelDivControls.Controls.Add(this.grpRxSource);
-            this.panelDivControls.Controls.Add(this.groupBoxTS1);
-            this.panelDivControls.Controls.Add(this.udR);
-            this.panelDivControls.Controls.Add(this.labelTS5);
-            this.panelDivControls.Controls.Add(this.udCalib);
-            this.panelDivControls.Controls.Add(this.labelDirection);
             this.panelDivControls.Controls.Add(this.btnShiftDwn45);
-            this.panelDivControls.Controls.Add(this.udAngle0);
             this.panelDivControls.Controls.Add(this.btnShift180);
             this.panelDivControls.Controls.Add(this.labelTS6);
-            this.panelDivControls.Controls.Add(this.labelTS9);
             this.panelDivControls.Controls.Add(this.groupBox_refMerc);
             this.panelDivControls.Controls.Add(this.btnShiftUp45);
             this.panelDivControls.ImeMode = System.Windows.Forms.ImeMode.AlphaFull;
-            this.panelDivControls.Location = new System.Drawing.Point(12, 3);
+            this.panelDivControls.Location = new System.Drawing.Point(8, 3);
             this.panelDivControls.Name = "panelDivControls";
-            this.panelDivControls.Size = new System.Drawing.Size(472, 257);
+            this.panelDivControls.Size = new System.Drawing.Size(326, 257);
             this.panelDivControls.TabIndex = 51;
             this.panelDivControls.TabStop = false;
             this.panelDivControls.Enter += new System.EventHandler(this.panelDivControls_Enter);
+            // 
+            // chkAlwaysOnTop
+            // 
+            this.chkAlwaysOnTop.AutoSize = true;
+            this.chkAlwaysOnTop.Image = null;
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(215, 15);
+            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
+            this.chkAlwaysOnTop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkAlwaysOnTop.Size = new System.Drawing.Size(98, 17);
+            this.chkAlwaysOnTop.TabIndex = 102;
+            this.chkAlwaysOnTop.Text = "Always On Top";
+            this.chkAlwaysOnTop.UseVisualStyleBackColor = true;
+            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
             // 
             // chkEnableDiversity
             // 
@@ -339,7 +345,7 @@ namespace Thetis
             this.chkEnableDiversity.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnableDiversity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkEnableDiversity.Image = null;
-            this.chkEnableDiversity.Location = new System.Drawing.Point(387, 54);
+            this.chkEnableDiversity.Location = new System.Drawing.Point(235, 57);
             this.chkEnableDiversity.Name = "chkEnableDiversity";
             this.chkEnableDiversity.Size = new System.Drawing.Size(66, 23);
             this.chkEnableDiversity.TabIndex = 101;
@@ -353,7 +359,7 @@ namespace Thetis
             this.grpRxSource.Controls.Add(this.radRxSourceRx1Rx2);
             this.grpRxSource.Controls.Add(this.radRxSource2);
             this.grpRxSource.Controls.Add(this.radRxSource1);
-            this.grpRxSource.Location = new System.Drawing.Point(245, 16);
+            this.grpRxSource.Location = new System.Drawing.Point(93, 19);
             this.grpRxSource.Name = "grpRxSource";
             this.grpRxSource.Size = new System.Drawing.Size(113, 90);
             this.grpRxSource.TabIndex = 52;
@@ -398,189 +404,12 @@ namespace Thetis
             this.radRxSource1.UseVisualStyleBackColor = true;
             this.radRxSource1.CheckedChanged += new System.EventHandler(this.radRxSource1_CheckedChanged);
             // 
-            // groupBoxTS1
-            // 
-            this.groupBoxTS1.Controls.Add(this.labelTS41);
-            this.groupBoxTS1.Controls.Add(this.labelTS30);
-            this.groupBoxTS1.Controls.Add(this.labelTS40);
-            this.groupBoxTS1.Controls.Add(this.label_d);
-            this.groupBoxTS1.Controls.Add(this.udAntSpacing);
-            this.groupBoxTS1.Location = new System.Drawing.Point(10, 85);
-            this.groupBoxTS1.Name = "groupBoxTS1";
-            this.groupBoxTS1.Size = new System.Drawing.Size(142, 75);
-            this.groupBoxTS1.TabIndex = 100;
-            this.groupBoxTS1.TabStop = false;
-            this.groupBoxTS1.Text = "Antenna Spacing";
-            // 
-            // labelTS41
-            // 
-            this.labelTS41.AutoSize = true;
-            this.labelTS41.Image = null;
-            this.labelTS41.Location = new System.Drawing.Point(9, 30);
-            this.labelTS41.Name = "labelTS41";
-            this.labelTS41.Size = new System.Drawing.Size(55, 13);
-            this.labelTS41.TabIndex = 98;
-            this.labelTS41.Text = "D (meters)";
-            // 
-            // labelTS30
-            // 
-            this.labelTS30.AutoSize = true;
-            this.labelTS30.Font = new System.Drawing.Font("Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
-            this.labelTS30.Image = null;
-            this.labelTS30.Location = new System.Drawing.Point(29, 56);
-            this.labelTS30.Name = "labelTS30";
-            this.labelTS30.Size = new System.Drawing.Size(21, 13);
-            this.labelTS30.TabIndex = 87;
-            this.labelTS30.Text = "l =";
-            // 
-            // labelTS40
-            // 
-            this.labelTS40.AutoSize = true;
-            this.labelTS40.Image = null;
-            this.labelTS40.Location = new System.Drawing.Point(9, 56);
-            this.labelTS40.Name = "labelTS40";
-            this.labelTS40.Size = new System.Drawing.Size(23, 13);
-            this.labelTS40.TabIndex = 95;
-            this.labelTS40.Text = " D/";
-            this.labelTS40.Visible = false;
-            // 
-            // label_d
-            // 
-            this.label_d.AutoSize = true;
-            this.label_d.BackColor = System.Drawing.Color.Transparent;
-            this.label_d.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label_d.Image = null;
-            this.label_d.Location = new System.Drawing.Point(52, 56);
-            this.label_d.Name = "label_d";
-            this.label_d.Size = new System.Drawing.Size(15, 15);
-            this.label_d.TabIndex = 96;
-            this.label_d.Text = "0";
-            // 
-            // udAntSpacing
-            // 
-            this.udAntSpacing.BackColor = System.Drawing.Color.White;
-            this.udAntSpacing.DecimalPlaces = 2;
-            this.udAntSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udAntSpacing.ForeColor = System.Drawing.Color.Black;
-            this.udAntSpacing.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.udAntSpacing.Location = new System.Drawing.Point(66, 26);
-            this.udAntSpacing.Maximum = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.udAntSpacing.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAntSpacing.Name = "udAntSpacing";
-            this.udAntSpacing.Size = new System.Drawing.Size(60, 23);
-            this.udAntSpacing.TabIndex = 97;
-            this.udAntSpacing.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAntSpacing.ValueChanged += new System.EventHandler(this.udAntSpacing_ValueChanged_1);
-            // 
-            // udR
-            // 
-            this.udR.DecimalPlaces = 3;
-            this.udR.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udR.Location = new System.Drawing.Point(122, 184);
-            this.udR.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udR.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udR.Name = "udR";
-            this.udR.Size = new System.Drawing.Size(56, 20);
-            this.udR.TabIndex = 5;
-            this.udR.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udR.Visible = false;
-            this.udR.ValueChanged += new System.EventHandler(this.udR_ValueChanged);
-            // 
-            // labelTS5
-            // 
-            this.labelTS5.AutoSize = true;
-            this.labelTS5.Image = null;
-            this.labelTS5.Location = new System.Drawing.Point(10, 168);
-            this.labelTS5.Name = "labelTS5";
-            this.labelTS5.Size = new System.Drawing.Size(72, 13);
-            this.labelTS5.TabIndex = 61;
-            this.labelTS5.Text = "calib direction";
-            this.labelTS5.Visible = false;
-            // 
-            // udCalib
-            // 
-            this.udCalib.DecimalPlaces = 3;
-            this.udCalib.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udCalib.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udCalib.Location = new System.Drawing.Point(13, 184);
-            this.udCalib.Maximum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.udCalib.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            -2147483648});
-            this.udCalib.Name = "udCalib";
-            this.udCalib.Size = new System.Drawing.Size(60, 23);
-            this.udCalib.TabIndex = 60;
-            this.udCalib.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udCalib.Visible = false;
-            this.udCalib.ValueChanged += new System.EventHandler(this.udCalib_ValueChanged);
-            // 
-            // labelDirection
-            // 
-            this.labelDirection.AutoSize = true;
-            this.labelDirection.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.labelDirection.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labelDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDirection.Image = null;
-            this.labelDirection.Location = new System.Drawing.Point(10, 38);
-            this.labelDirection.Name = "labelDirection";
-            this.labelDirection.Size = new System.Drawing.Size(63, 33);
-            this.labelDirection.TabIndex = 65;
-            this.labelDirection.Text = "NW";
-            this.labelDirection.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelDirection.Visible = false;
-            // 
             // btnShiftDwn45
             // 
             this.btnShiftDwn45.BackColor = System.Drawing.Color.White;
             this.btnShiftDwn45.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnShiftDwn45.Image = null;
-            this.btnShiftDwn45.Location = new System.Drawing.Point(162, 84);
+            this.btnShiftDwn45.Location = new System.Drawing.Point(10, 87);
             this.btnShiftDwn45.Name = "btnShiftDwn45";
             this.btnShiftDwn45.Size = new System.Drawing.Size(46, 26);
             this.btnShiftDwn45.TabIndex = 62;
@@ -588,44 +417,12 @@ namespace Thetis
             this.btnShiftDwn45.UseVisualStyleBackColor = false;
             this.btnShiftDwn45.Click += new System.EventHandler(this.btnShiftDwn45_Click);
             // 
-            // udAngle0
-            // 
-            this.udAngle0.BackColor = System.Drawing.Color.White;
-            this.udAngle0.DecimalPlaces = 1;
-            this.udAngle0.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udAngle0.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udAngle0.Location = new System.Drawing.Point(81, 38);
-            this.udAngle0.Maximum = new decimal(new int[] {
-            361,
-            0,
-            0,
-            0});
-            this.udAngle0.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            this.udAngle0.Name = "udAngle0";
-            this.udAngle0.Size = new System.Drawing.Size(74, 32);
-            this.udAngle0.TabIndex = 64;
-            this.udAngle0.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAngle0.Visible = false;
-            this.udAngle0.ValueChanged += new System.EventHandler(this.udAngle0_ValueChanged);
-            // 
             // btnShift180
             // 
             this.btnShift180.BackColor = System.Drawing.Color.White;
             this.btnShift180.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnShift180.Image = null;
-            this.btnShift180.Location = new System.Drawing.Point(162, 54);
+            this.btnShift180.Location = new System.Drawing.Point(10, 57);
             this.btnShift180.Name = "btnShift180";
             this.btnShift180.Size = new System.Drawing.Size(46, 26);
             this.btnShift180.TabIndex = 57;
@@ -637,22 +434,11 @@ namespace Thetis
             // 
             this.labelTS6.AutoSize = true;
             this.labelTS6.Image = null;
-            this.labelTS6.Location = new System.Drawing.Point(171, 8);
+            this.labelTS6.Location = new System.Drawing.Point(19, 11);
             this.labelTS6.Name = "labelTS6";
             this.labelTS6.Size = new System.Drawing.Size(26, 13);
             this.labelTS6.TabIndex = 54;
             this.labelTS6.Text = "shift";
-            // 
-            // labelTS9
-            // 
-            this.labelTS9.AutoSize = true;
-            this.labelTS9.Image = null;
-            this.labelTS9.Location = new System.Drawing.Point(24, 16);
-            this.labelTS9.Name = "labelTS9";
-            this.labelTS9.Size = new System.Drawing.Size(76, 13);
-            this.labelTS9.TabIndex = 64;
-            this.labelTS9.Text = "Direction (deg)";
-            this.labelTS9.Visible = false;
             // 
             // groupBox_refMerc
             // 
@@ -669,7 +455,7 @@ namespace Thetis
             this.groupBox_refMerc.Controls.Add(this.udR1);
             this.groupBox_refMerc.Controls.Add(this.radioButtonMerc2);
             this.groupBox_refMerc.Controls.Add(this.radioButtonMerc1);
-            this.groupBox_refMerc.Location = new System.Drawing.Point(213, 111);
+            this.groupBox_refMerc.Location = new System.Drawing.Point(61, 114);
             this.groupBox_refMerc.Name = "groupBox_refMerc";
             this.groupBox_refMerc.Size = new System.Drawing.Size(252, 140);
             this.groupBox_refMerc.TabIndex = 59;
@@ -712,6 +498,7 @@ namespace Thetis
             this.udGainMulti.Name = "udGainMulti";
             this.udGainMulti.Size = new System.Drawing.Size(56, 23);
             this.udGainMulti.TabIndex = 105;
+            this.udGainMulti.TinyStep = false;
             this.udGainMulti.Value = new decimal(new int[] {
             1,
             0,
@@ -801,6 +588,7 @@ namespace Thetis
             this.udFineNull.Name = "udFineNull";
             this.udFineNull.Size = new System.Drawing.Size(67, 23);
             this.udFineNull.TabIndex = 101;
+            this.udFineNull.TinyStep = false;
             this.udFineNull.Value = new decimal(new int[] {
             0,
             0,
@@ -843,6 +631,7 @@ namespace Thetis
             this.udR2.Name = "udR2";
             this.udR2.Size = new System.Drawing.Size(56, 23);
             this.udR2.TabIndex = 11;
+            this.udR2.TinyStep = false;
             this.udR2.Value = new decimal(new int[] {
             10,
             0,
@@ -875,6 +664,7 @@ namespace Thetis
             this.udR1.Name = "udR1";
             this.udR1.Size = new System.Drawing.Size(56, 23);
             this.udR1.TabIndex = 10;
+            this.udR1.TinyStep = false;
             this.udR1.Value = new decimal(new int[] {
             1,
             0,
@@ -913,13 +703,237 @@ namespace Thetis
             this.btnShiftUp45.BackColor = System.Drawing.Color.White;
             this.btnShiftUp45.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnShiftUp45.Image = null;
-            this.btnShiftUp45.Location = new System.Drawing.Point(162, 24);
+            this.btnShiftUp45.Location = new System.Drawing.Point(10, 27);
             this.btnShiftUp45.Name = "btnShiftUp45";
             this.btnShiftUp45.Size = new System.Drawing.Size(46, 26);
             this.btnShiftUp45.TabIndex = 58;
             this.btnShiftUp45.Text = "+45";
             this.btnShiftUp45.UseVisualStyleBackColor = false;
             this.btnShiftUp45.Click += new System.EventHandler(this.btnShiftUp45_Click);
+            // 
+            // groupBoxTS1
+            // 
+            this.groupBoxTS1.Controls.Add(this.labelTS41);
+            this.groupBoxTS1.Controls.Add(this.labelTS30);
+            this.groupBoxTS1.Controls.Add(this.labelTS40);
+            this.groupBoxTS1.Controls.Add(this.label_d);
+            this.groupBoxTS1.Controls.Add(this.udAntSpacing);
+            this.groupBoxTS1.Location = new System.Drawing.Point(337, 93);
+            this.groupBoxTS1.Name = "groupBoxTS1";
+            this.groupBoxTS1.Size = new System.Drawing.Size(142, 75);
+            this.groupBoxTS1.TabIndex = 100;
+            this.groupBoxTS1.TabStop = false;
+            this.groupBoxTS1.Text = "Antenna Spacing";
+            // 
+            // labelTS41
+            // 
+            this.labelTS41.AutoSize = true;
+            this.labelTS41.Image = null;
+            this.labelTS41.Location = new System.Drawing.Point(9, 30);
+            this.labelTS41.Name = "labelTS41";
+            this.labelTS41.Size = new System.Drawing.Size(55, 13);
+            this.labelTS41.TabIndex = 98;
+            this.labelTS41.Text = "D (meters)";
+            // 
+            // labelTS30
+            // 
+            this.labelTS30.AutoSize = true;
+            this.labelTS30.Font = new System.Drawing.Font("Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+            this.labelTS30.Image = null;
+            this.labelTS30.Location = new System.Drawing.Point(29, 56);
+            this.labelTS30.Name = "labelTS30";
+            this.labelTS30.Size = new System.Drawing.Size(21, 13);
+            this.labelTS30.TabIndex = 87;
+            this.labelTS30.Text = "l =";
+            // 
+            // labelTS40
+            // 
+            this.labelTS40.AutoSize = true;
+            this.labelTS40.Image = null;
+            this.labelTS40.Location = new System.Drawing.Point(9, 56);
+            this.labelTS40.Name = "labelTS40";
+            this.labelTS40.Size = new System.Drawing.Size(23, 13);
+            this.labelTS40.TabIndex = 95;
+            this.labelTS40.Text = " D/";
+            this.labelTS40.Visible = false;
+            // 
+            // label_d
+            // 
+            this.label_d.AutoSize = true;
+            this.label_d.BackColor = System.Drawing.Color.Transparent;
+            this.label_d.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label_d.Image = null;
+            this.label_d.Location = new System.Drawing.Point(52, 56);
+            this.label_d.Name = "label_d";
+            this.label_d.Size = new System.Drawing.Size(15, 15);
+            this.label_d.TabIndex = 96;
+            this.label_d.Text = "0";
+            // 
+            // udAntSpacing
+            // 
+            this.udAntSpacing.BackColor = System.Drawing.Color.White;
+            this.udAntSpacing.DecimalPlaces = 2;
+            this.udAntSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udAntSpacing.ForeColor = System.Drawing.Color.Black;
+            this.udAntSpacing.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udAntSpacing.Location = new System.Drawing.Point(66, 26);
+            this.udAntSpacing.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.udAntSpacing.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAntSpacing.Name = "udAntSpacing";
+            this.udAntSpacing.Size = new System.Drawing.Size(60, 23);
+            this.udAntSpacing.TabIndex = 97;
+            this.udAntSpacing.TinyStep = false;
+            this.udAntSpacing.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAntSpacing.ValueChanged += new System.EventHandler(this.udAntSpacing_ValueChanged_1);
+            // 
+            // udR
+            // 
+            this.udR.DecimalPlaces = 3;
+            this.udR.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udR.Location = new System.Drawing.Point(449, 192);
+            this.udR.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udR.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udR.Name = "udR";
+            this.udR.Size = new System.Drawing.Size(56, 20);
+            this.udR.TabIndex = 5;
+            this.udR.TinyStep = false;
+            this.udR.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udR.Visible = false;
+            this.udR.ValueChanged += new System.EventHandler(this.udR_ValueChanged);
+            // 
+            // labelTS5
+            // 
+            this.labelTS5.AutoSize = true;
+            this.labelTS5.Image = null;
+            this.labelTS5.Location = new System.Drawing.Point(337, 176);
+            this.labelTS5.Name = "labelTS5";
+            this.labelTS5.Size = new System.Drawing.Size(72, 13);
+            this.labelTS5.TabIndex = 61;
+            this.labelTS5.Text = "calib direction";
+            this.labelTS5.Visible = false;
+            // 
+            // udCalib
+            // 
+            this.udCalib.DecimalPlaces = 3;
+            this.udCalib.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udCalib.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udCalib.Location = new System.Drawing.Point(340, 192);
+            this.udCalib.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.udCalib.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            -2147483648});
+            this.udCalib.Name = "udCalib";
+            this.udCalib.Size = new System.Drawing.Size(60, 23);
+            this.udCalib.TabIndex = 60;
+            this.udCalib.TinyStep = false;
+            this.udCalib.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCalib.Visible = false;
+            this.udCalib.ValueChanged += new System.EventHandler(this.udCalib_ValueChanged);
+            // 
+            // labelDirection
+            // 
+            this.labelDirection.AutoSize = true;
+            this.labelDirection.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.labelDirection.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelDirection.Image = null;
+            this.labelDirection.Location = new System.Drawing.Point(337, 46);
+            this.labelDirection.Name = "labelDirection";
+            this.labelDirection.Size = new System.Drawing.Size(63, 33);
+            this.labelDirection.TabIndex = 65;
+            this.labelDirection.Text = "NW";
+            this.labelDirection.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelDirection.Visible = false;
+            // 
+            // udAngle0
+            // 
+            this.udAngle0.BackColor = System.Drawing.Color.White;
+            this.udAngle0.DecimalPlaces = 1;
+            this.udAngle0.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udAngle0.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udAngle0.Location = new System.Drawing.Point(408, 46);
+            this.udAngle0.Maximum = new decimal(new int[] {
+            361,
+            0,
+            0,
+            0});
+            this.udAngle0.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.udAngle0.Name = "udAngle0";
+            this.udAngle0.Size = new System.Drawing.Size(74, 32);
+            this.udAngle0.TabIndex = 64;
+            this.udAngle0.TinyStep = false;
+            this.udAngle0.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAngle0.Visible = false;
+            this.udAngle0.ValueChanged += new System.EventHandler(this.udAngle0_ValueChanged);
+            // 
+            // labelTS9
+            // 
+            this.labelTS9.AutoSize = true;
+            this.labelTS9.Image = null;
+            this.labelTS9.Location = new System.Drawing.Point(351, 24);
+            this.labelTS9.Name = "labelTS9";
+            this.labelTS9.Size = new System.Drawing.Size(76, 13);
+            this.labelTS9.TabIndex = 64;
+            this.labelTS9.Text = "Direction (deg)";
+            this.labelTS9.Visible = false;
             // 
             // udAngle
             // 
@@ -944,6 +958,7 @@ namespace Thetis
             this.udAngle.Name = "udAngle";
             this.udAngle.Size = new System.Drawing.Size(60, 23);
             this.udAngle.TabIndex = 6;
+            this.udAngle.TinyStep = false;
             this.udAngle.Value = new decimal(new int[] {
             0,
             0,
@@ -951,32 +966,26 @@ namespace Thetis
             0});
             this.udAngle.ValueChanged += new System.EventHandler(this.udTheta_ValueChanged);
             // 
-            // chkAlwaysOnTop
-            // 
-            this.chkAlwaysOnTop.AutoSize = true;
-            this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(367, 12);
-            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
-            this.chkAlwaysOnTop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkAlwaysOnTop.Size = new System.Drawing.Size(98, 17);
-            this.chkAlwaysOnTop.TabIndex = 102;
-            this.chkAlwaysOnTop.Text = "Always On Top";
-            this.chkAlwaysOnTop.UseVisualStyleBackColor = true;
-            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
-            // 
             // DiversityForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(496, 681);
+            this.ClientSize = new System.Drawing.Size(344, 611);
             this.Controls.Add(this.picRadar);
             this.Controls.Add(this.panelDivControls);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.groupBoxTS1);
             this.Controls.Add(this.chkAuto);
+            this.Controls.Add(this.udR);
             this.Controls.Add(this.chkEnable);
+            this.Controls.Add(this.labelTS5);
             this.Controls.Add(this.btnSync);
+            this.Controls.Add(this.udCalib);
             this.Controls.Add(this.udAngle);
+            this.Controls.Add(this.labelDirection);
+            this.Controls.Add(this.labelTS9);
+            this.Controls.Add(this.udAngle0);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(500, 500);
+            this.MinimumSize = new System.Drawing.Size(360, 500);
             this.Name = "DiversityForm";
             this.Text = "Phasing Control";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.DiversityForm_Closing);
@@ -987,18 +996,18 @@ namespace Thetis
             this.panelDivControls.PerformLayout();
             this.grpRxSource.ResumeLayout(false);
             this.grpRxSource.PerformLayout();
-            this.groupBoxTS1.ResumeLayout(false);
-            this.groupBoxTS1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udR)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).EndInit();
             this.groupBox_refMerc.ResumeLayout(false);
             this.groupBox_refMerc.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGainMulti)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFineNull)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR1)).EndInit();
+            this.groupBoxTS1.ResumeLayout(false);
+            this.groupBoxTS1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udR)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1683,16 +1692,20 @@ namespace Thetis
             set
             {
                 if (radioButtonMerc1.Checked)
-                    udR2.Value = value;
+                    //udR2.Value = value; //MW0LGE_[2.9.0.7]
+                    DiversityR2Gain = value;
                 else
-                    udR1.Value = value;
+                    //udR1.Value = value; //MW0LGE_[2.9.0.7]
+                    DiversityGain = value;
             }
             get
             {
                 if (radioButtonMerc1.Checked)
-                    return udR2.Value;
+                    //return udR2.Value; //MW0LGE_[2.9.0.7]
+                    return DiversityR2Gain;
                 else
-                    return udR1.Value;
+                    //return udR1.Value; //MW0LGE_[2.9.0.7]
+                    return DiversityGain;
             }
         }
 
@@ -1701,6 +1714,7 @@ namespace Thetis
             set
             {
                 decimal v = Math.Min(value, udR1.Maximum);
+                v = Math.Max(v, udR1.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
                 udR1.Value = v;
             }
             get { return udR1.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands
@@ -1711,6 +1725,7 @@ namespace Thetis
             set
             {
                 decimal v = Math.Min(value, udR2.Maximum);
+                v = Math.Max(v, udR2.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
                 udR2.Value = v;
             }
             get { return udR2.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands

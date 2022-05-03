@@ -80,6 +80,7 @@
             this.labelTS140 = new System.Windows.Forms.LabelTS();
             this.udPSCalWait = new System.Windows.Forms.NumericUpDownTS();
             this.chkQuickAttenuate = new System.Windows.Forms.CheckBoxTS();
+            this.chkAdvancedViewHidden = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPSPhnum)).BeginInit();
             this.grpPSInfo.SuspendLayout();
@@ -339,6 +340,7 @@
             this.udPSMoxDelay.Name = "udPSMoxDelay";
             this.udPSMoxDelay.Size = new System.Drawing.Size(51, 20);
             this.udPSMoxDelay.TabIndex = 29;
+            this.udPSMoxDelay.TinyStep = false;
             this.udPSMoxDelay.Value = new decimal(new int[] {
             2,
             0,
@@ -378,6 +380,7 @@
             this.udPSPhnum.Name = "udPSPhnum";
             this.udPSPhnum.Size = new System.Drawing.Size(80, 20);
             this.udPSPhnum.TabIndex = 25;
+            this.udPSPhnum.TinyStep = false;
             this.udPSPhnum.Value = new decimal(new int[] {
             150,
             0,
@@ -739,6 +742,7 @@
             this.udPSCalWait.Name = "udPSCalWait";
             this.udPSCalWait.Size = new System.Drawing.Size(51, 20);
             this.udPSCalWait.TabIndex = 16;
+            this.udPSCalWait.TinyStep = false;
             this.udPSCalWait.Value = new decimal(new int[] {
             0,
             0,
@@ -759,12 +763,26 @@
             this.chkQuickAttenuate.UseVisualStyleBackColor = true;
             this.chkQuickAttenuate.CheckedChanged += new System.EventHandler(this.chkQuickAttenuate_CheckedChanged);
             // 
+            // chkAdvancedViewHidden
+            // 
+            this.chkAdvancedViewHidden.AutoSize = true;
+            this.chkAdvancedViewHidden.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkAdvancedViewHidden.Image = null;
+            this.chkAdvancedViewHidden.Location = new System.Drawing.Point(397, 216);
+            this.chkAdvancedViewHidden.Name = "chkAdvancedViewHidden";
+            this.chkAdvancedViewHidden.Size = new System.Drawing.Size(150, 17);
+            this.chkAdvancedViewHidden.TabIndex = 50;
+            this.chkAdvancedViewHidden.Text = "chkAdvancedViewHidden";
+            this.chkAdvancedViewHidden.UseVisualStyleBackColor = false;
+            this.chkAdvancedViewHidden.Visible = false;
+            // 
             // PSForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(560, 303);
+            this.Controls.Add(this.chkAdvancedViewHidden);
             this.Controls.Add(this.chkQuickAttenuate);
             this.Controls.Add(this.chkPSOnTop);
             this.Controls.Add(this.lblPSTint);
@@ -861,5 +879,6 @@
         private System.Windows.Forms.CheckBoxTS chkPSOnTop;
         private System.Windows.Forms.CheckBoxTS chkQuickAttenuate;
         private System.Windows.Forms.ButtonTS btnDefaultPeaks;
+        private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
     }
 }
