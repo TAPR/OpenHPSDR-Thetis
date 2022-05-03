@@ -5269,6 +5269,7 @@
             this.picMultiMeterDigital.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.picMultiMeterDigital.Name = "picMultiMeterDigital";
             this.picMultiMeterDigital.TabStop = false;
+            this.picMultiMeterDigital.Click += new System.EventHandler(this.picMultiMeterDigital_Click);
             this.picMultiMeterDigital.Paint += new System.Windows.Forms.PaintEventHandler(this.picMultiMeterDigital_Paint);
             // 
             // txtMultiText
@@ -6926,6 +6927,7 @@
             this.picRX2Meter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.picRX2Meter.Name = "picRX2Meter";
             this.picRX2Meter.TabStop = false;
+            this.picRX2Meter.Click += new System.EventHandler(this.picRX2Meter_Click);
             this.picRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Meter_Paint);
             // 
             // txtRX2Meter
