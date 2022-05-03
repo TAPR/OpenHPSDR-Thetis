@@ -260,7 +260,7 @@ namespace Thetis
 
             if (!mox)
             {
-                foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && (kvp.Value.TypeBitield & (int)MeterType.RX) == (int)MeterType.RX))
+                foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && (kvp.Value.TypeBitField & (int)MeterType.RX) == (int)MeterType.RX))
                 {
                     int ui = kvp.Value.QuickestUpdateInterval;
                     if (ui < updateRate) updateRate = ui;
@@ -268,7 +268,7 @@ namespace Thetis
             }
             else
             {
-                foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && (kvp.Value.TypeBitield & (int)MeterType.RX) != (int)MeterType.RX))
+                foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && (kvp.Value.TypeBitField & (int)MeterType.RX) != (int)MeterType.RX))
                 {
                     int ui = kvp.Value.QuickestUpdateInterval;
                     if (ui < updateRate) updateRate = ui;
@@ -679,6 +679,7 @@ namespace Thetis
             private float _lengthFactor;
             private bool _setup;
             private Dictionary<float, PointF> _scaleCalibration;
+            private PointF _radiusRatio;
 
             public clsNeedleItem()
             {
@@ -690,7 +691,8 @@ namespace Thetis
                 _needleOffset.Y = 0.5f;
                 _lengthFactor = 1f;
                 _setup = false;
-
+                _radiusRatio.X = 1f;
+                _radiusRatio.Y = 1f;
                 _style = NeedleStyle.Line;
                 _colour = System.Drawing.Color.White;
                 _strokeWidth = 3f;
@@ -814,6 +816,11 @@ namespace Thetis
                 get { return _scaleCalibration; }
                 set { }
             }
+            public PointF RadiusRatio
+            {
+                get { return _radiusRatio; }
+                set { _radiusRatio = value; }
+            }
         }
         //
         #endregion
@@ -845,7 +852,7 @@ namespace Thetis
                 _meterItems = new Dictionary<string, clsMeterItem>();
 
                 //test
-                if ((TypeBitield & (int)MeterType.RX) == (int)MeterType.RX)
+                if ((TypeBitField & (int)MeterType.RX) == (int)MeterType.RX)
                 {
                     //clsBarItem cb;
 
@@ -916,101 +923,136 @@ namespace Thetis
                     //sc.ZOrder = -1;
                     //_meterItems.Add(sc.ID, sc);
 
+                    //clsNeedleItem ni = new clsNeedleItem(); ;
+                    //ni.TopLeft = new PointF(0f, 0f);
+                    //ni.BottomRight = new PointF(1f, 0.579f);
+                    //ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                    //ni.AttackRatio = 0.1f;
+                    //ni.DecayRatio = 0.05f;
+                    //ni.UpdateInterval = 16;
+                    //ni.HistoryDuration = 4000;
+                    //ni.ShowHistory = true;
+                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    //ni.Colour = System.Drawing.Color.YellowGreen;
+                    //ni.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Green);
+                    //ni.ZOrder = 1;
+                    //ni.NeedleOffset = new PointF(-0.004f, 0.616f);
+                    //ni.LengthFactor = 1.14f;
+                    ////ni.Setup = true;
+                    //ni.ScaleCalibration.Add(-121f, new PointF(0.091f, 0.42f));
+                    //ni.ScaleCalibration.Add(-115f, new PointF(0.144f, 0.359f));
+                    //ni.ScaleCalibration.Add(-109f, new PointF(0.191f, 0.281f));
+                    //ni.ScaleCalibration.Add(-103f, new PointF(0.25f, 0.243f));
+                    //ni.ScaleCalibration.Add(-97f, new PointF(0.306f, 0.184f));
+                    //ni.ScaleCalibration.Add(-91f, new PointF(0.37f, 0.17f));
+                    //ni.ScaleCalibration.Add(-85f, new PointF(0.432f, 0.134f));
+                    //ni.ScaleCalibration.Add(-79f, new PointF(0.495f, 0.147f));
+                    //ni.ScaleCalibration.Add(-73f, new PointF(0.56f, 0.134f));
+                    //ni.ScaleCalibration.Add(-63f, new PointF(0.623f, 0.153f));
+                    //ni.ScaleCalibration.Add(-53f, new PointF(0.686f, 0.184f));
+                    //ni.ScaleCalibration.Add(-43f, new PointF(0.745f, 0.225f));
+                    //ni.ScaleCalibration.Add(-33f, new PointF(0.802f, 0.279f));
+                    //ni.ScaleCalibration.Add(-23f, new PointF(0.865f, 0.344f));
+                    //ni.ScaleCalibration.Add(-13f, new PointF(0.902f, 0.419f));
+                    //_meterItems.Add(ni.ID, ni);
+
+                    //ni = new clsNeedleItem();
+                    //ni.TopLeft = new PointF(0f, 0f);
+                    //ni.BottomRight = new PointF(1f, 0.579f);
+                    //ni.ReadingSource = Reading.SIGNAL_STRENGTH;
+                    //ni.AttackRatio = 0.1f;
+                    //ni.DecayRatio = 0.05f;
+                    //ni.UpdateInterval = 16;
+                    //ni.ShowHistory = false;
+                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    //ni.Colour = System.Drawing.Color.LimeGreen;
+                    //ni.StrokeWidth = 2f;
+                    //ni.NeedleOffset = new PointF(-0.004f, 0.616f);
+                    //ni.LengthFactor = 1.14f;
+                    //ni.ScaleCalibration.Add(-121f, new PointF(0.091f, 0.42f));
+                    //ni.ScaleCalibration.Add(-115f, new PointF(0.144f, 0.359f));
+                    //ni.ScaleCalibration.Add(-109f, new PointF(0.191f, 0.281f));
+                    //ni.ScaleCalibration.Add(-103f, new PointF(0.25f, 0.243f));
+                    //ni.ScaleCalibration.Add(-97f, new PointF(0.306f, 0.184f));
+                    //ni.ScaleCalibration.Add(-91f, new PointF(0.37f, 0.17f));
+                    //ni.ScaleCalibration.Add(-85f, new PointF(0.432f, 0.134f));
+                    //ni.ScaleCalibration.Add(-79f, new PointF(0.495f, 0.147f));
+                    //ni.ScaleCalibration.Add(-73f, new PointF(0.56f, 0.134f));
+                    //ni.ScaleCalibration.Add(-63f, new PointF(0.623f, 0.153f));
+                    //ni.ScaleCalibration.Add(-53f, new PointF(0.686f, 0.184f));
+                    //ni.ScaleCalibration.Add(-43f, new PointF(0.745f, 0.225f));
+                    //ni.ScaleCalibration.Add(-33f, new PointF(0.802f, 0.279f));
+                    //ni.ScaleCalibration.Add(-23f, new PointF(0.865f, 0.344f));
+                    //ni.ScaleCalibration.Add(-13f, new PointF(0.902f, 0.419f));
+                    //_meterItems.Add(ni.ID, ni);
+
+                    ////sc = new clsSolidColour();
+                    ////sc.TopLeft = new PointF(0.1f, 0.5f);
+                    ////sc.BottomRight = new PointF(0.9f, 0.9f);
+                    ////sc.Colour = System.Drawing.Color.FromArgb(255,48,48,48);
+                    ////sc.ZOrder = -1;
+                    ////_meterItems.Add(sc.ID, sc);
+
+                    //clsImage img = new clsImage();
+                    //img.TopLeft = new PointF(0f, 0f);
+                    //img.BottomRight = new PointF(1f, 0.579f);
+                    //img.ZOrder = -2;
+                    //img.ImageName = "s-meter-green";
+                    //_meterItems.Add(img.ID, img);
+
+                    //img = new clsImage();
+                    //img.TopLeft = new PointF(0.4f, 0.579f - 0.05f);
+                    //img.BottomRight = new PointF(0.6f, 0.579f + 0.15f);
+                    //img.ZOrder = 10;
+                    //img.ImageName = "cover";
+                    //img.Clipped = true;
+                    //img.ClipTopLeft = new PointF(0f, 0f);
+                    //img.ClipBottomRight = new PointF(1f, 0.579f);
+                    //_meterItems.Add(img.ID, img);
+                    ////
+                    ///
                     clsNeedleItem ni = new clsNeedleItem(); ;
                     ni.TopLeft = new PointF(0f, 0f);
-                    ni.BottomRight = new PointF(1f, 0.579f);
+                    ni.BottomRight = new PointF(1f, 0.409f);
                     ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
                     ni.AttackRatio = 0.1f;
                     ni.DecayRatio = 0.05f;
                     ni.UpdateInterval = 16;
                     ni.HistoryDuration = 4000;
                     ni.ShowHistory = true;
+                    ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.YellowGreen;
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Green);
+                    ni.Colour = System.Drawing.Color.Black;
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(128, 238, 195, 154);
                     ni.ZOrder = 1;
-                    ni.NeedleOffset = new PointF(-0.004f, 0.616f);
-                    ni.LengthFactor = 1.14f;
+                    ni.NeedleOffset = new PointF(0f, 0.832f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = 1.65f;
                     //ni.Setup = true;
-                    //ni.ScaleCalibration.Add(-121, new PointF(0.094f, 0.420f)); // position for S1 or below
-                    //ni.ScaleCalibration.Add(-97, new PointF(0.306f, 0.183f)); // position for S5
-                    //ni.ScaleCalibration.Add(-73, new PointF(0.557f, 0.135f)); // position for S9
-                    //ni.ScaleCalibration.Add(-13, new PointF(0.900f, 0.420f)); // position for S9+60dB or above
-                    ni.ScaleCalibration.Add(-121f, new PointF(0.091f, 0.42f));
-                    ni.ScaleCalibration.Add(-115f, new PointF(0.144f, 0.359f));
-                    ni.ScaleCalibration.Add(-109f, new PointF(0.191f, 0.281f));
-                    ni.ScaleCalibration.Add(-103f, new PointF(0.25f, 0.243f));
-                    ni.ScaleCalibration.Add(-97f, new PointF(0.306f, 0.184f));
-                    ni.ScaleCalibration.Add(-91f, new PointF(0.37f, 0.17f));
-                    ni.ScaleCalibration.Add(-85f, new PointF(0.432f, 0.134f));
-                    ni.ScaleCalibration.Add(-79f, new PointF(0.495f, 0.147f));
-                    ni.ScaleCalibration.Add(-73f, new PointF(0.56f, 0.134f));
-                    ni.ScaleCalibration.Add(-63f, new PointF(0.623f, 0.153f));
-                    ni.ScaleCalibration.Add(-53f, new PointF(0.686f, 0.184f));
-                    ni.ScaleCalibration.Add(-43f, new PointF(0.745f, 0.225f));
-                    ni.ScaleCalibration.Add(-33f, new PointF(0.802f, 0.279f));
-                    ni.ScaleCalibration.Add(-23f, new PointF(0.865f, 0.344f));
-                    ni.ScaleCalibration.Add(-13f, new PointF(0.902f, 0.419f));
+                    ni.ScaleCalibration.Add(-127f, new PointF(0.076f, 0.31f));
+                    ni.ScaleCalibration.Add(-121f, new PointF(0.131f, 0.272f));
+                    ni.ScaleCalibration.Add(-115f, new PointF(0.189f, 0.254f));
+                    ni.ScaleCalibration.Add(-109f, new PointF(0.233f, 0.211f));
+                    ni.ScaleCalibration.Add(-103f, new PointF(0.284f, 0.207f));
+                    ni.ScaleCalibration.Add(-97f, new PointF(0.326f, 0.177f));
+                    ni.ScaleCalibration.Add(-91f, new PointF(0.374f, 0.177f));
+                    ni.ScaleCalibration.Add(-85f, new PointF(0.414f, 0.151f));
+                    ni.ScaleCalibration.Add(-79f, new PointF(0.459f, 0.168f));
+                    ni.ScaleCalibration.Add(-73f, new PointF(0.501f, 0.142f));
+                    ni.ScaleCalibration.Add(-63f, new PointF(0.564f, 0.172f));
+                    ni.ScaleCalibration.Add(-53f, new PointF(0.63f, 0.164f));
+                    ni.ScaleCalibration.Add(-43f, new PointF(0.695f, 0.203f));
+                    ni.ScaleCalibration.Add(-33f, new PointF(0.769f, 0.211f));
+                    ni.ScaleCalibration.Add(-23f, new PointF(0.838f, 0.272f));
+                    ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
                     _meterItems.Add(ni.ID, ni);
-
-                    ni = new clsNeedleItem();
-                    ni.TopLeft = new PointF(0f, 0f);
-                    ni.BottomRight = new PointF(1f, 0.579f);
-                    ni.ReadingSource = Reading.SIGNAL_STRENGTH;
-                    ni.AttackRatio = 0.1f;
-                    ni.DecayRatio = 0.05f;
-                    ni.UpdateInterval = 16;
-                    ni.ShowHistory = false;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.LimeGreen;
-                    ni.StrokeWidth = 2f;
-                    ni.NeedleOffset = new PointF(-0.004f, 0.616f);
-                    ni.LengthFactor = 1.14f;
-                    //ni.ScaleCalibration.Add(-121, new PointF(0.094f, 0.420f)); // position for S1 or below
-                    //ni.ScaleCalibration.Add(-97, new PointF(0.306f, 0.183f)); // position for S5
-                    //ni.ScaleCalibration.Add(-73, new PointF(0.557f, 0.135f)); // position for S9
-                    //ni.ScaleCalibration.Add(-13, new PointF(0.900f, 0.420f)); // position for S9+60dB or above
-                    ni.ScaleCalibration.Add(-121f, new PointF(0.091f, 0.42f));
-                    ni.ScaleCalibration.Add(-115f, new PointF(0.144f, 0.359f));
-                    ni.ScaleCalibration.Add(-109f, new PointF(0.191f, 0.281f));
-                    ni.ScaleCalibration.Add(-103f, new PointF(0.25f, 0.243f));
-                    ni.ScaleCalibration.Add(-97f, new PointF(0.306f, 0.184f));
-                    ni.ScaleCalibration.Add(-91f, new PointF(0.37f, 0.17f));
-                    ni.ScaleCalibration.Add(-85f, new PointF(0.432f, 0.134f));
-                    ni.ScaleCalibration.Add(-79f, new PointF(0.495f, 0.147f));
-                    ni.ScaleCalibration.Add(-73f, new PointF(0.56f, 0.134f));
-                    ni.ScaleCalibration.Add(-63f, new PointF(0.623f, 0.153f));
-                    ni.ScaleCalibration.Add(-53f, new PointF(0.686f, 0.184f));
-                    ni.ScaleCalibration.Add(-43f, new PointF(0.745f, 0.225f));
-                    ni.ScaleCalibration.Add(-33f, new PointF(0.802f, 0.279f));
-                    ni.ScaleCalibration.Add(-23f, new PointF(0.865f, 0.344f));
-                    ni.ScaleCalibration.Add(-13f, new PointF(0.902f, 0.419f));
-                    _meterItems.Add(ni.ID, ni);
-
-                    //sc = new clsSolidColour();
-                    //sc.TopLeft = new PointF(0.1f, 0.5f);
-                    //sc.BottomRight = new PointF(0.9f, 0.9f);
-                    //sc.Colour = System.Drawing.Color.FromArgb(255,48,48,48);
-                    //sc.ZOrder = -1;
-                    //_meterItems.Add(sc.ID, sc);
 
                     clsImage img = new clsImage();
                     img.TopLeft = new PointF(0f, 0f);
-                    img.BottomRight = new PointF(1f, 0.579f);
-                    img.ZOrder = -2;
-                    img.ImageName = "s-meter-green";
+                    img.BottomRight = new PointF(1f, 0.409f);
+                    img.ZOrder = 0;
+                    img.ImageName = "kenwood";
                     _meterItems.Add(img.ID, img);
-
-                    img = new clsImage();
-                    img.TopLeft = new PointF(0.4f, 0.579f - 0.05f);
-                    img.BottomRight = new PointF(0.6f, 0.579f + 0.15f);
-                    img.ZOrder = 10;
-                    img.ImageName = "cover";
-                    img.Clipped = true;
-                    img.ClipTopLeft = new PointF(0f, 0f);
-                    img.ClipBottomRight = new PointF(1f, 0.579f);
-                    _meterItems.Add(img.ID, img);
-                    //
                 }
                 else if ((typeBitfield & (int)MeterType.MOX) == (int)MeterType.MOX)
                 {
@@ -1176,7 +1218,7 @@ namespace Thetis
             public float XRatio { get { return _XRatio; } }
             public float YRatio { get { return _YRatio; } }
             public string Name { get { return _Name; } }
-            public int TypeBitield { get { return _TypeBitfield; } }
+            public int TypeBitField { get { return _TypeBitfield; } }
             public string ID { get { return _sGuid; } }
             public int RX { get { return _rx; } }
 
@@ -1322,11 +1364,14 @@ namespace Thetis
             {
                 if (!sImagePath.EndsWith("\\")) sImagePath += "\\";
 
-                string[] sFiles = System.IO.Directory.GetFiles(sImagePath);
-                foreach(string sFile in sFiles)
+                if (System.IO.Directory.Exists(sImagePath))
                 {
-                    string sID = System.IO.Path.GetFileNameWithoutExtension(sFile);
-                    loadImage(sFile, sID);
+                    string[] sFiles = System.IO.Directory.GetFiles(sImagePath);
+                    foreach (string sFile in sFiles)
+                    {
+                        string sID = System.IO.Path.GetFileNameWithoutExtension(sFile);
+                        loadImage(sFile, sID);
+                    }
                 }
             }
             private void loadImage(string sPath, string sID)
@@ -1818,8 +1863,8 @@ namespace Thetis
                     {
                         // this rx
                         if (
-                            ((m.TypeBitield & (int)MeterType.RX) == (int)MeterType.RX && !_mox) ||
-                            ((m.TypeBitield & (int)MeterType.MOX) == (int)MeterType.MOX && _mox)
+                            ((m.TypeBitField & (int)MeterType.RX) == (int)MeterType.RX && !_mox) ||
+                            ((m.TypeBitField & (int)MeterType.MOX) == (int)MeterType.MOX && _mox)
                             )
                         {
                             // display when rx only
@@ -1982,7 +2027,9 @@ namespace Thetis
                 float startY = cY + (h * ni.NeedleOffset.Y);
 
                 float rotation = 180f;
-                float radius = (w / 2) * ni.LengthFactor;
+
+                float radiusX = (w / 2) * (ni.LengthFactor * ni.RadiusRatio.X);
+                float radiusY = (w / 2) * (ni.LengthFactor * ni.RadiusRatio.Y);
 
                 //todo
                 switch (ni.Placement)
@@ -2044,13 +2091,19 @@ namespace Thetis
                     float dYmin = startY - eYmin;
                     float dXmax = startX - eXmax;
                     float dYmax = startY - eYmax;
+                    // expand for ellipse
+                    dXmin /= ni.RadiusRatio.X;
+                    dYmin /= ni.RadiusRatio.Y;
+                    dXmax /= ni.RadiusRatio.X;
+                    dYmax /= ni.RadiusRatio.Y;
+                    //
                     float angMin = (float)Math.Atan2(dYmin, dXmin);
                     float angMax = (float)Math.Atan2(dYmax, dXmax);
 
-                    float endMinX = startX + (float)(Math.Cos(angMin + degToRad(rotation)) * radius);
-                    float endMinY = startY + (float)(Math.Sin(angMin + degToRad(rotation)) * radius);
-                    float endMaxX = startX + (float)(Math.Cos(angMax + degToRad(rotation)) * radius);
-                    float endMaxY = startY + (float)(Math.Sin(angMax + degToRad(rotation)) * radius);
+                    float endMinX = startX + (float)(Math.Cos(angMin + degToRad(rotation)) * radiusX);
+                    float endMinY = startY + (float)(Math.Sin(angMin + degToRad(rotation)) * radiusY);
+                    float endMaxX = startX + (float)(Math.Cos(angMax + degToRad(rotation)) * radiusX);
+                    float endMaxY = startY + (float)(Math.Sin(angMax + degToRad(rotation)) * radiusY);
 
                     PathGeometry sharpGeometry = new PathGeometry(_renderTarget.Factory);
 
@@ -2063,7 +2116,7 @@ namespace Thetis
                     arcSegment.Point = new SharpDX.Vector2(endMaxX, endMaxY);
                     arcSegment.SweepDirection = ni.Direction == clsNeedleItem.NeedleDirection.Clockwise ? SweepDirection.Clockwise : SweepDirection.CounterClockwise;
                     arcSegment.ArcSize = Math.Abs(radToDeg(angMax) - radToDeg(angMin)) <= 180f ? ArcSize.Small : ArcSize.Large;
-                    arcSegment.Size = new Size2F(radius, radius);
+                    arcSegment.Size = new Size2F(radiusX, radiusY);
                     geo.AddArc(arcSegment);
 
                     geo.EndFigure(FigureEnd.Closed); // adds the closing line
@@ -2091,10 +2144,13 @@ namespace Thetis
                 // calc angle required
                 dX = startX - eX;
                 dY = startY - eY;
+                // expand
+                dX /= ni.RadiusRatio.X;
+                dY /= ni.RadiusRatio.Y;
                 float ang = (float)Math.Atan2(dY, dX);
 
-                float endX = startX + (float)(Math.Cos(ang + degToRad(rotation)) * radius);
-                float endY = startY + (float)(Math.Sin(ang + degToRad(rotation)) * radius);
+                float endX = startX + (float)(Math.Cos(ang + degToRad(rotation)) * radiusX);
+                float endY = startY + (float)(Math.Sin(ang + degToRad(rotation)) * radiusY);
 
                 _renderTarget.DrawLine(new SharpDX.Vector2(startX, startY), new SharpDX.Vector2(endX, endY), getDXBrushForColour(ni.Colour), ni.StrokeWidth);
 
