@@ -23525,17 +23525,17 @@ namespace Thetis
 
         private void radUseDriveSliderTune_CheckedChanged(object sender, EventArgs e)
         {
-            console.TuneDrivePowerOrigin = DrivePowerSource.DRIVE_SLIDER;
+            if(radUseDriveSliderTune.Checked) console.TuneDrivePowerOrigin = DrivePowerSource.DRIVE_SLIDER;
         }
 
         private void radUseTuneSliderTune_CheckedChanged(object sender, EventArgs e)
         {
-            console.TuneDrivePowerOrigin = DrivePowerSource.TUNE_SLIDER;
+            if (radUseTuneSliderTune.Checked) console.TuneDrivePowerOrigin = DrivePowerSource.TUNE_SLIDER;
         }
 
         private void radUseFixedDriveTune_CheckedChanged(object sender, EventArgs e)
         {
-            console.TuneDrivePowerOrigin = DrivePowerSource.FIXED;
+            if (radUseFixedDriveTune.Checked) console.TuneDrivePowerOrigin = DrivePowerSource.FIXED;
         }
 
         private void udTestIMDPower_ValueChanged(object sender, EventArgs e)
@@ -23566,24 +23566,24 @@ namespace Thetis
                     radUseTuneSlider2Tone.Checked = true;
                     break;
                 case DrivePowerSource.FIXED:
-                    radUseTuneSlider2Tone.Checked = true;
+                    radUseFixedDrive2Tone.Checked = true; //MW0LGE_[2.9.0.7] fixed, was setting incorrect radio button
                     break;
             }
         }
 
         private void radUseDriveSlider2Tone_CheckedChanged(object sender, EventArgs e)
         {
-            console.TwoToneDrivePowerOrigin = DrivePowerSource.DRIVE_SLIDER;
+            if(radUseDriveSlider2Tone.Checked) console.TwoToneDrivePowerOrigin = DrivePowerSource.DRIVE_SLIDER;
         }
 
         private void radUseTuneSlider2Tone_CheckedChanged(object sender, EventArgs e)
         {
-            console.TwoToneDrivePowerOrigin = DrivePowerSource.TUNE_SLIDER;
+            if (radUseTuneSlider2Tone.Checked) console.TwoToneDrivePowerOrigin = DrivePowerSource.TUNE_SLIDER;
         }
 
         private void radUseFixedDrive2Tone_CheckedChanged(object sender, EventArgs e)
         {
-            console.TwoToneDrivePowerOrigin = DrivePowerSource.FIXED;
+            if (radUseFixedDrive2Tone.Checked) console.TwoToneDrivePowerOrigin = DrivePowerSource.FIXED;
         }
         private void chkLimitPowerCATTCIMsgs_CheckedChanged(object sender, EventArgs e)
         {

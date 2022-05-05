@@ -23,11 +23,13 @@ namespace Thetis
     public enum Reading
     {
         NONE = -1,
+        //RX
         SIGNAL_STRENGTH = 0,
         AVG_SIGNAL_STRENGTH,
         ADC_REAL,
         ADC_IMAG,
         AGC_GAIN,
+        //TX
         MIC,
         PWR,
         ALC,
@@ -36,6 +38,7 @@ namespace Thetis
         COMP,
         CPDR,
         ALC_G,
+        ALC_GROUP,
         LVL_G,
         MIC_PK,
         ALC_PK,
@@ -60,6 +63,9 @@ namespace Thetis
         CAL_FWD_PWR,
         REV_VOLT,
         FWD_VOLT,
+        // volts/amps
+        VOLTS,
+        AMPS,
         LAST
     }
 
@@ -83,6 +89,9 @@ namespace Thetis
         private static bool _meterThreadRunning;
         private static object _readingsLock = new object();
         private static bool _mox;
+        private static bool _power;
+        private static bool _rx1VHForAbove;
+        private static bool _rx2VHForAbove;
         //
         private static DXRenderer _rx1Renderer;
         private static DXRenderer _rx2Renderer;
@@ -93,6 +102,8 @@ namespace Thetis
             // static constructor
             _rx1Renderer = null;
             _rx2Renderer = null;
+            _rx1VHForAbove = false;
+            _rx2VHForAbove = false;
             _delegatesAdded = false;
             _console = null;
             _readings = new Dictionary<int, clsReadings>();
@@ -104,24 +115,22 @@ namespace Thetis
             _readings.Add(2, new clsReadings());
 
             // test
-            clsMeter cm = new clsMeter(1, "test1meter", (int)MeterType.RX, 1f, 1f);
+            clsMeter cm = new clsMeter(1, "test1meter", (int)MeterType.RX, 1f, 2f);
             _meters.Add(cm.Name, cm);
 
-            //cm = new clsMeter(2, "test2meter", (int)MeterType.RX, 1f, 1f);
-            //_meters.Add(cm.Name, cm);
+            cm = new clsMeter(2, "test2meter", (int)MeterType.RX, 1f, 2f);
+            _meters.Add(cm.Name, cm);
 
-            cm = new clsMeter(1, "test3meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 1f);
+            cm = new clsMeter(1, "test3meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 2f);
+            cm.AddDisplayGroup("PWR/SWR"); // 1
+            cm.AddDisplayGroup("Comp");
+            cm.AddDisplayGroup("ALC");
+            cm.AddDisplayGroup("Volts/Amps");
+            cm.DisplayGroup = 1;
             _meters.Add(cm.Name, cm);
             //
 
             _meterThreadRunning = false;
-            _meterThread = new Thread(new ThreadStart(UpdateMeters))
-            {
-                Name = "Multimeter Thread",
-                Priority = ThreadPriority.Lowest,
-                IsBackground = true
-            };
-            _meterThread.Start();
         }
 
         private static void UpdateMeters()
@@ -129,35 +138,54 @@ namespace Thetis
             _meterThreadRunning = true;
             while (_meterThreadRunning)
             {
-                // udpate any meter
-                foreach (KeyValuePair<string, clsMeter> kvp in _meters)
+                if (_power)
                 {
-                    List<Reading> readingsUsed = new List<Reading>();
-
-                    kvp.Value.Update(ref readingsUsed);
-
-                    lock (_readingsLock)
+                    // udpate any meter
+                    foreach (KeyValuePair<string, clsMeter> kvp in _meters)
                     {
-                        // use/invalidate any readings that have been used, so that they can be updated
-                        foreach (Reading rt in readingsUsed)
+                        List<Reading> readingsUsed = new List<Reading>();
+
+                        kvp.Value.Update(ref readingsUsed);
+
+                        lock (_readingsLock)
                         {
-                            _readings[kvp.Value.RX].UseReading(rt);
+                            // use/invalidate any readings that have been used, so that they can be updated
+                            foreach (Reading rt in readingsUsed)
+                            {
+                                _readings[kvp.Value.RX].UseReading(rt);
+                            }
                         }
                     }
+                    Thread.Sleep(overallUpdateInterval());
                 }
-
-                Thread.Sleep(overallUpdateInterval());
+                else
+                {
+                    Thread.Sleep(100);
+                }
             }
         }
         public static void Init(Console c, Control rx1, Control rx2, string sImagePath = "")
         {
             _console = c;
+            _mox = _console.MOX;
+            _power = _console.PowerOn;
+            _rx1VHForAbove = _console.VFOAFreq >= 30;
+            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq > 30;
+
             addDelegates();
 
             if (rx1 != null)
                 _rx1Renderer = new DXRenderer(1, rx1, _console, sImagePath);
             if (rx2 != null)
                 _rx2Renderer = new DXRenderer(2, rx2, _console, sImagePath);
+
+            _meterThread = new Thread(new ThreadStart(UpdateMeters))
+            {
+                Name = "Multimeter Thread",
+                Priority = ThreadPriority.Lowest,
+                IsBackground = true
+            };
+            _meterThread.Start();
         }
         public static void Shutdown()
         {
@@ -175,6 +203,10 @@ namespace Thetis
 
             _console.MeterReadingsChangedHandlers += OnMeterReadings;
             _console.MoxChangeHandlers += OnMox;
+            _console.PowerChangeHanders += OnPower;
+            _console.VFOAFrequencyChangeHandlers += OnVFOA;
+            _console.VFOBFrequencyChangeHandlers += OnVFOB;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -183,10 +215,36 @@ namespace Thetis
 
             _console.MeterReadingsChangedHandlers -= OnMeterReadings;
             _console.MoxChangeHandlers -= OnMox;
+            _console.PowerChangeHanders -= OnPower;
+            _console.VFOAFrequencyChangeHandlers -= OnVFOA;
+            _console.VFOBFrequencyChangeHandlers -= OnVFOB;
 
             _delegatesAdded = false;
         }
-        private static float GetReading(int rx, Reading rt, bool bUseReading = false)
+        private static void OnVFOA(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
+        {
+            _rx1VHForAbove = _console.VFOAFreq >= 30;
+        }
+        private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
+        {
+            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
+        }
+        private static void OnPower(bool oldPower, bool newPower)
+        {
+            _power = newPower;
+        }
+        private static void OnMox(int rx, bool oldMox, bool newMox)
+        {
+            _mox = newMox;
+        }
+        private static float dbmOffsetForAbove30(int rx)
+        {
+            if ((rx == 1 && _rx1VHForAbove) || (rx == 2 && _rx2VHForAbove))
+                return 20f;
+            else
+                return 0f;
+        }
+        private static float getReading(int rx, Reading rt, bool bUseReading = false)
         {
             lock (_readingsLock)
             {
@@ -195,7 +253,15 @@ namespace Thetis
         }
         private static void setReading(int rx, Reading rt, ref Dictionary<Reading, float> readings)
         {
+            // locked outside
             if (_readings[rx].RequiresUpdate(rt)) _readings[rx].SetReading(rt, readings[rt]);
+        }
+        private static void setReading(int rx, Reading rt, float reading)
+        {
+            lock (_readingsLock)
+            {
+                if (_readings[rx].RequiresUpdate(rt)) _readings[rx].SetReading(rt, reading);
+            }
         }
         private static void OnMeterReadings(int rx, bool mox, ref Dictionary<Reading, float> readings)
         {
@@ -211,9 +277,12 @@ namespace Thetis
                 }
                 else
                 {
+                    setReading(rx, Reading.MIC, ref readings);
                     setReading(rx, Reading.MIC_PK, ref readings);
                     setReading(rx, Reading.EQ_PK, ref readings);
+                    setReading(rx, Reading.EQ, ref readings);
                     setReading(rx, Reading.LEVELER_PK, ref readings);
+                    setReading(rx, Reading.LEVELER, ref readings);
                     setReading(rx, Reading.LVL_G, ref readings);
                     setReading(rx, Reading.CFC_PK, ref readings);
                     setReading(rx, Reading.CFC_G, ref readings);
@@ -224,9 +293,16 @@ namespace Thetis
                     setReading(rx, Reading.ALC, ref readings);
                     setReading(rx, Reading.ALC_G, ref readings);
 
+                    setReading(rx, Reading.COMP, ref readings);
+                    setReading(rx, Reading.COMP_PK, ref readings);
+                    setReading(rx, Reading.ALC_GROUP, ref readings);
+
                     setReading(rx, Reading.PWR, ref readings);
                     setReading(rx, Reading.REVERSE_PWR, ref readings);
                     setReading(rx, Reading.SWR, ref readings);
+
+                    setReading(rx, Reading.ADC2_REAL, ref readings);
+                    setReading(rx, Reading.ADC2_IMAG, ref readings);
 
                     if (rx == 1)
                     { // only rx1 data
@@ -239,11 +315,9 @@ namespace Thetis
                         setReading(rx, Reading.CAL_FWD_PWR, ref readings);
                     }
                 }
+                setReading(rx, Reading.VOLTS, ref readings);
+                setReading(rx, Reading.AMPS, ref readings);
             }
-        }
-        private static void OnMox(int rx, bool oldMox, bool newMox)
-        {
-            _mox = newMox;
         }
         public static bool RequiresUpdate(int rx, Reading rt)
         {
@@ -305,7 +379,8 @@ namespace Thetis
                 NEEDLE,
                 TEXT,
                 IMAGE,
-                SOLID_COLOUR
+                SOLID_COLOUR,
+                CLICKBOX
             }
 
             private string _sGUID;
@@ -314,6 +389,7 @@ namespace Thetis
 
             private PointF _topLeft; // 0-1,0-1
             private PointF _bottomRight; // 0-1,0-1
+            private SizeF _size;  // 0-1,0-1
             private int _zOrder; // lower first
             private int _msUpdateInterval; //ms
             private float _attackRatio; // 0f - 1f
@@ -321,10 +397,9 @@ namespace Thetis
             private float _value;
             private System.Drawing.Color _historyColour;
             private Reading _readingType;
-
-            private Stopwatch _stopwatch;
-
+            private Stopwatch _updateStopwatch;
             private Dictionary<float, PointF> _scaleCalibration;
+            private int _displayGroup;
 
             public clsMeterItem()
             {
@@ -343,8 +418,10 @@ namespace Thetis
                 _value = -200;
                 _historyColour = System.Drawing.Color.FromArgb(128, 255, 255, 255);
                 _scaleCalibration = new Dictionary<float, PointF>();
-
-                _stopwatch = new Stopwatch();
+                _size.Width = 1f;
+                _size.Height = 1f;
+                _displayGroup = 0;
+                _updateStopwatch = new Stopwatch();
             }
 
             public string ID { get { return _sGUID; } }
@@ -354,7 +431,22 @@ namespace Thetis
             }
             public PointF BottomRight {
                 get { return _bottomRight; }
-                set { _bottomRight = value; }
+                set { /*_bottomRight = value;*/ }
+            }
+            public SizeF Size
+            {
+                get { return _size; }
+                set 
+                { 
+                    _size = value;
+                    _bottomRight.X = _topLeft.X + _size.Width;
+                    _bottomRight.Y = _topLeft.Y + _size.Height;
+                }
+            }
+            public int DisplayGroup
+            {
+                get { return _displayGroup; }
+                set { _displayGroup = value; }
             }
             public int UpdateInterval
             {
@@ -399,9 +491,9 @@ namespace Thetis
             {
                 get
                 {
-                    if (!_stopwatch.IsRunning) _stopwatch.Restart();
-                    bool bNeedsUpdate = _stopwatch.ElapsedMilliseconds >= _msUpdateInterval;
-                    if(bNeedsUpdate) _stopwatch.Stop();
+                    if (!_updateStopwatch.IsRunning) _updateStopwatch.Restart();
+                    bool bNeedsUpdate = _updateStopwatch.ElapsedMilliseconds >= _msUpdateInterval;
+                    if(bNeedsUpdate) _updateStopwatch.Stop();
 
                     return bNeedsUpdate;
                 }
@@ -465,6 +557,28 @@ namespace Thetis
             }
         }
         //
+        private class clsClickBox : clsMeterItem
+        {
+            private MouseButtons _button;
+            private int _gotoGroup;
+            public clsClickBox()
+            {
+                ItemType = MeterItemType.CLICKBOX;
+
+                _button = MouseButtons.Left | MouseButtons.Right | MouseButtons.Middle;
+                _gotoGroup = 0;
+            }
+            public MouseButtons Button
+            {
+                get { return _button; }
+                set { _button = value; }
+            }
+            public int GotoGroup 
+            {
+                get { return _gotoGroup; }
+                set { _gotoGroup = value; }
+            }
+        }
         private class clsSolidColour : clsMeterItem
         {
             private System.Drawing.Color _colour;
@@ -562,7 +676,7 @@ namespace Thetis
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
-                float reading = MeterManager.GetReading(rx, ReadingSource);
+                float reading = MeterManager.getReading(rx, ReadingSource);
 
                 lock (_historyLock)
                 {
@@ -608,6 +722,7 @@ namespace Thetis
                 {
                     lock (_historyLock)
                     {
+                        if (_history.Count == 0) return Value;
                         return _history.Min();
                     }
                 }
@@ -618,13 +733,19 @@ namespace Thetis
                 {
                     lock (_historyLock)
                     {
+                        if (_history.Count == 0) return Value;
                         return _history.Max();
                     }
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
             {
-                lock(_historyLock)
+                if (_history.Count == 0)
+                {
+                    minHistory = Value;
+                    maxHistory = Value;
+                }
+                else
                 {
                     minHistory = _history.Min();
                     maxHistory = _history.Max();
@@ -684,7 +805,7 @@ namespace Thetis
             public clsNeedleItem()
             {
                 _history = new List<float>();
-                _msHistoryDuration = 2000;
+                _msHistoryDuration = 500;
                 _showHistory = false;
                 _placement = NeedlePlacement.Bottom;
                 _needleOffset.X = 0f;
@@ -708,7 +829,7 @@ namespace Thetis
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
-                float reading = MeterManager.GetReading(rx, ReadingSource);
+                float reading = MeterManager.getReading(rx, ReadingSource);
 
                 lock (_historyLock)
                 {
@@ -784,6 +905,7 @@ namespace Thetis
                 {
                     lock (_historyLock)
                     {
+                        if(_history.Count == 0) return Value;
                         return _history.Min();
                     }
                 }
@@ -794,6 +916,7 @@ namespace Thetis
                 {
                     lock (_historyLock)
                     {
+                        if (_history.Count == 0) return Value;
                         return _history.Max();
                     }
                 }
@@ -802,8 +925,16 @@ namespace Thetis
             {
                 lock (_historyLock)
                 {
-                    minHistory = _history.Min();
-                    maxHistory = _history.Max();
+                    if (_history.Count == 0)
+                    {
+                        minHistory = Value;
+                        maxHistory = Value;
+                    }
+                    else
+                    {
+                        minHistory = _history.Min();
+                        maxHistory = _history.Max();
+                    }
                 }
             }
             public float LengthFactor
@@ -822,6 +953,59 @@ namespace Thetis
                 set { _radiusRatio = value; }
             }
         }
+        private class clsText : clsMeterItem
+        {
+            private string _sText;
+            private string _fontFamily;
+            private FontStyle _fontStyle;
+            private System.Drawing.Color _color;
+            private bool _fixedSize;
+            private float _fontSize;
+            public clsText()
+            {
+                _sText = "";
+                _fontFamily = "Trebuchet MS";
+                _fontStyle = FontStyle.Regular;
+                _color = System.Drawing.Color.White;
+                _fixedSize = false;
+                _fontSize = 9f;
+
+                ItemType = MeterItemType.TEXT;
+                ReadingSource = Reading.NONE;
+                UpdateInterval = 100;
+            }
+
+            public string Text
+            {
+                get { return _sText; }
+                set { _sText = value; }
+            }
+            public string FontFamily
+            {
+                get { return _fontFamily; }
+                set { _fontFamily = value; }
+            }
+            public FontStyle Style
+            {
+                get { return _fontStyle; }
+                set { _fontStyle = value; }
+            }
+            public System.Drawing.Color Colour
+            {
+                get { return _color; }
+                set { _color = value; }
+            }
+            public bool FixedSize
+            {
+                get { return _fixedSize; }
+                set { _fixedSize = value; }
+            }
+            public float FontSize
+            {
+                get { return _fontSize; }
+                set { _fontSize = value; }
+            }
+        }
         //
         #endregion
         #region clsMeter
@@ -837,6 +1021,8 @@ namespace Thetis
             private float _YRatio; // 0-1
 
             private Dictionary<string, clsMeterItem> _meterItems;
+            private int _displayGroup;
+            private List<string> _displayGroups;
 
             public clsMeter(int rx, string sName, int typeBitfield, float XRatio = 1f, float YRatio = 0.5f)
             {
@@ -850,6 +1036,9 @@ namespace Thetis
                 _YRatio = YRatio;
 
                 _meterItems = new Dictionary<string, clsMeterItem>();
+                _displayGroups = new List<string>();
+
+                _displayGroup = 0;
 
                 //test
                 if ((TypeBitField & (int)MeterType.RX) == (int)MeterType.RX)
@@ -1011,21 +1200,23 @@ namespace Thetis
                     //_meterItems.Add(img.ID, img);
                     ////
                     ///
+
+                    //kenwood
                     clsNeedleItem ni = new clsNeedleItem(); ;
-                    ni.TopLeft = new PointF(0f, 0f);
-                    ni.BottomRight = new PointF(1f, 0.409f);
+                    ni.TopLeft = new PointF(0f, 0.0f);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
                     ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
                     ni.AttackRatio = 0.1f;
                     ni.DecayRatio = 0.05f;
                     ni.UpdateInterval = 16;
                     ni.HistoryDuration = 4000;
                     ni.ShowHistory = true;
-                    ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(128, 238, 195, 154);
-                    ni.ZOrder = 1;
-                    ni.NeedleOffset = new PointF(0f, 0.832f);
+                    ni.Colour = System.Drawing.Color.FromArgb(255, 233,51,50);
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    ni.ZOrder = 2;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
                     ni.RadiusRatio = new PointF(1f, 0.58f);
                     ni.LengthFactor = 1.65f;
                     //ni.Setup = true;
@@ -1045,13 +1236,88 @@ namespace Thetis
                     ni.ScaleCalibration.Add(-33f, new PointF(0.769f, 0.211f));
                     ni.ScaleCalibration.Add(-23f, new PointF(0.838f, 0.272f));
                     ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
+                    ni.Value = -127f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    _meterItems.Add(ni.ID, ni);
+
+                    //ni = new clsNeedleItem(); ;
+                    //ni.TopLeft = new PointF(0f, 0f);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    //ni.ReadingSource = Reading.SIGNAL_STRENGTH;
+                    //ni.AttackRatio = 0.1f;
+                    //ni.DecayRatio = 0.05f;
+                    //ni.UpdateInterval = 16;
+                    //ni.HistoryDuration = 500;
+                    //ni.ShowHistory = false;
+                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    //ni.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
+                    //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    //ni.ZOrder = 1;
+                    //ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    //ni.RadiusRatio = new PointF(1f, 0.58f);
+                    //ni.LengthFactor = 1.65f;
+                    //ni.StrokeWidth = 1f;
+                    ////ni.Setup = true;
+                    //ni.ScaleCalibration.Add(-127f, new PointF(0.076f, 0.31f));
+                    //ni.ScaleCalibration.Add(-121f, new PointF(0.131f, 0.272f));
+                    //ni.ScaleCalibration.Add(-115f, new PointF(0.189f, 0.254f));
+                    //ni.ScaleCalibration.Add(-109f, new PointF(0.233f, 0.211f));
+                    //ni.ScaleCalibration.Add(-103f, new PointF(0.284f, 0.207f));
+                    //ni.ScaleCalibration.Add(-97f, new PointF(0.326f, 0.177f));
+                    //ni.ScaleCalibration.Add(-91f, new PointF(0.374f, 0.177f));
+                    //ni.ScaleCalibration.Add(-85f, new PointF(0.414f, 0.151f));
+                    //ni.ScaleCalibration.Add(-79f, new PointF(0.459f, 0.168f));
+                    //ni.ScaleCalibration.Add(-73f, new PointF(0.501f, 0.142f));
+                    //ni.ScaleCalibration.Add(-63f, new PointF(0.564f, 0.172f));
+                    //ni.ScaleCalibration.Add(-53f, new PointF(0.63f, 0.164f));
+                    //ni.ScaleCalibration.Add(-43f, new PointF(0.695f, 0.203f));
+                    //ni.ScaleCalibration.Add(-33f, new PointF(0.769f, 0.211f));
+                    //ni.ScaleCalibration.Add(-23f, new PointF(0.838f, 0.272f));
+                    //ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
+                    //ni.Value = -127f;
+                    //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    //_meterItems.Add(ni.ID, ni);
+
+                    //volts
+                    ni = new clsNeedleItem(); ;
+                    ni.TopLeft = new PointF(0f, 0f);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    ni.ReadingSource = Reading.VOLTS;
+                    ni.AttackRatio = 0.2f;
+                    ni.DecayRatio = 0.2f;
+                    ni.UpdateInterval = 100;
+                    ni.HistoryDuration = 500;
+                    ni.ShowHistory = false;
+                    ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    ni.Colour = System.Drawing.Color.Black;
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    ni.ZOrder = 1;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = .75f;
+                    //ni.Setup = true;
+                    ni.ScaleCalibration.Add(10f, new PointF(0.559f, 0.756f));
+                    ni.ScaleCalibration.Add(12.5f, new PointF(0.605f, 0.772f));
+                    ni.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
+                    ni.Value = 10f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                     _meterItems.Add(ni.ID, ni);
 
                     clsImage img = new clsImage();
                     img.TopLeft = new PointF(0f, 0f);
-                    img.BottomRight = new PointF(1f, 0.409f);
+                    //img.BottomRight = new PointF(1f, 0.441f);
+                    img.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
                     img.ZOrder = 0;
-                    img.ImageName = "kenwood";
+                    img.ImageName = "kenwood-s-meter";
+                    _meterItems.Add(img.ID, img);
+                   
+                    img = new clsImage();
+                    img.TopLeft = new PointF(0f / XRatio, 0.441f / YRatio);
+                    //img.BottomRight = new PointF(1f, 0.441f + 0.218f);
+                    img.Size = new SizeF(1f / XRatio, 0.101f / YRatio);
+                    img.ZOrder = 2;
+                    img.ImageName = "kenwood-s-meter-bg";
                     _meterItems.Add(img.ID, img);
                 }
                 else if ((typeBitfield & (int)MeterType.MOX) == (int)MeterType.MOX)
@@ -1134,7 +1400,8 @@ namespace Thetis
                     // cross
                     ni = new clsNeedleItem();
                     ni.TopLeft = new PointF(0f, 0f);
-                    ni.BottomRight = new PointF(1f, 0.782f);
+                    //ni.BottomRight = new PointF(1f, 0.782f);
+                    ni.Size = new SizeF(1f / XRatio, 0.782f / YRatio);
                     ni.ReadingSource = Reading.PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
@@ -1163,25 +1430,31 @@ namespace Thetis
                     ni.ScaleCalibration.Add(80f, new PointF(0.577f, 0.111f));
                     ni.ScaleCalibration.Add(90f, new PointF(0.619f, 0.098f));
                     ni.ScaleCalibration.Add(100f, new PointF(0.662f, 0.083f));
+                    ni.Value = 0f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                     _meterItems.Add(ni.ID, ni);
 
                     ni = new clsNeedleItem();
                     ni.TopLeft = new PointF(0f, 0f);
-                    ni.BottomRight = new PointF(1f, 0.782f);
+                    //ni.BottomRight = new PointF(1f, 0.782f);
+                    ni.Size = new SizeF(1f / XRatio, 0.782f / YRatio);
                     ni.ReadingSource = Reading.REVERSE_PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
                     ni.UpdateInterval = 16;
                     ni.HistoryDuration = 1000;
-                    ni.ShowHistory = false;
+                    ni.ShowHistory = true;
                     ni.StrokeWidth = 2.5f;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
                     ni.Colour = System.Drawing.Color.Black;
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, System.Drawing.Color.Yellow);
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, System.Drawing.Color.CornflowerBlue);
                     ni.ZOrder = 1;
                     ni.NeedleOffset = new PointF(-0.322f, 0.611f);
                     ni.LengthFactor = 1.62f;
                     ni.ScaleCalibration.Add(0f, new PointF(0.948f, 0.74f));
+                    ni.ScaleCalibration.Add(0.25f, new PointF(0.913f, 0.7f));
+                    ni.ScaleCalibration.Add(0.5f, new PointF(0.899f, 0.638f));
+                    ni.ScaleCalibration.Add(0.75f, new PointF(0.875f, 0.594f));
                     ni.ScaleCalibration.Add(1f, new PointF(0.854f, 0.538f));
                     ni.ScaleCalibration.Add(2f, new PointF(0.814f, 0.443f));
                     ni.ScaleCalibration.Add(3f, new PointF(0.769f, 0.4f));
@@ -1197,21 +1470,254 @@ namespace Thetis
                     ni.ScaleCalibration.Add(16f, new PointF(0.431f, 0.121f));
                     ni.ScaleCalibration.Add(18f, new PointF(0.393f, 0.109f));
                     ni.ScaleCalibration.Add(20f, new PointF(0.349f, 0.098f));
+                    ni.Value = 0f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                     _meterItems.Add(ni.ID, ni);
 
                     img = new clsImage();
                     img.TopLeft = new PointF(0f, 0f);
-                    img.BottomRight = new PointF(1f, 0.782f);
+                    //img.BottomRight = new PointF(1f, 0.782f);
+                    img.Size = new SizeF(1f / XRatio, 0.782f / YRatio);
                     img.ZOrder = 0;
                     img.ImageName = "cross-needle-100";
                     _meterItems.Add(img.ID, img);
 
                     img = new clsImage();
-                    img.TopLeft = new PointF(0f, 0.6f);
-                    img.BottomRight = new PointF(1f, 1f);
+                    img.TopLeft = new PointF(0f / XRatio, (0.782f - 0.180f) / YRatio);
+                    //img.BottomRight = new PointF(1f, 1f);
+                    img.Size = new SizeF(1f / XRatio, 0.217f / YRatio);
                     img.ZOrder = 3;
                     img.ImageName = "cross-needle-bg";
                     _meterItems.Add(img.ID, img);
+                    // end cross
+
+                    PointF tl = new PointF(0f / XRatio, ((0.782f - 0.180f) / YRatio) + (0.217f / YRatio));
+                    //kenwood
+                    clsClickBox cb = new clsClickBox();
+                    cb.TopLeft = tl;
+                    cb.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    cb.Button = MouseButtons.Left;
+                    _meterItems.Add(cb.ID, cb);
+
+                    clsText tx = new clsText();
+                    tx.TopLeft = new PointF(tl.X + (0.74f / XRatio), tl.Y + (0.48f / YRatio));
+                    tx.Size = new SizeF(0.2f / XRatio, 0.2f / YRatio);
+                    tx.Text = "%group%";
+                    tx.ZOrder = 10;
+                    tx.Style = FontStyle.Bold;
+                    tx.Colour = System.Drawing.Color.DarkGray;
+                    tx.FixedSize = true;
+                    tx.FontSize = 8f;
+                    _meterItems.Add(tx.ID, tx);
+
+                    ni = new clsNeedleItem(); ;
+                    ni.TopLeft = tl;// new PointF(0f / XRatio, 0.85f / YRatio);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    ni.ReadingSource = Reading.PWR;
+                    ni.AttackRatio = 0.2f;//0.325f;
+                    ni.DecayRatio = 0.1f;//0.5f;
+                    ni.UpdateInterval = 16;
+                    ni.HistoryDuration = 1000;
+                    ni.ShowHistory = true;
+                    ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    ni.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    ni.ZOrder = 2;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = 1.55f;
+                    ni.DisplayGroup = 1;
+                    //ni.Setup = true;
+                    ni.ScaleCalibration.Add(0f, new PointF(0.099f, 0.352f));
+                    ni.ScaleCalibration.Add(5f, new PointF(0.164f, 0.312f));
+                    ni.ScaleCalibration.Add(10f, new PointF(0.224f, 0.28f));
+                    ni.ScaleCalibration.Add(25f, new PointF(0.335f, 0.236f));
+                    ni.ScaleCalibration.Add(30f, new PointF(0.367f, 0.228f));
+                    ni.ScaleCalibration.Add(40f, new PointF(0.436f, 0.22f));
+                    ni.ScaleCalibration.Add(50f, new PointF(0.499f, 0.212f));
+                    ni.ScaleCalibration.Add(60f, new PointF(0.559f, 0.216f));
+                    ni.ScaleCalibration.Add(100f, new PointF(0.751f, 0.272f));
+                    ni.ScaleCalibration.Add(150f, new PointF(0.899f, 0.352f));
+                    ni.Value = 0f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    _meterItems.Add(ni.ID, ni);
+
+                    ni = new clsNeedleItem(); ;
+                    ni.TopLeft = tl;//new PointF(0f / XRatio, 0.85f / YRatio);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    ni.ReadingSource = Reading.SWR;
+                    ni.AttackRatio = 0.2f;//0.325f;
+                    ni.DecayRatio = 0.1f;//0.5f;
+                    ni.UpdateInterval = 16;
+                    ni.HistoryDuration = 1000;
+                    ni.ShowHistory = true;
+                    ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    ni.Colour = System.Drawing.Color.Black;
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, System.Drawing.Color.CornflowerBlue);
+                    ni.ZOrder = 3;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = 1.36f;
+                    ni.DisplayGroup = 1;
+                    //ni.Setup = true;
+                    ni.ScaleCalibration.Add(1f, new PointF(0.152f, 0.468f));
+                    ni.ScaleCalibration.Add(1.5f, new PointF(0.28f, 0.404f));
+                    ni.ScaleCalibration.Add(2f, new PointF(0.393f, 0.372f));
+                    ni.ScaleCalibration.Add(2.5f, new PointF(0.448f, 0.36f));
+                    ni.ScaleCalibration.Add(3f, new PointF(0.499f, 0.36f));
+                    ni.ScaleCalibration.Add(10f, new PointF(0.847f, 0.476f));
+                    ni.Value = 1f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    _meterItems.Add(ni.ID, ni);
+
+                    ni = new clsNeedleItem(); ;
+                    ni.TopLeft = tl;//new PointF(0f / XRatio, 0.85f / YRatio);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    ni.ReadingSource = Reading.ALC_G; // alc_comp
+                    ni.AttackRatio = 0.2f;//0.325f;
+                    ni.DecayRatio = 0.1f;//0.5f;
+                    ni.UpdateInterval = 16;
+                    ni.HistoryDuration = 1000;
+                    ni.ShowHistory = false;
+                    ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    ni.Colour = System.Drawing.Color.Black;
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    ni.ZOrder = 3;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = 0.96f;
+                    ni.DisplayGroup = 2;
+                    //ni.Setup = true;
+                    ni.ScaleCalibration.Add(0f, new PointF(0.249f, 0.68f));
+                    ni.ScaleCalibration.Add(5f, new PointF(0.342f, 0.64f));
+                    ni.ScaleCalibration.Add(10f, new PointF(0.425f, 0.624f));
+                    ni.ScaleCalibration.Add(15f, new PointF(0.499f, 0.62f));
+                    ni.ScaleCalibration.Add(20f, new PointF(0.571f, 0.628f));
+                    ni.ScaleCalibration.Add(25f, new PointF(0.656f, 0.64f));
+                    ni.ScaleCalibration.Add(30f, new PointF(0.751f, 0.688f));
+                    ni.Value = 0f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    _meterItems.Add(ni.ID, ni);
+
+                    ni = new clsNeedleItem();
+                    ni.TopLeft = tl;//new PointF(0f / XRatio, 0.85f / YRatio);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    ni.ReadingSource = Reading.ALC_GROUP;
+                    ni.AttackRatio = 0.2f;//0.325f;
+                    ni.DecayRatio = 0.1f;//0.5f;
+                    ni.UpdateInterval = 16;
+                    ni.HistoryDuration = 1000;
+                    ni.ShowHistory = false;
+                    ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    ni.Colour = System.Drawing.Color.Red;
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    ni.ZOrder = 3;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = 0.75f;
+                    ni.DisplayGroup = 3;
+                    //ni.Setup = true;
+                    ni.ScaleCalibration.Add(-30f, new PointF(0.295f, 0.804f));
+                    ni.ScaleCalibration.Add(0f, new PointF(0.332f, 0.784f));
+                    ni.ScaleCalibration.Add(25f, new PointF(0.499f, 0.756f));
+                    ni.Value = -30f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    _meterItems.Add(ni.ID, ni);
+
+                    //volts
+                    ni = new clsNeedleItem(); ;
+                    ni.TopLeft = tl;//new PointF(0f / XRatio, 0.85f / YRatio);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    ni.ReadingSource = Reading.VOLTS;
+                    ni.AttackRatio = 0.2f;
+                    ni.DecayRatio = 0.2f;
+                    ni.UpdateInterval = 100;
+                    ni.HistoryDuration = 500;
+                    ni.ShowHistory = false;
+                    ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    ni.Colour = System.Drawing.Color.Black;
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    ni.ZOrder = 1;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = .75f;
+                    //ni.Setup = true;
+                    ni.ScaleCalibration.Add(10f, new PointF(0.559f, 0.756f));
+                    ni.ScaleCalibration.Add(12.5f, new PointF(0.605f, 0.772f));
+                    ni.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
+                    ni.Value = 10f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    _meterItems.Add(ni.ID, ni);
+
+                    //amps
+                    ni = new clsNeedleItem(); ;
+                    ni.TopLeft = tl;//new PointF(0f / XRatio, 0.85f / YRatio);
+                    //ni.BottomRight = new PointF(1f, 0.441f);
+                    ni.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    ni.ReadingSource = Reading.AMPS;
+                    ni.AttackRatio = 0.2f;
+                    ni.DecayRatio = 0.2f;
+                    ni.UpdateInterval = 100;
+                    ni.HistoryDuration = 500;
+                    ni.ShowHistory = false;
+                    ni.Style = clsNeedleItem.NeedleStyle.Line;
+                    ni.Colour = System.Drawing.Color.Black;
+                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                    ni.ZOrder = 1;
+                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                    ni.RadiusRatio = new PointF(1f, 0.58f);
+                    ni.LengthFactor = 1.15f;
+                    ni.DisplayGroup = 4;
+                    //ni.Setup = true;
+                    ni.ScaleCalibration.Add(0f, new PointF(0.199f, 0.576f));
+                    ni.ScaleCalibration.Add(2f, new PointF(0.27f, 0.54f));
+                    ni.ScaleCalibration.Add(4f, new PointF(0.333f, 0.516f));
+                    ni.ScaleCalibration.Add(6f, new PointF(0.393f, 0.504f));
+                    ni.ScaleCalibration.Add(8f, new PointF(0.448f, 0.492f));
+                    ni.ScaleCalibration.Add(10f, new PointF(0.499f, 0.492f));
+                    ni.ScaleCalibration.Add(12f, new PointF(0.554f, 0.488f));
+                    ni.ScaleCalibration.Add(14f, new PointF(0.608f, 0.5f));
+                    ni.ScaleCalibration.Add(16f, new PointF(0.667f, 0.516f));
+                    ni.ScaleCalibration.Add(18f, new PointF(0.728f, 0.54f));
+                    ni.ScaleCalibration.Add(20f, new PointF(0.799f, 0.576f));
+                    ni.Value = 10f;
+                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                    _meterItems.Add(ni.ID, ni);
+
+                    img = new clsImage();
+                    img.TopLeft = tl;//new PointF(0f / XRatio, 0.85f / YRatio);
+                    //img.BottomRight = new PointF(1f, 0.441f);
+                    img.Size = new SizeF(1f / XRatio, 0.441f / YRatio);
+                    img.ZOrder = 0;
+                    img.ImageName = "kenwood-s-meter";
+                    _meterItems.Add(img.ID, img);
+
+                    img = new clsImage();
+                    img.TopLeft = new PointF(tl.X , tl.Y + (0.441f / YRatio));//new PointF(0f / XRatio, (0.441f + 0.85f) / YRatio);
+                    //img.BottomRight = new PointF(1f, 0.441f + 0.218f);
+                    img.Size = new SizeF(1f / XRatio, 0.101f / YRatio);
+                    img.ZOrder = 2;
+                    img.ImageName = "kenwood-s-meter-bg";
+                    _meterItems.Add(img.ID, img);
+                }
+            }
+            public void MouseUp(System.Windows.Forms.MouseEventArgs e, clsMeter m, clsClickBox cb)
+            {
+                if (cb.GotoGroup > 0)
+                {
+                    m.DisplayGroup = cb.GotoGroup;
+                }
+                else
+                {
+                    if (e.Button == MouseButtons.Left)
+                        IncrementDisplayGroup();
+                    else if (e.Button == MouseButtons.Right)
+                        DecrementDisplayGroup();
                 }
             }
 
@@ -1247,6 +1753,46 @@ namespace Thetis
             public Dictionary<string, clsMeterItem> MeterItems
             {
                 get { return _meterItems; }
+            }
+            public void IncrementDisplayGroup()
+            {
+                _displayGroup++;
+                if (_displayGroup > _displayGroups.Count) _displayGroup = 1;
+            }
+            public void DecrementDisplayGroup()
+            {
+                _displayGroup--;
+                if (_displayGroup < 1) _displayGroup = _displayGroups.Count;
+            }
+            public int DisplayGroups
+            {
+                get { return _displayGroups.Count; }
+            }
+            public int DisplayGroup
+            {
+                get { return _displayGroup; }
+                set
+                {
+                    _displayGroup = value;
+                    if (_displayGroup < 1) _displayGroup = 1;
+                    if (_displayGroup > _displayGroups.Count) _displayGroup = _displayGroups.Count;
+                }
+            }
+            public void AddDisplayGroup(string sName)
+            {
+                if (_displayGroups.Contains(sName)) return;
+
+                _displayGroups.Add(sName);
+                _displayGroup = 0; // 0 is all
+            }
+            public string DisplayGroupText
+            {
+                get
+                {
+                    if (_displayGroup == 0) return "ALL";
+
+                    return _displayGroups[_displayGroup-1];
+                }
             }
         }
         #endregion
@@ -1318,6 +1864,10 @@ namespace Thetis
             private Color4 _backColour;
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
             //
+            private Dictionary<string, SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
+            private static SharpDX.DirectWrite.Factory _fontFactory;
+            private Dictionary<string, SizeF> _stringMeasure;
+            //
 
             private int _rx;
             private Console _console;
@@ -1330,6 +1880,8 @@ namespace Thetis
                 //dx
                 _displayRunning = false;
                 _DXBrushes = null;
+                _textFormats = null;
+                _stringMeasure = null;
                 _bAntiAlias = true;
                 _bDXSetup = false;
                 _dxDisplayThreadRunning = false;
@@ -1342,6 +1894,7 @@ namespace Thetis
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
 
                 _displayTarget.Resize += target_Resize;
+                _displayTarget.MouseUp += OnMouseUp;
 
                 init();
 
@@ -1569,7 +2122,7 @@ namespace Thetis
                     setupAliasing();
 
                     buildDXResources();
-                    //buildDXFonts();
+                    buildDXFonts();
                 }
                 catch (Exception e)
                 {
@@ -1580,7 +2133,11 @@ namespace Thetis
             }
             public void ShutdownDX(bool bFromRenderThread = false)
             {
-                if(_displayTarget != null) _displayTarget.Resize -= target_Resize;
+                if (_displayTarget != null)
+                {
+                    _displayTarget.Resize -= target_Resize;
+                    _displayTarget.MouseUp -= OnMouseUp;
+                }
 
                 if (!_bDXSetup) return;
 
@@ -1602,7 +2159,7 @@ namespace Thetis
                     }
                     _images.Clear();
 
-                    //releaseDXFonts();
+                    releaseDXFonts();
                     releaseDXResources();
 
                     Utilities.Dispose(ref _renderTarget);
@@ -1760,7 +2317,22 @@ namespace Thetis
             {
                 if (!_bDXSetup) return;
 
-                clearAllDynamicBrushes();               
+                clearAllDynamicBrushes();
+                clearAllDynamicTextFormats();
+            }
+            private void buildDXFonts()
+            {
+                if (!_bDXSetup) return;
+
+                _fontFactory = new SharpDX.DirectWrite.Factory();
+            }
+            private void releaseDXFonts()
+            {
+                if (!_bDXSetup) return;
+
+                if (_fontFactory != null) Utilities.Dispose(ref _fontFactory);
+
+                _fontFactory = null;
             }
             private void clearAllDynamicBrushes()
             {
@@ -1775,6 +2347,23 @@ namespace Thetis
 
                 _DXBrushes.Clear();
                 _DXBrushes = null;
+            }
+            private void clearAllDynamicTextFormats()
+            {
+                if (!_bDXSetup || _textFormats == null) return;
+
+                foreach (KeyValuePair<string, SharpDX.DirectWrite.TextFormat> kvp in _textFormats)
+                {
+                    SharpDX.DirectWrite.TextFormat tf = kvp.Value;
+                    Utilities.Dispose(ref tf);
+                    tf = null;
+                }
+
+                _textFormats.Clear();
+                _textFormats = null;
+
+                if (_fontFactory != null) Utilities.Dispose(ref _fontFactory);
+                _fontFactory = null;
             }
             private SharpDX.Direct2D1.Brush getDXBrushForColour(System.Drawing.Color c, int replaceAlpha = -1)
             {
@@ -1805,6 +2394,34 @@ namespace Thetis
             private SharpDX.Color4 convertColour(System.Drawing.Color c)
             {
                 return new SharpDX.Color4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
+            }
+            private SharpDX.DirectWrite.TextFormat getDXTextFormatForFont(string sFontFamily, float emSize, FontStyle style)
+            {
+                if (!_bDXSetup) return null;
+
+                if (_textFormats == null) _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
+
+                string sKey = sFontFamily + emSize.ToString("0.0") + style.ToString();
+
+                if (_textFormats.ContainsKey(sKey)) return _textFormats[sKey];
+
+                try
+                {
+                    SharpDX.DirectWrite.FontWeight fontWeight = SharpDX.DirectWrite.FontWeight.Regular;
+                    SharpDX.DirectWrite.FontStyle fontStyle = SharpDX.DirectWrite.FontStyle.Normal;
+                    if (((int)style & (int)FontStyle.Bold) == (int)FontStyle.Bold) fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
+                    if (((int)style & (int)FontStyle.Italic) == (int)FontStyle.Italic) fontStyle = SharpDX.DirectWrite.FontStyle.Italic;
+
+                    SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, (emSize / 72) * _renderTarget.DotsPerInch.Width);
+                    tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
+
+                    _textFormats.Add(sKey, tf);
+
+                    return tf;                    
+                }
+                catch { }
+
+                return null;
             }
             private void resizeDX()
             {
@@ -1844,6 +2461,42 @@ namespace Thetis
             {
                 resizeDX();
             }
+            private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    clsMeter m = mkvp.Value;
+
+                    float tw;
+                    if (targetWidth >= targetHeight)
+                        tw = targetHeight - 0.5f;
+                    else
+                        tw = targetWidth - 0.5f;
+
+                    SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * m.XRatio, tw * m.YRatio);
+
+                    foreach (KeyValuePair<string, clsMeterItem> mikvp in mkvp.Value.MeterItems.OrderBy(mikvp => mikvp.Value.ZOrder))
+                    {
+                        clsMeterItem mi = mikvp.Value;
+                        if(mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
+                        {
+                            clsClickBox cb = (clsClickBox)mi;
+
+                            float x = cb.TopLeft.X * rect.Width;
+                            float y = cb.TopLeft.Y * rect.Height;
+                            float w = rect.Width * cb.Size.Width;
+                            float h = rect.Height * cb.Size.Height;
+
+                            SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
+
+                            if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                            {
+                                m.MouseUp(e, m, cb);
+                            }
+                        }
+                    }
+                }
+            }
             //
             private void drawMeters()
             {
@@ -1874,21 +2527,26 @@ namespace Thetis
                             foreach(KeyValuePair<string, clsMeterItem> mikvp in mkvp.Value.MeterItems.OrderBy(mikvp => mikvp.Value.ZOrder))
                             {
                                 clsMeterItem mi = mikvp.Value;
-
-                                switch (mi.ItemType)
+                                if ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup))
                                 {
-                                    case clsMeterItem.MeterItemType.H_BAR:
-                                        renderHBar(rect, mi);
-                                        break;
-                                    case clsMeterItem.MeterItemType.SOLID_COLOUR:
-                                        renderSolidColour(rect, mi);
-                                        break;
-                                    case clsMeterItem.MeterItemType.NEEDLE:
-                                        renderNeedle(rect, mi);
-                                        break;
-                                    case clsMeterItem.MeterItemType.IMAGE:
-                                        renderImage(rect, mi);
-                                        break;
+                                    switch (mi.ItemType)
+                                    {
+                                        case clsMeterItem.MeterItemType.H_BAR:
+                                            renderHBar(rect, mi);
+                                            break;
+                                        case clsMeterItem.MeterItemType.SOLID_COLOUR:
+                                            renderSolidColour(rect, mi);
+                                            break;
+                                        case clsMeterItem.MeterItemType.NEEDLE:
+                                            renderNeedle(rect, mi);
+                                            break;
+                                        case clsMeterItem.MeterItemType.IMAGE:
+                                            renderImage(rect, mi);
+                                            break;
+                                        case clsMeterItem.MeterItemType.TEXT:
+                                            renderText(rect, mi, m);
+                                            break;
+                                    }
                                 }
                             }
                         }
@@ -1902,15 +2560,95 @@ namespace Thetis
                 if(value > max) value = max;
                 return value;
             }
+            private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize)
+            {
+                if (!_bDXSetup) return SizeF.Empty;
 
+                if (_stringMeasure == null) _stringMeasure = new Dictionary<string, SizeF>();
+
+                emSize = (float)Math.Round(emSize, 1);
+
+                string sKey = sText + emSize.ToString("0.0");
+
+                if (_stringMeasure.ContainsKey(sKey)) return _stringMeasure[sKey];
+
+                SharpDX.DirectWrite.FontWeight fontWeight = SharpDX.DirectWrite.FontWeight.Regular;
+                SharpDX.DirectWrite.FontStyle fontStyle = SharpDX.DirectWrite.FontStyle.Normal;
+                if (((int)style & (int)FontStyle.Bold) == (int)FontStyle.Bold) fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
+                if (((int)style & (int)FontStyle.Italic) == (int)FontStyle.Italic) fontStyle = SharpDX.DirectWrite.FontStyle.Italic;
+
+                // calculate how big the string would be @ emSize pt
+                SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, emSize);
+                tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
+
+                SharpDX.DirectWrite.TextLayout layout = new SharpDX.DirectWrite.TextLayout(_fontFactory, sText, tf, float.MaxValue, float.MaxValue);
+                float width = layout.Metrics.Width;
+                float height = layout.Metrics.Height;
+                Utilities.Dispose(ref layout);
+                layout = null;
+                Utilities.Dispose(ref tf);
+                tf = null;
+
+                SizeF size = new SizeF(width, height);
+                _stringMeasure.Add(sKey, size);
+
+                return size;
+            }
+            private void renderText(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsText txt = (clsText)mi;
+
+                float x = txt.TopLeft.X * rect.Width;
+                float y = txt.TopLeft.Y * rect.Height;
+                float w = rect.Width * txt.Size.Width;
+                float h = rect.Height * txt.Size.Height;
+
+                string sText;
+                if (txt.Text == "%group%")
+                {
+                    sText = m.DisplayGroupText;
+                }
+                else
+                {
+                    sText = txt.Text;
+                }
+
+                float fontSize;
+                SizeF size;
+                if (txt.FixedSize)
+                {
+                    fontSize = txt.FontSize;
+                    size = measureString("0", txt.FontFamily, txt.Style, fontSize);
+                }
+                else
+                {
+                    fontSize = 72f;
+                    size = measureString(sText, txt.FontFamily, txt.Style, fontSize);
+                }
+
+                float r = w / size.Width;
+                float newSize = (float)Math.Round((fontSize * r) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+
+                //if (txt.ShowContainer) { 
+                //size.Width *= r;
+                //size.Height *= r;
+                //SharpDX.RectangleF tmp = new SharpDX.RectangleF(x, y, size.Width, size.Height);
+                //_renderTarget.DrawRectangle(tmp, getDXBrushForColour(System.Drawing.Color.Green));
+                //}
+
+                SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y, w, h);
+                _renderTarget.DrawText(sText, getDXTextFormatForFont(txt.FontFamily, newSize, txt.Style), txtrect, getDXBrushForColour(txt.Colour));
+            }
             private void renderHBar(SharpDX.RectangleF rect, clsMeterItem mi)
             {
                 clsBarItem cbi = (clsBarItem)mi;
 
                 float x = cbi.TopLeft.X * rect.Width;
                 float y = cbi.TopLeft.Y * rect.Height;
-                float w = (cbi.BottomRight.X * rect.Width) - x;
-                float h = (cbi.BottomRight.Y * rect.Height) - y;
+                //float w = (cbi.BottomRight.X * rect.Width) - x;
+                //float h = (cbi.BottomRight.Y * rect.Height) - y;
+                float w = rect.Width * cbi.Size.Width;
+                float h = rect.Height * cbi.Size.Height;
 
                 SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 _renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Red));
@@ -1949,8 +2687,10 @@ namespace Thetis
 
                 float x = sc.TopLeft.X * rect.Width;
                 float y = sc.TopLeft.Y * rect.Height;
-                float w = (sc.BottomRight.X * rect.Width) - x;
-                float h = (sc.BottomRight.Y * rect.Height) - y;
+                //float w = (sc.BottomRight.X * rect.Width) - x;
+                //float h = (sc.BottomRight.Y * rect.Height) - y;
+                float w = rect.Width * sc.Size.Width;
+                float h = rect.Height * sc.Size.Height;
 
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
                 _renderTarget.FillRectangle(rectSC, getDXBrushForColour(sc.Colour));
@@ -1961,8 +2701,10 @@ namespace Thetis
 
                 float x = ipg.TopLeft.X * rect.Width;
                 float y = ipg.TopLeft.Y * rect.Height;
-                float w = (ipg.BottomRight.X * rect.Width) - x;
-                float h = (ipg.BottomRight.Y * rect.Height) - y;
+                //float w = (ipg.BottomRight.X * rect.Width) - x;
+                //float h = (ipg.BottomRight.Y * rect.Height) - y;
+                float w = rect.Width * ipg.Size.Width;
+                float h = rect.Height * ipg.Size.Height;
 
                 string sImage = ipg.ImageName;
 
@@ -2181,6 +2923,10 @@ namespace Thetis
                 max = new PointF(0f, 0f);
 
                 value = (float)Math.Round(value, 3);
+
+                // adjust for >= 30mhz
+                if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
+                    value += MeterManager.dbmOffsetForAbove30(_rx);
 
                 if (mi.ScaleCalibration.Count > 0)
                 {
