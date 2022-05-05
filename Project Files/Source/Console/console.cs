@@ -1081,6 +1081,17 @@ namespace Thetis
                         break;
                     }
                 }
+
+                if (USE_MULTIMETERS2)
+                {
+                    DialogResult dr = MessageBox.Show("This version has work in progress multimeters.\n" +
+                        "Click the scales on the existing meter to test.\n"+
+                        "You will need a Meters folder and associated images in the same folder that the Skins folder resides.\n" +
+                        "See the NOTE: in github for a download link.",
+                                                "MultiMeters2 WIP",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
             }
         }
 
@@ -22949,12 +22960,12 @@ namespace Thetis
             bool bAbove30;
 
             if (nRX == 2)
-                bAbove30 = (VFOBFreq > 30.0);
+                bAbove30 = (VFOBFreq >= 30.0);
             else
-                bAbove30 = (VFOAFreq > 30.0); 
+                bAbove30 = (VFOAFreq >= 30.0); 
 
             if (bAbove30)
-                return 9 + ((dbm + 92) / 6f);
+                return 9 + ((dbm + 93) / 6f); //MW0LGE_[2.9.0.7] fixed to 93
             else
                 return 9 + ((dbm + 73) / 6f);
         }
@@ -23362,12 +23373,12 @@ namespace Thetis
             if (rx == 1)
             {
                 rxMode = current_meter_rx_mode;
-                bAbove30 = (VFOAFreq > 30.0); //MW0LGE_21a
+                bAbove30 = (VFOAFreq >= 30.0); //MW0LGE_21a
             }
             else
             {
                 rxMode = rx2_meter_mode;
-                bAbove30 = (VFOBFreq > 30.0); //MW0LGE_21a
+                bAbove30 = (VFOBFreq >= 30.0); //MW0LGE_21a
             }
 
             if (!mox || rx == 2) // rx2 can not tx
@@ -25302,11 +25313,11 @@ namespace Thetis
 
             if (nRX == 2)
             {
-                bAbove30 = (VFOBFreq > 30.0); // MW0LGE_21a
+                bAbove30 = (VFOBFreq >= 30.0); // MW0LGE_21a
             }
             else
             {
-                bAbove30 = (VFOAFreq > 30.0); // MW0LGE_21a
+                bAbove30 = (VFOAFreq >= 30.0); // MW0LGE_21a
             }
 
             if (bAbove30)
@@ -26771,7 +26782,6 @@ namespace Thetis
                                    rx1PreampOffset +
                                    rx1_xvtr_gain_offset +
                                    rx1_6m_gain_offset;
-
                                 new_meter_data = num;
                                 break;
                             case MeterRXMode.ADC_L:
@@ -27020,8 +27030,8 @@ namespace Thetis
             return batt_volts;
         }
 
-        private float _MKIIPAVolts = 0.0f;
-        private float _MKIIPAAmps = 0.0f;
+        private float _MKIIPAVolts = 0f;
+        private float _MKIIPAAmps = 0f;
         private ConcurrentQueue<int> _voltsQueue = new ConcurrentQueue<int>();
         private ConcurrentQueue<int> _ampsQueue = new ConcurrentQueue<int>();
         private async void readMKIIPAVoltsAmps()
@@ -27059,6 +27069,8 @@ namespace Thetis
 
                 await Task.Delay(8);
             }
+            _MKIIPAVolts = 0f;
+            _MKIIPAAmps = 0;
         }
         private void computeMKIIPAVoltsAmps()
         {
@@ -27066,24 +27078,32 @@ namespace Thetis
             float ampAverage = _ampsQueue.Count > 0 ? (float)_ampsQueue.Average() : 0;
 
             //volts
-            float volt_div = (22.0f + 1.0f) / 1.1f; // Voltage divider (R1 + R2) / R2
-            float volts = (voltAverage / 4095.0f) * 5.0f;
-            volts = volts * volt_div;
-            _MKIIPAVolts = volts;
+            _MKIIPAVolts = convertToVolts(voltAverage);
 
             //amps
+            _MKIIPAAmps = convertToAmps(ampAverage);
+        }
+        private float convertToVolts(float IOreading)
+        {
+            float volt_div = (22.0f + 1.0f) / 1.1f; // Voltage divider (R1 + R2) / R2
+            float volts = (IOreading / 4095.0f) * 5.0f;
+            volts = volts * volt_div;
+            return volts;
+        }
+        private float convertToAmps(float IOreading)
+        {
             float voff = 360.0f, sens = 120.0f;
             if (current_hpsdr_model == HPSDRModel.ANAN7000D)
             {
                 voff = 340.0f;
                 sens = 88.0f;
             }
-            float fwdvolts = (ampAverage * 5000.0f) / 4095.0f;
+            float fwdvolts = (IOreading * 5000.0f) / 4095.0f;
             if (fwdvolts < 0) fwdvolts = 0.0f;
             float amps = ((fwdvolts - voff) / sens);
             //  float amps = (0.01f * adc - 2.91f);
             if (amps < 0) amps = 0.0f;
-            _MKIIPAAmps = amps;
+            return amps;
         }
         //private async void displayMKIIPAVoltsAmps()
         //{
@@ -53790,10 +53810,10 @@ namespace Thetis
             HiPerfTimer meterDelay = new HiPerfTimer();
             while (chkPower.Checked)
             {
+                meterDelay.Reset();
+
                 if (!mox)
                 {
-                    meterDelay.Reset();
-
                     float offset = rx1_step_att_present ? (float)rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
                     offset += rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
 
@@ -53804,18 +53824,9 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_IMAG)) _RX1MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
                     //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_REAL)) _RX1MeterValues[ReadingType.ADC2_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
                     //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_IMAG)) _RX1MeterValues[ReadingType.ADC2_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
-
-                    MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
-                    meterDelay.Stop();
-
-                    // get quickest RX updating meter from MeterManager
-                    int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
-                    if (delayMS < 1) delayMS = 1;
-                    await Task.Delay(delayMS);
                 }
                 else
                 {
-                    meterDelay.Reset();
                     // get all readings
                     if (MeterManager.RequiresUpdate(1, Reading.MIC_PK)) _RX1MeterValues[Reading.MIC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.MIC_PK));
                     if (MeterManager.RequiresUpdate(1, Reading.EQ_PK)) _RX1MeterValues[Reading.EQ_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ_PK));
@@ -53825,10 +53836,13 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.CFC_G)) _RX1MeterValues[Reading.CFC_G] = (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_G));
                     if (MeterManager.RequiresUpdate(1, Reading.CPDR_PK)) _RX1MeterValues[Reading.CPDR_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK));
                     if (MeterManager.RequiresUpdate(1, Reading.CPDR)) _RX1MeterValues[Reading.CPDR] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
+                    if (MeterManager.RequiresUpdate(1, Reading.COMP)) _RX1MeterValues[Reading.COMP] = peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK)) : (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
 
                     if (MeterManager.RequiresUpdate(1, Reading.ALC_PK)) _RX1MeterValues[Reading.ALC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK));
-                    if (MeterManager.RequiresUpdate(1, Reading.ALC)) _RX1MeterValues[Reading.ALC] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
+                    if (MeterManager.RequiresUpdate(1, Reading.ALC)) _RX1MeterValues[Reading.ALC] = peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK)) : (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
                     if (MeterManager.RequiresUpdate(1, Reading.ALC_G)) _RX1MeterValues[Reading.ALC_G] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+
+                    if (MeterManager.RequiresUpdate(1, Reading.ALC_GROUP)) _RX1MeterValues[Reading.ALC_GROUP] = ( peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK)) : (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC)) ) + (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
 
                     if (MeterManager.RequiresUpdate(1, Reading.PWR)) _RX1MeterValues[Reading.PWR] = (alexpresent || apollopresent) && current_hpsdr_model == HPSDRModel.ANAN8000D && tx_xvtr_index >= 0 ? drivepwr : calfwdpower;
                     if (MeterManager.RequiresUpdate(1, Reading.REVERSE_PWR)) _RX1MeterValues[Reading.REVERSE_PWR] = (alexpresent || apollopresent) ? alex_rev : -200f;
@@ -53844,15 +53858,33 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.PA_REV_PWR)) _RX1MeterValues[Reading.PA_REV_PWR] = alex_rev;
                     if (MeterManager.RequiresUpdate(1, Reading.CAL_FWD_PWR)) _RX1MeterValues[Reading.CAL_FWD_PWR] = calfwdpower;
                     //
-
-                    MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
-                    meterDelay.Stop();
-
-                    // get quickest TX updating meter from MeterManager
-                    int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
-                    if (delayMS < 1) delayMS = 1;
-                    await Task.Delay(delayMS);
                 }
+
+                bool bNeedVolts = MeterManager.RequiresUpdate(1, Reading.VOLTS);
+                bool bNeedAmps = MeterManager.RequiresUpdate(1, Reading.AMPS);
+                if (bNeedVolts || bNeedAmps) 
+                {
+                    computeMKIIPAVoltsAmps();
+
+                    if (MeterManager.RequiresUpdate(1, Reading.VOLTS)) _RX1MeterValues[Reading.VOLTS] = _MKIIPAVolts;
+                    if (MeterManager.RequiresUpdate(1, Reading.AMPS)) _RX1MeterValues[Reading.AMPS] = _MKIIPAAmps;
+
+                    //update rx2 as well
+                    if (rx2_enabled)
+                    {
+                        if (MeterManager.RequiresUpdate(2, Reading.VOLTS)) _RX2MeterValues[Reading.VOLTS] = _MKIIPAVolts;
+                        if (MeterManager.RequiresUpdate(2, Reading.AMPS)) _RX2MeterValues[Reading.AMPS] = _MKIIPAAmps;
+                    }
+                }
+
+                MeterReadingsChangedHandlers?.Invoke(1, mox, ref _RX1MeterValues);
+
+                meterDelay.Stop();
+
+                // get quickest updating meter from MeterManager
+                int delayMS = MeterManager.QuickestUpdateInterval(1, mox) - (int)meterDelay.DurationMsec;
+                if (delayMS < 1) delayMS = 1;
+                await Task.Delay(delayMS);
             }
         }
         private async void MultiMeter2UpdateRX2()
@@ -53861,7 +53893,6 @@ namespace Thetis
 
             while (chkPower.Checked && rx2_enabled)
             {
-                // new meter
                 meterDelay.Reset();
 
                 float offset = rx2_step_att_present ? (float)rx2_attenuator_data : rx2_preamp_offset[(int)rx1_preamp_mode];
@@ -53879,10 +53910,9 @@ namespace Thetis
                 meterDelay.Stop();
 
                 // get quickest RX updating meter from MeterManager
-                int delayMS = MeterManager.QuickestUpdateInterval(2, mox) - (int)meterDelay.DurationMsec;
+                int delayMS = MeterManager.QuickestUpdateInterval(2, false) - (int)meterDelay.DurationMsec;
                 if (delayMS < 1) delayMS = 1;
                 await Task.Delay(delayMS);
-                //
             }
         }
         private void picMultiMeterDigital_Click(object sender, EventArgs e)
