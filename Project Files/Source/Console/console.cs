@@ -1075,16 +1075,6 @@ namespace Thetis
                 }
                 pause_DisplayThread = false;
 
-                if (USE_MULTIMETERS2)
-                {
-                    DialogResult dr = MessageBox.Show("This version has work in progress multimeters.\n" +
-                        "You will need a Meters folder and associated images in the same folder that the Skins folder resides.\n" +
-                        "See the NOTE: in github for a download link.",
-                                                "MultiMeters2 WIP",
-                                                MessageBoxButtons.OK,
-                                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                }
-
                 //autostart?
                 foreach (string s in CmdLineArgs)
                 {
@@ -1982,6 +1972,7 @@ namespace Thetis
                 }
                 _frmRX1Meter = new frmMeterDisplay(this, 1);
                 _frmRX2Meter = new frmMeterDisplay(this, 2);
+
                 string sImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
                 MeterManager.Init(this, ucDockedMeterRX1.DisplayContainer, ucDockedMeterRX2.DisplayContainer, sImagePath);
 
@@ -1990,10 +1981,13 @@ namespace Thetis
                 else
                     returnMeterFromFloating(ucDockedMeterRX1, _frmRX1Meter);
 
-                if (ucDockedMeterRX2.Floating)
-                    setMeterFloating(ucDockedMeterRX2, _frmRX2Meter);
-                else
-                    returnMeterFromFloating(ucDockedMeterRX2, _frmRX2Meter);
+                if (rx2_enabled)
+                {
+                    if (ucDockedMeterRX2.Floating)
+                        setMeterFloating(ucDockedMeterRX2, _frmRX2Meter);
+                    else
+                        returnMeterFromFloating(ucDockedMeterRX2, _frmRX2Meter);
+                }
             }
             //
 
@@ -32264,6 +32258,9 @@ namespace Thetis
 
             bool tx = chkMOX.Checked;
 
+            if (!tx && CATPTT) CATPTT = false; //MW0LGE [2.9.0.7] we need to abort the CATPTT otherwise
+                                               // it will try to PTT again after we stop mox
+
             if (tx) mox = tx;
             double freq = 0.0;
             /*  //MW0LGE [2.9.0.6] removed as peformed in UIMOXChangedTrue/UIMOXChangedFalse
@@ -32390,7 +32387,6 @@ namespace Thetis
                         freq -= (double)cw_pitch * 0.0000010;
                         break;
                 }
-
             }
             else
             {
@@ -34495,27 +34491,13 @@ namespace Thetis
             if (tx_freq < min_freq) tx_freq = min_freq;
             else if (tx_freq > max_freq) tx_freq = max_freq;
 
-            //MW0LGE_21d
-            if (rx1_dsp_mode == DSPMode.CWL)
-            {
-                rx_freq += (double)cw_pitch * 0.0000010;
-                if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-                    tx_freq += (double)cw_pitch * 0.0000010;
-            }
-            else if (rx1_dsp_mode == DSPMode.CWU)
-            {
-                rx_freq -= (double)cw_pitch * 0.0000010;
-                if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-                    tx_freq -= (double)cw_pitch * 0.0000010;
-            }
-
             if (mox && !chkVFOSplit.Checked && !full_duplex && !chkVFOBTX.Checked)
             {
                 if (!CheckValidTXFreq(current_region, tx_freq, radio.GetDSPTX(0).CurrentDSPMode, chkTUN.Checked))
                 {
                     switch (radio.GetDSPTX(0).CurrentDSPMode)
                     {
-                        case DSPMode.CWL:
+                        case DSPMode.CWL: // MW0LGE [2.9.0.7] NOTE, will not get here on tune, as the currentdspmode is changed to USB/LSB in chkTUN_CheckedChanged
                         case DSPMode.CWU:
                             MessageBox.Show("The frequency " + tx_freq.ToString("f6") + "MHz is not within the\n" +
                                 "Band specifications for your region (" + current_region.ToString() + ").",
@@ -34548,19 +34530,18 @@ namespace Thetis
                 }
             }
 
-            //MW0LGE_21d moved above check, so the txfrq is moved with the cw offset before the check is made
-            //if (rx1_dsp_mode == DSPMode.CWL)
-            //{
-            //    rx_freq += (double)cw_pitch * 0.0000010;
-            //    if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-            //        tx_freq += (double)cw_pitch * 0.0000010;
-            //}
-            //else if (rx1_dsp_mode == DSPMode.CWU)
-            //{
-            //    rx_freq -= (double)cw_pitch * 0.0000010;
-            //    if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
-            //        tx_freq -= (double)cw_pitch * 0.0000010;
-            //}
+            if (rx1_dsp_mode == DSPMode.CWL)
+            {
+                rx_freq += (double)cw_pitch * 0.0000010;
+                if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
+                    tx_freq += (double)cw_pitch * 0.0000010;
+            }
+            else if (rx1_dsp_mode == DSPMode.CWU)
+            {
+                rx_freq -= (double)cw_pitch * 0.0000010;
+                if (!cw_fw_keyer || (cw_fw_keyer && chkTUN.Checked))
+                    tx_freq -= (double)cw_pitch * 0.0000010;
+            }
 
             switch (RX1DSPMode)
             {
@@ -54300,6 +54281,8 @@ namespace Thetis
             setPoisitionOfDockedMeter(ucDockedMeterRX1);
             setPoisitionOfDockedMeter(ucDockedMeterRX2);
         }
+
+        
     }
 
     public class DigiMode
