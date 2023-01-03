@@ -663,6 +663,8 @@ namespace Thetis
             }
 
             lblRight1.Text = _right1[_currentFlip];
+
+            repositionControls();// MW0LGE [2.9.0.7]
         }
         public void Right2(int flipLayer, string value, int width = -1)
         {
@@ -679,6 +681,8 @@ namespace Thetis
             }
 
             lblRight2.Text = _right2[_currentFlip];
+
+            repositionControls();// MW0LGE [2.9.0.7]
         }
         public void Right3(int flipLayer, string value, int width = -1)
         {
@@ -695,6 +699,8 @@ namespace Thetis
             }
 
             lblRight3.Text = _right3[_currentFlip];
+
+            repositionControls();// MW0LGE [2.9.0.7]
         }
 
         private bool _bCorrectionsBeingApplied = false;
@@ -1074,6 +1080,16 @@ namespace Thetis
         private bool _useSmallFonts = false;
         private void repositionControls()
         {
+            // return if any control is null, this should not happen  // MW0LGE [2.9.0.7]
+            if (lblFB is null || lblPS is null ||
+                lblLeft1 is null || lblLeft2 is null || lblLeft3 is null ||
+                lblRight1 is null || lblRight2 is null || lblRight3 is null ||
+                lblWarning is null || lblSplitter is null)
+            {
+                Debug.WriteLine(">>>>>>>>> REPOS NULL");
+                return;
+            }
+
             int newLeftFB = lblSplitter.Left + lblSplitter.Width;
             int newSpan = this.Width - newLeftFB;
             int halfSpan = (int)Math.Ceiling(newSpan / 2f);

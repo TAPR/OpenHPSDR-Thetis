@@ -25137,6 +25137,11 @@ namespace Thetis
             if (dr == DialogResult.Yes)
                 console.ResetLevelCalibration();
         }
+
+        private void chkSupportUkraine_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.FlagShown = chkSupportUkraine.Checked; //MW0LGE [2.9.0.7]
+        }
     }
 
     #region PADeviceInfo Helper Class
