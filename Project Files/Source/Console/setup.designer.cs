@@ -200,6 +200,7 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
+            this.chkSupportUkraine = new System.Windows.Forms.CheckBoxTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
             this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
             this.grpFirmware = new System.Windows.Forms.GroupBoxTS();
@@ -355,6 +356,12 @@
             this.chkQSOTimerOnlyDuringMOX = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpGeneralCalibration = new System.Windows.Forms.TabPage();
+            this.groupBoxTS27 = new System.Windows.Forms.GroupBoxTS();
+            this.btnAmpDefault = new System.Windows.Forms.ButtonTS();
+            this.labelTS159 = new System.Windows.Forms.LabelTS();
+            this.labelTS158 = new System.Windows.Forms.LabelTS();
+            this.udAmpSens = new System.Windows.Forms.NumericUpDownTS();
+            this.udAmpVoff = new System.Windows.Forms.NumericUpDownTS();
             this.panelRX2LevelCal = new System.Windows.Forms.PanelTS();
             this.labelTS135 = new System.Windows.Forms.LabelTS();
             this.udGeneralCalRX2Level = new System.Windows.Forms.NumericUpDownTS();
@@ -3311,7 +3318,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkSupportUkraine = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3416,6 +3422,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).BeginInit();
             this.tpGeneralCalibration.SuspendLayout();
+            this.groupBoxTS27.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).BeginInit();
             this.panelRX2LevelCal.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).BeginInit();
@@ -6552,6 +6561,18 @@
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
             // 
+            // chkSupportUkraine
+            // 
+            this.chkSupportUkraine.AutoSize = true;
+            this.chkSupportUkraine.Image = null;
+            this.chkSupportUkraine.Location = new System.Drawing.Point(210, 198);
+            this.chkSupportUkraine.Name = "chkSupportUkraine";
+            this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
+            this.chkSupportUkraine.TabIndex = 39;
+            this.chkSupportUkraine.Text = "Support Ukraine";
+            this.chkSupportUkraine.UseVisualStyleBackColor = true;
+            this.chkSupportUkraine.CheckedChanged += new System.EventHandler(this.chkSupportUkraine_CheckedChanged);
+            // 
             // lblTimeout
             // 
             this.lblTimeout.Image = null;
@@ -9003,6 +9024,7 @@
             // tpGeneralCalibration
             // 
             this.tpGeneralCalibration.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralCalibration.Controls.Add(this.groupBoxTS27);
             this.tpGeneralCalibration.Controls.Add(this.panelRX2LevelCal);
             this.tpGeneralCalibration.Controls.Add(this.grpBoxTXDisplayCal);
             this.tpGeneralCalibration.Controls.Add(this.grpHPSDRFreqCalDbg);
@@ -9016,6 +9038,113 @@
             this.tpGeneralCalibration.TabIndex = 2;
             this.tpGeneralCalibration.Text = "Calibration";
             this.tpGeneralCalibration.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralCalibration_Paint);
+            // 
+            // groupBoxTS27
+            // 
+            this.groupBoxTS27.Controls.Add(this.btnAmpDefault);
+            this.groupBoxTS27.Controls.Add(this.labelTS159);
+            this.groupBoxTS27.Controls.Add(this.labelTS158);
+            this.groupBoxTS27.Controls.Add(this.udAmpSens);
+            this.groupBoxTS27.Controls.Add(this.udAmpVoff);
+            this.groupBoxTS27.Location = new System.Drawing.Point(541, 11);
+            this.groupBoxTS27.Name = "groupBoxTS27";
+            this.groupBoxTS27.Size = new System.Drawing.Size(175, 122);
+            this.groupBoxTS27.TabIndex = 15;
+            this.groupBoxTS27.TabStop = false;
+            this.groupBoxTS27.Text = "Current (A) calculation";
+            // 
+            // btnAmpDefault
+            // 
+            this.btnAmpDefault.Image = null;
+            this.btnAmpDefault.Location = new System.Drawing.Point(60, 86);
+            this.btnAmpDefault.Name = "btnAmpDefault";
+            this.btnAmpDefault.Selectable = true;
+            this.btnAmpDefault.Size = new System.Drawing.Size(75, 23);
+            this.btnAmpDefault.TabIndex = 4;
+            this.btnAmpDefault.Text = "Default";
+            this.toolTip1.SetToolTip(this.btnAmpDefault, "Set volt/sens to defaults (7000dle has unique values)");
+            this.btnAmpDefault.UseVisualStyleBackColor = true;
+            this.btnAmpDefault.Click += new System.EventHandler(this.btnAmpDefault_Click);
+            // 
+            // labelTS159
+            // 
+            this.labelTS159.AutoSize = true;
+            this.labelTS159.Image = null;
+            this.labelTS159.Location = new System.Drawing.Point(28, 54);
+            this.labelTS159.Name = "labelTS159";
+            this.labelTS159.Size = new System.Drawing.Size(57, 13);
+            this.labelTS159.TabIndex = 3;
+            this.labelTS159.Text = "Sensitivity:";
+            // 
+            // labelTS158
+            // 
+            this.labelTS158.AutoSize = true;
+            this.labelTS158.Image = null;
+            this.labelTS158.Location = new System.Drawing.Point(47, 27);
+            this.labelTS158.Name = "labelTS158";
+            this.labelTS158.Size = new System.Drawing.Size(38, 13);
+            this.labelTS158.TabIndex = 2;
+            this.labelTS158.Text = "Offset:";
+            // 
+            // udAmpSens
+            // 
+            this.udAmpSens.DecimalPlaces = 1;
+            this.udAmpSens.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpSens.Location = new System.Drawing.Point(91, 50);
+            this.udAmpSens.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.udAmpSens.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpSens.Name = "udAmpSens";
+            this.udAmpSens.Size = new System.Drawing.Size(67, 20);
+            this.udAmpSens.TabIndex = 1;
+            this.udAmpSens.TinyStep = false;
+            this.udAmpSens.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpSens.ValueChanged += new System.EventHandler(this.udAmpSens_ValueChanged);
+            // 
+            // udAmpVoff
+            // 
+            this.udAmpVoff.DecimalPlaces = 1;
+            this.udAmpVoff.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpVoff.Location = new System.Drawing.Point(91, 24);
+            this.udAmpVoff.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.udAmpVoff.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpVoff.Name = "udAmpVoff";
+            this.udAmpVoff.Size = new System.Drawing.Size(67, 20);
+            this.udAmpVoff.TabIndex = 0;
+            this.udAmpVoff.TinyStep = false;
+            this.udAmpVoff.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpVoff.ValueChanged += new System.EventHandler(this.udAmpVoff_ValueChanged);
             // 
             // panelRX2LevelCal
             // 
@@ -28851,7 +28980,7 @@
             // grpDisplay8000DLE
             // 
             this.grpDisplay8000DLE.Controls.Add(this.chkANAN8000DLEDisplayVoltsAmps);
-            this.grpDisplay8000DLE.Location = new System.Drawing.Point(513, 22);
+            this.grpDisplay8000DLE.Location = new System.Drawing.Point(513, 11);
             this.grpDisplay8000DLE.Name = "grpDisplay8000DLE";
             this.grpDisplay8000DLE.Size = new System.Drawing.Size(200, 47);
             this.grpDisplay8000DLE.TabIndex = 44;
@@ -52754,18 +52883,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkSupportUkraine
-            // 
-            this.chkSupportUkraine.AutoSize = true;
-            this.chkSupportUkraine.Image = null;
-            this.chkSupportUkraine.Location = new System.Drawing.Point(210, 198);
-            this.chkSupportUkraine.Name = "chkSupportUkraine";
-            this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
-            this.chkSupportUkraine.TabIndex = 39;
-            this.chkSupportUkraine.Text = "Support Ukraine";
-            this.chkSupportUkraine.UseVisualStyleBackColor = true;
-            this.chkSupportUkraine.CheckedChanged += new System.EventHandler(this.chkSupportUkraine_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -52904,6 +53021,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).EndInit();
             this.tpGeneralCalibration.ResumeLayout(false);
+            this.groupBoxTS27.ResumeLayout(false);
+            this.groupBoxTS27.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).EndInit();
             this.panelRX2LevelCal.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).EndInit();
@@ -57148,5 +57269,11 @@
         private NumericUpDownTS nudRX2NFoffsetGridFollow;
         private Button btnResetLevelCal;
         private CheckBoxTS chkSupportUkraine;
+        private GroupBoxTS groupBoxTS27;
+        private ButtonTS btnAmpDefault;
+        private LabelTS labelTS159;
+        private LabelTS labelTS158;
+        private NumericUpDownTS udAmpSens;
+        private NumericUpDownTS udAmpVoff;
     }
 }

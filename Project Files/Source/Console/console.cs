@@ -2001,7 +2001,7 @@ namespace Thetis
             get { return _bInfoBarShowSEQErrors; }
             set { _bInfoBarShowSEQErrors = value; }
         }
-        public void SetupInfoBar(ucInfoBar.ActionTypes action, bool bEnabled)
+        public void SetupInfoBarButton(ucInfoBar.ActionTypes action, bool bEnabled)
         {
             infoBar.UpdateButtonState(action, bEnabled);
         }
@@ -2023,6 +2023,21 @@ namespace Thetis
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.ShowSpots, SetupForm.ShowTCISpots /*| other spots*/, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.DisplayFill, SetupForm.DisplayPanFill, true); // <- last one needs to be true
             }
+
+            // tooltips
+            //infoBar.SetToolTipLeft(0, 1, "");
+            //infoBar.SetToolTipLeft(0, 2, "");
+            //infoBar.SetToolTipLeft(0, 3, "");
+            infoBar.SetToolTipLeft(1, 1, "RBW - Resolution Bandwidth");
+            infoBar.SetToolTipLeft(1, 2, "PB - Passband Bandwidth");
+            //infoBar.SetToolTipLeft(1, 3, "");
+
+            //infoBar.SetToolTipRight(0, 1, "");
+            //infoBar.SetToolTipRight(0, 2, "");
+            //infoBar.SetToolTipRight(0, 3, "");
+            infoBar.SetToolTipRight(1, 1, "NPSD - Noise Floor Power Spectral Density");
+            infoBar.SetToolTipRight(1, 2, "PBNP - Estimated Passband Noise Power");
+            infoBar.SetToolTipRight(1, 3, "PBSNR - Estimated Passband SNR");
         }
         public void InfoBarFeedbackLevel(int level, bool bFeedbackLevelOk, bool bCorrectionsBeingApplied, bool bCalibrationAttemptsChanged, Color feedbackColour)
         {
@@ -23017,8 +23032,8 @@ namespace Thetis
                 if (!MOX)
                 {
                     infoBar.Right1(1, "NPSD " + noise_floor_power_spectral_density.ToString("N1") + "dBm/Hz", 140);
-                    infoBar.Right2(1, "PBNP " + /*estimated_passband_noise_power.ToString("N1") + "dBm"*/sEstimated_passband_noise_power, 120);
-                    infoBar.Right3(1, "PBSNR " + /*estimated_snr.ToString("N1") + "dBm"*/ sEstimated_snr, 120);
+                    infoBar.Right2(1, "PBNP " + sEstimated_passband_noise_power, 120);
+                    infoBar.Right3(1, "PBSNR " + sEstimated_snr, 120);
                 }
                 else
                 {
@@ -27178,14 +27193,40 @@ namespace Thetis
             volts = volts * volt_div;
             return volts;
         }
+        private float _amp_voff = 360.0f;
+        private float _amp_sens = 120.0f;
+        public float AmpVoff
+        {
+            get { return _amp_voff; }
+            set {
+                float tmp = value;
+                if(tmp<0) tmp = 0.0f;
+
+                _amp_voff = tmp; 
+            }
+        }
+        public float AmpSens
+        {
+            get { return _amp_sens; }
+            set
+            {
+                float tmp = value;
+                if (tmp < 0.001f) tmp = 0.001f;
+
+                _amp_sens = tmp;
+            }
+        }
         private float convertToAmps(float IOreading)
         {
-            float voff = 360.0f, sens = 120.0f;
-            if (current_hpsdr_model == HPSDRModel.ANAN7000D)
-            {
-                voff = 340.0f;
-                sens = 88.0f;
-            }
+            //float voff = 360.0f, sens = 120.0f;
+            //if (current_hpsdr_model == HPSDRModel.ANAN7000D)
+            //{
+            //    //voff = 235; // to match my idle current TODO
+            //    voff = 340.0f;
+            //    sens = 88.0f;
+            //}
+            float voff = _amp_voff;
+            float sens = _amp_sens;
             float fwdvolts = (IOreading * 5000.0f) / 4095.0f;
             if (fwdvolts < 0) fwdvolts = 0.0f;
             float amps = ((fwdvolts - voff) / sens);
@@ -34614,6 +34655,7 @@ namespace Thetis
                         else diff = (int)((VFOBFreq - VFOAFreq) * 1e6);
                         if (chkRIT.Checked && !mox) diff -= (int)udRIT.Value;
                         int rx2_osc = (int)(radio.GetDSPRX(0, 0).RXOsc - diff);
+                        Debug.Print(radio.GetDSPRX(0, 0).RXOsc.ToString());
                         if (rx2_osc > -sample_rate_rx1 / 2 && rx2_osc < sample_rate_rx1 / 2)
                         {
                             radio.GetDSPRX(0, 1).RXOsc = rx2_osc;
@@ -43578,7 +43620,7 @@ namespace Thetis
             setupZTBButton();
 
             // need to update anything on the info bar buttons that is relying on rx2
-            SetupInfoBar(ucInfoBar.ActionTypes.ActivePeaks, Display.SpectralPeakHoldRX1 | (RX2Enabled && Display.SpectralPeakHoldRX2));
+            SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, Display.SpectralPeakHoldRX1 | (RX2Enabled && Display.SpectralPeakHoldRX2));
 
             if(!m_bResizeDX2Display && (oldRX2Enabled != RX2Enabled)) m_bResizeDX2Display = true; // MW0LGE_22b force resize is rx2 enabled state is changed, this may also be set by reisze calls above
 
@@ -54022,14 +54064,14 @@ namespace Thetis
                 {
                     computeMKIIPAVoltsAmps();
 
-                    if (MeterManager.RequiresUpdate(1, Reading.VOLTS)) _RX1MeterValues[Reading.VOLTS] = _MKIIPAVolts;
-                    if (MeterManager.RequiresUpdate(1, Reading.AMPS)) _RX1MeterValues[Reading.AMPS] = _MKIIPAAmps;
+                    if (bNeedVolts) _RX1MeterValues[Reading.VOLTS] = _MKIIPAVolts;
+                    if (bNeedAmps) _RX1MeterValues[Reading.AMPS] = _MKIIPAAmps;
 
                     //update rx2 as well
                     if (rx2_enabled)
                     {
-                        if (MeterManager.RequiresUpdate(2, Reading.VOLTS)) _RX2MeterValues[Reading.VOLTS] = _MKIIPAVolts;
-                        if (MeterManager.RequiresUpdate(2, Reading.AMPS)) _RX2MeterValues[Reading.AMPS] = _MKIIPAAmps;
+                        if (bNeedVolts) _RX2MeterValues[Reading.VOLTS] = _MKIIPAVolts;
+                        if (bNeedAmps) _RX2MeterValues[Reading.AMPS] = _MKIIPAAmps;
                     }
                 }
 
@@ -54053,8 +54095,31 @@ namespace Thetis
 
                 if (!mox)
                 {
-                    float offset = rx2_step_att_present ? (float)rx2_attenuator_data : rx2_preamp_offset[(int)rx1_preamp_mode];
-                    offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset + rx2_6m_gain_offset;
+                    //float offset = rx2_step_att_present ? (float)rx2_attenuator_data : rx2_preamp_offset[(int)rx1_preamp_mode];
+                    //offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset + rx2_6m_gain_offset;
+
+                    float offset = 0;
+                    if (current_hpsdr_model == HPSDRModel.ANAN100D ||
+                        current_hpsdr_model == HPSDRModel.ANAN200D ||
+                        current_hpsdr_model == HPSDRModel.ORIONMKII ||
+                        current_hpsdr_model == HPSDRModel.ANAN7000D ||
+                        current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                        rx2_preamp_present)
+                    {
+                        if (rx2_step_att_present)
+                            offset = (float)rx2_attenuator_data;
+                        else
+                            offset = rx2_preamp_offset[(int)rx2_preamp_mode];
+                    }
+                    else
+                    {
+                        if (rx1_step_att_present)
+                            offset = (float)rx1_attenuator_data;
+                        else
+                            offset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                    }
+                    offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset;
+                    if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D) offset += rx2_6m_gain_offset;
 
                     // get all readings
                     if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH)) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;

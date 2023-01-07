@@ -163,14 +163,16 @@ namespace Thetis
                     {
                         List<Reading> readingsUsed = new List<Reading>();
 
-                        kvp.Value.Update(ref readingsUsed);
+                        clsMeter m = kvp.Value;
+
+                        m.Update(ref readingsUsed);
 
                         lock (_readingsLock)
                         {
                             // use/invalidate any readings that have been used, so that they can be updated
                             foreach (Reading rt in readingsUsed)
                             {
-                                _readings[kvp.Value.RX].UseReading(rt);
+                                _readings[m.RX].UseReading(rt);
                             }
                         }
                     }
@@ -454,16 +456,25 @@ namespace Thetis
             }
             return updateRate;
         }
+        public static int QuickestUpdateInterval(int rx)
+        {
+            int updateRate = 50;
+
+            foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && kvp.Value.TypeBitField != (int)MeterType.NONE))
+            {
+                int ui = kvp.Value.QuickestUpdateInterval;
+                if (ui < updateRate) updateRate = ui;
+            }
+
+            return updateRate;
+        }
         private static int overallUpdateInterval()
         {
             int updateInterval = 5000;
 
             for (int rx = 1; rx <= 2; rx++)
             {
-                int tmp = QuickestUpdateInterval(rx, false);
-                if (tmp < updateInterval) updateInterval = tmp;
-
-                tmp = QuickestUpdateInterval(rx, true);
+                int tmp = QuickestUpdateInterval(rx);
                 if (tmp < updateInterval) updateInterval = tmp;
             }
 
@@ -1322,7 +1333,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
                     ni.AttackRatio = 0.1f;
                     ni.DecayRatio = 0.05f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 4000;
                     ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1518,7 +1529,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.StrokeWidth = 2.5f;
@@ -1554,7 +1565,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.REVERSE_PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.StrokeWidth = 2.5f;
@@ -1631,7 +1642,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1664,7 +1675,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.SWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1693,7 +1704,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.ALC_G; // alc_comp
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = false;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1723,7 +1734,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.ALC_GROUP;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = false;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
