@@ -219,6 +219,8 @@ namespace Thetis
             this.RXFMSquelchOn = rx.rx_fm_squelch_on;
             this.RXFMDeviation = rx.rx_fm_deviation;
             this.RXFMCTCSSFilter = rx.rx_fm_ctcss_filter;
+            this.RXFMDETLIMRUN = rx.rx_fm_detector_limiter;
+            this.RXFMDETLIMGAIN = rx.rx_fm_limiter_gain;
             this.RXANFPosition = rx.rx_anf_position;
             this.RXANRPosition = rx.rx_anr_position;
             this.RXCBLRun = rx.rx_cbl_run;
@@ -292,6 +294,8 @@ namespace Thetis
 			Pan = pan;
 			RXOsc = rx_osc;
             RXFMDeviation = rx_fm_deviation;
+            RXFMDETLIMRUN = rx_fm_detector_limiter;
+            RXFMDETLIMGAIN = rx_fm_limiter_gain;
             RXFMCTCSSFilter = rx_fm_ctcss_filter;
             RXANFPosition = rx_anf_position;
             RXANRPosition = rx_anr_position;
@@ -1249,6 +1253,44 @@ namespace Thetis
                 }
             }
 
+        }
+
+        private bool rx_fm_detector_limiter_dsp = false;
+        private bool rx_fm_detector_limiter = false;
+        public bool RXFMDETLIMRUN
+        {
+            get { return rx_fm_detector_limiter; }
+            set
+            {
+                rx_fm_detector_limiter = value;
+                if (update)
+                {
+                    if (value != rx_fm_detector_limiter_dsp || force)
+                    {
+                        WDSP.SetRXAFMLimRun(WDSP.id(thread, subrx), value);
+                        rx_fm_detector_limiter_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private double rx_fm_limiter_gain_dsp = 10.0;
+        private double rx_fm_limiter_gain = 10.0;
+        public double RXFMDETLIMGAIN
+        {
+            get { return rx_fm_limiter_gain; }
+            set
+            {
+                rx_fm_limiter_gain = value;
+                if (update)
+                {
+                    if (value != rx_fm_limiter_gain_dsp || force)
+                    {
+                        WDSP.SetRXAFMLimGain(WDSP.id(thread, subrx), value);
+                        rx_fm_limiter_gain_dsp = value;
+                    }
+                }
+            }
         }
 
         private int rx_anf_position_dsp = 1;
@@ -2432,7 +2474,7 @@ namespace Thetis
                 {
                     if (value != tx_eer_mode_am_iq_dsp || force)
                     {
-                        WDSP.SetEERAMIQ(0, value);
+                        cmaster.SetEERAMIQ(0, value);
                         tx_eer_mode_am_iq_dsp = value;
                     }
                 }
@@ -2452,7 +2494,7 @@ namespace Thetis
                 {
                     if (value != tx_eer_mode_mgain_dsp || force)
                     {
-                        WDSP.SetEERMgain(0, value);
+                        cmaster.SetEERMgain(0, value);
                         tx_eer_mode_mgain_dsp = value;
                     }
                 }
@@ -2472,7 +2514,7 @@ namespace Thetis
                 {
                     if (value != tx_eer_mode_pgain_dsp || force)
                     {
-                        WDSP.SetEERPgain(0, value);
+                        cmaster.SetEERPgain(0, value);
                         tx_eer_mode_pgain_dsp = value;
                     }
                 }
@@ -2492,7 +2534,7 @@ namespace Thetis
                 {
                     if (value != tx_eer_mode_rundelays_dsp || force)
                     {
-                        WDSP.SetEERRunDelays(0, value);
+                        cmaster.SetEERRunDelays(0, value);
                         tx_eer_mode_rundelays_dsp = value;
                     }
                 }
@@ -2512,7 +2554,7 @@ namespace Thetis
                 {
                     if (value != tx_eer_mode_mdelay_dsp || force)
                     {
-                        WDSP.SetEERMdelay(0, value);
+                        cmaster.SetEERMdelay(0, value);
                         tx_eer_mode_mdelay_dsp = value;
                     }
                 }
@@ -2532,28 +2574,8 @@ namespace Thetis
                 {
                     if (value != tx_eer_mode_pdelay_dsp || force)
                     {
-                        WDSP.SetEERPdelay(0, value);
+                        cmaster.SetEERPdelay(0, value);
                         tx_eer_mode_pdelay_dsp = value;
-                    }
-                }
-            }
-        }
-
-        private int tx_eer_mode_samplerate_dsp = 48000;
-        private int tx_eer_mode_samplerate = 48000;
-        public int TXEERModeSamplerate
-        {
-            get { return tx_eer_mode_samplerate; }
-            set
-            {
-                tx_eer_mode_samplerate = value;
-
-                if (update)
-                {
-                    if (value != tx_eer_mode_samplerate_dsp || force)
-                    {
-                        WDSP.SetEERSamplerate(0, value);
-                        tx_eer_mode_samplerate_dsp = value;
                     }
                 }
             }

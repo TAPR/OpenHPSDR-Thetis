@@ -367,6 +367,7 @@ void MetisReadThreadMainLoop(void)
 											bptr[k + 5] << 8);
 								}
 							}
+							// WriteAudio(30.0, 48000, spr, prn->RxBuff[0], 3);
 							switch (nddc)
 							{
 							case 2:
@@ -692,13 +693,19 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n)
 	{
 		WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, INFINITE);
 		// if ((nddc == 2) || (nddc == 4))
+		if (pcm->xmtr[0].peer->run && XmitBit)
 		{
-			for (i = 0; i < 4 * 63; i += 2)			// swap L & R audio; firmware bug fix
-			{
-				swap             = pbuffs[0][i + 0];
-				pbuffs[0][i + 0] = pbuffs[0][i + 1];
-				pbuffs[0][i + 1] = swap;
-			}
+			// if eer/etr mode and transmitting, overwrite LR data with EER data
+			memcpy(prn->outLRbufp, prn->outIQbufp + 256, sizeof(complex) * 126);
+		}
+		if (!XmitBit) memset(prn->outIQbufp, 0, sizeof(complex) * 126);
+		// WriteAudio (30.0, 48000, 126, prn->outIQbufp, 3);
+		// WriteAudio (60.0, 48000, 126, prn->outLRbufp, 3);
+		for (i = 0; i < 4 * 63; i += 2)			// swap L & R audio; firmware bug fix
+		{
+			swap = pbuffs[0][i + 0];
+			pbuffs[0][i + 0] = pbuffs[0][i + 1];
+			pbuffs[0][i + 1] = swap;
 		}
 		for (i = 0; i < 2 * 63; i++)				// for each sample from both sets, 8 bytes per
 			for (j = 0; j < 2; j++)					// for a sample from each set, 4 bytes per
@@ -706,14 +713,14 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n)
 				{
 					temp = pbuffs[j][i * 2 + k] >= 0.0 ? (short)floor(pbuffs[j][i * 2 + k] * 32767.0 + 0.5) :
 						(short)ceil(pbuffs[j][i * 2 + k] * 32767.0 - 0.5);
-					if (prn->cw.cw_enable && j == 1) 
-						temp = (prn->tx[0].dot << 2 | 
-						    	prn->tx[0].dash << 1 | 
-						    	prn->tx[0].cwx) & 0b00000111;
+					if (prn->cw.cw_enable && j == 1)
+						temp = (prn->tx[0].dot << 2 |
+							prn->tx[0].dash << 1 |
+							prn->tx[0].cwx) & 0b00000111;
 					prn->OutBufp[8 * i + 4 * j + 2 * k + 0] = (char)((temp >> 8) & 0xff);
 					prn->OutBufp[8 * i + 4 * j + 2 * k + 1] = (char)(temp & 0xff);
 				}
-			WriteMainLoop(prn->OutBufp);						
+		WriteMainLoop(prn->OutBufp);
 	}
 	return 0;
 }

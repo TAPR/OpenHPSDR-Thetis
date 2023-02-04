@@ -1132,7 +1132,12 @@ namespace Thetis
 
         private int msgs_since_reversal = 0;  //-W2PA Used to keep track of rotation and apply MidiMessagesPerTuneStep from console
         private int current_tuning_direction = 0;  // -1 = CCW, 1 = CW -- 0 is uninitialized value
-        private bool _swapVFOs = false;
+        private bool _swapVFOWheels = false;
+        public bool SwapVFOWheelsProperty
+        {
+            get { return _swapVFOWheels; }
+            set { _swapVFOWheels = value; }
+        }
 
         //-W2PA  Routine to implement MIDI wheel VFO tuning using the original code from Midi2Cat
         private void ProcessStdMIDIWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo)
@@ -1577,7 +1582,7 @@ namespace Thetis
             //MW0LGE [2.9.0.7]
             long freq;
             string sVfo;
-            if (_swapVFOs)
+            if (_swapVFOWheels)
             {
                 sVfo = "b";
                 freq = Convert.ToInt64(commands.ZZFB(""));
@@ -1769,7 +1774,7 @@ namespace Thetis
             //MW0LGE [2.9.0.7]
             long freq;
             string sVfo;
-            if (_swapVFOs)
+            if (_swapVFOWheels)
             {
                 sVfo = "a";
                 freq = Convert.ToInt64(commands.ZZFA(""));
@@ -6175,14 +6180,17 @@ namespace Thetis
         }
         public CmdState SwapVFOWheels(int msg, MidiDevice device)
         {
+            // MW0LGE [2.9.0.7]
+            // vfoA becomes vfoB when swapped in ChangeFreqVfoA and ChangeFreqVfoB. It is intended
+            // for use when a midi controller has two wheels, it can also be controlled with cat command ZZZW
             if (msg == 127)
             {
                 parser.nGet = 0;
                 parser.nSet = 1;
 
-                _swapVFOs = !_swapVFOs;
+                _swapVFOWheels = !_swapVFOWheels;
 
-                if (_swapVFOs)
+                if (_swapVFOWheels)
                 {
                     return CmdState.On;
                 }

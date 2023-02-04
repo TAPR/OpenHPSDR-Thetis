@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2022 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
@@ -37,3 +37,5 @@ extern double* get_fsamp_window(int N, int wintype);
 extern double *fir_read (int N, const char *filename, int rtype, double scale);
 
 extern void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity);
+
+extern double* zff_impulse(int nc, double scale);

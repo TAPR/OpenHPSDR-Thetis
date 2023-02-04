@@ -123,20 +123,20 @@ namespace Thetis
 
         private static readonly object m_objLock = new Object();
 
-        public static void CopyData(int rx, float[] newData, bool bUse)
+        public static void CopyData(int rx, float[] newData)//, bool bUse = true)
         {
             if (!m_bStarted) return;
             if (RXstoredData == null || rx > RXstoredData.Length || rx < 1) return;
             if (!RXstoredData[rx - 1].Enabled) return;
 
-            if (RXstoredData[rx-1].DataReady) return;
+            if (RXstoredData[rx-1].DataReady) return; // not been consumed
 
             lock (m_objLock)
             {
-                RXstoredData[rx-1].DataReady = false;
+//                RXstoredData[rx-1].DataReady = false;
 
-                if (bUse)
-                {
+//                if (bUse)
+//                {
                     unsafe
                     {
                         fixed (void* originalptr = &newData[0])
@@ -145,7 +145,7 @@ namespace Thetis
                     }
 
                     RXstoredData[rx-1].DataReady = true;
-                }
+//                }
             }
         }
         public static void Start()

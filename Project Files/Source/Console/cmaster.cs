@@ -191,6 +191,29 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "SetTXFixedGain", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXFixedGain(int id, double Igain, double Qgain);
 
+        // eer/etr
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetEERRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetEERRun(int id, bool run);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetEERAMIQ", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetEERAMIQ(int id, bool amiq);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetEERMgain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetEERMgain(int id, double gain);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetEERPgain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetEERPgain(int id, double gain);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetEERRunDelays", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetEERRunDelays(int id, bool run);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetEERMdelay", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetEERMdelay(int id, double delay);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetEERPdelay", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetEERPdelay(int id, double delay);
+
         // noise blanker - call directly from various places
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetRCVRANBRun", CallingConvention = CallingConvention.Cdecl)]
@@ -837,9 +860,17 @@ namespace Thetis
 
         public static void CMSetEERRun(int id)
         {
-            bool run = Audio.console.radio.GetDSPTX(0).TXEERModeRun && Audio.MOX;
-           //  WDSP.SetEERSize(id, Audio.OutCount);
-            WDSP.SetEERRun(id, run);
+            bool run = Audio.console.radio.GetDSPTX(0).TXEERModeRun;
+            if (run && mox)
+            {
+                cmaster.SetEERRun(id, true);
+                NetworkIO.EnableEClassModulation(1);
+            }
+            else
+            {
+                cmaster.SetEERRun(id, false);
+                NetworkIO.EnableEClassModulation(0);
+            }
         }
 
         public static void CMSetTXAVoxRun(int id)
