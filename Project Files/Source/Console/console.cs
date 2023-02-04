@@ -26460,7 +26460,13 @@ namespace Thetis
                     int flag = -1;
                     int flag2 = -1;
 
+                    bool bDataReady = false;
+                    bool bWaterfallDataReady = false;
+                    bool bN1mm = false;
+
                     bool bLocalMox = Display.MOX;//mox;  //MW0LGE_21k7 use the state from display
+
+                    bool bGetPixelIssue = false;
 
                     //MW0LGE_21g
                     if (mox)
@@ -26483,7 +26489,11 @@ namespace Thetis
                         if (!pause_DisplayThread && (!Display.DataReady || !Display.WaterfallDataReady) &&
                             Display.CurrentDisplayMode != DisplayMode.OFF)
                         {
-                            flag = -1;
+                            flag2 = -1;
+                            bDataReady = false;
+                            bWaterfallDataReady = false;
+                            bN1mm = false;
+
                             switch (Display.CurrentDisplayMode)
                             {
                                 case DisplayMode.WATERFALL:
@@ -26494,34 +26504,32 @@ namespace Thetis
                                         {
                                             fixed (float* ptr = &Display.new_display_data[0])
                                                 SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
-                                            Display.DataReady = true;// (flag == 1);
+                                            bDataReady = (flag == 1);
                                             fixed (float* ptr = &Display.new_waterfall_data[0])
                                                 SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag);
-                                            Display.WaterfallDataReady = true;// (flag == 1);
+                                            bWaterfallDataReady = (flag == 1);
                                         }
                                         else
                                         {
                                             fixed (float* ptr = &Display.new_display_data[0])
                                                 // SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
                                                 SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
-                                            Display.DataReady = (flag == 1);
+                                            bDataReady = (flag == 1);
                                             fixed (float* ptr = &Display.new_waterfall_data[0])
                                                 //SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag); 
                                                 SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag);
-                                            Display.WaterfallDataReady = (flag == 1);
+                                            bWaterfallDataReady = (flag == 1);
                                         }
                                     }
                                     else //rx
                                     {
                                         fixed (float* ptr = &Display.new_display_data[0])
                                             SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
-                                        Display.DataReady = (flag == 1);
-                                        //MW0LGE_21d N1MM
-                                        N1MM.CopyData(1, Display.new_display_data, flag == 1);
-                                        //
+                                        bDataReady = (flag == 1);
+                                        bN1mm = true;
                                         fixed (float* ptr = &Display.new_waterfall_data[0])
                                             SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag);
-                                        Display.WaterfallDataReady = (flag == 1);
+                                        bWaterfallDataReady = (flag == 1);
                                     }
                                     break;
                                 case DisplayMode.SPECTRUM:
@@ -26535,23 +26543,21 @@ namespace Thetis
                                         {
                                             fixed (float* ptr = &Display.new_display_data[0])
                                                 SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
-                                            Display.DataReady = (flag == 1);
+                                            bDataReady = (flag == 1);
                                         }
                                         else
                                         {
                                             fixed (float* ptr = &Display.new_display_data[0])
                                                 SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
-                                            Display.DataReady = (flag == 1);
+                                            bDataReady = (flag == 1);
                                         }
                                     }
                                     else
                                     {
                                         fixed (float* ptr = &Display.new_display_data[0])
                                             SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
-                                        Display.DataReady = (flag == 1);
-                                        //MW0LGE_21d N1MM
-                                        N1MM.CopyData(1, Display.new_display_data, flag == 1);
-                                        //
+                                        bDataReady = (flag == 1);
+                                        bN1mm = Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANASCOPE;
                                     }
                                     break;
                                 case DisplayMode.SCOPE:
@@ -26564,7 +26570,7 @@ namespace Thetis
                                         else
                                             WDSP.TXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
                                     }
-                                    Display.DataReady = true;
+                                    bDataReady = true;
                                     break;
                                 case DisplayMode.PHASE:
                                     fixed (float* ptr = &Display.new_display_data[0])
@@ -26575,7 +26581,7 @@ namespace Thetis
                                         else
                                             WDSP.TXAGetaSipF1(WDSP.id(top_thread, 0), ptr, Display.PhaseNumPts);
                                     }
-                                    Display.DataReady = true;
+                                    bDataReady = true;
                                     break;
                                 case DisplayMode.PHASE2:
                                     if (Audio.phase_buf_l != null && Audio.phase_buf_r != null) // MW0LGE would be null if audio not running (ie not connected?)
@@ -26586,11 +26592,23 @@ namespace Thetis
                                             Display.new_display_data[i * 2] = Audio.phase_buf_l[i];
                                             Display.new_display_data[i * 2 + 1] = Audio.phase_buf_r[i];
                                         }
-                                        Display.DataReady = true;
+                                        bDataReady = true;
                                         //Audio.phase_mutex.ReleaseMutex();
                                     }
                                     break;
                             }
+
+                            Display.DataReady = bDataReady;
+                            Display.WaterfallDataReady = bWaterfallDataReady;
+                            if (bN1mm && N1MM.IsStarted)
+                            {
+                                if (bDataReady)
+                                    N1MM.CopyData(1, Display.new_display_data);
+                                else if (bWaterfallDataReady)
+                                    N1MM.CopyData(1, Display.new_waterfall_data);
+                            }
+
+                            bGetPixelIssue |= !bDataReady && !bWaterfallDataReady;
                         }
 
                         if (!pause_DisplayThread && chkSplitDisplay.Checked &&
@@ -26598,6 +26616,10 @@ namespace Thetis
                             Display.CurrentDisplayModeBottom != DisplayMode.OFF)
                         {
                             flag2 = -1;
+                            bDataReady = false;
+                            bWaterfallDataReady = false;
+                            bN1mm = false;
+
                             switch (Display.CurrentDisplayModeBottom)
                             {
                                 case DisplayMode.SPECTRUM:
@@ -26608,16 +26630,14 @@ namespace Thetis
                                     {
                                         fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
-                                        Display.WaterfallDataReadyBottom = (flag2 == 1);
+                                        bWaterfallDataReady = (flag2 == 1);
                                     }
                                     else
                                     {
                                         fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
-                                        Display.WaterfallDataReadyBottom = (flag2 == 1);
-                                        //MW0LGE_21d N1MM
-                                        N1MM.CopyData(2, Display.new_waterfall_data_bottom, flag2 == 1);
-                                        //
+                                        bWaterfallDataReady = (flag2 == 1);
+                                        bN1mm = true;
                                     }
                                     break;
                                 case DisplayMode.PANADAPTER:
@@ -26625,16 +26645,15 @@ namespace Thetis
                                     {
                                         fixed (float* ptr = &Display.new_display_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag2);
-                                        Display.DataReadyBottom = (flag2 == 1);
+                                        bDataReady = (flag2 == 1);
                                     }
                                     else
                                     {
                                         fixed (float* ptr = &Display.new_display_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(1, 0, ptr, ref flag2);
-                                        Display.DataReadyBottom = (flag2 == 1);
-                                        //MW0LGE_21d N1MM
-                                        N1MM.CopyData(2, Display.new_display_data_bottom, flag2 == 1);
-                                        //
+                                        //Display.DataReadyBottom = (flag2 == 1);
+                                        bDataReady = (flag2 == 1);
+                                        bN1mm = true;
                                     }
                                     break;
                                 case DisplayMode.PANAFALL:  // MW0LGE
@@ -26642,22 +26661,20 @@ namespace Thetis
                                     {
                                         fixed (float* ptr = &Display.new_display_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag2);
-                                        Display.DataReadyBottom = (flag2 == 1);
+                                        bDataReady = (flag2 == 1);
                                         fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
-                                        Display.WaterfallDataReadyBottom = (flag2 == 1);
+                                        bWaterfallDataReady = (flag2 == 1);
                                     }
                                     else
                                     {
                                         fixed (float* ptr = &Display.new_display_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(1, 0, ptr, ref flag2);
-                                        Display.DataReadyBottom = (flag2 == 1);
-                                        //MW0LGE_21d N1MM
-                                        N1MM.CopyData(2, Display.new_display_data_bottom, flag2 == 1);
-                                        //
+                                        bDataReady = (flag2 == 1);
+                                        bN1mm = true;
                                         fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
                                             SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
-                                        Display.WaterfallDataReadyBottom = (flag2 == 1);
+                                        bWaterfallDataReady = (flag2 == 1);
                                     }
                                     break;
                                 case DisplayMode.SCOPE:
@@ -26670,7 +26687,7 @@ namespace Thetis
                                         else
                                             WDSP.TXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
                                     }
-                                    Display.DataReadyBottom = true;
+                                    bDataReady = true;
                                     break;
                                 case DisplayMode.PHASE:
                                     fixed (float* ptr = &Display.new_display_data_bottom[0])
@@ -26681,7 +26698,7 @@ namespace Thetis
                                         else
                                             WDSP.TXAGetaSipF1(WDSP.id(bottom_thread, 0), ptr, Display.PhaseNumPts);
                                     }
-                                    Display.DataReadyBottom = true;
+                                    bDataReady = true;
                                     break;
                                 case DisplayMode.PHASE2:
                                     if (Audio.phase_buf_l != null && Audio.phase_buf_r != null) // MW0LGE would be null if audio not running (ie not connected?)
@@ -26693,11 +26710,24 @@ namespace Thetis
                                             Display.new_display_data_bottom[i * 2 + 1] = Audio.phase_buf_r[i];
                                         }
                                         //Audio.phase_mutex.ReleaseMutex();
-                                        Display.DataReadyBottom = true;
+                                        bDataReady = true;
                                     }
                                     break;
                             }
+
+                            Display.DataReadyBottom = bDataReady;
+                            Display.WaterfallDataReadyBottom = bWaterfallDataReady;
+                            if (bN1mm && N1MM.IsStarted)
+                            {
+                                if(bDataReady)
+                                    N1MM.CopyData(2, Display.new_display_data_bottom);
+                                else if(bWaterfallDataReady)
+                                    N1MM.CopyData(2, Display.new_waterfall_data_bottom);
+                            }
+
+                            bGetPixelIssue |= !bDataReady && !bWaterfallDataReady;
                         }
+
                         if (displaydidit)
                         {
                             displaydidit = false;
@@ -26706,7 +26736,7 @@ namespace Thetis
                     }
 
                     //
-                    Display.GetPixelsIssue = (flag == 0) || (flag2 == 0); //MW0LGE_21a
+                    Display.GetPixelsIssue = bGetPixelIssue;
 
                     // MW0LGE_21k9 always want to run the renderer, as swr warning etc are displayed
                     if (!pause_DisplayThread) Display.RenderDX2D();
@@ -27221,7 +27251,6 @@ namespace Thetis
             //float voff = 360.0f, sens = 120.0f;
             //if (current_hpsdr_model == HPSDRModel.ANAN7000D)
             //{
-            //    //voff = 235; // to match my idle current TODO
             //    voff = 340.0f;
             //    sens = 88.0f;
             //}
@@ -34648,14 +34677,13 @@ namespace Thetis
                         FWCDDSFreq = dTmpFreq;
                     }
 
-                    if (chkEnableMultiRX.Checked)
+                    if (chkEnableMultiRX.Checked && !mox) //MW0LGE [2.7.0.9] only when RX'ing. Fixes issue where multirx would be outside sample area after a tx
                     {
                         int diff;
                         if (rx2_enabled) diff = (int)((VFOASubFreq - VFOAFreq) * 1e6);
                         else diff = (int)((VFOBFreq - VFOAFreq) * 1e6);
                         if (chkRIT.Checked && !mox) diff -= (int)udRIT.Value;
                         int rx2_osc = (int)(radio.GetDSPRX(0, 0).RXOsc - diff);
-                        Debug.Print(radio.GetDSPRX(0, 0).RXOsc.ToString());
                         if (rx2_osc > -sample_rate_rx1 / 2 && rx2_osc < sample_rate_rx1 / 2)
                         {
                             radio.GetDSPRX(0, 1).RXOsc = rx2_osc;
@@ -35195,26 +35223,29 @@ namespace Thetis
                 }
             }
 
-            if (chkEnableMultiRX.Checked && !rx2_enabled)
+            if (chkEnableMultiRX.Checked && !rx2_enabled && !mox)  //MW0LGE [2.7.0.9] only when RX'ing. Fixes issue where multirx would be outside sample area after a tx
             {
                 int diff = (int)((VFOBFreq - VFOAFreq) * 1e6);
+                //if (chkRIT.Checked && !mox) diff -= (int)udRIT.Value; // MW0LGE [2.9.0.7]
                 double rx2_osc = radio.GetDSPRX(0, 0).RXOsc - diff;
 
-                if (rx2_osc < -sample_rate_rx1 / 2)
-                {
-                    VFOBFreq = VFOAFreq + (sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc - 1) * 0.0000010;
-                    return;
-                }
-                else if (rx2_osc > sample_rate_rx1 / 2)
-                {
-                    VFOBFreq = VFOAFreq + (-sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc + 1) * 0.0000010;
-                    return;
-                }
+                // MW0LGE [2.9.0.7] commented out
+                //if (rx2_osc < -sample_rate_rx1 / 2)
+                //{
+                //    VFOBFreq = VFOAFreq + (sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc - 1) * 0.0000010;
+                //    return;
+                //}
+                //else if (rx2_osc > sample_rate_rx1 / 2)
+                //{
+                //    VFOBFreq = VFOAFreq + (-sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc + 1) * 0.0000010;
+                //    return;
+                //}
 
                 if (rx2_osc > -sample_rate_rx1 / 2 && rx2_osc < sample_rate_rx1 / 2)
                 {
                     radio.GetDSPRX(0, 1).RXOsc = rx2_osc;
                 }
+                else chkEnableMultiRX.Checked = false; // MW0LGE [2.9.0.7] same as vfoA lost focus
                 //UpdateRX1SubNotches();
             }
 
@@ -54346,8 +54377,6 @@ namespace Thetis
             setPoisitionOfDockedMeter(ucDockedMeterRX1);
             setPoisitionOfDockedMeter(ucDockedMeterRX2);
         }
-
-        
     }
 
     public class DigiMode

@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2022 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,8 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
-
+warren@pratt.one
 */
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -366,4 +365,37 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	_aligned_free (mag);
 	_aligned_free (firfreq);
 	_aligned_free (firpad);
+}
+
+// impulse response of a zero frequency filter comprising a cascade of two resonators, 
+//    each followed by a detrending filter
+double* zff_impulse(int nc, double scale)
+{
+	// nc = number of coefficients (power of two)
+	int n_resdet = nc / 2 - 1;			// size of single zero-frequency resonator with detrender
+	int n_dresdet = 2 * n_resdet - 1;	// size of two cascaded units; when we convolve these we get 2 * n - 1 length
+	// allocate the single and make the values
+	double* resdet = (double*)malloc0 (n_resdet * sizeof(double));
+	for (int i = 1, j = 0, k = n_resdet - 1; i < nc / 4; i++, j++, k--)
+		resdet[j] = resdet[k] = (double)(i * (i + 1) / 2);
+	resdet[nc / 4 - 1] = (double)(nc / 4 * (nc / 4 + 1) / 2);
+	// print_impulse ("resdet", n_resdet, resdet, 0, 0);
+	// allocate the double and complex versions and make the values
+	double* dresdet = (double*)malloc0 (n_dresdet * sizeof(double));
+	double div = (double)((nc / 2 + 1) * (nc / 2 + 1));					// calculate divisor
+	double* c_dresdet = (double*)malloc0 (nc * sizeof(complex));
+	for (int n = 0; n < n_dresdet; n++)	// convolve to make the cascade
+	{
+		for (int k = 0; k < n_resdet; k++)
+			if ((n - k) >= 0 && (n - k) < n_resdet)
+				dresdet[n] += resdet[k] * resdet[n - k];
+		dresdet[n] /= div;
+		c_dresdet[2 * n + 0] = dresdet[n] * scale;
+		c_dresdet[2 * n + 1] = 0.0;
+	}
+	// print_impulse("dresdet", n_dresdet, dresdet, 0, 0);
+	// print_impulse("c_dresdet", nc, c_dresdet, 1, 0);
+	_aligned_free(dresdet);
+	_aligned_free(resdet);
+	return c_dresdet;
 }

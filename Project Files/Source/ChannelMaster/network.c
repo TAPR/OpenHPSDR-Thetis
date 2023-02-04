@@ -1054,19 +1054,60 @@ void sendOutbound(int id, double* out)
 		}
 		LeaveCriticalSection(&prn->udpOUT);
 	}
-	else
+	else	//  PROTOCOL_1
 	{
-		if (id == 1)
+		// note:  packet won't be sent until BOTH 'hsendIQSem' and 'hsendLRSem' are released
+		// note:  'hobbuffsRun[0]' and 'hobbuffsRun[1]' are released AFTER we write the packet and can therefore
+		//        refill 'the buffers'outIQbufp' and 'outLRbufp'
+		// note:  there are 63 I-Q samples and 63 L-R samples per P1 frame => 126 of each per packet
+		if (pcm->xmtr[0].peer->run)	// if eer/etr is running
 		{
-			memcpy(prn->outIQbufp, out, sizeof(complex) * 126);
-			ReleaseSemaphore(prn->hsendIQSem, 1, 0);
-			WaitForSingleObject(prn->hobbuffsRun[0], INFINITE);
+			if (id == 1)	// TX I-Q data arriving
+			{
+				static int ptr = 0;
+				memcpy((void *)(prn->outIQbufp + 720), out, sizeof(complex) * 126);
+				// de-interleave the two sample streams
+				for (int n = 0, i = ptr, j = 256 + ptr, k = 720; n < 63; n++, i+=2, j+=2, k+=4)
+				{
+					// final location of I-Q data
+					prn->outIQbufp[i + 0] = prn->outIQbufp[k + 0];
+					prn->outIQbufp[i + 1] = prn->outIQbufp[k + 1];
+					// L-R data will be copied from here if needed
+					prn->outIQbufp[j + 0] = prn->outIQbufp[k + 2];
+					prn->outIQbufp[j + 1] = prn->outIQbufp[k + 3];
+				}
+				ptr = (ptr + 126) % 252;
+				if (ptr == 0)
+				{
+					// release semaphore, indicating IQ data received and complete.  
+					ReleaseSemaphore(prn->hsendIQSem, 1, 0);
+					// wait to refill 'outIQbuffp' until the packet is sent
+					WaitForSingleObject(prn->hobbuffsRun[0], INFINITE);
+				}
+			}
+			else			// RX L-R data arriving
+			{
+				memcpy(prn->outLRbufp, out, sizeof(complex) * 126);
+				// release semaphore indicating L-R data ready
+				ReleaseSemaphore(prn->hsendLRSem, 1, 0);
+				// wait to refill 'outLRbufp' until the packet is sent
+				WaitForSingleObject(prn->hobbuffsRun[1], INFINITE);
+			}
 		}
-		else
+		else					// eer/etr is NOT running
 		{
-			memcpy(prn->outLRbufp, out, sizeof(complex) * 126);
-			ReleaseSemaphore(prn->hsendLRSem, 1, 0);
-			WaitForSingleObject(prn->hobbuffsRun[1], INFINITE);
+			if (id == 1)
+			{
+				memcpy(prn->outIQbufp, out, sizeof(complex) * 126);
+				ReleaseSemaphore(prn->hsendIQSem, 1, 0);
+				WaitForSingleObject(prn->hobbuffsRun[0], INFINITE);
+			}
+			else
+			{
+				memcpy(prn->outLRbufp, out, sizeof(complex) * 126);
+				ReleaseSemaphore(prn->hsendLRSem, 1, 0);
+				WaitForSingleObject(prn->hobbuffsRun[1], INFINITE);
+			}
 		}
 	}
 }

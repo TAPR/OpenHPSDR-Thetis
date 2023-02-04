@@ -28,6 +28,7 @@ warren@wpratt.com
 #define _fmd_h
 #include "iir.h"
 #include "firmin.h"
+#include "wcpAGC.h"
 typedef struct _fmd
 {
 	int run;
@@ -71,6 +72,11 @@ typedef struct _fmd
 	SNOTCH sntch;
 	int sntch_run;
 	double ctcss_freq;
+	// detector limiter
+	WCPAGC plim;
+	int lim_run;
+	double lim_gain;
+	double lim_pre_gain;
 } fmd, *FMD;
 
 extern FMD create_fmd ( int run, int size, double* in, double* out, int rate, double deviation, 

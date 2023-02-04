@@ -2050,6 +2050,8 @@ namespace Thetis
             // FM Tab
             chkEmphPos_CheckedChanged(this, e);
             chkRemoveTone_CheckedChanged(this, e);
+            chkFMDetLimON_CheckedChanged(this, e);
+            tbDSPDetLimGain_Scroll(this, e);
 
             // EER Tab
             chkDSPEERon_CheckedChanged(this, e);
@@ -17721,17 +17723,31 @@ namespace Thetis
             console.radio.GetDSPRX(1, 0).RXFMCTCSSFilter = chkRemoveTone.Checked;
         }
 
+        private void chkFMDetLimON_CheckedChanged(object sender, EventArgs e)
+        {
+            console.radio.GetDSPRX(0, 0).RXFMDETLIMRUN = chkFMDetLimON.Checked;
+            console.radio.GetDSPRX(0, 1).RXFMDETLIMRUN = chkFMDetLimON.Checked;
+            console.radio.GetDSPRX(1, 0).RXFMDETLIMRUN = chkFMDetLimON.Checked;
+        }
+
+        private void tbDSPDetLimGain_Scroll(object sender, EventArgs e)
+        {
+            console.radio.GetDSPRX(0, 0).RXFMDETLIMGAIN = (double)tbDSPFMDetLimGain.Value;
+            console.radio.GetDSPRX(0, 1).RXFMDETLIMGAIN = (double)tbDSPFMDetLimGain.Value;
+            console.radio.GetDSPRX(1, 0).RXFMDETLIMGAIN = (double)tbDSPFMDetLimGain.Value;
+        }
+
         private void chkDSPEERon_CheckedChanged(object sender, EventArgs e)
         {
             if (chkDSPEERon.Checked)
             {
                 console.radio.GetDSPTX(0).TXEERModeRun = true;
-                NetworkIO.EnableEClassModulation(1);
+                //NetworkIO.EnableEClassModulation(1);
             }
             else
             {
                 console.radio.GetDSPTX(0).TXEERModeRun = false;
-                NetworkIO.EnableEClassModulation(0);
+                //NetworkIO.EnableEClassModulation(0);
             }
         }
 

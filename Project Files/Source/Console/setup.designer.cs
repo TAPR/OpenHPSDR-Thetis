@@ -200,7 +200,6 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
-            this.chkSupportUkraine = new System.Windows.Forms.CheckBoxTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
             this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
             this.grpFirmware = new System.Windows.Forms.GroupBoxTS();
@@ -274,6 +273,7 @@
             this.tpGeneralOptions = new System.Windows.Forms.TabPage();
             this.tcOptions = new System.Windows.Forms.TabControl();
             this.tpOptions1 = new System.Windows.Forms.TabPage();
+            this.chkSupportUkraine = new System.Windows.Forms.CheckBoxTS();
             this.grpGeneralProcessPriority = new System.Windows.Forms.GroupBoxTS();
             this.comboGeneralProcessPriority = new System.Windows.Forms.ComboBoxTS();
             this.grpGeneralOptions = new System.Windows.Forms.GroupBoxTS();
@@ -2209,6 +2209,11 @@
             this.radRX2LSBUSB = new System.Windows.Forms.RadioButtonTS();
             this.tpDSPFM = new System.Windows.Forms.TabPage();
             this.grpFMRX = new System.Windows.Forms.GroupBoxTS();
+            this.lblFMLimGain30dB = new System.Windows.Forms.LabelTS();
+            this.lblFMLimGain0dB = new System.Windows.Forms.LabelTS();
+            this.lblFMDetLimGain = new System.Windows.Forms.LabelTS();
+            this.tbDSPFMDetLimGain = new System.Windows.Forms.TrackBarTS();
+            this.chkFMDetLimON = new System.Windows.Forms.CheckBoxTS();
             this.chkRemoveTone = new System.Windows.Forms.CheckBoxTS();
             this.grpFMTX = new System.Windows.Forms.GroupBoxTS();
             this.chkEmphPos = new System.Windows.Forms.CheckBoxTS();
@@ -6544,7 +6549,6 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
-            this.tpGeneralHardware.Controls.Add(this.chkSupportUkraine);
             this.tpGeneralHardware.Controls.Add(this.lblTimeout);
             this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
             this.tpGeneralHardware.Controls.Add(this.grpFirmware);
@@ -6560,18 +6564,6 @@
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
-            // 
-            // chkSupportUkraine
-            // 
-            this.chkSupportUkraine.AutoSize = true;
-            this.chkSupportUkraine.Image = null;
-            this.chkSupportUkraine.Location = new System.Drawing.Point(210, 198);
-            this.chkSupportUkraine.Name = "chkSupportUkraine";
-            this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
-            this.chkSupportUkraine.TabIndex = 39;
-            this.chkSupportUkraine.Text = "Support Ukraine";
-            this.chkSupportUkraine.UseVisualStyleBackColor = true;
-            this.chkSupportUkraine.CheckedChanged += new System.EventHandler(this.chkSupportUkraine_CheckedChanged);
             // 
             // lblTimeout
             // 
@@ -7745,6 +7737,7 @@
             // tpOptions1
             // 
             this.tpOptions1.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions1.Controls.Add(this.chkSupportUkraine);
             this.tpOptions1.Controls.Add(this.grpGeneralProcessPriority);
             this.tpOptions1.Controls.Add(this.grpGeneralOptions);
             this.tpOptions1.Controls.Add(this.grpHermesStepAttenuator);
@@ -7758,6 +7751,18 @@
             this.tpOptions1.Size = new System.Drawing.Size(716, 384);
             this.tpOptions1.TabIndex = 0;
             this.tpOptions1.Text = "Options-1";
+            // 
+            // chkSupportUkraine
+            // 
+            this.chkSupportUkraine.AutoSize = true;
+            this.chkSupportUkraine.Image = null;
+            this.chkSupportUkraine.Location = new System.Drawing.Point(75, 331);
+            this.chkSupportUkraine.Name = "chkSupportUkraine";
+            this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
+            this.chkSupportUkraine.TabIndex = 39;
+            this.chkSupportUkraine.Text = "Support Ukraine";
+            this.chkSupportUkraine.UseVisualStyleBackColor = true;
+            this.chkSupportUkraine.CheckedChanged += new System.EventHandler(this.chkSupportUkraine_CheckedChanged);
             // 
             // grpGeneralProcessPriority
             // 
@@ -35665,13 +35670,77 @@
             // 
             // grpFMRX
             // 
+            this.grpFMRX.Controls.Add(this.lblFMLimGain30dB);
+            this.grpFMRX.Controls.Add(this.lblFMLimGain0dB);
+            this.grpFMRX.Controls.Add(this.lblFMDetLimGain);
+            this.grpFMRX.Controls.Add(this.tbDSPFMDetLimGain);
+            this.grpFMRX.Controls.Add(this.chkFMDetLimON);
             this.grpFMRX.Controls.Add(this.chkRemoveTone);
-            this.grpFMRX.Location = new System.Drawing.Point(6, 6);
+            this.grpFMRX.Location = new System.Drawing.Point(8, 8);
+            this.grpFMRX.Margin = new System.Windows.Forms.Padding(4);
             this.grpFMRX.Name = "grpFMRX";
-            this.grpFMRX.Size = new System.Drawing.Size(268, 139);
+            this.grpFMRX.Padding = new System.Windows.Forms.Padding(4);
+            this.grpFMRX.Size = new System.Drawing.Size(335, 174);
             this.grpFMRX.TabIndex = 1;
             this.grpFMRX.TabStop = false;
             this.grpFMRX.Text = "FM Receiver";
+            // 
+            // lblFMLimGain30dB
+            // 
+            this.lblFMLimGain30dB.AutoSize = true;
+            this.lblFMLimGain30dB.Image = null;
+            this.lblFMLimGain30dB.Location = new System.Drawing.Point(160, 148);
+            this.lblFMLimGain30dB.Name = "lblFMLimGain30dB";
+            this.lblFMLimGain30dB.Size = new System.Drawing.Size(41, 16);
+            this.lblFMLimGain30dB.TabIndex = 54;
+            this.lblFMLimGain30dB.Text = "30 dB";
+            // 
+            // lblFMLimGain0dB
+            // 
+            this.lblFMLimGain0dB.AutoSize = true;
+            this.lblFMLimGain0dB.Image = null;
+            this.lblFMLimGain0dB.Location = new System.Drawing.Point(5, 149);
+            this.lblFMLimGain0dB.Name = "lblFMLimGain0dB";
+            this.lblFMLimGain0dB.Size = new System.Drawing.Size(34, 16);
+            this.lblFMLimGain0dB.TabIndex = 53;
+            this.lblFMLimGain0dB.Text = "0 dB";
+            // 
+            // lblFMDetLimGain
+            // 
+            this.lblFMDetLimGain.AutoSize = true;
+            this.lblFMDetLimGain.Image = null;
+            this.lblFMDetLimGain.Location = new System.Drawing.Point(7, 104);
+            this.lblFMDetLimGain.Name = "lblFMDetLimGain";
+            this.lblFMDetLimGain.Size = new System.Drawing.Size(77, 16);
+            this.lblFMDetLimGain.TabIndex = 52;
+            this.lblFMDetLimGain.Text = "Limiter Gain";
+            // 
+            // tbDSPFMDetLimGain
+            // 
+            this.tbDSPFMDetLimGain.AutoSize = false;
+            this.tbDSPFMDetLimGain.BackColor = System.Drawing.Color.Black;
+            this.tbDSPFMDetLimGain.LargeChange = 1;
+            this.tbDSPFMDetLimGain.Location = new System.Drawing.Point(8, 124);
+            this.tbDSPFMDetLimGain.Margin = new System.Windows.Forms.Padding(4);
+            this.tbDSPFMDetLimGain.Maximum = 30;
+            this.tbDSPFMDetLimGain.Name = "tbDSPFMDetLimGain";
+            this.tbDSPFMDetLimGain.Size = new System.Drawing.Size(180, 20);
+            this.tbDSPFMDetLimGain.TabIndex = 51;
+            this.tbDSPFMDetLimGain.TickFrequency = 2;
+            this.tbDSPFMDetLimGain.Value = 10;
+            this.tbDSPFMDetLimGain.Scroll += new System.EventHandler(this.tbDSPDetLimGain_Scroll);
+            // 
+            // chkFMDetLimON
+            // 
+            this.chkFMDetLimON.AutoSize = true;
+            this.chkFMDetLimON.Image = null;
+            this.chkFMDetLimON.Location = new System.Drawing.Point(7, 81);
+            this.chkFMDetLimON.Name = "chkFMDetLimON";
+            this.chkFMDetLimON.Size = new System.Drawing.Size(121, 20);
+            this.chkFMDetLimON.TabIndex = 1;
+            this.chkFMDetLimON.Text = "Limiter ON/OFF";
+            this.chkFMDetLimON.UseVisualStyleBackColor = true;
+            this.chkFMDetLimON.CheckedChanged += new System.EventHandler(this.chkFMDetLimON_CheckedChanged);
             // 
             // chkRemoveTone
             // 
@@ -52948,7 +53017,6 @@
             this.tpGeneral.ResumeLayout(false);
             this.tcGeneral.ResumeLayout(false);
             this.tpGeneralHardware.ResumeLayout(false);
-            this.tpGeneralHardware.PerformLayout();
             this.grpFirmware.ResumeLayout(false);
             this.grpOzyType.ResumeLayout(false);
             this.panelTS7.ResumeLayout(false);
@@ -52987,6 +53055,7 @@
             this.tpGeneralOptions.ResumeLayout(false);
             this.tcOptions.ResumeLayout(false);
             this.tpOptions1.ResumeLayout(false);
+            this.tpOptions1.PerformLayout();
             this.grpGeneralProcessPriority.ResumeLayout(false);
             this.grpGeneralOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udSpaceMoxDelay)).EndInit();
@@ -57275,5 +57344,10 @@
         private LabelTS labelTS158;
         private NumericUpDownTS udAmpSens;
         private NumericUpDownTS udAmpVoff;
+        private CheckBoxTS chkFMDetLimON;
+        private LabelTS lblFMLimGain30dB;
+        private LabelTS lblFMLimGain0dB;
+        private LabelTS lblFMDetLimGain;
+        public TrackBarTS tbDSPFMDetLimGain;
     }
 }

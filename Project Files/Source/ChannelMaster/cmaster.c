@@ -480,6 +480,7 @@ void SetXmtrChannelOutrate (int xmtr_id, int rate, int state)	// 2014-11-24:  Ca
 	SetAAudioMixState (0, 0, mix_in_id, state);								//	.Conditionally make this stream ACTIVE in AAMixer
 																			//
 	SetTXGainSize(pcm->xmtr[xmtr_id].pgain, size);							// set size for Penelope Gain Block
+	pSetEERSamplerate(pcm->xmtr[xmtr_id].peer, rate);						// set rate for EER
 	pSetEERSize(pcm->xmtr[xmtr_id].peer, size);								// set size for EER
 	pSetILVInsize(pcm->xmtr[xmtr_id].pilv, size);							// set size for Interleave & output
 	// PIPE - set Scope (leave in C# since scope is there)

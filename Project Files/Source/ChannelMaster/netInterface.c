@@ -62,8 +62,8 @@ int StartAudioNative()
 				prn->hWriteThreadInitSem = CreateSemaphore(NULL, 0, 1, NULL);
 				prn->hWriteThreadMain = (HANDLE)_beginthreadex(NULL, 0, sendProtocol1Samples, 0, 0, NULL);
 				// Create Events
-				prn->hsendEventHandles[0] = ( prn->hsendLRSem = CreateSemaphore(NULL, 0, 64, NULL));
-				prn->hsendEventHandles[1] = ( prn->hsendIQSem = CreateSemaphore(NULL, 0, 64, NULL));
+				prn->hsendEventHandles[0] = ( prn->hsendLRSem = CreateSemaphore(NULL, 0, 1, NULL));
+				prn->hsendEventHandles[1] = ( prn->hsendIQSem = CreateSemaphore(NULL, 0, 1, NULL));
 				prn->hobbuffsRun[0] = CreateSemaphore (NULL, 0, 1, NULL);
 				prn->hobbuffsRun[1] = CreateSemaphore (NULL, 0, 1, NULL);
 			}
@@ -350,7 +350,7 @@ void EnableEClassModulation(int bit)
 	{
 		prn->cw.eer = bit;
 		if (listenSock != INVALID_SOCKET)
-			CmdRx();
+			CmdTx();
 	}
 }
 

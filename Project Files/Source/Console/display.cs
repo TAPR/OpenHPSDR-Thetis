@@ -43,7 +43,7 @@ namespace Thetis
     using System.Runtime.InteropServices;
     using System.Buffers;
     using System.Diagnostics;
-    
+
     using SharpDX;
     using SharpDX.Direct2D1;
     using SharpDX.Direct3D;
@@ -63,7 +63,7 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
-    
+
     class Display
     {
         #region Variable Declaration
@@ -102,44 +102,52 @@ namespace Thetis
         public static float FrameDelta { get; private set; }
 
         private static bool tnf_active = true;
-        public static bool TNFActive {
+        public static bool TNFActive
+        {
             get { return tnf_active; }
-            set {
+            set
+            {
                 tnf_active = value;
             }
         }
 
         private static bool m_bFrameRateIssue = false;
-        public static bool FrameRateIssue {
+        public static bool FrameRateIssue
+        {
             get { return m_bFrameRateIssue; }
             set { m_bFrameRateIssue = value; }
         }
 
         private static bool m_bGetPixelsIssue = false;
-        public static bool GetPixelsIssue {
+        public static bool GetPixelsIssue
+        {
             get { return m_bGetPixelsIssue; }
             set { m_bGetPixelsIssue = value; }
         }
 
         private static bool m_bShowFrameRateIssue = true;
-        public static bool ShowFrameRateIssue {
+        public static bool ShowFrameRateIssue
+        {
             get { return m_bShowFrameRateIssue; }
             set { m_bShowFrameRateIssue = value; }
         }
 
         private static bool m_bShowGetPixelsIssue = false;
-        public static bool ShowGetPixelsIssue {
+        public static bool ShowGetPixelsIssue
+        {
             get { return m_bShowGetPixelsIssue; }
             set { m_bShowGetPixelsIssue = value; }
         }
 
         private static float m_fRX1WaterfallOpacity = 1f;
-        public static float RX1WaterfallOpacity {
+        public static float RX1WaterfallOpacity
+        {
             get { return m_fRX1WaterfallOpacity; }
             set { m_fRX1WaterfallOpacity = value; }
         }
         private static float m_fRX2WaterfallOpacity = 1f;
-        public static float RX2WaterfallOpacity {
+        public static float RX2WaterfallOpacity
+        {
             get { return m_fRX2WaterfallOpacity; }
             set { m_fRX2WaterfallOpacity = value; }
         }
@@ -181,46 +189,54 @@ namespace Thetis
         private static Font m_fntCallOutFont = new System.Drawing.Font("Trebuchet MS", 9, FontStyle.Regular);
 
         private static ColorSheme color_sheme = ColorSheme.enhanced;
-        public static ColorSheme ColorSheme {
+        public static ColorSheme ColorSheme
+        {
             get { return color_sheme; }
 
             set { color_sheme = value; }
         }
 
         private static ColorSheme rx2_color_sheme = ColorSheme.enhanced;
-        public static ColorSheme RX2ColorSheme {
+        public static ColorSheme RX2ColorSheme
+        {
             get { return rx2_color_sheme; }
 
             set { rx2_color_sheme = value; }
         }
 
         private static bool reverse_waterfall = false;
-        public static bool ReverseWaterfall {
+        public static bool ReverseWaterfall
+        {
             get { return reverse_waterfall; }
             set { reverse_waterfall = value; }
         }
 
         private static bool pan_fill = false;
-        public static bool PanFill {
+        public static bool PanFill
+        {
             get { return pan_fill; }
             set { pan_fill = value; }
         }
 
         private static bool m_bSpectralPeakHoldRX1 = false;
         private static bool m_bSpectralPeakHoldRX2 = false;
-        public static bool SpectralPeakHoldRX1 {
+        public static bool SpectralPeakHoldRX1
+        {
             get { return m_bSpectralPeakHoldRX1; }
-            set {
+            set
+            {
                 m_bSpectralPeakHoldRX1 = value;
-                if(m_bSpectralPeakHoldRX1)
+                if (m_bSpectralPeakHoldRX1)
                 {
                     ResetSpectrumPeaks(1);
                 }
             }
         }
-        public static bool SpectralPeakHoldRX2 {
+        public static bool SpectralPeakHoldRX2
+        {
             get { return m_bSpectralPeakHoldRX2; }
-            set {
+            set
+            {
                 m_bSpectralPeakHoldRX2 = value;
                 if (m_bSpectralPeakHoldRX2)
                 {
@@ -230,30 +246,36 @@ namespace Thetis
         }
 
         private static bool tx_pan_fill = false;
-        public static bool TXPanFill {
+        public static bool TXPanFill
+        {
             get { return tx_pan_fill; }
             set { tx_pan_fill = value; }
         }
 
         private static Color pan_fill_color = Color.FromArgb(100, 0, 0, 127);
-        public static Color PanFillColor {
+        public static Color PanFillColor
+        {
             get { return pan_fill_color; }
             set { pan_fill_color = value; }
         }
 
         private static bool tx_on_vfob = false;
-        public static bool TXOnVFOB {
+        public static bool TXOnVFOB
+        {
             get { return tx_on_vfob; }
-            set {
+            set
+            {
                 tx_on_vfob = value;
             }
         }
 
         private static bool display_duplex = false;
-        public static bool DisplayDuplex {
+        public static bool DisplayDuplex
+        {
             get { return display_duplex; }
-            set { 
-                if(mox && value != display_duplex)
+            set
+            {
+                if (mox && value != display_duplex)
                 {
                     // just incase dup is changed whilst tx'ing
                     ResetBlobMaximums(1, true);
@@ -261,15 +283,17 @@ namespace Thetis
                     ResetSpectrumPeaks(1);
                     ResetSpectrumPeaks(2);
                 }
-                display_duplex = value; 
+                display_duplex = value;
             }
         }
 
         private static readonly Object m_objSplitDisplayLock = new Object();
         private static bool split_display = false;
-        public static bool SplitDisplay {
+        public static bool SplitDisplay
+        {
             get { return split_display; }
-            set {
+            set
+            {
                 lock (m_objSplitDisplayLock)
                 {
                     split_display = value;
@@ -278,9 +302,11 @@ namespace Thetis
         }
 
         private static DisplayMode current_display_mode_bottom = DisplayMode.PANADAPTER;
-        public static DisplayMode CurrentDisplayModeBottom {
+        public static DisplayMode CurrentDisplayModeBottom
+        {
             get { return current_display_mode_bottom; }
-            set {
+            set
+            {
                 bool bDifferent = current_display_mode_bottom != value;
                 current_display_mode_bottom = value;
                 if (bDifferent)
@@ -293,86 +319,104 @@ namespace Thetis
         }
 
         private static int rx1_filter_low;
-        public static int RX1FilterLow {
+        public static int RX1FilterLow
+        {
             get { return rx1_filter_low; }
             set { rx1_filter_low = value; }
         }
 
         private static int rx1_filter_high;
-        public static int RX1FilterHigh {
+        public static int RX1FilterHigh
+        {
             get { return rx1_filter_high; }
             set { rx1_filter_high = value; }
         }
 
         private static int rx2_filter_low;
-        public static int RX2FilterLow {
+        public static int RX2FilterLow
+        {
             get { return rx2_filter_low; }
             set { rx2_filter_low = value; }
         }
 
         private static int rx2_filter_high;
-        public static int RX2FilterHigh {
+        public static int RX2FilterHigh
+        {
             get { return rx2_filter_high; }
             set { rx2_filter_high = value; }
         }
 
         private static int tx_filter_low;
-        public static int TXFilterLow {
+        public static int TXFilterLow
+        {
             get { return tx_filter_low; }
             set { tx_filter_low = value; }
         }
 
         private static int tx_filter_high;
-        public static int TXFilterHigh {
+        public static int TXFilterHigh
+        {
             get { return tx_filter_high; }
             set { tx_filter_high = value; }
         }
 
         private static bool sub_rx1_enabled = false;
-        public static bool SubRX1Enabled {
+        public static bool SubRX1Enabled
+        {
             get { return sub_rx1_enabled; }
-            set {
+            set
+            {
                 sub_rx1_enabled = value;
             }
         }
 
         private static bool split_enabled = false;
-        public static bool SplitEnabled {
+        public static bool SplitEnabled
+        {
             get { return split_enabled; }
-            set {
+            set
+            {
                 split_enabled = value;
             }
         }
 
         private static bool show_freq_offset = false;
-        public static bool ShowFreqOffset {
+        public static bool ShowFreqOffset
+        {
             get { return show_freq_offset; }
-            set {
+            set
+            {
                 show_freq_offset = value;
             }
         }
 
         private static bool show_zero_line = false;
-        public static bool ShowZeroLine {
+        public static bool ShowZeroLine
+        {
             get { return show_zero_line; }
-            set {
+            set
+            {
                 show_zero_line = value;
             }
         }
 
         private static double freq;
-        public static double FREQ {
+        public static double FREQ
+        {
             get { return freq; }
-            set {
+            set
+            {
                 freq = value;
             }
         }
 
 
         private static long vfoa_hz;
-        public static long VFOA {
+        public static long VFOA
+        {
             get { return vfoa_hz; }
-            set {
+            set
+            {
                 vfoa_hz = value;
             }
         }
@@ -381,7 +425,8 @@ namespace Thetis
         public static long VFOASub //multi-rx freq
         {
             get { return vfoa_sub_hz; }
-            set {
+            set
+            {
                 vfoa_sub_hz = value;
             }
         }
@@ -390,66 +435,81 @@ namespace Thetis
         public static long VFOB //split tx freq
         {
             get { return vfob_hz; }
-            set {
+            set
+            {
                 vfob_hz = value;
             }
         }
 
         private static long vfob_sub_hz;
-        public static long VFOBSub {
+        public static long VFOBSub
+        {
             get { return vfob_sub_hz; }
-            set {
+            set
+            {
                 vfob_sub_hz = value;
             }
         }
 
         private static int rx_display_bw;
-        public static int RXDisplayBW {
+        public static int RXDisplayBW
+        {
             get { return rx_display_bw; }
-            set {
+            set
+            {
                 rx_display_bw = value;
             }
         }
 
         private static int rit_hz;
-        public static int RIT {
+        public static int RIT
+        {
             get { return rit_hz; }
-            set {
+            set
+            {
                 rit_hz = value;
             }
         }
 
         private static int xit_hz;
-        public static int XIT {
+        public static int XIT
+        {
             get { return xit_hz; }
-            set {
+            set
+            {
                 xit_hz = value;
             }
         }
 
         private static int freq_diff = 0;
-        public static int FreqDiff {
+        public static int FreqDiff
+        {
             get { return freq_diff; }
-            set {
+            set
+            {
                 freq_diff = value;
             }
         }
 
         private static int rx2_freq_diff = 0;
-        public static int RX2FreqDiff {
+        public static int RX2FreqDiff
+        {
             get { return rx2_freq_diff; }
-            set {
+            set
+            {
                 rx2_freq_diff = value;
             }
         }
 
         private static double m_dSpecralPeakHoldDelayRX1 = 100;
         private static double m_dSpecralPeakHoldDelayRX2 = 100;
-        public static double SpectralPeakHoldDelayRX1 {
-            get { return m_dSpecralPeakHoldDelayRX1;  }
+        public static double SpectralPeakHoldDelayRX1
+        {
+            get { return m_dSpecralPeakHoldDelayRX1; }
             set { m_dSpecralPeakHoldDelayRX1 = value; }
         }
-        public static double SpectralPeakHoldDelayRX2 {
+        public static double SpectralPeakHoldDelayRX2
+        {
             get { return m_dSpecralPeakHoldDelayRX2; }
             set { m_dSpecralPeakHoldDelayRX2 = value; }
         }
@@ -511,7 +571,7 @@ namespace Thetis
             if (!m_bDelayRX1Blobs && !m_bDelayRX2Blobs && !m_bDelayRX1SpectrumPeaks && !m_bDelayRX2SpectrumPeaks) return;
 
             //if (m_objBlobsActivePeakDisplayDelayTimer.ElapsedMsec >= 500)
-            if(m_dElapsedFrameStart > m_dPeakDelay)
+            if (m_dElapsedFrameStart > m_dPeakDelay)
             {
                 if (m_bDelayRX1Blobs) m_bDelayRX1Blobs = false;
                 if (m_bDelayRX2Blobs) m_bDelayRX2Blobs = false;
@@ -592,34 +652,40 @@ namespace Thetis
         public static bool FastAttackNoiseFloorRX1
         {
             get { return m_bFastAttackNoiseFloorRX1; }
-            set {
+            set
+            {
                 m_bNoiseFloorGoodRX1 = false;
                 m_nAttackFastFramesRX1 = m_nFps;
-                m_bFastAttackNoiseFloorRX1 = value; 
+                m_bFastAttackNoiseFloorRX1 = value;
             }
         }
         public static bool FastAttackNoiseFloorRX2
         {
             get { return m_bFastAttackNoiseFloorRX2; }
-            set {
+            set
+            {
                 m_bNoiseFloorGoodRX2 = false;
                 m_nAttackFastFramesRX2 = m_nFps;
-                m_bFastAttackNoiseFloorRX2 = value; 
+                m_bFastAttackNoiseFloorRX2 = value;
             }
         }
 
         private static double m_dCentreFreqRX1 = 0;
-        public static double CentreFreqRX1 {
+        public static double CentreFreqRX1
+        {
             get { return m_dCentreFreqRX1; }
-            set {
+            set
+            {
                 m_dCentreFreqRX1 = value;
             }
         }
 
         private static double m_dCentreFreqRX2 = 0;
-        public static double CentreFreqRX2 {
+        public static double CentreFreqRX2
+        {
             get { return m_dCentreFreqRX2; }
-            set {
+            set
+            {
                 m_dCentreFreqRX2 = value;
             }
         }
@@ -666,18 +732,21 @@ namespace Thetis
         }
 
         private static int cw_pitch = 600;
-        public static int CWPitch {
+        public static int CWPitch
+        {
             get { return cw_pitch; }
             set { cw_pitch = value; }
         }
 
         private static int m_nPhasePointSize = 1;
-        public static int PhasePointSize {
+        public static int PhasePointSize
+        {
             get { return m_nPhasePointSize; }
             set { m_nPhasePointSize = value; }
         }
         private static bool m_bShowFPS = false;
-        public static bool ShowFPS {
+        public static bool ShowFPS
+        {
             get { return m_bShowFPS; }
             set { m_bShowFPS = value; }
         }
@@ -695,9 +764,11 @@ namespace Thetis
         private static int displayTargetHeight = 0;	// target height
         private static int displayTargetWidth = 0;	// target width
         private static Control displayTarget = null;
-        public static Control Target {
+        public static Control Target
+        {
             get { return displayTarget; }
-            set {                
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     displayTarget = value;
@@ -734,7 +805,7 @@ namespace Thetis
         public static int Decimation
         {
             get { return m_nDecimation; }
-            set 
+            set
             {
                 lock (_objDX2Lock)
                 {
@@ -743,276 +814,323 @@ namespace Thetis
             }
         }
         private static int rx_display_low = -4000;
-        public static int RXDisplayLow {
+        public static int RXDisplayLow
+        {
             get { return rx_display_low; }
-            set {
+            set
+            {
                 if (value != rx_display_low)
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
                 }
-                rx_display_low = value; 
+                rx_display_low = value;
             }
         }
 
         private static int rx_display_high = 4000;
-        public static int RXDisplayHigh {
+        public static int RXDisplayHigh
+        {
             get { return rx_display_high; }
-            set { 
-                if(value != rx_display_high)
+            set
+            {
+                if (value != rx_display_high)
                 {
                     ResetBlobMaximums(1, true);
                     ResetSpectrumPeaks(1);
                 }
-                rx_display_high = value; 
+                rx_display_high = value;
             }
         }
 
         private static int rx2_display_low = -4000;
-        public static int RX2DisplayLow {
+        public static int RX2DisplayLow
+        {
             get { return rx2_display_low; }
-            set {
+            set
+            {
                 if (value != rx2_display_low)
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
                 }
-                rx2_display_low = value; 
+                rx2_display_low = value;
             }
         }
 
         private static int rx2_display_high = 4000;
-        public static int RX2DisplayHigh {
+        public static int RX2DisplayHigh
+        {
             get { return rx2_display_high; }
-            set {
+            set
+            {
                 if (value != rx2_display_high)
                 {
                     ResetBlobMaximums(2, true);
                     ResetSpectrumPeaks(2);
                 }
-                rx2_display_high = value; 
+                rx2_display_high = value;
             }
         }
 
         private static int tx_display_low = -4000;
-        public static int TXDisplayLow {
+        public static int TXDisplayLow
+        {
             get { return tx_display_low; }
             set { tx_display_low = value; }
         }
 
         private static int tx_display_high = 4000;
-        public static int TXDisplayHigh {
+        public static int TXDisplayHigh
+        {
             get { return tx_display_high; }
             set { tx_display_high = value; }
         }
 
         private static int rx_spectrum_display_low = -4000;
-        public static int RXSpectrumDisplayLow {
+        public static int RXSpectrumDisplayLow
+        {
             get { return rx_spectrum_display_low; }
             set { rx_spectrum_display_low = value; }
         }
 
         private static int rx_spectrum_display_high = 4000;
-        public static int RXSpectrumDisplayHigh {
+        public static int RXSpectrumDisplayHigh
+        {
             get { return rx_spectrum_display_high; }
             set { rx_spectrum_display_high = value; }
         }
 
         private static int rx2_spectrum_display_low = -4000;
-        public static int RX2SpectrumDisplayLow {
+        public static int RX2SpectrumDisplayLow
+        {
             get { return rx2_spectrum_display_low; }
             set { rx2_spectrum_display_low = value; }
         }
 
         private static int rx2_spectrum_display_high = 4000;
-        public static int RX2SpectrumDisplayHigh {
+        public static int RX2SpectrumDisplayHigh
+        {
             get { return rx2_spectrum_display_high; }
             set { rx2_spectrum_display_high = value; }
         }
 
         private static int tx_spectrum_display_low = -4000;
-        public static int TXSpectrumDisplayLow {
+        public static int TXSpectrumDisplayLow
+        {
             get { return tx_spectrum_display_low; }
             set { tx_spectrum_display_low = value; }
         }
 
         private static int tx_spectrum_display_high = 4000;
-        public static int TXSpectrumDisplayHigh {
+        public static int TXSpectrumDisplayHigh
+        {
             get { return tx_spectrum_display_high; }
             set { tx_spectrum_display_high = value; }
         }
 
         private static float rx1_preamp_offset = 0.0f;
-        public static float RX1PreampOffset {
+        public static float RX1PreampOffset
+        {
             get { return rx1_preamp_offset; }
             set { rx1_preamp_offset = value; }
         }
 
         private static float alex_preamp_offset = 0.0f;
-        public static float AlexPreampOffset {
+        public static float AlexPreampOffset
+        {
             get { return alex_preamp_offset; }
             set { alex_preamp_offset = value; }
         }
 
         private static float rx2_preamp_offset = 0.0f;
-        public static float RX2PreampOffset {
+        public static float RX2PreampOffset
+        {
             get { return rx2_preamp_offset; }
             set { rx2_preamp_offset = value; }
         }
 
         private static bool tx_display_cal_control = false;
-        public static bool TXDisplayCalControl {
+        public static bool TXDisplayCalControl
+        {
             get { return tx_display_cal_control; }
             set { tx_display_cal_control = value; }
         }
 
         private static float rx1_display_cal_offset;					// display calibration offset in dB
-        public static float RX1DisplayCalOffset {
+        public static float RX1DisplayCalOffset
+        {
             get { return rx1_display_cal_offset; }
-            set {
+            set
+            {
                 rx1_display_cal_offset = value;
             }
         }
 
         private static float rx2_display_cal_offset;					// display calibration offset in dB
-        public static float RX2DisplayCalOffset {
+        public static float RX2DisplayCalOffset
+        {
             get { return rx2_display_cal_offset; }
             set { rx2_display_cal_offset = value; }
         }
 
         private static float rx1_fft_size_offset;					// display calibration offset in dB
-        public static float RX1FFTSizeOffset {
+        public static float RX1FFTSizeOffset
+        {
             get { return rx1_fft_size_offset; }
-            set {
+            set
+            {
                 rx1_fft_size_offset = value;
             }
         }
 
         private static float rx2_fft_size_offset;					// display calibration offset in dB
-        public static float RX2FFTSizeOffset {
+        public static float RX2FFTSizeOffset
+        {
             get { return rx2_fft_size_offset; }
             set { rx2_fft_size_offset = value; }
         }
 
 
         private static float tx_display_cal_offset = 0f;					// display calibration offset in dB
-        public static float TXDisplayCalOffset {
+        public static float TXDisplayCalOffset
+        {
             get { return tx_display_cal_offset; }
-            set {
+            set
+            {
                 tx_display_cal_offset = value;
             }
         }
 
         private static HPSDRModel current_hpsdr_model = HPSDRModel.ANAN7000D;
-        public static HPSDRModel CurrentHPSDRModel {
+        public static HPSDRModel CurrentHPSDRModel
+        {
             get { return current_hpsdr_model; }
             set { current_hpsdr_model = value; }
         }
 
         private static int display_cursor_x;						// x-coord of the cursor when over the display
-        public static int DisplayCursorX {
+        public static int DisplayCursorX
+        {
             get { return display_cursor_x; }
             set { display_cursor_x = value; }
         }
 
         private static int display_cursor_y;						// y-coord of the cursor when over the display
-        public static int DisplayCursorY {
+        public static int DisplayCursorY
+        {
             get { return display_cursor_y; }
             set { display_cursor_y = value; }
         }
 
         private static bool grid_control = false;
-        public static bool GridControl {
+        public static bool GridControl
+        {
             get { return grid_control; }
             set { grid_control = value; }
         }
 
         private static bool show_agc = false;
-        public static bool ShowAGC {
+        public static bool ShowAGC
+        {
             get { return show_agc; }
             set { show_agc = value; }
         }
 
         private static bool spectrum_line = false;
-        public static bool SpectrumLine {
+        public static bool SpectrumLine
+        {
             get { return spectrum_line; }
             set { spectrum_line = value; }
         }
 
         private static bool display_agc_hang_line = false;
-        public static bool DisplayAGCHangLine {
+        public static bool DisplayAGCHangLine
+        {
             get { return display_agc_hang_line; }
             set { display_agc_hang_line = value; }
         }
 
         private static bool rx1_hang_spectrum_line = false;
-        public static bool RX1HangSpectrumLine {
+        public static bool RX1HangSpectrumLine
+        {
             get { return rx1_hang_spectrum_line; }
             set { rx1_hang_spectrum_line = value; }
         }
 
         private static bool display_rx2_gain_line = false;
-        public static bool DisplayRX2GainLine {
+        public static bool DisplayRX2GainLine
+        {
             get { return display_rx2_gain_line; }
             set { display_rx2_gain_line = value; }
         }
 
         private static bool rx2_gain_spectrum_line = false;
-        public static bool RX2GainSpectrumLine {
+        public static bool RX2GainSpectrumLine
+        {
             get { return rx2_gain_spectrum_line; }
             set { rx2_gain_spectrum_line = value; }
         }
 
         private static bool display_rx2_hang_line = false;
-        public static bool DisplayRX2HangLine {
+        public static bool DisplayRX2HangLine
+        {
             get { return display_rx2_hang_line; }
             set { display_rx2_hang_line = value; }
         }
 
         private static bool rx2_hang_spectrum_line = false;
-        public static bool RX2HangSpectrumLine {
+        public static bool RX2HangSpectrumLine
+        {
             get { return rx2_hang_spectrum_line; }
             set { rx2_hang_spectrum_line = value; }
         }
 
         private static bool tx_grid_control = false;
-        public static bool TXGridControl {
+        public static bool TXGridControl
+        {
             get { return tx_grid_control; }
             set { tx_grid_control = value; }
         }
 
         private static ClickTuneMode current_click_tune_mode = ClickTuneMode.Off;
-        public static ClickTuneMode CurrentClickTuneMode {
+        public static ClickTuneMode CurrentClickTuneMode
+        {
             get { return current_click_tune_mode; }
             set { current_click_tune_mode = value; }
         }
 
         private static int scope_time = 50;
-        public static int ScopeTime {
+        public static int ScopeTime
+        {
             get { return scope_time; }
             set { scope_time = value; }
         }
 
         private static int sample_rate_rx1 = 384000;
-        public static int SampleRateRX1 {
+        public static int SampleRateRX1
+        {
             get { return sample_rate_rx1; }
             set { sample_rate_rx1 = value; }
         }
 
         private static int sample_rate_rx2 = 384000;
-        public static int SampleRateRX2 {
+        public static int SampleRateRX2
+        {
             get { return sample_rate_rx2; }
             set { sample_rate_rx2 = value; }
         }
 
         private static int sample_rate_tx = 192000;
-        public static int SampleRateTX {
+        public static int SampleRateTX
+        {
             get { return sample_rate_tx; }
             set { sample_rate_tx = value; }
         }
 
         private static bool high_swr = false;
-        public static bool HighSWR {
+        public static bool HighSWR
+        {
             get { return high_swr; }
             set { high_swr = value; }
         }
@@ -1025,14 +1143,16 @@ namespace Thetis
         //}
 
         private static bool mox = false;
-        public static bool MOX {
+        public static bool MOX
+        {
             get { return mox; }
-            set {
+            set
+            {
                 if (value != mox) resetPeaksAndNoise();
-                mox = value;               
+                mox = value;
             }
         }
-        
+
         private static bool m_bShowRX1NoiseFloor = false;
         public static bool ShowRX1NoiseFloor
         {
@@ -1047,33 +1167,39 @@ namespace Thetis
         }
 
         private static bool blank_bottom_display = false;
-        public static bool BlankBottomDisplay {
+        public static bool BlankBottomDisplay
+        {
             get { return blank_bottom_display; }
             set { blank_bottom_display = value; }
         }
 
         private static DSPMode rx1_dsp_mode = DSPMode.USB;
-        public static DSPMode RX1DSPMode {
+        public static DSPMode RX1DSPMode
+        {
             get { return rx1_dsp_mode; }
             set { rx1_dsp_mode = value; }
         }
 
         private static DSPMode rx2_dsp_mode = DSPMode.USB;
-        public static DSPMode RX2DSPMode {
+        public static DSPMode RX2DSPMode
+        {
             get { return rx2_dsp_mode; }
             set { rx2_dsp_mode = value; }
         }
 
         private static MNotch m_objHightlightedNotch;
-        public static MNotch HighlightNotch {
+        public static MNotch HighlightNotch
+        {
             get { return m_objHightlightedNotch; }
             set { m_objHightlightedNotch = value; }
         }
 
         private static DisplayMode current_display_mode = DisplayMode.PANAFALL;
-        public static DisplayMode CurrentDisplayMode {
+        public static DisplayMode CurrentDisplayMode
+        {
             get { return current_display_mode; }
-            set {
+            set
+            {
                 bool bDifferent = current_display_mode != value;
                 current_display_mode = value;
 
@@ -1109,83 +1235,100 @@ namespace Thetis
         }
 
         private static float max_x;								// x-coord of maxmimum over one display pass
-        public static float MaxX {
+        public static float MaxX
+        {
             get { return max_x; }
             set { max_x = value; }
         }
 
         private static float max_y;								// y-coord of maxmimum over one display pass
-        public static float MaxY {
+        public static float MaxY
+        {
             get { return max_y; }
             set { max_y = value; }
         }
 
         private static bool rx2_enabled = false;
-        public static bool RX2Enabled {
+        public static bool RX2Enabled
+        {
             get { return rx2_enabled; }
             set { rx2_enabled = value; }
         }
 
         private static bool _bRebuildRX1LinearGradBrush = true;
-        public static bool RebuildLinearGradientBrushRX1 {
+        public static bool RebuildLinearGradientBrushRX1
+        {
             get { return _bRebuildRX1LinearGradBrush; }
-            set {
+            set
+            {
                 _bRebuildRX1LinearGradBrush = value;
             }
         }
         private static bool _bRebuildRX2LinearGradBrush = true;
-        public static bool RebuildLinearGradientBrushRX2 {
+        public static bool RebuildLinearGradientBrushRX2
+        {
             get { return _bRebuildRX2LinearGradBrush; }
-            set {
+            set
+            {
                 _bRebuildRX2LinearGradBrush = value;
             }
         }
         private static bool data_ready;					// True when there is new display data ready from the DSP
-        public static bool DataReady {
+        public static bool DataReady
+        {
             get { return data_ready; }
             set { data_ready = value; }
         }
 
         private static bool data_ready_bottom;
-        public static bool DataReadyBottom {
+        public static bool DataReadyBottom
+        {
             get { return data_ready_bottom; }
             set { data_ready_bottom = value; }
         }
 
         private static bool waterfall_data_ready_bottom;
-        public static bool WaterfallDataReadyBottom {
+        public static bool WaterfallDataReadyBottom
+        {
             get { return waterfall_data_ready_bottom; }
             set { waterfall_data_ready_bottom = value; }
         }
 
         private static bool waterfall_data_ready;
-        public static bool WaterfallDataReady {
+        public static bool WaterfallDataReady
+        {
             get { return waterfall_data_ready; }
             set { waterfall_data_ready = value; }
         }
 
         private static int spectrum_grid_max = -40;
-        public static int SpectrumGridMax {
+        public static int SpectrumGridMax
+        {
             get { return spectrum_grid_max; }
-            set {
+            set
+            {
                 if (value != spectrum_grid_max) _bRebuildRX1LinearGradBrush = true;
                 spectrum_grid_max = value;
             }
         }
 
         private static int spectrum_grid_min = -140;
-        public static int SpectrumGridMin {
+        public static int SpectrumGridMin
+        {
             get { return spectrum_grid_min; }
-            set {
+            set
+            {
                 if (value != spectrum_grid_min) _bRebuildRX1LinearGradBrush = true;
                 spectrum_grid_min = value;
             }
         }
 
         private static int spectrum_grid_step = 5;
-        public static int SpectrumGridStep {
+        public static int SpectrumGridStep
+        {
             get { return spectrum_grid_step; }
-            set {
+            set
+            {
                 if (value != spectrum_grid_step) _bRebuildRX1LinearGradBrush = true;
                 spectrum_grid_step = value;
             }
@@ -1264,77 +1407,95 @@ namespace Thetis
         //
 
         private static int rx2_spectrum_grid_max = -40;
-        public static int RX2SpectrumGridMax {
+        public static int RX2SpectrumGridMax
+        {
             get { return rx2_spectrum_grid_max; }
-            set {
+            set
+            {
                 if (value != rx2_spectrum_grid_max) _bRebuildRX2LinearGradBrush = true;
                 rx2_spectrum_grid_max = value;
             }
         }
 
         private static int rx2_spectrum_grid_min = -140;
-        public static int RX2SpectrumGridMin {
+        public static int RX2SpectrumGridMin
+        {
             get { return rx2_spectrum_grid_min; }
-            set {
+            set
+            {
                 if (value != rx2_spectrum_grid_min) _bRebuildRX2LinearGradBrush = true;
                 rx2_spectrum_grid_min = value;
             }
         }
 
         private static int rx2_spectrum_grid_step = 5;
-        public static int RX2SpectrumGridStep {
+        public static int RX2SpectrumGridStep
+        {
             get { return rx2_spectrum_grid_step; }
-            set {
+            set
+            {
                 if (value != rx2_spectrum_grid_step) _bRebuildRX2LinearGradBrush = true;
                 rx2_spectrum_grid_step = value;
             }
         }
 
         private static int tx_spectrum_grid_max = 20;
-        public static int TXSpectrumGridMax {
+        public static int TXSpectrumGridMax
+        {
             get { return tx_spectrum_grid_max; }
-            set {
+            set
+            {
                 tx_spectrum_grid_max = value;
             }
         }
 
         private static int tx_spectrum_grid_min = -80;
-        public static int TXSpectrumGridMin {
+        public static int TXSpectrumGridMin
+        {
             get { return tx_spectrum_grid_min; }
-            set {
+            set
+            {
                 tx_spectrum_grid_min = value;
             }
         }
 
         private static int tx_spectrum_grid_step = 5;
-        public static int TXSpectrumGridStep {
+        public static int TXSpectrumGridStep
+        {
             get { return tx_spectrum_grid_step; }
-            set {
+            set
+            {
                 tx_spectrum_grid_step = value;
             }
         }
 
         private static int tx_wf_amp_max = 30;
-        public static int TXWFAmpMax {
+        public static int TXWFAmpMax
+        {
             get { return tx_wf_amp_max; }
-            set {
+            set
+            {
                 tx_wf_amp_max = value;
             }
         }
 
         private static int tx_wf_amp_min = -70;
-        public static int TXWFAmpMin {
+        public static int TXWFAmpMin
+        {
             get { return tx_wf_amp_min; }
-            set {
+            set
+            {
                 tx_wf_amp_min = value;
             }
         }
 
         private static Color band_edge_color = Color.Red;
         private static Pen band_edge_pen = new Pen(band_edge_color);
-        public static Color BandEdgeColor {
+        public static Color BandEdgeColor
+        {
             get { return band_edge_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     band_edge_color = value;
@@ -1346,9 +1507,11 @@ namespace Thetis
 
         private static Color tx_band_edge_color = Color.Red;
         private static Pen tx_band_edge_pen = new Pen(tx_band_edge_color);
-        public static Color TXBandEdgeColor {
+        public static Color TXBandEdgeColor
+        {
             get { return tx_band_edge_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_band_edge_color = value;
@@ -1360,9 +1523,11 @@ namespace Thetis
 
         private static Color sub_rx_zero_line_color = Color.LightSkyBlue;
         private static Pen sub_rx_zero_line_pen = new Pen(sub_rx_zero_line_color, 2); // MW0LGE width 2
-        public static Color SubRXZeroLine {
+        public static Color SubRXZeroLine
+        {
             get { return sub_rx_zero_line_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     sub_rx_zero_line_color = value;
@@ -1374,9 +1539,11 @@ namespace Thetis
 
         private static Color sub_rx_filter_color = Color.Blue;
         private static SolidBrush sub_rx_filter_brush = new SolidBrush(sub_rx_filter_color);
-        public static Color SubRXFilterColor {
+        public static Color SubRXFilterColor
+        {
             get { return sub_rx_filter_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     sub_rx_filter_color = value;
@@ -1389,9 +1556,11 @@ namespace Thetis
         private static Color grid_text_color = Color.Yellow;
         private static SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
         private static Pen grid_text_pen = new Pen(grid_text_color);
-        public static Color GridTextColor {
+        public static Color GridTextColor
+        {
             get { return grid_text_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     grid_text_color = value;
@@ -1404,9 +1573,11 @@ namespace Thetis
 
         private static Color grid_tx_text_color = Color.FromArgb(255, Color.Yellow);
         private static SolidBrush grid_tx_text_brush = new SolidBrush(Color.FromArgb(255, grid_tx_text_color));
-        public static Color GridTXTextColor {
+        public static Color GridTXTextColor
+        {
             get { return grid_tx_text_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     grid_tx_text_color = value;
@@ -1418,9 +1589,11 @@ namespace Thetis
 
         private static Color grid_zero_color = Color.Red;
         private static Pen grid_zero_pen = new Pen(grid_zero_color, 2); // MW0LGE width 2
-        public static Color GridZeroColor {
+        public static Color GridZeroColor
+        {
             get { return grid_zero_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     grid_zero_color = value;
@@ -1432,9 +1605,11 @@ namespace Thetis
 
         private static Color tx_grid_zero_color = Color.FromArgb(255, Color.Red);
         private static Pen tx_grid_zero_pen = new Pen(Color.FromArgb(255, tx_grid_zero_color), 2); //MW0LGE width 2
-        public static Color TXGridZeroColor {
+        public static Color TXGridZeroColor
+        {
             get { return tx_grid_zero_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_grid_zero_color = value;
@@ -1446,9 +1621,11 @@ namespace Thetis
 
         private static Color grid_color = Color.FromArgb(65, 255, 255, 255);
         private static Pen grid_pen = new Pen(grid_color);
-        public static Color GridColor {
+        public static Color GridColor
+        {
             get { return grid_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     grid_color = value;
@@ -1460,9 +1637,11 @@ namespace Thetis
 
         private static Color tx_vgrid_color = Color.FromArgb(65, 255, 255, 255);
         private static Pen tx_vgrid_pen = new Pen(tx_vgrid_color);
-        public static Color TXVGridColor {
+        public static Color TXVGridColor
+        {
             get { return tx_vgrid_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_vgrid_color = value;
@@ -1475,9 +1654,11 @@ namespace Thetis
 
         private static Color hgrid_color = Color.White;
         private static Pen hgrid_pen = new Pen(hgrid_color);
-        public static Color HGridColor {
+        public static Color HGridColor
+        {
             get { return hgrid_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     hgrid_color = value;
@@ -1490,9 +1671,11 @@ namespace Thetis
 
         private static Color tx_hgrid_color = Color.White;
         private static Pen tx_hgrid_pen = new Pen(tx_hgrid_color);
-        public static Color TXHGridColor {
+        public static Color TXHGridColor
+        {
             get { return tx_hgrid_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_hgrid_color = value;
@@ -1509,9 +1692,11 @@ namespace Thetis
         private static Color dataPeaks_fill_color = Color.FromArgb(128, Color.Gray);
         private static Pen data_fill_fpen = new Pen(data_fill_color);
         private static Pen dataPeaks_fill_fpen = new Pen(dataPeaks_fill_color);
-        public static Color DataFillColor {
+        public static Color DataFillColor
+        {
             get { return data_fill_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     data_fill_color = value;
@@ -1520,9 +1705,11 @@ namespace Thetis
                 }
             }
         }
-        public static Color DataPeaksFillColor {
+        public static Color DataPeaksFillColor
+        {
             get { return dataPeaks_fill_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     dataPeaks_fill_color = value;
@@ -1533,9 +1720,11 @@ namespace Thetis
         }
         private static Color data_line_color = Color.White;
         private static Pen data_line_pen = new Pen(new SolidBrush(data_line_color), 1.0F);
-        public static Color DataLineColor {
+        public static Color DataLineColor
+        {
             get { return data_line_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     data_line_color = value;
@@ -1548,9 +1737,11 @@ namespace Thetis
         private static Color tx_data_line_color = Color.White;
         private static Pen tx_data_line_pen = new Pen(new SolidBrush(tx_data_line_color), 1.0F);
         private static Pen tx_data_line_fpen = new Pen(Color.FromArgb(100, tx_data_line_color));
-        public static Color TXDataLineColor {
+        public static Color TXDataLineColor
+        {
             get { return tx_data_line_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_data_line_color = value;
@@ -1563,9 +1754,11 @@ namespace Thetis
 
         private static Color grid_pen_dark = Color.FromArgb(65, 255, 255, 255);
         private static Pen grid_pen_inb = new Pen(grid_pen_dark);
-        public static Color GridPenDark {
+        public static Color GridPenDark
+        {
             get { return grid_pen_dark; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     grid_pen_dark = value;
@@ -1577,9 +1770,11 @@ namespace Thetis
 
         private static Color tx_vgrid_pen_fine = Color.FromArgb(65, 255, 255, 255);
         private static Pen tx_vgrid_pen_inb = new Pen(tx_vgrid_pen_fine);
-        public static Color TXVGridPenFine {
+        public static Color TXVGridPenFine
+        {
             get { return tx_vgrid_pen_fine; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_vgrid_pen_fine = value;
@@ -1592,7 +1787,7 @@ namespace Thetis
         private static Color bandstack_overlay_color = Color.FromArgb(192, 192, 64, 0);
         private static SolidBrush bandstack_overlay_brush = new SolidBrush(bandstack_overlay_color);
         private static SolidBrush bandstack_overlay_brush_lines = new SolidBrush(Color.FromArgb(Math.Min(bandstack_overlay_color.A + 64, 255), bandstack_overlay_color));
-        private static SolidBrush bandstack_overlay_brush_highlight = new SolidBrush(Color.FromArgb(Math.Min(bandstack_overlay_color.A + 64,255), bandstack_overlay_color));
+        private static SolidBrush bandstack_overlay_brush_highlight = new SolidBrush(Color.FromArgb(Math.Min(bandstack_overlay_color.A + 64, 255), bandstack_overlay_color));
         public static Color BandstackOverlayColor
         {
             get { return bandstack_overlay_color; }
@@ -1612,9 +1807,11 @@ namespace Thetis
         private static Color display_filter_color = Color.FromArgb(65, 255, 255, 255);
         private static SolidBrush display_filter_brush = new SolidBrush(display_filter_color);
         private static Pen cw_zero_pen = new Pen(Color.FromArgb(255, display_filter_color), 2); // MW0LGE width 2
-        public static Color DisplayFilterColor {
+        public static Color DisplayFilterColor
+        {
             get { return display_filter_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     display_filter_color = value;
@@ -1627,9 +1824,11 @@ namespace Thetis
 
         private static Color tx_filter_color = Color.FromArgb(65, 255, 255, 255);
         private static SolidBrush tx_filter_brush = new SolidBrush(tx_filter_color);
-        public static Color TXFilterColor {
+        public static Color TXFilterColor
+        {
             get { return tx_filter_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_filter_color = value;
@@ -1691,9 +1890,11 @@ namespace Thetis
 
         private static Color display_filter_tx_color = Color.Yellow;
         private static Pen tx_filter_pen = new Pen(display_filter_tx_color, 2); // width 2 MW0LGE
-        public static Color DisplayFilterTXColor {
+        public static Color DisplayFilterTXColor
+        {
             get { return display_filter_tx_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     display_filter_tx_color = value;
@@ -1705,9 +1906,11 @@ namespace Thetis
 
         private static Color display_background_color = Color.Black;
         private static SolidBrush display_background_brush = new SolidBrush(display_background_color);
-        public static Color DisplayBackgroundColor {
+        public static Color DisplayBackgroundColor
+        {
             get { return display_background_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     display_background_color = value;
@@ -1719,9 +1922,11 @@ namespace Thetis
 
         private static Color tx_display_background_color = Color.Black;
         private static SolidBrush tx_display_background_brush = new SolidBrush(tx_display_background_color);
-        public static Color TXDisplayBackgroundColor {
+        public static Color TXDisplayBackgroundColor
+        {
             get { return tx_display_background_color; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_display_background_color = value;
@@ -1733,91 +1938,112 @@ namespace Thetis
 
         //MW0LGE
         private static bool m_bShowTXFilterOnWaterfall = false;
-        public static bool ShowTXFilterOnWaterfall {
+        public static bool ShowTXFilterOnWaterfall
+        {
             get { return m_bShowTXFilterOnWaterfall; }
-            set {
+            set
+            {
                 m_bShowTXFilterOnWaterfall = value;
             }
         }
         private static bool m_bShowRXFilterOnWaterfall = false;
-        public static bool ShowRXFilterOnWaterfall {
+        public static bool ShowRXFilterOnWaterfall
+        {
             get { return m_bShowRXFilterOnWaterfall; }
-            set {
+            set
+            {
                 m_bShowRXFilterOnWaterfall = value;
             }
         }
         private static bool m_bShowTXZeroLineOnWaterfall = false;
-        public static bool ShowTXZeroLineOnWaterfall {
+        public static bool ShowTXZeroLineOnWaterfall
+        {
             get { return m_bShowTXZeroLineOnWaterfall; }
-            set {
+            set
+            {
                 m_bShowTXZeroLineOnWaterfall = value;
             }
         }
         private static bool m_bShowRXZeroLineOnWaterfall = false;
-        public static bool ShowRXZeroLineOnWaterfall {
+        public static bool ShowRXZeroLineOnWaterfall
+        {
             get { return m_bShowRXZeroLineOnWaterfall; }
-            set {
+            set
+            {
                 m_bShowRXZeroLineOnWaterfall = value;
             }
         }
         private static bool m_bShowTXFilterOnRXWaterfall = false;
-        public static bool ShowTXFilterOnRXWaterfall {
+        public static bool ShowTXFilterOnRXWaterfall
+        {
             get { return m_bShowTXFilterOnRXWaterfall; }
-            set {
+            set
+            {
                 m_bShowTXFilterOnRXWaterfall = value;
             }
         }
 
         private static bool draw_tx_filter = false;
-        public static bool DrawTXFilter {
+        public static bool DrawTXFilter
+        {
             get { return draw_tx_filter; }
-            set {
+            set
+            {
                 draw_tx_filter = value;
             }
         }
 
         private static bool show_cwzero_line = false;
-        public static bool ShowCWZeroLine {
+        public static bool ShowCWZeroLine
+        {
             get { return show_cwzero_line; }
-            set {
+            set
+            {
                 show_cwzero_line = value;
             }
         }
 
         private static bool draw_tx_cw_freq = false;
-        public static bool DrawTXCWFreq {
+        public static bool DrawTXCWFreq
+        {
             get { return draw_tx_cw_freq; }
-            set {
+            set
+            {
                 draw_tx_cw_freq = value;
             }
         }
 
         private static Color waterfall_low_color = Color.Black;
-        public static Color WaterfallLowColor {
+        public static Color WaterfallLowColor
+        {
             get { return waterfall_low_color; }
             set { waterfall_low_color = value; }
         }
 
         private static Color waterfall_mid_color = Color.Red;
-        public static Color WaterfallMidColor {
+        public static Color WaterfallMidColor
+        {
             get { return waterfall_mid_color; }
             set { waterfall_mid_color = value; }
         }
 
         private static Color waterfall_high_color = Color.Yellow;
-        public static Color WaterfallHighColor {
+        public static Color WaterfallHighColor
+        {
             get { return waterfall_high_color; }
             set { waterfall_high_color = value; }
         }
 
         private static float waterfall_high_threshold = -80.0F;
-        public static float WaterfallHighThreshold {
+        public static float WaterfallHighThreshold
+        {
             get { return waterfall_high_threshold; }
             set { waterfall_high_threshold = value; }
         }
 
         private static float waterfall_low_threshold = -130.0F;
-        public static float WaterfallLowThreshold {
+        public static float WaterfallLowThreshold
+        {
             get { return waterfall_low_threshold; }
             set { waterfall_low_threshold = value; }
         }
@@ -1828,7 +2054,8 @@ namespace Thetis
         public static byte GrayScale       // this is called or set in console
         {
             get { return Gray_Scale; }
-            set {
+            set
+            {
                 Gray_Scale = value;
             }
         }
@@ -1840,46 +2067,54 @@ namespace Thetis
         public static byte GridOff       // this is called or set in setup
         {
             get { return grid_off; }
-            set {
+            set
+            {
                 grid_off = value;
             }
         }
 
 
         private static Color rx2_waterfall_low_color = Color.Black;
-        public static Color RX2WaterfallLowColor {
+        public static Color RX2WaterfallLowColor
+        {
             get { return rx2_waterfall_low_color; }
             set { rx2_waterfall_low_color = value; }
         }
 
         private static Color rx2_waterfall_mid_color = Color.Red;
-        public static Color RX2WaterfallMidColor {
+        public static Color RX2WaterfallMidColor
+        {
             get { return rx2_waterfall_mid_color; }
             set { rx2_waterfall_mid_color = value; }
         }
 
         private static Color rx2_waterfall_high_color = Color.Yellow;
-        public static Color RX2WaterfallHighColor {
+        public static Color RX2WaterfallHighColor
+        {
             get { return rx2_waterfall_high_color; }
             set { rx2_waterfall_high_color = value; }
         }
 
         private static float rx2_waterfall_high_threshold = -80.0F;
-        public static float RX2WaterfallHighThreshold {
+        public static float RX2WaterfallHighThreshold
+        {
             get { return rx2_waterfall_high_threshold; }
             set { rx2_waterfall_high_threshold = value; }
         }
 
         private static float rx2_waterfall_low_threshold = -130.0F;
-        public static float RX2WaterfallLowThreshold {
+        public static float RX2WaterfallLowThreshold
+        {
             get { return rx2_waterfall_low_threshold; }
             set { rx2_waterfall_low_threshold = value; }
         }
 
         private static float display_line_width = 1.0F;
-        public static float DisplayLineWidth {
+        public static float DisplayLineWidth
+        {
             get { return display_line_width; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     display_line_width = value;
@@ -1889,9 +2124,11 @@ namespace Thetis
         }
 
         private static float tx_display_line_width = 1.0F;
-        public static float TXDisplayLineWidth {
+        public static float TXDisplayLineWidth
+        {
             get { return tx_display_line_width; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     tx_display_line_width = value;
@@ -1901,25 +2138,31 @@ namespace Thetis
         }
 
         private static DisplayLabelAlignment display_label_align = DisplayLabelAlignment.LEFT;
-        public static DisplayLabelAlignment DisplayLabelAlign {
+        public static DisplayLabelAlignment DisplayLabelAlign
+        {
             get { return display_label_align; }
-            set {
+            set
+            {
                 display_label_align = value;
             }
         }
 
         private static DisplayLabelAlignment tx_display_label_align = DisplayLabelAlignment.CENTER;
-        public static DisplayLabelAlignment TXDisplayLabelAlign {
+        public static DisplayLabelAlignment TXDisplayLabelAlign
+        {
             get { return tx_display_label_align; }
-            set {
+            set
+            {
                 tx_display_label_align = value;
             }
         }
 
         private static int phase_num_pts = 100;
-        public static int PhaseNumPts {
+        public static int PhaseNumPts
+        {
             get { return phase_num_pts; }
-            set {
+            set
+            {
                 lock (_objDX2Lock)
                 {
                     phase_num_pts = value;
@@ -1928,47 +2171,58 @@ namespace Thetis
         }
 
         private static bool click_tune_filter = false;
-        public static bool ClickTuneFilter {
+        public static bool ClickTuneFilter
+        {
             get { return click_tune_filter; }
             set { click_tune_filter = value; }
         }
 
         private static bool show_cth_line = false;
-        public static bool ShowCTHLine {
+        public static bool ShowCTHLine
+        {
             get { return show_cth_line; }
             set { show_cth_line = value; }
         }
 
         private static double f_center = vfoa_hz;
-        public static double F_Center {
+        public static double F_Center
+        {
             get { return f_center; }
-            set {
+            set
+            {
                 f_center = value;
             }
         }
 
         private static int top_size = 0;
-        public static int TopSize {
+        public static int TopSize
+        {
             get { return top_size; }
             set { top_size = value; }
         }
 
         private static int _lin_corr = 2;
-        public static int LinCor {
-            get {
+        public static int LinCor
+        {
+            get
+            {
                 return _lin_corr;
             }
-            set {
+            set
+            {
                 _lin_corr = value;
             }
         }
 
         private static int _linlog_corr = -14;
-        public static int LinLogCor {
-            get {
+        public static int LinLogCor
+        {
+            get
+            {
                 return _linlog_corr;
             }
-            set {
+            set
+            {
                 _linlog_corr = value;
             }
         }
@@ -2192,51 +2446,59 @@ namespace Thetis
         }
 
         private static float[] scope2_min = new float[displayTargetWidth];
-        public static float[] Scope2Min {
+        public static float[] Scope2Min
+        {
             get { return scope2_min; }
             set { scope2_min = value; }
         }
         private static float[] scope2_max = new float[displayTargetWidth];
-        public static float[] Scope2Max {
+        public static float[] Scope2Max
+        {
             get { return scope2_max; }
             set { scope2_max = value; }
         }
 
- 
+
         //MW0LGE - these properties auto AGC on the waterfall, so that
         //spectrum/grid based max/mins can be used without getting changed by agc
         private static bool m_bRX1_spectrum_thresholds = false;
-        public static bool SpectrumBasedThresholdsRX1 {
+        public static bool SpectrumBasedThresholdsRX1
+        {
             get { return m_bRX1_spectrum_thresholds; }
             set { m_bRX1_spectrum_thresholds = value; }
         }
         private static bool m_bRX2_spectrum_thresholds = false;
-        public static bool SpectrumBasedThresholdsRX2 {
+        public static bool SpectrumBasedThresholdsRX2
+        {
             get { return m_bRX2_spectrum_thresholds; }
             set { m_bRX2_spectrum_thresholds = value; }
         }
         //--
 
         private static bool rx1_waterfall_agc = false;
-        public static bool RX1WaterfallAGC {
+        public static bool RX1WaterfallAGC
+        {
             get { return rx1_waterfall_agc; }
             set { rx1_waterfall_agc = value; }
         }
 
         private static bool rx2_waterfall_agc = false;
-        public static bool RX2WaterfallAGC {
+        public static bool RX2WaterfallAGC
+        {
             get { return rx2_waterfall_agc; }
             set { rx2_waterfall_agc = value; }
         }
 
         private static int waterfall_update_period = 2; // in frame intevals, such that it only gets updated every 2 frame (default)
-        public static int WaterfallUpdatePeriod {
+        public static int WaterfallUpdatePeriod
+        {
             get { return waterfall_update_period; }
             set { waterfall_update_period = value; }
         }
 
         private static int rx2_waterfall_update_period = 2; // in frame intevals, such that it only gets updated every 2 frame (default)
-        public static int RX2WaterfallUpdatePeriod {
+        public static int RX2WaterfallUpdatePeriod
+        {
             get { return rx2_waterfall_update_period; }
             set { rx2_waterfall_update_period = value; }
         }
@@ -2377,15 +2639,19 @@ namespace Thetis
 
         private static bool m_bHighlightNumberScaleRX1 = false;
         private static bool m_bHighlightNumberScaleRX2 = false;
-        public static bool HighlightNumberScaleRX1 {
+        public static bool HighlightNumberScaleRX1
+        {
             get { return m_bHighlightNumberScaleRX1; }
-            set {
+            set
+            {
                 m_bHighlightNumberScaleRX1 = value;
             }
         }
-        public static bool HighlightNumberScaleRX2 {
+        public static bool HighlightNumberScaleRX2
+        {
             get { return m_bHighlightNumberScaleRX2; }
-            set {
+            set
+            {
                 m_bHighlightNumberScaleRX2 = value;
             }
         }
@@ -2394,7 +2660,7 @@ namespace Thetis
         {
             lock (_objDX2Lock)
             {
-                if (!_bDX2Setup) return;                
+                if (!_bDX2Setup) return;
 
                 try
                 {
@@ -2407,7 +2673,7 @@ namespace Thetis
                     releaseFonts();
                     releaseDX2Resources();
 
-                    if(_bitmapBackground != null)
+                    if (_bitmapBackground != null)
                         Utilities.Dispose(ref _bitmapBackground);
 
                     Utilities.Dispose(ref _waterfall_bmp_dx2d);
@@ -2461,7 +2727,7 @@ namespace Thetis
                 }
             }
         }
-        
+
         private static string[] DX2Adaptors()
         {
             SharpDX.DXGI.Factory factory1 = new SharpDX.DXGI.Factory1();
@@ -2469,12 +2735,12 @@ namespace Thetis
             int nAdaptorCount = factory1.GetAdapterCount();
             string[] adaptors = new string[nAdaptorCount];
 
-            for(int n = 0; n<nAdaptorCount; n++)
+            for (int n = 0; n < nAdaptorCount; n++)
             {
-                using(Adapter adapter = factory1.GetAdapter(n))
+                using (Adapter adapter = factory1.GetAdapter(n))
                 {
                     adaptors[n] = adapter.Description.Description;
-                }                
+                }
             }
             Utilities.Dispose(ref factory1);
             factory1 = null;
@@ -2554,7 +2820,7 @@ namespace Thetis
                     }
 
                     _factory1 = new SharpDX.DXGI.Factory1();
-                    
+
                     _device = new Device(driverType, debug | DeviceCreationFlags.PreventAlteringLayerSettingsFromRegistry | DeviceCreationFlags.BgraSupport | DeviceCreationFlags.SingleThreaded, featureLevels);
 
                     SharpDX.DXGI.Device1 device1 = _device.QueryInterfaceOrNull<SharpDX.DXGI.Device1>();
@@ -2590,7 +2856,7 @@ namespace Thetis
                     bool bFlipPresent = false;
                     if (factory4 != null)
                     {
-                        if(!_bUseLegacyBuffers) bFlipPresent = true;
+                        if (!_bUseLegacyBuffers) bFlipPresent = true;
                         Utilities.Dispose(ref factory4);
                         factory4 = null;
                     }
@@ -2631,7 +2897,7 @@ namespace Thetis
                     _surface = _swapChain1.GetBackBuffer<Surface>(0);
 
                     RenderTargetProperties rtp = new RenderTargetProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));
-                    _d2dRenderTarget = new RenderTarget(_d2dFactory, _surface, rtp);                    
+                    _d2dRenderTarget = new RenderTarget(_d2dFactory, _surface, rtp);
 
                     if (debug == DeviceCreationFlags.Debug)
                     {
@@ -2674,7 +2940,7 @@ namespace Thetis
                 {
                     if (!_bDX2Setup) return;
                     ModeDescription modeDesc = new ModeDescription(displayTargetWidth, displayTargetHeight,
-                                                       new Rational(console.DisplayFPS, 1), Format.B8G8R8A8_UNorm);                    
+                                                       new Rational(console.DisplayFPS, 1), Format.B8G8R8A8_UNorm);
                     _swapChain1.ResizeTarget(ref modeDesc);
 
                     // MW0LGE_21k9 must resize the back buffers, belts and braces because width/height not likely to change
@@ -2720,13 +2986,16 @@ namespace Thetis
             }
         }
 
-        public static int PanafallSplitBarPos {
+        public static int PanafallSplitBarPos
+        {
             get { return (int)(displayTargetHeight * m_fPanafallSplitPerc); }
         }
         private static float m_fPanafallSplitPerc = 0.5f;
-        public static float PanafallSplitBarPerc {
+        public static float PanafallSplitBarPerc
+        {
             get { return m_fPanafallSplitPerc; }
-            set {
+            set
+            {
                 bool resetBmp = value != m_fPanafallSplitPerc;
                 m_fPanafallSplitPerc = value;
                 if (resetBmp)
@@ -2734,17 +3003,20 @@ namespace Thetis
             }
         }
         private static bool m_bAntiAlias = false;
-        public static bool AntiAlias {
+        public static bool AntiAlias
+        {
             get { return m_bAntiAlias; }
             set
-            { 
+            {
                 m_bAntiAlias = value;
                 setupAliasing();
             }
         }
-        public static bool SpecialPanafall {
+        public static bool SpecialPanafall
+        {
             get { return m_bSpecialPanafall; }
-            set {
+            set
+            {
                 m_bSpecialPanafall = value;
                 if (m_bSpecialPanafall)
                 {
@@ -2759,18 +3031,21 @@ namespace Thetis
         }
 
         private static int m_nRX1DisplayHeight = 0;
-        public static int RX1DisplayHeight {
+        public static int RX1DisplayHeight
+        {
             get { return m_nRX1DisplayHeight; }
             set { }
         }
         private static int m_nRX2DisplayHeight = 0;
-        public static int RX2DisplayHeight {
+        public static int RX2DisplayHeight
+        {
             get { return m_nRX2DisplayHeight; }
             set { }
         }
 
         private static string m_sDebugText = "";
-        public static string DebugText {
+        public static string DebugText
+        {
             get { return m_sDebugText; }
             set { m_sDebugText = value; }
         }
@@ -2808,7 +3083,7 @@ namespace Thetis
                     Matrix3x2 t = _d2dRenderTarget.Transform;
                     t.TranslationVector = m_pixelShift;
                     _d2dRenderTarget.Transform = t;
-                    
+
                     if (_bitmapBackground == null)
                     {
                         _d2dRenderTarget.Clear(m_cDX2_display_background_colour);
@@ -3062,7 +3337,7 @@ namespace Thetis
 
                     // undo the translate
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
-                    
+
                     _d2dRenderTarget.EndDraw();
 
                     // render
@@ -3071,7 +3346,7 @@ namespace Thetis
                     // It will error and just ignore everything, we try present and ignore the 0x887A000A error
                     PresentFlags pf = m_nVBlanks == 0 ? _NoVSYNCpresentFlag : PresentFlags.None;
                     Result r = _swapChain1.TryPresent(m_nVBlanks, pf);
-                    
+
                     if (r != Result.Ok && r != 0x887A000A)
                     {
                         string sMsg = "";
@@ -3094,13 +3369,15 @@ namespace Thetis
         }
 
         private static int m_nVBlanks = 0;
-        public static int VerticalBlanks {
+        public static int VerticalBlanks
+        {
             get { return m_nVBlanks; }
-            set {
+            set
+            {
                 int v = value;
                 if (v < 0) v = 0;
                 if (v > 4) v = 4;
-                m_nVBlanks = v; 
+                m_nVBlanks = v;
             }
         }
 
@@ -3131,24 +3408,28 @@ namespace Thetis
         }
 
         private static bool m_bPeakBlobMaximums = true;
-        public static bool ShowPeakBlobs {
+        public static bool ShowPeakBlobs
+        {
             get { return m_bPeakBlobMaximums; }
             set { m_bPeakBlobMaximums = value; }
         }
         private static bool m_bInsideFilterOnly = false;
-        public static bool ShowPeakBlobsInsideFilterOnly {
+        public static bool ShowPeakBlobsInsideFilterOnly
+        {
             get { return m_bInsideFilterOnly; }
             set { m_bInsideFilterOnly = value; }
         }
         private static int m_nNumberOfMaximums = 3;
-        public static int NumberOfPeakBlobs {
+        public static int NumberOfPeakBlobs
+        {
             get { return m_nNumberOfMaximums; }
-            set {
+            set
+            {
                 int t = value;
                 if (t < 1) t = 1;
                 // just use rx1 as both same length
                 if (t > m_nRX1Maximums.Length) t = m_nRX1Maximums.Length;
-                m_nNumberOfMaximums = t; 
+                m_nNumberOfMaximums = t;
             }
         }
 
@@ -3175,7 +3456,7 @@ namespace Thetis
                 int p1 = Math.Abs(nX - maximums[n].X);
 
                 if (maximums[n].Enabled && p1 < 10) // 10 being the radius of the ellipse/circle
-                { 
+                {
                     nRet = n;
                     break;
                 }
@@ -3260,7 +3541,7 @@ namespace Thetis
         }
         static public void ResetBlobMaximums(int rx, bool bClear = false)
         {
-            if(bClear) delayBlobsActivePeakDisplay(rx, true);
+            if (bClear) delayBlobsActivePeakDisplay(rx, true);
 
             Maximums[] maximums;
             if (rx == 1)
@@ -3316,17 +3597,20 @@ namespace Thetis
         }
 
         static private bool m_bBlobPeakHold = false;
-        static public bool BlobPeakHold {
+        static public bool BlobPeakHold
+        {
             get { return m_bBlobPeakHold; }
             set { m_bBlobPeakHold = value; }
         }
         static private double m_fBlobPeakHoldMS = 500f;
-        static public double BlobPeakHoldMS {
+        static public double BlobPeakHoldMS
+        {
             get { return m_fBlobPeakHoldMS; }
             set { m_fBlobPeakHoldMS = value; }
         }
         static private bool m_bBlobPeakHoldDrop = false;
-        static public bool BlobPeakHoldDrop {
+        static public bool BlobPeakHoldDrop
+        {
             get { return m_bBlobPeakHoldDrop; }
             set { m_bBlobPeakHoldDrop = value; }
         }
@@ -3388,7 +3672,7 @@ namespace Thetis
                     grid_step = spectrum_grid_step;
                 }
 
-                yRange = grid_max - grid_min;                
+                yRange = grid_max - grid_min;
             }
             else// if(rx == 2)
             {
@@ -3759,7 +4043,7 @@ namespace Thetis
 
             float local_max_Pixel_y = float.MinValue;
 
-            int filter_left_x=0, filter_right_x=0;
+            int filter_left_x = 0, filter_right_x = 0;
             if (bPeakBlobs)
             {
                 ResetBlobMaximums(rx);
@@ -3789,7 +4073,7 @@ namespace Thetis
                     spectralPeaks = m_rx2_spectrumPeaks;
                 }
             }
-            
+
             float mn = float.PositiveInfinity;
             float mx = float.NegativeInfinity;
             int YPosForMx = 0;
@@ -3833,7 +4117,7 @@ namespace Thetis
                         local_max_Pixel_y = Y;
                     }
 
-                    if(!local_mox && bSpectralPeakHold && max >= spectralPeaks[i].max_dBm)
+                    if (!local_mox && bSpectralPeakHold && max >= spectralPeaks[i].max_dBm)
                     {
                         spectralPeaks[i].max_dBm = max;
                         spectralPeaks[i].Time = m_dElapsedFrameStart;
@@ -3954,7 +4238,7 @@ namespace Thetis
                         previousPoint = point;
                     }
                 }
-                
+
                 //noise floor
                 if (!local_mox)
                 {
@@ -4086,7 +4370,7 @@ namespace Thetis
                                 _d2dRenderTarget.DrawText(maximums[n].max_dBm.ToString("f1") + sAppend, fontDX2d_callout, new RectangleF(m_objEllipse.Point.X + 6, m_objEllipse.Point.Y - 8, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_PeakBlobText, DrawTextOptions.None);
                             }
                         }
-                    }                    
+                    }
                 }
             }
 
@@ -4116,7 +4400,7 @@ namespace Thetis
         public static int NFsensitivity
         {
             get { return _NFsensitivity; }
-            set 
+            set
             {
                 int t = value;
                 if (t < 1) t = 1;
@@ -4196,7 +4480,7 @@ namespace Thetis
         {
             m_nRX1WaterFallFrameCount = 0;
             m_nRX2WaterFallFrameCount = 0;
-        }       
+        }
 
         private static int m_nRX1WaterFallFrameCount = 0; // 1=every frame, 2= every other, etc
         private static int m_nRX2WaterFallFrameCount = 0;
@@ -4346,9 +4630,9 @@ namespace Thetis
                     }
                 }
 
-                if(bRXdraw)
-                { 
-                    float[] data;                    
+                if (bRXdraw)
+                {
+                    float[] data;
 
                     if (rx == 1)
                         data = current_waterfall_data;
@@ -4439,10 +4723,10 @@ namespace Thetis
                     // get top pixels, store into new bitmap, ready to display them lower down by 1 pixel
                     if (rx == 1)
                     {
-                        topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp_dx2d.Size.Width, (int)_waterfall_bmp_dx2d.Size.Height - 1), 
+                        topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp_dx2d.Size.Width, (int)_waterfall_bmp_dx2d.Size.Height - 1),
                             new BitmapProperties(new SDXPixelFormat(_waterfall_bmp_dx2d.PixelFormat.Format, _ALPHA_MODE)));
 
-                        topPixels.CopyFromBitmap(_waterfall_bmp_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, (int)topPixels.Size.Height));                        
+                        topPixels.CopyFromBitmap(_waterfall_bmp_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, (int)topPixels.Size.Height));
                     }
                     else //rx2
                     {
@@ -5368,7 +5652,7 @@ namespace Thetis
                 else
                 {
                     _d2dRenderTarget.DrawBitmap(_waterfall_bmp2_dx2d, new RectangleF(0, nVerticalShift + 20, _waterfall_bmp2_dx2d.Size.Width, _waterfall_bmp2_dx2d.Size.Height), m_fRX2WaterfallOpacity, BitmapInterpolationMode.Linear);
-                }                
+                }
             }
 
             // return the transform to what it was
@@ -5403,7 +5687,8 @@ namespace Thetis
                     _bitmapBackground = null;
                 }
 
-                if (image != null) {
+                if (image != null)
+                {
                     using (Bitmap graphicsImage = new Bitmap(image))
                     {
                         _bitmapBackground = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
@@ -5418,7 +5703,7 @@ namespace Thetis
             Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
             BitmapProperties bitmapProperties = new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE)); //was R8G8B8A8_UNorm  //MW0LGE_21k9
             Size2 size = new Size2(bitmap.Width, bitmap.Height);
-            
+
             // Transform pixels from BGRA to RGBA
             int stride = bitmap.Width * sizeof(int);
             DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
@@ -5444,7 +5729,7 @@ namespace Thetis
 
             }
             bitmap.UnlockBits(bitmapData);
-            
+
             tempStream.Position = 0;
 
             SharpDX.Direct2D1.Bitmap dx2bitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
@@ -5456,7 +5741,7 @@ namespace Thetis
         }
 
         //--------------------------
-        
+
         private static SharpDX.Direct2D1.Brush m_bDX2_dataPeaks_fill_fpen_brush;
         private static SharpDX.Direct2D1.Brush m_bDX2_data_fill_fpen_brush;
         private static SharpDX.Direct2D1.Brush m_bDX2_data_line_pen_brush;
@@ -5535,9 +5820,11 @@ namespace Thetis
         //
         private static bool m_bUseLinearGradient = false;
         private static bool m_bUseLinearGradientForDataLine = false;
-        public static bool UseLinearGradient {
+        public static bool UseLinearGradient
+        {
             get { return m_bUseLinearGradient; }
-            set { 
+            set
+            {
                 m_bUseLinearGradient = value;
                 if (m_bUseLinearGradient)
                 {
@@ -5546,9 +5833,11 @@ namespace Thetis
                 }
             }
         }
-        public static bool UseLinearGradientForDataLine {
+        public static bool UseLinearGradientForDataLine
+        {
             get { return m_bUseLinearGradientForDataLine; }
-            set {
+            set
+            {
                 m_bUseLinearGradientForDataLine = value;
             }
         }
@@ -5725,13 +6014,13 @@ namespace Thetis
 
             //
             m_brushLGDataFillRX1 = null;
-            m_brushLGDataFillRX2 = null; 
-            m_brushLGDataLineRX1 = null; 
+            m_brushLGDataFillRX2 = null;
+            m_brushLGDataLineRX1 = null;
             m_brushLGDataLineRX2 = null;
 
-            m_bDX2_dataPeaks_fill_fpen_brush = null; 
+            m_bDX2_dataPeaks_fill_fpen_brush = null;
             m_bDX2_data_fill_fpen_brush = null;
-            m_bDX2_data_line_pen_brush = null; 
+            m_bDX2_data_line_pen_brush = null;
             m_bDX2_tx_data_line_fpen_brush = null;
             m_bDX2_tx_data_line_pen_brush = null;
 
@@ -5743,15 +6032,15 @@ namespace Thetis
             m_bDX2_m_bHightlightNumberScale = null;
 
             m_bDX2_grid_tx_text_brush = null;
-            m_bDX2_grid_text_brush = null; 
-            m_bDX2_pana_text_brush = null; 
+            m_bDX2_grid_text_brush = null;
+            m_bDX2_pana_text_brush = null;
 
-            m_bDX2_bandstack_overlay_brush = null; 
-            m_bDX2_bandstack_overlay_brush_lines = null; 
-            m_bDX2_bandstack_overlay_brush_highlight = null; 
+            m_bDX2_bandstack_overlay_brush = null;
+            m_bDX2_bandstack_overlay_brush_lines = null;
+            m_bDX2_bandstack_overlay_brush_highlight = null;
 
-            m_bDX2_display_filter_brush = null; 
-            m_bDX2_tx_filter_brush = null; 
+            m_bDX2_display_filter_brush = null;
+            m_bDX2_tx_filter_brush = null;
             m_bDX2_m_bTextCallOutActive = null;
             m_bDX2_m_bTextCallOutInactive = null;
             m_bDX2_m_pHighlighted = null;
@@ -5822,7 +6111,7 @@ namespace Thetis
 
                 m_bDX2_p1 = convertBrush((SolidBrush)p1.Brush);
                 m_bDX2_display_background_brush = convertBrush((SolidBrush)display_background_brush);
-                
+
                 m_cDX2_display_background_colour = convertColour(display_background_brush.Color); // does not need dispose as it is a type
 
                 m_bDX2_m_bHightlightNumbers = getDXBrushForColour(Color.FromArgb(255, 255, 255));       //convertBrush(new SolidBrush(Color.FromArgb(255, 255, 255)));
@@ -5884,7 +6173,7 @@ namespace Thetis
 
                 StrokeStyleProperties ssp = new StrokeStyleProperties() { DashOffset = 2, DashStyle = SharpDX.Direct2D1.DashStyle.Dash };
                 m_styleDots = new StrokeStyle(_d2dFactory, ssp);
-                
+
                 m_bDX2_noisefloor = convertBrush(new SolidBrush(noisefloor_color));
             }
         }
@@ -5936,9 +6225,9 @@ namespace Thetis
 
                 fontFactory = new SharpDX.DirectWrite.Factory();
 
-                fontDX2d_callout = new SharpDX.DirectWrite.TextFormat(fontFactory, m_fntCallOutFont.FontFamily.Name, (m_fntCallOutFont.Size/72) * _d2dRenderTarget.DotsPerInch.Width);
+                fontDX2d_callout = new SharpDX.DirectWrite.TextFormat(fontFactory, m_fntCallOutFont.FontFamily.Name, (m_fntCallOutFont.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_font9 = new SharpDX.DirectWrite.TextFormat(fontFactory, font9.FontFamily.Name, (font9.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
-                fontDX2d_font9b = new SharpDX.DirectWrite.TextFormat(fontFactory, font9b.FontFamily.Name,SharpDX.DirectWrite.FontWeight.Bold, SharpDX.DirectWrite.FontStyle.Normal, (font9b.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
+                fontDX2d_font9b = new SharpDX.DirectWrite.TextFormat(fontFactory, font9b.FontFamily.Name, SharpDX.DirectWrite.FontWeight.Bold, SharpDX.DirectWrite.FontStyle.Normal, (font9b.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_font9c = new SharpDX.DirectWrite.TextFormat(fontFactory, font95.FontFamily.Name, (font95.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_panafont = new SharpDX.DirectWrite.TextFormat(fontFactory, pana_font.FontFamily.Name, (pana_font.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_font10 = new SharpDX.DirectWrite.TextFormat(fontFactory, font10.FontFamily.Name, (font10.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
@@ -5977,7 +6266,7 @@ namespace Thetis
                 }
             }
         }
-        private static void drawLineDX2D(SharpDX.Direct2D1.Brush b, float x1, float y1, float x2, float y2, float strokeWidth = 1f )
+        private static void drawLineDX2D(SharpDX.Direct2D1.Brush b, float x1, float y1, float x2, float y2, float strokeWidth = 1f)
         {
             //0.5f's to move into 'centre' of desired pixel
             _d2dRenderTarget.DrawLine(new SharpDX.Vector2(x1/* + 0.5f*/, y1/* + 0.5f*/), new SharpDX.Vector2(x2/* + 0.5f*/, y2/* + 0.5f*/), b, strokeWidth);
@@ -6089,7 +6378,7 @@ namespace Thetis
         public static bool AlwaysShowCursorInfo
         {
             get { return m_bAlwaysShowCursorInfo; }
-            set { m_bAlwaysShowCursorInfo = value;}
+            set { m_bAlwaysShowCursorInfo = value; }
         }
         private static string m_sMHzCursorDisplay = "";
         public static string MHzCursorDisplay
@@ -6163,7 +6452,7 @@ namespace Thetis
             {
                 if (local_mox)
                 {
-                    if(displayduplex)
+                    if (displayduplex)
                     {
                         Low = rx_display_low;
                         High = rx_display_high;
@@ -6195,12 +6484,12 @@ namespace Thetis
 
                     sample_rate = sample_rate_rx1;
                 }
-                
+
                 f_diff = freq_diff;
             }
             else// if (rx == 2)
             {
-                if (local_mox) 
+                if (local_mox)
                 {
                     if (displayduplex)
                     {
@@ -6234,7 +6523,7 @@ namespace Thetis
 
                     sample_rate = sample_rate_rx2;
                 }
-                
+
                 f_diff = rx2_freq_diff;
             }
 
@@ -6270,7 +6559,7 @@ namespace Thetis
                     filter_high = rx2_filter_high;
                 }
             }
-            
+
             if ((rx1_dsp_mode == DSPMode.DRM && rx == 1) ||
                 (rx2_dsp_mode == DSPMode.DRM && rx == 2))
             {
@@ -6358,7 +6647,7 @@ namespace Thetis
             #region Tx filter and tx lines
 
             //MW0LGE_21k8 reworked
-            if(rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU)
+            if ((rx==1 && rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU) || (rx == 2 && rx2_dsp_mode != DSPMode.CWL && rx2_dsp_mode != DSPMode.CWU)) //MW0LGE [2.9.0.7] +rx2
             {
                 if ((bIsWaterfall && m_bShowTXFilterOnRXWaterfall/*m_bShowTXFilterOnWaterfall*/) || !bIsWaterfall)
                 {
@@ -6393,7 +6682,7 @@ namespace Thetis
                     {
                         drawFilterOverlayDX2D(m_bDX2_tx_filter_brush, filter_left_x, filter_right_x, W, H, rx, top, bottom, nVerticalShift);
                     }
-                    else if(draw_tx_filter)
+                    else if (draw_tx_filter)
                     {
                         if ((rx == 2 && tx_on_vfob) || (rx == 1 && !(tx_on_vfob && rx2_enabled)))
                         {
@@ -6565,7 +6854,7 @@ namespace Thetis
 
             //MW0LGE_21h
             #region BandStackOverlay
-            if(m_bShowBandStackOverlays && m_bandStackOverlays != null && rx == 1 && !local_mox && !bIsWaterfall )
+            if (m_bShowBandStackOverlays && m_bandStackOverlays != null && rx == 1 && !local_mox && !bIsWaterfall)
             {
                 long rf_freq = vfoa_hz;
                 int rit = rit_hz;
@@ -6576,7 +6865,7 @@ namespace Thetis
                     int filter_left_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].LowFilter) - Low - rit) / width * W);
                     int filter_right_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].HighFilter) - Low - rit) / width * W);
 
-                    brush = (n == m_nHighlightedBandStackEntryIndex) ? m_bDX2_bandstack_overlay_brush_highlight: m_bDX2_bandstack_overlay_brush;
+                    brush = (n == m_nHighlightedBandStackEntryIndex) ? m_bDX2_bandstack_overlay_brush_highlight : m_bDX2_bandstack_overlay_brush;
 
                     // filled rect
                     drawFilterOverlayDX2D(brush, filter_left_x, filter_right_x, W, H, rx, top, bottom, nVerticalShift);
@@ -6652,7 +6941,7 @@ namespace Thetis
                         //TODO: check right edge of screen, put on left of notch if no room
                         string temp_text = ((n.FCenter) / 1e6).ToString("f6") + "MHz";
                         int nTmp = temp_text.IndexOf(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator) + 4;
-                        
+
                         drawStringDX2D("F: " + temp_text.Insert(nTmp, " "), fontDX2d_callout, t, notch_right_x + 4, nVerticalShift + top + (H / 4));
                         drawStringDX2D("W: " + n.FWidth.ToString("f0") + "Hz", fontDX2d_callout, t, notch_right_x + 4, nVerticalShift + top + (H / 4) + 12);
                     }
@@ -6707,8 +6996,8 @@ namespace Thetis
                         drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x1, nVerticalShift + top, cw_line_x1, nVerticalShift + H, tx_filter_pen.Width);
                     }
 
-                    if (rx == 2 && !local_mox &&
-                        (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
+                    if (rx == 2 && !local_mox && tx_on_vfob &&  //MW0LGE [2.9.0.7] txonb
+                        (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)) //MW0LGE [2.9.0.7] txonb
                     {
                         int cw_line_x1;
                         if (!split_enabled)
@@ -7072,7 +7361,8 @@ namespace Thetis
                             nLeft = center_line_x - nW;
                             nRight = nLeft + nW;
                         }
-                        else {
+                        else
+                        {
                             nLeft = center_line_x;
                             nRight = nLeft + nW;
                         }
@@ -7116,7 +7406,7 @@ namespace Thetis
                                 x = xOffset + 3;
                                 break;
                             case DisplayLabelAlignment.CENTER:
-                                if(rx == 1 && (rx1_dsp_mode==DSPMode.USB || rx1_dsp_mode == DSPMode.DIGU || rx1_dsp_mode == DSPMode.CWU))
+                                if (rx == 1 && (rx1_dsp_mode == DSPMode.USB || rx1_dsp_mode == DSPMode.DIGU || rx1_dsp_mode == DSPMode.CWU))
                                 {
                                     x = center_line_x - xOffset - (int)size.Width;
                                 }
@@ -7211,7 +7501,7 @@ namespace Thetis
 
                     // draw horiz cursor line
                     if (ShowCTHLine) drawLineDX2D(p, 0, display_cursor_y, W, display_cursor_y);
-                }               
+                }
             }
             #endregion
 
@@ -7312,7 +7602,8 @@ namespace Thetis
                         double rx1_hang = 0.0;
                         float rx1_agc_hang_y = 0.0f;
 
-                        unsafe {
+                        unsafe
+                        {
                             double size = (double)console.specRX.GetSpecRX(0).FFTSize;//MW0LGE_21k7
                             WDSP.GetRXAAGCThresh(WDSP.id(0, 0), &rx1_thresh, size/*4096.0*/, sample_rate);
                             WDSP.GetRXAAGCHangLevel(WDSP.id(0, 0), &rx1_hang);
@@ -7742,7 +8033,8 @@ namespace Thetis
                     drawStringDX2D(m_sMHzCursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y - 18);
                 }
 
-                if (m_sOtherData1CursorDisplay != "") {
+                if (m_sOtherData1CursorDisplay != "")
+                {
                     xPos = display_cursor_x + 12;
                     if (bLeftSide)
                     {
@@ -7770,7 +8062,7 @@ namespace Thetis
                         xPos -= width + 24;
                         bLeftSide = true;
                     }
-                    drawStringDX2D(m_sOtherData2CursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y + 18); 
+                    drawStringDX2D(m_sOtherData2CursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y + 18);
                 }
             }
             //
@@ -7853,9 +8145,9 @@ namespace Thetis
                 max = current_display_data_bottom[0];
             }
 
-            if (!mox || (mox && tx_on_vfob && console.RX2Enabled)) 
+            if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
             {
-                if (rx==1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
+                if (rx == 1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
                 else max += rx2_display_cal_offset;
             }
             else
@@ -7865,7 +8157,7 @@ namespace Thetis
 
             if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
             {
-                if (rx==1/*!bottom*/) max += rx1_preamp_offset - alex_preamp_offset;   //MW0LGE_21 change to rx==1
+                if (rx == 1/*!bottom*/) max += rx1_preamp_offset - alex_preamp_offset;   //MW0LGE_21 change to rx==1
                 else max += rx2_preamp_offset;
             }
 
@@ -7886,7 +8178,7 @@ namespace Thetis
 
                 if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
                 {
-                    if (rx==1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
+                    if (rx == 1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
                     else max += rx2_display_cal_offset;
                 }
                 else
@@ -7896,7 +8188,7 @@ namespace Thetis
 
                 if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
                 {
-                    if (rx==1/*!bottom*/) max += rx1_preamp_offset - alex_preamp_offset;  //MW0LGE_21 change to rx==1
+                    if (rx == 1/*!bottom*/) max += rx1_preamp_offset - alex_preamp_offset;  //MW0LGE_21 change to rx==1
                     else max += rx2_preamp_offset;
                 }
 
@@ -8800,7 +9092,7 @@ namespace Thetis
             max_y = local_max_y;
 
             // get the average
-            float avg = 0.0F;            
+            float avg = 0.0F;
             avg = (float)((float)sum / nDecimatedWidth / 1.12);
 
             for (int i = 0; i < nDecimatedWidth; i++)
@@ -8922,10 +9214,10 @@ namespace Thetis
                 if (_spotLayerRightRX1 == null)
                     _spotLayerRightRX1 = new List<int>();
 
-                for (int layer = 0;layer < _spotLayerRightRX1.Count;layer++)
+                for (int layer = 0; layer < _spotLayerRightRX1.Count; layer++)
                 {
                     int layerRightmostX = _spotLayerRightRX1[layer];
-                    if(leftX > layerRightmostX)
+                    if (leftX > layerRightmostX)
                         return layer;
                 }
                 // none found, need to add another
@@ -8953,7 +9245,7 @@ namespace Thetis
             if (layer < 0) return;
             if (rx == 1)
             {
-                if(layer < _spotLayerRightRX1.Count)
+                if (layer < _spotLayerRightRX1.Count)
                     _spotLayerRightRX1[layer] = rightX;
             }
             else
@@ -8990,7 +9282,7 @@ namespace Thetis
             if (bottom) return;
 
             long vfo_hz;
-            int rxDisplayLow; 
+            int rxDisplayLow;
             int rxDisplayHigh;
 
             bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
@@ -9100,13 +9392,13 @@ namespace Thetis
 
             // now plot all the tags over the lines if the spot is visible
             SharpDX.Direct2D1.Brush textBrush;
-            SharpDX.Direct2D1.Brush whiteBrush = getDXBrushForColour(Color.White,255);
-            SharpDX.Direct2D1.Brush blackBrush = getDXBrushForColour(Color.Black,255);
+            SharpDX.Direct2D1.Brush whiteBrush = getDXBrushForColour(Color.White, 255);
+            SharpDX.Direct2D1.Brush blackBrush = getDXBrushForColour(Color.Black, 255);
             SharpDX.Direct2D1.Brush brightBorder = getDXBrushForColour(Color.Yellow, 255);
 
             List<SpotManager2.smSpot> visibleSpots = sortedSpots.Where(o => o.Visible[rx - 1]).ToList();
             SpotManager2.smSpot highLightedSpot = null;
-            foreach(SpotManager2.smSpot spot in visibleSpots)
+            foreach (SpotManager2.smSpot spot in visibleSpots)
             {
                 sDisplayString = getCallsignString(spot);
 
@@ -9125,7 +9417,7 @@ namespace Thetis
                 }
             }
 
-            if(highLightedSpot != null)
+            if (highLightedSpot != null)
             {
                 sDisplayString = getCallsignString(highLightedSpot);
 
@@ -9204,10 +9496,10 @@ namespace Thetis
         {
             if (!_bDX2Setup) return null;
 
-            if(_DX2Brushes == null) _DX2Brushes = new Dictionary<Color, SharpDX.Direct2D1.Brush>();
+            if (_DX2Brushes == null) _DX2Brushes = new Dictionary<Color, SharpDX.Direct2D1.Brush>();
 
             Color newC;
-            if (replaceAlpha >=0 && replaceAlpha <= 255)
+            if (replaceAlpha >= 0 && replaceAlpha <= 255)
                 newC = Color.FromArgb(replaceAlpha, c.R, c.G, c.B); // override the alpha
             else
                 newC = c;
