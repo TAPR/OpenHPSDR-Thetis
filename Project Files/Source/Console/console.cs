@@ -23520,8 +23520,8 @@ namespace Thetis
                         {
                             if (bDrawMarkers)
                             {
-                                g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3); // long tic marks
-                                g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 4 - 6, 2, 6); // short tic marks
+                                g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3); // short tic marks
+                                g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 4 - 6, 2, 6); // long tic marks
                             }
                             //Font f = new Font("Arial", 7.0f, FontStyle.Bold);
                             SizeF size = g.MeasureString("+" + (i * 20).ToString(), font7, 3, StringFormat.GenericTypographic);
@@ -25563,7 +25563,7 @@ namespace Thetis
             {
                 current_meter_data = new_meter_data;
                 current_swrmeter_data = new_swrmeter_data;
-                meter_data_ready = false;
+                //meter_data_ready = false;  //MW0LGE [2.9.0.7] should not be here as is done down below after it is consumed
             }
 
             if (avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
@@ -27172,6 +27172,7 @@ namespace Thetis
             // MW0LGE_21k9c
             // old method ran ~100ms of volts and ~100ms of amps, then waited 600ms, total time for 100 readings of each = 800ms
             // new method takes two readings every 8ms into a threadsafe fifo queue, so those 100 of each will be spread over 800ms
+            // MW0LGE [2.9.0.7] changed volts to 150
             while (chkPower.Checked && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D))
             {
                 _voltsQueue.Enqueue(NetworkIO.getUserADC0());
@@ -27179,7 +27180,7 @@ namespace Thetis
 
                 bool bOk;
                 int nTries = 0;
-                while (_voltsQueue.Count > 100 && nTries < 100) // keep max 100 in the queue
+                while (_voltsQueue.Count > 150 && nTries < 150) // keep max 150 in the queue
                 {
                     bOk = _voltsQueue.TryDequeue(out int tmp);
                     if (!bOk)
@@ -28798,6 +28799,8 @@ namespace Thetis
             else return Math.Max((ref_pow * -0.01774) + 1.137097, 0.25); // mx+b found using 80% at 19, 25% at 50
         }
 
+        private float _oldMKIIPAVolts = 0f;
+        private float _oldMKIIPAAmps = 0f;
         private void timer_cpu_meter_Tick(object sender, System.EventArgs e)
         {
             //if ((anan7000dpresent || anan8000dpresent) && ANAN8000DLEDisplayVoltsAmps)
@@ -28817,8 +28820,27 @@ namespace Thetis
                 if (!toolStripStatusLabel_Volts.Visible) toolStripStatusLabel_Volts.Visible = true;
                 if (!toolStripStatusLabel_Amps.Visible) toolStripStatusLabel_Amps.Visible = true;
 
-                toolStripStatusLabel_Volts.Text = String.Format("{0:#0.0}V", _MKIIPAVolts);
-                toolStripStatusLabel_Amps.Text = String.Format("{0:#0.0}A", _MKIIPAAmps);
+                //MW0LGE [2.9.0.7] added to prevent edge case flicker due to rounding
+                if (Math.Abs(_MKIIPAVolts - _oldMKIIPAVolts) >= 0.1f)
+                {
+                    toolStripStatusLabel_Volts.Text = String.Format("{0:#0.0}V", _MKIIPAVolts);
+                    _oldMKIIPAVolts = _MKIIPAVolts;
+                }
+                else
+                {
+                    toolStripStatusLabel_Volts.Text = String.Format("{0:#0.0}V", _oldMKIIPAVolts);
+                }
+
+                if (Math.Abs(_MKIIPAAmps - _oldMKIIPAAmps) >= 0.1f)
+                {
+                    toolStripStatusLabel_Amps.Text = String.Format("{0:#0.0}A", _MKIIPAAmps);
+                    _oldMKIIPAAmps = _MKIIPAAmps;
+                }
+                else
+                {
+                    toolStripStatusLabel_Amps.Text = String.Format("{0:#0.0}A", _oldMKIIPAAmps);
+                }
+                    
             }
             else
             {
@@ -32297,6 +32319,12 @@ namespace Thetis
         private bool mox = false;
         private PreampMode temp_mode = PreampMode.HPSDR_OFF; // HPSDR preamp mode
         private PreampMode temp_mode2 = PreampMode.HPSDR_OFF; // HPSDR preamp mode
+        private bool _forceATTwhenPSAoff = true; //MW0LGE [2.9.0.7] added
+        public bool ForceATTwhenPSAoff
+        {
+            get { return _forceATTwhenPSAoff; }
+            set { _forceATTwhenPSAoff = value; }
+        }
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
             bool bOldMox = mox; //MW0LGE_21b used for state change delgates at end of fn
@@ -32524,9 +32552,15 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!chkFWCATUBypass.Checked && // MW0LGE_21k9d changed from || to &&
+                        //if (!chkFWCATUBypass.Checked && // MW0LGE_21k9d changed from || to &&
+                        //    (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
+                        //     radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
+
+                        //if PS-A is off and require full att on tx, or mode is cw then set ATTonTX to 31  //MW0LGE [2.9.0.7]
+                        if((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
                             (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
                              radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
+
                         SetupForm.HermesAttenuatorData = tx_step_attenuator_by_band[(int)rx1_band];
                         NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
                         SetupForm.HermesEnableAttenuator = true;
@@ -54053,6 +54087,8 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_IMAG)) _RX1MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
                     //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_REAL)) _RX1MeterValues[ReadingType.ADC2_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
                     //if (MeterManager.RequiresUpdate(1, ReadingType.ADC2_IMAG)) _RX1MeterValues[ReadingType.ADC2_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+
+                    //test
                 }
                 else if (mox && (!RX2Enabled || (RX2Enabled && VFOATX)))
                 {
@@ -54071,7 +54107,18 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.ALC)) _RX1MeterValues[Reading.ALC] = peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK)) : (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
                     if (MeterManager.RequiresUpdate(1, Reading.ALC_G)) _RX1MeterValues[Reading.ALC_G] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
 
-                    if (MeterManager.RequiresUpdate(1, Reading.ALC_GROUP)) _RX1MeterValues[Reading.ALC_GROUP] = ( peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK)) : (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC)) ) + (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+                    if (MeterManager.RequiresUpdate(1, Reading.ALC_GROUP))
+                    {
+                        float fTmp;
+                        if (peak_tx_meter)
+                            fTmp = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK));
+                        else
+                            fTmp = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
+                        
+                        fTmp += (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+
+                        _RX1MeterValues[Reading.ALC_GROUP] = fTmp;
+                    }
 
                     if (MeterManager.RequiresUpdate(1, Reading.PWR)) _RX1MeterValues[Reading.PWR] = (alexpresent || apollopresent) && current_hpsdr_model == HPSDRModel.ANAN8000D && tx_xvtr_index >= 0 ? drivepwr : calfwdpower;
                     if (MeterManager.RequiresUpdate(1, Reading.REVERSE_PWR)) _RX1MeterValues[Reading.REVERSE_PWR] = (alexpresent || apollopresent) ? alex_rev : -200f;
@@ -54177,7 +54224,18 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(2, Reading.ALC)) _RX2MeterValues[Reading.ALC] = peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK)) : (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
                     if (MeterManager.RequiresUpdate(2, Reading.ALC_G)) _RX2MeterValues[Reading.ALC_G] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
 
-                    if (MeterManager.RequiresUpdate(2, Reading.ALC_GROUP)) _RX2MeterValues[Reading.ALC_GROUP] = (peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK)) : (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC))) + (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+                    if (MeterManager.RequiresUpdate(2, Reading.ALC_GROUP))
+                    {
+                        float fTmp;
+                        if (peak_tx_meter)
+                            fTmp = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK));
+                        else
+                            fTmp = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
+
+                        fTmp += (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
+
+                        _RX2MeterValues[Reading.ALC_GROUP] = fTmp;
+                    }
 
                     if (MeterManager.RequiresUpdate(2, Reading.PWR)) _RX2MeterValues[Reading.PWR] = (alexpresent || apollopresent) && current_hpsdr_model == HPSDRModel.ANAN8000D && tx_xvtr_index >= 0 ? drivepwr : calfwdpower;
                     if (MeterManager.RequiresUpdate(2, Reading.REVERSE_PWR)) _RX2MeterValues[Reading.REVERSE_PWR] = (alexpresent || apollopresent) ? alex_rev : -200f;

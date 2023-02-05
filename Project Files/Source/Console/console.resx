@@ -10095,7 +10095,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="buttonTS1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>17, 568</value>
+    <value>43, 571</value>
   </data>
   <data name="buttonTS1.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>

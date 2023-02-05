@@ -2303,6 +2303,9 @@ namespace Thetis
 
             //PA
             comboPAProfile_SelectedIndexChanged(this, e); //MW0LGE_22b
+
+            //
+            chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
         }
 
         public string[] GetTXProfileStrings()
@@ -25190,6 +25193,11 @@ namespace Thetis
         private void initVoltsAmpsCalibration()
         {
             if (!_bSensSet || !_bVoffSet) btnAmpDefault_Click(this, EventArgs.Empty);
+        }
+
+        private void chkForceATTwhenPSAoff_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ForceATTwhenPSAoff = chkForceATTwhenPSAoff.Checked;
         }
     }
 
