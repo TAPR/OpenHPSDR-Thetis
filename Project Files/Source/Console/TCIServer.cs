@@ -552,7 +552,10 @@ namespace Thetis
 				else if (rx == 1)
 					offset = (int)console.ThreadSafeTCIAccessor.radio.GetDSPRX(1, 0).RXOsc;
 			}
-			string s = "if:" + rx.ToString() + "," + chan.ToString() + "," + offset.ToString() + ";";
+
+			offset += -console.ThreadSafeTCIAccessor.GetDSPcwPitchShiftToZero(rx + 1); //MW0LGE [2.9.0.7] note we invert with -
+
+            string s = "if:" + rx.ToString() + "," + chan.ToString() + "," + offset.ToString() + ";";
 			sendTextFrame(s);
 		}
 		private void sendMOX(int rx, bool mox, bool signalTCI = false)
@@ -651,7 +654,10 @@ namespace Thetis
 				else if (rx == 1)
 					ddsFreq = (long)(console.ThreadSafeTCIAccessor.CentreRX2Frequency * 1e6);
 			}
-			string s = "dds:" + rx.ToString() + "," + ddsFreq.ToString() + ";";
+
+			ddsFreq += console.ThreadSafeTCIAccessor.GetDSPcwPitchShiftToZero(rx+1); //MW0LGE [2.9.0.7]
+
+            string s = "dds:" + rx.ToString() + "," + ddsFreq.ToString() + ";";
 			sendTextFrame(s);
 		}
 		private void sendFilterBand(int rx, int low, int high)
@@ -668,7 +674,7 @@ namespace Thetis
         }
 		//
 
-		private void sendInitialRadioState()
+        private void sendInitialRadioState()
         {
 			bool bSend = m_server != null ? m_server.SendInitialFrequencyStateOnConnect : true;
 

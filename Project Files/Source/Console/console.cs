@@ -849,6 +849,9 @@ namespace Thetis
             ptbRX2RF.MouseWheel += new MouseEventHandler(MouseWheelAGCRX2);
             //
 
+            // setup N1MM   //MW0LGE [2.9.0.7]
+            N1MM.Init(this);
+
             // for resizing
             GrabConsoleSizeBasis();
             MinimumSize = this.Size;
@@ -19736,8 +19739,37 @@ namespace Thetis
         {
             get { return comboMeterTXMode.Items; }
         }
-
-
+        public int GetDSPcwPitchShiftToZero(int rx)
+        {
+            // rx 1 or 2
+            int nPitch = 0;
+            switch (rx)
+            {
+                case 1:
+                    {
+                        if (RX1DSPMode == DSPMode.CWL)
+                        {
+                            nPitch = CWPitch;
+                        }
+                        else if (RX1DSPMode == DSPMode.CWU)
+                        {
+                            nPitch = -CWPitch;
+                        }
+                    }
+                    break;
+                case 2:
+                    if (RX2DSPMode == DSPMode.CWL)
+                    {
+                        nPitch = CWPitch;
+                    }
+                    else if (RX2DSPMode == DSPMode.CWU)
+                    {
+                        nPitch = -CWPitch;
+                    }
+                    break;
+            }
+            return nPitch;
+        }
 
         private int cw_pitch = 600;
         public int CWPitch
@@ -52892,6 +52924,11 @@ namespace Thetis
 
             bsf = BandStackManager.GetFilter(newBand, false);
             if (bsf != null) bsf.LastVisited.Mode = newMode;
+
+            //MW0LGE [2.9.0.7] resize after entering or leaving CW so that N1MM can use cwpitch offset
+            if(newMode == DSPMode.CWL || newMode == DSPMode.CWU ||
+                oldMode == DSPMode.CWL || oldMode == DSPMode.CWU)
+                N1MM.Resize(rx);
         }
         private void OnVFOAFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
@@ -54093,18 +54130,22 @@ namespace Thetis
                 else if (mox && (!RX2Enabled || (RX2Enabled && VFOATX)))
                 {
                     // get all readings
+                    if (MeterManager.RequiresUpdate(1, Reading.MIC)) _RX1MeterValues[Reading.MIC] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.MIC));
                     if (MeterManager.RequiresUpdate(1, Reading.MIC_PK)) _RX1MeterValues[Reading.MIC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.MIC_PK));
+                    if (MeterManager.RequiresUpdate(1, Reading.EQ)) _RX1MeterValues[Reading.EQ] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ));
                     if (MeterManager.RequiresUpdate(1, Reading.EQ_PK)) _RX1MeterValues[Reading.EQ_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ_PK));
+                    if (MeterManager.RequiresUpdate(1, Reading.LEVELER)) _RX1MeterValues[Reading.LEVELER] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.LEVELER));
                     if (MeterManager.RequiresUpdate(1, Reading.LEVELER_PK)) _RX1MeterValues[Reading.LEVELER_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.LEVELER_PK));
                     if (MeterManager.RequiresUpdate(1, Reading.LVL_G)) _RX1MeterValues[Reading.LVL_G] = (float)Math.Max(0, WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
-                    if (MeterManager.RequiresUpdate(1, Reading.CFC_PK)) _RX1MeterValues[Reading.CFC_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_PK));
                     if (MeterManager.RequiresUpdate(1, Reading.CFC_G)) _RX1MeterValues[Reading.CFC_G] = (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_G));
-                    if (MeterManager.RequiresUpdate(1, Reading.CPDR_PK)) _RX1MeterValues[Reading.CPDR_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK));
+                    if (MeterManager.RequiresUpdate(1, Reading.CFC_PK)) _RX1MeterValues[Reading.CFC_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_PK));
                     if (MeterManager.RequiresUpdate(1, Reading.CPDR)) _RX1MeterValues[Reading.CPDR] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
-                    if (MeterManager.RequiresUpdate(1, Reading.COMP)) _RX1MeterValues[Reading.COMP] = peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK)) : (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
+                    if (MeterManager.RequiresUpdate(1, Reading.CPDR_PK)) _RX1MeterValues[Reading.CPDR_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK));
+                    if (MeterManager.RequiresUpdate(1, Reading.COMP)) _RX1MeterValues[Reading.COMP] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.COMP));
+                    if (MeterManager.RequiresUpdate(1, Reading.COMP_PK)) _RX1MeterValues[Reading.COMP_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.COMP_PK));
 
+                    if (MeterManager.RequiresUpdate(1, Reading.ALC)) _RX1MeterValues[Reading.ALC] = peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC)) : (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
                     if (MeterManager.RequiresUpdate(1, Reading.ALC_PK)) _RX1MeterValues[Reading.ALC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK));
-                    if (MeterManager.RequiresUpdate(1, Reading.ALC)) _RX1MeterValues[Reading.ALC] = peak_tx_meter ? (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_PK)) : (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC));
                     if (MeterManager.RequiresUpdate(1, Reading.ALC_G)) _RX1MeterValues[Reading.ALC_G] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.ALC_G));
 
                     if (MeterManager.RequiresUpdate(1, Reading.ALC_GROUP))
@@ -54212,6 +54253,7 @@ namespace Thetis
                     // get all readings
                     if (MeterManager.RequiresUpdate(2, Reading.MIC_PK)) _RX2MeterValues[Reading.MIC_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.MIC_PK));
                     if (MeterManager.RequiresUpdate(2, Reading.EQ_PK)) _RX2MeterValues[Reading.EQ_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ_PK));
+                    if (MeterManager.RequiresUpdate(2, Reading.EQ)) _RX2MeterValues[Reading.EQ] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.EQ));
                     if (MeterManager.RequiresUpdate(2, Reading.LEVELER_PK)) _RX2MeterValues[Reading.LEVELER_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.LEVELER_PK));
                     if (MeterManager.RequiresUpdate(2, Reading.LVL_G)) _RX2MeterValues[Reading.LVL_G] = (float)Math.Max(0, WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
                     if (MeterManager.RequiresUpdate(2, Reading.CFC_PK)) _RX2MeterValues[Reading.CFC_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_PK));

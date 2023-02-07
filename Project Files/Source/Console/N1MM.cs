@@ -11,6 +11,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using SharpDX.Direct2D1;
 
 namespace Thetis
 {
@@ -35,6 +36,7 @@ namespace Thetis
 
         static N1MM()
         {
+            _console = null;
             setMaxRXs(2);
         }
      
@@ -71,6 +73,8 @@ namespace Thetis
         private static bool m_bStarted = false;
         private static Task udp_send_task;
         private static CancellationTokenSource cancelTokenSource;
+        private static Console _console;
+
         public static void Stop()
         {
             if (cancelTokenSource != null)
@@ -91,6 +95,10 @@ namespace Thetis
                 RXstoredData[i].Enabled = false;
             }
         }
+        public static void Init(Console c)
+        {
+            _console = c;
+        }
 
         public static void Resize(int rx)
         {
@@ -108,17 +116,20 @@ namespace Thetis
             RXstoredData[rx - 1].Width = width;
 
             if (IsEnabled(rx))
-                {
-                    // use the display versions of everything, as this is all that matters to N1MM as we are based on the picDisplay pixels
-                    double bandWidth = rx == 1 ? Display.RXDisplayHigh - Display.RXDisplayLow : Display.RX2DisplayHigh - Display.RX2DisplayLow;
-                    double centreFrequency = rx == 1 ? Display.CentreFreqRX1 : Display.CentreFreqRX2;
+            {
+                // use the display versions of everything, as this is all that matters to N1MM as we are based on the picDisplay pixels
+                double bandWidth = rx == 1 ? Display.RXDisplayHigh - Display.RXDisplayLow : Display.RX2DisplayHigh - Display.RX2DisplayLow;
+                double centreFrequency = rx == 1 ? Display.CentreFreqRX1 : Display.CentreFreqRX2;
 
-                    double dL = Math.Round(centreFrequency - ((bandWidth / 2) * 1e-6), 6);
-                    double dH = Math.Round(centreFrequency + ((bandWidth / 2) * 1e-6), 6);
+                double dL = Math.Round(centreFrequency - ((bandWidth / 2) * 1e-6), 6);
+                double dH = Math.Round(centreFrequency + ((bandWidth / 2) * 1e-6), 6);
 
-                    setLowFrequencyMHz(rx, dL);
-                    setHighFrequencyMHz(rx, dH);
-                }
+                dL += _console.GetDSPcwPitchShiftToZero(rx) * 1e-6; // MW0LGE [2.9.0.7]
+                dH += _console.GetDSPcwPitchShiftToZero(rx) * 1e-6;
+
+                setLowFrequencyMHz(rx, dL);
+                setHighFrequencyMHz(rx, dH);
+            }
         }
 
         private static readonly object m_objLock = new Object();
