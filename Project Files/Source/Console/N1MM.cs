@@ -36,7 +36,7 @@ namespace Thetis
 
         static N1MM()
         {
-            _console = null;
+            //_console = null;
             setMaxRXs(2);
         }
      
@@ -73,7 +73,7 @@ namespace Thetis
         private static bool m_bStarted = false;
         private static Task udp_send_task;
         private static CancellationTokenSource cancelTokenSource;
-        private static Console _console;
+        //private static Console _console;
 
         public static void Stop()
         {
@@ -95,10 +95,10 @@ namespace Thetis
                 RXstoredData[i].Enabled = false;
             }
         }
-        public static void Init(Console c)
-        {
-            _console = c;
-        }
+        //public static void Init(Console c)
+        //{
+        //    _console = c;
+        //}
 
         public static void Resize(int rx)
         {
@@ -124,8 +124,37 @@ namespace Thetis
                 double dL = Math.Round(centreFrequency - ((bandWidth / 2) * 1e-6), 6);
                 double dH = Math.Round(centreFrequency + ((bandWidth / 2) * 1e-6), 6);
 
-                dL += _console.GetDSPcwPitchShiftToZero(rx) * 1e-6; // MW0LGE [2.9.0.7]
-                dH += _console.GetDSPcwPitchShiftToZero(rx) * 1e-6;
+                // MW0LGE [2.9.0.7] fix issue where spectrum is offset by cwpitch
+                int nPitch = 0;
+                switch (rx)
+                {
+                    case 1:
+                        {
+                            if (Display.RX1DSPMode == DSPMode.CWL)
+                            {
+                                nPitch = Display.CWPitch;
+                            }
+                            else if (Display.RX1DSPMode == DSPMode.CWU)
+                            {
+                                nPitch = -Display.CWPitch;
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (Display.RX2DSPMode == DSPMode.CWL)
+                        {
+                            nPitch = Display.CWPitch;
+                        }
+                        else if (Display.RX2DSPMode == DSPMode.CWU)
+                        {
+                            nPitch = -Display.CWPitch;
+                        }
+                        break;
+                }
+                //
+
+                dL += nPitch * 1e-6;
+                dH += nPitch * 1e-6;
 
                 setLowFrequencyMHz(rx, dL);
                 setHighFrequencyMHz(rx, dH);

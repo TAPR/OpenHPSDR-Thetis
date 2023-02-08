@@ -72,6 +72,7 @@ namespace Thetis
         // volts/amps
         VOLTS,
         AMPS,
+        EYE_PERCENT,
         LAST
     }
 
@@ -127,34 +128,11 @@ namespace Thetis
             _transverterIndex = -1; // no transverter
             //_mox = false;
 
+            // two sets of readings, for each trx
             _readings.Add(1, new clsReadings());
             _readings.Add(2, new clsReadings());
 
             _meterThreadRunning = false;
-
-            // test
-            clsMeter cm = new clsMeter(1, "test1meter", (int)MeterType.RX, 1f, 0.542f);
-            _meters.Add(cm.Name, cm);
-
-            cm = new clsMeter(2, "test2meter", (int)MeterType.RX, 1f, 0.542f);
-            _meters.Add(cm.Name, cm);
-
-            cm = new clsMeter(1, "test3meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 1.361f);
-            cm.AddDisplayGroup("PWR/SWR"); // 1
-            cm.AddDisplayGroup("Comp");
-            cm.AddDisplayGroup("ALC");
-            cm.AddDisplayGroup("Volts/Amps");
-            cm.DisplayGroup = 1;
-            _meters.Add(cm.Name, cm);
-
-            cm = new clsMeter(2, "test4meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 1.361f);
-            cm.AddDisplayGroup("PWR/SWR"); // 1
-            cm.AddDisplayGroup("Comp");
-            cm.AddDisplayGroup("ALC");
-            cm.AddDisplayGroup("Volts/Amps");
-            cm.DisplayGroup = 1;
-            _meters.Add(cm.Name, cm);
-            //
         }
 
         private static void UpdateMeters()
@@ -204,12 +182,36 @@ namespace Thetis
             //_mox = _console.MOX;
             _power = _console.PowerOn;
             _rx1VHForAbove = _console.VFOAFreq >= 30;
-            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq > 30;
+            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
             _currentHPSDRmodel = _console.CurrentHPSDRModel;
             _apolloPresent = _console.ApolloPresent;
             _alexPresent = _console.AlexPresent;
             _paPresent = _console.PAPresent;
             _transverterIndex = _console.TXXVTRIndex;
+
+            // test
+            clsMeter cm = new clsMeter(1, "test1meter", (int)MeterType.RX, 1f, 0.542f);
+            _meters.Add(cm.Name, cm);
+
+            cm = new clsMeter(2, "test2meter", (int)MeterType.RX, 1f, 0.542f);
+            _meters.Add(cm.Name, cm);
+
+            cm = new clsMeter(1, "test3meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 1.361f);
+            cm.AddDisplayGroup("PWR/SWR"); // 1
+            cm.AddDisplayGroup("Comp");
+            cm.AddDisplayGroup("ALC");
+            cm.AddDisplayGroup("Volts/Amps");
+            cm.DisplayGroup = 1;
+            _meters.Add(cm.Name, cm);
+
+            cm = new clsMeter(2, "test4meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 1.361f);
+            cm.AddDisplayGroup("PWR/SWR"); // 1
+            cm.AddDisplayGroup("Comp");
+            cm.AddDisplayGroup("ALC");
+            cm.AddDisplayGroup("Volts/Amps");
+            cm.DisplayGroup = 1;
+            _meters.Add(cm.Name, cm);
+            //
 
             addDelegates();
 
@@ -326,7 +328,7 @@ namespace Thetis
         {
             get
             {
-                int nWatts = 200;
+                int nWatts = 500;
 
                 if (_alexPresent && 
                     ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D) 
@@ -365,16 +367,23 @@ namespace Thetis
             else
                 return 0f;
         }
-        private static float normaliseTo200W()
+        private static float normaliseTo100W()
         {
-            // return a factor to apply to power values to bring them to 200w
-            // this is needed because power meters are all based on 200w at full deflection
+            // return a factor to apply to power values to bring them to 100w
+            // this is needed because power meter scaling is based on 100w at full deflection
             switch(CurrentPowerRating)
             {
-                case 100: return 2f;
-                case 30: return 6 + 2/3f;
-                case 15: return 13 + 1/3f;
-                case 1: return 200f;
+                //case 100: return 2f;
+                //case 30: return 6 + 2/3f;
+                //case 15: return 13 + 1/3f;
+                //case 1: return 200f;
+
+                case 500: return 1 / 5f;
+                case 200: return 1 / 2f;
+                case 100: return 1f;
+                case 30: return 100 / 30f;
+                case 15: return 100 / 15f;
+                case 1: return 100f;
             }
 
             return 1f;
@@ -409,6 +418,7 @@ namespace Thetis
                     setReading(rx, Reading.AVG_SIGNAL_STRENGTH, ref readings);
                     setReading(rx, Reading.ADC_REAL, ref readings);
                     setReading(rx, Reading.ADC_IMAG, ref readings);
+                    setReading(rx, Reading.EYE_PERCENT, ref readings);
                 }
                 else
                 {
@@ -545,6 +555,7 @@ namespace Thetis
             private Stopwatch _updateStopwatch;
             private Dictionary<float, PointF> _scaleCalibration;
             private int _displayGroup;
+            private bool _bNormaliseTo100W;
 
             public clsMeterItem()
             {
@@ -566,6 +577,7 @@ namespace Thetis
                 _size.Width = 1f;
                 _size.Height = 1f;
                 _displayGroup = 0;
+                _bNormaliseTo100W = false;
                 _updateStopwatch = new Stopwatch();
             }
 
@@ -592,6 +604,11 @@ namespace Thetis
             {
                 get { return _displayGroup; }
                 set { _displayGroup = value; }
+            }
+            public bool NormaliseTo100W
+            {
+                get { return _bNormaliseTo100W; }
+                set { _bNormaliseTo100W = value; }
             }
             public int UpdateInterval
             {
@@ -731,6 +748,7 @@ namespace Thetis
                         case Reading.ADC_IMAG: return "ADC Imaginary";
                         case Reading.ADC_REAL: return "ADC Real";
                         case Reading.AGC_GAIN: return "AGC Gain";
+                        case Reading.EYE_PERCENT: return "Magic Eye";
                         case Reading.ALC: return "ALC";
                         case Reading.ALC_G: return "ALC Comp";
                         case Reading.ALC_GROUP: return "ALC Group";
@@ -783,6 +801,7 @@ namespace Thetis
                         case Reading.ADC_IMAG: return "dBFS";
                         case Reading.ADC_REAL: return "dBFS";
                         case Reading.AGC_GAIN: return "dB";
+                        case Reading.EYE_PERCENT: return "?";
                         case Reading.ALC: return "dB";
                         case Reading.ALC_G: return "dB";
                         case Reading.ALC_GROUP: return "dB";
@@ -919,6 +938,7 @@ namespace Thetis
             private FontStyle _fontStyle;
             private System.Drawing.Color _fontColorLow;
             private System.Drawing.Color _fontColorHigh;
+            private System.Drawing.Color _fontColourType;
             private float _fontSize;
             private bool _showType;
 
@@ -927,12 +947,15 @@ namespace Thetis
                 //_scaleType = Reading.NONE;
                 _lowColour = System.Drawing.Color.White;
                 _highColour = System.Drawing.Color.Red;
+                _fontColourType = System.Drawing.Color.DarkGray;
+
                 _showType = false;
 
                 _fontFamily = "Trebuchet MS";
                 _fontStyle = FontStyle.Regular;
                 _fontColorLow = System.Drawing.Color.White;
                 _fontColorHigh = System.Drawing.Color.Red;
+                _fontColourType = System.Drawing.Color.DarkGray;
                 _fontSize = 9f;
 
                 ItemType = MeterItemType.H_SCALE;
@@ -955,6 +978,11 @@ namespace Thetis
             {
                 get { return _highColour; }
                 set { _highColour = value; }
+            }
+            public System.Drawing.Color FontColourType
+            {
+                get { return _fontColourType; }
+                set { _fontColourType = value; }
             }
             public string FontFamily
             {
@@ -1561,7 +1589,8 @@ namespace Thetis
                 //test
                 if ((TypeBitField & (int)MeterType.RX) == (int)MeterType.RX)
                 {
-                    clsText tx;
+                    clsImage img;
+                    //clsText tx;
                     //tx = new clsText();
                     //tx.TopLeft = new PointF(0f, 0f);
                     //tx.Size = new SizeF(0.2f, 0.05f);
@@ -1591,30 +1620,30 @@ namespace Thetis
                     //cb.ScaleCalibration.Add(-13, new PointF(1, 0)); // position for S9+60dB or above
                     //_meterItems.Add(cb.ID, cb);
 
-                    // eye
-                    clsMagicEyeItem me = new clsMagicEyeItem();
-                    me.TopLeft = new PointF(0.4f, 1f);
-                    me.Size = new SizeF(0.2f, 0.2f);
-                    me.ZOrder = 2;
-                    me.AttackRatio = 0.2f;
-                    me.DecayRatio = 0.05f;
-                    me.UpdateInterval = nMSupdate;
-                    me.HistoryDuration = 0;
-                    me.ShowHistory = false;
-                    me.Colour = System.Drawing.Color.Lime;
-                    me.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    me.ScaleCalibration.Add(-133, new PointF(0, 0)); // S0 - X is used as a % through 360 degree
-                    me.ScaleCalibration.Add(-73, new PointF(0.85f, 0)); // S9
-                    me.ScaleCalibration.Add(-13, new PointF(1f, 0)); // S9 + 60db
-                    _meterItems.Add(me.ID, me);
+                    //// eye
+                    //clsMagicEyeItem me = new clsMagicEyeItem();
+                    //me.TopLeft = new PointF(0.4f, 1f);
+                    //me.Size = new SizeF(0.2f, 0.2f);
+                    //me.ZOrder = 2;
+                    //me.AttackRatio = 0.2f;
+                    //me.DecayRatio = 0.05f;
+                    //me.UpdateInterval = 50;
+                    //me.HistoryDuration = 0;
+                    //me.ShowHistory = false;
+                    //me.Colour = System.Drawing.Color.Lime;
+                    //me.ReadingSource = Reading.EYE_PERCENT;
+                    //me.ScaleCalibration.Add(0, new PointF(0, 0));
+                    //me.ScaleCalibration.Add(1f, new PointF(1f, 0));
+                    //me.Value = 0f;
+                    //_meterItems.Add(me.ID, me);
 
-                    clsImage img = new clsImage();
-                    img.TopLeft = new PointF(0.4f, 1f);
-                    img.Size = new SizeF(0.2f, 0.2f);
-                    img.ZOrder = 3;
-                    img.ImageName = "bezel-glass-2";
-                    _meterItems.Add(img.ID, img);
-                    //
+                    //clsImage img = new clsImage();
+                    //img.TopLeft = new PointF(0.4f, 1f);
+                    //img.Size = new SizeF(0.2f, 0.2f);
+                    //img.ZOrder = 3;
+                    //img.ImageName = "bezel-glass-2";
+                    //_meterItems.Add(img.ID, img);
+                    ////
 
                     float fPad = 0.02f;
                     clsBarItem cb;
@@ -1633,6 +1662,7 @@ namespace Thetis
                     cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
                     cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
                     cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
 
@@ -1651,6 +1681,7 @@ namespace Thetis
                     cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
                     cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
                     cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
                     
@@ -1702,6 +1733,7 @@ namespace Thetis
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-120, new PointF(0, 0));
                     cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
 
@@ -1719,6 +1751,7 @@ namespace Thetis
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-120, new PointF(0, 0));
                     cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
 
@@ -2107,20 +2140,21 @@ namespace Thetis
                     ni.LengthFactor = 1.62f;
                     ni.ScaleStrokeWidth = true;
                     ni.ScaleCalibration.Add(0f, new PointF(0.052f, 0.732f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.146f, 0.528f));
-                    ni.ScaleCalibration.Add(20f, new PointF(0.188f, 0.434f));
-                    ni.ScaleCalibration.Add(30f, new PointF(0.235f, 0.387f));
-                    ni.ScaleCalibration.Add(40f, new PointF(0.258f, 0.338f));
-                    ni.ScaleCalibration.Add(50f, new PointF(0.303f, 0.313f));
-                    ni.ScaleCalibration.Add(60f, new PointF(0.321f, 0.272f));
-                    ni.ScaleCalibration.Add(70f, new PointF(0.361f, 0.257f));
-                    ni.ScaleCalibration.Add(80f, new PointF(0.381f, 0.223f));
-                    ni.ScaleCalibration.Add(100f, new PointF(0.438f, 0.181f));
-                    ni.ScaleCalibration.Add(120f, new PointF(0.483f, 0.155f));
-                    ni.ScaleCalibration.Add(140f, new PointF(0.532f, 0.13f));
-                    ni.ScaleCalibration.Add(160f, new PointF(0.577f, 0.111f));
-                    ni.ScaleCalibration.Add(180f, new PointF(0.619f, 0.098f));
-                    ni.ScaleCalibration.Add(200f, new PointF(0.662f, 0.083f));
+                    ni.ScaleCalibration.Add(5f, new PointF(0.146f, 0.528f));
+                    ni.ScaleCalibration.Add(10f, new PointF(0.188f, 0.434f));
+                    ni.ScaleCalibration.Add(15f, new PointF(0.235f, 0.387f));
+                    ni.ScaleCalibration.Add(20f, new PointF(0.258f, 0.338f));
+                    ni.ScaleCalibration.Add(25f, new PointF(0.303f, 0.313f));
+                    ni.ScaleCalibration.Add(30f, new PointF(0.321f, 0.272f));
+                    ni.ScaleCalibration.Add(35f, new PointF(0.361f, 0.257f));
+                    ni.ScaleCalibration.Add(40f, new PointF(0.381f, 0.223f));
+                    ni.ScaleCalibration.Add(50f, new PointF(0.438f, 0.181f));
+                    ni.ScaleCalibration.Add(60f, new PointF(0.483f, 0.155f));
+                    ni.ScaleCalibration.Add(70f, new PointF(0.532f, 0.13f));
+                    ni.ScaleCalibration.Add(80f, new PointF(0.577f, 0.111f));
+                    ni.ScaleCalibration.Add(90f, new PointF(0.619f, 0.098f));
+                    ni.ScaleCalibration.Add(100f, new PointF(0.662f, 0.083f));
+                    ni.NormaliseTo100W = true;
                     ni.Value = 0f;
                     MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                     _meterItems.Add(ni.ID, ni);
@@ -2145,24 +2179,25 @@ namespace Thetis
                     ni.LengthFactor = 1.62f;
                     ni.ScaleStrokeWidth = true;
                     ni.ScaleCalibration.Add(0f, new PointF(0.948f, 0.74f));
-                    ni.ScaleCalibration.Add(0.5f, new PointF(0.913f, 0.7f));
-                    ni.ScaleCalibration.Add(1f, new PointF(0.899f, 0.638f));
-                    ni.ScaleCalibration.Add(1.5f, new PointF(0.875f, 0.594f));
-                    ni.ScaleCalibration.Add(2f, new PointF(0.854f, 0.538f));
-                    ni.ScaleCalibration.Add(4f, new PointF(0.814f, 0.443f));
-                    ni.ScaleCalibration.Add(6f, new PointF(0.769f, 0.4f));
-                    ni.ScaleCalibration.Add(8f, new PointF(0.744f, 0.351f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.702f, 0.321f));
-                    ni.ScaleCalibration.Add(12f, new PointF(0.682f, 0.285f));
-                    ni.ScaleCalibration.Add(14f, new PointF(0.646f, 0.268f));
-                    ni.ScaleCalibration.Add(16f, new PointF(0.626f, 0.234f));
-                    ni.ScaleCalibration.Add(18f, new PointF(0.596f, 0.228f));
-                    ni.ScaleCalibration.Add(20f, new PointF(0.569f, 0.196f));
-                    ni.ScaleCalibration.Add(24f, new PointF(0.524f, 0.166f));
-                    ni.ScaleCalibration.Add(28f, new PointF(0.476f, 0.14f));
-                    ni.ScaleCalibration.Add(32f, new PointF(0.431f, 0.121f));
-                    ni.ScaleCalibration.Add(36f, new PointF(0.393f, 0.109f));
-                    ni.ScaleCalibration.Add(40f, new PointF(0.349f, 0.098f));
+                    ni.ScaleCalibration.Add(0.25f, new PointF(0.913f, 0.7f));
+                    ni.ScaleCalibration.Add(0.5f, new PointF(0.899f, 0.638f));
+                    ni.ScaleCalibration.Add(0.75f, new PointF(0.875f, 0.594f));
+                    ni.ScaleCalibration.Add(1f, new PointF(0.854f, 0.538f));
+                    ni.ScaleCalibration.Add(2f, new PointF(0.814f, 0.443f));
+                    ni.ScaleCalibration.Add(3f, new PointF(0.769f, 0.4f));
+                    ni.ScaleCalibration.Add(4f, new PointF(0.744f, 0.351f));
+                    ni.ScaleCalibration.Add(5f, new PointF(0.702f, 0.321f));
+                    ni.ScaleCalibration.Add(6f, new PointF(0.682f, 0.285f));
+                    ni.ScaleCalibration.Add(7f, new PointF(0.646f, 0.268f));
+                    ni.ScaleCalibration.Add(8f, new PointF(0.626f, 0.234f));
+                    ni.ScaleCalibration.Add(9f, new PointF(0.596f, 0.228f));
+                    ni.ScaleCalibration.Add(10f, new PointF(0.569f, 0.196f));
+                    ni.ScaleCalibration.Add(12f, new PointF(0.524f, 0.166f));
+                    ni.ScaleCalibration.Add(14f, new PointF(0.476f, 0.14f));
+                    ni.ScaleCalibration.Add(16f, new PointF(0.431f, 0.121f));
+                    ni.ScaleCalibration.Add(18f, new PointF(0.393f, 0.109f));
+                    ni.ScaleCalibration.Add(20f, new PointF(0.349f, 0.098f));
+                    ni.NormaliseTo100W = true;
                     ni.Value = 0f;
                     MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                     _meterItems.Add(ni.ID, ni);
@@ -2231,15 +2266,15 @@ namespace Thetis
                     ni.DisplayGroup = 1;
                     //ni.Setup = true;
                     ni.ScaleCalibration.Add(0f, new PointF(0.099f, 0.352f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.164f, 0.312f));
-                    ni.ScaleCalibration.Add(20f, new PointF(0.224f, 0.28f));
-                    ni.ScaleCalibration.Add(50f, new PointF(0.335f, 0.236f));
-                    ni.ScaleCalibration.Add(60f, new PointF(0.367f, 0.228f));
-                    ni.ScaleCalibration.Add(80f, new PointF(0.436f, 0.22f));
-                    ni.ScaleCalibration.Add(100f, new PointF(0.499f, 0.212f));
-                    ni.ScaleCalibration.Add(120f, new PointF(0.559f, 0.216f));
-                    ni.ScaleCalibration.Add(200f, new PointF(0.751f, 0.272f));
-                    ni.ScaleCalibration.Add(300f, new PointF(0.899f, 0.352f));
+                    ni.ScaleCalibration.Add(5f, new PointF(0.164f, 0.312f));
+                    ni.ScaleCalibration.Add(10f, new PointF(0.224f, 0.28f));
+                    ni.ScaleCalibration.Add(25f, new PointF(0.335f, 0.236f));
+                    ni.ScaleCalibration.Add(30f, new PointF(0.367f, 0.228f));
+                    ni.ScaleCalibration.Add(40f, new PointF(0.436f, 0.22f));
+                    ni.ScaleCalibration.Add(50f, new PointF(0.499f, 0.212f));
+                    ni.ScaleCalibration.Add(60f, new PointF(0.559f, 0.216f));
+                    ni.ScaleCalibration.Add(100f, new PointF(0.751f, 0.272f));
+                    ni.ScaleCalibration.Add(150f, new PointF(0.899f, 0.352f));
                     ni.Value = 0f;
                     MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                     _meterItems.Add(ni.ID, ni);
@@ -2416,7 +2451,7 @@ namespace Thetis
                     clsBarItem cb;
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (0 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.MIC;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2430,6 +2465,7 @@ namespace Thetis
                     cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                     cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                     cb.ShowValue = false;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
 
@@ -2437,7 +2473,7 @@ namespace Thetis
                     //cb.TopLeft = new PointF(0.05f, 1.4f + (1 * 0.075f));
                     //cb.Size = new SizeF(0.9f, 0.05f);
                     cb.TopLeft = new PointF(fPad, 1.4f + (0 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.MIC_PK;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2451,11 +2487,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                     cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                     cb.ZOrder = 3;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (1 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.EQ;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2476,7 +2513,7 @@ namespace Thetis
                     //cb.TopLeft = new PointF(0.05f, 1.4f + (3 * 0.075f));
                     //cb.Size = new SizeF(0.9f, 0.05f);
                     cb.TopLeft = new PointF(fPad, 1.4f + (1 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.EQ_PK;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2490,11 +2527,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                     cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                     cb.ZOrder = 3;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (2 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.LEVELER;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2515,7 +2553,7 @@ namespace Thetis
                     //cb.TopLeft = new PointF(0.05f, 1.4f + (4 * 0.075f));
                     //cb.Size = new SizeF(0.9f, 0.05f);
                     cb.TopLeft = new PointF(fPad, 1.4f + (2 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.LEVELER_PK;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2529,11 +2567,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                     cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                     cb.ZOrder = 3;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (3 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.LVL_G;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2547,11 +2586,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(20, new PointF(0.75f, 0));
                     cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                     cb.ZOrder = 2;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (4 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.ALC;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2572,7 +2612,7 @@ namespace Thetis
                     //cb.TopLeft = new PointF(0.05f, 1.4f + (9 * 0.075f));
                     //cb.Size = new SizeF(0.9f, 0.05f);
                     cb.TopLeft = new PointF(fPad, 1.4f + (4 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.ALC_PK;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2585,12 +2625,13 @@ namespace Thetis
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                     cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                     cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
+                    cb.ZOrder = 3;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (5 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.ALC_G;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2604,11 +2645,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(20, new PointF(0.75f, 0));
                     cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                     cb.ZOrder = 2;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (6 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.ALC_GROUP;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2622,11 +2664,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
                     cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                     cb.ZOrder = 2;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (7 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.CFC_PK;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2640,11 +2683,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                     cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                     cb.ZOrder = 2;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (8 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.CFC_G;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2658,11 +2702,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(20, new PointF(0.75f, 0));
                     cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                     cb.ZOrder = 2;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (9 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.COMP;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2683,7 +2728,7 @@ namespace Thetis
                     //cb.TopLeft = new PointF(0.05f, 1.4f + (7 * 0.075f));
                     //cb.Size = new SizeF(0.9f, 0.05f);
                     cb.TopLeft = new PointF(fPad, 1.4f + (9 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.COMP_PK;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2697,11 +2742,12 @@ namespace Thetis
                     cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                     cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                     cb.ZOrder = 3;
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (10 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.PWR;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2711,18 +2757,79 @@ namespace Thetis
                     cb.Colour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
                     cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(10, new PointF(0.1875f, 0));
-                    cb.ScaleCalibration.Add(20, new PointF(0.375f, 0));
-                    cb.ScaleCalibration.Add(100, new PointF(0.5625f, 0));
-                    cb.ScaleCalibration.Add(200, new PointF(0.75f, 0));
-                    cb.ScaleCalibration.Add(240, new PointF(0.98f, 0));
+
+                    switch(CurrentPowerRating)
+                    {
+                        case 500:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(50, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(100, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(250, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(500, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(600, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 200:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(20, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(100, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(200, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(240, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 100:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(50, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(100, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(120, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 30:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(20, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(30, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(50, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 15:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(1, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(5, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(15, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(25, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 1:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(0.1f, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(0.25f, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(0.5f, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(0.8f, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(1f, new PointF(0.98f, 0));
+
+                            }
+                            break;
+                    }
+
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (11 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.REVERSE_PWR;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2732,18 +2839,79 @@ namespace Thetis
                     cb.Colour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
                     cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(10, new PointF(0.1875f, 0));
-                    cb.ScaleCalibration.Add(20, new PointF(0.375f, 0));
-                    cb.ScaleCalibration.Add(100, new PointF(0.5625f, 0));
-                    cb.ScaleCalibration.Add(200, new PointF(0.75f, 0));
-                    cb.ScaleCalibration.Add(240, new PointF(0.98f, 0));
+
+                    switch (CurrentPowerRating)
+                    {
+                        case 500:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(50, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(100, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(250, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(500, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(600, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 200:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(20, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(100, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(200, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(240, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 100:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(50, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(100, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(120, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 30:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(20, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(30, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(50, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 15:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(1, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(5, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(10, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(15, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(25, new PointF(0.98f, 0));
+                            }
+                            break;
+                        case 1:
+                            {
+                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                                cb.ScaleCalibration.Add(0.1f, new PointF(0.1875f, 0));
+                                cb.ScaleCalibration.Add(0.25f, new PointF(0.375f, 0));
+                                cb.ScaleCalibration.Add(0.5f, new PointF(0.5625f, 0));
+                                cb.ScaleCalibration.Add(0.8f, new PointF(0.75f, 0));
+                                cb.ScaleCalibration.Add(1f, new PointF(0.98f, 0));
+
+                            }
+                            break;
+                    }
+
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
 
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 1.4f + (12 * 0.075f));
-                    cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                    cb.Size = new SizeF(1f - fPad * 2f, 0.06f);
                     cb.ReadingSource = Reading.SWR;
                     cb.AttackRatio = 0.8f;
                     cb.DecayRatio = 0.1f;
@@ -2758,6 +2926,7 @@ namespace Thetis
                     cb.ScaleCalibration.Add(2, new PointF(0.5f, 0));
                     cb.ScaleCalibration.Add(3, new PointF(0.75f, 0));
                     cb.ScaleCalibration.Add(5, new PointF(0.99f, 0));
+                    cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
 
@@ -2772,7 +2941,7 @@ namespace Thetis
                         {
                             cs = new clsScaleItem();
                             cs.TopLeft = new PointF(fPad, 1.4f + (nCount * 0.075f));
-                            cs.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                            cs.Size = new SizeF(1f - fPad * 2f, 0.06f);
                             cs.ReadingSource = mi.ReadingSource;//Reading.MIC_PK;
                             cs.ZOrder = 4;
                             cs.ShowType = true;
@@ -2791,7 +2960,7 @@ namespace Thetis
                     {
                         solidColour = new clsSolidColour();
                         solidColour.TopLeft = new PointF(fPad, 1.4f + (i * 0.075f));
-                        solidColour.Size = new SizeF(1f - fPad * 2f, 0.05f);
+                        solidColour.Size = new SizeF(1f - fPad * 2f, 0.06f);
                         solidColour.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
                         solidColour.ZOrder = 1;
                         _meterItems.Add(solidColour.ID, solidColour);
@@ -3375,8 +3544,8 @@ namespace Thetis
                                 // background for entire form/area?
                                 _renderTarget.Clear(_backColour);
 
-                                SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
-                                _renderTarget.DrawRectangle(rect, getDXBrushForColour(System.Drawing.Color.FromArgb(255, 64, 64, 64)));
+                                //SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
+                                //_renderTarget.DrawRectangle(rect, getDXBrushForColour(System.Drawing.Color.FromArgb(255, 64, 64, 64)));
 
                                 drawMeters();
 
@@ -3777,19 +3946,24 @@ namespace Thetis
 
                 if (scale.ItemType == clsMeterItem.MeterItemType.H_SCALE)
                 {
-                    float fontSize = 38f;
-                    SizeF adjustedFontSize = measureString("1", scale.FontFamily, scale.Style, fontSize);
+                    float fontSize = 32f;
+                    SizeF adjustedFontSize = measureString("0", scale.FontFamily, scale.Style, fontSize);
                     float ratio = h / adjustedFontSize.Height;
                     float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
-                    float fLineBaseY = y + (h * 0.85f);
 
                     if (scale.ShowType)
                     {
                         string sText = scale.TypeName;
                         adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
                         SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - adjustedFontSize.Height, adjustedFontSize.Width, adjustedFontSize.Height);
-                        _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourLow));
+                        _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourType));
                     }
+
+                    fontSize = 54f;
+                    adjustedFontSize = measureString("0", scale.FontFamily, scale.Style, fontSize);
+                    ratio = h / adjustedFontSize.Height;
+                    newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+                    float fLineBaseY = y + (h * 0.85f);
 
                     switch (scale.ReadingSource)
                     {
@@ -4056,6 +4230,7 @@ namespace Thetis
                         case Reading.PWR:
                         case Reading.REVERSE_PWR:
                             {
+                                string[] list500 = { "50", "100", "250", "500", "600+" };
                                 string[] list200 = { "10", "20", "100", "200", "240+" };
                                 string[] list100 = { "5", "10", "50", "100", "120+" };
                                 string[] list30 = { "5", "10", "20", "30", "50+" };
@@ -4066,6 +4241,9 @@ namespace Thetis
                                 string[] powerList;
                                 switch (nPower)
                                 {
+                                    case 500:
+                                        powerList = list500;
+                                        break;
                                     case 200:
                                         powerList = list200;
                                         break;
@@ -4082,7 +4260,7 @@ namespace Thetis
                                         powerList = list1;
                                         break;
                                     default:
-                                        powerList = list200;
+                                        powerList = list500;
                                         break;
                                 }
 
@@ -4333,48 +4511,59 @@ namespace Thetis
 
                 Ellipse e = new Ellipse(centre, w / 2f, h / 2f);
 
-                _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
-
-                PointF min, max;
-                float percX, percY;
-                getPerc(magicEye, magicEye.Value, out percX, out percY, out min, out max);
-
-                float fDeg = (360f - (int)(360 * percX)) / 2f;
-                float fRad = (float)degToRad(fDeg);
-                float fRad180 = 0;// (float)degToRad(180f);
-
-                float radiusX = w / 2f;
-                float radiusY = h / 2f;
-                float endMaxX = centre.X + (float)Math.Sin(fRad180 - fRad) * radiusX;
-                float endMaxY = centre.Y + (float)Math.Cos(fRad180 - fRad) * radiusY;
-                float endMinX = centre.X + (float)Math.Sin(fRad180 + fRad) * radiusX;
-                float endMinY = centre.Y + (float)Math.Cos(fRad180 + fRad) * radiusY;
-
-                PathGeometry sharpGeometry = new PathGeometry(_renderTarget.Factory);
-
-                GeometrySink geo = sharpGeometry.Open();
-                geo.BeginFigure(new SharpDX.Vector2(centre.X, centre.Y), FigureBegin.Filled);
-
-                geo.AddLine(new SharpDX.Vector2(endMinX, endMinY));
-
-                ArcSegment arcSegment = new ArcSegment();
-                arcSegment.Point = new SharpDX.Vector2(endMaxX, endMaxY);
-                arcSegment.SweepDirection = SweepDirection.Clockwise;
-                arcSegment.ArcSize = fDeg <= 90f ? ArcSize.Small : ArcSize.Large;
-                arcSegment.Size = new Size2F(radiusX, radiusY);
-                geo.AddArc(arcSegment);
-
-                geo.EndFigure(FigureEnd.Closed); // adds the closing line
-                geo.Close();
-
                 System.Drawing.Color c = magicEye.Colour;
                 SharpDX.Direct2D1.Brush br = getDXBrushForColour(System.Drawing.Color.FromArgb(255, (int)(c.R * 0.35f), (int)(c.G * 0.35f), (int)(c.B * 0.35f)));
-                _renderTarget.FillGeometry(sharpGeometry, br);
 
-                Utilities.Dispose(ref geo);
-                geo = null;
-                Utilities.Dispose(ref sharpGeometry);
-                sharpGeometry = null;
+                if (magicEye.Value <= 0.01f)
+                {
+                    _renderTarget.FillEllipse(e, br);
+                }
+                else if (magicEye.Value >= 0.99f)
+                {
+                    _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
+                }
+                else
+                {
+                    _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
+
+                    PointF min, max;
+                    float percX, percY;
+                    getPerc(magicEye, magicEye.Value, out percX, out percY, out min, out max);
+
+                    float fDeg = (360f - (int)(360 * percX)) / 2f;
+                    float fRad = (float)degToRad(fDeg);
+
+                    float radiusX = w / 2f;
+                    float radiusY = h / 2f;
+                    float endMaxX = centre.X + (float)Math.Sin(-fRad) * radiusX;
+                    float endMaxY = centre.Y + (float)Math.Cos(-fRad) * radiusY;
+                    float endMinX = centre.X + (float)Math.Sin(fRad) * radiusX;
+                    float endMinY = centre.Y + (float)Math.Cos(fRad) * radiusY;
+
+                    PathGeometry sharpGeometry = new PathGeometry(_renderTarget.Factory);
+
+                    GeometrySink geo = sharpGeometry.Open();
+                    geo.BeginFigure(new SharpDX.Vector2(centre.X, centre.Y), FigureBegin.Filled);
+
+                    geo.AddLine(new SharpDX.Vector2(endMinX, endMinY));
+
+                    ArcSegment arcSegment = new ArcSegment();
+                    arcSegment.Point = new SharpDX.Vector2(endMaxX, endMaxY);
+                    arcSegment.SweepDirection = SweepDirection.Clockwise;
+                    arcSegment.ArcSize = fDeg <= 90f ? ArcSize.Small : ArcSize.Large;
+                    arcSegment.Size = new Size2F(radiusX, radiusY);
+                    geo.AddArc(arcSegment);
+
+                    geo.EndFigure(FigureEnd.Closed); // adds the closing line
+                    geo.Close();
+
+                    _renderTarget.FillGeometry(sharpGeometry, br);
+
+                    Utilities.Dispose(ref geo);
+                    geo = null;
+                    Utilities.Dispose(ref sharpGeometry);
+                    sharpGeometry = null;
+                }
 
                 e.RadiusX = w / 6f;
                 e.RadiusY = w / 6f;
@@ -4458,7 +4647,7 @@ namespace Thetis
                     string sText = cbi.Value.ToString("0.0") + cbi.TypeUnits;
 
                     float fontSize = 38f;//cbi.FontSize; //38f;
-                    SizeF adjustedFontSize = measureString("1", cbi.FontFamily, cbi.FntStyle, fontSize);
+                    SizeF adjustedFontSize = measureString("0", cbi.FontFamily, cbi.FntStyle, fontSize);
                     float ratio = h / adjustedFontSize.Height;
                     float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
 
@@ -4792,9 +4981,9 @@ namespace Thetis
                 if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                     value += MeterManager.dbmOffsetForAbove30(_rx);
 
-                // normalise to 200w
-                else if (mi.ReadingSource == Reading.PWR || mi.ReadingSource == Reading.REVERSE_PWR)
-                    value *= MeterManager.normaliseTo200W();
+                // normalise to 100w for needles?
+                else if (mi.NormaliseTo100W)
+                    value *= MeterManager.normaliseTo100W();
 
 
                 if (mi.ScaleCalibration.Count > 0)
