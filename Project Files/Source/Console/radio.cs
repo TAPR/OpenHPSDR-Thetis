@@ -33,10 +33,13 @@ namespace Thetis
     using System.Collections.Generic;
     using System.Threading;
     using System.Diagnostics;
+    using System.Security.Policy;
+    using System.Text.RegularExpressions;
+
+
 
     #region Radio Class 
-
-	public class Radio
+    public class Radio
 	{
 		private const int NUM_RX_THREADS = 2;
 		private const int NUM_RX_PER_THREAD = 2;
@@ -3219,38 +3222,78 @@ namespace Thetis
 
     class MNotchDB
     {
-        private static List<MNotch> list = new List<MNotch>();
-        public static List<MNotch> List
+        private static List<MNotch> _lstNotches = new List<MNotch>();
+        //private static List<MNotch> NotchList
+        //{
+        //    get
+        //    {
+        //        lock (_listLock)
+        //        {
+        //            return _lstNotches;
+        //        }
+        //    }
+        //}
+        public static void Clear()
         {
-            get { return list; }
+            lock (_listLock)
+            {
+                _lstNotches.Clear();
+            }
+        }
+        public static int IndexOf(MNotch mNotch)
+        {
+            lock (_listLock)
+            {
+                return _lstNotches.IndexOf(mNotch);
+            }
+        }
+        public static void Add(MNotch mNotch)
+        {
+            lock (_listLock)
+            {
+                _lstNotches.Add(mNotch);
+            }
+        }
+        public static int Count
+        {
+            get
+            {
+                lock (_listLock)
+                {
+                    return _lstNotches.Count;
+                }
+            }
+        }
+        public static MNotch NotchFromIndex(int index)
+        {
+            lock (_listLock)
+            {
+                return _lstNotches[index];
+            }
         }
 
-        private static Object m_objListLock = new Object(); //MW0LGE_21k8
+        private static Object _listLock = new Object(); //MW0LGE_21k8
         //MW0LGE return a notch that matches
         public static MNotch GetFirstNotchThatMatches(double freqHz, double fwidth, bool bActive)
         {
-            MNotch notch = null;
-
-            lock (m_objListLock)
+            lock (_listLock)
             {
-                foreach (MNotch n in list)
+                foreach (MNotch n in _lstNotches)
                 {
                     if (n.FCenter == freqHz && n.FWidth == fwidth && n.Active == bActive)
                     {
-                        notch = n;
-                        break;
+                        return n;
                     }
                 }
+                return null;
             }
-
-            return notch;
         }
         //MW0LGE check if notch close by
         public static bool NotchNearFreq(double freqHz, int deltaHz)
         {
-            lock (m_objListLock)
+            lock (_listLock)
             {
-                foreach (MNotch n in list)
+                foreach (MNotch n in _lstNotches)
                 {
                     if (Math.Abs(freqHz - n.FCenter) < deltaHz) return true;
                 }
@@ -3263,50 +3306,53 @@ namespace Thetis
         //notch is included if filter width is enough to be within the BW
         public static List<MNotch> NotchesInBW(double centreBWFreqHz, int lowHz, int highHz)
         {
-            List<MNotch> l = new List<MNotch>();
-            double min = centreBWFreqHz + lowHz;
-            double max = centreBWFreqHz + highHz;
-
-            lock (m_objListLock)
+            lock (_listLock)
             {
-                foreach (MNotch n in list)
+                List<MNotch> l = new List<MNotch>();
+                double min = centreBWFreqHz + lowHz;
+                double max = centreBWFreqHz + highHz;
+
+                foreach (MNotch n in _lstNotches)
                 {
                     if (((n.FCenter + n.FWidth / 2) >= min) && ((n.FCenter - n.FWidth / 2) <= max))
+                    {
                         l.Add(n);
+                    }                        
                 }
-            }
 
-            return l;
+                return l;
+            }
         }
 
         //MW0LGE return first notch found that surrounds a given frequency in the given bandwidth        
         public static MNotch NotchThatSurroundsFrequencyInBW(double centreBWFreqHz, int lowHz, int highHz, double freqHz, int nPadWidth = 0)
         {
-            MNotch notch = null;
             List<MNotch> l = NotchesInBW(centreBWFreqHz, lowHz, highHz);
 
-            if (l.Count > 0)
+            lock (_listLock)
             {
-                foreach (MNotch n in l)
+                if (l.Count > 0)
                 {
-                    double dLf = n.FCenter - n.FWidth / 2;
-                    double dHf = n.FCenter + n.FWidth / 2;
-
-                    if(n.FWidth<(nPadWidth*2))
+                    foreach (MNotch n in l)
                     {
-                        dLf -= nPadWidth;
-                        dHf += nPadWidth;
-                    }
+                        double dLf = n.FCenter - n.FWidth / 2;
+                        double dHf = n.FCenter + n.FWidth / 2;
 
-                    if (freqHz >= dLf && freqHz <= dHf)
-                    {
-                        notch = n;
-                        break;
+                        if (n.FWidth < (nPadWidth * 2))
+                        {
+                            dLf -= nPadWidth;
+                            dHf += nPadWidth;
+                        }
+
+                        if (freqHz >= dLf && freqHz <= dHf)
+                        {
+                            return n;
+                        }
                     }
                 }
-            }
 
-            return notch;
+                return null;
+            }
         }
     }
 

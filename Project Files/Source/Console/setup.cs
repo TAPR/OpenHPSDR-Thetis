@@ -3196,6 +3196,7 @@ namespace Thetis
                 if (udATTOnTX != null)
                 {
                     if (value > 31) value = 31;
+                    if (value < 0) value = 0; //MW0LGE [2.9.0.7] added after mi0bot source review
                     udATTOnTX.Value = value;
                 }
             }
@@ -7891,7 +7892,6 @@ namespace Thetis
             //    comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
             //    comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
             //}
-
         }
 
         private void comboAudioSampleRateRX2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -7902,7 +7902,10 @@ namespace Thetis
             int new_rate = Int32.Parse(comboAudioSampleRateRX2.Text);
             bool was_enabled = console.RX2Enabled;
 
-            if ((NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) && (new_rate != old_rate || initializing || m_bForceAudio))
+            // MW0LGE [2.9.07] always initialise rx2 even if P1. Thanks to Reid (Gi8TME/Mi0BOT) and DH1KLM
+            // see https://github.com/ramdor/Thetis-2.9.0/issues/66
+            //if ((NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) && (new_rate != old_rate || initializing || m_bForceAudio))
+            if (new_rate != old_rate || initializing || m_bForceAudio)
             {
                 // turn OFF the DSP channel so it gets flushed out (must do while data is flowing to get slew-down and flush)
                 WDSP.SetChannelState(WDSP.id(2, 0), 0, 1);
@@ -18897,29 +18900,33 @@ namespace Thetis
             WDSP.RXANBPSetAutoIncrease(WDSP.id(2, 0), chkMNFAutoIncrease.Checked);
         }
 
+        private Object _notchLock = new Object();
         unsafe public void SaveNotchesToDatabase()
         {
-            // get the number of notches that exist
-            int nn;
-            WDSP.RXANBPGetNumNotches(WDSP.id(0, 0), &nn);
-            numnotches = nn;
-            // HERE:  SAVE 'numnotches', THE NUMBER OF NOTCHES, TO THE DATABASE
-            MNotchDB.List.Clear();
-            for (int i = 0; i < numnotches; i++)
+            lock (_notchLock)
             {
-                double fcenter, fwidth;
-                int active;
-                // get fcenter, fwidth, and active for a notch
-                WDSP.RXANBPGetNotch(WDSP.id(0, 0), i, &fcenter, &fwidth, &active);
-                // HERE:  SAVE fcenter, fwidth, and active FOR THIS NOTCH TO THE DATABASE
-                MNotchDB.List.Add(new MNotch(fcenter, fwidth, Convert.ToBoolean(active)));
+                // get the number of notches that exist
+                int nn;
+                WDSP.RXANBPGetNumNotches(WDSP.id(0, 0), &nn);
+                numnotches = nn;
+                // HERE:  SAVE 'numnotches', THE NUMBER OF NOTCHES, TO THE DATABASE
+                MNotchDB.Clear();
+                for (int i = 0; i < numnotches; i++)
+                {
+                    double fcenter, fwidth;
+                    int active;
+                    // get fcenter, fwidth, and active for a notch
+                    WDSP.RXANBPGetNotch(WDSP.id(0, 0), i, &fcenter, &fwidth, &active);
+                    // HERE:  SAVE fcenter, fwidth, and active FOR THIS NOTCH TO THE DATABASE
+                    MNotchDB.Add(new MNotch(fcenter, fwidth, Convert.ToBoolean(active)));
+                }
             }
         }
 
         unsafe public void UpdateNotchDisplay()
         {
             // sets max limits, and selects first notch if one exists
-            numnotches = MNotchDB.List.Count;
+            numnotches = MNotchDB.Count;
             udMNFNotch.Value = 0;
             udMNFNotch.Maximum = 0;
             if (numnotches > 0)
@@ -18952,15 +18959,15 @@ namespace Thetis
         unsafe public void RestoreNotchesFromDatabase()
         {
             // HERE:  Read the number of notches, 'numnotches' from the database
-            for (int i = 0; i < MNotchDB.List.Count; i++)
+            for (int i = 0; i < MNotchDB.Count; i++)
             {
                 double fcenter = 0.0, fwidth = 0.0;
                 bool active = false;
 
                 // HERE:  READ VALUES OF fcenter, fwidth, and active FOR NOTCH[i] FROM THE DATABASE
-                fcenter = MNotchDB.List[i].FCenter;
-                fwidth = MNotchDB.List[i].FWidth;
-                active = MNotchDB.List[i].Active;
+                fcenter = MNotchDB.NotchFromIndex(i).FCenter;
+                fwidth = MNotchDB.NotchFromIndex(i).FWidth;
+                active = MNotchDB.NotchFromIndex(i).Active;
 
                 WDSP.RXANBPAddNotch(WDSP.id(0, 0), i, fcenter, fwidth, active);
                 WDSP.RXANBPAddNotch(WDSP.id(0, 1), i, fcenter, fwidth, active);

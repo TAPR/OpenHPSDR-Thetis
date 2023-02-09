@@ -2870,9 +2870,9 @@ namespace Thetis
                 a.Add("last_rx2_filter[" + m.ToString() + "]/" + rx2_filters[m].LastFilter.ToString());
             }
 
-            for (int i = 0; i < MNotchDB.List.Count; i++)
+            for (int i = 0; i < MNotchDB.Count; i++)
             {
-                a.Add("mnotchdb[" + i + "]/" + MNotchDB.List[i].ToString());
+                a.Add("mnotchdb[" + i + "]/" + MNotchDB.NotchFromIndex(i).ToString());
             }
 
             for (int i = 0; i < (int)Band.LAST; i++)
@@ -4081,7 +4081,7 @@ namespace Thetis
                         break;
 
                     case var nam when name.StartsWith("mnotchdb"):
-                        MNotchDB.List.Add(MNotch.Parse(val));
+                        MNotchDB.Add(MNotch.Parse(val));
                         break;
 
                     case var nam when name.StartsWith("last_rx1_filter["):
@@ -5101,8 +5101,8 @@ namespace Thetis
             {
                 if (c is RadioButtonTS b)
                 {
-                    //b.Enabled = b.Text != "2" || XVTRPresent; //MW0LGE_[2.9.0.7] 2 not used in this button any more, instead we ignore LFMF
-                    b.Enabled = c != radBand2;
+                    //b.Enabled = b.Text != "2" || XVTRPresent; //MW0LGE_[2.9.0.7] "2" not used in this button any more, instead we ignore LFMF
+                    b.Enabled = c != radBand2 || XVTRPresent;
 
                     if (b.BackColor == vfo_text_dark_color)
                     b.BackColor = button_selected_color;
@@ -36320,7 +36320,7 @@ namespace Thetis
                         {
                             // ok are we over the top of a notch?
                             // we pad it with 1pixel worth of hz to make it selectable at low zoom
-                            SelectedNotch = MNotchDB.NotchThatSurroundsFrequencyInBW(dCentreFreq, nL, nH, dVfo, HzInNPixels(1, nRX));
+                            SelectedNotch = MNotchDB.NotchThatSurroundsFrequencyInBW(dCentreFreq, nL - max_filter_width, nH + max_filter_width, dVfo, HzInNPixels(1, nRX));
                         }
                         else
                         {
@@ -36331,8 +36331,6 @@ namespace Thetis
                     {
                         // drag the whole notch
                         double diff = PixelToHz(e.X, nRX) - PixelToHz(drag_notch_start_point.X, nRX);
-                        // check to see if outside frequency limits
-                        bool bOk = true;
 
                         //MW0LGE_21e XVTR
                         double f = drag_notch_start_data + diff;
@@ -36358,10 +36356,19 @@ namespace Thetis
                         }
                         //
 
-                        if (f - (SelectedNotch.FWidth / 2) < tmpMin * 1e6) bOk = false;
-                        if (f + (SelectedNotch.FWidth / 2) > tmpMax * 1e6) bOk = false;
+                        if (SelectedNotch != null)
+                        {
+                            // check to see if outside frequency limits
+                            bool bOk = true;
+                            if (f - (SelectedNotch.FWidth / 2) < tmpMin * 1e6) bOk = false;
+                            if (f + (SelectedNotch.FWidth / 2) > tmpMax * 1e6) bOk = false;
 
-                        if (bOk) SelectedNotch.FCenter = drag_notch_start_data + diff;
+                            if (bOk)
+                            {
+                                SelectedNotch.FCenter = drag_notch_start_data + diff;
+                                changeNotchCentreFrequency(SelectedNotch, SelectedNotch.FCenter, m_nNotchRX); //MW0LGE [2.9.0.7] update on drag
+                            }
+                        }
                     }
                     else if (m_bDraggingNotchBW && nRX != 0)
                     {
@@ -36380,9 +36387,6 @@ namespace Thetis
 
                         if (tmp < 0) tmp = 0;
                         if (tmp > max_filter_width) tmp = max_filter_width;
-
-                        // check to see if outside frequency limits
-                        bool bOk = true;
 
                         //MW0LGE_21e XVTR
                         double tmpMin = min_freq;
@@ -36406,10 +36410,16 @@ namespace Thetis
                             }
                         }
                         //
+                        // check to see if outside frequency limits
+                        bool bOk = true;
                         if (SelectedNotch.FCenter - (tmp / 2) < tmpMin * 1e6) bOk = false;
                         if (SelectedNotch.FCenter + (tmp / 2) > tmpMax * 1e6) bOk = false;
 
-                        if (bOk) SelectedNotch.FWidth = tmp;
+                        if (bOk)
+                        {
+                            SelectedNotch.FWidth = tmp;
+                            changeNotchBW(SelectedNotch, SelectedNotch.FWidth);
+                        }
                     }
                 }
                 //END NOTCH
@@ -46784,7 +46794,7 @@ namespace Thetis
             if (SetupForm.NotchAdminBusy) return false; // cant change it if setup is adding/editing
 
             bool bRet = false;
-            int nIndex = MNotchDB.List.IndexOf(notch);
+            int nIndex = MNotchDB.IndexOf(notch);
 
             if (nIndex >= 0)
             {
@@ -46847,7 +46857,7 @@ namespace Thetis
             newCentreFrequencyHz = Math.Round(newCentreFrequencyHz);
 
             bool bRet = false;
-            int nIndex = MNotchDB.List.IndexOf(notch);
+            int nIndex = MNotchDB.IndexOf(notch);
 
             if (nIndex >= 0)
             {
@@ -46868,9 +46878,8 @@ namespace Thetis
                 SetupForm.UpdateNotchDisplay();
 
                 // find the previously selected notch, which would have been lost due to savenotchestodb
-                if (bSelected) SelectedNotch = MNotchDB.GetFirstNotchThatMatches(fcenter, fwidth, bActive);
-
-                bRet = true;
+                //if (bSelected) SelectedNotch = MNotchDB.GetFirstNotchThatMatches(fcenter, fwidth, bActive); //MW0LGE [2.9.0.7] fix old bug, we need to find the notch for the updated freq
+                if (bSelected) SelectedNotch = MNotchDB.GetFirstNotchThatMatches(newCentreFrequencyHz, fwidth, bActive);
             }
 
             return bRet;
@@ -46881,7 +46890,7 @@ namespace Thetis
             if (SetupForm.NotchAdminBusy) return false; // cant change it if setup is adding/editing
 
             bool bRet = false;
-            int nIndex = MNotchDB.List.IndexOf(notch);
+            int nIndex = MNotchDB.IndexOf(notch);
 
             if (nIndex >= 0)
             {
@@ -46912,7 +46921,7 @@ namespace Thetis
             if (SetupForm.NotchAdminBusy) return false; // cant change it if setup is adding/editing
 
             bool bRet = false;
-            int nIndex = MNotchDB.List.IndexOf(notch);
+            int nIndex = MNotchDB.IndexOf(notch);
 
             if (nIndex >= 0)
             {
@@ -46946,7 +46955,7 @@ namespace Thetis
             if (SetupForm.NotchAdminBusy) return false; // cant remove it if setup is adding/editing
 
             bool bRet = false;
-            int nIndex = MNotchDB.List.IndexOf(notch);
+            int nIndex = MNotchDB.IndexOf(notch);
 
             if (nIndex >= 0)
             {
@@ -47779,7 +47788,7 @@ namespace Thetis
             //panelModeSpecificPhone.Show();
             //panelModeSpecificDigital.Show();
             //panelModeSpecificFM.Show();
-            SelectModeDependentPanel();
+            //SelectModeDependentPanel();  //MW0LGE [2.9.0.7] moved to end
 
             panelFilter.Show();
             panelMode.Show();
@@ -48124,6 +48133,8 @@ namespace Thetis
             isexpanded = true;
             iscollapsed = false;
 
+            SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
+
             this.Text = BasicTitleBar; //MW0LGE_21a moved here after expaned is true so that title text gets rebuild correctly
         }
 
@@ -48241,10 +48252,10 @@ namespace Thetis
             panelDSP.Hide();
             panelDisplay2.Hide();
             panelMultiRX.Hide();
-            panelModeSpecificCW.Hide();
-            panelModeSpecificPhone.Hide();
-            panelModeSpecificDigital.Hide();
-            panelModeSpecificFM.Hide();
+            //panelModeSpecificCW.Hide(); //MW0LGE [2.9.0.7] moved after flag change at end of function
+            //panelModeSpecificPhone.Hide();
+            //panelModeSpecificDigital.Hide();
+            //panelModeSpecificFM.Hide();            
             panelFilter.Hide();
 
             if (panelBandHF.Visible)
@@ -48745,6 +48756,8 @@ namespace Thetis
 
             iscollapsed = true;
             isexpanded = false;
+
+            SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
         }
 
 
@@ -54324,61 +54337,7 @@ namespace Thetis
         private void picRX2Meter_Click(object sender, EventArgs e)
         {
         }
-        //private float _gREF = 0;
-        //private int _gIDX = 0;
-        private void buttonTS1_Click(object sender, EventArgs e)
-        {
-            //_gIDX++;
-            //if (_gIDX > 11) _gIDX = 0;
-
-            //float vswr = 0;
-            //switch (_gIDX)
-            //{
-            //    case 0:
-            //        vswr = 1f;
-            //        break;
-            //    case 1:
-            //        vswr = 1.1f;
-            //        break;
-            //    case 2:
-            //        vswr = 1.2f;
-            //        break;
-            //    case 3:
-            //        vswr = 1.3f;
-            //        break;
-            //    case 4:
-            //        vswr = 1.4f;
-            //        break;
-            //    case 5:
-            //        vswr = 1.5f;
-            //        break;
-            //    case 6:
-            //        vswr = 1.6f;
-            //        break;
-            //    case 7:
-            //        vswr = 1.8f;
-            //        break;
-            //    case 8:
-            //        vswr = 2f;
-            //        break;
-            //    case 9:
-            //        vswr = 3f;
-            //        break;
-            //    case 10:
-            //        vswr = 5f;
-            //        break;
-            //    case 11:
-            //        vswr = float.MaxValue;
-            //        break;
-            //}
-
-            //float reflectCoef = (vswr - 1) / (vswr + 1);
-            //float reflectCoefVPercent = (float)Math.Pow(reflectCoef, 2f);
-            //float maxPower = _RX1MeterValues[Reading.PWR];
-
-            //_gREF = maxPower * reflectCoefVPercent;
-        }
-
+        
         private void returnMeterFromFloating(ucMeter m, frmMeterDisplay frm)
         {
             frm.Hide();

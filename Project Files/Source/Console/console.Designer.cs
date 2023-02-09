@@ -904,10 +904,8 @@
             this.toolStripStatusLabel_Date = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_LocalTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
-            this.buttonTS2 = new System.Windows.Forms.ButtonTS();
             this.ucDockedMeterRX2 = new Thetis.ucMeter();
             this.ucDockedMeterRX1 = new Thetis.ucMeter();
-            this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
             this.pnlResizeMeter = new System.Windows.Forms.PanelTS();
             this.picMultiMeterDigital = new System.Windows.Forms.PictureBox();
@@ -5263,19 +5261,12 @@
             this.tmrAutoAGC.Interval = 500;
             this.tmrAutoAGC.Tick += new System.EventHandler(this.tmrAutoAGC_Tick);
             // 
-            // buttonTS2
-            // 
-            resources.ApplyResources(this.buttonTS2, "buttonTS2");
-            this.buttonTS2.Name = "buttonTS2";
-            this.buttonTS2.Selectable = true;
-            this.buttonTS2.UseVisualStyleBackColor = true;
-            this.buttonTS2.Click += new System.EventHandler(this.buttonTS2_Click);
-            // 
             // ucDockedMeterRX2
             // 
             resources.ApplyResources(this.ucDockedMeterRX2, "ucDockedMeterRX2");
             this.ucDockedMeterRX2.AxisLock = Thetis.Axis.NONE;
             this.ucDockedMeterRX2.BackColor = System.Drawing.Color.Transparent;
+            this.ucDockedMeterRX2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ucDockedMeterRX2.Delta = new System.Drawing.Point(0, 0);
             this.ucDockedMeterRX2.DockedLocation = new System.Drawing.Point(0, 0);
             this.ucDockedMeterRX2.DockedSize = new System.Drawing.Size(407, 403);
@@ -5290,6 +5281,7 @@
             resources.ApplyResources(this.ucDockedMeterRX1, "ucDockedMeterRX1");
             this.ucDockedMeterRX1.AxisLock = Thetis.Axis.NONE;
             this.ucDockedMeterRX1.BackColor = System.Drawing.Color.Black;
+            this.ucDockedMeterRX1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ucDockedMeterRX1.Delta = new System.Drawing.Point(0, 0);
             this.ucDockedMeterRX1.DockedLocation = new System.Drawing.Point(0, 0);
             this.ucDockedMeterRX1.DockedSize = new System.Drawing.Size(407, 403);
@@ -5298,14 +5290,6 @@
             this.ucDockedMeterRX1.RX = 1;
             this.ucDockedMeterRX1.FloatingDockedClicked += new System.EventHandler(this.ucDockedMeterRX1_FloatingDockedClicked);
             this.ucDockedMeterRX1.DockedMoved += new System.EventHandler(this.ucDockedMeterRX1_DockedMoved);
-            // 
-            // buttonTS1
-            // 
-            resources.ApplyResources(this.buttonTS1, "buttonTS1");
-            this.buttonTS1.Name = "buttonTS1";
-            this.buttonTS1.Selectable = true;
-            this.buttonTS1.UseVisualStyleBackColor = true;
-            this.buttonTS1.Click += new System.EventHandler(this.buttonTS1_Click);
             // 
             // grpMultimeter
             // 
@@ -7388,10 +7372,8 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Controls.Add(this.buttonTS2);
             this.Controls.Add(this.ucDockedMeterRX2);
             this.Controls.Add(this.ucDockedMeterRX1);
-            this.Controls.Add(this.buttonTS1);
             this.Controls.Add(this.statusStripMain);
             this.Controls.Add(this.grpMultimeter);
             this.Controls.Add(this.panelFilter);
@@ -7697,9 +7679,7 @@
         private LabelTS lblTune;
         private LabelTS lblPAProfile;
         private LabelTS labelTS2;
-        private ButtonTS buttonTS1;
         private ucMeter ucDockedMeterRX1;
         private ucMeter ucDockedMeterRX2;
-        private ButtonTS buttonTS2;
     }
 }

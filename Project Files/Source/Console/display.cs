@@ -63,6 +63,7 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
+    using WindowsFirewallHelper.Addresses;
 
     class Display
     {
@@ -764,6 +765,7 @@ namespace Thetis
         private static int displayTargetHeight = 0;	// target height
         private static int displayTargetWidth = 0;	// target width
         private static Control displayTarget = null;
+        private static double _mnfMinSize = 100;
         public static Control Target
         {
             get { return displayTarget; }
@@ -777,6 +779,8 @@ namespace Thetis
                     displayTargetWidth = Math.Min(displayTarget.Width, BUFFER_SIZE);
 
                     initDisplayArrays(displayTargetWidth, displayTargetHeight);
+
+                    UpdateMNFminWidth();
 
                     if (!_bDX2Setup)
                     {
@@ -797,6 +801,17 @@ namespace Thetis
                         console.specRX.GetSpecRX(1).Pixels = displayTargetWidth / m_nDecimation;
                         console.specRX.GetSpecRX(cmaster.inid(1, 0)).Pixels = displayTargetWidth / m_nDecimation;
                     }
+                }
+            }
+        }
+
+        public static void UpdateMNFminWidth()
+        {
+            unsafe
+            {
+                fixed (double* ptr = &_mnfMinSize)
+                {
+                    WDSP.RXANBPGetMinNotchWidth(0, ptr);
                 }
             }
         }
@@ -3847,6 +3862,90 @@ namespace Thetis
         {
             get { return m_fActiveDisplayOffsetRX2; }
         }
+        private static void modifyDataForNotches(ref float[] data, int rx, bool bottom, bool local_mox, bool displayduplex, int W)
+        {
+            int Low, High;
+            if (rx == 1)
+            {
+                if (local_mox)
+                {
+                    if (displayduplex)
+                    {
+                        Low = rx_display_low;
+                        High = rx_display_high;
+                    }
+                    else
+                    {
+                        Low = tx_display_low;
+                        High = tx_display_high;
+                    }
+                }
+                else
+                {
+                    Low = rx_display_low;
+                    High = rx_display_high;
+                }
+            }
+            else// if (rx == 2)
+            {
+                if (local_mox)
+                {
+                    if (displayduplex)
+                    {
+                        Low = tx_display_low;
+                        High = tx_display_high;
+                    }
+                    else
+                    {
+                        Low = tx_display_low;
+                        High = tx_display_high;
+                    }
+                }
+                else
+                {
+                    Low = rx2_display_low;
+                    High = rx2_display_high;
+                }
+            }
+            float fAttenuation = 200f;
+            int width = High - Low;
+
+            List<clsNotchCoords> notchData = handleNotches(rx, bottom, getCWSideToneShift(rx), Low, High, 0, 0, width, W, 0, false);//, 50);
+
+            int nDecimatedWidth = W / m_nDecimation;
+
+            foreach (clsNotchCoords nc in notchData)
+            {
+                if (!nc._Use) continue; // skip inactive
+
+                // do left
+                int wL = nc._c_x - nc._left_x;
+                //wL *= 3;
+                for (int i = nc._c_x; i > nc._c_x - wL; i--)
+                {
+                    int xPos = i / m_nDecimation;
+                    if (xPos < 0 || xPos > nDecimatedWidth - 1) continue;
+
+                    int x = nc._c_x - i + 1; // +1 to fix /0
+
+                    float fTmp = 1f / ((float)Math.Pow((double)wL / (double)(wL - x), 1.5)); // pow2 quite sharp
+                    data[xPos] -= (fAttenuation * fTmp);
+                }
+                // do right
+                int wR = nc._right_x - nc._c_x;
+                //wR *= 3;
+                for (int i = nc._c_x; i < nc._c_x + wR; i++)
+                {
+                    int xPos = i / m_nDecimation;
+                    if (xPos < 0 || xPos > nDecimatedWidth - 1) continue;
+
+                    int x = i - nc._c_x + 1; // +1 to fix /0
+
+                    float fTmp = 1f / ((float)Math.Pow((double)wR / (double)(wR - x), 1.5)); // pow2 quite sharp
+                    data[xPos] -= (fAttenuation * fTmp);
+                }
+            }
+        }
         unsafe static private bool DrawPanadapterDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
             if (grid_control)
@@ -3877,6 +3976,8 @@ namespace Thetis
             int yRange;
             float[] data;
 
+            bool bNotch = false;
+
             if (rx == 1)
             {
                 bSpectralPeakHold = m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
@@ -3900,6 +4001,7 @@ namespace Thetis
 
                 if (data_ready)
                 {
+                    bNotch = true;
                     if (!displayduplex && (local_mox || (mox && tx_on_vfob)) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth/*current_display_data.Length*/; i++)
@@ -3938,7 +4040,7 @@ namespace Thetis
 
                 if (data_ready_bottom)
                 {
-
+                    bNotch = true;
                     //MW0LGE//if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     if (blank_bottom_display || (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)))
                     {
@@ -4082,6 +4184,12 @@ namespace Thetis
             bool lookformax = true;
             //List <(int pos, float val)> maxtab_tmp = new List<(int pos, float val)>();
             float triggerDelta = 10; //db
+
+            //
+            if (bNotch)
+            {
+                modifyDataForNotches(ref data, rx, bottom,local_mox,displayduplex,W);
+            }
 
             unchecked // we dont expect any overflows
             {
@@ -4512,6 +4620,7 @@ namespace Thetis
             Color mid_color = Color.Red;
             Color high_color = Color.Blue;
 
+            bool bNotch = false;
             int nDecimatedWidth = W / m_nDecimation;
 
             if (rx == 2)
@@ -4578,6 +4687,7 @@ namespace Thetis
             {
                 if (rx == 1 && waterfall_data_ready)
                 {
+                    bNotch = true;
                     if (!displayduplex && local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
@@ -4589,11 +4699,12 @@ namespace Thetis
                         fixed (void* wptr = &current_waterfall_data[0])
                             Win32.memcpy(wptr, rptr, nDecimatedWidth * sizeof(float));
 
-                    }
+                    }                    
                     waterfall_data_ready = false;
                 }
                 else if (rx == 2 && waterfall_data_ready_bottom)
                 {
+                    bNotch = true;
                     if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
@@ -4605,7 +4716,6 @@ namespace Thetis
                         fixed (void* wptr = &current_waterfall_data_bottom[0])
                             Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
                     }
-
                     waterfall_data_ready_bottom = false;
                 }
 
@@ -4646,6 +4756,11 @@ namespace Thetis
                     {
                         if (rx == 1) fOffset += rx1_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
                         else if (rx == 2) fOffset += rx2_display_cal_offset + (rx2_preamp_offset);
+
+                        if (bNotch)
+                        {
+                            modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
+                        }
                     }
                     else
                     {
@@ -6421,6 +6536,125 @@ namespace Thetis
 
             return nRet;
         }
+        private class clsNotchCoords
+        {
+            public int _c_x;
+            public int _left_x;
+            public int _right_x;
+            public bool _Use;
+            public int _widthHz;
+
+            public clsNotchCoords(int nC_x, int nLeft_X, int nRight_X, bool bUse, int nWidthHz)
+            {
+                _c_x = nC_x;
+                _left_x = nLeft_X;
+                _right_x = nRight_X;
+                _Use = bUse;
+                _widthHz = nWidthHz;
+            }
+        }        
+        private static List<clsNotchCoords> handleNotches(int rx, bool bottom, int cwSideToneShift, int Low, int High, int nVerticalShift, int top, int width, int W, int H, bool bDraw)//, int expandHz = 0)
+        {
+            long rf_freq = vfoa_hz;
+            int rit = rit_hz;
+
+            if (/*bottom || */(current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) // MW0LGE
+            {
+                rf_freq = vfob_hz;
+            }
+
+            rf_freq += cwSideToneShift;
+
+            SharpDX.Direct2D1.Brush p;
+            SharpDX.Direct2D1.Brush b;
+            SharpDX.Direct2D1.Brush t;
+
+            List<MNotch> notches = MNotchDB.NotchesInBW(rf_freq, Low - console.MaxFilterWidth, High + console.MaxFilterWidth);
+            List<clsNotchCoords> notchData = new List<clsNotchCoords>();
+
+            foreach (MNotch n in notches)
+            {
+                int notch_centre_x;
+                int notch_left_x;
+                int notch_right_x;
+
+                
+                if (bDraw)
+                {
+                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
+                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - n.FWidth / 2 - Low - rit) / width * W);
+                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + n.FWidth / 2 - Low - rit) / width * W);
+                }
+                else
+                {
+                    //int expandHz = (int)(_dMNFminSize * 0.5);
+                    //double nw = n.FWidth < 100 ? 100 : n.FWidth;
+                    double dNewWidth = n.FWidth < _mnfMinSize ? _mnfMinSize : n.FWidth; // use the min width of filter from WDSP
+                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
+                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - rit/* - expandHz*/) / width * W);
+                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - rit/* + expandHz*/) / width * W);
+                }
+
+                clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, tnf_active && n.Active, (int)n.FWidth);
+                notchData.Add(nc);
+
+                if (bDraw)
+                {
+                    if (tnf_active)
+                    {
+                        if (n.Active)
+                        {
+                            p = m_bDX2_m_pNotchActive;
+                            b = m_bDX2_m_bBWFillColour;
+                        }
+                        else
+                        {
+                            p = m_bDX2_m_pNotchInactive;
+                            b = m_bDX2_m_bBWFillColourInactive;
+                        }
+                    }
+                    else
+                    {
+                        p = m_bDX2_m_pTNFInactive;
+                        b = m_bDX2_m_bTNFInactive;
+                    }
+
+                    //overide if highlighed
+                    if (n == m_objHightlightedNotch)
+                    {
+                        if (n.Active)
+                        {
+                            t = m_bDX2_m_bTextCallOutActive;
+                        }
+                        else
+                        {
+                            t = m_bDX2_m_bTextCallOutInactive;
+                        }
+                        p = m_bDX2_m_pHighlighted;
+                        b = m_bDX2_m_bBWHighlighedFillColour;
+
+                        //display text callout info 1/4 the way down the notch when being highlighted
+                        //TODO: check right edge of screen, put on left of notch if no room
+                        string temp_text = ((n.FCenter) / 1e6).ToString("f6") + "MHz";
+                        int nTmp = temp_text.IndexOf(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator) + 4;
+
+                        drawStringDX2D("F: " + temp_text.Insert(nTmp, " "), fontDX2d_callout, t, notch_right_x + 4, nVerticalShift + top + (H / 4));
+                        drawStringDX2D("W: " + n.FWidth.ToString("f0") + "Hz", fontDX2d_callout, t, notch_right_x + 4, nVerticalShift + top + (H / 4) + 12);
+                    }
+
+                    // the middle notch line
+                    drawLineDX2D(p, notch_centre_x, nVerticalShift + top, notch_centre_x, nVerticalShift + H);
+
+                    // only draw area fill if wide enough
+                    if (notch_left_x != notch_right_x)
+                    {
+                        drawFillRectangleDX2D(b, notch_left_x, nVerticalShift + top, notch_right_x - notch_left_x, H - top);
+                    }
+                }
+            }
+
+            return notchData;
+        }
         private static void drawPanadapterAndWaterfallGridDX2D(int nVerticalShift, int W, int H, int rx, bool bottom, bool bIsWaterfall = false)
         {
             // MW0LGE
@@ -6881,80 +7115,7 @@ namespace Thetis
             // draw notches if in RX
             if (!local_mox && !bIsWaterfall)
             {
-                long rf_freq = vfoa_hz;
-                int rit = rit_hz;
-
-                if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) // MW0LGE
-                {
-                    rf_freq = vfob_hz;
-                }
-
-                rf_freq += cwSideToneShift;
-
-                SharpDX.Direct2D1.Brush p;
-                SharpDX.Direct2D1.Brush b;
-                SharpDX.Direct2D1.Brush t;
-
-                List<MNotch> notches = MNotchDB.NotchesInBW(rf_freq, Low, High);
-
-                foreach (MNotch n in notches)
-                {
-
-                    int notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
-                    int notch_left_x = (int)((float)((n.FCenter) - rf_freq - n.FWidth / 2 - Low - rit) / width * W);
-                    int notch_right_x = (int)((float)((n.FCenter) - rf_freq + n.FWidth / 2 - Low - rit) / width * W);
-
-                    if (tnf_active)
-                    {
-                        if (n.Active)
-                        {
-                            p = m_bDX2_m_pNotchActive;
-                            b = m_bDX2_m_bBWFillColour;
-                        }
-                        else
-                        {
-                            p = m_bDX2_m_pNotchInactive;
-                            b = m_bDX2_m_bBWFillColourInactive;
-                        }
-                    }
-                    else
-                    {
-                        p = m_bDX2_m_pTNFInactive;
-                        b = m_bDX2_m_bTNFInactive;
-                    }
-
-                    //overide if highlighed
-                    if (n == m_objHightlightedNotch)
-                    {
-                        if (n.Active)
-                        {
-                            t = m_bDX2_m_bTextCallOutActive;
-                        }
-                        else
-                        {
-                            t = m_bDX2_m_bTextCallOutInactive;
-                        }
-                        p = m_bDX2_m_pHighlighted;
-                        b = m_bDX2_m_bBWHighlighedFillColour;
-
-                        //display text callout info 1/4 the way down the notch when being highlighted
-                        //TODO: check right edge of screen, put on left of notch if no room
-                        string temp_text = ((n.FCenter) / 1e6).ToString("f6") + "MHz";
-                        int nTmp = temp_text.IndexOf(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator) + 4;
-
-                        drawStringDX2D("F: " + temp_text.Insert(nTmp, " "), fontDX2d_callout, t, notch_right_x + 4, nVerticalShift + top + (H / 4));
-                        drawStringDX2D("W: " + n.FWidth.ToString("f0") + "Hz", fontDX2d_callout, t, notch_right_x + 4, nVerticalShift + top + (H / 4) + 12);
-                    }
-
-                    // the middle notch line
-                    drawLineDX2D(p, notch_centre_x, nVerticalShift + top, notch_centre_x, nVerticalShift + H);
-
-                    // only draw area fill if wide enough
-                    if (notch_left_x != notch_right_x)
-                    {
-                        drawFillRectangleDX2D(b, notch_left_x, nVerticalShift + top, notch_right_x - notch_left_x, H - top);
-                    }
-                }
+                handleNotches(rx, bottom, cwSideToneShift, Low, High, nVerticalShift, top, width, W, H, true);//, 50); //MW0LGE [2.9.0.7] moved to function so can be used by drawmpana/drawwater                
             }// END NOTCH
             #endregion
 
