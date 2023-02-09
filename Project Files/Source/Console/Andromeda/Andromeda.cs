@@ -3483,6 +3483,18 @@ namespace Thetis
         //
         private void SelectModeDependentPanel()
         {
+            if(iscollapsed && !isexpanded)
+            {
+                // MW0LGE [2.9.0.7] in collapsed view, hide them all
+                //https://github.com/ramdor/Thetis-2.9.0/issues/90
+
+                panelModeSpecificPhone.Hide();
+                panelModeSpecificCW.Hide();
+                panelModeSpecificDigital.Hide();
+                panelModeSpecificFM.Hide();
+                return;
+            }
+
             //MW0LGE_21k9d changed to show/hide as it was causing some unexplained
             //slow down, perhaps z-order fighting, not sure. ~1-3 seconds taken to get through
             //this function, changing from digi to something else.

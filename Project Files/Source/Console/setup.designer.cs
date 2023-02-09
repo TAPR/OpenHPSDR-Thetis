@@ -18,6 +18,7 @@
             System.Windows.Forms.NumericUpDownTS numericUpDownTS10;
             System.Windows.Forms.NumericUpDownTS numericUpDownTS12;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
+            this.chkForceATTwhenPSAoff = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableXVTRHF = new System.Windows.Forms.CheckBoxTS();
             this.chkBPF2Gnd = new System.Windows.Forms.CheckBoxTS();
             this.chkDisableRXOut = new System.Windows.Forms.CheckBoxTS();
@@ -3819,6 +3820,7 @@
             this.grpRX2AMSBSEL.SuspendLayout();
             this.tpDSPFM.SuspendLayout();
             this.grpFMRX.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).BeginInit();
             this.grpFMTX.SuspendLayout();
             this.tpDSPAudio.SuspendLayout();
             this.grpDSPAudRX2Dolly.SuspendLayout();
@@ -4223,6 +4225,7 @@
             // tpAlexAntCtrl
             // 
             tpAlexAntCtrl.BackColor = System.Drawing.SystemColors.Control;
+            tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenPSAoff);
             tpAlexAntCtrl.Controls.Add(this.chkEnableXVTRHF);
             tpAlexAntCtrl.Controls.Add(this.chkBPF2Gnd);
             tpAlexAntCtrl.Controls.Add(this.chkDisableRXOut);
@@ -4243,11 +4246,25 @@
             tpAlexAntCtrl.TabIndex = 0;
             tpAlexAntCtrl.Text = "Antenna";
             // 
+            // chkForceATTwhenPSAoff
+            // 
+            this.chkForceATTwhenPSAoff.Checked = true;
+            this.chkForceATTwhenPSAoff.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkForceATTwhenPSAoff.Image = null;
+            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(528, 188);
+            this.chkForceATTwhenPSAoff.Name = "chkForceATTwhenPSAoff";
+            this.chkForceATTwhenPSAoff.Size = new System.Drawing.Size(149, 31);
+            this.chkForceATTwhenPSAoff.TabIndex = 20;
+            this.chkForceATTwhenPSAoff.Text = "Force ATT on Tx to 31 when PS-A is off";
+            this.toolTip1.SetToolTip(this.chkForceATTwhenPSAoff, "Forces ATT on Tx to 31 when PS-A is off. CW will do this anyway");
+            this.chkForceATTwhenPSAoff.UseVisualStyleBackColor = true;
+            this.chkForceATTwhenPSAoff.CheckedChanged += new System.EventHandler(this.chkForceATTwhenPSAoff_CheckedChanged);
+            // 
             // chkEnableXVTRHF
             // 
             this.chkEnableXVTRHF.AutoSize = true;
             this.chkEnableXVTRHF.Image = null;
-            this.chkEnableXVTRHF.Location = new System.Drawing.Point(525, 295);
+            this.chkEnableXVTRHF.Location = new System.Drawing.Point(528, 334);
             this.chkEnableXVTRHF.Name = "chkEnableXVTRHF";
             this.chkEnableXVTRHF.Size = new System.Drawing.Size(108, 17);
             this.chkEnableXVTRHF.TabIndex = 19;
@@ -4262,7 +4279,7 @@
             this.chkBPF2Gnd.Checked = true;
             this.chkBPF2Gnd.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBPF2Gnd.Image = null;
-            this.chkBPF2Gnd.Location = new System.Drawing.Point(525, 273);
+            this.chkBPF2Gnd.Location = new System.Drawing.Point(528, 312);
             this.chkBPF2Gnd.Name = "chkBPF2Gnd";
             this.chkBPF2Gnd.Size = new System.Drawing.Size(105, 17);
             this.chkBPF2Gnd.TabIndex = 16;
@@ -4289,7 +4306,7 @@
             // 
             this.chkEXT2OutOnTx.AutoSize = true;
             this.chkEXT2OutOnTx.Image = null;
-            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(525, 205);
+            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(528, 244);
             this.chkEXT2OutOnTx.Name = "chkEXT2OutOnTx";
             this.chkEXT2OutOnTx.Size = new System.Drawing.Size(94, 17);
             this.chkEXT2OutOnTx.TabIndex = 13;
@@ -4302,7 +4319,7 @@
             // 
             this.chkEXT1OutOnTx.AutoSize = true;
             this.chkEXT1OutOnTx.Image = null;
-            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(525, 225);
+            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(528, 264);
             this.chkEXT1OutOnTx.Name = "chkEXT1OutOnTx";
             this.chkEXT1OutOnTx.Size = new System.Drawing.Size(94, 17);
             this.chkEXT1OutOnTx.TabIndex = 10;
@@ -4356,7 +4373,7 @@
             // 
             this.chkHFTRRelay.AutoSize = true;
             this.chkHFTRRelay.Image = null;
-            this.chkHFTRRelay.Location = new System.Drawing.Point(525, 250);
+            this.chkHFTRRelay.Location = new System.Drawing.Point(528, 289);
             this.chkHFTRRelay.Name = "chkHFTRRelay";
             this.chkHFTRRelay.Size = new System.Drawing.Size(95, 17);
             this.chkHFTRRelay.TabIndex = 7;
@@ -4424,7 +4441,7 @@
             // 
             this.chkRxOutOnTx.AutoSize = true;
             this.chkRxOutOnTx.Image = null;
-            this.chkRxOutOnTx.Location = new System.Drawing.Point(525, 185);
+            this.chkRxOutOnTx.Location = new System.Drawing.Point(528, 224);
             this.chkRxOutOnTx.Name = "chkRxOutOnTx";
             this.chkRxOutOnTx.Size = new System.Drawing.Size(98, 17);
             this.chkRxOutOnTx.TabIndex = 2;
@@ -35691,7 +35708,7 @@
             this.lblFMLimGain30dB.Image = null;
             this.lblFMLimGain30dB.Location = new System.Drawing.Point(160, 148);
             this.lblFMLimGain30dB.Name = "lblFMLimGain30dB";
-            this.lblFMLimGain30dB.Size = new System.Drawing.Size(41, 16);
+            this.lblFMLimGain30dB.Size = new System.Drawing.Size(35, 13);
             this.lblFMLimGain30dB.TabIndex = 54;
             this.lblFMLimGain30dB.Text = "30 dB";
             // 
@@ -35701,7 +35718,7 @@
             this.lblFMLimGain0dB.Image = null;
             this.lblFMLimGain0dB.Location = new System.Drawing.Point(5, 149);
             this.lblFMLimGain0dB.Name = "lblFMLimGain0dB";
-            this.lblFMLimGain0dB.Size = new System.Drawing.Size(34, 16);
+            this.lblFMLimGain0dB.Size = new System.Drawing.Size(29, 13);
             this.lblFMLimGain0dB.TabIndex = 53;
             this.lblFMLimGain0dB.Text = "0 dB";
             // 
@@ -35711,7 +35728,7 @@
             this.lblFMDetLimGain.Image = null;
             this.lblFMDetLimGain.Location = new System.Drawing.Point(7, 104);
             this.lblFMDetLimGain.Name = "lblFMDetLimGain";
-            this.lblFMDetLimGain.Size = new System.Drawing.Size(77, 16);
+            this.lblFMDetLimGain.Size = new System.Drawing.Size(62, 13);
             this.lblFMDetLimGain.TabIndex = 52;
             this.lblFMDetLimGain.Text = "Limiter Gain";
             // 
@@ -35736,7 +35753,7 @@
             this.chkFMDetLimON.Image = null;
             this.chkFMDetLimON.Location = new System.Drawing.Point(7, 81);
             this.chkFMDetLimON.Name = "chkFMDetLimON";
-            this.chkFMDetLimON.Size = new System.Drawing.Size(121, 20);
+            this.chkFMDetLimON.Size = new System.Drawing.Size(100, 17);
             this.chkFMDetLimON.TabIndex = 1;
             this.chkFMDetLimON.Text = "Limiter ON/OFF";
             this.chkFMDetLimON.UseVisualStyleBackColor = true;
@@ -35759,7 +35776,7 @@
             // grpFMTX
             // 
             this.grpFMTX.Controls.Add(this.chkEmphPos);
-            this.grpFMTX.Location = new System.Drawing.Point(6, 161);
+            this.grpFMTX.Location = new System.Drawing.Point(8, 189);
             this.grpFMTX.Name = "grpFMTX";
             this.grpFMTX.Size = new System.Drawing.Size(268, 139);
             this.grpFMTX.TabIndex = 0;
@@ -53564,6 +53581,7 @@
             this.tpDSPFM.ResumeLayout(false);
             this.grpFMRX.ResumeLayout(false);
             this.grpFMRX.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).EndInit();
             this.grpFMTX.ResumeLayout(false);
             this.grpFMTX.PerformLayout();
             this.tpDSPAudio.ResumeLayout(false);
@@ -57349,5 +57367,6 @@
         private LabelTS lblFMLimGain0dB;
         private LabelTS lblFMDetLimGain;
         public TrackBarTS tbDSPFMDetLimGain;
+        private CheckBoxTS chkForceATTwhenPSAoff;
     }
 }
