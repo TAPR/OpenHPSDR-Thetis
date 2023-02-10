@@ -1029,7 +1029,7 @@ namespace Thetis
             public clsMagicEyeItem()
             {
                 _history = new List<float>();
-                _msHistoryDuration = 2000;
+                _msHistoryDuration = 0;
                 _showHistory = false;
                 _showValue = true;
 
@@ -1620,30 +1620,29 @@ namespace Thetis
                     //cb.ScaleCalibration.Add(-13, new PointF(1, 0)); // position for S9+60dB or above
                     //_meterItems.Add(cb.ID, cb);
 
-                    //// eye
-                    //clsMagicEyeItem me = new clsMagicEyeItem();
-                    //me.TopLeft = new PointF(0.4f, 1f);
-                    //me.Size = new SizeF(0.2f, 0.2f);
-                    //me.ZOrder = 2;
-                    //me.AttackRatio = 0.2f;
-                    //me.DecayRatio = 0.05f;
-                    //me.UpdateInterval = 50;
-                    //me.HistoryDuration = 0;
-                    //me.ShowHistory = false;
-                    //me.Colour = System.Drawing.Color.Lime;
-                    //me.ReadingSource = Reading.EYE_PERCENT;
-                    //me.ScaleCalibration.Add(0, new PointF(0, 0));
-                    //me.ScaleCalibration.Add(1f, new PointF(1f, 0));
-                    //me.Value = 0f;
-                    //_meterItems.Add(me.ID, me);
+                    // eye
+                    clsMagicEyeItem me = new clsMagicEyeItem();
+                    me.TopLeft = new PointF(0.4f, 1f);
+                    me.Size = new SizeF(0.2f, 0.2f);
+                    me.ZOrder = 2;
+                    me.AttackRatio = 0.2f;
+                    me.DecayRatio = 0.05f;
+                    me.UpdateInterval = 50;
+                    me.Colour = System.Drawing.Color.Lime;
+                    me.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                    me.ScaleCalibration.Add(-127f, new PointF(0, 0));
+                    me.ScaleCalibration.Add(-73f, new PointF(0.85f, 0));
+                    me.ScaleCalibration.Add(-13f, new PointF(1f, 0));
+                    me.Value = -127f;
+                    _meterItems.Add(me.ID, me);
 
-                    //clsImage img = new clsImage();
-                    //img.TopLeft = new PointF(0.4f, 1f);
-                    //img.Size = new SizeF(0.2f, 0.2f);
-                    //img.ZOrder = 3;
-                    //img.ImageName = "bezel-glass-2";
-                    //_meterItems.Add(img.ID, img);
-                    ////
+                    img = new clsImage();
+                    img.TopLeft = new PointF(0.4f, 1f);
+                    img.Size = new SizeF(0.2f, 0.2f);
+                    img.ZOrder = 3;
+                    img.ImageName = "eye-bezel-glass";
+                    _meterItems.Add(img.ID, img);
+                    //
 
                     float fPad = 0.02f;
                     clsBarItem cb;
@@ -4514,22 +4513,22 @@ namespace Thetis
                 System.Drawing.Color c = magicEye.Colour;
                 SharpDX.Direct2D1.Brush br = getDXBrushForColour(System.Drawing.Color.FromArgb(255, (int)(c.R * 0.35f), (int)(c.G * 0.35f), (int)(c.B * 0.35f)));
 
-                if (magicEye.Value <= 0.01f)
+                _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
+
+                PointF min, max;
+                float percX, percY;
+                getPerc(magicEye, magicEye.Value, out percX, out percY, out min, out max);
+
+                if (percX <= 0.01f)
                 {
                     _renderTarget.FillEllipse(e, br);
                 }
-                else if (magicEye.Value >= 0.99f)
+                else if (percX >= 0.99f)
                 {
                     _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
                 }
                 else
                 {
-                    _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
-
-                    PointF min, max;
-                    float percX, percY;
-                    getPerc(magicEye, magicEye.Value, out percX, out percY, out min, out max);
-
                     float fDeg = (360f - (int)(360 * percX)) / 2f;
                     float fRad = (float)degToRad(fDeg);
 

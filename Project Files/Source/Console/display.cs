@@ -3907,7 +3907,7 @@ namespace Thetis
                     High = rx2_display_high;
                 }
             }
-            float fAttenuation = 200f;
+            float fAttenuation = 100f;
             int width = High - Low;
 
             List<clsNotchCoords> notchData = handleNotches(rx, bottom, getCWSideToneShift(rx), Low, High, 0, 0, width, W, 0, false);//, 50);
