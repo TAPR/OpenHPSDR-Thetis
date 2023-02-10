@@ -25206,6 +25206,11 @@ namespace Thetis
         {
             console.ForceATTwhenPSAoff = chkForceATTwhenPSAoff.Checked;
         }
+
+        private void chkVisualNotch_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowVisualNotch = chkVisualNotch.Checked;
+        }
     }
 
     #region PADeviceInfo Helper Class

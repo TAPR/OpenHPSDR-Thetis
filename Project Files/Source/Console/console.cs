@@ -563,7 +563,7 @@ namespace Thetis
 
         public Console(string[] args)
         {
-            CheckIfRussian(); //#UKRAINE
+            //CheckIfRussian(); //#UKRAINE
 
             Display.specready = false;
 
@@ -22698,7 +22698,43 @@ namespace Thetis
         private const int num_oloads = 2;               // number of possible overload displays        
 
         private float _avNumRX1 = -200;
-        private float _avNumRX2 = -200;        
+        private float _avNumRX2 = -200;       
+        
+        private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
+        {
+            estimated_snr = 0;
+
+            if (rx == 1)
+            {
+                bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
+                dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
+                passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
+
+                noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(dRWB));
+                estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+
+                if (!MOX)
+                {
+                    estimated_snr = signal - estimated_passband_noise_power;
+                }
+            }
+            else//rx2
+            {
+                bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
+                dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
+                passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
+
+                noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(dRWB));
+                estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+
+                if (!MOX)
+                {                    
+                    estimated_snr = _avNumRX2 - estimated_passband_noise_power;
+                }
+            }
+            rx_dBHz = 10 * Math.Log10((double)passbandWidth);//MW0LGE_22b
+            rbw_dBHz = 10 * Math.Log10(dRWB);
+        }
         private async void UpdatePeakText()
         {
             // return;
@@ -22954,13 +22990,14 @@ namespace Thetis
 
                 if (bOverRX1)
                 {
-                    bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
-                    dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
-                    passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
+                    //bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
+                    //dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
+                    //passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
 
-                    noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(dRWB));
-                    estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+                    //noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(dRWB));
+                    //estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
 
+                    float num = -200f;
                     if (!MOX)
                     {
                         //
@@ -22968,7 +23005,7 @@ namespace Thetis
                         if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
                         else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
 
-                        float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
+                        num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
                         num = num +
                         rx1_meter_cal_offset +
                         rx1PreampOffset +
@@ -22980,7 +23017,10 @@ namespace Thetis
                         else // slow fall
                             num = _avNumRX1 = num * 0.2f + _avNumRX1 * 0.8f;
                         //
-
+                    }
+                    spectralCalculations(1, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
+                    if(!MOX)
+                    { 
                         estimated_snr = _avNumRX1 - estimated_passband_noise_power;
 
                         if (_UseSUnitsForPBNPPBSNR)
@@ -22997,13 +23037,14 @@ namespace Thetis
                 }
                 else //rx2
                 {
-                    bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
-                    dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
-                    passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
+                    //bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
+                    //dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
+                    //passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
 
-                    noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(dRWB));
-                    estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+                    //noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(dRWB));
+                    //estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
 
+                    float num = -200f;
                     if (!MOX)
                     {
                         //
@@ -23027,7 +23068,7 @@ namespace Thetis
                             else
                                 rx2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
                         }
-                        float num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
+                        num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
                         num = num +
                         rx2_meter_cal_offset +
                         rx2PreampOffset +
@@ -23039,7 +23080,10 @@ namespace Thetis
                         else // slow fall
                             num = _avNumRX2 = num * 0.2f + _avNumRX2 * 0.8f;
                         //
-
+                    }
+                    spectralCalculations(2, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
+                    if (!MOX)
+                    { 
                         estimated_snr = _avNumRX2 - estimated_passband_noise_power;
 
                         if (_UseSUnitsForPBNPPBSNR)
@@ -53613,88 +53657,90 @@ namespace Thetis
         #endregion
 
         #region Ukraine
-        //#UKRAINE
-        private Object _rCheck = new Object();
-        private bool _bIsRussian = false;
-        public bool IsRussian
-        {
-            get { return _bIsRussian; }
-        }
-        public void CheckIfRussian(string callsign = "")
-        {
-            lock (_rCheck)
-            {
-                _bIsRussian = false;
+        ////#UKRAINE
+        //private Object _rCheck = new Object();
+        //private bool _bIsRussian = false;
+        //public bool IsRussian
+        //{
+        //    get { return _bIsRussian; }
+        //}
+        //public void CheckIfRussian(string callsign = "")
+        //{
+        //    lock (_rCheck)
+        //    {
+        //        _bIsRussian = false;
 
-                try
-                {
-                    // passed in callsign is russian?
-                    if (callsign != "" && Common.IsCallsignRussian(callsign))
-                    {
-                        _bIsRussian = true;
-                        return;
-                    }
+        //        try
+        //        {
+        //            // passed in callsign is russian?
+        //            if (callsign != "" && Common.IsCallsignRussian(callsign))
+        //            {
+        //                _bIsRussian = true;
+        //                return;
+        //            }
 
-                    // picked Russian region?
-                    if (CurrentRegion == FRSRegion.Russia)
-                    {
-                        _bIsRussian = true;
-                        return;
-                    }
+        //            // picked Russian region?
+        //            if (CurrentRegion == FRSRegion.Russia)
+        //            {
+        //                _bIsRussian = true;
+        //                return;
+        //            }
 
-                    // callsign russian in custom title?
-                    if (Common.IsCallsignRussian(CustomTitle))
-                    {
-                        _bIsRussian = true;
-                        return;
-                    }
+        //            // callsign russian in custom title?
+        //            if (Common.IsCallsignRussian(CustomTitle))
+        //            {
+        //                _bIsRussian = true;
+        //                return;
+        //            }
 
-                    // callsign russian in spot system?
-                    if (SpotForm != null && Common.IsCallsignRussian(SpotForm.callBox.Text))
-                    {
-                        _bIsRussian = true;
-                        return;
-                    }
+        //            // callsign russian in spot system?
+        //            if (SpotForm != null && Common.IsCallsignRussian(SpotForm.callBox.Text))
+        //            {
+        //                _bIsRussian = true;
+        //                return;
+        //            }
 
-                    // current OS language is russian
-                    CultureInfo ci = CultureInfo.InstalledUICulture;
-                    if (ci != null)
-                        if (ci.TwoLetterISOLanguageName.Trim().ToLower().StartsWith("ru") ||
-                            ci.ThreeLetterISOLanguageName.Trim().ToLower().StartsWith("rus"))
-                        {
-                            _bIsRussian = true;
-                            return;
-                        }
+        //            // current OS language is russian
+        //            CultureInfo ci = CultureInfo.InstalledUICulture;
+        //            if (ci != null)
+        //                if (ci.TwoLetterISOLanguageName.Trim().ToLower().StartsWith("ru") ||
+        //                    ci.ThreeLetterISOLanguageName.Trim().ToLower().StartsWith("rus"))
+        //                {
+        //                    _bIsRussian = true;
+        //                    return;
+        //                }
 
-                    // Is Russian an installed language in OS?
-                    foreach (InputLanguage il in InputLanguage.InstalledInputLanguages)
-                    {
-                        if (il.Culture.ToString().Trim().ToLower().StartsWith("ru") ||
-                            il.Culture.TwoLetterISOLanguageName.Trim().ToLower().StartsWith("ru") ||
-                            il.Culture.ThreeLetterISOLanguageName.Trim().ToLower().StartsWith("rus")
-                            )
-                        {
-                            _bIsRussian = true;
-                            return;
-                        }
-                    }
+        //            // Is Russian an installed language in OS?
+        //            foreach (InputLanguage il in InputLanguage.InstalledInputLanguages)
+        //            {
+        //                if (il.Culture.ToString().Trim().ToLower().StartsWith("ru") ||
+        //                    il.Culture.TwoLetterISOLanguageName.Trim().ToLower().StartsWith("ru") ||
+        //                    il.Culture.ThreeLetterISOLanguageName.Trim().ToLower().StartsWith("rus")
+        //                    )
+        //                {
+        //                    _bIsRussian = true;
+        //                    return;
+        //                }
+        //            }
 
-                    // keyboard layout?
-                    int layoutID = CultureInfo.InstalledUICulture.KeyboardLayoutId;
-                    if (layoutID == 0x00000419 ||   //Russian
-                        layoutID == 0x00020419 ||   //Russian - Mnemonic
-                        layoutID == 0x00010419      //Russian (Typewriter)
-                        )
-                    {
-                        _bIsRussian = true;
-                        return;
-                    }
-                }
-                catch
-                {
-                }
-            }
-        }
+        //            // keyboard layout?
+        //            int layoutID = CultureInfo.InstalledUICulture.KeyboardLayoutId;
+        //            if (layoutID == 0x00000419 ||   //Russian
+        //                layoutID == 0x00020419 ||   //Russian - Mnemonic
+        //                layoutID == 0x00010419      //Russian (Typewriter)
+        //                )
+        //            {
+        //                _bIsRussian = true;
+        //                return;
+        //            }
+        //        }
+        //        catch
+        //        {
+        //        }
+        //    }
+        //}
+        #endregion
+
         private Color _limitSliderBarColor = Color.Red;
         public Color LimitSliderColor
         {
@@ -54092,7 +54138,6 @@ namespace Thetis
                 NetworkIO.SetAudioAmpEnable(_bEnableAudioAmplifier);
             }
         }
-        #endregion
 
         private void ptbTune_MouseUp(object sender, MouseEventArgs e)
         {
@@ -54146,6 +54191,11 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_REAL)) _RX1MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_IMAG)) _RX1MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
+                    if (MeterManager.RequiresUpdate(1, Reading.ESIMATED_SNR))
+                    {
+                        spectralCalculations(1, _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                        _RX1MeterValues[Reading.ESIMATED_SNR] = (float)estimated_snr;
+                    }
                 }
                 else if (mox && (!RX2Enabled || (RX2Enabled && VFOATX)))
                 {
@@ -54267,6 +54317,11 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH)) _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_REAL)) _RX2MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_IMAG)) _RX2MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+                    if (MeterManager.RequiresUpdate(2, Reading.ESIMATED_SNR))
+                    {
+                        spectralCalculations(2, _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                        _RX2MeterValues[Reading.ESIMATED_SNR] = (float)estimated_snr;
+                    }
                 }
                 else if(mox && RX2Enabled && VFOBTX)
                 {

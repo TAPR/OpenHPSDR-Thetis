@@ -2360,6 +2360,7 @@
             this.lblLMSNR2taps = new System.Windows.Forms.LabelTS();
             this.tpDSPMNF = new System.Windows.Forms.TabPage();
             this.grpDSPMNF = new System.Windows.Forms.GroupBoxTS();
+            this.chkVisualNotch = new System.Windows.Forms.CheckBoxTS();
             this.btnVFOFreq = new System.Windows.Forms.ButtonTS();
             this.chkMNFRun = new System.Windows.Forms.CheckBoxTS();
             this.chkMNFAutoIncrease = new System.Windows.Forms.CheckBoxTS();
@@ -38006,6 +38007,7 @@
             // 
             // grpDSPMNF
             // 
+            this.grpDSPMNF.Controls.Add(this.chkVisualNotch);
             this.grpDSPMNF.Controls.Add(this.btnVFOFreq);
             this.grpDSPMNF.Controls.Add(this.chkMNFRun);
             this.grpDSPMNF.Controls.Add(this.chkMNFAutoIncrease);
@@ -38024,10 +38026,24 @@
             this.grpDSPMNF.Controls.Add(this.udMNFNotch);
             this.grpDSPMNF.Location = new System.Drawing.Point(6, 24);
             this.grpDSPMNF.Name = "grpDSPMNF";
-            this.grpDSPMNF.Size = new System.Drawing.Size(571, 170);
+            this.grpDSPMNF.Size = new System.Drawing.Size(571, 224);
             this.grpDSPMNF.TabIndex = 1;
             this.grpDSPMNF.TabStop = false;
             this.grpDSPMNF.Text = "Multi Notch Filter";
+            // 
+            // chkVisualNotch
+            // 
+            this.chkVisualNotch.AutoSize = true;
+            this.chkVisualNotch.Image = null;
+            this.chkVisualNotch.Location = new System.Drawing.Point(20, 185);
+            this.chkVisualNotch.Name = "chkVisualNotch";
+            this.chkVisualNotch.Size = new System.Drawing.Size(444, 17);
+            this.chkVisualNotch.TabIndex = 16;
+            this.chkVisualNotch.Text = "Visual approximation of notch (NOTE: this is not 100% representation of the activ" +
+    "e notch)";
+            this.toolTip1.SetToolTip(this.chkVisualNotch, "This is a simple approximation and does not accurately represent the notch");
+            this.chkVisualNotch.UseVisualStyleBackColor = true;
+            this.chkVisualNotch.CheckedChanged += new System.EventHandler(this.chkVisualNotch_CheckedChanged);
             // 
             // btnVFOFreq
             // 
@@ -57368,5 +57384,6 @@
         private LabelTS lblFMDetLimGain;
         public TrackBarTS tbDSPFMDetLimGain;
         private CheckBoxTS chkForceATTwhenPSAoff;
+        private CheckBoxTS chkVisualNotch;
     }
 }

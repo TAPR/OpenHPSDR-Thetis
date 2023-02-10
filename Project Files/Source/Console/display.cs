@@ -751,7 +751,12 @@ namespace Thetis
             get { return m_bShowFPS; }
             set { m_bShowFPS = value; }
         }
-
+        private static bool m_bShowVisualNotch = false;
+        public static bool ShowVisualNotch
+        {
+            get { return m_bShowVisualNotch; }
+            set { m_bShowVisualNotch = value; }
+        }
         //=======================================================
 
         private static bool m_bSpecialPanafall = false; // ke9ns add 1=map mode (panafall but only a small waterfall) and only when just in RX1 mode)
@@ -4185,14 +4190,14 @@ namespace Thetis
             //List <(int pos, float val)> maxtab_tmp = new List<(int pos, float val)>();
             float triggerDelta = 10; //db
 
-            //
-            if (bNotch)
-            {
-                modifyDataForNotches(ref data, rx, bottom,local_mox,displayduplex,W);
-            }
-
             unchecked // we dont expect any overflows
             {
+                // modify the data for visual notches
+                if (bNotch && m_bShowVisualNotch)
+                {
+                    modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
+                }
+
                 float averageSum = 0;
                 int averageCount = 0;
                 float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2; // +2db to add some extras above the average
@@ -4757,8 +4762,9 @@ namespace Thetis
                         if (rx == 1) fOffset += rx1_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
                         else if (rx == 2) fOffset += rx2_display_cal_offset + (rx2_preamp_offset);
 
-                        if (bNotch)
+                        if (bNotch && m_bShowVisualNotch)
                         {
+                            // modify the data for visual notches
                             modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
                         }
                     }
@@ -6590,6 +6596,7 @@ namespace Thetis
                     //int expandHz = (int)(_dMNFminSize * 0.5);
                     //double nw = n.FWidth < 100 ? 100 : n.FWidth;
                     double dNewWidth = n.FWidth < _mnfMinSize ? _mnfMinSize : n.FWidth; // use the min width of filter from WDSP
+                    dNewWidth += 20; // fudge factor to align better with spectrum notch
                     notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
                     notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - rit/* - expandHz*/) / width * W);
                     notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - rit/* + expandHz*/) / width * W);
@@ -9705,15 +9712,16 @@ namespace Thetis
         private static void ukraineFlag()
         {
             //#UKRAINE
-            if ((DateTime.Now - _lastFlagCheck).TotalMinutes >= 120)
-            {
-                _lastFlagCheck = DateTime.Now;
 
-                console.CheckIfRussian();
+            //if ((DateTime.Now - _lastFlagCheck).TotalMinutes >= 120)
+            //{
+            //    _lastFlagCheck = DateTime.Now;
 
-                if (console.IsRussian)
-                    _showFlag = true; // every two hours, replace the flag if russian
-            }
+            //    console.CheckIfRussian();
+
+            //    if (console.IsRussian)
+            //        _showFlag = true; // every two hours, replace the flag if russian
+            //}
 
             if (_showFlag)
             {
