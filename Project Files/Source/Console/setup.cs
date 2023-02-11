@@ -15242,11 +15242,11 @@ namespace Thetis
             {
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
                 {
-                    sRet = "Protocol 2 v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                    sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString() + " Protocol 2";
                 }
                 else
                 {
-                    sRet = "Protocol 1 v" + NetworkIO.FWCodeVersion.ToString("0\\.0");
+                    sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol 1";
                 }
             }
 
@@ -25126,7 +25126,7 @@ namespace Thetis
 
         private void nudNFshift_ValueChanged(object sender, EventArgs e)
         {
-            Display.NFshiftDBM = (int)nudNFshift.Value;
+            Display.NFshiftDBM = (float)nudNFshift.Value;
         }
 
         private void chkNFShowDecimal_CheckedChanged(object sender, EventArgs e)
@@ -25210,6 +25210,32 @@ namespace Thetis
         private void chkVisualNotch_CheckedChanged(object sender, EventArgs e)
         {
             Display.ShowVisualNotch = chkVisualNotch.Checked;
+        }
+
+        private void btnRX1PBsnr_Click(object sender, EventArgs e)
+        {
+            float snr = console.RXPBsnr(1);
+
+            float t = (float)nudNFshift.Value + snr;
+
+            // limit to 12 for the shift
+            if (t < -12) t = -12;
+            if (t > 12) t = 12;
+
+            nudNFshift.Value = (decimal)t;
+        }
+
+        private void btnRX2PBsnr_Click(object sender, EventArgs e)
+        {
+            float snr = console.RXPBsnr(2);
+
+            float t = (float)nudNFshift.Value + snr;
+
+            // limit to 12 for the shift
+            if (t < -12) t = -12;
+            if (t > 12) t = 12;
+
+            nudNFshift.Value = (decimal)t;
         }
     }
 

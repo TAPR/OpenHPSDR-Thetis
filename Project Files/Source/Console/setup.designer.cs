@@ -331,6 +331,8 @@
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
+            this.btnRX2PBsnr = new System.Windows.Forms.ButtonTS();
+            this.btnRX1PBsnr = new System.Windows.Forms.ButtonTS();
             this.labelTS157 = new System.Windows.Forms.LabelTS();
             this.labelTS156 = new System.Windows.Forms.LabelTS();
             this.nudNFshift = new System.Windows.Forms.NumericUpDownTS();
@@ -3325,6 +3327,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.labelTS160 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -8644,6 +8647,9 @@
             // 
             // groupBoxTS26
             // 
+            this.groupBoxTS26.Controls.Add(this.labelTS160);
+            this.groupBoxTS26.Controls.Add(this.btnRX2PBsnr);
+            this.groupBoxTS26.Controls.Add(this.btnRX1PBsnr);
             this.groupBoxTS26.Controls.Add(this.labelTS157);
             this.groupBoxTS26.Controls.Add(this.labelTS156);
             this.groupBoxTS26.Controls.Add(this.nudNFshift);
@@ -8651,10 +8657,36 @@
             this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
             this.groupBoxTS26.Location = new System.Drawing.Point(438, 13);
             this.groupBoxTS26.Name = "groupBoxTS26";
-            this.groupBoxTS26.Size = new System.Drawing.Size(166, 84);
+            this.groupBoxTS26.Size = new System.Drawing.Size(257, 148);
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
+            // 
+            // btnRX2PBsnr
+            // 
+            this.btnRX2PBsnr.Image = null;
+            this.btnRX2PBsnr.Location = new System.Drawing.Point(164, 107);
+            this.btnRX2PBsnr.Name = "btnRX2PBsnr";
+            this.btnRX2PBsnr.Selectable = true;
+            this.btnRX2PBsnr.Size = new System.Drawing.Size(47, 23);
+            this.btnRX2PBsnr.TabIndex = 14;
+            this.btnRX2PBsnr.Text = "RX2";
+            this.toolTip1.SetToolTip(this.btnRX2PBsnr, "Adjust shift by current difference from RX2");
+            this.btnRX2PBsnr.UseVisualStyleBackColor = true;
+            this.btnRX2PBsnr.Click += new System.EventHandler(this.btnRX2PBsnr_Click);
+            // 
+            // btnRX1PBsnr
+            // 
+            this.btnRX1PBsnr.Image = null;
+            this.btnRX1PBsnr.Location = new System.Drawing.Point(164, 78);
+            this.btnRX1PBsnr.Name = "btnRX1PBsnr";
+            this.btnRX1PBsnr.Selectable = true;
+            this.btnRX1PBsnr.Size = new System.Drawing.Size(47, 23);
+            this.btnRX1PBsnr.TabIndex = 13;
+            this.btnRX1PBsnr.Text = "RX1";
+            this.toolTip1.SetToolTip(this.btnRX1PBsnr, "Adjust shift by current difference from RX1");
+            this.btnRX1PBsnr.UseVisualStyleBackColor = true;
+            this.btnRX1PBsnr.Click += new System.EventHandler(this.btnRX1PBsnr_Click);
             // 
             // labelTS157
             // 
@@ -8679,19 +8711,20 @@
             // 
             // nudNFshift
             // 
+            this.nudNFshift.DecimalPlaces = 1;
             this.nudNFshift.Increment = new decimal(new int[] {
             1,
             0,
             0,
-            0});
+            65536});
             this.nudNFshift.Location = new System.Drawing.Point(70, 47);
             this.nudNFshift.Maximum = new decimal(new int[] {
-            6,
+            12,
             0,
             0,
             0});
             this.nudNFshift.Minimum = new decimal(new int[] {
-            6,
+            12,
             0,
             0,
             -2147483648});
@@ -52985,6 +53018,16 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // labelTS160
+            // 
+            this.labelTS160.Image = null;
+            this.labelTS160.Location = new System.Drawing.Point(13, 92);
+            this.labelTS160.Name = "labelTS160";
+            this.labelTS160.Size = new System.Drawing.Size(145, 35);
+            this.labelTS160.TabIndex = 15;
+            this.labelTS160.Text = "Normalise PBSNR to 0dB by adusting shift";
+            this.labelTS160.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -57385,5 +57428,8 @@
         public TrackBarTS tbDSPFMDetLimGain;
         private CheckBoxTS chkForceATTwhenPSAoff;
         private CheckBoxTS chkVisualNotch;
+        private ButtonTS btnRX2PBsnr;
+        private ButtonTS btnRX1PBsnr;
+        private LabelTS labelTS160;
     }
 }

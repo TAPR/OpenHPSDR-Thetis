@@ -22700,6 +22700,29 @@ namespace Thetis
         private float _avNumRX1 = -200;
         private float _avNumRX2 = -200;       
         
+        public float RXPBsnr(int rx)
+        {
+            if (rx == 1)
+            {
+                if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
+                {
+                    spectralCalculations(1, _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                    return (float)estimated_snr;
+                }
+                else
+                    return _RX1MeterValues[Reading.ESIMATED_PBSNR];
+            }
+            else
+            {
+                if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
+                {
+                    spectralCalculations(2, _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                    return (float)estimated_snr;
+                }
+                else
+                    return _RX2MeterValues[Reading.ESIMATED_PBSNR];
+            }
+        }
         private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
         {
             estimated_snr = 0;
@@ -22729,7 +22752,7 @@ namespace Thetis
 
                 if (!MOX)
                 {                    
-                    estimated_snr = _avNumRX2 - estimated_passband_noise_power;
+                    estimated_snr = signal - estimated_passband_noise_power;
                 }
             }
             rx_dBHz = 10 * Math.Log10((double)passbandWidth);//MW0LGE_22b
@@ -53269,14 +53292,18 @@ namespace Thetis
             get { return _RX2NFoffsetGridFollow; }
             set { _RX2NFoffsetGridFollow = value; }
         }
-
+        private bool _lastRX1NoiseFloorGood = false;
+        private bool _lastRX2NoiseFloorGood = false;
         private void tmrAutoAGC_Tick(object sender, EventArgs e)
         {
             if (!chkPower.Checked || mox) return;
 
+            // every 500ms
+
             bool bRX1Good = Display.IsNoiseFloorGoodRX1;
             bool bRX2Good = Display.IsNoiseFloorGoodRX2;
-
+            _lastRX1NoiseFloorGood = bRX1Good;
+            _lastRX2NoiseFloorGood = bRX1Good;
             if (bRX1Good) _lastRX1NoiseFloor = Display.NoiseFloorRX1; // these update noisefloorgoodrx
             if (bRX2Good) _lastRX2NoiseFloor = Display.NoiseFloorRX2;
 
@@ -54191,10 +54218,10 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_REAL)) _RX1MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_IMAG)) _RX1MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
-                    if (MeterManager.RequiresUpdate(1, Reading.ESIMATED_SNR))
+                    if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood && MeterManager.RequiresUpdate(1, Reading.ESIMATED_PBSNR))
                     {
                         spectralCalculations(1, _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                        _RX1MeterValues[Reading.ESIMATED_SNR] = (float)estimated_snr;
+                        _RX1MeterValues[Reading.ESIMATED_PBSNR] = (float)estimated_snr;
                     }
                 }
                 else if (mox && (!RX2Enabled || (RX2Enabled && VFOATX)))
@@ -54317,10 +54344,10 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH)) _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_REAL)) _RX2MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_IMAG)) _RX2MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
-                    if (MeterManager.RequiresUpdate(2, Reading.ESIMATED_SNR))
+                    if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood && MeterManager.RequiresUpdate(2, Reading.ESIMATED_PBSNR))
                     {
                         spectralCalculations(2, _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                        _RX2MeterValues[Reading.ESIMATED_SNR] = (float)estimated_snr;
+                        _RX2MeterValues[Reading.ESIMATED_PBSNR] = (float)estimated_snr;
                     }
                 }
                 else if(mox && RX2Enabled && VFOBTX)

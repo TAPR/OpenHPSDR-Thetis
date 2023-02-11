@@ -73,7 +73,7 @@ namespace Thetis
         VOLTS,
         AMPS,
         EYE_PERCENT,
-        ESIMATED_SNR,
+        ESIMATED_PBSNR,
         LAST
     }
 
@@ -466,7 +466,7 @@ namespace Thetis
                 setReading(rx, Reading.VOLTS, ref readings);
                 setReading(rx, Reading.AMPS, ref readings);
 
-                setReading(rx, Reading.ESIMATED_SNR, ref readings);
+                setReading(rx, Reading.ESIMATED_PBSNR, ref readings);
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -757,7 +757,7 @@ namespace Thetis
                         case Reading.ALC: return "ALC";
                         case Reading.ALC_G: return "ALC Comp";
                         case Reading.ALC_GROUP: return "ALC Group";
-                        case Reading.ESIMATED_SNR: return "Estimated PBSNR";
+                        case Reading.ESIMATED_PBSNR: return "Estimated PBSNR";
                         case Reading.ALC_PK: return "ALC";// Peak";
                         case Reading.AMPS: return "Amps";
                         case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
@@ -811,7 +811,7 @@ namespace Thetis
                         case Reading.ALC: return "dB";
                         case Reading.ALC_G: return "dB";
                         case Reading.ALC_GROUP: return "dB";
-                        case Reading.ESIMATED_SNR: return "dB";
+                        case Reading.ESIMATED_PBSNR: return "dB";
                         case Reading.ALC_PK: return "dB";
                         case Reading.AMPS: return "A";
                         case Reading.AVG_SIGNAL_STRENGTH: return "dBm";
@@ -1761,7 +1761,7 @@ namespace Thetis
                     cb.ShowHistory = true;
                     cb.ShowValue = false;
                     cb.ShowMarker = false;
-                    cb.Colour = System.Drawing.Color.CadetBlue;
+                    cb.MarkerColour = System.Drawing.Color.CadetBlue;
                     cb.ShowMarker = true;
                     cb.PeakHoldMarkerColour = System.Drawing.Color.Green;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
@@ -1798,7 +1798,7 @@ namespace Thetis
                     cb.HistoryDuration = 1000;
                     cb.ShowHistory = false;
                     cb.PeakHold = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
@@ -1852,7 +1852,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 4000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Orange;
+                    cb.MarkerColour = System.Drawing.Color.Orange;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-120, new PointF(0, 0));
@@ -1870,7 +1870,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 4000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Orange;
+                    cb.MarkerColour = System.Drawing.Color.Orange;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-120, new PointF(0, 0));
@@ -1882,19 +1882,18 @@ namespace Thetis
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 0.875f);
                     cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
-                    cb.ReadingSource = Reading.ESIMATED_SNR;
+                    cb.ReadingSource = Reading.ESIMATED_PBSNR;
                     cb.AttackRatio = 0.2f;
                     cb.DecayRatio = 0.05f;
-                    cb.UpdateInterval = nMSupdate;
+                    cb.UpdateInterval = 50;
                     cb.HistoryDuration = 1000;
                     cb.ShowHistory = false;
                     cb.PeakHold = true;
                     cb.Colour = System.Drawing.Color.DarkCyan;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
                     cb.Style = clsBarItem.BarStyle.Segments;
-                    cb.ScaleCalibration.Add(-10, new PointF(0, 0));
-                    //cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
-                    cb.ScaleCalibration.Add(50, new PointF(0.99f, 0));
+                    cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                    cb.ScaleCalibration.Add(60, new PointF(0.99f, 0));
                     cb.FontColour = System.Drawing.Color.Yellow;
                     cb.ZOrder = 2;
                     _meterItems.Add(cb.ID, cb);
@@ -1918,7 +1917,7 @@ namespace Thetis
                     cs = new clsScaleItem();
                     cs.TopLeft = new PointF(fPad, 0.875f);
                     cs.Size = new SizeF(1f - fPad * 2f, 0.05f);
-                    cs.ReadingSource = Reading.ESIMATED_SNR;
+                    cs.ReadingSource = Reading.ESIMATED_PBSNR;
                     cs.ZOrder = 3;
                     cs.ShowType = true;
                     _meterItems.Add(cs.ID, cs);
@@ -2617,7 +2616,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = false;
-                    cb.Colour = System.Drawing.Color.DarkGray;
+                    cb.MarkerColour = System.Drawing.Color.DarkGray;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2639,7 +2638,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2658,7 +2657,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = false;
-                    cb.Colour = System.Drawing.Color.DarkGray;
+                    cb.MarkerColour = System.Drawing.Color.DarkGray;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2679,7 +2678,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2698,7 +2697,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = false;
-                    cb.Colour = System.Drawing.Color.DarkGray;
+                    cb.MarkerColour = System.Drawing.Color.DarkGray;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2719,7 +2718,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2738,7 +2737,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(0, new PointF(0, 0));
@@ -2757,7 +2756,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = false;
-                    cb.Colour = System.Drawing.Color.DarkGray;
+                    cb.MarkerColour = System.Drawing.Color.DarkGray;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2778,7 +2777,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2797,7 +2796,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(0, new PointF(0, 0));
@@ -2816,7 +2815,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2835,7 +2834,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2854,7 +2853,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(0, new PointF(0, 0));
@@ -2873,7 +2872,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = false;
-                    cb.Colour = System.Drawing.Color.DarkGray;
+                    cb.MarkerColour = System.Drawing.Color.DarkGray;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2894,7 +2893,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(-30, new PointF(0, 0));
@@ -2913,7 +2912,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
                     cb.Style = clsBarItem.BarStyle.Line;
 
@@ -2995,7 +2994,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
                     cb.Style = clsBarItem.BarStyle.Line;
 
@@ -3077,7 +3076,7 @@ namespace Thetis
                     cb.UpdateInterval = nMSupdate;
                     cb.HistoryDuration = 2000;
                     cb.ShowHistory = true;
-                    cb.Colour = System.Drawing.Color.Yellow;
+                    cb.MarkerColour = System.Drawing.Color.Yellow;
                     cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Orange);
                     cb.Style = clsBarItem.BarStyle.Line;
                     cb.ScaleCalibration.Add(1, new PointF(0, 0));
@@ -4251,7 +4250,7 @@ namespace Thetis
                                 }
                             }
                             break;
-                        case Reading.ESIMATED_SNR:
+                        case Reading.ESIMATED_PBSNR:
                             {
                                 float spacing = (w * 0.99f) / 6f;
 
@@ -4286,7 +4285,7 @@ namespace Thetis
                                     _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(c), 2f);
 
                                     // text
-                                    string sText = (-10 + i * 10).ToString();
+                                    string sText = (i * 10).ToString();
                                     if (i == 6) sText += "+";
                                     adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
                                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
