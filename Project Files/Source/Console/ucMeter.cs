@@ -8,15 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Thetis
 {
     public enum Axis
     {
-        NONE = 0,
-        LEFT,
+//        NONE = 0,
+        LEFT = 0,
+        TOPLEFT,
         TOP,
-        TOPLEFT
+        TOPRIGHT,
+        RIGHT,
+        BOTTOMRIGHT,
+        BOTTOM,
+        BOTTOMLEFT
     }
     public partial class ucMeter : UserControl
     {
@@ -30,15 +36,17 @@ namespace Thetis
         {
             InitializeComponent();
 
+            _console = null;
+
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
-            _axisLock = Axis.NONE;
+            _axisLock = Axis.TOPLEFT;
             _delta = new Point(0, 0);
+            _pinOnTop = false;
 
             storeLocation();
-            setFloatingDockButton();
+            setTopBarButtons();
             setTitle();
-            setAxisButton();
 
             //btnFloat.foc
             //btnFloat.SetStyle(ControlStyles.Selectable, false);
@@ -62,7 +70,42 @@ namespace Thetis
         private int _rx = 0;
         private Point _delta;
         private Axis _axisLock;
+        private bool _pinOnTop;
+        private Console _console;
+        private bool _mox;
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public Console Console
+        {
+            set 
+            {
+                _console = value;
+                if (_console == null) return;
 
+                _mox = (_console.RX2Enabled && _console.VFOBTX && _console.MOX) || (!_console.RX2Enabled && _console.MOX);
+                setTitle();
+
+                addDelegates();
+            }
+        }
+        private void addDelegates()
+        {
+            if (_console == null) return;
+
+            _console.MoxChangeHandlers += OnMoxChangeHandler;
+        }
+        public void RemoveDelegates() // done in console close down
+        {
+            if (_console == null) return;
+
+            _console.MoxChangeHandlers -= OnMoxChangeHandler;
+        }
+        private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
+        {
+            if (rx != _rx) return;
+
+            _mox = newMox;
+            setTitle();
+        }
         private void pnlBar_MouseDown(object sender, MouseEventArgs e)
         {
             if (_floating)
@@ -117,6 +160,7 @@ namespace Thetis
                 }
             }
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public PictureBox DisplayContainer
         {
             get { return picContainer; }
@@ -166,6 +210,7 @@ namespace Thetis
                 }
             }
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Point DockedLocation
         {
             get 
@@ -176,6 +221,7 @@ namespace Thetis
                 _dockedLocation = value;
             }
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Size DockedSize
         {
             get { return _dockedSize; }
@@ -187,32 +233,48 @@ namespace Thetis
             //_dockedLocation = new Point(this.Location.X - _delta.X, this.Location.Y - _delta.Y);
             _dockedSize = this.Size;
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public void RestoreLocation()
         {
             this.Location = _dockedLocation;
             //this.Location = new Point(_dockedLocation.X + _delta.X, _dockedLocation.Y + _delta.Y);
             this.Size = _dockedSize;
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool Floating
         {
             get { return _floating; }
             set 
             { 
                 _floating = value;
-                btnAxis.Visible = !_floating;
-                setFloatingDockButton();
+                setTopBarButtons();
+                setTopMost();
             }
         }
-        private void setFloatingDockButton()
+        private void setTopBarButtons()
         {
             if (_floating)
+            {
                 btnFloat.BackgroundImage = Properties.Resources.dockIcon_dock;
+                btnPin.Left = btnAxis.Left; // move to fill the gap
+                btnAxis.Visible = false;
+                btnPin.Visible = true;
+            }
             else
+            {
                 btnFloat.BackgroundImage = Properties.Resources.dockIcon_float;
+                btnPin.Left = btnAxis.Left - btnPin.Width; // put back (dont really need to as invis)
+                btnAxis.Visible = true;
+                btnPin.Visible = false;
+            }
+
+            setAxisButton();
+            setPinOnTopButton();
         }
         private void setTitle()
         {
-            lblRX.Text = "RX" + _rx.ToString();
+            string sPrefix = _mox ? "TX" : "RX";
+            lblRX.Text = sPrefix + _rx.ToString();
         }
 
         private void btnFloat_Click(object sender, EventArgs e)
@@ -286,6 +348,7 @@ namespace Thetis
             if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
                 mouseLeave();
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public int RX
         {
             get { return _rx; }
@@ -366,13 +429,23 @@ namespace Thetis
                 _dockedSize = this.Size;
             }
         }
-
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Point Delta
         {
             get { return _delta; }
             set { _delta = value; } 
         }
-
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool PinOnTop
+        {
+            get { return _pinOnTop; }
+            set { 
+                _pinOnTop = value;
+                setPinOnTopButton();
+                setTopMost();
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Axis AxisLock
         {
             get { return _axisLock; }
@@ -384,31 +457,143 @@ namespace Thetis
 
         private void btnAxis_Click(object sender, EventArgs e)
         {
+            MouseEventArgs me = (MouseEventArgs)e;
+
             int n = (int)_axisLock;
-            n++;
-            if (n > (int)Axis.TOPLEFT) n = (int)Axis.NONE;
+            if (me.Button == MouseButtons.Right)
+                n--;
+            else
+                n++;
+
+            if (n > (int)Axis.BOTTOMLEFT) n = (int)Axis.LEFT;
+            if (n < (int)Axis.LEFT) n = (int)Axis.BOTTOMLEFT;
 
             _axisLock = (Axis)n;
 
             setAxisButton();
+
+            // reset this data when the lock is changed
+            if(_console != null)
+            {
+                Delta = new Point(_console.HDelta, _console.VDelta);
+                DockedLocation = new Point(this.Left, this.Top);
+            }
         }
         private void setAxisButton()
         {
             switch (_axisLock)
             {
-                case Axis.NONE:
-                    btnAxis.BackgroundImage = Properties.Resources.dot;
-                    break;
+                //case Axis.NONE:
+                //    btnAxis.BackgroundImage = Properties.Resources.dot;
+                //    break;
                 case Axis.LEFT:
                     btnAxis.BackgroundImage = Properties.Resources.arrow_left;
-                    break;
-                case Axis.TOP:
-                    btnAxis.BackgroundImage = Properties.Resources.arrow_up;
                     break;
                 case Axis.TOPLEFT:
                     btnAxis.BackgroundImage = Properties.Resources.arrow_topleft;
                     break;
+                case Axis.TOP:
+                    btnAxis.BackgroundImage = Properties.Resources.arrow_up;
+                    break;
+                case Axis.TOPRIGHT:
+                    btnAxis.BackgroundImage = Properties.Resources.arrow_topright;
+                    break;
+                case Axis.RIGHT:
+                    btnAxis.BackgroundImage = Properties.Resources.arrow_right;
+                    break;
+                case Axis.BOTTOMRIGHT:
+                    btnAxis.BackgroundImage = Properties.Resources.arrow_bottomright;
+                    break;
+                case Axis.BOTTOM:
+                    btnAxis.BackgroundImage = Properties.Resources.down;
+                    break;
+                case Axis.BOTTOMLEFT:
+                    btnAxis.BackgroundImage = Properties.Resources.arrow_bottomleft;
+                    break;
             }
+        }
+        private void setPinOnTopButton()
+        {
+            btnPin.BackgroundImage = _pinOnTop ? Properties.Resources.pin_on_top : Properties.Resources.pin_not_on_top;
+        }
+
+        private void btnPin_Click(object sender, EventArgs e)
+        {
+            _pinOnTop = !_pinOnTop;
+            setPinOnTopButton();
+            setTopMost();
+        }
+        private void setTopMost()
+        {
+            if (_floating)
+            {
+                frmMeterDisplay md = this.Parent as frmMeterDisplay;
+                if (md != null)
+                {
+                    md.TopMost = _pinOnTop;
+                }
+            }
+        }
+        public override string ToString()
+        {
+            return
+                DockedLocation.X.ToString() + "|" +
+                DockedLocation.Y.ToString() + "|" +
+                DockedSize.Width.ToString() + "|" +
+                DockedSize.Height.ToString() + "|" +
+                Floating.ToString() + "|" +
+                Delta.X.ToString() + "|" +
+                Delta.Y.ToString() + "|" +
+                AxisLock.ToString() + "|" +
+                PinOnTop.ToString();
+        }
+        public bool TryParse(string str)
+        {
+            bool bOk = false;
+            int x = 0, y = 0, w = 0, h = 0;
+            bool floating = false;
+            bool pinOnTop = false;
+
+            if (str != "")
+            {
+                string[] tmp = str.Split('|');
+                if(tmp.Length == 9)
+                {                    
+                    bOk = int.TryParse(tmp[0], out x);
+                    if (bOk) bOk = int.TryParse(tmp[1], out y);
+                    if (bOk) bOk = int.TryParse(tmp[2], out w);
+                    if (bOk) bOk = int.TryParse(tmp[3], out h);
+                    if (bOk)
+                    {
+                        DockedLocation = new Point(x, y);
+                        DockedSize = new Size(w, h);
+                    }
+
+                    if (bOk) bOk = bool.TryParse(tmp[4], out floating);
+                    if (bOk) Floating = floating;
+
+                    if (bOk) bOk = int.TryParse(tmp[5], out x);
+                    if (bOk) bOk = int.TryParse(tmp[6], out y);
+                    if (bOk) Delta = new Point(x, y);
+
+                    if (bOk)
+                    {
+                        try
+                        {
+                            AxisLock = (Axis)Enum.Parse(typeof(Axis), tmp[7]);
+                        }
+                        catch
+                        {
+                            bOk = false;
+                        }
+                    }
+
+                    if (bOk) bOk = bool.TryParse(tmp[8], out pinOnTop);
+                    if (bOk) PinOnTop = pinOnTop;
+                }
+            }
+
+            return bOk;
         }
     }
 }

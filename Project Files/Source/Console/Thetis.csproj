@@ -339,6 +339,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
     <Compile Include="ucMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -645,6 +650,13 @@
     <None Include="Resources\arrow_up.png" />
     <None Include="Resources\arrow_topleft.png" />
     <None Include="Resources\dot.png" />
+    <None Include="Resources\arrow_bottomleft.png" />
+    <None Include="Resources\arrow_bottomright.png" />
+    <None Include="Resources\arrow_right.png" />
+    <None Include="Resources\arrow_topright.png" />
+    <None Include="Resources\down.png" />
+    <None Include="Resources\pin_not_on_top.png" />
+    <None Include="Resources\pin_on_top.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
@@ -700,6 +712,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSeqLog.resx">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ucMeter.resx">
       <DependentUpon>ucMeter.cs</DependentUpon>

@@ -16,11 +16,11 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
-using static System.Net.Mime.MediaTypeNames;
+//using static System.Net.Mime.MediaTypeNames;
 using System.Xml.Linq;
-using SharpDX.Direct2D1.Effects;
-using System.Windows.Forms.DataVisualization.Charting;
-using static System.Windows.Forms.AxHost;
+//using SharpDX.Direct2D1.Effects;
+//using System.Windows.Forms.DataVisualization.Charting;
+//using static System.Windows.Forms.AxHost;
 //
 
 namespace Thetis
@@ -73,7 +73,7 @@ namespace Thetis
         VOLTS,
         AMPS,
         EYE_PERCENT,
-        ESIMATED_PBSNR,
+        ESTIMATED_PBSNR,
         LAST
     }
 
@@ -466,7 +466,7 @@ namespace Thetis
                 setReading(rx, Reading.VOLTS, ref readings);
                 setReading(rx, Reading.AMPS, ref readings);
 
-                setReading(rx, Reading.ESIMATED_PBSNR, ref readings);
+                setReading(rx, Reading.ESTIMATED_PBSNR, ref readings);
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -696,7 +696,7 @@ namespace Thetis
                 //if (!readingsUsed.Contains(ReadingSource))
                 //    readingsUsed.Add(ReadingSource);
             }
-            public float Value
+            public virtual float Value
             {
                 get { return _value; }
                 set { _value = value; }
@@ -757,7 +757,7 @@ namespace Thetis
                         case Reading.ALC: return "ALC";
                         case Reading.ALC_G: return "ALC Comp";
                         case Reading.ALC_GROUP: return "ALC Group";
-                        case Reading.ESIMATED_PBSNR: return "Estimated PBSNR";
+                        case Reading.ESTIMATED_PBSNR: return "Estimated PBSNR";
                         case Reading.ALC_PK: return "ALC";// Peak";
                         case Reading.AMPS: return "Amps";
                         case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
@@ -811,7 +811,7 @@ namespace Thetis
                         case Reading.ALC: return "dB";
                         case Reading.ALC_G: return "dB";
                         case Reading.ALC_GROUP: return "dB";
-                        case Reading.ESIMATED_PBSNR: return "dB";
+                        case Reading.ESTIMATED_PBSNR: return "dB";
                         case Reading.ALC_PK: return "dB";
                         case Reading.AMPS: return "A";
                         case Reading.AVG_SIGNAL_STRENGTH: return "dBm";
@@ -1558,11 +1558,8 @@ namespace Thetis
                 ReadingSource = Reading.NONE;
                 UpdateInterval = 100;
             }
-            public override void Update(int rx, ref List<Reading> readingsUsed)
+            private void updateReadintText(float reading)
             {
-                // get latest reading
-                float reading = MeterManager.getReading(rx, ReadingSource);
-                
                 switch (_sText)
                 {
                     case "%valueWithType%":
@@ -1579,6 +1576,13 @@ namespace Thetis
                         _readingText = "";
                         break;
                 }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed)
+            {
+                // get latest reading
+                float reading = MeterManager.getReading(rx, ReadingSource);
+
+                updateReadintText(reading);
 
                 // this reading has been used
                 if (!readingsUsed.Contains(ReadingSource))
@@ -1626,6 +1630,14 @@ namespace Thetis
             {
                 get { return _fontSize; }
                 set { _fontSize = value; }
+            }
+            public override float Value
+            {
+                get { return base.Value; }
+                set { 
+                    base.Value = value;
+                    updateReadintText(value);
+                }
             }
         }
         //
@@ -1785,6 +1797,7 @@ namespace Thetis
                     tx.FontSize = 9f;
                     tx.UpdateInterval = 100;
                     tx.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                    tx.Value = -200f;
                     _meterItems.Add(tx.ID, tx);
                     //+
 
@@ -1882,7 +1895,7 @@ namespace Thetis
                     cb = new clsBarItem();
                     cb.TopLeft = new PointF(fPad, 0.875f);
                     cb.Size = new SizeF(1f - fPad * 2f, 0.05f);
-                    cb.ReadingSource = Reading.ESIMATED_PBSNR;
+                    cb.ReadingSource = Reading.ESTIMATED_PBSNR;
                     cb.AttackRatio = 0.2f;
                     cb.DecayRatio = 0.05f;
                     cb.UpdateInterval = 50;
@@ -1917,7 +1930,7 @@ namespace Thetis
                     cs = new clsScaleItem();
                     cs.TopLeft = new PointF(fPad, 0.875f);
                     cs.Size = new SizeF(1f - fPad * 2f, 0.05f);
-                    cs.ReadingSource = Reading.ESIMATED_PBSNR;
+                    cs.ReadingSource = Reading.ESTIMATED_PBSNR;
                     cs.ZOrder = 3;
                     cs.ShowType = true;
                     _meterItems.Add(cs.ID, cs);
@@ -4250,7 +4263,7 @@ namespace Thetis
                                 }
                             }
                             break;
-                        case Reading.ESIMATED_PBSNR:
+                        case Reading.ESTIMATED_PBSNR:
                             {
                                 float spacing = (w * 0.99f) / 6f;
 

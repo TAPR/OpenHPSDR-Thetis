@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.pnlBar = new System.Windows.Forms.Panel();
+            this.pbGrab = new System.Windows.Forms.PictureBox();
+            this.picContainer = new System.Windows.Forms.PictureBox();
+            this.btnPin = new System.Windows.Forms.ButtonTS();
             this.btnAxis = new System.Windows.Forms.ButtonTS();
             this.lblRX = new System.Windows.Forms.LabelTS();
             this.btnFloat = new System.Windows.Forms.ButtonTS();
-            this.pbGrab = new System.Windows.Forms.PictureBox();
-            this.picContainer = new System.Windows.Forms.PictureBox();
             this.pnlBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbGrab)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picContainer)).BeginInit();
@@ -44,6 +45,7 @@
             this.pnlBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlBar.BackColor = System.Drawing.Color.DimGray;
+            this.pnlBar.Controls.Add(this.btnPin);
             this.pnlBar.Controls.Add(this.btnAxis);
             this.pnlBar.Controls.Add(this.lblRX);
             this.pnlBar.Controls.Add(this.btnFloat);
@@ -56,6 +58,60 @@
             this.pnlBar.MouseLeave += new System.EventHandler(this.pnlBar_MouseLeave);
             this.pnlBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlBar_MouseMove);
             this.pnlBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlBar_MouseUp);
+            // 
+            // pbGrab
+            // 
+            this.pbGrab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbGrab.BackColor = System.Drawing.Color.Transparent;
+            this.pbGrab.Image = global::Thetis.Properties.Resources.resizegrab;
+            this.pbGrab.Location = new System.Drawing.Point(389, 385);
+            this.pbGrab.Name = "pbGrab";
+            this.pbGrab.Size = new System.Drawing.Size(16, 16);
+            this.pbGrab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbGrab.TabIndex = 1;
+            this.pbGrab.TabStop = false;
+            this.pbGrab.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseDown);
+            this.pbGrab.MouseEnter += new System.EventHandler(this.pbGrab_MouseEnter);
+            this.pbGrab.MouseLeave += new System.EventHandler(this.pbGrab_MouseLeave);
+            this.pbGrab.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseMove);
+            this.pbGrab.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseUp);
+            // 
+            // picContainer
+            // 
+            this.picContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picContainer.BackColor = System.Drawing.Color.Black;
+            this.picContainer.Location = new System.Drawing.Point(0, 0);
+            this.picContainer.Margin = new System.Windows.Forms.Padding(0);
+            this.picContainer.Name = "picContainer";
+            this.picContainer.Size = new System.Drawing.Size(405, 401);
+            this.picContainer.TabIndex = 1;
+            this.picContainer.TabStop = false;
+            this.picContainer.MouseLeave += new System.EventHandler(this.picContainer_MouseLeave);
+            this.picContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseMove);
+            // 
+            // btnPin
+            // 
+            this.btnPin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPin.BackColor = System.Drawing.Color.Transparent;
+            this.btnPin.BackgroundImage = global::Thetis.Properties.Resources.pin_not_on_top;
+            this.btnPin.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnPin.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.btnPin.FlatAppearance.BorderSize = 0;
+            this.btnPin.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnPin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.DarkGray;
+            this.btnPin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPin.Image = null;
+            this.btnPin.Location = new System.Drawing.Point(339, 0);
+            this.btnPin.Margin = new System.Windows.Forms.Padding(0);
+            this.btnPin.Name = "btnPin";
+            this.btnPin.Selectable = false;
+            this.btnPin.Size = new System.Drawing.Size(18, 18);
+            this.btnPin.TabIndex = 3;
+            this.btnPin.UseVisualStyleBackColor = false;
+            this.btnPin.Click += new System.EventHandler(this.btnPin_Click);
             // 
             // btnAxis
             // 
@@ -118,38 +174,6 @@
             this.btnFloat.Click += new System.EventHandler(this.btnFloat_Click);
             this.btnFloat.MouseLeave += new System.EventHandler(this.btnFloat_MouseLeave);
             // 
-            // pbGrab
-            // 
-            this.pbGrab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbGrab.BackColor = System.Drawing.Color.Transparent;
-            this.pbGrab.Image = global::Thetis.Properties.Resources.resizegrab;
-            this.pbGrab.Location = new System.Drawing.Point(389, 385);
-            this.pbGrab.Name = "pbGrab";
-            this.pbGrab.Size = new System.Drawing.Size(16, 16);
-            this.pbGrab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbGrab.TabIndex = 1;
-            this.pbGrab.TabStop = false;
-            this.pbGrab.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseDown);
-            this.pbGrab.MouseEnter += new System.EventHandler(this.pbGrab_MouseEnter);
-            this.pbGrab.MouseLeave += new System.EventHandler(this.pbGrab_MouseLeave);
-            this.pbGrab.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseMove);
-            this.pbGrab.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseUp);
-            // 
-            // picContainer
-            // 
-            this.picContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picContainer.BackColor = System.Drawing.Color.Black;
-            this.picContainer.Location = new System.Drawing.Point(0, 0);
-            this.picContainer.Margin = new System.Windows.Forms.Padding(0);
-            this.picContainer.Name = "picContainer";
-            this.picContainer.Size = new System.Drawing.Size(405, 401);
-            this.picContainer.TabIndex = 1;
-            this.picContainer.TabStop = false;
-            this.picContainer.MouseLeave += new System.EventHandler(this.picContainer_MouseLeave);
-            this.picContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseMove);
-            // 
             // ucMeter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -179,5 +203,6 @@
         private System.Windows.Forms.PictureBox picContainer;
         private System.Windows.Forms.LabelTS lblRX;
         private System.Windows.Forms.ButtonTS btnAxis;
+        private System.Windows.Forms.ButtonTS btnPin;
     }
 }

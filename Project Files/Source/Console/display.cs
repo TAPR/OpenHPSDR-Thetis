@@ -63,7 +63,7 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
-    using WindowsFirewallHelper.Addresses;
+    //using WindowsFirewallHelper.Addresses;
 
     class Display
     {
@@ -78,7 +78,7 @@ namespace Thetis
         public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs and dx spotter
         public static string background_image = null;
 
-        private static int[] histogram_data = null;					// histogram display buffer
+        private static int[] histogram_data = null;				// histogram display buffer
         private static int[] histogram_history;					// histogram counter
 
         public static float[] new_display_data;					// Buffer used to store the new data from the DSP for the display
@@ -106,13 +106,13 @@ namespace Thetis
 
         public static float FrameDelta { get; private set; }
 
-        private static bool tnf_active = true;
+        private static bool _tnf_active = true;
         public static bool TNFActive
         {
-            get { return tnf_active; }
+            get { return _tnf_active; }
             set
             {
-                tnf_active = value;
+                _tnf_active = value;
             }
         }
 
@@ -6642,12 +6642,12 @@ namespace Thetis
                     notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - rit/* + expandHz*/) / width * W);
                 }
 
-                clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, tnf_active && n.Active, (int)n.FWidth);
+                clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, _tnf_active && n.Active, (int)n.FWidth);
                 notchData.Add(nc);
 
                 if (bDraw)
                 {
-                    if (tnf_active)
+                    if (_tnf_active)
                     {
                         if (n.Active)
                         {

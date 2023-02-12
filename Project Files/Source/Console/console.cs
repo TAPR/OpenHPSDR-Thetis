@@ -1965,6 +1965,12 @@ namespace Thetis
             // MW0LGE_[2.9.0.7] setup the multi meter
             if (USE_MULTIMETERS2)
             {
+                ucDockedMeterRX1.Console = this;
+                ucDockedMeterRX2.Console = this;
+
+                ucDockedMeterRX1.RX = 1;
+                ucDockedMeterRX2.RX = 2;
+
                 _RX1MeterValues = new Dictionary<Reading, float>();
                 _RX2MeterValues = new Dictionary<Reading, float>();
                 for (int n = 0; n < (int)Reading.LAST; n++)
@@ -2667,10 +2673,10 @@ namespace Thetis
             // a.Add("chkSyncIT_checkstate/" + chkSyncIT.CheckState.ToString());  //-W2PA Checkbox for synched RIT/XIT
 
             //a.Add("current_datetime_mode/" + (int)current_datetime_mode);
-            a.Add("rx1_display_cal_offset/" + rx1_display_cal_offset.ToString("f3"));
+            a.Add("rx1_display_cal_offset/" + rx1_display_cal_offset.ToString("f4")); //MW0LGE [2.9.0.7] change to same float precision format as display cal by radio model
             a.Add("rx1_meter_cal_offset/" + rx1_meter_cal_offset);
 
-            a.Add("rx2_display_cal_offset/" + rx2_display_cal_offset.ToString("f3"));
+            a.Add("rx2_display_cal_offset/" + rx2_display_cal_offset.ToString("f4"));
             a.Add("rx2_meter_cal_offset/" + rx2_meter_cal_offset);
 
             a.Add("txtMemoryQuick/" + txtMemoryQuick.Text);		// save quick memory settings
@@ -3052,15 +3058,17 @@ namespace Thetis
             a.Add("infoBar_flip/" + infoBar.CurrentFlip.ToString()); //MW0LGE_21k9rc4 info bar currentflip
             a.Add("infoBar_button1/" + ((int)infoBar.Button1Action).ToString()); //MW0LGE_[2.9.0.6] change to in, to prevent getstate issues if enaum names change
             a.Add("infoBar_button2/" + ((int)infoBar.Button2Action).ToString());
-            a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("0.0000")); //MW0LGE_21k9c changed format
+            a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("f4")); //MW0LGE_21k9c changed format
 
             //
-            a.Add("ucMeterRX1_LocationSize/" + ucDockedMeterRX1.DockedLocation.X.ToString() + "|" + ucDockedMeterRX1.DockedLocation.Y.ToString() + "|" + ucDockedMeterRX1.DockedSize.Width.ToString() + "|" + ucDockedMeterRX1.DockedSize.Height.ToString());
-            a.Add("ucMeterRX2_LocationSize/" + ucDockedMeterRX2.DockedLocation.X.ToString() + "|" + ucDockedMeterRX2.DockedLocation.Y.ToString() + "|" + ucDockedMeterRX2.DockedSize.Width.ToString() + "|" + ucDockedMeterRX2.DockedSize.Height.ToString());
-            a.Add("ucMeterRX1_Floating/" + ucDockedMeterRX1.Floating.ToString());
-            a.Add("ucMeterRX2_Floating/" + ucDockedMeterRX2.Floating.ToString());
-            a.Add("ucMeterRX1_Delta/" + ucDockedMeterRX1.Delta.X.ToString() + "|" + ucDockedMeterRX1.Delta.Y.ToString());
-            a.Add("ucMeterRX2_Delta/" + ucDockedMeterRX2.Delta.X.ToString() + "|" + ucDockedMeterRX2.Delta.Y.ToString());
+            //a.Add("ucMeterRX1_LocationSize/" + ucDockedMeterRX1.DockedLocation.X.ToString() + "|" + ucDockedMeterRX1.DockedLocation.Y.ToString() + "|" + ucDockedMeterRX1.DockedSize.Width.ToString() + "|" + ucDockedMeterRX1.DockedSize.Height.ToString());
+            //a.Add("ucMeterRX2_LocationSize/" + ucDockedMeterRX2.DockedLocation.X.ToString() + "|" + ucDockedMeterRX2.DockedLocation.Y.ToString() + "|" + ucDockedMeterRX2.DockedSize.Width.ToString() + "|" + ucDockedMeterRX2.DockedSize.Height.ToString());
+            //a.Add("ucMeterRX1_Floating/" + ucDockedMeterRX1.Floating.ToString());
+            //a.Add("ucMeterRX2_Floating/" + ucDockedMeterRX2.Floating.ToString());
+            //a.Add("ucMeterRX1_Delta/" + ucDockedMeterRX1.Delta.X.ToString() + "|" + ucDockedMeterRX1.Delta.Y.ToString());
+            //a.Add("ucMeterRX2_Delta/" + ucDockedMeterRX2.Delta.X.ToString() + "|" + ucDockedMeterRX2.Delta.Y.ToString());
+            a.Add("ucMeterRX1_Settings/" + ucDockedMeterRX1.ToString());
+            a.Add("ucMeterRX2_Settings/" + ucDockedMeterRX1.ToString());
             //
 
             a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
@@ -3964,72 +3972,78 @@ namespace Thetis
                     case "infoBar_splitter_ratio":
                         infoBar.SplitterRatio = float.Parse(val);
                         break;
-                    case "ucMeterRX1_LocationSize":
-                        {
-                            int X = 0, Y = 0, W = 0, H = 0;
-                            string[] tmp = val.Split('|');
-                            bool bOk = int.TryParse(tmp[0], out X);
-                            if (bOk) bOk = int.TryParse(tmp[1], out Y);
-                            if (bOk) bOk = int.TryParse(tmp[2], out W);
-                            if (bOk) bOk = int.TryParse(tmp[3], out H);
-                            if (bOk)
-                            {
-                                ucDockedMeterRX1.DockedLocation = new Point(X, Y);
-                                ucDockedMeterRX1.DockedSize = new Size(W, H);
-                            }
-                        }
+                    case "ucMeterRX1_Settings":
+                        ucDockedMeterRX1.TryParse(val);
                         break;
-                    case "ucMeterRX2_LocationSize":
-                        {
-                            int X = 0, Y = 0, W = 0, H = 0;
-                            string[] tmp = val.Split('|');
-                            bool bOk = int.TryParse(tmp[0], out X);
-                            if (bOk) bOk = int.TryParse(tmp[1], out Y);
-                            if (bOk) bOk = int.TryParse(tmp[2], out W);
-                            if (bOk) bOk = int.TryParse(tmp[3], out H);
-                            if (bOk)
-                            {
-                                ucDockedMeterRX2.DockedLocation = new Point(X, Y);
-                                ucDockedMeterRX2.DockedSize = new Size(W, H);
-                            }
-                        }
+                    case "ucMeterRX2_Settings":
+                        ucDockedMeterRX2.TryParse(val);
                         break;
-                    case "ucMeterRX1_Floating":
-                        {
-                            bool bOk = bool.TryParse(val, out bool floating);
-                            if (bOk) ucDockedMeterRX1.Floating = floating;
-                        }
-                        break;
-                    case "ucMeterRX2_Floating":
-                        {
-                            bool bOk = bool.TryParse(val, out bool floating);
-                            if (bOk) ucDockedMeterRX2.Floating = floating;
-                        }
-                        break;
-                    case "ucMeterRX1_Delta":
-                        {
-                            int X = 0, Y = 0;
-                            string[] tmp = val.Split('|');
-                            bool bOk = int.TryParse(tmp[0], out X);
-                            if (bOk) bOk = int.TryParse(tmp[1], out Y);
-                            if (bOk)
-                            {
-                                ucDockedMeterRX1.Delta = new Point(X, Y);
-                            }
-                        }
-                        break;
-                    case "ucMeterRX2_Delta":
-                        {
-                            int X = 0, Y = 0;
-                            string[] tmp = val.Split('|');
-                            bool bOk = int.TryParse(tmp[0], out X);
-                            if (bOk) bOk = int.TryParse(tmp[1], out Y);
-                            if (bOk)
-                            {
-                                ucDockedMeterRX2.Delta = new Point(X, Y);
-                            }
-                        }
-                        break;
+                    //case "ucMeterRX1_LocationSize":
+                    //    {
+                    //        int X = 0, Y = 0, W = 0, H = 0;
+                    //        string[] tmp = val.Split('|');
+                    //        bool bOk = int.TryParse(tmp[0], out X);
+                    //        if (bOk) bOk = int.TryParse(tmp[1], out Y);
+                    //        if (bOk) bOk = int.TryParse(tmp[2], out W);
+                    //        if (bOk) bOk = int.TryParse(tmp[3], out H);
+                    //        if (bOk)
+                    //        {
+                    //            ucDockedMeterRX1.DockedLocation = new Point(X, Y);
+                    //            ucDockedMeterRX1.DockedSize = new Size(W, H);
+                    //        }
+                    //    }
+                    //    break;
+                    //case "ucMeterRX2_LocationSize":
+                    //    {
+                    //        int X = 0, Y = 0, W = 0, H = 0;
+                    //        string[] tmp = val.Split('|');
+                    //        bool bOk = int.TryParse(tmp[0], out X);
+                    //        if (bOk) bOk = int.TryParse(tmp[1], out Y);
+                    //        if (bOk) bOk = int.TryParse(tmp[2], out W);
+                    //        if (bOk) bOk = int.TryParse(tmp[3], out H);
+                    //        if (bOk)
+                    //        {
+                    //            ucDockedMeterRX2.DockedLocation = new Point(X, Y);
+                    //            ucDockedMeterRX2.DockedSize = new Size(W, H);
+                    //        }
+                    //    }
+                    //    break;
+                    //case "ucMeterRX1_Floating":
+                    //    {
+                    //        bool bOk = bool.TryParse(val, out bool floating);
+                    //        if (bOk) ucDockedMeterRX1.Floating = floating;
+                    //    }
+                    //    break;
+                    //case "ucMeterRX2_Floating":
+                    //    {
+                    //        bool bOk = bool.TryParse(val, out bool floating);
+                    //        if (bOk) ucDockedMeterRX2.Floating = floating;
+                    //    }
+                    //    break;
+                    //case "ucMeterRX1_Delta":
+                    //    {
+                    //        int X = 0, Y = 0;
+                    //        string[] tmp = val.Split('|');
+                    //        bool bOk = int.TryParse(tmp[0], out X);
+                    //        if (bOk) bOk = int.TryParse(tmp[1], out Y);
+                    //        if (bOk)
+                    //        {
+                    //            ucDockedMeterRX1.Delta = new Point(X, Y);
+                    //        }
+                    //    }
+                    //    break;
+                    //case "ucMeterRX2_Delta":
+                    //    {
+                    //        int X = 0, Y = 0;
+                    //        string[] tmp = val.Split('|');
+                    //        bool bOk = int.TryParse(tmp[0], out X);
+                    //        if (bOk) bOk = int.TryParse(tmp[1], out Y);
+                    //        if (bOk)
+                    //        {
+                    //            ucDockedMeterRX2.Delta = new Point(X, Y);
+                    //        }
+                    //    }
+                    //    break;
                     //
 
                     case var nam when name.StartsWith("rx1_filters["):
@@ -22710,7 +22724,7 @@ namespace Thetis
                     return (float)estimated_snr;
                 }
                 else
-                    return _RX1MeterValues[Reading.ESIMATED_PBSNR];
+                    return _RX1MeterValues[Reading.ESTIMATED_PBSNR];
             }
             else
             {
@@ -22720,7 +22734,7 @@ namespace Thetis
                     return (float)estimated_snr;
                 }
                 else
-                    return _RX2MeterValues[Reading.ESIMATED_PBSNR];
+                    return _RX2MeterValues[Reading.ESTIMATED_PBSNR];
             }
         }
         private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
@@ -52538,6 +52552,9 @@ namespace Thetis
             }
 
             Display.RemoveDelegates();
+
+            if (ucDockedMeterRX1 != null) ucDockedMeterRX1.RemoveDelegates();
+            if (ucDockedMeterRX2 != null) ucDockedMeterRX2.RemoveDelegates();
         }
         //
         private void OnTransverterIndexChanged(int oldIndex, int newIndex)
@@ -54218,10 +54235,15 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_REAL)) _RX1MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_IMAG)) _RX1MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
-                    if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood && MeterManager.RequiresUpdate(1, Reading.ESIMATED_PBSNR))
+                    if (MeterManager.RequiresUpdate(1, Reading.ESTIMATED_PBSNR))
                     {
-                        spectralCalculations(1, _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                        _RX1MeterValues[Reading.ESIMATED_PBSNR] = (float)estimated_snr;
+                        if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
+                        {
+                            spectralCalculations(1, _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
+                        }
+                        else
+                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = -200f;
                     }
                 }
                 else if (mox && (!RX2Enabled || (RX2Enabled && VFOATX)))
@@ -54344,10 +54366,15 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH)) _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_REAL)) _RX2MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_IMAG)) _RX2MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
-                    if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood && MeterManager.RequiresUpdate(2, Reading.ESIMATED_PBSNR))
+                    if (MeterManager.RequiresUpdate(2, Reading.ESTIMATED_PBSNR))
                     {
-                        spectralCalculations(2, _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                        _RX2MeterValues[Reading.ESIMATED_PBSNR] = (float)estimated_snr;
+                        if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
+                        {
+                            spectralCalculations(2, _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
+                        }
+                        else
+                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = -200f;
                     }
                 }
                 else if(mox && RX2Enabled && VFOBTX)
@@ -54435,8 +54462,8 @@ namespace Thetis
         private void setMeterFloating(ucMeter m, frmMeterDisplay frm)
         {
             m.Hide();
-            m.Floating = true;
             frm.TakeOwner(m);
+            m.Floating = true;
             frm.Show();
         }
         private void ucDockedMeterRX1_FloatingDockedClicked(object sender, EventArgs e)
@@ -54477,27 +54504,29 @@ namespace Thetis
 
                 switch (m.AxisLock)
                 {
-                    case Axis.NONE:
+                    case Axis.RIGHT:
+                    case Axis.BOTTOMRIGHT:
+                    //case Axis.NONE:
                         newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y - m.Delta.Y + VDelta);
-                        //newLocation.X = m.Location.X;
-                        //newLocation.Y = m.Location.Y;
                         break;
+                    case Axis.BOTTOMLEFT:
                     case Axis.LEFT:
                         newLocation = new Point(m.DockedLocation.X, m.DockedLocation.Y - m.Delta.Y + VDelta);
-                        break;
-                    case Axis.TOP:
-                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y);
                         break;
                     case Axis.TOPLEFT:
                         newLocation = new Point(m.DockedLocation.X, m.DockedLocation.Y);
                         break;
+                    case Axis.TOP:
+                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y);
+                        break;
+                    case Axis.BOTTOM:
+                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y - m.Delta.Y + VDelta);
+                        break;
+                    case Axis.TOPRIGHT:
+                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y);
+                        break;
                 }
-
-                //m.Location = new Point((int)(this.Width * m.Delta.X) - m.Width, (int)(this.Height * m.Delta.Y) - m.Height);
-                //m.Location = new Point((int)(this.Width * m.Delta.X), (int)(this.Height * m.Delta.Y));
-
-                //m.Location = new Point((int)(this.ClientRectangle.Width * m.Delta.X) - m.Width, (int)(this.ClientRectangle.Height * m.Delta.Y) - m.Height);
-
+              
                 //limit to client area
                 if (newLocation.X + m.Width > this.Width) newLocation.X = this.Width - m.Width;
                 if (newLocation.Y + m.Height > this.Height) newLocation.Y = this.Height - m.Height;
@@ -54528,19 +54557,6 @@ namespace Thetis
                 else
                     ucDockedMeterRX2.Hide();
             }
-        }
-
-        private void buttonTS2_Click(object sender, EventArgs e)
-        {
-            ucDockedMeterRX1.Delta = new Point(0, 0);
-            ucDockedMeterRX1.Location = new Point(0, 0);
-            ucDockedMeterRX1.DockedLocation = new Point(0, 0);
-            ucDockedMeterRX2.Delta = new Point(0, 0);
-            ucDockedMeterRX2.Location = new Point(0, 0);
-            ucDockedMeterRX2.DockedLocation = new Point(0, 0);
-
-            setPoisitionOfDockedMeter(ucDockedMeterRX1);
-            setPoisitionOfDockedMeter(ucDockedMeterRX2);
         }
     }
 
