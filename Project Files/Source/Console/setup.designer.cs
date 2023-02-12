@@ -331,6 +331,7 @@
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS160 = new System.Windows.Forms.LabelTS();
             this.btnRX2PBsnr = new System.Windows.Forms.ButtonTS();
             this.btnRX1PBsnr = new System.Windows.Forms.ButtonTS();
             this.labelTS157 = new System.Windows.Forms.LabelTS();
@@ -3327,7 +3328,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS160 = new System.Windows.Forms.LabelTS();
+            this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -8647,6 +8648,7 @@
             // 
             // groupBoxTS26
             // 
+            this.groupBoxTS26.Controls.Add(this.btnResetNFShift);
             this.groupBoxTS26.Controls.Add(this.labelTS160);
             this.groupBoxTS26.Controls.Add(this.btnRX2PBsnr);
             this.groupBoxTS26.Controls.Add(this.btnRX1PBsnr);
@@ -8661,6 +8663,16 @@
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
+            // 
+            // labelTS160
+            // 
+            this.labelTS160.Image = null;
+            this.labelTS160.Location = new System.Drawing.Point(13, 92);
+            this.labelTS160.Name = "labelTS160";
+            this.labelTS160.Size = new System.Drawing.Size(145, 35);
+            this.labelTS160.TabIndex = 15;
+            this.labelTS160.Text = "Normalise PBSNR to 0dB by adusting shift";
+            this.labelTS160.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // btnRX2PBsnr
             // 
@@ -53018,15 +53030,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // labelTS160
+            // btnResetNFShift
             // 
-            this.labelTS160.Image = null;
-            this.labelTS160.Location = new System.Drawing.Point(13, 92);
-            this.labelTS160.Name = "labelTS160";
-            this.labelTS160.Size = new System.Drawing.Size(145, 35);
-            this.labelTS160.TabIndex = 15;
-            this.labelTS160.Text = "Normalise PBSNR to 0dB by adusting shift";
-            this.labelTS160.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.btnResetNFShift.Image = null;
+            this.btnResetNFShift.Location = new System.Drawing.Point(164, 46);
+            this.btnResetNFShift.Name = "btnResetNFShift";
+            this.btnResetNFShift.Selectable = true;
+            this.btnResetNFShift.Size = new System.Drawing.Size(47, 23);
+            this.btnResetNFShift.TabIndex = 16;
+            this.btnResetNFShift.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnResetNFShift, "Set to 0.0dBm");
+            this.btnResetNFShift.UseVisualStyleBackColor = true;
+            this.btnResetNFShift.Click += new System.EventHandler(this.btnResetNFShift_Click);
             // 
             // Setup
             // 
@@ -57431,5 +57446,6 @@
         private ButtonTS btnRX2PBsnr;
         private ButtonTS btnRX1PBsnr;
         private LabelTS labelTS160;
+        private ButtonTS btnResetNFShift;
     }
 }

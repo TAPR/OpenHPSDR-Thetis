@@ -595,6 +595,10 @@ namespace Thetis
 
             return bOk;
         }
+        private void btnAxis_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right) btnAxis_Click(sender, e);
+        }
     }
 }
 

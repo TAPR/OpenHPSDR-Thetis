@@ -122,6 +122,7 @@ namespace Thetis
 			InitializeComponent();
 			console = c;
 			Common.RestoreForm(this, "EQForm", false);
+            Common.ForceFormOnScreen(this); //MW0LGE [2.9.0.7]
             
 			tbRXEQ_Scroll(this, EventArgs.Empty);
 			//tbTXEQ_Scroll(this, EventArgs.Empty);

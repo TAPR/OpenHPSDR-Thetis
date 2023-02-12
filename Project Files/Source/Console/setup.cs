@@ -541,6 +541,8 @@ namespace Thetis
 
             openFileDialog1.Filter = "Thetis Database Files (*.xml) | *.xml";
 
+            btnRX2PBsnr.Enabled = console.RX2Enabled; //MW0LGE [2.9.0.7]
+
             // AddHPSDRPages();
 
 
@@ -565,6 +567,7 @@ namespace Thetis
             //console.BandChangeHandlers += OnBandChangeHandler;
             //console.VFOTXChangedHandlers += OnVFOTXChanged;
             console.TXBandChangeHandlers += OnTXBandChanged;
+            console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
 
             _bAddedDelegates = true;
         }
@@ -577,8 +580,13 @@ namespace Thetis
             //console.BandChangeHandlers -= OnBandChangeHandler;
             //console.VFOTXChangedHandlers -= OnVFOTXChanged;
             console.TXBandChangeHandlers -= OnTXBandChanged;
+            console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
 
             _bAddedDelegates = false;
+        }
+        private void OnRX2EnabledChanged(bool enabled)
+        {
+            btnRX2PBsnr.Enabled = enabled;
         }
         #endregion
 
@@ -930,10 +938,6 @@ namespace Thetis
 
             chkWaterfallUseRX1SpectrumMinMax_CheckedChanged(this, e);
             chkWaterfallUseRX2SpectrumMinMax_CheckedChanged(this, e);
-
-            //MW0LGE_21d step atten
-            //adcsLinked();
-            //updateConsoleWithAttenuationInfo();
         }
 
         private void RefreshCOMPortLists()
@@ -25236,6 +25240,11 @@ namespace Thetis
             if (t > 12) t = 12;
 
             nudNFshift.Value = (decimal)t;
+        }
+
+        private void btnResetNFShift_Click(object sender, EventArgs e)
+        {
+            nudNFshift.Value = (decimal)0f;
         }
     }
 

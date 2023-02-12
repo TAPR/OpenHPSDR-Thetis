@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.pnlBar = new System.Windows.Forms.Panel();
-            this.pbGrab = new System.Windows.Forms.PictureBox();
-            this.picContainer = new System.Windows.Forms.PictureBox();
             this.btnPin = new System.Windows.Forms.ButtonTS();
             this.btnAxis = new System.Windows.Forms.ButtonTS();
             this.lblRX = new System.Windows.Forms.LabelTS();
             this.btnFloat = new System.Windows.Forms.ButtonTS();
+            this.pbGrab = new System.Windows.Forms.PictureBox();
+            this.picContainer = new System.Windows.Forms.PictureBox();
             this.pnlBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbGrab)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picContainer)).BeginInit();
@@ -58,38 +58,6 @@
             this.pnlBar.MouseLeave += new System.EventHandler(this.pnlBar_MouseLeave);
             this.pnlBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlBar_MouseMove);
             this.pnlBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlBar_MouseUp);
-            // 
-            // pbGrab
-            // 
-            this.pbGrab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbGrab.BackColor = System.Drawing.Color.Transparent;
-            this.pbGrab.Image = global::Thetis.Properties.Resources.resizegrab;
-            this.pbGrab.Location = new System.Drawing.Point(389, 385);
-            this.pbGrab.Name = "pbGrab";
-            this.pbGrab.Size = new System.Drawing.Size(16, 16);
-            this.pbGrab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbGrab.TabIndex = 1;
-            this.pbGrab.TabStop = false;
-            this.pbGrab.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseDown);
-            this.pbGrab.MouseEnter += new System.EventHandler(this.pbGrab_MouseEnter);
-            this.pbGrab.MouseLeave += new System.EventHandler(this.pbGrab_MouseLeave);
-            this.pbGrab.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseMove);
-            this.pbGrab.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseUp);
-            // 
-            // picContainer
-            // 
-            this.picContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picContainer.BackColor = System.Drawing.Color.Black;
-            this.picContainer.Location = new System.Drawing.Point(0, 0);
-            this.picContainer.Margin = new System.Windows.Forms.Padding(0);
-            this.picContainer.Name = "picContainer";
-            this.picContainer.Size = new System.Drawing.Size(405, 401);
-            this.picContainer.TabIndex = 1;
-            this.picContainer.TabStop = false;
-            this.picContainer.MouseLeave += new System.EventHandler(this.picContainer_MouseLeave);
-            this.picContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseMove);
             // 
             // btnPin
             // 
@@ -134,6 +102,7 @@
             this.btnAxis.TabIndex = 2;
             this.btnAxis.UseVisualStyleBackColor = false;
             this.btnAxis.Click += new System.EventHandler(this.btnAxis_Click);
+            this.btnAxis.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnAxis_MouseUp);
             // 
             // lblRX
             // 
@@ -173,6 +142,38 @@
             this.btnFloat.UseVisualStyleBackColor = false;
             this.btnFloat.Click += new System.EventHandler(this.btnFloat_Click);
             this.btnFloat.MouseLeave += new System.EventHandler(this.btnFloat_MouseLeave);
+            // 
+            // pbGrab
+            // 
+            this.pbGrab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbGrab.BackColor = System.Drawing.Color.Transparent;
+            this.pbGrab.Image = global::Thetis.Properties.Resources.resizegrab;
+            this.pbGrab.Location = new System.Drawing.Point(389, 385);
+            this.pbGrab.Name = "pbGrab";
+            this.pbGrab.Size = new System.Drawing.Size(16, 16);
+            this.pbGrab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbGrab.TabIndex = 1;
+            this.pbGrab.TabStop = false;
+            this.pbGrab.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseDown);
+            this.pbGrab.MouseEnter += new System.EventHandler(this.pbGrab_MouseEnter);
+            this.pbGrab.MouseLeave += new System.EventHandler(this.pbGrab_MouseLeave);
+            this.pbGrab.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseMove);
+            this.pbGrab.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseUp);
+            // 
+            // picContainer
+            // 
+            this.picContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picContainer.BackColor = System.Drawing.Color.Black;
+            this.picContainer.Location = new System.Drawing.Point(0, 0);
+            this.picContainer.Margin = new System.Windows.Forms.Padding(0);
+            this.picContainer.Name = "picContainer";
+            this.picContainer.Size = new System.Drawing.Size(405, 401);
+            this.picContainer.TabIndex = 1;
+            this.picContainer.TabStop = false;
+            this.picContainer.MouseLeave += new System.EventHandler(this.picContainer_MouseLeave);
+            this.picContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseMove);
             // 
             // ucMeter
             // 

@@ -2200,6 +2200,47 @@ namespace Thetis
                     img.ZOrder = 2;
                     img.ImageName = "kenwood-s-meter-bg";
                     _meterItems.Add(img.ID, img);
+
+                    // VBAR
+                    cb = new clsBarItem();
+                    cb.ItemType = clsMeterItem.MeterItemType.V_BAR;
+                    cb.TopLeft = new PointF(fPad, 0.95f);
+                    cb.Size = new SizeF(0.1f, 0.75f);
+                    cb.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                    cb.AttackRatio = 0.8f;
+                    cb.DecayRatio = 0.2f;
+                    cb.UpdateInterval = nMSupdate;
+                    cb.HistoryDuration = 1000;
+                    cb.ShowHistory = false;
+                    cb.ShowValue = false;
+                    cb.Colour = System.Drawing.Color.CadetBlue;
+                    cb.ShowMarker = false;
+                    cb.PeakHoldMarkerColour = System.Drawing.Color.Red;
+                    cb.PeakHold = true;
+                    cb.HistoryColour = System.Drawing.Color.FromArgb(255, System.Drawing.Color.Red);
+                    cb.Style = clsBarItem.BarStyle.SolidFilled;
+                    cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
+                    cb.ScaleCalibration.Add(-73, new PointF(0, 0.5f)); // position for S9
+                    cb.ScaleCalibration.Add(-13, new PointF(0, 0.99f)); // position for S9+60dB or above
+                    cb.FontColour = System.Drawing.Color.Yellow;
+                    cb.ZOrder = 2;
+                    _meterItems.Add(cb.ID, cb);
+
+                    cs = new clsScaleItem();
+                    cs.ItemType = clsMeterItem.MeterItemType.V_SCALE; // change from default to vertical
+                    cs.TopLeft = cb.TopLeft;
+                    cs.Size = cb.Size;
+                    cs.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                    cs.ZOrder = 3;
+                    cs.ShowType = true;
+                    _meterItems.Add(cs.ID, cs);
+
+                    solidColour = new clsSolidColour();
+                    solidColour.TopLeft = cb.TopLeft;
+                    solidColour.Size = cb.Size;
+                    solidColour.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                    solidColour.ZOrder = 1;
+                    _meterItems.Add(solidColour.ID, solidColour);
                 }
                 else if ((typeBitfield & (int)MeterType.MOX) == (int)MeterType.MOX)
                 {
@@ -4034,6 +4075,9 @@ namespace Thetis
                                 {
                                     switch (mi.ItemType)
                                     {
+                                        case clsMeterItem.MeterItemType.V_BAR:
+                                            renderVBar(rect, mi, m);
+                                            break;
                                         case clsMeterItem.MeterItemType.H_BAR:
                                             renderHBar(rect, mi, m);
                                             break;
@@ -4717,9 +4761,111 @@ namespace Thetis
                             break;
                     }
                 }
-                else if (scale.ItemType == clsMeterItem.MeterItemType.H_SCALE)
+                else if (scale.ItemType == clsMeterItem.MeterItemType.V_SCALE)
                 {
-                    //TODO
+                    float fontSize = 8f;
+                    SizeF adjustedFontSize = measureString("0", scale.FontFamily, scale.Style, fontSize);
+                    float ratio = w / adjustedFontSize.Width;
+                    float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+
+                    if (scale.ShowType)
+                    {
+                        string sText = scale.TypeName;
+                        adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
+                        SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - (adjustedFontSize.Height * 1.1f), adjustedFontSize.Width, adjustedFontSize.Height);
+                        _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourType));
+                    }
+
+                    fontSize = 10f;
+                    adjustedFontSize = measureString("0", scale.FontFamily, scale.Style, fontSize);
+                    ratio = w / adjustedFontSize.Width;
+                    newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+
+                    float fBottomY = y + h;
+                    float xCentreLine = x + (w * 0.5f);                    
+
+                    switch (scale.ReadingSource)
+                    {
+                        case Reading.SIGNAL_STRENGTH:
+                        case Reading.AVG_SIGNAL_STRENGTH:
+                            {
+                                float spacing = (h * 0.5f) / 5.0f;
+                                if (scale.ShowMarkers)
+                                {
+                                    // vert line
+                                    startPoint.X = xCentreLine;
+                                    startPoint.Y = fBottomY;
+                                    endPoint.X = xCentreLine;
+                                    endPoint.Y = fBottomY - (h * 0.5f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
+
+                                    startPoint.Y = endPoint.Y;
+                                    endPoint.Y = fBottomY - (h * 0.99f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
+                                }
+
+                                // markers low                                
+                                for (int i = 1; i < 6; i++)
+                                {
+                                    if (scale.ShowMarkers)
+                                    {
+                                        // short ticks
+                                        startPoint.X = xCentreLine - (w * 0.1f);
+                                        startPoint.Y = fBottomY - ((i * spacing) - (spacing * 0.5f)); // - half a space to shift left between longer ticks
+                                        endPoint.X = xCentreLine + (w * 0.1f);
+                                        endPoint.Y = startPoint.Y;
+
+                                        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
+                                    }
+
+                                    // long ticks
+                                    startPoint.X = xCentreLine - (w * 0.3f);
+                                    startPoint.Y = fBottomY - (i * spacing);
+                                    endPoint.X = xCentreLine + (w * 0.3f);
+                                    endPoint.Y = startPoint.Y;
+
+                                    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
+
+                                    // text
+                                    string sText = (-1 + i * 2).ToString();
+                                    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
+                                    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(endPoint.X + (w * 0.08f), endPoint.Y - (adjustedFontSize.Height / 2f), adjustedFontSize.Width, adjustedFontSize.Height);
+                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourLow));
+                                }
+
+                                // markers high
+                                spacing = ((h * 0.5f) - (h * 0.01f)) / 3.0f; // - w*0.01f as we only draw the line up to w*0.99f
+                                for (int i = 1; i < 4; i++)
+                                {
+
+                                    //short ticks
+                                    if (scale.ShowMarkers)
+                                    {
+                                        startPoint.X = xCentreLine - (w * 0.1f);
+                                        startPoint.Y = fBottomY -  ((h * 0.5f) + (i * spacing) - (spacing * 0.5f)); // - half a space to shift left between longer ticks
+                                        endPoint.X = xCentreLine + (w * 0.1f);
+                                        endPoint.Y = startPoint.Y;
+
+                                        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
+                                    }
+
+                                    // long ticks
+                                    startPoint.X = xCentreLine - (w * 0.3f);
+                                    startPoint.Y = fBottomY - ((h * 0.5f) + (i * spacing));
+                                    endPoint.X = xCentreLine + (w * 0.3f);
+                                    endPoint.Y = startPoint.Y;
+
+                                    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
+
+                                    // text
+                                    string sText = "+" + (i * 20).ToString();
+                                    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
+                                    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(endPoint.X - (w * 0.2f), endPoint.Y - (adjustedFontSize.Height / 2f) + (h * 0.01f), adjustedFontSize.Width, adjustedFontSize.Height);
+                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourHigh));
+                                }
+                            }
+                            break;
+                    }
                 }
             }
             private void renderEye(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
@@ -4862,9 +5008,9 @@ namespace Thetis
                 if (cbi.ShowHistory)
                 {
                     getPerc(cbi, cbi.MinHistory, out percX, out percY, out min, out max);
-                    minHistory_x = x + percX * w;
+                    minHistory_x = x + (min.X * w) + (percX * ((max.X - min.X) * w));
                     getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
-                    maxHistory_x = x + percX * w;
+                    maxHistory_x = x + (min.X * w) + (percX * ((max.X - min.X) * w));
                 }
                 else if (cbi.PeakHold) // max is used for peak hold
                 {
@@ -4958,6 +5104,144 @@ namespace Thetis
                                 _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), getDXBrushForColour(cbi.MarkerColour), cbi.StrokeWidth);
                         }
                         break;
+                }
+
+                if (cbi.ShowValue)
+                {
+                    string sText = cbi.Value.ToString("0.0") + cbi.TypeUnits;
+
+                    float fontSize = 38f;//cbi.FontSize; //38f;
+                    SizeF adjustedFontSize = measureString("0", cbi.FontFamily, cbi.FntStyle, fontSize);
+                    float ratio = h / adjustedFontSize.Height;
+                    float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+
+                    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y + (h * 0.2f), w, h);
+                    _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, newSize, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.FontColour));
+                }
+            }
+            private void renderVBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsBarItem cbi = (clsBarItem)mi;
+
+                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
+
+                PointF min, max;
+                float percX, percY;
+
+                getPerc(cbi, cbi.Value, out percX, out percY, out min, out max);
+
+                //top left is 0,0
+                float yBottom = y + h;
+                //float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
+                float yPos = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+
+                float minHistory_y = y;
+                float maxHistory_y = y;
+                if (cbi.ShowHistory)
+                {
+                    getPerc(cbi, cbi.MinHistory, out percX, out percY, out min, out max);
+                    minHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+                    getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
+                    maxHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+                }
+                else if (cbi.PeakHold) // max is used for peak hold
+                {
+                    getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
+                    maxHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+                }
+
+                int segmentBlockSize = (int)(w * 0.02f);
+                if (segmentBlockSize < 7) segmentBlockSize = 7;
+                int segmentGapSize = (int)(segmentBlockSize * 0.2f);
+                if (segmentBlockSize < 2) segmentBlockSize = 2;
+                int segmentStep = segmentBlockSize + segmentGapSize;
+
+                if (cbi.ShowHistory)
+                {
+                    switch (cbi.Style)
+                    {
+                        case clsBarItem.BarStyle.None:
+                        case clsBarItem.BarStyle.SolidFilled:
+                        case clsBarItem.BarStyle.Line:
+                            {
+                                SharpDX.RectangleF history = new SharpDX.RectangleF(x, maxHistory_y, w, minHistory_y - maxHistory_y); // drawn TL to BR
+                                _renderTarget.FillRectangle(history, getDXBrushForColour(cbi.HistoryColour));
+                            }
+                            break;
+                        //case clsBarItem.BarStyle.Segments:
+                        //    {
+                        //        int numValueBlocks = (int)((xPos - x) / (float)segmentStep);
+
+                        //        float i;
+                        //        float startX = (numValueBlocks * segmentStep) + x;
+                        //        SharpDX.RectangleF barrect;
+                        //        for (i = startX; i < maxHistory_x - segmentStep; i += segmentStep)
+                        //        {
+                        //            barrect = new SharpDX.RectangleF(i, y, segmentBlockSize, h);
+                        //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour));
+                        //        }
+
+                        //        // complete the sliver
+                        //        if (i < maxHistory_x)
+                        //        {
+                        //            barrect = new SharpDX.RectangleF(i, y, maxHistory_x - i, h);
+                        //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour));
+                        //        }
+                        //    }
+                        //    break;
+                    }
+                }
+
+                switch (cbi.Style)
+                {
+                    case clsBarItem.BarStyle.SolidFilled:
+                        {
+                            SharpDX.RectangleF barrect = new SharpDX.RectangleF(x, yPos, w, yBottom - yPos);
+
+                            if (cbi.PeakHold)
+                                _renderTarget.DrawLine(new SharpDX.Vector2(x, maxHistory_y), new SharpDX.Vector2(x + w, maxHistory_y), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
+
+                            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
+                        }
+                        break;
+                    case clsBarItem.BarStyle.Line:
+                        {
+                            if (cbi.PeakHold)
+                                _renderTarget.DrawLine(new SharpDX.Vector2(x, maxHistory_y), new SharpDX.Vector2(x + w, maxHistory_y), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
+
+                            _renderTarget.DrawLine(new SharpDX.Vector2(x, yPos), new SharpDX.Vector2(x + w, yPos), getDXBrushForColour(cbi.MarkerColour), cbi.StrokeWidth);
+                        }
+                        break;
+                    //case clsBarItem.BarStyle.Segments:
+                    //    {
+                    //        float i;
+                    //        SharpDX.RectangleF barrect;
+                    //        for (i = x; i < xPos - segmentStep; i += segmentStep)
+                    //        {
+                    //            barrect = new SharpDX.RectangleF(i, y, segmentBlockSize, h);
+                    //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
+                    //        }
+
+                    //        // complete the sliver
+                    //        if (i < xPos)
+                    //        {
+                    //            barrect = new SharpDX.RectangleF(i, y, xPos - i, h);
+                    //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
+                    //        }
+
+                    //        if (cbi.PeakHold)
+                    //            _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
+
+                    //        if (cbi.ShowMarker)
+                    //            _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), getDXBrushForColour(cbi.MarkerColour), cbi.StrokeWidth);
+                    //    }
+                    //    break;
                 }
 
                 if (cbi.ShowValue)
