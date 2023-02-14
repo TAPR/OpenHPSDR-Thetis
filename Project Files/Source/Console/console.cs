@@ -54233,8 +54233,13 @@ namespace Thetis
                     // get all readings
                     if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
-                    if (MeterManager.RequiresUpdate(1, Reading.ADC_REAL)) _RX1MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
-                    if (MeterManager.RequiresUpdate(1, Reading.ADC_IMAG)) _RX1MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
+                    if (MeterManager.RequiresUpdate(1, Reading.ADC_PK)) _RX1MeterValues[Reading.ADC_PK] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
+                    if (MeterManager.RequiresUpdate(1, Reading.ADC_AV)) _RX1MeterValues[Reading.ADC_AV] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
+
+                    if (MeterManager.RequiresUpdate(1, Reading.AGC_PK)) _RX1MeterValues[Reading.AGC_PK] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_PK);
+                    if (MeterManager.RequiresUpdate(1, Reading.AGC_AV)) _RX1MeterValues[Reading.AGC_AV] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_AV);
+                    if (MeterManager.RequiresUpdate(1, Reading.AGC_GAIN)) _RX1MeterValues[Reading.AGC_GAIN] = 0 - WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_GAIN);
+
                     if (MeterManager.RequiresUpdate(1, Reading.ESTIMATED_PBSNR))
                     {
                         if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
@@ -54243,7 +54248,7 @@ namespace Thetis
                             _RX1MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
                         }
                         else
-                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = -200f;
+                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
                 }
                 else if (mox && (!RX2Enabled || (RX2Enabled && VFOATX)))
@@ -54364,8 +54369,13 @@ namespace Thetis
                     // get all readings
                     if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH)) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
                     if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH)) _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
-                    if (MeterManager.RequiresUpdate(2, Reading.ADC_REAL)) _RX2MeterValues[Reading.ADC_REAL] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
-                    if (MeterManager.RequiresUpdate(2, Reading.ADC_IMAG)) _RX2MeterValues[Reading.ADC_IMAG] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+                    if (MeterManager.RequiresUpdate(2, Reading.ADC_PK)) _RX2MeterValues[Reading.ADC_PK] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
+                    if (MeterManager.RequiresUpdate(2, Reading.ADC_AV)) _RX2MeterValues[Reading.ADC_AV] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
+
+                    if (MeterManager.RequiresUpdate(2, Reading.AGC_PK)) _RX2MeterValues[Reading.AGC_PK] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AGC_PK);
+                    if (MeterManager.RequiresUpdate(2, Reading.AGC_AV)) _RX2MeterValues[Reading.AGC_AV] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AGC_AV);
+                    if (MeterManager.RequiresUpdate(2, Reading.AGC_GAIN)) _RX2MeterValues[Reading.AGC_GAIN] = 0 - WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AGC_GAIN);
+
                     if (MeterManager.RequiresUpdate(2, Reading.ESTIMATED_PBSNR))
                     {
                         if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
@@ -54374,7 +54384,7 @@ namespace Thetis
                             _RX2MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
                         }
                         else
-                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = -200f;
+                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
                 }
                 else if(mox && RX2Enabled && VFOBTX)

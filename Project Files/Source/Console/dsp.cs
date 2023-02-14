@@ -687,7 +687,10 @@ namespace Thetis
             COMP_PK,
             CPDR_PK,
             CFC_PK,
-            CFC_G
+            CFC_G,
+            AGC_PK, // MW0LGE [2.9.0.7] added pk + av + last
+            AGC_AV,
+            METERTYPE_LAST
         }
 
         public enum rxaMeterType
@@ -762,16 +765,25 @@ namespace Thetis
 	        case MeterType.AVG_SIGNAL_STRENGTH:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_S_AV);
 		        break;
-	        case MeterType.ADC_REAL:
-                val = GetRXAMeter(channel, rxaMeterType.RXA_ADC_PK);
-		        break;
+	        case MeterType.ADC_REAL:  // MW0LGE [2.9.0.7] not sure how these are real + imaginary values, they are ADC peak, and ADC average, according to rxa.c and rxa.h
+                val = GetRXAMeter(channel, rxaMeterType.RXA_ADC_PK); // input peak MW0LGE [2.9.0.7]
+                    break;
 	        case MeterType.ADC_IMAG:
-                val = GetRXAMeter(channel, rxaMeterType.RXA_ADC_PK);
-		        break;
+                //val = GetRXAMeter(channel, rxaMeterType.RXA_ADC_PK);
+                val = GetRXAMeter(channel, rxaMeterType.RXA_ADC_AV); // input average MW0LGE [2.9.0.7]
+                    break;
 	        case MeterType.AGC_GAIN:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_GAIN);
 		        break;
-	        default:
+            //
+            case MeterType.AGC_PK:
+                val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_PK);
+                break;
+            case MeterType.AGC_AV:
+                val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_AV);
+                break;
+                //
+                default:
 		        val = -400.0;
 		        break;
 	        }
