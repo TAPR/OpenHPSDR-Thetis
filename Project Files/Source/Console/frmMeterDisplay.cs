@@ -15,17 +15,27 @@ namespace Thetis
     {
         private Console _console;
         private int _rx;
+        private string _id;
+
         public frmMeterDisplay(Console c, int rx)
         {
             InitializeComponent();
 
+            _id = System.Guid.NewGuid().ToString();
             _console = c;
-            _rx = rx;
-
-            Common.RestoreForm(this, "MeterDisplay_" + _rx.ToString(), true);
-            Common.ForceFormOnScreen(this);
+            _rx = rx;            
         }
+        public string ID
+        {
+            get { return _id; }
+            set 
+            {
+                _id = value;
 
+                Common.RestoreForm(this, "MeterDisplay_" + _id, true);
+                Common.ForceFormOnScreen(this);
+            }
+        }
         private void frmMeterDisplay_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -34,7 +44,7 @@ namespace Thetis
                 e.Cancel = true;
             }
 
-            Common.SaveForm(this, "MeterDisplay_" + _rx.ToString());
+            Common.SaveForm(this, "MeterDisplay_" + _id);
         }
 
         public void TakeOwner(ucMeter m)

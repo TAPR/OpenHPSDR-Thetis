@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Security.Cryptography;
 
 namespace Thetis
 {
@@ -37,6 +38,7 @@ namespace Thetis
             InitializeComponent();
 
             _console = null;
+            _id = System.Guid.NewGuid().ToString();
 
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
@@ -73,6 +75,8 @@ namespace Thetis
         private bool _pinOnTop;
         private Console _console;
         private bool _mox;
+        private string _id;
+
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
         {
@@ -87,13 +91,18 @@ namespace Thetis
                 addDelegates();
             }
         }
+        public string ID
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
         private void addDelegates()
         {
             if (_console == null) return;
 
             _console.MoxChangeHandlers += OnMoxChangeHandler;
         }
-        public void RemoveDelegates() // done in console close down
+        public void RemoveDelegates()
         {
             if (_console == null) return;
 
@@ -537,6 +546,8 @@ namespace Thetis
         public override string ToString()
         {
             return
+                ID + "|" +
+                RX.ToString() + "|" +
                 DockedLocation.X.ToString() + "|" +
                 DockedLocation.Y.ToString() + "|" +
                 DockedSize.Width.ToString() + "|" +
@@ -550,37 +561,41 @@ namespace Thetis
         public bool TryParse(string str)
         {
             bool bOk = false;
-            int x = 0, y = 0, w = 0, h = 0;
+            int x = 0, y = 0, w = 0, h = 0, rx = 0;
             bool floating = false;
             bool pinOnTop = false;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length == 9)
-                {                    
-                    bOk = int.TryParse(tmp[0], out x);
-                    if (bOk) bOk = int.TryParse(tmp[1], out y);
-                    if (bOk) bOk = int.TryParse(tmp[2], out w);
-                    if (bOk) bOk = int.TryParse(tmp[3], out h);
+                if(tmp.Length == 11)
+                {
+                    bOk = tmp[0] != "";
+                    if (bOk) ID = tmp[0];
+                    if (bOk) int.TryParse(tmp[1], out rx);
+                    if (bOk) RX = rx;
+                    if (bOk) int.TryParse(tmp[2], out x);
+                    if (bOk) bOk = int.TryParse(tmp[3], out y);
+                    if (bOk) bOk = int.TryParse(tmp[4], out w);
+                    if (bOk) bOk = int.TryParse(tmp[5], out h);
                     if (bOk)
                     {
                         DockedLocation = new Point(x, y);
                         DockedSize = new Size(w, h);
                     }
 
-                    if (bOk) bOk = bool.TryParse(tmp[4], out floating);
+                    if (bOk) bOk = bool.TryParse(tmp[6], out floating);
                     if (bOk) Floating = floating;
 
-                    if (bOk) bOk = int.TryParse(tmp[5], out x);
-                    if (bOk) bOk = int.TryParse(tmp[6], out y);
+                    if (bOk) bOk = int.TryParse(tmp[7], out x);
+                    if (bOk) bOk = int.TryParse(tmp[8], out y);
                     if (bOk) Delta = new Point(x, y);
 
                     if (bOk)
                     {
                         try
                         {
-                            AxisLock = (Axis)Enum.Parse(typeof(Axis), tmp[7]);
+                            AxisLock = (Axis)Enum.Parse(typeof(Axis), tmp[9]);
                         }
                         catch
                         {
@@ -588,7 +603,7 @@ namespace Thetis
                         }
                     }
 
-                    if (bOk) bOk = bool.TryParse(tmp[8], out pinOnTop);
+                    if (bOk) bOk = bool.TryParse(tmp[10], out pinOnTop);
                     if (bOk) PinOnTop = pinOnTop;
                 }
             }

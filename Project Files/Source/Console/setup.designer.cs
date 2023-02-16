@@ -331,6 +331,7 @@
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
+            this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
             this.labelTS160 = new System.Windows.Forms.LabelTS();
             this.btnRX2PBsnr = new System.Windows.Forms.ButtonTS();
             this.btnRX1PBsnr = new System.Windows.Forms.ButtonTS();
@@ -2884,6 +2885,12 @@
             this.clrbtnPeakText = new Thetis.ColorButton();
             this.lblPeakText = new System.Windows.Forms.LabelTS();
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
+            this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
+            this.chkContainerHighlight = new System.Windows.Forms.CheckBoxTS();
+            this.btnContainerDelete = new System.Windows.Forms.ButtonTS();
+            this.comboContainerSelect = new System.Windows.Forms.ComboBoxTS();
+            this.btnAddRX2Container = new System.Windows.Forms.ButtonTS();
+            this.btnAddRX1Container = new System.Windows.Forms.ButtonTS();
             this.groupBoxTS14 = new System.Windows.Forms.GroupBoxTS();
             this.tbSignalHistoryAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnSignalHistoryColour = new Thetis.ColorButton();
@@ -3328,7 +3335,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4094,6 +4100,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
             this.grpDisplayPeakCursor.SuspendLayout();
             this.tpAppearanceMeter.SuspendLayout();
+            this.groupBoxTS28.SuspendLayout();
             this.groupBoxTS14.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).BeginInit();
             this.grpMeterEdge.SuspendLayout();
@@ -8663,6 +8670,19 @@
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
+            // 
+            // btnResetNFShift
+            // 
+            this.btnResetNFShift.Image = null;
+            this.btnResetNFShift.Location = new System.Drawing.Point(164, 46);
+            this.btnResetNFShift.Name = "btnResetNFShift";
+            this.btnResetNFShift.Selectable = true;
+            this.btnResetNFShift.Size = new System.Drawing.Size(47, 23);
+            this.btnResetNFShift.TabIndex = 16;
+            this.btnResetNFShift.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnResetNFShift, "Set to 0.0dBm");
+            this.btnResetNFShift.UseVisualStyleBackColor = true;
+            this.btnResetNFShift.Click += new System.EventHandler(this.btnResetNFShift_Click);
             // 
             // labelTS160
             // 
@@ -46664,6 +46684,7 @@
             // tpAppearanceMeter
             // 
             this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceMeter.Controls.Add(this.groupBoxTS28);
             this.tpAppearanceMeter.Controls.Add(this.groupBoxTS14);
             this.tpAppearanceMeter.Controls.Add(this.labelTS2);
             this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigBackground);
@@ -46679,12 +46700,83 @@
             this.tpAppearanceMeter.TabIndex = 2;
             this.tpAppearanceMeter.Text = "Meter";
             // 
+            // groupBoxTS28
+            // 
+            this.groupBoxTS28.Controls.Add(this.chkContainerHighlight);
+            this.groupBoxTS28.Controls.Add(this.btnContainerDelete);
+            this.groupBoxTS28.Controls.Add(this.comboContainerSelect);
+            this.groupBoxTS28.Controls.Add(this.btnAddRX2Container);
+            this.groupBoxTS28.Controls.Add(this.btnAddRX1Container);
+            this.groupBoxTS28.Location = new System.Drawing.Point(326, 16);
+            this.groupBoxTS28.Name = "groupBoxTS28";
+            this.groupBoxTS28.Size = new System.Drawing.Size(390, 380);
+            this.groupBoxTS28.TabIndex = 86;
+            this.groupBoxTS28.TabStop = false;
+            this.groupBoxTS28.Text = "MultiMeter 2";
+            // 
+            // chkContainerHighlight
+            // 
+            this.chkContainerHighlight.AutoSize = true;
+            this.chkContainerHighlight.Image = null;
+            this.chkContainerHighlight.Location = new System.Drawing.Point(32, 63);
+            this.chkContainerHighlight.Name = "chkContainerHighlight";
+            this.chkContainerHighlight.Size = new System.Drawing.Size(67, 17);
+            this.chkContainerHighlight.TabIndex = 89;
+            this.chkContainerHighlight.Text = "Highlight";
+            this.chkContainerHighlight.UseVisualStyleBackColor = true;
+            this.chkContainerHighlight.CheckedChanged += new System.EventHandler(this.chkContainerHighlight_CheckedChanged);
+            // 
+            // btnContainerDelete
+            // 
+            this.btnContainerDelete.Image = null;
+            this.btnContainerDelete.Location = new System.Drawing.Point(152, 55);
+            this.btnContainerDelete.Name = "btnContainerDelete";
+            this.btnContainerDelete.Selectable = true;
+            this.btnContainerDelete.Size = new System.Drawing.Size(59, 32);
+            this.btnContainerDelete.TabIndex = 88;
+            this.btnContainerDelete.Text = "Delete";
+            this.btnContainerDelete.UseVisualStyleBackColor = true;
+            this.btnContainerDelete.Click += new System.EventHandler(this.btnContainerDelete_Click);
+            // 
+            // comboContainerSelect
+            // 
+            this.comboContainerSelect.FormattingEnabled = true;
+            this.comboContainerSelect.Location = new System.Drawing.Point(18, 28);
+            this.comboContainerSelect.Name = "comboContainerSelect";
+            this.comboContainerSelect.Size = new System.Drawing.Size(193, 21);
+            this.comboContainerSelect.TabIndex = 87;
+            this.comboContainerSelect.SelectedIndexChanged += new System.EventHandler(this.comboContainerSelect_SelectedIndexChanged);
+            // 
+            // btnAddRX2Container
+            // 
+            this.btnAddRX2Container.Image = null;
+            this.btnAddRX2Container.Location = new System.Drawing.Point(309, 15);
+            this.btnAddRX2Container.Name = "btnAddRX2Container";
+            this.btnAddRX2Container.Selectable = true;
+            this.btnAddRX2Container.Size = new System.Drawing.Size(75, 44);
+            this.btnAddRX2Container.TabIndex = 1;
+            this.btnAddRX2Container.Text = "Add RX2 Container";
+            this.btnAddRX2Container.UseVisualStyleBackColor = true;
+            this.btnAddRX2Container.Click += new System.EventHandler(this.btnAddRX2Container_Click);
+            // 
+            // btnAddRX1Container
+            // 
+            this.btnAddRX1Container.Image = null;
+            this.btnAddRX1Container.Location = new System.Drawing.Point(228, 16);
+            this.btnAddRX1Container.Name = "btnAddRX1Container";
+            this.btnAddRX1Container.Selectable = true;
+            this.btnAddRX1Container.Size = new System.Drawing.Size(75, 44);
+            this.btnAddRX1Container.TabIndex = 0;
+            this.btnAddRX1Container.Text = "Add RX1 Container";
+            this.btnAddRX1Container.UseVisualStyleBackColor = true;
+            this.btnAddRX1Container.Click += new System.EventHandler(this.btnAddRX1Container_Click);
+            // 
             // groupBoxTS14
             // 
             this.groupBoxTS14.Controls.Add(this.tbSignalHistoryAlpha);
             this.groupBoxTS14.Controls.Add(this.clrbtnSignalHistoryColour);
             this.groupBoxTS14.Controls.Add(this.labelTS518);
-            this.groupBoxTS14.Location = new System.Drawing.Point(312, 185);
+            this.groupBoxTS14.Location = new System.Drawing.Point(19, 300);
             this.groupBoxTS14.Name = "groupBoxTS14";
             this.groupBoxTS14.Size = new System.Drawing.Size(206, 67);
             this.groupBoxTS14.TabIndex = 85;
@@ -46782,7 +46874,7 @@
             this.grpMeterEdge.Controls.Add(this.lblMeterEdgeHigh);
             this.grpMeterEdge.Controls.Add(this.lblMeterEdgeLow);
             this.grpMeterEdge.Controls.Add(this.clrbtnMeterEdgeLow);
-            this.grpMeterEdge.Location = new System.Drawing.Point(312, 8);
+            this.grpMeterEdge.Location = new System.Drawing.Point(19, 134);
             this.grpMeterEdge.Name = "grpMeterEdge";
             this.grpMeterEdge.Size = new System.Drawing.Size(206, 160);
             this.grpMeterEdge.TabIndex = 80;
@@ -53030,19 +53122,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // btnResetNFShift
-            // 
-            this.btnResetNFShift.Image = null;
-            this.btnResetNFShift.Location = new System.Drawing.Point(164, 46);
-            this.btnResetNFShift.Name = "btnResetNFShift";
-            this.btnResetNFShift.Selectable = true;
-            this.btnResetNFShift.Size = new System.Drawing.Size(47, 23);
-            this.btnResetNFShift.TabIndex = 16;
-            this.btnResetNFShift.Text = "Reset";
-            this.toolTip1.SetToolTip(this.btnResetNFShift, "Set to 0.0dBm");
-            this.btnResetNFShift.UseVisualStyleBackColor = true;
-            this.btnResetNFShift.Click += new System.EventHandler(this.btnResetNFShift_Click);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -53964,6 +54043,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
             this.grpDisplayPeakCursor.ResumeLayout(false);
             this.tpAppearanceMeter.ResumeLayout(false);
+            this.groupBoxTS28.ResumeLayout(false);
+            this.groupBoxTS28.PerformLayout();
             this.groupBoxTS14.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).EndInit();
             this.grpMeterEdge.ResumeLayout(false);
@@ -57447,5 +57528,11 @@
         private ButtonTS btnRX1PBsnr;
         private LabelTS labelTS160;
         private ButtonTS btnResetNFShift;
+        private GroupBoxTS groupBoxTS28;
+        private ButtonTS btnAddRX2Container;
+        private ButtonTS btnAddRX1Container;
+        private CheckBoxTS chkContainerHighlight;
+        private ButtonTS btnContainerDelete;
+        private ComboBoxTS comboContainerSelect;
     }
 }

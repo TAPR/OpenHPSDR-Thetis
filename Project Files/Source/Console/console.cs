@@ -157,6 +157,7 @@ namespace Thetis
 
         //=======================================================================================
 
+        private string _sMeterImagePath = "";
         private int rx1_squelch_threshold_scroll = -160;
         private int rx2_squelch_threshold_scroll = -160;
         private bool rx1_squelch_on = false;
@@ -523,8 +524,8 @@ namespace Thetis
         private bool m_bDisplayLoopRunning = false;
         private frmNotchPopup m_frmNotchPopup;
         private frmSeqLog m_frmSeqLog;
-        private frmMeterDisplay _frmRX1Meter;
-        private frmMeterDisplay _frmRX2Meter;
+        //private frmMeterDisplay _frmRX1Meter;
+        //private frmMeterDisplay _frmRX2Meter;
         private Thread multimeter2_thread_rx1;
         private Thread multimeter2_thread_rx2;
 
@@ -1757,7 +1758,34 @@ namespace Thetis
             //MW0LGE_21d Display.Target = picDisplay;
             InitDisplayModes();					// Initialize Display Modes
             InitAGCModes();						// Initialize AGC Modes
-            InitMultiMeterModes();				// Initialize MultiMeter Modes
+            InitMultiMeterModes();              // Initialize MultiMeter Modes
+
+            // MW0LGE_[2.9.0.7] setup the multi meter
+            if (USE_MULTIMETERS2)
+            {
+                //ucDockedMeterRX1.Console = this;
+                //ucDockedMeterRX2.Console = this;
+
+                //ucDockedMeterRX1.RX = 1;
+                //ucDockedMeterRX2.RX = 2;
+
+                _RX1MeterValues = new Dictionary<Reading, float>();
+                _RX2MeterValues = new Dictionary<Reading, float>();
+                for (int n = 0; n < (int)Reading.LAST; n++)
+                {
+                    _RX1MeterValues.Add((Reading)n, -200f);
+                    _RX2MeterValues.Add((Reading)n, -200f);
+                }
+
+                _sMeterImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+                MeterManager.Init(this, _sMeterImagePath);
+
+                // add default meter displays
+                //addMeterContainer(1, true);
+                //addMeterContainer(2, true);
+                //
+            }
+            //
 
             Siolisten = new SIOListenerII(this);
             Sio2listen = new SIO2ListenerII(this);
@@ -1961,43 +1989,6 @@ namespace Thetis
             //--
 
             initialiseRawInput(); // MW0LGE
-
-            // MW0LGE_[2.9.0.7] setup the multi meter
-            if (USE_MULTIMETERS2)
-            {
-                ucDockedMeterRX1.Console = this;
-                ucDockedMeterRX2.Console = this;
-
-                ucDockedMeterRX1.RX = 1;
-                ucDockedMeterRX2.RX = 2;
-
-                _RX1MeterValues = new Dictionary<Reading, float>();
-                _RX2MeterValues = new Dictionary<Reading, float>();
-                for (int n = 0; n < (int)Reading.LAST; n++)
-                {
-                    _RX1MeterValues.Add((Reading)n, -200f);
-                    _RX2MeterValues.Add((Reading)n, -200f);
-                }
-                _frmRX1Meter = new frmMeterDisplay(this, 1);
-                _frmRX2Meter = new frmMeterDisplay(this, 2);
-
-                string sImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
-                MeterManager.Init(this, ucDockedMeterRX1.DisplayContainer, ucDockedMeterRX2.DisplayContainer, sImagePath);
-
-                if (ucDockedMeterRX1.Floating)
-                    setMeterFloating(ucDockedMeterRX1, _frmRX1Meter);
-                else
-                    returnMeterFromFloating(ucDockedMeterRX1, _frmRX1Meter);
-
-                if (rx2_enabled)
-                {
-                    if (ucDockedMeterRX2.Floating)
-                        setMeterFloating(ucDockedMeterRX2, _frmRX2Meter);
-                    else
-                        returnMeterFromFloating(ucDockedMeterRX2, _frmRX2Meter);
-                }
-            }
-            //
 
             return;
         }
@@ -3067,8 +3058,14 @@ namespace Thetis
             //a.Add("ucMeterRX2_Floating/" + ucDockedMeterRX2.Floating.ToString());
             //a.Add("ucMeterRX1_Delta/" + ucDockedMeterRX1.Delta.X.ToString() + "|" + ucDockedMeterRX1.Delta.Y.ToString());
             //a.Add("ucMeterRX2_Delta/" + ucDockedMeterRX2.Delta.X.ToString() + "|" + ucDockedMeterRX2.Delta.Y.ToString());
-            a.Add("ucMeterRX1_Settings/" + ucDockedMeterRX1.ToString());
-            a.Add("ucMeterRX2_Settings/" + ucDockedMeterRX1.ToString());
+            //a.Add("ucMeterRX1_Settings/" + ucDockedMeterRX1.ToString());
+            //a.Add("ucMeterRX2_Settings/" + ucDockedMeterRX1.ToString());
+
+            //foreach(KeyValuePair<string, ucMeter> kvp in _lstMeters)
+            //{
+            //    a.Add("ucMeterData_" + kvp.Value.ID + "/" + kvp.Value.ToString());
+            //}
+            MeterManager.StoreSettings(ref a);
             //
 
             a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
@@ -3124,6 +3121,8 @@ namespace Thetis
                                                 // this is done because we have not stored an upper limit the number of notches
                                                 // and if we had 20 in there before, and now only write 3, how do we know?
                                                 // as it will still be [0]..[19]
+
+            DB.PurgeMeters();
 
             DB.SaveVars("State", ref a);		// save the values to the DB
         }
@@ -3972,12 +3971,12 @@ namespace Thetis
                     case "infoBar_splitter_ratio":
                         infoBar.SplitterRatio = float.Parse(val);
                         break;
-                    case "ucMeterRX1_Settings":
-                        ucDockedMeterRX1.TryParse(val);
-                        break;
-                    case "ucMeterRX2_Settings":
-                        ucDockedMeterRX2.TryParse(val);
-                        break;
+                    //case "ucMeterRX1_Settings":
+                    //    ucDockedMeterRX1.TryParse(val);
+                    //    break;
+                    //case "ucMeterRX2_Settings":
+                    //    ucDockedMeterRX2.TryParse(val);
+                    //    break;
                     //case "ucMeterRX1_LocationSize":
                     //    {
                     //        int X = 0, Y = 0, W = 0, H = 0;
@@ -4307,7 +4306,6 @@ namespace Thetis
                         }  //-W2PA  else the number has changed so don't import, leave the defaults alone
                             ;
                         break;
-
                     default:
                         // add to the ToDoList
                         toDoList.Add(new KeyValuePair<string, string>(name, val));
@@ -4451,6 +4449,15 @@ namespace Thetis
                                 MessageBox.Show("Control not found: " + name, "GetState Error",
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                         }
+                        break;
+
+                    case var nam when name.StartsWith("ucMeterData"):
+                        ucMeter ucM = new ucMeter();
+                        bool bMeterOk = ucM.TryParse(val);
+
+                        if (bMeterOk)
+                            MeterManager.AddMeterContainer(ucM);
+
                         break;
                 }
             }
@@ -31388,8 +31395,12 @@ namespace Thetis
             if (USE_MULTIMETERS2)
             {
                 MeterManager.Shutdown();
-                _frmRX1Meter.Close();
-                _frmRX2Meter.Close();
+                //foreach(KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
+                //{
+                //    kvp.Value.Close();
+                //}
+                //_frmRX1Meter.Close();
+                //_frmRX2Meter.Close();
             }
 
             if (infoBar != null)
@@ -43296,8 +43307,9 @@ namespace Thetis
 
                 panelRX2Mixer.Location = new Point(gr_rx2_mixer_basis.X + (int)(h_delta * 0.078), gr_rx2_mixer_basis.Y + v_delta);
 
-                setPoisitionOfDockedMeter(ucDockedMeterRX1);
-                setPoisitionOfDockedMeter(ucDockedMeterRX2);
+                //setPoisitionOfDockedMeter(ucDockedMeterRX1);
+                //setPoisitionOfDockedMeter(ucDockedMeterRX2);
+                MeterManager.SetPositionOfDockedMeters();
             }
 
             previous_delta = h_delta + v_delta; //we'll check this next time through...
@@ -52476,8 +52488,8 @@ namespace Thetis
             DrivePowerChangedHandlers += OnDrivePowerChanged;
             SampleRateChangedHandlers += OnSampleRateChanged;
             ThetisFocusChangedHandlers += OnThetisFocusChanged;
-            RX2EnabledChangedHandlers += OnRX2EnabledChanged;
-            RX2EnabledPreChangedHandlers += OnRX2EnabledPreChanged;
+            //RX2EnabledChangedHandlers += OnRX2EnabledChanged;
+            //RX2EnabledPreChangedHandlers += OnRX2EnabledPreChanged;
             SpotClickedHandlers += OnSpotClicked;
 
             VFOTXChangedHandlers += OnVFOTXChanged;
@@ -52525,8 +52537,8 @@ namespace Thetis
             DrivePowerChangedHandlers -= OnDrivePowerChanged;
             SampleRateChangedHandlers -= OnSampleRateChanged;
             ThetisFocusChangedHandlers -= OnThetisFocusChanged;
-            RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
-            RX2EnabledPreChangedHandlers -= OnRX2EnabledPreChanged;
+            //RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
+            //RX2EnabledPreChangedHandlers -= OnRX2EnabledPreChanged;
             SpotClickedHandlers -= OnSpotClicked;
 
             VFOTXChangedHandlers -= OnVFOTXChanged;
@@ -52553,8 +52565,13 @@ namespace Thetis
 
             Display.RemoveDelegates();
 
-            if (ucDockedMeterRX1 != null) ucDockedMeterRX1.RemoveDelegates();
-            if (ucDockedMeterRX2 != null) ucDockedMeterRX2.RemoveDelegates();
+            //if (ucDockedMeterRX1 != null) ucDockedMeterRX1.RemoveDelegates();
+            //if (ucDockedMeterRX2 != null) ucDockedMeterRX2.RemoveDelegates();
+
+            //foreach(KeyValuePair<string, ucMeter> kvp in _lstMeters)
+            //{
+            //    kvp.Value.RemoveDelegates();
+            //}
         }
         //
         private void OnTransverterIndexChanged(int oldIndex, int newIndex)
@@ -54457,117 +54474,207 @@ namespace Thetis
         {
         }
         
-        private void returnMeterFromFloating(ucMeter m, frmMeterDisplay frm)
-        {
-            frm.Hide();
-            m.Hide();
-            m.Parent = this;
-            m.Anchor = AnchorStyles.None;// AnchorStyles.Right | AnchorStyles.Bottom;
-            m.RestoreLocation();
-            m.Floating = false;
-            setPoisitionOfDockedMeter(m);
-            m.BringToFront();
-            m.Show();
-        }
-        private void setMeterFloating(ucMeter m, frmMeterDisplay frm)
-        {
-            m.Hide();
-            frm.TakeOwner(m);
-            m.Floating = true;
-            frm.Show();
-        }
-        private void ucDockedMeterRX1_FloatingDockedClicked(object sender, EventArgs e)
-        {
-            if (ucDockedMeterRX1.Floating)
-                returnMeterFromFloating(ucDockedMeterRX1, _frmRX1Meter);
-            else
-                setMeterFloating(ucDockedMeterRX1, _frmRX1Meter);
-        }
-        private void ucDockedMeterRX2_FloatingDockedClicked(object sender, EventArgs e)
-        {
-            if (ucDockedMeterRX2.Floating)
-                returnMeterFromFloating(ucDockedMeterRX2, _frmRX2Meter);
-            else
-                setMeterFloating(ucDockedMeterRX2, _frmRX2Meter);
-        }
-        private void ucDockedMeterRX1_DockedMoved(object sender, EventArgs e)
-        {
-            //ucDockedMeterRX1.Delta = new PointF(ucDockedMeterRX1.Right / (float)this.Width, ucDockedMeterRX1.Bottom / (float)this.Height);//new Point(HDelta, VDelta);
+        //private void returnMeterFromFloating(ucMeter m, frmMeterDisplay frm)
+        //{
+        //    frm.Hide();
+        //    m.Hide();
+        //    m.Parent = this;
+        //    m.Anchor = AnchorStyles.None;// AnchorStyles.Right | AnchorStyles.Bottom;
+        //    m.RestoreLocation();
+        //    m.Floating = false;
+        //    setPoisitionOfDockedMeter(m);
+        //    m.BringToFront();
 
-            //ucDockedMeterRX1.Delta = new PointF((ucDockedMeterRX1.DockedLocation.X + ucDockedMeterRX1.Width) / (float)this.ClientRectangle.Width, (ucDockedMeterRX1.DockedLocation.Y + ucDockedMeterRX1.Height) / (float)this.ClientRectangle.Height);
-            //Debug.Print("{0}", ucDockedMeterRX1.Delta);
+        //    if (m.RX == 2 && !RX2Enabled) return;
 
-            ucDockedMeterRX1.Delta = new Point(HDelta, VDelta);
-        }
-        private void ucDockedMeterRX2_DockedMoved(object sender, EventArgs e)
-        {
-            //ucDockedMeterRX2.Delta = new PointF(ucDockedMeterRX2.Left / (float)this.Width, ucDockedMeterRX2.Top / (float)this.Height);//new Point(HDelta, VDelta);
-            //ucDockedMeterRX2.Delta = new PointF(0f, 0f);
+        //    m.Show();
+        //}
+        //private void setMeterFloating(ucMeter m, frmMeterDisplay frm)
+        //{
+        //    if (m.RX == 2 && !RX2Enabled) return;
 
-            ucDockedMeterRX2.Delta = new Point(HDelta, VDelta);
-        }
-        private void setPoisitionOfDockedMeter(ucMeter m)
-        {
-            if (!m.Floating)
-            {
-                Point newLocation = new Point();
+        //    m.Hide();
+        //    frm.TakeOwner(m);
+        //    m.Floating = true;
 
-                switch (m.AxisLock)
-                {
-                    case Axis.RIGHT:
-                    case Axis.BOTTOMRIGHT:
-                    //case Axis.NONE:
-                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y - m.Delta.Y + VDelta);
-                        break;
-                    case Axis.BOTTOMLEFT:
-                    case Axis.LEFT:
-                        newLocation = new Point(m.DockedLocation.X, m.DockedLocation.Y - m.Delta.Y + VDelta);
-                        break;
-                    case Axis.TOPLEFT:
-                        newLocation = new Point(m.DockedLocation.X, m.DockedLocation.Y);
-                        break;
-                    case Axis.TOP:
-                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y);
-                        break;
-                    case Axis.BOTTOM:
-                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y - m.Delta.Y + VDelta);
-                        break;
-                    case Axis.TOPRIGHT:
-                        newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y);
-                        break;
-                }
+        //    if (m.RX == 2 && !RX2Enabled) return;
+
+        //    frm.Show();
+        //}
+        //private void ucMeter_FloatingDockedClicked(object sender, EventArgs e)
+        //{
+        //    ucMeter ucM = (ucMeter)sender;
+
+        //    if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+
+        //    if (ucM.Floating)
+        //        returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+        //    else
+        //        setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+        //}
+        //private void ucMeter_FloatingDockedMoved(object sender, EventArgs e)
+        //{
+        //    ucMeter ucM = (ucMeter)sender;
+
+        //    ucM.Delta = new Point(HDelta, VDelta);
+        //}
+        //private void ucDockedMeterRX2_FloatingDockedClicked(object sender, EventArgs e)
+        //{
+        //    if (ucDockedMeterRX2.Floating)
+        //        returnMeterFromFloating(ucDockedMeterRX2, _frmRX2Meter);
+        //    else
+        //        setMeterFloating(ucDockedMeterRX2, _frmRX2Meter);
+        //}
+        //private void ucDockedMeterRX1_DockedMoved(object sender, EventArgs e)
+        //{
+        //    //ucDockedMeterRX1.Delta = new PointF(ucDockedMeterRX1.Right / (float)this.Width, ucDockedMeterRX1.Bottom / (float)this.Height);//new Point(HDelta, VDelta);
+
+        //    //ucDockedMeterRX1.Delta = new PointF((ucDockedMeterRX1.DockedLocation.X + ucDockedMeterRX1.Width) / (float)this.ClientRectangle.Width, (ucDockedMeterRX1.DockedLocation.Y + ucDockedMeterRX1.Height) / (float)this.ClientRectangle.Height);
+        //    //Debug.Print("{0}", ucDockedMeterRX1.Delta);
+
+        //    ucDockedMeterRX1.Delta = new Point(HDelta, VDelta);
+        //}
+        //private void ucDockedMeterRX2_DockedMoved(object sender, EventArgs e)
+        //{
+        //    //ucDockedMeterRX2.Delta = new PointF(ucDockedMeterRX2.Left / (float)this.Width, ucDockedMeterRX2.Top / (float)this.Height);//new Point(HDelta, VDelta);
+        //    //ucDockedMeterRX2.Delta = new PointF(0f, 0f);
+
+        //    ucDockedMeterRX2.Delta = new Point(HDelta, VDelta);
+        //}
+        //private void setPositionOfDockedMeters()
+        //{
+        //    foreach(KeyValuePair<string, ucMeter> kvp in _lstMeters)
+        //    {
+        //        setPoisitionOfDockedMeter(kvp.Value);
+        //    }
+        //}
+        //private void setPoisitionOfDockedMeter(ucMeter m)
+        //{
+        //    if (!m.Floating)
+        //    {
+        //        Point newLocation = new Point();
+
+        //        switch (m.AxisLock)
+        //        {
+        //            case Axis.RIGHT:
+        //            case Axis.BOTTOMRIGHT:
+        //            //case Axis.NONE:
+        //                newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y - m.Delta.Y + VDelta);
+        //                break;
+        //            case Axis.BOTTOMLEFT:
+        //            case Axis.LEFT:
+        //                newLocation = new Point(m.DockedLocation.X, m.DockedLocation.Y - m.Delta.Y + VDelta);
+        //                break;
+        //            case Axis.TOPLEFT:
+        //                newLocation = new Point(m.DockedLocation.X, m.DockedLocation.Y);
+        //                break;
+        //            case Axis.TOP:
+        //                newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y);
+        //                break;
+        //            case Axis.BOTTOM:
+        //                newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y - m.Delta.Y + VDelta);
+        //                break;
+        //            case Axis.TOPRIGHT:
+        //                newLocation = new Point(m.DockedLocation.X - m.Delta.X + HDelta, m.DockedLocation.Y);
+        //                break;
+        //        }
               
-                //limit to client area
-                if (newLocation.X + m.Width > this.Width) newLocation.X = this.Width - m.Width;
-                if (newLocation.Y + m.Height > this.Height) newLocation.Y = this.Height - m.Height;
-                if (newLocation.X < 0) newLocation.X = 0;
-                if (newLocation.Y < 0) newLocation.Y = 0;
+        //        //limit to client area
+        //        if (newLocation.X + m.Width > this.Width) newLocation.X = this.Width - m.Width;
+        //        if (newLocation.Y + m.Height > this.Height) newLocation.Y = this.Height - m.Height;
+        //        if (newLocation.X < 0) newLocation.X = 0;
+        //        if (newLocation.Y < 0) newLocation.Y = 0;
 
-                m.Location = newLocation;
-            }
-        }
-        private void OnRX2EnabledChanged(bool enabled)
-        {
-            if (enabled)
-            {
-                // show after rx2 turn on completes
-                if (ucDockedMeterRX2.Floating)
-                    setMeterFloating(ucDockedMeterRX2, _frmRX2Meter);
-                else
-                    returnMeterFromFloating(ucDockedMeterRX2, _frmRX2Meter);
-            }
-        }
-        private void OnRX2EnabledPreChanged(bool enabled)
-        {
-            if (!enabled)
-            {
-                // hide before rx2 turn off completes
-                if (ucDockedMeterRX2.Floating)
-                    _frmRX2Meter.Hide();
-                else
-                    ucDockedMeterRX2.Hide();
-            }
-        }
+        //        m.Location = newLocation;
+        //    }
+        //}
+        //private void OnRX2EnabledChanged(bool enabled)
+        //{
+        //    //if (enabled)
+        //    //{
+        //    //    // show after rx2 turn on completes
+        //    //    if (ucDockedMeterRX2.Floating)
+        //    //        setMeterFloating(ucDockedMeterRX2, _frmRX2Meter);
+        //    //    else
+        //    //        returnMeterFromFloating(ucDockedMeterRX2, _frmRX2Meter);
+        //    //}
+
+        //    if (enabled)
+        //    {
+        //        foreach(KeyValuePair<string, ucMeter> kvp in _lstMeters.Where(o => o.Value.RX == 2))
+        //        {
+        //            ucMeter ucM = kvp.Value;
+
+        //            if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+
+        //            if (ucM.Floating)
+        //                setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+        //            else
+        //                returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+        //        }
+        //    }
+        //}
+        //private void OnRX2EnabledPreChanged(bool enabled)
+        //{
+        //    //if (!enabled)
+        //    //{
+        //    //    // hide before rx2 turn off completes
+        //    //    if (ucDockedMeterRX2.Floating)
+        //    //        _frmRX2Meter.Hide();
+        //    //    else
+        //    //        ucDockedMeterRX2.Hide();
+        //    //}
+
+        //    if (!enabled)
+        //    {
+        //        foreach (KeyValuePair<string, ucMeter> kvp in _lstMeters.Where(o => o.Value.RX == 2))
+        //        {
+        //            ucMeter ucM = kvp.Value;
+
+        //            if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+
+        //            if (ucM.Floating)
+        //                _lstMeterDisplayForms[ucM.ID].Hide();
+        //            else
+        //                ucM.Hide();
+        //        }
+        //    }
+        //}
+        //private Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
+        //private Dictionary<string, ucMeter> _lstMeters = new Dictionary<string, ucMeter>();
+        //public void AddMeterContainer(ucMeter ucM)
+        //{
+        //    ucM.FloatingDockedClicked += ucMeter_FloatingDockedClicked;
+        //    ucM.DockedMoved += ucMeter_FloatingDockedMoved;
+
+        //    frmMeterDisplay f = new frmMeterDisplay(this, ucM.RX);
+        //    f.ID = ucM.ID;
+        //    _lstMeterDisplayForms.Add(f.ID, f);
+
+        //    MeterManager.AddRenderer(ucM.RX, ucM.DisplayContainer);
+
+        //    _lstMeters.Add(ucM.ID, ucM);
+
+        //    if (ucM.Floating)
+        //    {
+        //        setMeterFloating(ucM, f);
+        //    }
+        //    else
+        //        returnMeterFromFloating(ucM, f);
+        //}
+
+        //public void AddMeterContainer(int nRx, bool bFloating)
+        //{
+        //    ucMeter ucM = new ucMeter();
+        //    ucM.RX = nRx;
+        //    ucM.Floating = bFloating;
+
+        //    AddMeterContainer(ucM);
+        //}
+        //public int TotalMeterContainers
+        //{
+        //    get { return _lstMeters.Count; }
+        //}
     }
 
     public class DigiMode

@@ -8805,17 +8805,26 @@ namespace Thetis
         // having one that was previously deleted staying in the database
         public static void PurgeNotches()
         {
+            purgeStateTableEntries("mnotchdb*");
+        }
+        public static void PurgeMeters()
+        {
+            purgeStateTableEntries("ucMeterData*");
+        }
+        private static void purgeStateTableEntries(string sKey)
+        {
             // make sure there is a State table
             if (!ds.Tables.Contains("State")) return;
 
             // find all the notches and remove them
-            var rows = ds.Tables["State"].Select("Key like 'mnotchdb*'");
+            var rows = ds.Tables["State"].Select("Key like '" + sKey + "'");
             if (rows != null)
             {
                 foreach (var row in rows)
                     row.Delete();
             }
         }
+
         public static void RemoveVarsList(string tableName, List<string> list)
         {
             if (!ds.Tables.Contains(tableName))

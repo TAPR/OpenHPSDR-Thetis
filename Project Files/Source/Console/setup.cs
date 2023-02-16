@@ -938,6 +938,9 @@ namespace Thetis
 
             chkWaterfallUseRX1SpectrumMinMax_CheckedChanged(this, e);
             chkWaterfallUseRX2SpectrumMinMax_CheckedChanged(this, e);
+
+            //MW0LGE [2.9.0.7]
+            updateMeter2Controls();
         }
 
         private void RefreshCOMPortLists()
@@ -25245,6 +25248,115 @@ namespace Thetis
         private void btnResetNFShift_Click(object sender, EventArgs e)
         {
             nudNFshift.Value = (decimal)0f;
+        }
+
+        private void btnAddRX1Container_Click(object sender, EventArgs e)
+        {
+            if (MeterManager.TotalMeterContainers < 10)
+            {
+                string sId = MeterManager.AddMeterContainer(1, false);
+                updateMeter2Controls(sId);
+            }            
+        }
+
+        private void btnAddRX2Container_Click(object sender, EventArgs e)
+        {
+            if (MeterManager.TotalMeterContainers < 10)
+            {
+                string sId = MeterManager.AddMeterContainer(2, false);
+                updateMeter2Controls(sId);
+            }           
+        }
+        private class clsContainerComboboxItem
+        {
+            public string Text { get; set; }
+            public string ID { get; set; }
+
+            public override string ToString()
+            {
+                return Text;
+            }
+        }
+        private void updateMeter2Controls(string sId = "")
+        {
+            bool bEnableAdd = MeterManager.TotalMeterContainers < 10;
+
+            btnAddRX1Container.Enabled = bEnableAdd;
+            btnAddRX2Container.Enabled = bEnableAdd;
+
+            comboContainerSelect.Items.Clear();
+            int i = 0;
+            int nSelect = 0;
+            foreach(KeyValuePair<string, ucMeter> kvp in MeterManager.MeterContainers)
+            {
+                clsContainerComboboxItem cci = new clsContainerComboboxItem();
+                cci.Text = "Container " + (i+1).ToString() + " RX" + kvp.Value.RX.ToString();
+                cci.ID = kvp.Value.ID;
+
+                comboContainerSelect.Items.Add(cci);
+
+                if (cci.ID == sId) nSelect = i;
+
+                i++;                
+            }
+
+            bool bEnableControls = false;
+
+            if (comboContainerSelect.Items.Count > 0)
+            {
+                comboContainerSelect.SelectedIndex = nSelect;
+
+                bEnableControls = true;
+            }
+            else
+            {
+                comboContainerSelect.Text = "";
+            }
+
+            btnContainerDelete.Enabled = bEnableControls;
+            chkContainerHighlight.Enabled = bEnableControls;
+            comboContainerSelect.Enabled = bEnableControls;
+        }
+
+        private void btnContainerDelete_Click(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+
+            if (cci != null)
+            {
+                MeterManager.RemoveMeterContainer(cci.ID);
+                comboContainerSelect.Items.Remove(cci);
+
+                updateMeter2Controls();
+            }
+        }
+
+        private void comboContainerSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (chkContainerHighlight.Checked)
+            {
+                clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+                if (cci != null)
+                {
+                    MeterManager.HighlightContainer = cci.ID;
+                }
+            }
+        }
+
+        private void chkContainerHighlight_CheckedChanged(object sender, EventArgs e)
+        {
+            if(chkContainerHighlight.Checked)
+            {
+                clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+                if (cci != null)
+                {
+                    MeterManager.HighlightContainer = cci.ID;
+                }
+            }
+            else
+            {
+                MeterManager.HighlightContainer = "";
+            }
         }
     }
 
