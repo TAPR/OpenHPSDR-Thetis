@@ -8809,7 +8809,9 @@ namespace Thetis
         }
         public static void PurgeMeters()
         {
-            purgeStateTableEntries("ucMeterData*");
+            purgeStateTableEntries("meterContData_*");
+            purgeStateTableEntries("meterData_*");
+            purgeStateTableEntries("meterIGData_*");
         }
         private static void purgeStateTableEntries(string sKey)
         {

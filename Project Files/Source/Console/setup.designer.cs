@@ -278,6 +278,7 @@
             this.grpGeneralProcessPriority = new System.Windows.Forms.GroupBoxTS();
             this.comboGeneralProcessPriority = new System.Windows.Forms.ComboBoxTS();
             this.grpGeneralOptions = new System.Windows.Forms.GroupBoxTS();
+            this.chkPreventTXonDifferentBandToRX = new System.Windows.Forms.CheckBoxTS();
             this.udSpaceMoxDelay = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS521 = new System.Windows.Forms.LabelTS();
             this.udRFDelay = new System.Windows.Forms.NumericUpDownTS();
@@ -2886,6 +2887,13 @@
             this.lblPeakText = new System.Windows.Forms.LabelTS();
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
             this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
+            this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
+            this.btnMeterUp = new System.Windows.Forms.ButtonTS();
+            this.btnMeterDown = new System.Windows.Forms.ButtonTS();
+            this.btnRemoveMeterItem = new System.Windows.Forms.ButtonTS();
+            this.btnAddMeterItem = new System.Windows.Forms.ButtonTS();
+            this.lstMetersInUse = new System.Windows.Forms.ListBox();
+            this.lstMetersAvailable = new System.Windows.Forms.ListBox();
             this.chkContainerHighlight = new System.Windows.Forms.CheckBoxTS();
             this.btnContainerDelete = new System.Windows.Forms.ButtonTS();
             this.comboContainerSelect = new System.Windows.Forms.ComboBoxTS();
@@ -7785,7 +7793,7 @@
             // 
             this.chkSupportUkraine.AutoSize = true;
             this.chkSupportUkraine.Image = null;
-            this.chkSupportUkraine.Location = new System.Drawing.Point(75, 331);
+            this.chkSupportUkraine.Location = new System.Drawing.Point(72, 347);
             this.chkSupportUkraine.Name = "chkSupportUkraine";
             this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
             this.chkSupportUkraine.TabIndex = 39;
@@ -7823,6 +7831,7 @@
             // 
             // grpGeneralOptions
             // 
+            this.grpGeneralOptions.Controls.Add(this.chkPreventTXonDifferentBandToRX);
             this.grpGeneralOptions.Controls.Add(this.udSpaceMoxDelay);
             this.grpGeneralOptions.Controls.Add(this.labelTS521);
             this.grpGeneralOptions.Controls.Add(this.udRFDelay);
@@ -7836,10 +7845,21 @@
             this.grpGeneralOptions.Controls.Add(this.lblPTTOutDelay);
             this.grpGeneralOptions.Location = new System.Drawing.Point(6, 6);
             this.grpGeneralOptions.Name = "grpGeneralOptions";
-            this.grpGeneralOptions.Size = new System.Drawing.Size(250, 207);
+            this.grpGeneralOptions.Size = new System.Drawing.Size(250, 224);
             this.grpGeneralOptions.TabIndex = 6;
             this.grpGeneralOptions.TabStop = false;
             this.grpGeneralOptions.Text = "Options";
+            // 
+            // chkPreventTXonDifferentBandToRX
+            // 
+            this.chkPreventTXonDifferentBandToRX.Image = null;
+            this.chkPreventTXonDifferentBandToRX.Location = new System.Drawing.Point(129, 46);
+            this.chkPreventTXonDifferentBandToRX.Name = "chkPreventTXonDifferentBandToRX";
+            this.chkPreventTXonDifferentBandToRX.Size = new System.Drawing.Size(115, 50);
+            this.chkPreventTXonDifferentBandToRX.TabIndex = 30;
+            this.chkPreventTXonDifferentBandToRX.Text = "Prevent TX when on different band to RX";
+            this.toolTip1.SetToolTip(this.chkPreventTXonDifferentBandToRX, "Prevent TX\'ing on a different band to the RX band");
+            this.chkPreventTXonDifferentBandToRX.CheckedChanged += new System.EventHandler(this.chkPreventTXonDifferentBandToRX_CheckedChanged);
             // 
             // udSpaceMoxDelay
             // 
@@ -7848,7 +7868,7 @@
             0,
             0,
             0});
-            this.udSpaceMoxDelay.Location = new System.Drawing.Point(84, 179);
+            this.udSpaceMoxDelay.Location = new System.Drawing.Point(84, 195);
             this.udSpaceMoxDelay.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -7874,7 +7894,7 @@
             // labelTS521
             // 
             this.labelTS521.Image = null;
-            this.labelTS521.Location = new System.Drawing.Point(0, 176);
+            this.labelTS521.Location = new System.Drawing.Point(0, 192);
             this.labelTS521.Name = "labelTS521";
             this.labelTS521.Size = new System.Drawing.Size(71, 23);
             this.labelTS521.TabIndex = 29;
@@ -7889,7 +7909,7 @@
             0,
             0,
             0});
-            this.udRFDelay.Location = new System.Drawing.Point(84, 147);
+            this.udRFDelay.Location = new System.Drawing.Point(84, 163);
             this.udRFDelay.Maximum = new decimal(new int[] {
             500,
             0,
@@ -7921,7 +7941,7 @@
             0,
             0,
             0});
-            this.udMoxDelay.Location = new System.Drawing.Point(84, 117);
+            this.udMoxDelay.Location = new System.Drawing.Point(84, 133);
             this.udMoxDelay.Maximum = new decimal(new int[] {
             500,
             0,
@@ -7948,7 +7968,7 @@
             // lblRFDelay
             // 
             this.lblRFDelay.Image = null;
-            this.lblRFDelay.Location = new System.Drawing.Point(11, 144);
+            this.lblRFDelay.Location = new System.Drawing.Point(11, 160);
             this.lblRFDelay.Name = "lblRFDelay";
             this.lblRFDelay.Size = new System.Drawing.Size(60, 23);
             this.lblRFDelay.TabIndex = 23;
@@ -7963,7 +7983,7 @@
             0,
             0,
             0});
-            this.udGenPTTOutDelay.Location = new System.Drawing.Point(84, 87);
+            this.udGenPTTOutDelay.Location = new System.Drawing.Point(84, 103);
             this.udGenPTTOutDelay.Maximum = new decimal(new int[] {
             500,
             0,
@@ -7989,7 +8009,7 @@
             // lblMoxDelay
             // 
             this.lblMoxDelay.Image = null;
-            this.lblMoxDelay.Location = new System.Drawing.Point(6, 114);
+            this.lblMoxDelay.Location = new System.Drawing.Point(6, 130);
             this.lblMoxDelay.Name = "lblMoxDelay";
             this.lblMoxDelay.Size = new System.Drawing.Size(65, 23);
             this.lblMoxDelay.TabIndex = 21;
@@ -8022,7 +8042,7 @@
             // chkSplitOff
             // 
             this.chkSplitOff.Image = null;
-            this.chkSplitOff.Location = new System.Drawing.Point(9, 49);
+            this.chkSplitOff.Location = new System.Drawing.Point(9, 55);
             this.chkSplitOff.Name = "chkSplitOff";
             this.chkSplitOff.Size = new System.Drawing.Size(123, 32);
             this.chkSplitOff.TabIndex = 12;
@@ -8033,7 +8053,7 @@
             // lblPTTOutDelay
             // 
             this.lblPTTOutDelay.Image = null;
-            this.lblPTTOutDelay.Location = new System.Drawing.Point(6, 84);
+            this.lblPTTOutDelay.Location = new System.Drawing.Point(6, 100);
             this.lblPTTOutDelay.Name = "lblPTTOutDelay";
             this.lblPTTOutDelay.Size = new System.Drawing.Size(65, 23);
             this.lblPTTOutDelay.TabIndex = 18;
@@ -8155,7 +8175,7 @@
             this.grpCWDelay.Controls.Add(this.labelTS325);
             this.grpCWDelay.Controls.Add(this.udCWKeyUpDelay);
             this.grpCWDelay.Controls.Add(this.udHWKeyDownDelay);
-            this.grpCWDelay.Location = new System.Drawing.Point(9, 219);
+            this.grpCWDelay.Location = new System.Drawing.Point(6, 236);
             this.grpCWDelay.Name = "grpCWDelay";
             this.grpCWDelay.Size = new System.Drawing.Size(250, 86);
             this.grpCWDelay.TabIndex = 31;
@@ -46702,23 +46722,106 @@
             // 
             // groupBoxTS28
             // 
+            this.groupBoxTS28.Controls.Add(this.groupBoxTS29);
+            this.groupBoxTS28.Controls.Add(this.btnMeterUp);
+            this.groupBoxTS28.Controls.Add(this.btnMeterDown);
+            this.groupBoxTS28.Controls.Add(this.btnRemoveMeterItem);
+            this.groupBoxTS28.Controls.Add(this.btnAddMeterItem);
+            this.groupBoxTS28.Controls.Add(this.lstMetersInUse);
+            this.groupBoxTS28.Controls.Add(this.lstMetersAvailable);
             this.groupBoxTS28.Controls.Add(this.chkContainerHighlight);
             this.groupBoxTS28.Controls.Add(this.btnContainerDelete);
             this.groupBoxTS28.Controls.Add(this.comboContainerSelect);
             this.groupBoxTS28.Controls.Add(this.btnAddRX2Container);
             this.groupBoxTS28.Controls.Add(this.btnAddRX1Container);
-            this.groupBoxTS28.Location = new System.Drawing.Point(326, 16);
+            this.groupBoxTS28.Location = new System.Drawing.Point(326, 8);
             this.groupBoxTS28.Name = "groupBoxTS28";
-            this.groupBoxTS28.Size = new System.Drawing.Size(390, 380);
+            this.groupBoxTS28.Size = new System.Drawing.Size(390, 385);
             this.groupBoxTS28.TabIndex = 86;
             this.groupBoxTS28.TabStop = false;
             this.groupBoxTS28.Text = "MultiMeter 2";
+            // 
+            // groupBoxTS29
+            // 
+            this.groupBoxTS29.Location = new System.Drawing.Point(18, 230);
+            this.groupBoxTS29.Name = "groupBoxTS29";
+            this.groupBoxTS29.Size = new System.Drawing.Size(355, 142);
+            this.groupBoxTS29.TabIndex = 96;
+            this.groupBoxTS29.TabStop = false;
+            // 
+            // btnMeterUp
+            // 
+            this.btnMeterUp.Image = null;
+            this.btnMeterUp.Location = new System.Drawing.Point(343, 115);
+            this.btnMeterUp.Name = "btnMeterUp";
+            this.btnMeterUp.Selectable = true;
+            this.btnMeterUp.Size = new System.Drawing.Size(31, 23);
+            this.btnMeterUp.TabIndex = 95;
+            this.btnMeterUp.Text = "U";
+            this.btnMeterUp.UseVisualStyleBackColor = true;
+            this.btnMeterUp.Click += new System.EventHandler(this.btnMeterUp_Click);
+            // 
+            // btnMeterDown
+            // 
+            this.btnMeterDown.Image = null;
+            this.btnMeterDown.Location = new System.Drawing.Point(342, 144);
+            this.btnMeterDown.Name = "btnMeterDown";
+            this.btnMeterDown.Selectable = true;
+            this.btnMeterDown.Size = new System.Drawing.Size(31, 23);
+            this.btnMeterDown.TabIndex = 94;
+            this.btnMeterDown.Text = "D";
+            this.btnMeterDown.UseVisualStyleBackColor = true;
+            this.btnMeterDown.Click += new System.EventHandler(this.btnMeterDown_Click);
+            // 
+            // btnRemoveMeterItem
+            // 
+            this.btnRemoveMeterItem.Image = null;
+            this.btnRemoveMeterItem.Location = new System.Drawing.Point(144, 144);
+            this.btnRemoveMeterItem.Name = "btnRemoveMeterItem";
+            this.btnRemoveMeterItem.Selectable = true;
+            this.btnRemoveMeterItem.Size = new System.Drawing.Size(67, 23);
+            this.btnRemoveMeterItem.TabIndex = 93;
+            this.btnRemoveMeterItem.Text = "<";
+            this.btnRemoveMeterItem.UseVisualStyleBackColor = true;
+            this.btnRemoveMeterItem.Click += new System.EventHandler(this.btnRemoveMeterItem_Click);
+            // 
+            // btnAddMeterItem
+            // 
+            this.btnAddMeterItem.Image = null;
+            this.btnAddMeterItem.Location = new System.Drawing.Point(144, 115);
+            this.btnAddMeterItem.Name = "btnAddMeterItem";
+            this.btnAddMeterItem.Selectable = true;
+            this.btnAddMeterItem.Size = new System.Drawing.Size(67, 23);
+            this.btnAddMeterItem.TabIndex = 92;
+            this.btnAddMeterItem.Text = ">";
+            this.btnAddMeterItem.UseVisualStyleBackColor = true;
+            this.btnAddMeterItem.Click += new System.EventHandler(this.btnAddMeterItem_Click);
+            // 
+            // lstMetersInUse
+            // 
+            this.lstMetersInUse.FormattingEnabled = true;
+            this.lstMetersInUse.Location = new System.Drawing.Point(217, 90);
+            this.lstMetersInUse.Name = "lstMetersInUse";
+            this.lstMetersInUse.Size = new System.Drawing.Size(120, 134);
+            this.lstMetersInUse.TabIndex = 91;
+            this.lstMetersInUse.SelectedIndexChanged += new System.EventHandler(this.lstMetersInUse_SelectedIndexChanged);
+            this.lstMetersInUse.DoubleClick += new System.EventHandler(this.lstMetersInUse_DoubleClick);
+            // 
+            // lstMetersAvailable
+            // 
+            this.lstMetersAvailable.FormattingEnabled = true;
+            this.lstMetersAvailable.Location = new System.Drawing.Point(18, 90);
+            this.lstMetersAvailable.Name = "lstMetersAvailable";
+            this.lstMetersAvailable.Size = new System.Drawing.Size(120, 134);
+            this.lstMetersAvailable.TabIndex = 90;
+            this.lstMetersAvailable.SelectedIndexChanged += new System.EventHandler(this.lstMetersAvailable_SelectedIndexChanged);
+            this.lstMetersAvailable.DoubleClick += new System.EventHandler(this.lstMetersAvailable_DoubleClick);
             // 
             // chkContainerHighlight
             // 
             this.chkContainerHighlight.AutoSize = true;
             this.chkContainerHighlight.Image = null;
-            this.chkContainerHighlight.Location = new System.Drawing.Point(32, 63);
+            this.chkContainerHighlight.Location = new System.Drawing.Point(32, 54);
             this.chkContainerHighlight.Name = "chkContainerHighlight";
             this.chkContainerHighlight.Size = new System.Drawing.Size(67, 17);
             this.chkContainerHighlight.TabIndex = 89;
@@ -46729,7 +46832,7 @@
             // btnContainerDelete
             // 
             this.btnContainerDelete.Image = null;
-            this.btnContainerDelete.Location = new System.Drawing.Point(152, 55);
+            this.btnContainerDelete.Location = new System.Drawing.Point(152, 46);
             this.btnContainerDelete.Name = "btnContainerDelete";
             this.btnContainerDelete.Selectable = true;
             this.btnContainerDelete.Size = new System.Drawing.Size(59, 32);
@@ -46740,8 +46843,9 @@
             // 
             // comboContainerSelect
             // 
+            this.comboContainerSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboContainerSelect.FormattingEnabled = true;
-            this.comboContainerSelect.Location = new System.Drawing.Point(18, 28);
+            this.comboContainerSelect.Location = new System.Drawing.Point(18, 19);
             this.comboContainerSelect.Name = "comboContainerSelect";
             this.comboContainerSelect.Size = new System.Drawing.Size(193, 21);
             this.comboContainerSelect.TabIndex = 87;
@@ -57534,5 +57638,13 @@
         private CheckBoxTS chkContainerHighlight;
         private ButtonTS btnContainerDelete;
         private ComboBoxTS comboContainerSelect;
+        private CheckBoxTS chkPreventTXonDifferentBandToRX;
+        private GroupBoxTS groupBoxTS29;
+        private ButtonTS btnMeterUp;
+        private ButtonTS btnMeterDown;
+        private ButtonTS btnRemoveMeterItem;
+        private ButtonTS btnAddMeterItem;
+        private ListBox lstMetersInUse;
+        private ListBox lstMetersAvailable;
     }
 }

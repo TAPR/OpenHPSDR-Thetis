@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
@@ -16,19 +14,21 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
-//using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
-using System.Net;
-using SharpDX.Direct2D1.Effects;
-using static System.Net.Mime.MediaTypeNames;
-using System.Net.NetworkInformation;
-using static Thetis.Console;
+
 using System.Collections;
-using System.Runtime.CompilerServices;
+using System.Xml;
 //using SharpDX.Direct2D1.Effects;
-//using System.Windows.Forms.DataVisualization.Charting;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
+//using System.Security.Cryptography;
+//using static Thetis.MeterManager.clsMeterItem;
+//using System.Xml.Linq;
+//using SharpDX.Direct2D1.Effects;
+//using System.Net;
 //using static System.Windows.Forms.AxHost;
-//
+//using SharpDX.DirectWrite;
+//using static Thetis.WDSP;
+
+//using SharpDX.Direct2D1.Effects;
 
 namespace Thetis
 {
@@ -66,8 +66,8 @@ namespace Thetis
         //additional to MeterRXMode & MeterTXMode
         REVERSE_PWR,
         SWR,
-        ADC2_PEAK,
-        ADC2_AV,
+        //ADC2_PEAK,
+        //ADC2_AV,
         //pa
         DRIVE_FWD_ADC,
         FWD_ADC,
@@ -86,17 +86,36 @@ namespace Thetis
         LAST
     }
 
+    public enum MeterType
+    {
+        NONE = 0,
+        SIGNAL_STRENGTH,
+        AVG_SIGNAL_STRENGTH,
+        ADC,
+        AGC,
+        AGC_GAIN,
+        MIC,
+        PWR,
+        REVERSE_PWR,
+        ALC,
+        EQ,
+        LEVELER,
+        COMP,
+        //CPDR,
+        ALC_GAIN,
+        ALC_GROUP,
+        LEVELER_GAIN,
+        CFC,
+        MAGIC_EYE,
+        ESTIMATED_PBSNR,
+        KENWOOD,
+        CROSS,
+        SWR,
+        LAST
+    }
     internal static class MeterManager
     {
         #region MeterManager
-        private enum MeterType
-        {
-            NONE = 0,
-            RX = 1,
-            MOX = 2,
-            TUNE = 4,
-            TWOTONE = 8
-        }
         // member variables
         private static Console _console;
         private static bool _delegatesAdded;
@@ -105,14 +124,9 @@ namespace Thetis
         private static Thread _meterThread;
         private static bool _meterThreadRunning;
         //private static object _readingsLock = new object();
-        //private static bool _mox;
         private static bool _power;
         private static bool _rx1VHForAbove;
         private static bool _rx2VHForAbove;
-        //
-        private static DXRenderer _rx1Renderer;
-        private static DXRenderer _rx2Renderer;
-        //
         private static HPSDRModel _currentHPSDRmodel;
         private static bool _alexPresent;
         private static bool _paPresent;
@@ -120,13 +134,14 @@ namespace Thetis
         private static int _transverterIndex;
         private static string _imagePath;
 
-        private static string _highlightContainerID;
+        private static Object _imageLock = new Object();
+
+        private static Dictionary<string, DataStream> _pooledStreamData;
+        private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;        
 
         static MeterManager()
         {
             // static constructor
-            _rx1Renderer = null;
-            _rx2Renderer = null;
             _rx1VHForAbove = false;
             _rx2VHForAbove = false;
             _delegatesAdded = false;
@@ -140,14 +155,140 @@ namespace Thetis
             _apolloPresent = false;
             _transverterIndex = -1; // no transverter
             _imagePath = "";
-            _highlightContainerID = "";
-            //_mox = false;
+
+            _pooledImages = new Dictionary<string, System.Drawing.Bitmap>();
+            _pooledStreamData = new Dictionary<string, DataStream>();
 
             // two sets of readings, for each trx
             _readings.Add(1, new clsReadings());
             _readings.Add(2, new clsReadings());
 
             _meterThreadRunning = false;
+        }
+        public static string MeterName(MeterType meter)
+        {
+            switch (meter)
+            {
+                case MeterType.SIGNAL_STRENGTH: return "Signal Strength";
+                case MeterType.AVG_SIGNAL_STRENGTH: return "Average Signal Strength";
+                case MeterType.ADC: return "ADC";
+                case MeterType.AGC: return "AGC";
+                case MeterType.AGC_GAIN: return "AGC Gain";
+                case MeterType.MIC: return "Mic";
+                case MeterType.PWR: return "ForwardPower";
+                case MeterType.REVERSE_PWR: return "Reverse Power";
+                case MeterType.ALC: return "ALC";
+                case MeterType.EQ: return "EQ";
+                case MeterType.LEVELER: return "Leveler";
+                case MeterType.COMP: return "Compression";
+                //case MeterType.CPDR: return "TODO Compander";
+                case MeterType.ALC_GAIN: return "ALC Comp";
+                case MeterType.ALC_GROUP: return "ALC Group";
+                case MeterType.LEVELER_GAIN: return "Leveler Gain";
+                case MeterType.CFC: return "CFC";
+                case MeterType.MAGIC_EYE: return "Magic Eye";
+                case MeterType.ESTIMATED_PBSNR: return "Estimated Passband SNR";
+                case MeterType.KENWOOD: return "Kenwood Meter";
+                case MeterType.CROSS: return "Cross Meter";
+            }
+
+            return meter.ToString();
+        }
+        public static string ReadingName(Reading reading)
+        {
+            switch (reading)
+            {
+                case Reading.ADC_AV: return "ADC Average";
+                case Reading.ADC_PK: return "ADC Peak";
+                case Reading.AGC_AV: return "AGC Average";
+                case Reading.AGC_PK: return "AGC Peak";
+                case Reading.AGC_GAIN: return "AGC Gain";
+                case Reading.EYE_PERCENT: return "Magic Eye";
+                case Reading.ALC: return "ALC";
+                case Reading.ALC_G: return "ALC Comp";
+                case Reading.ALC_GROUP: return "ALC Group";
+                case Reading.ESTIMATED_PBSNR: return "Estimated PBSNR";
+                case Reading.ALC_PK: return "ALC";// Peak";
+                case Reading.AMPS: return "Amps";
+                case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
+                case Reading.CAL_FWD_PWR: return "Calibrated FWD Power";
+                case Reading.CFC_G: return "CFC Comp";
+                case Reading.CFC_PK: return "CFC";// Peak";
+                case Reading.COMP: return "Compression";
+                case Reading.COMP_PK: return "Compression";// Peak";
+                //case Reading.CPDR: return "TODO Compander";
+                //case Reading.CPDR_PK: return "Compander Peak";
+                case Reading.DRIVE_FWD_ADC: return "Drive Forward ADC";
+                case Reading.DRIVE_PWR: return "Drive Power";
+                case Reading.EQ: return "EQ";
+                case Reading.EQ_PK: return "EQ";// Peak";
+                case Reading.FWD_ADC: return "Forward ADC";
+                case Reading.FWD_VOLT: return "Forward Volt";
+                case Reading.LEVELER: return "Leveler";
+                case Reading.LEVELER_PK: return "Leveler";// Peak";
+                case Reading.LVL_G: return "Leveler Gain";
+                case Reading.MIC: return "MIC";
+                case Reading.MIC_PK: return "MIC";// Peak";
+                case Reading.PA_FWD_PWR: return "PA Forward Power";
+                case Reading.PA_REV_PWR: return "PA Reverse Power";
+                case Reading.PWR: return "Power";
+                case Reading.REVERSE_PWR: return "Reverse Power";
+                case Reading.REV_ADC: return "Reverse ADC";
+                case Reading.REV_VOLT: return "Reverse VOLT";
+                case Reading.SIGNAL_STRENGTH: return "Signal";
+                case Reading.SWR: return "SWR";
+                case Reading.VOLTS: return "Volts";
+            }
+
+            return reading.ToString();
+        }
+        public static string ReadingUnits(Reading reading)
+        {
+            switch (reading)
+            {
+                case Reading.ADC_AV: return "dBFS";
+                case Reading.ADC_PK: return "dBFS";
+                case Reading.AGC_PK: return "dB";
+                case Reading.AGC_AV: return "dB";
+                case Reading.AGC_GAIN: return "dB";
+                case Reading.EYE_PERCENT: return "?";
+                case Reading.ALC: return "dB";
+                case Reading.ALC_G: return "dB";
+                case Reading.ALC_GROUP: return "dB";
+                case Reading.ESTIMATED_PBSNR: return "dB";
+                case Reading.ALC_PK: return "dB";
+                case Reading.AMPS: return "A";
+                case Reading.AVG_SIGNAL_STRENGTH: return "dBm";
+                case Reading.CAL_FWD_PWR: return "W";
+                case Reading.CFC_G: return "dB";
+                case Reading.CFC_PK: return "dB";
+                case Reading.COMP: return "dB";
+                case Reading.COMP_PK: return "dB";
+                //case Reading.CPDR: return "dB";
+                //case Reading.CPDR_PK: return "dB";
+                case Reading.DRIVE_FWD_ADC: return "?";
+                case Reading.DRIVE_PWR: return "W";
+                case Reading.EQ: return "dB";
+                case Reading.EQ_PK: return "dB";
+                case Reading.FWD_ADC: return "FWD ADC";
+                case Reading.FWD_VOLT: return "?";
+                case Reading.LEVELER: return "dB";
+                case Reading.LEVELER_PK: return "dB";
+                case Reading.LVL_G: return "dB";
+                case Reading.MIC: return "dB";
+                case Reading.MIC_PK: return "dB";
+                case Reading.PA_FWD_PWR: return "W";
+                case Reading.PA_REV_PWR: return "W";
+                case Reading.PWR: return "W";
+                case Reading.REVERSE_PWR: return "W";
+                case Reading.REV_ADC: return "?";
+                case Reading.REV_VOLT: return "V";
+                case Reading.SIGNAL_STRENGTH: return "dBm";
+                case Reading.SWR: return ":1";
+                case Reading.VOLTS: return "V";
+            }
+
+            return reading.ToString();
         }
 
         private static void UpdateMeters()
@@ -190,44 +331,72 @@ namespace Thetis
                     Thread.Sleep(100);
                 }
             }
-        }
-        private static Dictionary<string, DataStream> _pooledStreamData;
-        private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;
+        }              
         public static void AddImage(string sKey, System.Drawing.Bitmap image)
         {
-            if (_pooledImages == null) return;
+            lock (_imageLock)
+            {
+                if (_pooledImages == null) return;
 
-            _pooledImages.Add(sKey, image);
+                _pooledImages.Add(sKey, image);
+            }
         }
         public static System.Drawing.Bitmap GetImage(string sKey)
         {
-            if (_pooledImages == null) return null;
-            if (!_pooledImages.ContainsKey(sKey)) return null;
+            lock (_imageLock)
+            {
+                if (_pooledImages == null) return null;
+                if (!_pooledImages.ContainsKey(sKey)) return null;
 
-            return _pooledImages[sKey];
+                return _pooledImages[sKey];
+            }
         }
         public static bool ContainsBitmap(string sKey)
         {
-            if (_pooledImages == null) return false;
-            return _pooledImages.ContainsKey(sKey);
+            lock (_imageLock)
+            {
+                if (_pooledImages == null) return false;
+                return _pooledImages.ContainsKey(sKey);
+            }
         }
         public static void AddStreamData(string sId, DataStream tempStream)
         {
-            if (_pooledStreamData == null) return;
+            lock (_imageLock)
+            {
+                if (_pooledStreamData == null) return;
 
-            _pooledStreamData.Add(sId, tempStream);
+                _pooledStreamData.Add(sId, tempStream);
+            }
         }
         public static DataStream GetStreamData(string sKey)
         {
-            if (_pooledStreamData == null) return null;
-            if (!_pooledStreamData.ContainsKey(sKey)) return null;
+            lock (_imageLock)
+            {
+                if (_pooledStreamData == null) return null;
+                if (!_pooledStreamData.ContainsKey(sKey)) return null;
 
-            return _pooledStreamData[sKey];
+                return _pooledStreamData[sKey];
+            }
         }
         public static bool ContainsStreamData(string sKey)
         {
-            if (_pooledStreamData == null) return false;
-            return _pooledStreamData.ContainsKey(sKey);
+            lock (_imageLock)
+            {
+                if (_pooledStreamData == null) return false;
+                return _pooledStreamData.ContainsKey(sKey);
+            }
+        }
+        public static void HighlightContainer(string sId)
+        {
+            foreach(KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            {
+                kvp.Value.HighlightEdge = false;
+            }
+
+            if (sId != "" && _DXrenderers.ContainsKey(sId))
+            {
+                _DXrenderers[sId].HighlightEdge = true;
+            }
         }
         public static void DisposeImageData()
         {
@@ -249,7 +418,6 @@ namespace Thetis
         public static void Init(Console c, string sImagePath = "")
         {
             _console = c;
-            //_mox = _console.MOX;
             _power = _console.PowerOn;
             _rx1VHForAbove = _console.VFOAFreq >= 30;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
@@ -259,49 +427,8 @@ namespace Thetis
             _paPresent = _console.PAPresent;
             _transverterIndex = _console.TXXVTRIndex;
             _imagePath = sImagePath;
-            _pooledImages = new Dictionary<string, System.Drawing.Bitmap>();
-            _pooledStreamData = new Dictionary<string, DataStream>();
 
-            //// test
-            clsMeter cm = new clsMeter(1, "test1meter", (int)MeterType.RX, 1f, 1f);// 0.542f);
-            _meters.Add(cm.Name, cm);
-
-            cm = new clsMeter(2, "test2meter", (int)MeterType.RX, 1f, 1f);// 0.542f);
-            _meters.Add(cm.Name, cm);
-
-            cm = new clsMeter(1, "test3meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 1.361f);
-            cm.AddDisplayGroup("PWR/SWR"); // 1
-            cm.AddDisplayGroup("Comp");
-            cm.AddDisplayGroup("ALC");
-            cm.AddDisplayGroup("Volts/Amps");
-            cm.DisplayGroup = 1;
-            _meters.Add(cm.Name, cm);
-
-            cm = new clsMeter(2, "test4meter", (int)MeterType.MOX | (int)MeterType.TUNE | (int)MeterType.TWOTONE, 1f, 1.361f);
-            cm.AddDisplayGroup("PWR/SWR"); // 1
-            cm.AddDisplayGroup("Comp");
-            cm.AddDisplayGroup("ALC");
-            cm.AddDisplayGroup("Volts/Amps");
-            cm.DisplayGroup = 1;
-            _meters.Add(cm.Name, cm);
-            ////
-
-            addDelegates();
-
-            //if (rx1 != null)
-            //{
-            //    _rx1Renderer = new DXRenderer(1, rx1, _console, sImagePath, quickestUpdateInterval(1));
-            //    rx1.Parent.Show();
-            //}
-
-            //if (rx2 != null)
-            //{
-            //    _rx2Renderer = new DXRenderer(2, rx2, _console, sImagePath, quickestUpdateInterval(2));
-            //    if (c.RX2Enabled)
-            //        rx2.Parent.Show();
-            //    else
-            //        rx2.Parent.Hide();
-            //}
+            addDelegates();                       
 
             _meterThread = new Thread(new ThreadStart(UpdateMeters))
             {
@@ -317,9 +444,9 @@ namespace Thetis
             set { _imagePath = value; }
         }
         private static Dictionary<string, DXRenderer> _DXrenderers = new Dictionary<string, DXRenderer>();
-        private static void addRenderer(string sId, int rx, PictureBox target)
+        private static void addRenderer(string sId, int rx, PictureBox target, clsMeter meter)
         {
-            DXRenderer renderer = new DXRenderer(sId, rx, target, _console, MeterManager.ImagePath, quickestUpdateInterval(rx));
+            DXRenderer renderer = new DXRenderer(sId, rx, target, _console, MeterManager.ImagePath, meter);            
 
             _DXrenderers.Add(sId, renderer);
         }
@@ -334,12 +461,14 @@ namespace Thetis
         }
         public static void Shutdown()
         {
-            if (_rx1Renderer != null) _rx1Renderer.ShutdownDX();
-            if (_rx2Renderer != null) _rx2Renderer.ShutdownDX();
-
-            DisposeImageData();
-
             removeDelegates();
+
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            {
+                kvp.Value.ShutdownDX();
+            }
+
+            DisposeImageData();           
             
             _meterThreadRunning = false;
             if (_meterThread != null && _meterThread.IsAlive) _meterThread.Join();
@@ -389,7 +518,7 @@ namespace Thetis
             _console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
             _console.RX2EnabledPreChangedHandlers -= OnRX2EnabledPreChanged;
 
-            foreach (KeyValuePair<string, ucMeter> kvp in _lstMeters)
+            foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
             }
@@ -440,8 +569,8 @@ namespace Thetis
         {
             get
             {
-                // power choice from console.getMeterPixelPosAndDrawScales
-                // TODO: 8000mk3
+                // power choice based on console.getMeterPixelPosAndDrawScales
+                // TODO: 8000mk2  !!!!!!!!!!!!!!!!!!!!
 
                 int nWatts = 500;
 
@@ -546,8 +675,8 @@ namespace Thetis
                     setReading(rx, Reading.LVL_G, ref readings);
                     setReading(rx, Reading.CFC_PK, ref readings);
                     setReading(rx, Reading.CFC_G, ref readings);
-                    setReading(rx, Reading.CPDR_PK, ref readings);
-                    setReading(rx, Reading.CPDR, ref readings);
+                    //setReading(rx, Reading.CPDR_PK, ref readings);
+                    //setReading(rx, Reading.CPDR, ref readings);
 
                     setReading(rx, Reading.ALC_PK, ref readings);
                     setReading(rx, Reading.ALC, ref readings);
@@ -560,9 +689,6 @@ namespace Thetis
                     setReading(rx, Reading.PWR, ref readings);
                     setReading(rx, Reading.REVERSE_PWR, ref readings);
                     setReading(rx, Reading.SWR, ref readings);
-
-                    setReading(rx, Reading.ADC2_PEAK, ref readings);
-                    setReading(rx, Reading.ADC2_AV, ref readings);
 
                     if (rx == 1)
                     { // only rx1 data
@@ -594,66 +720,48 @@ namespace Thetis
         {
             int updateRate = 5000;
 
-            if (!mox)
+            foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx))
             {
-                foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && (kvp.Value.TypeBitField & (int)MeterType.RX) == (int)MeterType.RX))
-                {
-                    int ui = kvp.Value.QuickestUpdateInterval;
-                    if (ui < updateRate) updateRate = ui;
-                }
-            }
-            else
-            {
-                foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && (kvp.Value.TypeBitField & (int)MeterType.RX) != (int)MeterType.RX))
-                {
-                    int ui = kvp.Value.QuickestUpdateInterval;
-                    if (ui < updateRate) updateRate = ui;
-                }
-            }
-            return updateRate;
-        }
-        private static int quickestUpdateInterval(int rx)
-        {
-            int updateRate = 5000;
-
-            foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && kvp.Value.TypeBitField != (int)MeterType.NONE))
-            {
-                int ui = kvp.Value.QuickestUpdateInterval;
+                int ui = kvp.Value.QuickestUpdateInterval(mox);
                 if (ui < updateRate) updateRate = ui;
             }
 
             return updateRate;
         }
-        private static int overallUpdateInterval()
-        {
-            int updateInterval = 5000;
-
-            for (int rx = 1; rx <= 2; rx++)
-            {
-                int tmp = quickestUpdateInterval(rx);
-                if (tmp < updateInterval) updateInterval = tmp;
-            }
-
-            return updateInterval;
-        }
 
         private static Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
-        private static Dictionary<string, ucMeter> _lstMeters = new Dictionary<string, ucMeter>();
-        public static void AddMeterContainer(ucMeter ucM)
+        private static Dictionary<string, ucMeter> _lstUCMeters = new Dictionary<string, ucMeter>();
+        public static clsMeter MeterFromId(string sId)
+        {
+            if (_meters == null) return null;
+            if (!_meters.ContainsKey(sId)) return null;
+
+            return _meters[sId];
+        }
+        public static void AddMeterContainer(ucMeter ucM, bool mox)
         {
             if (_console == null) return;
-
+            ucM.Console = _console;
             ucM.FloatingDockedClicked += ucMeter_FloatingDockedClicked;
             ucM.DockedMoved += ucMeter_FloatingDockedMoved;
 
+            // float form
             frmMeterDisplay f = new frmMeterDisplay(_console, ucM.RX);
-            f.ID = ucM.ID;
+            f.ID = ucM.ID;            
+
+            // meter items
+            clsMeter meter = new clsMeter(ucM.RX, "", 1f, 1f, mox);
+            meter.ID = ucM.ID;
+
+            // a renderer
+            addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter);
+
+            // store everything
             _lstMeterDisplayForms.Add(f.ID, f);
+            _lstUCMeters.Add(ucM.ID, ucM);
+            _meters.Add(meter.ID, meter);
 
-            MeterManager.addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer);
-
-            _lstMeters.Add(ucM.ID, ucM);
-
+            // setup
             if (ucM.Floating)
             {
                 setMeterFloating(ucM, f);
@@ -662,19 +770,19 @@ namespace Thetis
                 returnMeterFromFloating(ucM, f);
         }
 
-        public static string AddMeterContainer(int nRx, bool bFloating)
+        public static string AddMeterContainer(int nRx, bool bFloating, bool mox)
         {
             ucMeter ucM = new ucMeter();
             ucM.RX = nRx;
             ucM.Floating = bFloating;
 
-            AddMeterContainer(ucM);
+            AddMeterContainer(ucM, mox);
 
             return ucM.ID;
         }
         public static int TotalMeterContainers
         {
-            get { return _lstMeters.Count; }
+            get { return _lstUCMeters.Count; }
         }
         private static void ucMeter_FloatingDockedClicked(object sender, EventArgs e)
         {
@@ -695,7 +803,7 @@ namespace Thetis
         }
         public static void SetPositionOfDockedMeters()
         {
-            foreach (KeyValuePair<string, ucMeter> kvp in _lstMeters)
+            foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 setPoisitionOfDockedMeter(kvp.Value);
             }
@@ -780,7 +888,7 @@ namespace Thetis
         {
             if (enabled)
             {
-                foreach (KeyValuePair<string, ucMeter> kvp in _lstMeters.Where(o => o.Value.RX == 2))
+                foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters.Where(o => o.Value.RX == 2))
                 {
                     ucMeter ucM = kvp.Value;
 
@@ -797,7 +905,7 @@ namespace Thetis
         {
             if (!enabled)
             {
-                foreach (KeyValuePair<string, ucMeter> kvp in _lstMeters.Where(o => o.Value.RX == 2))
+                foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters.Where(o => o.Value.RX == 2))
                 {
                     ucMeter ucM = kvp.Value;
 
@@ -810,33 +918,106 @@ namespace Thetis
                 }
             }
         }
+        public static void RestoreSettings(ref List<KeyValuePair<string, string>> settings)
+        {
+            foreach(KeyValuePair<string, string> kvp in settings.Where(o => o.Key.StartsWith("meterContData")))
+            {
+                ucMeter ucM = new ucMeter();
+                bool bUcMeterOk = ucM.TryParse(kvp.Value);
+                if (bUcMeterOk)
+                {
+                    AddMeterContainer(ucM, false);
+
+                    clsMeter m = MeterFromId(ucM.ID);
+
+                    if (m != null)
+                    {
+                        // now the meter
+                        IEnumerable<KeyValuePair<string, string>> meterData = settings.Where(o => o.Key.StartsWith("meterData_" + m.ID));
+                        if (meterData != null && meterData.Count() == 1)
+                        {
+                            KeyValuePair<string, string> md = meterData.First();
+
+                            clsMeter tmpMeter = new clsMeter();
+                            tmpMeter.TryParse(md.Value);
+
+                            // copy to actual meter
+                            // id will be the same
+                            m.Name = tmpMeter.Name;
+                            m.RX = tmpMeter.RX;
+                            m.XRatio = tmpMeter.XRatio;
+                            m.YRatio = tmpMeter.YRatio;
+                            m.DisplayGroup = tmpMeter.DisplayGroup;
+                            m.PadX = tmpMeter.PadX;
+                            m.PadY = tmpMeter.PadY;
+                            m.Height = tmpMeter.Height;
+                        }
+
+                        // finally the groups
+
+                        IEnumerable<KeyValuePair<string, string>> meterIGData = settings.Where(o => o.Key.StartsWith("meterIGData_") && o.Value.Contains(m.ID)); // parent id, stored in value
+                        foreach (KeyValuePair<string, string> igd in meterIGData)
+                        {
+                            clsItemGroup ig = new clsItemGroup();
+                            ig.TryParse(igd.Value);
+
+                            m.AddMeter(ig.MeterType, ig);
+                        }
+
+                        m.Rebuild();
+                    }
+                }
+            }
+        }
         public static void StoreSettings(ref ArrayList a)
         {
             if (a == null) return;
 
-            foreach (KeyValuePair<string, ucMeter> kvp in _lstMeters)
+            // meter container data
+            foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
-                a.Add("ucMeterData_" + kvp.Value.ID + "/" + kvp.Value.ToString());
+                a.Add("meterContData_" + kvp.Value.ID + "/" + kvp.Value.ToString());
+
+                // then the meter itself which holds multiple meter items
+                clsMeter m = MeterFromId(kvp.Value.ID);
+                if (m != null)
+                {           
+                    a.Add("meterData_" + kvp.Value.ID + "/" + m.ToString());
+
+                    Dictionary<string, clsItemGroup> groupItems = m.getMeterGroups();
+
+                    // then each meter item which are groups in this case
+                    foreach (KeyValuePair<string, clsItemGroup> ig in groupItems)
+                    {
+                        Dictionary<string, clsMeterItem> mis = m.itemsFromID(ig.Value.ID);
+                        if (mis != null)
+                        {
+                            foreach (KeyValuePair<string, clsMeterItem> kvp2 in mis.Where(o => o.Value.StoreSettings == true))
+                            {
+                                clsMeterItem mi = kvp2.Value;
+                                if (mi != null)
+                                {
+                                    a.Add("meterIGData_" + kvp2.Value.ID + "/" + mi.ToString());
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         public static Dictionary<string, ucMeter> MeterContainers
         {
-            get { return _lstMeters; }
-        }
-        public static string HighlightContainer
-        {
-            get { return _highlightContainerID; }
-            set { _highlightContainerID = value; }
+            get { return _lstUCMeters; }
         }
         public static void RemoveMeterContainer(string sId)
         {
-            if (!_lstMeters.ContainsKey(sId)) return;
+            if (!_lstUCMeters.ContainsKey(sId)) return;
             if (!_lstMeterDisplayForms.ContainsKey(sId)) return;
 
             frmMeterDisplay f = _lstMeterDisplayForms[sId];
             f.Hide();
 
-            ucMeter uc = _lstMeters[sId];
+            ucMeter uc = _lstUCMeters[sId];
             uc.Hide();
 
             removeRenderer(sId);
@@ -844,33 +1025,39 @@ namespace Thetis
             f.Close();
 
             _lstMeterDisplayForms.Remove(sId);
-            _lstMeters.Remove(sId);
+            _lstUCMeters.Remove(sId);
+            _meters.Remove(sId);
         }
         #endregion
         #region clsMeterItem
-        private class clsMeterItem
+        public class clsMeterItem
         {
             public enum MeterItemType
             {
-                BASE = 0, // done
-                H_BAR, // done
+                BASE = 0,
+                H_BAR,
                 V_BAR,
-                H_SCALE, // done
+                H_SCALE,
                 V_SCALE,
-                NEEDLE, // done
-                TEXT, // done
-                IMAGE, // done
-                SOLID_COLOUR, // done
-                CLICKBOX, // done
-                MAGIC_EYE
+                NEEDLE,
+                TEXT,
+                IMAGE,
+                SOLID_COLOUR,
+                CLICKBOX,
+                MAGIC_EYE,
+                ITEM_GROUP
             }
 
-            private string _sGUID;
+            private string _sId;
+            private string _sParentId;
 
             private MeterItemType _ItemType;
 
+            private bool _storeSettings;
+
             private PointF _topLeft; // 0-1,0-1
-            private PointF _bottomRight; // 0-1,0-1
+            //private PointF _bottomRight; // 0-1,0-1
+            private PointF _originalTopLeft;
             private SizeF _size;  // 0-1,0-1
             private int _zOrder; // lower first
             private int _msUpdateInterval; //ms
@@ -883,48 +1070,89 @@ namespace Thetis
             private Dictionary<float, PointF> _scaleCalibration;
             private int _displayGroup;
             private bool _bNormaliseTo100W;
+            private bool _bOnlyWhenTx;
+            private bool _bOnlyWhenRx;
 
             public clsMeterItem()
             {
                 // constructor
-                _sGUID = Guid.NewGuid().ToString();
+                _sId = System.Guid.NewGuid().ToString();
+                _sParentId = "";
                 _ItemType = MeterItemType.BASE;
+                _storeSettings = false;
                 _readingType = Reading.NONE;
                 _topLeft.X = 0;
                 _topLeft.Y = 0;
                 _zOrder = 0;
-                _bottomRight.X = 1;
-                _bottomRight.Y = 1;
+                //_bottomRight.X = 1;
+                //_bottomRight.Y = 1;
                 _msUpdateInterval = 5000; //ms
                 _attackRatio = 0.8f;
                 _decayRatio = 0.2f;
-                _value = -200;
+                _value = -200f;
                 _historyColour = System.Drawing.Color.FromArgb(128, 255, 255, 255);
                 _scaleCalibration = new Dictionary<float, PointF>();
                 _size.Width = 1f;
                 _size.Height = 1f;
                 _displayGroup = 0;
                 _bNormaliseTo100W = false;
+                _bOnlyWhenTx = false;
+                _bOnlyWhenRx = false;                
                 _updateStopwatch = new Stopwatch();
+                _originalTopLeft.X = 0;
+                _originalTopLeft.Y = 0;
             }
-
-            public string ID { get { return _sGUID; } }
+            public void ZeroOut()
+            {
+                if (_scaleCalibration.Count > 0)
+                    Value = _scaleCalibration.First().Key; // first entry always lowest
+                else
+                    Value = -200f;
+            }
+            public string ID { 
+                get { return _sId; } 
+                set { _sId = value; }
+            }
+            public string ParentID
+            {
+                get { return _sParentId; }
+                set { _sParentId = value; }
+            }
+            public bool StoreSettings
+            {
+                get { return _storeSettings; }
+                set { _storeSettings = value; }
+            }
+            private bool _topLeftInit = false;
             public PointF TopLeft {
                 get { return _topLeft; }
-                set { _topLeft = value; }
+                set { 
+                    _topLeft = value;
+                    if (!_topLeftInit)
+                    {
+                        _originalTopLeft.X = _topLeft.X;
+                        _originalTopLeft.Y = _topLeft.Y;
+                        _topLeftInit = true;
+                    }
+                }
             }
-            public PointF BottomRight {
-                get { return _bottomRight; } // readonly
-                set { /*_bottomRight = value;*/ }
+            public PointF OriginalTopLeft
+            {
+                get { return _originalTopLeft; }
+                set { _originalTopLeft = value; }
             }
+            //public PointF BottomRight {
+            //    get { return _bottomRight; } // readonly
+            //    set { /*_bottomRight = value;*/ }
+            //}
             public SizeF Size
             {
                 get { return _size; }
                 set 
                 { 
                     _size = value;
-                    _bottomRight.X = _topLeft.X + _size.Width;
-                    _bottomRight.Y = _topLeft.Y + _size.Height;
+                    //_bottomRight.X = _topLeft.X + _size.Width;
+                    //_bottomRight.Y = _topLeft.Y + _size.Height;
                 }
             }
             public int DisplayGroup
@@ -1061,122 +1289,104 @@ namespace Thetis
             {
                 get { return _scaleCalibration; }
                 set { }
-            }
-            public string TypeName
+            }            
+            public bool OnlyWhenTX
             {
-                get
-                {
-                    string sName = _readingType.ToString();
-
-                    switch (_readingType)
-                    {
-                        case Reading.ADC2_AV: return "ADC2 Average";
-                        case Reading.ADC2_PEAK: return "ADC2 Peak";
-                        case Reading.ADC_AV: return "ADC Average";
-                        case Reading.ADC_PK: return "ADC Peak";
-                        case Reading.AGC_AV: return "AGC Average";
-                        case Reading.AGC_PK: return "AGC Peak";
-                        case Reading.AGC_GAIN: return "AGC Gain";
-                        case Reading.EYE_PERCENT: return "Magic Eye";
-                        case Reading.ALC: return "ALC";
-                        case Reading.ALC_G: return "ALC Comp";
-                        case Reading.ALC_GROUP: return "ALC Group";
-                        case Reading.ESTIMATED_PBSNR: return "Estimated PBSNR";
-                        case Reading.ALC_PK: return "ALC";// Peak";
-                        case Reading.AMPS: return "Amps";
-                        case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
-                        case Reading.CAL_FWD_PWR: return "Calibrated FWD Power";
-                        case Reading.CFC_G: return "CFC Comp";
-                        case Reading.CFC_PK: return "CFC";// Peak";
-                        case Reading.COMP: return "Compression";
-                        case Reading.COMP_PK: return "Compression";// Peak";
-                        case Reading.CPDR: return "Compander";
-                        case Reading.CPDR_PK: return "Compander Peak";
-                        case Reading.DRIVE_FWD_ADC: return "Drive Forward ADC";
-                        case Reading.DRIVE_PWR: return "Drive Power";
-                        case Reading.EQ: return "EQ";
-                        case Reading.EQ_PK: return "EQ";// Peak";
-                        case Reading.FWD_ADC: return "Forward ADC";
-                        case Reading.FWD_VOLT: return "Forward Volt";
-                        case Reading.LEVELER: return "Leveler";
-                        case Reading.LEVELER_PK: return "Leveler";// Peak";
-                        case Reading.LVL_G: return "Leveler Gain";
-                        case Reading.MIC: return "MIC";
-                        case Reading.MIC_PK: return "MIC";// Peak";
-                        case Reading.PA_FWD_PWR: return "PA Forward Power";
-                        case Reading.PA_REV_PWR: return "PA Reverse Power";
-                        case Reading.PWR: return "Power";
-                        case Reading.REVERSE_PWR: return "Reverse Power";
-                        case Reading.REV_ADC: return "Reverse ADC";
-                        case Reading.REV_VOLT: return "Reverse VOLT";
-                        case Reading.SIGNAL_STRENGTH: return "Signal";
-                        case Reading.SWR: return "SWR";
-                        case Reading.VOLTS: return "Volts";
-                    }
-
-                    return sName;
-                }
-                set { }
+                get { return _bOnlyWhenTx; }
+                set { _bOnlyWhenTx = value; }
             }
-            public string TypeUnits
+            public bool OnlyWhenRX
             {
-                get
-                {
-                    string sName = _readingType.ToString();
-
-                    switch (_readingType)
-                    {
-                        case Reading.ADC2_AV: return "dBFS";
-                        case Reading.ADC2_PEAK: return "dBFS";
-                        case Reading.ADC_AV: return "dBFS";
-                        case Reading.ADC_PK: return "dBFS";
-                        case Reading.AGC_PK: return "dB";
-                        case Reading.AGC_AV: return "dB";
-                        case Reading.AGC_GAIN: return "dB";
-                        case Reading.EYE_PERCENT: return "?";
-                        case Reading.ALC: return "dB";
-                        case Reading.ALC_G: return "dB";
-                        case Reading.ALC_GROUP: return "dB";
-                        case Reading.ESTIMATED_PBSNR: return "dB";
-                        case Reading.ALC_PK: return "dB";
-                        case Reading.AMPS: return "A";
-                        case Reading.AVG_SIGNAL_STRENGTH: return "dBm";
-                        case Reading.CAL_FWD_PWR: return "W";
-                        case Reading.CFC_G: return "dB";
-                        case Reading.CFC_PK: return "dB";
-                        case Reading.COMP: return "dB";
-                        case Reading.COMP_PK: return "dB";
-                        case Reading.CPDR: return "dB";
-                        case Reading.CPDR_PK: return "dB";
-                        case Reading.DRIVE_FWD_ADC: return "?";
-                        case Reading.DRIVE_PWR: return "W";
-                        case Reading.EQ: return "dB";
-                        case Reading.EQ_PK: return "dB";
-                        case Reading.FWD_ADC: return "FWD ADC";
-                        case Reading.FWD_VOLT: return "?";
-                        case Reading.LEVELER: return "dB";
-                        case Reading.LEVELER_PK: return "dB";
-                        case Reading.LVL_G: return "dB";
-                        case Reading.MIC: return "dB";
-                        case Reading.MIC_PK: return "dB";
-                        case Reading.PA_FWD_PWR: return "W";
-                        case Reading.PA_REV_PWR: return "W";
-                        case Reading.PWR: return "W";
-                        case Reading.REVERSE_PWR: return "W";
-                        case Reading.REV_ADC: return "?";
-                        case Reading.REV_VOLT: return "V";
-                        case Reading.SIGNAL_STRENGTH: return "dBm";
-                        case Reading.SWR: return ":1";
-                        case Reading.VOLTS: return "V";
-                    }
-
-                    return sName;
-                }
-                set { }
+                get { return _bOnlyWhenRx; }
+                set { _bOnlyWhenRx = value; }
+            }
+            public override string ToString()
+            {
+                return base.ToString();
+            }
+            public virtual bool TryParse(string val)
+            {
+                return false;
             }
         }
         //
-        private class clsClickBox : clsMeterItem
+        internal class clsItemGroup : clsMeterItem
+        {
+            private MeterType _meterType;
+            private int _order; // 0 = topmost
+
+            public clsItemGroup()
+            {
+                ItemType = MeterItemType.ITEM_GROUP;
+                _meterType = MeterType.NONE;
+                StoreSettings = true;
+                ZOrder = 20;
+            }
+            public MeterType MeterType
+            {
+                get { return _meterType; }
+                set { _meterType = value; }
+            }
+            public int Order
+            {
+                get { return _order; }
+                set { _order = value; }
+            }
+            public override string ToString()
+            {
+                string sRet;
+
+                sRet = ID + "|" +
+                    ParentID + "|" +
+                    ItemType.ToString() + "|" +
+                    TopLeft.X.ToString("f4") + "|" +
+                    TopLeft.Y.ToString("f4") + "|" +
+                    Size.Width.ToString("f4") + "|" +
+                    Size.Height.ToString("f4") + "|" +
+                    MeterType.ToString() + "|" +
+                    Order.ToString();
+                    //ZOrder.ToString() + "|" +
+                    //UpdateInterval.ToString() + "|" +
+                    //AttackRatio.ToString("f4") + "|" +
+                    //DecayRatio.ToString("f4") + "|" +
+                    //HistoryColour.ToString() + "|" +
+                    //ReadingSource.ToString();
+
+                return sRet;
+            }
+            public override bool TryParse(string str)
+            {
+                bool bOk = false;
+                float x = 0, y = 0, w = 0, h = 0;
+                int order = 0;
+                MeterType mt = MeterType.LAST;
+
+                if (str != "")
+                {
+                    string[] tmp = str.Split('|');
+                    if (tmp.Length == 9)
+                    {
+                        bOk = tmp[0] != "";
+                        if (bOk) ID = tmp[0];
+                        if (bOk) ParentID = tmp[1];
+                        //if (bOk) bOk = Enum.TryParse<MeterItemType>(tmp[2], out it);  //ignore
+
+                        if (bOk) bOk = float.TryParse(tmp[3], out x);
+                        if (bOk) bOk = float.TryParse(tmp[4], out y);
+                        if (bOk) bOk = float.TryParse(tmp[5], out w);
+                        if (bOk) bOk = float.TryParse(tmp[6], out h);
+                        if (bOk) bOk = Enum.TryParse<MeterType>(tmp[7], out mt);
+                        if (bOk)
+                            MeterType = mt;
+                        if (bOk) bOk = int.TryParse(tmp[8], out order);
+                        if (bOk) Order = order;
+                    }
+                }
+
+                return bOk;
+            }
+        }
+        internal class clsClickBox : clsMeterItem
         {
             private MouseButtons _button;
             private int _gotoGroup;
@@ -1186,6 +1396,7 @@ namespace Thetis
 
                 _button = MouseButtons.Left | MouseButtons.Right | MouseButtons.Middle;
                 _gotoGroup = 0;
+                StoreSettings = false;
             }
             public MouseButtons Button
             {
@@ -1197,15 +1408,31 @@ namespace Thetis
                 get { return _gotoGroup; }
                 set { _gotoGroup = value; }
             }
+            //public override string ToString()
+            //{
+            //    string sRet;
+
+            //    sRet = ID + "|" +
+            //        ParentID + "|" +
+            //        ItemType.ToString() + "|" +
+            //        TopLeft.X.ToString("f4") + "|" +
+            //        TopLeft.Y.ToString("f4") + "|" +
+            //        Size.Width.ToString("f4") + "|" +
+            //        Size.Height.ToString("f4") + "|" +
+            //        Button.ToString() + "|" +
+            //        GotoGroup.ToString("f4") + "|";
+
+            //    return sRet;
+            //}
         }
-        private class clsSolidColour : clsMeterItem
+        internal class clsSolidColour : clsMeterItem
         {
             private System.Drawing.Color _colour;
             public clsSolidColour()
             {
                 ItemType = MeterItemType.SOLID_COLOUR;
-
                 _colour = System.Drawing.Color.Black;
+                StoreSettings = false;
             }
             public System.Drawing.Color Colour
             {
@@ -1215,12 +1442,27 @@ namespace Thetis
                     _colour = value;
                 }
             }
+            //public override string ToString()
+            //{
+            //    string sRet;
+
+            //    sRet = ID + "|" +
+            //        ParentID + "|" +
+            //        ItemType.ToString() + "|" +
+            //        TopLeft.X.ToString("f4") + "|" +
+            //        TopLeft.Y.ToString("f4") + "|" +
+            //        Size.Width.ToString("f4") + "|" +
+            //        Size.Height.ToString("f4") + "|" +
+            //        //
+            //        _colour.ToString();
+
+            //    return sRet;
+            //}
         }
-        private class clsImage : clsMeterItem
+        internal class clsImage : clsMeterItem
         {
             private string _name;
             private PointF _clipTopLeft;
-            //private PointF _clipBottomRight;
             private SizeF _clipSize;
             private bool _clipped;
             public clsImage()
@@ -1229,9 +1471,9 @@ namespace Thetis
 
                 _name = "";
                 _clipTopLeft = new PointF(0f, 0f);
-                //_clipBottomRight = new PointF(1f, 1f);
                 _clipSize = new SizeF(1f, 1f);
                 _clipped = false;
+                StoreSettings = false;
             }
             public string ImageName
             {
@@ -1246,11 +1488,6 @@ namespace Thetis
                 get { return _clipTopLeft; }
                 set { _clipTopLeft = value; }
             }
-            //public PointF ClipBottomRight
-            //{
-            //    get { return _clipBottomRight; }
-            //    set { _clipBottomRight = value; }
-            //}
             public SizeF ClipSize
             {
                 get { return _clipSize; }
@@ -1261,10 +1498,23 @@ namespace Thetis
                 get { return _clipped; }
                 set { _clipped = value; }
             }
+            //public override string ToString()
+            //{
+            //    string sRet;
+
+            //    sRet = ID + "|" +
+            //        ParentID + "|" +
+            //        ItemType.ToString() + "|" +
+            //        TopLeft.X.ToString("f4") + "|" +
+            //        TopLeft.Y.ToString("f4") + "|" +
+            //        Size.Width.ToString("f4") + "|" +
+            //        Size.Height.ToString("f4") + "|";
+
+            //    return sRet;
+            //}
         }
-        private class clsScaleItem : clsMeterItem
+        internal class clsScaleItem : clsMeterItem
         {
-            //private Reading _scaleType;
             private System.Drawing.Color _lowColour;
             private System.Drawing.Color _highColour;
             private string _fontFamily;
@@ -1278,7 +1528,6 @@ namespace Thetis
 
             public clsScaleItem()
             {
-                //_scaleType = Reading.NONE;
                 _lowColour = System.Drawing.Color.White;
                 _highColour = System.Drawing.Color.Red;
                 _fontColourType = System.Drawing.Color.DarkGray;
@@ -1298,12 +1547,8 @@ namespace Thetis
                 UpdateInterval = 100;
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
+                StoreSettings = false;
             }
-            //public Reading ScaleType
-            //{
-            //    get { return _scaleType; }
-            //    set { _scaleType = value; }
-            //}
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -1354,8 +1599,24 @@ namespace Thetis
                 get { return _showMarkers; }
                 set { _showMarkers = value; }
             }
+            public override string ToString()
+            {
+                string sRet;
+
+                sRet = ID + "|" +
+                    ParentID + "|" +
+                    ItemType.ToString() + "|" +
+                    TopLeft.X.ToString("f4") + "|" +
+                    TopLeft.Y.ToString("f4") + "|" +
+                    Size.Width.ToString("f4") + "|" +
+                    Size.Height.ToString("f4") + "|";
+                    //
+
+
+                return sRet;
+            }
         }
-        private class clsMagicEyeItem : clsMeterItem
+        internal class clsMagicEyeItem : clsMeterItem
         {
             private List<float> _history;
             private int _msHistoryDuration; //ms
@@ -1382,6 +1643,7 @@ namespace Thetis
                 UpdateInterval = 100;
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
+                StoreSettings = false;
             }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
@@ -1471,7 +1733,8 @@ namespace Thetis
                 set { }
             }
         }
-        private class clsBarItem : clsMeterItem
+
+        internal class clsBarItem : clsMeterItem
         {
             public enum BarStyle
             {
@@ -1528,6 +1791,7 @@ namespace Thetis
                 UpdateInterval = 100;
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
+                StoreSettings = false;
             }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
@@ -1669,7 +1933,7 @@ namespace Thetis
                 set { _fontSize = value; }
             }
         }
-        private class clsNeedleItem : clsMeterItem
+        internal class clsNeedleItem : clsMeterItem
         {
             public enum NeedlePlacement
             {
@@ -1729,6 +1993,7 @@ namespace Thetis
                 UpdateInterval = 100;
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
+                StoreSettings = false;
             }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
@@ -1862,7 +2127,7 @@ namespace Thetis
                 set { _radiusRatio = value; }
             }
         }
-        private class clsText : clsMeterItem
+        internal class clsText : clsMeterItem
         {
             private string _sText;
             private string _fontFamily;
@@ -1883,6 +2148,7 @@ namespace Thetis
                 ItemType = MeterItemType.TEXT;
                 ReadingSource = Reading.NONE;
                 UpdateInterval = 100;
+                StoreSettings = false;
             }
             private void updateReadintText(float reading)
             {
@@ -1890,7 +2156,7 @@ namespace Thetis
                 {
                     case "%valueWithType%":
                         {
-                            _readingText = reading.ToString("0.0") + TypeUnits;
+                            _readingText = reading.ToString("0.0") + MeterManager.ReadingUnits(ReadingSource);
                         }
                         break;
                     case "%value%":
@@ -1968,13 +2234,12 @@ namespace Thetis
         }
         //
         #endregion
-        #region clsMeter
-        private class clsMeter
+        #region clsMeterItems
+        public class clsMeter
         {
             // the single meter, that may contain many bars/labels/analog/images/etc
-            private string _sGuid;
-            private string _Name;
-            private int _TypeBitfield; // bitfield of MeterType
+            private string _sId;
+            private string _name;            
             private int _rx;
 
             private float _XRatio; // 0-1
@@ -1985,15 +2250,1651 @@ namespace Thetis
             private int _displayGroup;
             private List<string> _displayGroups;
             private bool _mox;
+            private float _fPadX = 0.02f;
+            private float _fPadY = 0.05f;
+            private float _fHeight = 0.05f;
 
-            public clsMeter(int rx, string sName, int typeBitfield, float XRatio = 1f, float YRatio = 0.441f)
+            private int _quickestRXUpdate;
+            private int _quickestTXUpdate;
+
+            #region meterDefs
+            private Object _objMeterItemLock = new Object();
+            private void addMeterItem(clsMeterItem mi)
+            {
+                lock (_objMeterItemLock)
+                {
+                    _meterItems.Add(mi.ID, mi);
+                }
+            }
+            public void AddMeter(MeterType meter, clsItemGroup restoreIg = null)
+            {
+                //restoreIg is passed in when used by restoreSettings, so that the item group can be ordered
+                //correctly and the ID copied over
+                float bBottom = 0;
+                int nDelay = 100;
+                switch (meter)
+                {
+                    case MeterType.SIGNAL_STRENGTH: AddSMeterBarSignal(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.AVG_SIGNAL_STRENGTH: AddSMeterBarSignalAvg(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.ADC: AddADCBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.AGC: AddAGCBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.AGC_GAIN: AddAGCGainBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.MIC: AddMicBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.PWR: AddPWRBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.REVERSE_PWR: AddREVPWRBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.ALC: AddALCBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.EQ: AddEQBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.LEVELER: AddLevelerBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.COMP: AddCompBar(nDelay, 0, out bBottom, restoreIg); break;
+                    //case MeterType.CPDR: break;
+                    case MeterType.ALC_GAIN: AddALCGainBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.ALC_GROUP: AddALCGroupBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.LEVELER_GAIN: AddLevelerGainBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.CFC: AddCFCBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.MAGIC_EYE: AddMagicEye(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
+                    case MeterType.ESTIMATED_PBSNR: AddPBSNRBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.KENWOOD: AddKenwood(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.CROSS: AddCrossNeedle(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.SWR: AddSWRBar(nDelay, 0, out bBottom, restoreIg); break;
+                }
+            }
+            public string AddSMeterBarSignal(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            { 
+                return addSMeterBar(nMSupdate, Reading.SIGNAL_STRENGTH, fTop, out fBottom, restoreIg);
+            }
+            public string AddSMeterBarSignalAvg(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                return addSMeterBar(nMSupdate, Reading.AVG_SIGNAL_STRENGTH, fTop, out fBottom, restoreIg);
+            }
+            private string addSMeterBar(int nMSupdate, Reading reading, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = reading;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.2f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 4000;
+                cb.ShowHistory = true;
+                cb.ShowValue = true;
+                cb.Colour = System.Drawing.Color.CadetBlue;
+                cb.ShowMarker = true;
+                cb.PeakHoldMarkerColour = System.Drawing.Color.Red;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
+                cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
+                cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 3;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc;
+                sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                if (reading == Reading.SIGNAL_STRENGTH)
+                    ig.MeterType = MeterType.SIGNAL_STRENGTH;
+                else
+                    ig.MeterType = MeterType.AVG_SIGNAL_STRENGTH;
+                lock (_objMeterItemLock)
+                {
+                    ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+                }
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddADCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.ADC_PK;
+                cb.AttackRatio = 0.2f;
+                cb.DecayRatio = 0.05f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 4000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Orange;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-120, new PointF(0, 0));
+                cb.ScaleCalibration.Add(-20, new PointF(0.8333f, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 3;
+                addMeterItem(cb);
+
+                clsBarItem cb2;
+                cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.ADC_AV;
+                cb2.AttackRatio = 0.2f;
+                cb2.DecayRatio = 0.05f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 0;
+                cb2.ShowHistory = false;
+                cb2.MarkerColour = System.Drawing.Color.DarkGray;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-120, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(-20, new PointF(0.8333f, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.99f, 0));
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.ShowValue = false;
+                cb2.ZOrder = 2;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.ADC;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddPBSNRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.ESTIMATED_PBSNR;
+                cb.AttackRatio = 0.2f;
+                cb.DecayRatio = 0.05f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 1000;
+                cb.ShowHistory = false;
+                cb.PeakHold = true;
+                cb.Colour = System.Drawing.Color.DarkCyan;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
+                cb.Style = clsBarItem.BarStyle.Segments;
+                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                cb.ScaleCalibration.Add(50, new PointF(0.8333f, 0));
+                cb.ScaleCalibration.Add(60, new PointF(0.99f, 0));
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 3;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.ESTIMATED_PBSNR;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig); ;
+
+                return cb.ID;
+            }
+            public string AddAGCGainBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.AGC_GAIN;
+                cb.AttackRatio = 0.2f;
+                cb.DecayRatio = 0.05f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 1000;
+                cb.ShowHistory = true;
+                cb.PeakHold = false;
+                cb.Colour = System.Drawing.Color.DarkCyan;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-50, new PointF(0, 0));
+                cb.ScaleCalibration.Add(100, new PointF(0.857f, 0));
+                cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 3;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.AGC_GAIN;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddAGCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.AGC_PK;
+                cb.AttackRatio = 0.2f;
+                cb.DecayRatio = 0.05f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 1000;
+                cb.ShowHistory = true;
+                cb.PeakHold = false;
+                cb.Colour = System.Drawing.Color.DarkCyan;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-125, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
+                cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 3;
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.AGC_AV;
+                cb2.AttackRatio = 0.2f;
+                cb2.DecayRatio = 0.05f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 0;
+                cb2.ShowHistory = false;
+                cb2.PeakHold = false;
+                cb2.Colour = System.Drawing.Color.DarkCyan;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
+                cb2.MarkerColour = System.Drawing.Color.DarkGray;
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-125, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.5f, 0));
+                cb2.ScaleCalibration.Add(125, new PointF(0.99f, 0));
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.ShowValue = false;
+                cb2.ZOrder = 2;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.AGC;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddMagicEye(int nMSupdate, float fTop, out float fBottom, float fSize,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsMagicEyeItem me = new clsMagicEyeItem();
+                me.ParentID = ig.ID;
+                me.TopLeft = new PointF(0.5f - (fSize / 2f), fTop + _fPadY);
+                me.Size = new SizeF(fSize, fSize);
+                me.ZOrder = 2;
+                me.AttackRatio = 0.2f;
+                me.DecayRatio = 0.05f;
+                me.UpdateInterval = nMSupdate;
+                me.Colour = System.Drawing.Color.Lime;
+                me.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                me.ScaleCalibration.Add(-127f, new PointF(0, 0));
+                me.ScaleCalibration.Add(-73f, new PointF(0.85f, 0));
+                me.ScaleCalibration.Add(-13f, new PointF(1f, 0));
+                me.Value = -127f;
+                addMeterItem(me);
+
+                clsImage img = new clsImage();
+                img.ParentID = ig.ID;
+                img.TopLeft = me.TopLeft;
+                img.Size = me.Size;
+                img.ZOrder = 3;
+                img.ImageName = "eye-bezel-glass";
+                addMeterItem(img);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.MAGIC_EYE;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return me.ID;
+            }
+            public string AddKenwood(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                //kenwood
+                clsNeedleItem ni = new clsNeedleItem();
+                ni.ParentID = ig.ID;
+                ni.TopLeft = new PointF(0f, fTop + _fPadY - (_fHeight * 0.75f));
+                ni.Size = new SizeF(1f, 0.441f); // image x to y ratio
+
+                ni.OnlyWhenRX = true;
+                ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                ni.AttackRatio = 0.8f;//0.1f;
+                ni.DecayRatio = 0.2f;// 0.05f;
+                ni.UpdateInterval = nMSupdate;
+                ni.HistoryDuration = 4000;
+                ni.ShowHistory = true;
+                ni.Style = clsNeedleItem.NeedleStyle.Line;
+                ni.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
+                ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                ni.ZOrder = 4;
+                ni.NeedleOffset = new PointF(0.004f, 0.736f);
+                ni.RadiusRatio = new PointF(1f, 0.58f);
+                ni.LengthFactor = 1.65f;
+                ni.ScaleStrokeWidth = true;
+
+                ni.ScaleCalibration.Add(-127f, new PointF(0.076f, 0.31f));
+                ni.ScaleCalibration.Add(-121f, new PointF(0.131f, 0.272f));
+                ni.ScaleCalibration.Add(-115f, new PointF(0.189f, 0.254f));
+                ni.ScaleCalibration.Add(-109f, new PointF(0.233f, 0.211f));
+                ni.ScaleCalibration.Add(-103f, new PointF(0.284f, 0.207f));
+                ni.ScaleCalibration.Add(-97f, new PointF(0.326f, 0.177f));
+                ni.ScaleCalibration.Add(-91f, new PointF(0.374f, 0.177f));
+                ni.ScaleCalibration.Add(-85f, new PointF(0.414f, 0.151f));
+                ni.ScaleCalibration.Add(-79f, new PointF(0.459f, 0.168f));
+                ni.ScaleCalibration.Add(-73f, new PointF(0.501f, 0.142f));
+                ni.ScaleCalibration.Add(-63f, new PointF(0.564f, 0.172f));
+                ni.ScaleCalibration.Add(-53f, new PointF(0.63f, 0.164f));
+                ni.ScaleCalibration.Add(-43f, new PointF(0.695f, 0.203f));
+                ni.ScaleCalibration.Add(-33f, new PointF(0.769f, 0.211f));
+                ni.ScaleCalibration.Add(-23f, new PointF(0.838f, 0.272f));
+                ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
+                ni.Value = -127f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni);
+
+                //volts
+                clsNeedleItem ni2 = new clsNeedleItem(); ;
+                ni2.ParentID = ig.ID;
+                ni2.TopLeft = ni.TopLeft;
+                ni2.Size = ni.Size;
+                ni2.ReadingSource = Reading.VOLTS;
+                ni2.AttackRatio = 0.2f;
+                ni2.DecayRatio = 0.2f;
+                ni2.UpdateInterval = nMSupdate;
+                ni2.HistoryDuration = 500;
+                ni2.ShowHistory = false;
+                ni2.Style = clsNeedleItem.NeedleStyle.Line;
+                ni2.Colour = System.Drawing.Color.Black;
+                ni2.ZOrder = 3;
+                ni2.NeedleOffset = new PointF(0.004f, 0.736f);
+                ni2.RadiusRatio = new PointF(1f, 0.58f);
+                ni2.LengthFactor = 0.75f;
+                ni2.ScaleStrokeWidth = true;
+                ni2.ScaleCalibration.Add(10f, new PointF(0.559f, 0.756f));
+                ni2.ScaleCalibration.Add(12.5f, new PointF(0.605f, 0.772f));
+                ni2.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
+                ni2.Value = 10f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni2);
+
+                //amps
+                clsNeedleItem ni3 = new clsNeedleItem(); ;
+                ni3.ParentID = ig.ID;
+                ni3.TopLeft = ni.TopLeft;
+                ni3.Size = ni.Size;
+                ni3.OnlyWhenTX = true;
+                ni3.ReadingSource = Reading.AMPS;
+                ni3.AttackRatio = 0.2f;
+                ni3.DecayRatio = 0.2f;
+                ni3.UpdateInterval = nMSupdate;
+                ni3.HistoryDuration = 500;
+                ni3.ShowHistory = false;
+                ni3.Style = clsNeedleItem.NeedleStyle.Line;
+                ni3.Colour = System.Drawing.Color.Black;
+                ni3.ZOrder = 3;
+                ni3.NeedleOffset = new PointF(0.004f, 0.736f);
+                ni3.RadiusRatio = new PointF(1f, 0.58f);
+                ni3.LengthFactor = 1.15f;
+                ni3.ScaleStrokeWidth = true;
+                ni3.DisplayGroup = 4;
+                ni3.ScaleCalibration.Add(0f, new PointF(0.199f, 0.576f));
+                ni3.ScaleCalibration.Add(2f, new PointF(0.27f, 0.54f));
+                ni3.ScaleCalibration.Add(4f, new PointF(0.333f, 0.516f));
+                ni3.ScaleCalibration.Add(6f, new PointF(0.393f, 0.504f));
+                ni3.ScaleCalibration.Add(8f, new PointF(0.448f, 0.492f));
+                ni3.ScaleCalibration.Add(10f, new PointF(0.499f, 0.492f));
+                ni3.ScaleCalibration.Add(12f, new PointF(0.554f, 0.488f));
+                ni3.ScaleCalibration.Add(14f, new PointF(0.608f, 0.5f));
+                ni3.ScaleCalibration.Add(16f, new PointF(0.667f, 0.516f));
+                ni3.ScaleCalibration.Add(18f, new PointF(0.728f, 0.54f));
+                ni3.ScaleCalibration.Add(20f, new PointF(0.799f, 0.576f));
+                ni3.Value = 10f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni3);
+
+                //
+                clsClickBox clb = new clsClickBox();
+                clb.ParentID = ig.ID;
+                clb.TopLeft = new PointF(ni.TopLeft.X + 0.74f, ni.TopLeft.Y + 0.48f); // tl;
+                clb.Size = new SizeF(0.2f, 0.05f);
+                clb.OnlyWhenTX = true;
+                clb.Button = MouseButtons.Left;
+                addMeterItem(clb);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = clb.TopLeft;
+                sc.Size = clb.Size;
+                sc.OnlyWhenTX = true;
+                sc.ZOrder = 5;
+                sc.Colour = System.Drawing.Color.FromArgb(96, System.Drawing.Color.White);
+                addMeterItem(sc);
+
+                clsText tx = new clsText();
+                tx.ParentID = ig.ID;
+                tx.TopLeft = clb.TopLeft;
+                tx.Size = clb.Size;
+                tx.OnlyWhenTX = true;
+                tx.Text = "%group%";
+                tx.ZOrder = 10;
+                tx.Style = FontStyle.Bold;
+                tx.Colour = System.Drawing.Color.DarkGray;
+                tx.FixedSize = true;
+                tx.FontSize = 8f;
+                addMeterItem(tx);
+
+                clsNeedleItem ni4 = new clsNeedleItem();
+                ni4.ParentID = ig.ID;
+                ni4.TopLeft = ni.TopLeft;
+                ni4.Size = ni.Size;
+                ni4.OnlyWhenTX = true;
+                ni4.ReadingSource = Reading.PWR;
+                ni4.AttackRatio = 0.2f;//0.325f;
+                ni4.DecayRatio = 0.1f;//0.5f;
+                ni4.UpdateInterval = nMSupdate;
+                ni4.HistoryDuration = 1000;
+                ni4.ShowHistory = true;
+                ni4.Style = clsNeedleItem.NeedleStyle.Line;
+                ni4.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
+                ni4.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                ni4.ZOrder = 2;
+                ni4.NeedleOffset = new PointF(0.004f, 0.736f);
+                ni4.RadiusRatio = new PointF(1f, 0.58f);
+                ni4.LengthFactor = 1.55f;
+                ni4.ScaleStrokeWidth = true;
+                ni4.DisplayGroup = 1;
+                //ni.Setup = true;
+                ni4.ScaleCalibration.Add(0f, new PointF(0.099f, 0.352f));
+                ni4.ScaleCalibration.Add(5f, new PointF(0.164f, 0.312f));
+                ni4.ScaleCalibration.Add(10f, new PointF(0.224f, 0.28f));
+                ni4.ScaleCalibration.Add(25f, new PointF(0.335f, 0.236f));
+                ni4.ScaleCalibration.Add(30f, new PointF(0.367f, 0.228f));
+                ni4.ScaleCalibration.Add(40f, new PointF(0.436f, 0.22f));
+                ni4.ScaleCalibration.Add(50f, new PointF(0.499f, 0.212f));
+                ni4.ScaleCalibration.Add(60f, new PointF(0.559f, 0.216f));
+                ni4.ScaleCalibration.Add(100f, new PointF(0.751f, 0.272f));
+                ni4.ScaleCalibration.Add(150f, new PointF(0.899f, 0.352f));
+                ni4.Value = 0f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni4);
+
+                clsNeedleItem ni5 = new clsNeedleItem();
+                ni5.ParentID = ig.ID;
+                ni5.TopLeft = ni.TopLeft;
+                ni5.Size = ni.Size;
+                ni5.OnlyWhenTX = true;
+                ni5.ReadingSource = Reading.SWR;
+                ni5.AttackRatio = 0.2f;//0.325f;
+                ni5.DecayRatio = 0.1f;//0.5f;
+                ni5.UpdateInterval = nMSupdate;
+                ni5.HistoryDuration = 1000;
+                ni5.ShowHistory = true;
+                ni5.Style = clsNeedleItem.NeedleStyle.Line;
+                ni5.Colour = System.Drawing.Color.Black;
+                ni5.HistoryColour = System.Drawing.Color.FromArgb(64, System.Drawing.Color.CornflowerBlue);
+                ni5.ZOrder = 3;
+                ni5.NeedleOffset = new PointF(0.004f, 0.736f);
+                ni5.RadiusRatio = new PointF(1f, 0.58f);
+                ni5.LengthFactor = 1.36f;
+                ni5.ScaleStrokeWidth = true;
+                ni5.DisplayGroup = 1;
+                ni5.ScaleCalibration.Add(1f, new PointF(0.152f, 0.468f));
+                ni5.ScaleCalibration.Add(1.5f, new PointF(0.28f, 0.404f));
+                ni5.ScaleCalibration.Add(2f, new PointF(0.393f, 0.372f));
+                ni5.ScaleCalibration.Add(2.5f, new PointF(0.448f, 0.36f));
+                ni5.ScaleCalibration.Add(3f, new PointF(0.499f, 0.36f));
+                ni5.ScaleCalibration.Add(10f, new PointF(0.847f, 0.476f));
+                ni5.Value = 1f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni5);
+
+                clsNeedleItem ni6 = new clsNeedleItem();
+                ni6.ParentID = ig.ID;
+                ni6.TopLeft = ni.TopLeft;
+                ni6.Size = ni.Size;
+                ni6.OnlyWhenTX = true;
+                ni6.ReadingSource = Reading.ALC_G; // alc_comp
+                ni6.AttackRatio = 0.2f;//0.325f;
+                ni6.DecayRatio = 0.1f;//0.5f;
+                ni6.UpdateInterval = nMSupdate;
+                ni6.HistoryDuration = 1000;
+                ni6.ShowHistory = false;
+                ni6.Style = clsNeedleItem.NeedleStyle.Line;
+                ni6.Colour = System.Drawing.Color.Black;
+                ni6.ZOrder = 3;
+                ni6.NeedleOffset = new PointF(0.004f, 0.736f);
+                ni6.RadiusRatio = new PointF(1f, 0.58f);
+                ni6.LengthFactor = 0.96f;
+                ni6.ScaleStrokeWidth = true;
+                ni6.DisplayGroup = 2;
+                ni6.ScaleCalibration.Add(0f, new PointF(0.249f, 0.68f));
+                ni6.ScaleCalibration.Add(5f, new PointF(0.342f, 0.64f));
+                ni6.ScaleCalibration.Add(10f, new PointF(0.425f, 0.624f));
+                ni6.ScaleCalibration.Add(15f, new PointF(0.499f, 0.62f));
+                ni6.ScaleCalibration.Add(20f, new PointF(0.571f, 0.628f));
+                ni6.ScaleCalibration.Add(25f, new PointF(0.656f, 0.64f));
+                ni6.ScaleCalibration.Add(30f, new PointF(0.751f, 0.688f));
+                ni6.Value = 0f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni6);
+
+                clsNeedleItem ni7 = new clsNeedleItem();
+                ni7.ParentID = ig.ID;
+                ni7.TopLeft = ni.TopLeft;
+                ni7.Size = ni.Size;
+                ni7.OnlyWhenTX = true;
+                ni7.ReadingSource = Reading.ALC_GROUP;
+                ni7.AttackRatio = 0.2f;//0.325f;
+                ni7.DecayRatio = 0.1f;//0.5f;
+                ni7.UpdateInterval = nMSupdate;
+                ni7.HistoryDuration = 1000;
+                ni7.ShowHistory = false;
+                ni7.Style = clsNeedleItem.NeedleStyle.Line;
+                ni7.Colour = System.Drawing.Color.Red;
+                //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
+                ni7.ZOrder = 3;
+                ni7.NeedleOffset = new PointF(0.004f, 0.736f);
+                ni7.RadiusRatio = new PointF(1f, 0.58f);
+                ni7.LengthFactor = 0.75f;
+                ni7.ScaleStrokeWidth = true;
+                ni7.DisplayGroup = 3;
+                //ni.Setup = true;
+                ni7.ScaleCalibration.Add(-30f, new PointF(0.295f, 0.804f));
+                ni7.ScaleCalibration.Add(0f, new PointF(0.332f, 0.784f));
+                ni7.ScaleCalibration.Add(25f, new PointF(0.499f, 0.756f));
+                ni7.Value = -30f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni7);
+                //
+
+                clsImage img = new clsImage();
+                img.ParentID = ig.ID;
+                img.TopLeft = ni.TopLeft;
+                img.Size = ni.Size;
+                img.ZOrder = 1;
+                img.ImageName = "kenwood-s-meter";
+                addMeterItem(img);
+
+                img = new clsImage();
+                img.ParentID = ig.ID;
+                img.TopLeft = new PointF(ni.TopLeft.X, ni.TopLeft.Y + ni.Size.Height);
+                img.Size = new SizeF(1f, 0.101f); // image x to y ratio
+                img.ZOrder = 5;
+                img.ImageName = "kenwood-s-meter-bg";
+                addMeterItem(img);
+
+                fBottom = img.TopLeft.Y + img.Size.Height;
+
+                ig.TopLeft = ni.TopLeft;
+                ig.Size = new SizeF(ni.Size.Width, fBottom);
+                ig.MeterType = MeterType.KENWOOD;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                AddDisplayGroup("ALL"); //0
+                AddDisplayGroup("PWR/SWR"); //1
+                AddDisplayGroup("Comp"); //2
+                AddDisplayGroup("ALC"); //3
+                AddDisplayGroup("Volts/Amps"); //4
+                DisplayGroup = 1;
+
+                return ni.ID;
+            }
+            public string AddCrossNeedle(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsNeedleItem ni = new clsNeedleItem();
+                ni.ParentID = ig.ID;
+                ni.TopLeft = new PointF(0f, fTop + _fPadY - (_fHeight * 0.75f));
+                ni.Size = new SizeF(1f, 0.782f); // image x to y ratio
+                ni.ReadingSource = Reading.PWR;
+                ni.AttackRatio = 0.2f;
+                ni.DecayRatio = 0.1f;
+                ni.UpdateInterval = nMSupdate;
+                ni.HistoryDuration = 1000;
+                ni.ShowHistory = true;
+                ni.StrokeWidth = 2.5f;
+                ni.Style = clsNeedleItem.NeedleStyle.Line;
+                ni.Colour = System.Drawing.Color.Black;
+                ni.HistoryColour = System.Drawing.Color.FromArgb(96, System.Drawing.Color.Red);
+                ni.ZOrder = 4;
+                ni.NeedleOffset = new PointF(0.322f, 0.611f);
+                ni.LengthFactor = 1.62f;
+                ni.ScaleStrokeWidth = true;
+                ni.ScaleCalibration.Add(0f, new PointF(0.052f, 0.732f));
+                ni.ScaleCalibration.Add(5f, new PointF(0.146f, 0.528f));
+                ni.ScaleCalibration.Add(10f, new PointF(0.188f, 0.434f));
+                ni.ScaleCalibration.Add(15f, new PointF(0.235f, 0.387f));
+                ni.ScaleCalibration.Add(20f, new PointF(0.258f, 0.338f));
+                ni.ScaleCalibration.Add(25f, new PointF(0.303f, 0.313f));
+                ni.ScaleCalibration.Add(30f, new PointF(0.321f, 0.272f));
+                ni.ScaleCalibration.Add(35f, new PointF(0.361f, 0.257f));
+                ni.ScaleCalibration.Add(40f, new PointF(0.381f, 0.223f));
+                ni.ScaleCalibration.Add(50f, new PointF(0.438f, 0.181f));
+                ni.ScaleCalibration.Add(60f, new PointF(0.483f, 0.155f));
+                ni.ScaleCalibration.Add(70f, new PointF(0.532f, 0.13f));
+                ni.ScaleCalibration.Add(80f, new PointF(0.577f, 0.111f));
+                ni.ScaleCalibration.Add(90f, new PointF(0.619f, 0.098f));
+                ni.ScaleCalibration.Add(100f, new PointF(0.662f, 0.083f));
+                ni.NormaliseTo100W = true;
+                ni.Value = 0f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni);
+
+                clsNeedleItem ni2 = new clsNeedleItem();
+                ni2.ParentID = ig.ID;
+                ni2.TopLeft = ni.TopLeft;
+                ni2.Size = ni.Size;
+                ni2.ReadingSource = Reading.REVERSE_PWR;
+                ni2.AttackRatio = 0.2f;//0.325f;
+                ni2.DecayRatio = 0.1f;//0.5f;
+                ni2.UpdateInterval = nMSupdate;
+                ni2.HistoryDuration = 1000;
+                ni2.ShowHistory = true;
+                ni2.StrokeWidth = 2.5f;
+                ni2.Direction = clsNeedleItem.NeedleDirection.CounterClockwise;
+                ni2.Style = clsNeedleItem.NeedleStyle.Line;
+                ni2.Colour = System.Drawing.Color.Black;
+                ni2.HistoryColour = System.Drawing.Color.FromArgb(96, System.Drawing.Color.CornflowerBlue);
+                ni2.ZOrder = 3;
+                ni2.NeedleOffset = new PointF(-0.322f, 0.611f);
+                ni2.LengthFactor = 1.62f;
+                ni2.ScaleStrokeWidth = true;
+                ni2.ScaleCalibration.Add(0f, new PointF(0.948f, 0.74f));
+                ni2.ScaleCalibration.Add(0.25f, new PointF(0.913f, 0.7f));
+                ni2.ScaleCalibration.Add(0.5f, new PointF(0.899f, 0.638f));
+                ni2.ScaleCalibration.Add(0.75f, new PointF(0.875f, 0.594f));
+                ni2.ScaleCalibration.Add(1f, new PointF(0.854f, 0.538f));
+                ni2.ScaleCalibration.Add(2f, new PointF(0.814f, 0.443f));
+                ni2.ScaleCalibration.Add(3f, new PointF(0.769f, 0.4f));
+                ni2.ScaleCalibration.Add(4f, new PointF(0.744f, 0.351f));
+                ni2.ScaleCalibration.Add(5f, new PointF(0.702f, 0.321f));
+                ni2.ScaleCalibration.Add(6f, new PointF(0.682f, 0.285f));
+                ni2.ScaleCalibration.Add(7f, new PointF(0.646f, 0.268f));
+                ni2.ScaleCalibration.Add(8f, new PointF(0.626f, 0.234f));
+                ni2.ScaleCalibration.Add(9f, new PointF(0.596f, 0.228f));
+                ni2.ScaleCalibration.Add(10f, new PointF(0.569f, 0.196f));
+                ni2.ScaleCalibration.Add(12f, new PointF(0.524f, 0.166f));
+                ni2.ScaleCalibration.Add(14f, new PointF(0.476f, 0.14f));
+                ni2.ScaleCalibration.Add(16f, new PointF(0.431f, 0.121f));
+                ni2.ScaleCalibration.Add(18f, new PointF(0.393f, 0.109f));
+                ni2.ScaleCalibration.Add(20f, new PointF(0.349f, 0.098f));
+                ni2.NormaliseTo100W = true;
+                ni2.Value = 0f;
+                //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                addMeterItem(ni2);
+
+                clsImage img = new clsImage();
+                img.ParentID = ig.ID;
+                img.TopLeft = ni.TopLeft;
+                img.Size = ni.Size;
+                img.ZOrder = 1;
+                img.ImageName = "cross-needle";
+                addMeterItem(img);
+
+                clsImage img2 = new clsImage();
+                img2.ParentID = ig.ID;
+                img2.TopLeft = new PointF(ni.TopLeft.X, ni.TopLeft.Y + ni.Size.Height - 0.180f); // it goes too high if we move it up by 0.217f
+                img2.Size = new SizeF(1f, 0.217f);
+                img2.ZOrder = 5;
+                img2.ImageName = "cross-needle-bg";
+                addMeterItem(img2);
+
+                fBottom = img2.TopLeft.Y + img2.Size.Height;
+
+                ig.TopLeft = ni.TopLeft;
+                ig.Size = new SizeF(ni.Size.Width, fBottom);
+                ig.MeterType = MeterType.CROSS;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return ni.ID;
+            }
+            public string AddMicBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.MIC;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = false;
+                cb.MarkerColour = System.Drawing.Color.DarkGray;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb.ShowValue = false;
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.MIC_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 3;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.MIC;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddEQBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.EQ;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = false;
+                cb.MarkerColour = System.Drawing.Color.DarkGray;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.ShowValue = false;
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.EQ_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 3;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.ParentID = ig.ID;
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.EQ;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddLevelerBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.LEVELER;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = false;
+                cb.MarkerColour = System.Drawing.Color.DarkGray;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.ShowValue = false;
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.LEVELER_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 3;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.LEVELER;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddLevelerGainBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.LVL_G;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                cb.ScaleCalibration.Add(20, new PointF(0.8f, 0));
+                cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.LEVELER_GAIN;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddALCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.ALC;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = false;
+                cb.MarkerColour = System.Drawing.Color.DarkGray;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.ShowValue = false;
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.ALC_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 3;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.ALC;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddALCGainBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.ALC_G;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                cb.ScaleCalibration.Add(20, new PointF(0.8f, 0));
+                cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.ALC_GAIN;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddALCGroupBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.ALC_GROUP;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
+                cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.ALC_GROUP;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddCFCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.CFC_PK;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.CFC_G;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = false;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(0, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(20, new PointF(0.8f, 0));
+                cb2.ScaleCalibration.Add(25, new PointF(0.99f, 0));
+                cb2.ZOrder = 2;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.ShowValue = false;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.CFC;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddCompBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.COMP;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = false;
+                cb.MarkerColour = System.Drawing.Color.DarkGray;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb.ZOrder = 2;
+                cb.ShowValue = false;
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.COMP_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 3;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.COMP;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddPWRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                return AddPWRBar(nMSupdate, fTop, out fBottom, Reading.PWR, restoreIg);
+            }
+            public string AddREVPWRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                return AddPWRBar(nMSupdate, fTop, out fBottom, Reading.REVERSE_PWR, restoreIg);
+            }
+            public string AddPWRBar(int nMSupdate, float fTop, out float fBottom, Reading reading,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = reading;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
+                cb.Style = clsBarItem.BarStyle.Line;
+
+                switch (CurrentPowerRating)
+                {
+                    case 500:
+                        {
+                            cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                            cb.ScaleCalibration.Add(50, new PointF(0.1875f, 0));
+                            cb.ScaleCalibration.Add(100, new PointF(0.375f, 0));
+                            cb.ScaleCalibration.Add(250, new PointF(0.5625f, 0));
+                            cb.ScaleCalibration.Add(500, new PointF(0.75f, 0));
+                            cb.ScaleCalibration.Add(600, new PointF(0.99f, 0));
+                        }
+                        break;
+                    case 200:
+                        {
+                            cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                            cb.ScaleCalibration.Add(10, new PointF(0.1875f, 0));
+                            cb.ScaleCalibration.Add(20, new PointF(0.375f, 0));
+                            cb.ScaleCalibration.Add(100, new PointF(0.5625f, 0));
+                            cb.ScaleCalibration.Add(200, new PointF(0.75f, 0));
+                            cb.ScaleCalibration.Add(240, new PointF(0.99f, 0));
+                        }
+                        break;
+                    case 100:
+                        {
+                            cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                            cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
+                            cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
+                            cb.ScaleCalibration.Add(50, new PointF(0.5625f, 0));
+                            cb.ScaleCalibration.Add(100, new PointF(0.75f, 0));
+                            cb.ScaleCalibration.Add(120, new PointF(0.99f, 0));
+                        }
+                        break;
+                    case 30:
+                        {
+                            cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                            cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
+                            cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
+                            cb.ScaleCalibration.Add(20, new PointF(0.5625f, 0));
+                            cb.ScaleCalibration.Add(30, new PointF(0.75f, 0));
+                            cb.ScaleCalibration.Add(50, new PointF(0.99f, 0));
+                        }
+                        break;
+                    case 15:
+                        {
+                            cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                            cb.ScaleCalibration.Add(1, new PointF(0.1875f, 0));
+                            cb.ScaleCalibration.Add(5, new PointF(0.375f, 0));
+                            cb.ScaleCalibration.Add(10, new PointF(0.5625f, 0));
+                            cb.ScaleCalibration.Add(15, new PointF(0.75f, 0));
+                            cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
+                        }
+                        break;
+                    case 1:
+                        {
+                            cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                            cb.ScaleCalibration.Add(0.1f, new PointF(0.1875f, 0));
+                            cb.ScaleCalibration.Add(0.25f, new PointF(0.375f, 0));
+                            cb.ScaleCalibration.Add(0.5f, new PointF(0.5625f, 0));
+                            cb.ScaleCalibration.Add(0.8f, new PointF(0.75f, 0));
+                            cb.ScaleCalibration.Add(1f, new PointF(0.99f, 0));
+
+                        }
+                        break;
+                }
+
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                if (reading == Reading.PWR)
+                    ig.MeterType = MeterType.PWR;
+                else
+                    ig.MeterType = MeterType.REVERSE_PWR;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddSWRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if(restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.SWR;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Orange);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(1, new PointF(0, 0));
+                cb.ScaleCalibration.Add(1.5f, new PointF(0.25f, 0));
+                cb.ScaleCalibration.Add(2, new PointF(0.5f, 0));
+                cb.ScaleCalibration.Add(3, new PointF(0.75f, 0));
+                cb.ScaleCalibration.Add(5, new PointF(0.99f, 0));
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                addMeterItem(cb);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.SWR;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            #endregion
+            public clsMeter()
+            {
+                // to be used when restoring from db, everything initialised via TryParse
+            }
+            public clsMeter(int rx, string sName, float XRatio = 1f, float YRatio = 1f, bool mox = false)
             {
                 // constructor
-                _sGuid = Guid.NewGuid().ToString();
+                _sId = Guid.NewGuid().ToString();
                 _rx = rx;
-                _Name = sName;
-                _TypeBitfield = typeBitfield;
-                _mox = false;
+                _name = sName;
+                _mox = mox;
+                _quickestRXUpdate = 500;
+                _quickestTXUpdate = 500;
+
+                _fPadX = 0.02f;
+                _fPadY = 0.05f;
+                _fHeight = 0.05f;
 
                 _XRatio = XRatio;
                 _YRatio = YRatio;
@@ -2004,1535 +3905,327 @@ namespace Thetis
 
                 _displayGroup = 0;
 
-                int nMSupdate = 16;
-                float fPadX = 0.02f;
-                float fPadY = 0.05f;
-                float fHeight = 0.05f;
-                float fTop;
+                //float fBottom;
+                //AddSMeterBarSignalAvg(50, 0, out fBottom);
+                //AddSMeterBarSignal(50, fBottom, out fBottom);
+                //AddADCBar(50, fBottom, out fBottom);
+                //AddPBSNRBar(50, fBottom, out fBottom);
+                //AddAGCGainBar(50, fBottom, out fBottom);
+                //AddAGCBar(50, fBottom, out fBottom);
+                //AddMagicEye(50, fBottom, out fBottom, 0.2f);
+                //AddKenwood(50, fBottom, out fBottom);
+                //AddCrossNeedle(50, fBottom, out fBottom);
+                //AddMicBar(50, fBottom, out fBottom);
+                //AddEQBar(50, fBottom, out fBottom);
+                //AddLevelerBar(50, fBottom, out fBottom);
+                //AddLevelerGainBar(50, fBottom, out fBottom);
+                //AddALCBar(50, fBottom, out fBottom);
+                //AddALCGainBar(50, fBottom, out fBottom);
+                //AddALCGroupBar(50, fBottom, out fBottom);
+                //AddCFCBar(50, fBottom, out fBottom);
+                //AddCompBar(50, fBottom, out fBottom);
+                //AddPWRBar(50, fBottom, out fBottom);
+                //AddREVPWRBar(50, fBottom, out fBottom);
+                //AddSWRBar(50, fBottom, out fBottom);
 
-                //test
-                if ((TypeBitField & (int)MeterType.RX) == (int)MeterType.RX)
+                // last thing to do
+                //setupSortedZOrder();
+            }
+
+            public bool TryParse(string str)
+            {
+                bool bOk = false;
+                int rx=0, displaygroup=0;
+                float xRatio=0, yRatio=0, fPadX=0, fPadY=0, fHeight=0;
+
+                if (str != "")
                 {
-                    clsImage img;
-                    //clsText tx;
-                    //tx = new clsText();
-                    //tx.TopLeft = new PointF(0f, 0f);
-                    //tx.Size = new SizeF(0.2f, 0.05f);
-                    //tx.Text = "%fps%";
-                    //tx.ZOrder = 10;
-                    //tx.Style = FontStyle.Regular;
-                    //tx.Colour = System.Drawing.Color.LimeGreen;
-                    //tx.FixedSize = true;
-                    //tx.FontSize = 8f;
-                    //_meterItems.Add(tx.ID, tx);
-
-                    //clsBarItem cb;
-
-                    //cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.1f, 0.1f);
-                    //cb.BottomRight = new PointF(0.9f, 0.15f);
-                    //cb.ReadingSource = Reading.SIGNAL_STRENGTH;
-                    //cb.AttackRatio = 0.1f;
-                    //cb.DecayRatio = 0.05f;
-                    //cb.UpdateInterval = 16;
-                    //cb.ShowHistory = false;
-                    //cb.Colour = System.Drawing.Color.DarkGray;
-                    //cb.StrokeWidth = 1f;
-                    //cb.Style = clsBarItem.BarStyle.Line;
-                    //cb.ScaleCalibration.Add(-127, new PointF(0, 0)); // position for S0 or below
-                    //cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
-                    //cb.ScaleCalibration.Add(-13, new PointF(1, 0)); // position for S9+60dB or above
-                    //_meterItems.Add(cb.ID, cb);
-
-                    fTop = 0.575f + fHeight;
-
-                    clsBarItem cb;
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 0) );
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.2f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 4000;
-                    cb.ShowHistory = true;
-                    cb.ShowValue = true;
-                    cb.Colour = System.Drawing.Color.CadetBlue;
-                    cb.ShowMarker = true;
-                    cb.PeakHoldMarkerColour = System.Drawing.Color.Red;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
-                    cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
-                    cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 1));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.SIGNAL_STRENGTH;
-                    cb.AttackRatio = 0.4f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 1000;
-                    cb.ShowHistory = false;
-                    cb.PeakHold = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
-                    cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
-                    cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-                    
-                    clsScaleItem cs;
-                    clsSolidColour solidColour;
-
-                    cs = new clsScaleItem();
-                    cs.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 0));
-                    cs.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cs.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    cs.ZOrder = 3;
-                    cs.ShowType = true;
-                    _meterItems.Add(cs.ID, cs);
-
-                    cs = new clsScaleItem();
-                    cs.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 1));
-                    cs.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cs.ReadingSource = Reading.SIGNAL_STRENGTH;
-                    cs.ZOrder = 3;
-                    cs.ShowType = true;
-                    _meterItems.Add(cs.ID, cs);
-
-                    //
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 2));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.ADC_PK;
-                    cb.AttackRatio = 0.2f;
-                    cb.DecayRatio = 0.05f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 4000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Orange;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-120, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(-20, new PointF(0.8333f, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 3;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 2));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.ADC_AV;
-                    cb.AttackRatio = 0.2f;
-                    cb.DecayRatio = 0.05f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 0;
-                    cb.ShowHistory = false;
-                    cb.MarkerColour = System.Drawing.Color.DarkGray;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-120, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(-20, new PointF(0.8333f, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ShowValue = false;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 3));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.ESTIMATED_PBSNR;
-                    cb.AttackRatio = 0.2f;
-                    cb.DecayRatio = 0.05f;
-                    cb.UpdateInterval = 50;
-                    cb.HistoryDuration = 1000;
-                    cb.ShowHistory = false;
-                    cb.PeakHold = true;
-                    cb.Colour = System.Drawing.Color.DarkCyan;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
-                    cb.Style = clsBarItem.BarStyle.Segments;
-                    cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(50, new PointF(0.8333f, 0));
-                    cb.ScaleCalibration.Add(60, new PointF(0.99f, 0));
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 4));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.AGC_GAIN;
-                    cb.AttackRatio = 0.2f;
-                    cb.DecayRatio = 0.05f;
-                    cb.UpdateInterval = 50;
-                    cb.HistoryDuration = 1000;
-                    cb.ShowHistory = true;
-                    cb.PeakHold = false;
-                    cb.Colour = System.Drawing.Color.DarkCyan;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-50, new PointF(0, 0));
-                    //cb.ScaleCalibration.Add(75, new PointF(0.6666f, 0));
-                    cb.ScaleCalibration.Add(100, new PointF(0.857f, 0));
-                    cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 5));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.AGC_PK;
-                    cb.AttackRatio = 0.2f;
-                    cb.DecayRatio = 0.05f;
-                    cb.UpdateInterval = 50;
-                    cb.HistoryDuration = 1000;
-                    cb.ShowHistory = true;
-                    cb.PeakHold = false;
-                    cb.Colour = System.Drawing.Color.DarkCyan;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-125, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
-                    cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 3;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 5));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.AGC_AV;
-                    cb.AttackRatio = 0.2f;
-                    cb.DecayRatio = 0.05f;
-                    cb.UpdateInterval = 50;
-                    cb.HistoryDuration = 0;
-                    cb.ShowHistory = false;
-                    cb.PeakHold = false;
-                    cb.Colour = System.Drawing.Color.DarkCyan;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
-                    cb.MarkerColour = System.Drawing.Color.DarkGray;
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-125, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
-                    cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ShowValue = false;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    //--
-                    cs = new clsScaleItem();
-                    cs.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 2));
-                    cs.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cs.ReadingSource = Reading.ADC_PK;
-                    cs.ZOrder = 3;
-                    cs.ShowType = true;
-                    _meterItems.Add(cs.ID, cs);
-
-                    cs = new clsScaleItem();
-                    cs.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 3));
-                    cs.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cs.ReadingSource = Reading.ESTIMATED_PBSNR;
-                    cs.ZOrder = 3;
-                    cs.ShowType = true;
-                    _meterItems.Add(cs.ID, cs);
-
-                    cs = new clsScaleItem();
-                    cs.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 4));
-                    cs.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cs.ReadingSource = Reading.AGC_GAIN;
-                    cs.ZOrder = 3;
-                    cs.ShowType = true;
-                    _meterItems.Add(cs.ID, cs);
-
-                    cs = new clsScaleItem();
-                    cs.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 5));
-                    cs.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cs.ReadingSource = Reading.AGC_PK;
-                    cs.ZOrder = 3;
-                    cs.ShowType = true;
-                    _meterItems.Add(cs.ID, cs);
-
-                    for (int i = 0; i < 6; i++)
+                    string[] tmp = str.Split('|');
+                    if (tmp.Length == 9)
                     {
-                        solidColour = new clsSolidColour();
-                        solidColour.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * i) - fHeight * 0.75f);
-                        solidColour.Size = new SizeF(1f - fPadX * 2f, fHeight + fHeight * 0.75f);
-                        solidColour.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
-                        solidColour.ZOrder = 1;
-                        _meterItems.Add(solidColour.ID, solidColour);
-                    }
-
-                    // eye
-                    clsMagicEyeItem me = new clsMagicEyeItem();
-                    me.TopLeft = new PointF(0.4f, fTop + ((fPadY + fHeight) * 6));
-                    me.Size = new SizeF(0.2f, 0.2f);
-                    me.ZOrder = 2;
-                    me.AttackRatio = 0.2f;
-                    me.DecayRatio = 0.05f;
-                    me.UpdateInterval = 50;
-                    me.Colour = System.Drawing.Color.Lime;
-                    me.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    me.ScaleCalibration.Add(-127f, new PointF(0, 0));
-                    me.ScaleCalibration.Add(-73f, new PointF(0.85f, 0));
-                    me.ScaleCalibration.Add(-13f, new PointF(1f, 0));
-                    me.Value = -127f;
-                    _meterItems.Add(me.ID, me);
-
-                    img = new clsImage();
-                    img.TopLeft = me.TopLeft;
-                    img.Size = me.Size;
-                    img.ZOrder = 3;
-                    img.ImageName = "eye-bezel-glass";
-                    _meterItems.Add(img.ID, img);
-                    //
-
-                    //
-
-                    //cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.1f, 0.2f);
-                    //cb.BottomRight = new PointF(0.9f, 0.25f);
-                    //cb.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    //cb.AttackRatio = 0.1f;
-                    //cb.DecayRatio = 0.05f;
-                    //cb.UpdateInterval = 16;
-                    //cb.HistoryDuration = 2000;
-                    //cb.ShowHistory = true;
-                    //cb.Style = clsBarItem.BarStyle.Line;
-                    //_meterItems.Add(cb.ID, cb);
-
-                    //cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.1f, 0.3f);
-                    //cb.BottomRight = new PointF(0.9f, 0.35f);
-                    //cb.ReadingSource = Reading.ADC_REAL;
-                    //cb.ShowHistory = true;
-                    //_meterItems.Add(cb.ID, cb);
-
-                    //cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.1f, 0.4f);
-                    //cb.BottomRight = new PointF(0.9f, 0.45f);
-                    //cb.ReadingSource = Reading.ADC_IMAG;
-                    //cb.ShowHistory = true;
-                    //_meterItems.Add(cb.ID, cb);
-
-                    //clsSolidColour sc = new clsSolidColour();
-                    //sc.TopLeft = new PointF(0.1f, 0.1f);
-                    //sc.BottomRight = new PointF(0.9f, 0.15f);
-                    //sc.Colour = System.Drawing.Color.Black;
-                    //sc.ZOrder = -1;
-                    //_meterItems.Add(sc.ID, sc);
-
-                    //clsNeedleItem ni = new clsNeedleItem(); ;
-                    //ni.TopLeft = new PointF(0f, 0f);
-                    //ni.BottomRight = new PointF(1f, 0.579f);
-                    //ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    //ni.AttackRatio = 0.1f;
-                    //ni.DecayRatio = 0.05f;
-                    //ni.UpdateInterval = 16;
-                    //ni.HistoryDuration = 4000;
-                    //ni.ShowHistory = true;
-                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    //ni.Colour = System.Drawing.Color.YellowGreen;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Green);
-                    //ni.ZOrder = 1;
-                    //ni.NeedleOffset = new PointF(-0.004f, 0.616f);
-                    //ni.LengthFactor = 1.14f;
-                    ////ni.Setup = true;
-                    //ni.ScaleCalibration.Add(-121f, new PointF(0.091f, 0.42f));
-                    //ni.ScaleCalibration.Add(-115f, new PointF(0.144f, 0.359f));
-                    //ni.ScaleCalibration.Add(-109f, new PointF(0.191f, 0.281f));
-                    //ni.ScaleCalibration.Add(-103f, new PointF(0.25f, 0.243f));
-                    //ni.ScaleCalibration.Add(-97f, new PointF(0.306f, 0.184f));
-                    //ni.ScaleCalibration.Add(-91f, new PointF(0.37f, 0.17f));
-                    //ni.ScaleCalibration.Add(-85f, new PointF(0.432f, 0.134f));
-                    //ni.ScaleCalibration.Add(-79f, new PointF(0.495f, 0.147f));
-                    //ni.ScaleCalibration.Add(-73f, new PointF(0.56f, 0.134f));
-                    //ni.ScaleCalibration.Add(-63f, new PointF(0.623f, 0.153f));
-                    //ni.ScaleCalibration.Add(-53f, new PointF(0.686f, 0.184f));
-                    //ni.ScaleCalibration.Add(-43f, new PointF(0.745f, 0.225f));
-                    //ni.ScaleCalibration.Add(-33f, new PointF(0.802f, 0.279f));
-                    //ni.ScaleCalibration.Add(-23f, new PointF(0.865f, 0.344f));
-                    //ni.ScaleCalibration.Add(-13f, new PointF(0.902f, 0.419f));
-                    //_meterItems.Add(ni.ID, ni);
-
-                    //ni = new clsNeedleItem();
-                    //ni.TopLeft = new PointF(0f, 0f);
-                    //ni.BottomRight = new PointF(1f, 0.579f);
-                    //ni.ReadingSource = Reading.SIGNAL_STRENGTH;
-                    //ni.AttackRatio = 0.1f;
-                    //ni.DecayRatio = 0.05f;
-                    //ni.UpdateInterval = 16;
-                    //ni.ShowHistory = false;
-                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    //ni.Colour = System.Drawing.Color.LimeGreen;
-                    //ni.StrokeWidth = 2f;
-                    //ni.NeedleOffset = new PointF(-0.004f, 0.616f);
-                    //ni.LengthFactor = 1.14f;
-                    //ni.ScaleCalibration.Add(-121f, new PointF(0.091f, 0.42f));
-                    //ni.ScaleCalibration.Add(-115f, new PointF(0.144f, 0.359f));
-                    //ni.ScaleCalibration.Add(-109f, new PointF(0.191f, 0.281f));
-                    //ni.ScaleCalibration.Add(-103f, new PointF(0.25f, 0.243f));
-                    //ni.ScaleCalibration.Add(-97f, new PointF(0.306f, 0.184f));
-                    //ni.ScaleCalibration.Add(-91f, new PointF(0.37f, 0.17f));
-                    //ni.ScaleCalibration.Add(-85f, new PointF(0.432f, 0.134f));
-                    //ni.ScaleCalibration.Add(-79f, new PointF(0.495f, 0.147f));
-                    //ni.ScaleCalibration.Add(-73f, new PointF(0.56f, 0.134f));
-                    //ni.ScaleCalibration.Add(-63f, new PointF(0.623f, 0.153f));
-                    //ni.ScaleCalibration.Add(-53f, new PointF(0.686f, 0.184f));
-                    //ni.ScaleCalibration.Add(-43f, new PointF(0.745f, 0.225f));
-                    //ni.ScaleCalibration.Add(-33f, new PointF(0.802f, 0.279f));
-                    //ni.ScaleCalibration.Add(-23f, new PointF(0.865f, 0.344f));
-                    //ni.ScaleCalibration.Add(-13f, new PointF(0.902f, 0.419f));
-                    //_meterItems.Add(ni.ID, ni);
-
-                    ////sc = new clsSolidColour();
-                    ////sc.TopLeft = new PointF(0.1f, 0.5f);
-                    ////sc.BottomRight = new PointF(0.9f, 0.9f);
-                    ////sc.Colour = System.Drawing.Color.FromArgb(255,48,48,48);
-                    ////sc.ZOrder = -1;
-                    ////_meterItems.Add(sc.ID, sc);
-
-                    //clsImage img = new clsImage();
-                    //img.TopLeft = new PointF(0f, 0f);
-                    //img.BottomRight = new PointF(1f, 0.579f);
-                    //img.ZOrder = -2;
-                    //img.ImageName = "s-meter-green";
-                    //_meterItems.Add(img.ID, img);
-
-                    //img = new clsImage();
-                    //img.TopLeft = new PointF(0.4f, 0.579f - 0.05f);
-                    //img.BottomRight = new PointF(0.6f, 0.579f + 0.15f);
-                    //img.ZOrder = 10;
-                    //img.ImageName = "cover";
-                    //img.Clipped = true;
-                    //img.ClipTopLeft = new PointF(0f, 0f);
-                    //img.ClipBottomRight = new PointF(1f, 0.579f);
-                    //_meterItems.Add(img.ID, img);
-                    ////
-                    ///                    
-
-                    //kenwood
-                    clsNeedleItem ni = new clsNeedleItem(); ;
-                    ni.TopLeft = new PointF(0f, 0.0f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    ni.AttackRatio = 0.8f;//0.1f;
-                    ni.DecayRatio = 0.2f;// 0.05f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 4000;
-                    ni.ShowHistory = true;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    ni.ZOrder = 2;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = 1.65f;
-                    ni.ScaleStrokeWidth = true;
-
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(-127f, new PointF(0.076f, 0.31f));
-                    ni.ScaleCalibration.Add(-121f, new PointF(0.131f, 0.272f));
-                    ni.ScaleCalibration.Add(-115f, new PointF(0.189f, 0.254f));
-                    ni.ScaleCalibration.Add(-109f, new PointF(0.233f, 0.211f));
-                    ni.ScaleCalibration.Add(-103f, new PointF(0.284f, 0.207f));
-                    ni.ScaleCalibration.Add(-97f, new PointF(0.326f, 0.177f));
-                    ni.ScaleCalibration.Add(-91f, new PointF(0.374f, 0.177f));
-                    ni.ScaleCalibration.Add(-85f, new PointF(0.414f, 0.151f));
-                    ni.ScaleCalibration.Add(-79f, new PointF(0.459f, 0.168f));
-                    ni.ScaleCalibration.Add(-73f, new PointF(0.501f, 0.142f));
-                    ni.ScaleCalibration.Add(-63f, new PointF(0.564f, 0.172f));
-                    ni.ScaleCalibration.Add(-53f, new PointF(0.63f, 0.164f));
-                    ni.ScaleCalibration.Add(-43f, new PointF(0.695f, 0.203f));
-                    ni.ScaleCalibration.Add(-33f, new PointF(0.769f, 0.211f));
-                    ni.ScaleCalibration.Add(-23f, new PointF(0.838f, 0.272f));
-                    ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
-                    ni.Value = -127f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);                    
-
-                    //ni = new clsNeedleItem(); ;
-                    //ni.TopLeft = new PointF(0f, 0f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    //ni.ReadingSource = Reading.SIGNAL_STRENGTH;
-                    //ni.AttackRatio = 0.1f;
-                    //ni.DecayRatio = 0.05f;
-                    //ni.UpdateInterval = 16;
-                    //ni.HistoryDuration = 500;
-                    //ni.ShowHistory = false;
-                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    //ni.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    //ni.ZOrder = 1;
-                    //ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    //ni.RadiusRatio = new PointF(1f, 0.58f);
-                    //ni.LengthFactor = 1.65f;
-                    //ni.StrokeWidth = 1f;
-                    ////ni.Setup = true;
-                    //ni.ScaleCalibration.Add(-127f, new PointF(0.076f, 0.31f));
-                    //ni.ScaleCalibration.Add(-121f, new PointF(0.131f, 0.272f));
-                    //ni.ScaleCalibration.Add(-115f, new PointF(0.189f, 0.254f));
-                    //ni.ScaleCalibration.Add(-109f, new PointF(0.233f, 0.211f));
-                    //ni.ScaleCalibration.Add(-103f, new PointF(0.284f, 0.207f));
-                    //ni.ScaleCalibration.Add(-97f, new PointF(0.326f, 0.177f));
-                    //ni.ScaleCalibration.Add(-91f, new PointF(0.374f, 0.177f));
-                    //ni.ScaleCalibration.Add(-85f, new PointF(0.414f, 0.151f));
-                    //ni.ScaleCalibration.Add(-79f, new PointF(0.459f, 0.168f));
-                    //ni.ScaleCalibration.Add(-73f, new PointF(0.501f, 0.142f));
-                    //ni.ScaleCalibration.Add(-63f, new PointF(0.564f, 0.172f));
-                    //ni.ScaleCalibration.Add(-53f, new PointF(0.63f, 0.164f));
-                    //ni.ScaleCalibration.Add(-43f, new PointF(0.695f, 0.203f));
-                    //ni.ScaleCalibration.Add(-33f, new PointF(0.769f, 0.211f));
-                    //ni.ScaleCalibration.Add(-23f, new PointF(0.838f, 0.272f));
-                    //ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
-                    //ni.Value = -127f;
-                    //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    //_meterItems.Add(ni.ID, ni);
-
-                    //volts
-                    ni = new clsNeedleItem(); ;
-                    ni.TopLeft = new PointF(0f, 0f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.VOLTS;
-                    ni.AttackRatio = 0.2f;
-                    ni.DecayRatio = 0.2f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 500;
-                    ni.ShowHistory = false;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    ni.ZOrder = 1;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = .75f;
-                    ni.ScaleStrokeWidth = true;
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(10f, new PointF(0.559f, 0.756f));
-                    ni.ScaleCalibration.Add(12.5f, new PointF(0.605f, 0.772f));
-                    ni.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
-                    ni.Value = 10f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    img = new clsImage();
-                    img.TopLeft = new PointF(0f, 0f);
-                    //img.BottomRight = new PointF(1f, 0.441f);
-                    img.Size = new SizeF(1f, 0.441f);
-                    img.ZOrder = 0;
-                    img.ImageName = "kenwood-s-meter";
-                    _meterItems.Add(img.ID, img);
-
-                    img = new clsImage();
-                    img.TopLeft = new PointF(0f, 0.441f);
-                    //img.BottomRight = new PointF(1f, 0.441f + 0.218f);
-                    img.Size = new SizeF(1f, 0.101f);
-                    img.ZOrder = 2;
-                    img.ImageName = "kenwood-s-meter-bg";
-                    _meterItems.Add(img.ID, img);
-
-                    //// VBAR
-                    //cb = new clsBarItem();
-                    //cb.ItemType = clsMeterItem.MeterItemType.V_BAR;
-                    //cb.TopLeft = new PointF(fPad, 0.95f);
-                    //cb.Size = new SizeF(0.1f, 0.75f);
-                    //cb.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    //cb.AttackRatio = 0.8f;
-                    //cb.DecayRatio = 0.2f;
-                    //cb.UpdateInterval = nMSupdate;
-                    //cb.HistoryDuration = 1000;
-                    //cb.ShowHistory = false;
-                    //cb.ShowValue = false;
-                    //cb.Colour = System.Drawing.Color.CadetBlue;
-                    //cb.ShowMarker = false;
-                    //cb.PeakHoldMarkerColour = System.Drawing.Color.Red;
-                    //cb.PeakHold = true;
-                    //cb.HistoryColour = System.Drawing.Color.FromArgb(255, System.Drawing.Color.Red);
-                    //cb.Style = clsBarItem.BarStyle.SolidFilled;
-                    //cb.ScaleCalibration.Add(-133, new PointF(0, 0)); // position for S0 or below  // -133 is the edge, as S0 (-127) is the first small tick
-                    //cb.ScaleCalibration.Add(-73, new PointF(0, 0.5f)); // position for S9
-                    //cb.ScaleCalibration.Add(-13, new PointF(0, 0.99f)); // position for S9+60dB or above
-                    //cb.FontColour = System.Drawing.Color.Yellow;
-                    //cb.ZOrder = 2;
-                    //_meterItems.Add(cb.ID, cb);
-
-                    //cs = new clsScaleItem();
-                    //cs.ItemType = clsMeterItem.MeterItemType.V_SCALE; // change from default to vertical
-                    //cs.TopLeft = cb.TopLeft;
-                    //cs.Size = cb.Size;
-                    //cs.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
-                    //cs.ZOrder = 3;
-                    //cs.ShowType = true;
-                    //_meterItems.Add(cs.ID, cs);
-
-                    //solidColour = new clsSolidColour();
-                    //solidColour.TopLeft = cb.TopLeft;
-                    //solidColour.Size = cb.Size;
-                    //solidColour.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
-                    //solidColour.ZOrder = 1;
-                    //_meterItems.Add(solidColour.ID, solidColour);
-                }
-                else if ((typeBitfield & (int)MeterType.MOX) == (int)MeterType.MOX)
-                {
-                    clsNeedleItem ni;
-                    clsImage img;
-
-                    clsText tx;
-                    //tx = new clsText();
-                    //tx.TopLeft = new PointF(0f, 0f);
-                    //tx.Size = new SizeF(0.2f, 0.05f);
-                    //tx.Text = "%fps%";
-                    //tx.ZOrder = 10;
-                    //tx.Style = FontStyle.Bold;
-                    //tx.Colour = System.Drawing.Color.Red;
-                    //tx.FixedSize = true;
-                    //tx.FontSize = 8f;
-                    //_meterItems.Add(tx.ID, tx);
-
-                    //// pwr
-                    //ni = new clsNeedleItem();
-                    //ni.TopLeft = new PointF(0.1f, 0.54f);
-                    //ni.BottomRight = new PointF(0.9f, 0.99f);
-                    //ni.ReadingSource = Reading.PWR;
-                    //ni.AttackRatio = 0.2f;
-                    //ni.DecayRatio = 0.05f;
-                    //ni.UpdateInterval = 16;
-                    //ni.HistoryDuration = 1000;
-                    //ni.ShowHistory = true;
-                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    //ni.Colour = System.Drawing.Color.Red;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                    //ni.ZOrder = 1;
-                    //ni.NeedleOffset = new PointF(0f, 0.64f);
-                    //ni.LengthFactor = 1.08f;
-                    //ni.ScaleCalibration.Add(0, new PointF(0.119f, 0.468f)); // position for 0W
-                    //ni.ScaleCalibration.Add(5, new PointF(0.214f, 0.341f));
-                    //ni.ScaleCalibration.Add(10, new PointF(0.277f, 0.292f));
-                    //ni.ScaleCalibration.Add(20, new PointF(0.356f, 0.240f));
-                    //ni.ScaleCalibration.Add(30, new PointF(0.428f, 0.208f));
-                    //ni.ScaleCalibration.Add(50, new PointF(0.557f, 0.124f));
-                    //ni.ScaleCalibration.Add(60, new PointF(0.615f, 0.225f));
-                    //ni.ScaleCalibration.Add(100, new PointF(0.786f, 0.346f)); // position for MAX W
-                    ////ni.Setup = true;
-                    //_meterItems.Add(ni.ID, ni);
-
-                    ////swr
-                    //ni = new clsNeedleItem();
-                    //ni.TopLeft = new PointF(0.1f, 0.54f);
-                    //ni.BottomRight = new PointF(0.9f, 0.99f);
-                    //ni.ReadingSource = Reading.SWR;
-                    //ni.AttackRatio = 0.1f;
-                    //ni.DecayRatio = 0.05f;
-                    //ni.UpdateInterval = 16;
-                    //ni.HistoryDuration = 500;
-                    //ni.ShowHistory = true;
-                    //ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    //ni.Colour = System.Drawing.Color.Yellow;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Yellow);
-                    //ni.ZOrder = 2;
-                    //ni.NeedleOffset = new PointF(0f, 0.64f);
-                    //ni.LengthFactor = 0.88f;
-                    //ni.ScaleCalibration.Add(1f, new PointF(0.179f, 0.577f)); // position for 1:1
-                    //ni.ScaleCalibration.Add(1.5f, new PointF(0.238f, 0.483f));
-                    //ni.ScaleCalibration.Add(2f, new PointF(0.298f, 0.427f));
-                    //ni.ScaleCalibration.Add(2.5f, new PointF(0.370f, 0.379f));
-                    //ni.ScaleCalibration.Add(3f, new PointF(0.419f, 0.358f));
-                    //ni.ScaleCalibration.Add(3.5f, new PointF(0.467f, 0.352f));
-                    //ni.ScaleCalibration.Add(4f, new PointF(0.503f, 0.350f));
-                    //ni.ScaleCalibration.Add(5f, new PointF(0.554f, 0.358f));
-                    //ni.ScaleCalibration.Add(10f, new PointF(0.651f, 0.397f)); // position for 10:1
-                    //ni.ScaleCalibration.Add(float.MaxValue, new PointF(0.744f, 0.479f)); // position for infinity
-                    //_meterItems.Add(ni.ID, ni);
-
-                    //img = new clsImage();
-                    //img.TopLeft = new PointF(0.1f, 0.54f);
-                    //img.BottomRight = new PointF(0.9f, 0.99f);
-                    //img.ZOrder = -2;
-                    //img.ImageName = "s-meter-green";
-                    //_meterItems.Add(img.ID, img);
-
-                    //img = new clsImage();
-                    //img.TopLeft = new PointF(0.4f, 0.95f);
-                    //img.BottomRight = new PointF(0.6f, 1.15f);
-                    //img.ZOrder = 10;
-                    //img.ImageName = "cover";
-                    //img.Clipped = true;
-                    //img.ClipTopLeft = new PointF(0.1f, 0.54f);
-                    //img.ClipBottomRight = new PointF(0.9f, 0.99f); ;
-                    //_meterItems.Add(img.ID, img);
-
-
-                    // cross
-                    ni = new clsNeedleItem();
-                    ni.TopLeft = new PointF(0f, 0f);
-                    //ni.BottomRight = new PointF(1f, 0.782f);
-                    ni.Size = new SizeF(1f, 0.782f);
-                    ni.ReadingSource = Reading.PWR;
-                    ni.AttackRatio = 0.2f;//0.325f;
-                    ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 1000;
-                    ni.ShowHistory = true;
-                    ni.StrokeWidth = 2.5f;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(96, System.Drawing.Color.Red);
-                    ni.ZOrder = 2;
-                    ni.NeedleOffset = new PointF(0.322f, 0.611f);
-                    ni.LengthFactor = 1.62f;
-                    ni.ScaleStrokeWidth = true;
-                    ni.ScaleCalibration.Add(0f, new PointF(0.052f, 0.732f));
-                    ni.ScaleCalibration.Add(5f, new PointF(0.146f, 0.528f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.188f, 0.434f));
-                    ni.ScaleCalibration.Add(15f, new PointF(0.235f, 0.387f));
-                    ni.ScaleCalibration.Add(20f, new PointF(0.258f, 0.338f));
-                    ni.ScaleCalibration.Add(25f, new PointF(0.303f, 0.313f));
-                    ni.ScaleCalibration.Add(30f, new PointF(0.321f, 0.272f));
-                    ni.ScaleCalibration.Add(35f, new PointF(0.361f, 0.257f));
-                    ni.ScaleCalibration.Add(40f, new PointF(0.381f, 0.223f));
-                    ni.ScaleCalibration.Add(50f, new PointF(0.438f, 0.181f));
-                    ni.ScaleCalibration.Add(60f, new PointF(0.483f, 0.155f));
-                    ni.ScaleCalibration.Add(70f, new PointF(0.532f, 0.13f));
-                    ni.ScaleCalibration.Add(80f, new PointF(0.577f, 0.111f));
-                    ni.ScaleCalibration.Add(90f, new PointF(0.619f, 0.098f));
-                    ni.ScaleCalibration.Add(100f, new PointF(0.662f, 0.083f));
-                    ni.NormaliseTo100W = true;
-                    ni.Value = 0f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    ni = new clsNeedleItem();
-                    ni.TopLeft = new PointF(0f, 0f);
-                    //ni.BottomRight = new PointF(1f, 0.782f);
-                    ni.Size = new SizeF(1f, 0.782f);
-                    ni.ReadingSource = Reading.REVERSE_PWR;
-                    ni.AttackRatio = 0.2f;//0.325f;
-                    ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 1000;
-                    ni.ShowHistory = true;
-                    ni.StrokeWidth = 2.5f;
-                    ni.Direction = clsNeedleItem.NeedleDirection.CounterClockwise;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(96, System.Drawing.Color.CornflowerBlue);
-                    ni.ZOrder = 1;
-                    ni.NeedleOffset = new PointF(-0.322f, 0.611f);
-                    ni.LengthFactor = 1.62f;
-                    ni.ScaleStrokeWidth = true;
-                    ni.ScaleCalibration.Add(0f, new PointF(0.948f, 0.74f));
-                    ni.ScaleCalibration.Add(0.25f, new PointF(0.913f, 0.7f));
-                    ni.ScaleCalibration.Add(0.5f, new PointF(0.899f, 0.638f));
-                    ni.ScaleCalibration.Add(0.75f, new PointF(0.875f, 0.594f));
-                    ni.ScaleCalibration.Add(1f, new PointF(0.854f, 0.538f));
-                    ni.ScaleCalibration.Add(2f, new PointF(0.814f, 0.443f));
-                    ni.ScaleCalibration.Add(3f, new PointF(0.769f, 0.4f));
-                    ni.ScaleCalibration.Add(4f, new PointF(0.744f, 0.351f));
-                    ni.ScaleCalibration.Add(5f, new PointF(0.702f, 0.321f));
-                    ni.ScaleCalibration.Add(6f, new PointF(0.682f, 0.285f));
-                    ni.ScaleCalibration.Add(7f, new PointF(0.646f, 0.268f));
-                    ni.ScaleCalibration.Add(8f, new PointF(0.626f, 0.234f));
-                    ni.ScaleCalibration.Add(9f, new PointF(0.596f, 0.228f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.569f, 0.196f));
-                    ni.ScaleCalibration.Add(12f, new PointF(0.524f, 0.166f));
-                    ni.ScaleCalibration.Add(14f, new PointF(0.476f, 0.14f));
-                    ni.ScaleCalibration.Add(16f, new PointF(0.431f, 0.121f));
-                    ni.ScaleCalibration.Add(18f, new PointF(0.393f, 0.109f));
-                    ni.ScaleCalibration.Add(20f, new PointF(0.349f, 0.098f));
-                    ni.NormaliseTo100W = true;
-                    ni.Value = 0f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    img = new clsImage();
-                    img.TopLeft = new PointF(0f, 0f);
-                    img.BottomRight = new PointF(1f, 0.782f);
-                    img.Size = new SizeF(1f, 0.782f);
-                    img.ZOrder = 0;
-                    img.ImageName = "cross-needle";
-                    _meterItems.Add(img.ID, img);
-
-                    img = new clsImage();
-                    img.TopLeft = new PointF(0f, 0.782f - 0.180f);
-                    //img.BottomRight = new PointF(1f, 1f);
-                    img.Size = new SizeF(1f, 0.217f);
-                    img.ZOrder = 3;
-                    img.ImageName = "cross-needle-bg";
-                    _meterItems.Add(img.ID, img);
-                    // end cross
-
-                    PointF tl = new PointF(0f, (0.782f - 0.180f) + 0.217f);
-                    //kenwood
-                    clsClickBox clb = new clsClickBox();
-                    clb.TopLeft = new PointF(tl.X + 0.74f, tl.Y + 0.48f); // tl;
-                    clb.Size = new SizeF(0.2f, 0.05f); //SizeF(1f, 0.441f);
-                    clb.Button = MouseButtons.Left;
-                    _meterItems.Add(clb.ID, clb);
-
-                    clsSolidColour sc = new clsSolidColour();
-                    sc.TopLeft = new PointF(tl.X + 0.74f, tl.Y + 0.48f); // tl;
-                    sc.Size = new SizeF(0.2f, 0.05f); //SizeF(1f, 0.441f);
-                    sc.ZOrder = 9; // below text
-                    sc.Colour = System.Drawing.Color.FromArgb(96, System.Drawing.Color.White);
-                    _meterItems.Add(sc.ID, sc);
-
-                    tx = new clsText();
-                    tx.TopLeft = new PointF(tl.X + 0.74f, tl.Y + 0.48f);
-                    tx.Size = new SizeF(0.2f, 0.05f);
-                    tx.Text = "%group%";
-                    tx.ZOrder = 10;
-                    tx.Style = FontStyle.Bold;
-                    tx.Colour = System.Drawing.Color.DarkGray;
-                    tx.FixedSize = true;
-                    tx.FontSize = 8f;
-                    _meterItems.Add(tx.ID, tx);
-
-                    ni = new clsNeedleItem(); ;
-                    ni.TopLeft = tl;// new PointF(0f, 0.85f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.PWR;
-                    ni.AttackRatio = 0.2f;//0.325f;
-                    ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 1000;
-                    ni.ShowHistory = true;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    ni.ZOrder = 2;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = 1.55f;
-                    ni.ScaleStrokeWidth = true;
-                    ni.DisplayGroup = 1;
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(0f, new PointF(0.099f, 0.352f));
-                    ni.ScaleCalibration.Add(5f, new PointF(0.164f, 0.312f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.224f, 0.28f));
-                    ni.ScaleCalibration.Add(25f, new PointF(0.335f, 0.236f));
-                    ni.ScaleCalibration.Add(30f, new PointF(0.367f, 0.228f));
-                    ni.ScaleCalibration.Add(40f, new PointF(0.436f, 0.22f));
-                    ni.ScaleCalibration.Add(50f, new PointF(0.499f, 0.212f));
-                    ni.ScaleCalibration.Add(60f, new PointF(0.559f, 0.216f));
-                    ni.ScaleCalibration.Add(100f, new PointF(0.751f, 0.272f));
-                    ni.ScaleCalibration.Add(150f, new PointF(0.899f, 0.352f));
-                    ni.Value = 0f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    ni = new clsNeedleItem(); ;
-                    ni.TopLeft = tl;//new PointF(0f, 0.85f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.SWR;
-                    ni.AttackRatio = 0.2f;//0.325f;
-                    ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 1000;
-                    ni.ShowHistory = true;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    ni.HistoryColour = System.Drawing.Color.FromArgb(64, System.Drawing.Color.CornflowerBlue);
-                    ni.ZOrder = 3;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = 1.36f;
-                    ni.ScaleStrokeWidth = true;
-                    ni.DisplayGroup = 1;
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(1f, new PointF(0.152f, 0.468f));
-                    ni.ScaleCalibration.Add(1.5f, new PointF(0.28f, 0.404f));
-                    ni.ScaleCalibration.Add(2f, new PointF(0.393f, 0.372f));
-                    ni.ScaleCalibration.Add(2.5f, new PointF(0.448f, 0.36f));
-                    ni.ScaleCalibration.Add(3f, new PointF(0.499f, 0.36f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.847f, 0.476f));
-                    ni.Value = 1f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    ni = new clsNeedleItem(); ;
-                    ni.TopLeft = tl;//new PointF(0f, 0.85f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.ALC_G; // alc_comp
-                    ni.AttackRatio = 0.2f;//0.325f;
-                    ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 1000;
-                    ni.ShowHistory = false;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    ni.ZOrder = 3;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = 0.96f;
-                    ni.ScaleStrokeWidth = true;
-                    ni.DisplayGroup = 2;
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(0f, new PointF(0.249f, 0.68f));
-                    ni.ScaleCalibration.Add(5f, new PointF(0.342f, 0.64f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.425f, 0.624f));
-                    ni.ScaleCalibration.Add(15f, new PointF(0.499f, 0.62f));
-                    ni.ScaleCalibration.Add(20f, new PointF(0.571f, 0.628f));
-                    ni.ScaleCalibration.Add(25f, new PointF(0.656f, 0.64f));
-                    ni.ScaleCalibration.Add(30f, new PointF(0.751f, 0.688f));
-                    ni.Value = 0f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    ni = new clsNeedleItem();
-                    ni.TopLeft = tl;//new PointF(0f, 0.85f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.ALC_GROUP;
-                    ni.AttackRatio = 0.2f;//0.325f;
-                    ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 1000;
-                    ni.ShowHistory = false;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Red;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    ni.ZOrder = 3;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = 0.75f;
-                    ni.ScaleStrokeWidth = true;
-                    ni.DisplayGroup = 3;
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(-30f, new PointF(0.295f, 0.804f));
-                    ni.ScaleCalibration.Add(0f, new PointF(0.332f, 0.784f));
-                    ni.ScaleCalibration.Add(25f, new PointF(0.499f, 0.756f));
-                    ni.Value = -30f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    //volts
-                    ni = new clsNeedleItem(); ;
-                    ni.TopLeft = tl;//new PointF(0f, 0.85f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.VOLTS;
-                    ni.AttackRatio = 0.2f;
-                    ni.DecayRatio = 0.2f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 500;
-                    ni.ShowHistory = false;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    ni.ZOrder = 1;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = 0.75f;
-                    ni.ScaleStrokeWidth = true;
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(10f, new PointF(0.559f, 0.756f));
-                    ni.ScaleCalibration.Add(12.5f, new PointF(0.605f, 0.772f));
-                    ni.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
-                    ni.Value = 10f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    //amps
-                    ni = new clsNeedleItem(); ;
-                    ni.TopLeft = tl;//new PointF(0f, 0.85f);
-                    //ni.BottomRight = new PointF(1f, 0.441f);
-                    ni.Size = new SizeF(1f, 0.441f);
-                    ni.ReadingSource = Reading.AMPS;
-                    ni.AttackRatio = 0.2f;
-                    ni.DecayRatio = 0.2f;
-                    ni.UpdateInterval = nMSupdate;
-                    ni.HistoryDuration = 500;
-                    ni.ShowHistory = false;
-                    ni.Style = clsNeedleItem.NeedleStyle.Line;
-                    ni.Colour = System.Drawing.Color.Black;
-                    //ni.HistoryColour = System.Drawing.Color.FromArgb(64, 233, 51, 50);
-                    ni.ZOrder = 1;
-                    ni.NeedleOffset = new PointF(0.004f, 0.736f);
-                    ni.RadiusRatio = new PointF(1f, 0.58f);
-                    ni.LengthFactor = 1.15f;
-                    ni.ScaleStrokeWidth = true;
-                    ni.DisplayGroup = 4;
-                    //ni.Setup = true;
-                    ni.ScaleCalibration.Add(0f, new PointF(0.199f, 0.576f));
-                    ni.ScaleCalibration.Add(2f, new PointF(0.27f, 0.54f));
-                    ni.ScaleCalibration.Add(4f, new PointF(0.333f, 0.516f));
-                    ni.ScaleCalibration.Add(6f, new PointF(0.393f, 0.504f));
-                    ni.ScaleCalibration.Add(8f, new PointF(0.448f, 0.492f));
-                    ni.ScaleCalibration.Add(10f, new PointF(0.499f, 0.492f));
-                    ni.ScaleCalibration.Add(12f, new PointF(0.554f, 0.488f));
-                    ni.ScaleCalibration.Add(14f, new PointF(0.608f, 0.5f));
-                    ni.ScaleCalibration.Add(16f, new PointF(0.667f, 0.516f));
-                    ni.ScaleCalibration.Add(18f, new PointF(0.728f, 0.54f));
-                    ni.ScaleCalibration.Add(20f, new PointF(0.799f, 0.576f));
-                    ni.Value = 10f;
-                    MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                    _meterItems.Add(ni.ID, ni);
-
-                    img = new clsImage();
-                    img.TopLeft = tl;//new PointF(0f, 0.85f);
-                    //img.BottomRight = new PointF(1f, 0.441f);
-                    img.Size = new SizeF(1f, 0.441f);
-                    img.ZOrder = 0;
-                    img.ImageName = "kenwood-s-meter";
-                    _meterItems.Add(img.ID, img);
-
-                    img = new clsImage();
-                    img.TopLeft = new PointF(tl.X, tl.Y + 0.441f);//new PointF(0f, 0.441f + 0.85f);
-                    //img.BottomRight = new PointF(1f, 0.441f + 0.218f);
-                    img.Size = new SizeF(1f, 0.101f);
-                    img.ZOrder = 2;
-                    img.ImageName = "kenwood-s-meter-bg";
-                    _meterItems.Add(img.ID, img);
-
-                    //
-                    fTop = (img.TopLeft.Y + img.Size.Height) + fHeight;
-
-                    clsBarItem cb;
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 0));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.MIC;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = false;
-                    cb.MarkerColour = System.Drawing.Color.DarkGray;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ShowValue = false;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.05f, 1.4f + (1 * 0.075f));
-                    //cb.Size = new SizeF(0.9f, 0.05f);
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 0));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.MIC_PK;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 3;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 1));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.EQ;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = false;
-                    cb.MarkerColour = System.Drawing.Color.DarkGray;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.ShowValue = false;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.05f, 1.4f + (3 * 0.075f));
-                    //cb.Size = new SizeF(0.9f, 0.05f);
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 1));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.EQ_PK;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 3;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 2));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.LEVELER;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = false;
-                    cb.MarkerColour = System.Drawing.Color.DarkGray;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.ShowValue = false;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.05f, 1.4f + (4 * 0.075f));
-                    //cb.Size = new SizeF(0.9f, 0.05f);
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 2));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.LEVELER_PK;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 3;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 3));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.LVL_G;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(20, new PointF(0.8f, 0));
-                    cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 4));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.ALC;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = false;
-                    cb.MarkerColour = System.Drawing.Color.DarkGray;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.ShowValue = false;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.05f, 1.4f + (9 * 0.075f));
-                    //cb.Size = new SizeF(0.9f, 0.05f);
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 4));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.ALC_PK;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 3;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 5));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.ALC_G;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(20, new PointF(0.8f, 0));
-                    cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 6));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.ALC_GROUP;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
-                    cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 7));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.CFC_PK;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 7));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.CFC_G;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = false;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(20, new PointF(0.8f, 0));
-                    cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ShowValue = false;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 8));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.COMP;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = false;
-                    cb.MarkerColour = System.Drawing.Color.DarkGray;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 2;
-                    cb.ShowValue = false;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    //cb.TopLeft = new PointF(0.05f, 1.4f + (7 * 0.075f));
-                    //cb.Size = new SizeF(0.9f, 0.05f);
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 8));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.COMP_PK;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(-30, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                    cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                    cb.ZOrder = 3;
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 9));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.PWR;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                    cb.Style = clsBarItem.BarStyle.Line;
-
-                    switch(CurrentPowerRating)
-                    {
-                        case 500:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(50, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(100, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(250, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(500, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(600, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 200:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(20, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(100, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(200, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(240, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 100:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(50, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(100, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(120, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 30:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(20, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(30, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(50, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 15:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(1, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(5, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(15, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 1:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(0.1f, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(0.25f, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(0.5f, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(0.8f, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(1f, new PointF(0.99f, 0));
-
-                            }
-                            break;
-                    }
-
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 10));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.REVERSE_PWR;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                    cb.Style = clsBarItem.BarStyle.Line;
-
-                    switch (CurrentPowerRating)
-                    {
-                        case 500:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(50, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(100, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(250, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(500, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(600, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 200:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(20, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(100, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(200, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(240, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 100:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(50, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(100, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(120, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 30:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(20, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(30, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(50, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 15:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(1, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(5, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(10, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(15, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
-                            }
-                            break;
-                        case 1:
-                            {
-                                cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                                cb.ScaleCalibration.Add(0.1f, new PointF(0.1875f, 0));
-                                cb.ScaleCalibration.Add(0.25f, new PointF(0.375f, 0));
-                                cb.ScaleCalibration.Add(0.5f, new PointF(0.5625f, 0));
-                                cb.ScaleCalibration.Add(0.8f, new PointF(0.75f, 0));
-                                cb.ScaleCalibration.Add(1f, new PointF(0.99f, 0));
-
-                            }
-                            break;
-                    }
-
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    cb = new clsBarItem();
-                    cb.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * 11));
-                    cb.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                    cb.ReadingSource = Reading.SWR;
-                    cb.AttackRatio = 0.8f;
-                    cb.DecayRatio = 0.1f;
-                    cb.UpdateInterval = nMSupdate;
-                    cb.HistoryDuration = 2000;
-                    cb.ShowHistory = true;
-                    cb.MarkerColour = System.Drawing.Color.Yellow;
-                    cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Orange);
-                    cb.Style = clsBarItem.BarStyle.Line;
-                    cb.ScaleCalibration.Add(1, new PointF(0, 0));
-                    cb.ScaleCalibration.Add(1.5f, new PointF(0.25f, 0));
-                    cb.ScaleCalibration.Add(2, new PointF(0.5f, 0));
-                    cb.ScaleCalibration.Add(3, new PointF(0.75f, 0));
-                    cb.ScaleCalibration.Add(5, new PointF(0.99f, 0));
-                    cb.FontColour = System.Drawing.Color.Yellow;
-                    cb.ZOrder = 2;
-                    _meterItems.Add(cb.ID, cb);
-
-                    clsScaleItem cs;
-                    Dictionary<string, clsMeterItem> tmpItems = new Dictionary<string, clsMeterItem>();
-                    int nCount = 0;
-                    foreach(KeyValuePair<string, clsMeterItem> kvp in _meterItems)
-                    {
-                        clsMeterItem mi = kvp.Value;
-
-                        if (mi.ItemType == clsMeterItem.MeterItemType.H_BAR && mi.ShowHistory == true) // showhistory check so we can ignore some
+                        bOk = tmp[0] != "";
+                        if (bOk) ID = tmp[0];
+                        if (bOk) _name = tmp[1];
+                        if (bOk) int.TryParse(tmp[2], out rx);
+                        if (bOk) RX = rx;
+                        if (bOk) bOk = float.TryParse(tmp[3], out xRatio);
+                        if (bOk) bOk = float.TryParse(tmp[4], out yRatio);
+                        if (bOk)
                         {
-                            cs = new clsScaleItem();
-                            cs.TopLeft = new PointF(mi.TopLeft.X, mi.TopLeft.Y);
-                            cs.Size = new SizeF(1f - fPadX * 2f, fHeight);
-                            cs.ReadingSource = mi.ReadingSource;//Reading.MIC_PK;
-                            cs.ZOrder = 4;
-                            cs.ShowType = true;
-                            tmpItems.Add(cs.ID, cs);
-                            nCount++;
+                            _XRatio = xRatio;
+                            _YRatio = yRatio;
+                        }
+                        if (bOk) int.TryParse(tmp[5], out displaygroup);
+                        if (bOk) _displayGroup = displaygroup;
+                        if (bOk) bOk = float.TryParse(tmp[6], out fPadX);
+                        if (bOk) bOk = float.TryParse(tmp[7], out fPadY);
+                        if (bOk) bOk = float.TryParse(tmp[8], out fHeight);
+                        if (bOk)
+                        {
+                            _fPadX = fPadX;
+                            _fPadY = fPadY;
+                            _fHeight = fHeight;
+                        }
+
+                    }
+                }
+
+                return bOk;
+            }
+            private int numberOfMeterGroups()
+            {
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return 0;
+
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+
+                    return items.Count;
+                }
+            }
+            private void removeMeterItem(string sId, bool bRebuild = false)
+            {
+                lock (_objMeterItemLock)
+                {
+                    // remove this item, plus all items that are children
+
+                    Dictionary<string, clsMeterItem> items = itemsFromID(sId);
+                    if (items == null || items.Count == 0) return;
+
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        _meterItems.Remove(kvp.Value.ID);
+                    }
+
+                    if (bRebuild) Rebuild();
+                }
+            }
+            public void RemoveMeterType(MeterType mt, bool bRebuild = false)
+            {
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return;
+
+                    //special for kenwood
+                    if(mt == MeterType.KENWOOD)
+                    {
+                        RemoveDisplayGroup("ALL");
+                        RemoveDisplayGroup("PWR/SWR");
+                        RemoveDisplayGroup("Comp");
+                        RemoveDisplayGroup("ALC"); 
+                        RemoveDisplayGroup("Volts/Amps");
+                    }
+                    //
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach(KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        int nOrder = -1;
+
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null && ig.MeterType == mt) {
+                            nOrder = ig.Order;
+                            removeMeterItem(ig.ID, false);
+                        }
+
+                        if(nOrder >= 0)
+                        {
+                            Dictionary<string, clsMeterItem> tmpItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                            foreach(KeyValuePair<string, clsMeterItem> tmpKvp in tmpItems){
+                                clsItemGroup tmpIg = tmpKvp.Value as clsItemGroup;
+                                if (tmpIg != null && tmpIg.Order > nOrder)
+                                    tmpIg.Order--;
+                            }
                         }
                     }
 
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in tmpItems)
+                    if (bRebuild) Rebuild();
+                }
+            }
+            public bool HasMeterType(MeterType mt)
+            {
+                lock (_objMeterItemLock)
+                { 
+                    if (_meterItems == null) return false;
+
+                    //IEnumerable<KeyValuePair<string, clsMeterItem>> items = _meterItems.Where(o => o.Value.ItemType == MeterItemType.ITEM_GROUP);
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
-                        _meterItems.Add(kvp.Value.ID, kvp.Value);
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null && ig.MeterType == mt) return true;
                     }
 
-                    clsSolidColour solidColour;
-                    for (int i = 0; i < nCount; i++)
+                    return false;
+                }
+            }
+            public int GetOrderForMeterType(MeterType mt)
+            {
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return -1;
+
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
-                        solidColour = new clsSolidColour();
-                        solidColour.TopLeft = new PointF(fPadX, fTop + ((fPadY + fHeight) * i) - fHeight * 0.75f);
-                        solidColour.Size = new SizeF(1f - fPadX * 2f, fHeight + fHeight * 0.75f);
-                        solidColour.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
-                        solidColour.ZOrder = 1;
-                        _meterItems.Add(solidColour.ID, solidColour);
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null && ig.MeterType == mt) return ig.Order;
                     }
-                    //
+
+                    return -1;
+                }
+            }
+            public void SetOrderForMeterType(MeterType mt, int nOrder, bool bRebuild, bool bUp)
+            {
+                // only works for up/down 1 place
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return;
+
+                    if (nOrder < 0) nOrder = 0;
+                    int nTmp = numberOfMeterGroups() - 1;
+                    if (nOrder > nTmp) nOrder = nTmp;
+
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null)
+                        {
+                            if (ig.MeterType == mt)
+                            {
+                                ig.Order = nOrder;
+                            }
+                            else if (ig.Order == nOrder)
+                            {
+                                if (bUp)
+                                    ig.Order++;
+                                else
+                                    ig.Order--;
+                            }
+                        }
+                    }
+                }
+                if (bRebuild) Rebuild();
+            }
+            private clsMeterItem itemFromID(string sId)
+            {
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return null;
+                    if (!_meterItems.ContainsKey(sId)) return null;
+
+                    return _meterItems[sId];
+                }
+            }
+            internal Dictionary<string, clsMeterItem> itemsFromID(string sId, bool bIncludeParent = true)
+            {
+                // obtains all items that have given ID and also the parent
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return null;
+                    if (!_meterItems.ContainsKey(sId)) return null;
+
+                    Dictionary<string, clsMeterItem> lst = new Dictionary<string, clsMeterItem>();
+
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => (o.Value.ParentID == sId) || (bIncludeParent && o.Value.ID == sId)))
+                        lst.Add(kvp.Key, kvp.Value);
+
+                    return lst;
+                }
+            }
+            private bool hasReading(Reading reading)
+            {
+                bool bRet = false;
+                foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                {
+                    if(kvp.Value.ReadingSource == reading)
+                    {
+                        bRet = true;
+                        break;
+                    }
+                }
+                return bRet;
+            }
+            public float GetBottom()
+            {
+                lock (_objMeterItemLock)
+                {
+                    float fBottom = 0;
+
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                    {
+                        float fTmp = kvp.Value.TopLeft.Y + kvp.Value.Size.Height;
+                        if (fTmp > fBottom) fBottom = fTmp;
+                    }
+
+                    return fBottom;
+                }
+            }
+            public int QuickestRXUpdate
+            {
+                get { return _quickestRXUpdate; }
+            }
+            public int QuickestTXUpdate
+            {
+                get { return _quickestTXUpdate; }
+            }
+            internal Dictionary<string, clsItemGroup> getMeterGroups()
+            {
+                Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>();
+
+                foreach (KeyValuePair<string, clsMeterItem> kvp in meterItems)
+                {
+                    groupItems.Add(kvp.Value.ID, (clsItemGroup)kvp.Value);
                 }
 
-                // last thing to do
+                return groupItems;
+            }
+            public void Rebuild()
+            {
+                _quickestRXUpdate = QuickestUpdateInterval(false);
+                _quickestTXUpdate = QuickestUpdateInterval(true);
+
                 setupSortedZOrder();
+
+                lock (_objMeterItemLock)
+                {
+                    // shift top
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    Dictionary<string, clsItemGroup> groupItems = getMeterGroups();
+
+                    float fTop = 0;
+
+                    foreach (KeyValuePair<string, clsItemGroup> kvp in groupItems.OrderBy(o => o.Value.Order))
+                    {
+                        clsItemGroup ig = kvp.Value;
+
+                        if (ig != null)
+                        {
+                            ig.TopLeft = new PointF(ig.TopLeft.X, fTop);
+
+                            Dictionary<string, clsMeterItem> itemsInGroup = itemsFromID(ig.ID);
+
+                            foreach (KeyValuePair<string, clsMeterItem> kvp2 in itemsInGroup)
+                            {
+                                clsMeterItem mi = kvp2.Value;
+
+                                mi.TopLeft = new PointF(mi.OriginalTopLeft.X, mi.OriginalTopLeft.Y + fTop);
+                            }
+
+                            fTop += ig.Size.Height;
+                        }
+                    }
+                }
             }
             private void setupSortedZOrder()
             {
-                _sortedMeterItemsForZOrder = _meterItems.OrderBy(x => x.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
+                lock (_objMeterItemLock)
+                {
+                    _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
+                }
             }
-            public void MouseUp(System.Windows.Forms.MouseEventArgs e, clsMeter m, clsClickBox cb)
+            internal void MouseUp(System.Windows.Forms.MouseEventArgs e, clsMeter m, clsClickBox cb)
             {
                 if (cb.GotoGroup > 0)
                 {
@@ -3551,19 +4244,25 @@ namespace Thetis
                 get { return _mox; }
                 set { _mox = value; }
             }
-            public float XRatio { get { return _XRatio; } }
-            public float YRatio { get { return _YRatio; } }
-            public string Name { get { return _Name; } }
-            public int TypeBitField { get { return _TypeBitfield; } }
-            public string ID { get { return _sGuid; } }
-            public int RX { get { return _rx; } }
+            public float PadX { get { return _fPadX; } set { _fPadX = value; } }
+            public float PadY { get { return _fPadY; } set { _fPadY = value; } }
+            public float Height { get { return _fHeight; } set { _fHeight = value; } }
 
-            public int QuickestUpdateInterval
+            public float XRatio { get { return _XRatio; } set { _XRatio = value; } }
+            public float YRatio { get { return _YRatio; } set { _YRatio = value; } }
+            public string Name { get { return _name; } set { _name = value; } }            
+            public string ID
+            { 
+                get { return _sId; } 
+                set { _sId = value; }
+            }
+            public int RX { get { return _rx; } set { _rx = value; } }
+            public int QuickestUpdateInterval(bool mox)
             {
-                get
+                lock (_objMeterItemLock)
                 {
                     int updateInterval = int.MaxValue;
-                    foreach (var kvp in _meterItems)
+                    foreach (var kvp in _meterItems.Where(o => ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX)))
                     {
                         clsMeterItem mi = kvp.Value;
                         if (mi.UpdateInterval < updateInterval) updateInterval = mi.UpdateInterval;
@@ -3573,29 +4272,31 @@ namespace Thetis
             }
             public void Update(ref List<Reading> readingsUsed)
             {
-                // this is called for each meter from the meter manager thread
-                foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                lock (_objMeterItemLock)
                 {
-                    // now we need to update each item in the meter
-                    clsMeterItem mi = kvp.Value;
-                    if(mi.RequiresUpdate) mi.Update(_rx, ref readingsUsed);
+                    // this is called for each meter from the meter manager thread
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                    {
+                        // now we need to update each item in the meter
+                        clsMeterItem mi = kvp.Value;
+                        if (mi.RequiresUpdate) mi.Update(_rx, ref readingsUsed);
+                    }
                 }
             }
             public int DelayForUpdate()
             {
-                // this is called for each meter from the meter manager thread
-                int nDelay = 5000;
-                foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                lock (_objMeterItemLock)
                 {
-                    clsMeterItem mi = kvp.Value;
-                    int nTmp = mi.DelayUntilNextUpdate;
-                    if (nTmp < nDelay) nDelay = nTmp;
+                    // this is called for each meter from the meter manager thread
+                    int nDelay = 5000;
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                    {
+                        clsMeterItem mi = kvp.Value;
+                        int nTmp = mi.DelayUntilNextUpdate;
+                        if (nTmp < nDelay) nDelay = nTmp;
+                    }
+                    return nDelay;
                 }
-                return nDelay;  
-            }
-            public Dictionary<string, clsMeterItem> MeterItems
-            {
-                get { return _meterItems; }
             }
             public Dictionary<string, clsMeterItem> SortedMeterItemsForZOrder
             {
@@ -3604,12 +4305,12 @@ namespace Thetis
             public void IncrementDisplayGroup()
             {
                 _displayGroup++;
-                if (_displayGroup > _displayGroups.Count) _displayGroup = 1;
+                if (_displayGroup > _displayGroups.Count - 1) _displayGroup = 0;
             }
             public void DecrementDisplayGroup()
             {
                 _displayGroup--;
-                if (_displayGroup < 1) _displayGroup = _displayGroups.Count;
+                if (_displayGroup < 0) _displayGroup = _displayGroups.Count - 1;
             }
             public int DisplayGroups
             {
@@ -3621,8 +4322,8 @@ namespace Thetis
                 set
                 {
                     _displayGroup = value;
-                    if (_displayGroup < 1) _displayGroup = 1;
-                    if (_displayGroup > _displayGroups.Count) _displayGroup = _displayGroups.Count;
+                    if (_displayGroup < 0) _displayGroup = 0;
+                    if (_displayGroup > _displayGroups.Count - 1) _displayGroup = _displayGroups.Count - 1;
                 }
             }
             public void AddDisplayGroup(string sName)
@@ -3632,15 +4333,39 @@ namespace Thetis
                 _displayGroups.Add(sName);
                 _displayGroup = 0; // 0 is all
             }
+            public void RemoveDisplayGroup(string sName)
+            {
+                if (!_displayGroups.Contains(sName)) return;
+
+                _displayGroups.Remove(sName);
+                _displayGroup = 0; // 0 is all
+            }
             public string DisplayGroupText
             {
                 get
                 {
-                    if (_displayGroup == 0) return "ALL";
+                    if (_displayGroup < 0) return "";
+                    if (_displayGroup > _displayGroups.Count - 1) return "";
 
-                    return _displayGroups[_displayGroup-1];
+                    return _displayGroups[_displayGroup];
                 }
-            }           
+            }
+            public override string ToString()
+            {
+                string sRet;
+
+                sRet = _sId + "|" +
+                    _name + "|" +
+                    _rx.ToString() + "|" +
+                    _XRatio.ToString("f4") + "|" +
+                    _YRatio.ToString("f4") + "|" +
+                    _displayGroup.ToString() + "|" +
+                    _fPadX.ToString("f4") + "|" +
+                    _fPadY.ToString("f4") + "|" +
+                    _fHeight.ToString("f4");
+
+                return sRet;
+            }
         }
         #endregion
         #region clsReading
@@ -3724,26 +4449,30 @@ namespace Thetis
             private Console _console;
 
             //
-            private int _updateInterval = 100;
+            //private int _updateInterval = 100;
             private int _nFps = 0;
             private int _nFrameCount = 0;
             private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
             private double _fLastTime;
             private double _dElapsedFrameStart;
             private string _sId;
+            private clsMeter _meter;
+            private bool _highlightEdge;
 
-            public DXRenderer(string sId, int rx, PictureBox target, Console c, string sImagePath, int nUpdateInterval)
+            public DXRenderer(string sId, int rx, PictureBox target, Console c, string sImagePath, clsMeter meter)
             {
                 _sId = sId;
                 _rx = rx;
                 _console = c;
+                _meter = meter;
+                _highlightEdge = false;
 
                 //dx
-                _updateInterval = nUpdateInterval;
+                _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
+                _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
+                _stringMeasure = new Dictionary<string, SizeF>();
+
                 _displayRunning = false;
-                _DXBrushes = null;
-                _textFormats = null;
-                _stringMeasure = null;
                 _bAntiAlias = true;
                 _bDXSetup = false;
                 _dxDisplayThreadRunning = false;
@@ -3751,8 +4480,8 @@ namespace Thetis
                 _pixelShift = new Vector2(0.5f, 0.5f);
                 _nVBlanks = 0;
                 _displayTarget = target;
+                _displayTarget.Tag = sId; // use the tag to hold sId, we can then use this in mouse event OnMouseUp
                 _backColour = convertColour(System.Drawing.Color.Black);
-                //_nBufferCount = 1;
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
 
                 _fLastTime = _objFrameStartTimer.ElapsedMsec;
@@ -3780,6 +4509,16 @@ namespace Thetis
             {
                 get { return _sId; }
             }
+            public bool HighlightEdge
+            {
+                get { return _highlightEdge; }
+                set { _highlightEdge = value; }
+            }
+            //public int UpdateInterval
+            //{
+            //    get { return _updateInterval; }
+            //    set { _updateInterval = value; }
+            //}
 
             //DIRECTX
             private void loadImages(string sImagePath)
@@ -3790,21 +4529,22 @@ namespace Thetis
                 {
                     string[] sFiles = System.IO.Directory.GetFiles(sImagePath);
                     foreach (string sFile in sFiles)
-                    {
-                        string sID = System.IO.Path.GetFileNameWithoutExtension(sFile);
-                        loadImage(sFile, sID);
+                    {                        
+                        loadImage(sFile);
                     }
                 }
             }
-            private void loadImage(string sPath, string sID)
+            private void loadImage(string sFilePath)
             {
-                if (!_images.ContainsKey(sID) && System.IO.File.Exists(sPath))
+                string sID = System.IO.Path.GetFileNameWithoutExtension(sFilePath);
+
+                if (!_images.ContainsKey(sID) && System.IO.File.Exists(sFilePath)) // check contains incase of filename dupe somehow
                 {
                     try
                     {
                         if (!MeterManager.ContainsBitmap(sID))
                         {
-                            System.Drawing.Image image = System.Drawing.Image.FromFile(sPath);
+                            System.Drawing.Image image = System.Drawing.Image.FromFile(sFilePath);
                             System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(image);
                             MeterManager.AddImage(sID, bmp2);                                                            
                         }
@@ -3994,7 +4734,7 @@ namespace Thetis
 
                     setupAliasing();
 
-                    buildDXResources();
+                    //buildDXResources();
                     buildDXFonts();
                 }
                 catch (Exception e)
@@ -4099,6 +4839,8 @@ namespace Thetis
                     _dxDisplayThreadRunning = true;
                     while (_dxDisplayThreadRunning)
                     {
+                        int nSleepTime = 100;
+
                         if (_displayRunning && _displayTarget.Visible)
                         {
                             _dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
@@ -4115,9 +4857,9 @@ namespace Thetis
                                 // background for entire form/area?
                                 _renderTarget.Clear(_backColour);
 
-                                drawMeters();
+                                nSleepTime = drawMeters();
 
-                                if (MeterManager.HighlightContainer == _sId)
+                                if (_highlightEdge)
                                 {
                                     SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
                                     rect.Inflate(-8, -8);
@@ -4153,7 +4895,7 @@ namespace Thetis
                             }
                         }
                         if(_displayTarget.Visible)
-                            Thread.Sleep(_updateInterval);
+                            Thread.Sleep(nSleepTime);
                         else
                             Thread.Sleep(500); // if not visible, sleep for half second
                     }
@@ -4202,12 +4944,12 @@ namespace Thetis
             {
                 get { return _displayTarget.Height; }
             }
-            private void buildDXResources()
-            {
-                if (!_bDXSetup) return;
+            //private void buildDXResources()
+            //{
+            //    if (!_bDXSetup) return;
 
-                releaseDXResources();
-            }
+            //    releaseDXResources();
+            //}
             private void releaseDXResources()
             {
                 if (!_bDXSetup) return;
@@ -4264,7 +5006,7 @@ namespace Thetis
             {
                 if (!_bDXSetup) return null;
 
-                if (_DXBrushes == null) _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
+                //if (_DXBrushes == null) _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
 
                 System.Drawing.Color newC;
                 if (replaceAlpha >= 0 && replaceAlpha <= 255)
@@ -4294,7 +5036,7 @@ namespace Thetis
             {
                 if (!_bDXSetup) return null;
 
-                if (_textFormats == null) _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
+                //if (_textFormats == null) _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
 
                 string sKey = sFontFamily + emSize.ToString("0.0") + style.ToString();
 
@@ -4360,113 +5102,103 @@ namespace Thetis
             }
             private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
             {
-                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                PictureBox pb = sender as PictureBox;
+                if (pb == null) return;
+                string sId = pb.Tag.ToString();
+                if (!_meters.ContainsKey(sId)) return;
+
+                clsMeter m = _meters[sId];
+                if (m.SortedMeterItemsForZOrder == null) return;
+
+                float tw = targetWidth - 1f;// 0.5f;
+                float rw = m.XRatio;
+                float rh = m.YRatio;
+
+                SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                 {
-                    clsMeter m = mkvp.Value;
-
-                    float tw;
-                    //if (targetWidth >= targetHeight)
-                    //    tw = targetHeight - 0.5f;
-                    //else
-                    //    tw = targetWidth - 0.5f;
-
-                    tw = targetWidth - 0.5f;
-                    float rw = m.XRatio;
-                    float rh = m.YRatio;
-
-                    SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
-
-                    foreach (KeyValuePair<string, clsMeterItem> mikvp in mkvp.Value.SortedMeterItemsForZOrder)//.MeterItems.OrderBy(mikvp => mikvp.Value.ZOrder))
+                    clsMeterItem mi = mikvp.Value;
+                    if(mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
                     {
-                        clsMeterItem mi = mikvp.Value;
-                        if(mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
+                        clsClickBox cb = (clsClickBox)mi;
+
+                        float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
+                        float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                        float w = rect.Width * (mi.Size.Width / m.XRatio);
+                        float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                        SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
+
+                        if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
                         {
-                            clsClickBox cb = (clsClickBox)mi;
-
-                            float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                            float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
-                            float w = rect.Width * (mi.Size.Width / m.XRatio);
-                            float h = rect.Height * (mi.Size.Height / m.YRatio);
-
-                            SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
-
-                            if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
-                            {
-                                m.MouseUp(e, m, cb);
-                            }
+                            m.MouseUp(e, m, cb);
                         }
                     }
                 }
             }
             //
-            private void drawMeters()
+            private int drawMeters()
             {
-                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                int nRedrawDelay = 500;
+                clsMeter m = _meter;
+
+                if (m.RX == _rx && m.SortedMeterItemsForZOrder != null)
                 {
-                    clsMeter m = mkvp.Value;
+                    int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
+                    if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
 
-                    float tw;
-                    //if (targetWidth >= targetHeight)
-                    //    tw = targetHeight - 0.5f;
-                    //else
-                    //    tw = targetWidth - 0.5f;
-
-                    tw = targetWidth - 1f;
-                    float rw = m.XRatio;
-                    float rh = m.YRatio;
-
-                    SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
-
-                    if (m.RX == _rx)
+                    foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                     {
-                        // this rx
-                        if (
-                            ((m.TypeBitField & (int)MeterType.RX) == (int)MeterType.RX && !m.MOX) ||
-                            ((m.TypeBitField & (int)MeterType.MOX) == (int)MeterType.MOX && m.MOX)
-                            )
-                        {
-                            // display when rx only
-                            _renderTarget.DrawRectangle(rect, getDXBrushForColour(System.Drawing.Color.LimeGreen), 2f);                            
+                        clsMeterItem mi = mikvp.Value;
 
-                            //test
-                            foreach (KeyValuePair<string, clsMeterItem> mikvp in mkvp.Value.SortedMeterItemsForZOrder)//in mkvp.Value.MeterItems.OrderBy(mikvp => mikvp.Value.ZOrder))
+                        bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
+
+                        if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
+                        {
+                            float tw = targetWidth - 1f;
+                            float rw = m.XRatio;
+                            float rh = m.YRatio;
+
+                            SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                            switch (mi.ItemType)
                             {
-                                clsMeterItem mi = mikvp.Value;
-                                if ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup))
-                                {
-                                    switch (mi.ItemType)
-                                    {
-                                        case clsMeterItem.MeterItemType.V_BAR:
-                                            renderVBar(rect, mi, m);
-                                            break;
-                                        case clsMeterItem.MeterItemType.H_BAR:
-                                            renderHBar(rect, mi, m);
-                                            break;
-                                        case clsMeterItem.MeterItemType.SOLID_COLOUR:
-                                            renderSolidColour(rect, mi, m);
-                                            break;
-                                        case clsMeterItem.MeterItemType.NEEDLE:
-                                            renderNeedle(rect, mi, m);
-                                            break;
-                                        case clsMeterItem.MeterItemType.IMAGE:
-                                            renderImage(rect, mi, m);
-                                            break;
-                                        case clsMeterItem.MeterItemType.TEXT:
-                                            renderText(rect, mi, m);                                            
-                                            break;
-                                        case clsMeterItem.MeterItemType.H_SCALE:
-                                        case clsMeterItem.MeterItemType.V_SCALE:
-                                            renderScale(rect, mi, m);
-                                            break;
-                                        case clsMeterItem.MeterItemType.MAGIC_EYE:
-                                            renderEye(rect, mi, m);
-                                            break;
-                                    }
-                                }
+                                //case clsMeterItem.MeterItemType.V_BAR:
+                                //    renderVBar(rect, mi, m);
+                                //    break;
+                                case clsMeterItem.MeterItemType.H_BAR:
+                                    renderHBar(rect, mi, m);
+                                    break;
+                                case clsMeterItem.MeterItemType.SOLID_COLOUR:
+                                    renderSolidColour(rect, mi, m);
+                                    break;
+                                case clsMeterItem.MeterItemType.NEEDLE:
+                                    renderNeedle(rect, mi, m);
+                                    break;
+                                case clsMeterItem.MeterItemType.IMAGE:
+                                    renderImage(rect, mi, m);
+                                    break;
+                                case clsMeterItem.MeterItemType.TEXT:
+                                    renderText(rect, mi, m);                                            
+                                    break;
+                                case clsMeterItem.MeterItemType.H_SCALE:
+                                case clsMeterItem.MeterItemType.V_SCALE:
+                                    renderScale(rect, mi, m);
+                                    break;
+                                case clsMeterItem.MeterItemType.MAGIC_EYE:
+                                    renderEye(rect, mi, m);
+                                    break;
+                                //case clsMeterItem.MeterItemType.ITEM_GROUP:
+                                //    renderGroup(rect, mi, m);
+                                //    break;
                             }
                         }
                     }
+
                 }
+
+                return nRedrawDelay;
             }
 
             //private float limit(float value, float min, float max)
@@ -4479,7 +5211,7 @@ namespace Thetis
             {
                 if (!_bDXSetup) return SizeF.Empty;
 
-                if (_stringMeasure == null) _stringMeasure = new Dictionary<string, SizeF>();
+                //if (_stringMeasure == null) _stringMeasure = new Dictionary<string, SizeF>();
 
                 emSize = (float)Math.Round(emSize, 1);
 
@@ -4531,14 +5263,13 @@ namespace Thetis
 
                 if (scale.ItemType == clsMeterItem.MeterItemType.H_SCALE)
                 {
-                    //float fontSize = 32f;
                     float fontSizeEmScaled = (scale.FontSize / 16f) * (rect.Width / 52f);
 
-                    SizeF szTextSize;// = measureString("0", scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
+                    SizeF szTextSize;
 
                     if (scale.ShowType)
                     {                        
-                        string sText = scale.TypeName;
+                        string sText = MeterManager.ReadingName(scale.ReadingSource);
                         szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                         SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width / 2f), y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                         _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourType));
@@ -4553,369 +5284,29 @@ namespace Thetis
                         case Reading.AGC_GAIN:
                             {
                                 generalScale(x, y, w, h, scale, 7, 1, -50, 125, 25, 25, fLineBaseY, fontSizeEmScaled);
-                                //float spacing = w / 7.0f;//(w * 0.6666f) / 5.0f;
-
-                                //if (scale.ShowMarkers)
-                                //{
-                                //    // horiz line
-                                //    startPoint.X = x;
-                                //    startPoint.Y = fLineBaseY;
-                                //    endPoint.X = x + (spacing * 6);//(w * 0.6666f);
-                                //    endPoint.Y = startPoint.Y;
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    startPoint.X = endPoint.X;
-                                //    endPoint.X = x + (w * 0.99f);
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-                                //}
-
-                                //// markers low                                
-                                //for (int i = 1; i < 7; i++)
-                                //{
-                                //    if (scale.ShowMarkers)
-                                //    {
-                                //        // short ticks
-                                //        startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //        endPoint.X = startPoint.X;
-                                //        endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-                                //    }
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = (-50 + i * 25).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 2f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourLow));
-                                //}
-
-                                //// markers high
-                                //float lowSpacing = spacing;
-                                //spacing = (/*(w * 0.3333f)*/(w - (lowSpacing * 6)) - (w * 0.01f)) / 1.0f; // - w*0.01f as we only draw the line up to w*0.99f
-                                //for (int i = 1; i < 2; i++)
-                                //{
-
-                                //    //short ticks
-                                //    if (scale.ShowMarkers)
-                                //    {
-                                //        startPoint.X = x + /*(w * 0.6666f)*/(lowSpacing * 6) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //        endPoint.X = startPoint.X;
-                                //        endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-                                //    }
-
-                                //    // long ticks
-                                //    startPoint.X = x + (/*w * 0.6666f*/(lowSpacing * 6)) + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // text
-                                //    string sText = /*"+" +*/ (100 + i * 25).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourHigh));
-                                //}
                             }
                             break;
                         case Reading.AGC_AV:
                         case Reading.AGC_PK:
                             {
                                 generalScale(x, y, w, h, scale, 6, 5, -125, 125, 25, 25, fLineBaseY, fontSizeEmScaled);
-                                //float spacing = (w * 0.5f) / 5.0f;
-
-                                //if (scale.ShowMarkers)
-                                //{
-                                //    // horiz line
-                                //    startPoint.X = x;
-                                //    startPoint.Y = fLineBaseY;
-                                //    endPoint.X = x + (w * 0.5f);
-                                //    endPoint.Y = startPoint.Y;
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    startPoint.X = endPoint.X;
-                                //    endPoint.X = x + (w * 0.99f);
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-                                //}
-
-                                //// markers low                                
-                                //for (int i = 1; i < 6; i++)
-                                //{
-                                //    if (scale.ShowMarkers)
-                                //    {
-                                //        // short ticks
-                                //        startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //        endPoint.X = startPoint.X;
-                                //        endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-                                //    }
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = (-125 + i * 25).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 2f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourLow));
-                                //}
-
-                                //// markers high
-                                //spacing = ((w * 0.5f) - (w * 0.01f)) / 5.0f; // - w*0.01f as we only draw the line up to w*0.99f
-                                //for (int i = 1; i < 6; i++)
-                                //{
-
-                                //    //short ticks
-                                //    if (scale.ShowMarkers)
-                                //    {
-                                //        startPoint.X = x + (w * 0.5f) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //        endPoint.X = startPoint.X;
-                                //        endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-                                //    }
-
-                                //    // long ticks
-                                //    startPoint.X = x + (w * 0.5f) + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // text
-                                //    string sText = (i * 25).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourHigh));
-                                //}
                             }
                             break;
                         case Reading.SIGNAL_STRENGTH:
                         case Reading.AVG_SIGNAL_STRENGTH:
                             {
                                 generalScale(x,y,w,h, scale, 6, 3, -1, 60, 2, 20, fLineBaseY, fontSizeEmScaled, 0.5f, true, true);
-                                //float spacing = (w * 0.5f) / 5.0f;
-
-                                //if (scale.ShowMarkers)
-                                //{
-                                //    // horiz line
-                                //    startPoint.X = x;
-                                //    startPoint.Y = fLineBaseY;
-                                //    endPoint.X = x + (w * 0.5f);
-                                //    endPoint.Y = startPoint.Y;
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    startPoint.X = endPoint.X;
-                                //    endPoint.X = x + (w * 0.99f);
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-                                //}
-
-                                //// markers low                                
-                                //for (int i = 1; i < 6; i++)
-                                //{
-                                //    if (scale.ShowMarkers)
-                                //    {
-                                //        // short ticks
-                                //        startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //        endPoint.X = startPoint.X;
-                                //        endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-                                //    }
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = (-1 + i * 2).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 2f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourLow));
-                                //}
-
-                                //// markers high
-                                //spacing = ((w * 0.5f) - (w * 0.01f)) / 3.0f; // - w*0.01f as we only draw the line up to w*0.99f
-                                //for (int i = 1; i < 4; i++)
-                                //{
-
-                                //    //short ticks
-                                //    if (scale.ShowMarkers)
-                                //    {
-                                //        startPoint.X = x + (w * 0.5f) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //        endPoint.X = startPoint.X;
-                                //        endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-                                //    }
-
-                                //    // long ticks
-                                //    startPoint.X = x + (w * 0.5f) + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // text
-                                //    string sText = "+" + (i * 20).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.FontColourHigh));
-                                //}
                             }
                             break;
                         case Reading.ADC_PK:
                         case Reading.ADC_AV:
-                        case Reading.ADC2_PEAK:
-                        case Reading.ADC2_AV:
                             {
                                 generalScale(x, y, w, h, scale, 6, 1, -120, 0, 20, 20, fLineBaseY, fontSizeEmScaled);
-                                //float spacing = (w * 0.8333f) / 5f;
-
-                                //// horiz line
-                                //startPoint.X = x;
-                                //startPoint.Y = fLineBaseY;
-                                //endPoint.X = x + (w * 0.8333f);
-                                //endPoint.Y = startPoint.Y;
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //startPoint.X = endPoint.X;
-                                //endPoint.X = x + (w * 0.99f);
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                ////low markers
-                                //for (int i = 1; i < 6; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = (-120 + i * 20).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.LowColour));
-                                //}
-
-                                ////high markers
-                                //spacing = ((w * 0.99f) - (w * 0.8333f)) / 1.0f;
-
-                                //for (int i = 1; i < 2; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (w * 0.8333f) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (w * 0.8333f) + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // text
-                                //    string sText = (-20 + i * 20).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.HighColour));
-                                //}
                             }
                             break;
                         case Reading.ESTIMATED_PBSNR:
                             {
                                 generalScale(x, y, w, h, scale, 6, 1, 0, 60, 10, 10, fLineBaseY, fontSizeEmScaled);
-                                //float spacing = (w * 0.8333f) / 5f;
-
-                                //// horiz line
-                                //startPoint.X = x;
-                                //startPoint.Y = fLineBaseY;
-                                //endPoint.X = x + (w * 0.8333f);
-                                //endPoint.Y = startPoint.Y;
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //startPoint.X = endPoint.X;
-                                //endPoint.X = x + (w * 0.99f);
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                ////low markers
-                                //for (int i = 1; i < 6; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = (i * 10).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.LowColour));
-                                //}
-
-                                ////high markers
-                                //spacing = ((w * 0.99f) - (w * 0.8333f)) / 1.0f;
-
-                                //for (int i = 1; i < 2; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (w * 0.8333f) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (w * 0.8333f) + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // text
-                                //    string sText = (50 + i * 10).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.HighColour));
-                                //}
                             }
                             break;
                         // -30 to 12
@@ -4932,136 +5323,11 @@ namespace Thetis
                         case Reading.ALC_PK:
                             {
                                 generalScale(x, y, w, h, scale, 4, 3, -30, 12, 10, 4, fLineBaseY, fontSizeEmScaled, 0.665f);
-                                //float spacing = (w * 0.665f) / 3f;
-
-                                //// horiz line
-                                //startPoint.X = x;
-                                //startPoint.Y = fLineBaseY;
-                                //endPoint.X = x + (w * 0.665f);
-                                //endPoint.Y = startPoint.Y;
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //startPoint.X = endPoint.X;
-                                //endPoint.X = x + (w * 0.99f);
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                ////low markers
-                                //for (int i = 1; i < 4; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = (-30 + i * 10).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.LowColour));
-                                //}
-
-                                ////high markers
-                                //spacing = ((w * 0.99f) - (w * 0.665f)) / 3.0f;
-
-                                //for (int i = 1; i < 4; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (w * 0.665f) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (w * 0.665f) + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // text
-                                //    string sText = (i * 4).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.HighColour));
-                                //}
                             }
                             break;
                         case Reading.ALC_GROUP:
                             {
                                 generalScale(x, y, w, h, scale, 4, 5, -30, 25, 10, 5, fLineBaseY, fontSizeEmScaled, 0.5f, true);
-                                //float spacing = (w * 0.5f) / 3.0f;
-
-                                //// horiz line
-                                //startPoint.X = x;
-                                //startPoint.Y = fLineBaseY;
-                                //endPoint.X = x + (w * 0.5f);
-                                //endPoint.Y = startPoint.Y;
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //startPoint.X = endPoint.X;
-                                //endPoint.X = x + (w * 0.99f);
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                ////low markers
-                                //for (int i = 1; i < 4; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = (-30 + i * 10).ToString();
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.LowColour));
-                                //}
-
-                                ////high markers
-                                //spacing = ((w * 0.99f) - (w * 0.5f)) / 5.0f;
-                                //string[] gain_list = { "5", "10", "15", "20", "25+" };
-
-                                //for (int i = 1; i < 6; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (w * 0.5f) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (w * 0.5f) + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //    // text
-                                //    string sText = gain_list[i - 1];
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width / 1f), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.HighColour));
-                                //}
                             }
                             break;
                         case Reading.PWR:
@@ -5260,68 +5526,7 @@ namespace Thetis
                         case Reading.LVL_G:
                         case Reading.CFC_G:
                             {
-                                generalScale(x, y, w, h, scale, 5, 1, 0, 25, 5, 5, fLineBaseY, fontSizeEmScaled, -1, true);
-                                //float spacing = (w * 0.75f) / 4.0f;
-
-                                //// horiz line
-                                //startPoint.X = x;
-                                //startPoint.Y = fLineBaseY;
-                                //endPoint.X = x + (w * 0.75f);
-                                //endPoint.Y = startPoint.Y;
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //startPoint.X = endPoint.X;
-                                //endPoint.X = x + (w * 0.99f);
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //string[] gain_list = { "5", "10", "15", "20", "25+" };
-
-                                ////low markers
-                                //for (int i = 1; i < 5; i++)
-                                //{
-                                //    // short ticks
-                                //    startPoint.X = x + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // long ticks
-                                //    startPoint.X = x + (i * spacing);
-                                //    endPoint.X = startPoint.X;
-                                //    endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour), 2f);
-
-                                //    // text
-                                //    string sText = gain_list[i - 1];
-                                //    adjustedFontSize = measureString(sText, scale.FontFamily, scale.Style, newSize);
-                                //    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect, getDXBrushForColour(scale.LowColour));
-                                //}
-
-                                ////high markers
-                                //spacing = ((w * 0.99f) - (w * 0.75f));
-
-                                //// short ticks
-                                //startPoint.X = x + (w * 0.75f) + (1 * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
-                                //endPoint.X = startPoint.X;
-                                //endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //// long ticks
-                                //startPoint.X = x + (w * 0.75f) + (1 * spacing);
-                                //endPoint.X = startPoint.X;
-                                //endPoint.Y = fLineBaseY - (h * 0.3f);
-
-                                //_renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour), 2f);
-
-                                //// text
-                                //string sText2 = gain_list[4];
-                                //adjustedFontSize = measureString(sText2, scale.FontFamily, scale.Style, newSize);
-                                //SharpDX.RectangleF txtrect2 = new SharpDX.RectangleF(startPoint.X - (adjustedFontSize.Width), endPoint.Y - adjustedFontSize.Height - (h * 0.1f), adjustedFontSize.Width, adjustedFontSize.Height);
-                                //_renderTarget.DrawText(sText2, getDXTextFormatForFont(scale.FontFamily, newSize, scale.Style), txtrect2, getDXBrushForColour(scale.HighColour));
+                                generalScale(x, y, w, h, scale, 5, 1, 0, 25, 5, 5, fLineBaseY, fontSizeEmScaled, -1, true);                                
                             }
                             break;
                         default:
@@ -5337,7 +5542,7 @@ namespace Thetis
 
                     if (scale.ShowType)
                     {
-                        string sText = scale.TypeName;
+                        string sText = MeterManager.ReadingName(scale.ReadingSource);
                         adjustedFontSize = measureString(sText, scale.FontFamily, scale.FntStyle, newSize);
                         SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - (adjustedFontSize.Height * 1.1f), adjustedFontSize.Width, adjustedFontSize.Height);
                         _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourType));
@@ -5516,6 +5721,22 @@ namespace Thetis
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(i == highLongTicks ? x + w - szTextSize.Width : startPoint.X - szTextSize.Width / 2f, endPoint.Y - szTextSize.Height, szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourHigh));
                 }
+            }
+            private void renderGroup(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsItemGroup ig = (clsItemGroup)mi;
+
+                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                float newSize = 16f;
+
+                string sText = ig.Order.ToString();
+                SizeF szTextSize = measureString(sText, "Trebuchet MS", FontStyle.Regular, newSize);
+                SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y, szTextSize.Width, szTextSize.Height);
+                _renderTarget.DrawText(sText, getDXTextFormatForFont("Trebuchet MS", newSize, FontStyle.Regular), txtrect, getDXBrushForColour(System.Drawing.Color.White));
             }
             private void renderEye(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -5759,14 +5980,14 @@ namespace Thetis
                 {
                     float fontSizeEmScaled = (cbi.FontSize / 16f) * (rect.Width / 52f);
 
-                    string sText = cbi.Value.ToString("0.0") + cbi.TypeUnits;
+                    string sText = cbi.Value.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.MarkerColour));
 
                     if (cbi.PeakHold || cbi.ShowHistory)
                     {
-                        sText = cbi.MaxHistory.ToString("0.0") + cbi.TypeUnits;
+                        sText = cbi.MaxHistory.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
                         szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                         txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                         _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, getDXBrushForColour(cbi.PeakHoldMarkerColour));
@@ -5900,7 +6121,7 @@ namespace Thetis
 
                 if (cbi.ShowValue)
                 {
-                    string sText = cbi.Value.ToString("0.0") + cbi.TypeUnits;
+                    string sText = cbi.Value.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
 
                     float fontSize = 38f;//cbi.FontSize; //38f;
                     SizeF adjustedFontSize = measureString("0", cbi.FontFamily, cbi.FntStyle, fontSize);

@@ -38,7 +38,7 @@
             this.ClientSize = new System.Drawing.Size(200, 200);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(200, 200);
+            this.MinimumSize = new System.Drawing.Size(100, 100);
             this.Name = "frmMeterDisplay";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

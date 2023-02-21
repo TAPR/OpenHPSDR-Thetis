@@ -574,7 +574,7 @@ namespace Thetis
                     if (bOk) ID = tmp[0];
                     if (bOk) int.TryParse(tmp[1], out rx);
                     if (bOk) RX = rx;
-                    if (bOk) int.TryParse(tmp[2], out x);
+                    if (bOk) bOk = int.TryParse(tmp[2], out x);
                     if (bOk) bOk = int.TryParse(tmp[3], out y);
                     if (bOk) bOk = int.TryParse(tmp[4], out w);
                     if (bOk) bOk = int.TryParse(tmp[5], out h);

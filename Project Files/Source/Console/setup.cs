@@ -48,6 +48,9 @@ namespace Thetis
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
+    using System.Security.Cryptography;
+    using System.Xml;
+
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
@@ -587,6 +590,15 @@ namespace Thetis
         private void OnRX2EnabledChanged(bool enabled)
         {
             btnRX2PBsnr.Enabled = enabled;
+
+            // maintain selection, because updateMeter2Controls clears it
+            string sId = "";
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                sId = cci.ID;
+            }
+            updateMeter2Controls(sId);
         }
         #endregion
 
@@ -25249,24 +25261,12 @@ namespace Thetis
         {
             nudNFshift.Value = (decimal)0f;
         }
-
-        private void btnAddRX1Container_Click(object sender, EventArgs e)
+        private void chkPreventTXonDifferentBandToRX_CheckedChanged(object sender, EventArgs e)
         {
-            if (MeterManager.TotalMeterContainers < 10)
-            {
-                string sId = MeterManager.AddMeterContainer(1, false);
-                updateMeter2Controls(sId);
-            }            
+            console.PreventTXonDifferentBandToRXband = chkPreventTXonDifferentBandToRX.Checked;
         }
 
-        private void btnAddRX2Container_Click(object sender, EventArgs e)
-        {
-            if (MeterManager.TotalMeterContainers < 10)
-            {
-                string sId = MeterManager.AddMeterContainer(2, false);
-                updateMeter2Controls(sId);
-            }           
-        }
+        // multimeter 2
         private class clsContainerComboboxItem
         {
             public string Text { get; set; }
@@ -25277,16 +25277,61 @@ namespace Thetis
                 return Text;
             }
         }
+        private class clsMeterTypeComboboxItem
+        {
+            private MeterType _meterType;
+            private int _order;
+
+            public clsMeterTypeComboboxItem(MeterType mt, int nOrder)
+            {
+                _meterType = mt;
+                _order = nOrder;
+            }
+            public MeterType MeterType
+            {
+                get { return _meterType; }
+                set { _meterType = value; }
+            }
+            public int Order
+            {
+                get { return _order; }
+                set { _order = value; }
+            }
+            public override string ToString()
+            {
+                return MeterManager.MeterName(_meterType);
+            }
+        }
+        private void btnAddRX1Container_Click(object sender, EventArgs e)
+        {
+            if (MeterManager.TotalMeterContainers < 10)
+            {
+                string sId = MeterManager.AddMeterContainer(1, false, mox);
+                updateMeter2Controls(sId);
+            }            
+        }
+
+        private void btnAddRX2Container_Click(object sender, EventArgs e)
+        {
+            if (MeterManager.TotalMeterContainers < 10)
+            {
+                string sId = MeterManager.AddMeterContainer(2, false, mox);
+                updateMeter2Controls(sId);
+            }           
+        }
         private void updateMeter2Controls(string sId = "")
         {
             bool bEnableAdd = MeterManager.TotalMeterContainers < 10;
 
             btnAddRX1Container.Enabled = bEnableAdd;
-            btnAddRX2Container.Enabled = bEnableAdd;
+            btnAddRX2Container.Enabled = bEnableAdd && console.RX2Enabled;
 
+            comboContainerSelect.Text = "";
             comboContainerSelect.Items.Clear();
             int i = 0;
             int nSelect = 0;
+
+            // add the containers to the list
             foreach(KeyValuePair<string, ucMeter> kvp in MeterManager.MeterContainers)
             {
                 clsContainerComboboxItem cci = new clsContainerComboboxItem();
@@ -25295,7 +25340,7 @@ namespace Thetis
 
                 comboContainerSelect.Items.Add(cci);
 
-                if (cci.ID == sId) nSelect = i;
+                if (cci.ID == sId && nSelect == 0) nSelect = i;
 
                 i++;                
             }
@@ -25316,6 +25361,51 @@ namespace Thetis
             btnContainerDelete.Enabled = bEnableControls;
             chkContainerHighlight.Enabled = bEnableControls;
             comboContainerSelect.Enabled = bEnableControls;
+
+            updateMeterLists();
+        }
+        private MeterManager.clsMeter meterFromSelectedContainer()
+        {
+            clsContainerComboboxItem cci = comboContainerSelect.SelectedItem as clsContainerComboboxItem;
+            if (cci == null) return null;
+
+            return MeterManager.MeterFromId(cci.ID);
+        }
+        private void updateMeterLists()
+        {
+            lstMetersAvailable.Items.Clear();
+            lstMetersInUse.Items.Clear();
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            List<clsMeterTypeComboboxItem> inuse = new List<clsMeterTypeComboboxItem>();
+            List<clsMeterTypeComboboxItem> notinuse = new List<clsMeterTypeComboboxItem>();
+
+            for (int n = 1; n < (int)MeterType.LAST; n++)
+            {
+                MeterType mt = (MeterType)n;
+
+                if (m.HasMeterType(mt))
+                {
+                    clsMeterTypeComboboxItem mtci = new clsMeterTypeComboboxItem(mt, m.GetOrderForMeterType(mt));
+                    inuse.Add(mtci);
+                }
+                else
+                {
+                    clsMeterTypeComboboxItem mtci = new clsMeterTypeComboboxItem(mt, -1);
+                    notinuse.Add(mtci);
+                }
+            }
+
+            foreach (clsMeterTypeComboboxItem mtci in notinuse)
+            {
+                lstMetersAvailable.Items.Add(mtci);
+            }
+            foreach (clsMeterTypeComboboxItem mtci in inuse.OrderBy(o => o.Order))
+            {
+                lstMetersInUse.Items.Add(mtci);
+            }
         }
 
         private void btnContainerDelete_Click(object sender, EventArgs e)
@@ -25333,14 +25423,15 @@ namespace Thetis
 
         private void comboContainerSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci == null) return;
+
             if (chkContainerHighlight.Checked)
             {
-                clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
-                if (cci != null)
-                {
-                    MeterManager.HighlightContainer = cci.ID;
-                }
+                MeterManager.HighlightContainer(cci.ID);
             }
+
+            updateMeterLists();
         }
 
         private void chkContainerHighlight_CheckedChanged(object sender, EventArgs e)
@@ -25350,13 +25441,95 @@ namespace Thetis
                 clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
                 if (cci != null)
                 {
-                    MeterManager.HighlightContainer = cci.ID;
+                    MeterManager.HighlightContainer(cci.ID);
                 }
             }
             else
             {
-                MeterManager.HighlightContainer = "";
+                MeterManager.HighlightContainer("");
             }
+        }
+
+        private void btnAddMeterItem_Click(object sender, EventArgs e)
+        {
+            clsMeterTypeComboboxItem mti = lstMetersAvailable.SelectedItem as clsMeterTypeComboboxItem;
+            if (mti == null) return;
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            m.AddMeter(mti.MeterType);
+            m.Rebuild();
+            updateMeterLists();
+        }
+
+        private void lstMetersAvailable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnRemoveMeterItem_Click(object sender, EventArgs e)
+        {
+            clsMeterTypeComboboxItem mti = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mti == null) return;
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            m.RemoveMeterType(mti.MeterType, true);
+
+            updateMeterLists();
+        }
+
+        private void btnMeterUp_Click(object sender, EventArgs e)
+        {
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return;
+
+            int n = lstMetersInUse.SelectedIndex - 1;
+            if (n < 0) return;
+
+            m.SetOrderForMeterType(mtci.MeterType, n, true, true);
+
+            updateMeterLists();
+
+            lstMetersInUse.SelectedIndex = n;
+        }
+
+        private void btnMeterDown_Click(object sender, EventArgs e)
+        {
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return;
+
+            int n = lstMetersInUse.SelectedIndex + 1;
+            if (n > lstMetersInUse.Items.Count - 1) return;
+
+            m.SetOrderForMeterType(mtci.MeterType, n, true, false);
+
+            updateMeterLists();
+
+            lstMetersInUse.SelectedIndex = n;
+        }
+
+        private void lstMetersAvailable_DoubleClick(object sender, EventArgs e)
+        {
+            btnAddMeterItem_Click(sender, e);
+        }
+
+        private void lstMetersInUse_DoubleClick(object sender, EventArgs e)
+        {
+            btnRemoveMeterItem_Click(sender, e);
         }
     }
 

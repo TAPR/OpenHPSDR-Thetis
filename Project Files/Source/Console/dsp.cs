@@ -807,7 +807,7 @@ namespace Thetis
 	        switch (MT)
 	        {
 	        case MeterType.MIC:
-                    val = GetTXAMeter(channel, txaMeterType.TXA_MIC_AV);
+                val = GetTXAMeter(channel, txaMeterType.TXA_MIC_AV);
 		        break;
 	        case MeterType.PWR:
                 val = GetTXAMeter(channel, txaMeterType.TXA_OUT_PK);
