@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 //directX
 using SharpDX;
@@ -14,21 +15,6 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
-
-using System.Collections;
-using System.Xml;
-//using SharpDX.Direct2D1.Effects;
-//using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
-//using System.Security.Cryptography;
-//using static Thetis.MeterManager.clsMeterItem;
-//using System.Xml.Linq;
-//using SharpDX.Direct2D1.Effects;
-//using System.Net;
-//using static System.Windows.Forms.AxHost;
-//using SharpDX.DirectWrite;
-//using static Thetis.WDSP;
-
-//using SharpDX.Direct2D1.Effects;
 
 namespace Thetis
 {
@@ -66,8 +52,6 @@ namespace Thetis
         //additional to MeterRXMode & MeterTXMode
         REVERSE_PWR,
         SWR,
-        //ADC2_PEAK,
-        //ADC2_AV,
         //pa
         DRIVE_FWD_ADC,
         FWD_ADC,
@@ -81,38 +65,42 @@ namespace Thetis
         // volts/amps
         VOLTS,
         AMPS,
-        EYE_PERCENT,
         ESTIMATED_PBSNR,
+        EYE_PERCENT,
         LAST
     }
 
     public enum MeterType
     {
         NONE = 0,
+        //rx
         SIGNAL_STRENGTH,
         AVG_SIGNAL_STRENGTH,
         ADC,
         AGC,
         AGC_GAIN,
+        ESTIMATED_PBSNR,
+        //tx
         MIC,
-        PWR,
-        REVERSE_PWR,
-        ALC,
         EQ,
         LEVELER,
-        COMP,
-        //CPDR,
+        LEVELER_GAIN,
+        ALC,
         ALC_GAIN,
         ALC_GROUP,
-        LEVELER_GAIN,
         CFC,
+        COMP,
+        //--
+        PWR,
+        REVERSE_PWR,
+        SWR,
+        //CPDR, //not used
+        //special
         MAGIC_EYE,
-        ESTIMATED_PBSNR,
         KENWOOD,
         CROSS,
-        SWR,
         LAST
-    }
+    }    
     internal static class MeterManager
     {
         #region MeterManager
@@ -182,10 +170,10 @@ namespace Thetis
                 case MeterType.LEVELER: return "Leveler";
                 case MeterType.COMP: return "Compression";
                 //case MeterType.CPDR: return "TODO Compander";
-                case MeterType.ALC_GAIN: return "ALC Comp";
+                case MeterType.ALC_GAIN: return "ALC Compression";
                 case MeterType.ALC_GROUP: return "ALC Group";
                 case MeterType.LEVELER_GAIN: return "Leveler Gain";
-                case MeterType.CFC: return "CFC";
+                case MeterType.CFC: return "CFC Compression";
                 case MeterType.MAGIC_EYE: return "Magic Eye";
                 case MeterType.ESTIMATED_PBSNR: return "Estimated Passband SNR";
                 case MeterType.KENWOOD: return "Kenwood Meter";
@@ -205,15 +193,15 @@ namespace Thetis
                 case Reading.AGC_GAIN: return "AGC Gain";
                 case Reading.EYE_PERCENT: return "Magic Eye";
                 case Reading.ALC: return "ALC";
-                case Reading.ALC_G: return "ALC Comp";
+                case Reading.ALC_G: return "ALC Compression";
                 case Reading.ALC_GROUP: return "ALC Group";
                 case Reading.ESTIMATED_PBSNR: return "Estimated PBSNR";
                 case Reading.ALC_PK: return "ALC";// Peak";
                 case Reading.AMPS: return "Amps";
                 case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
                 case Reading.CAL_FWD_PWR: return "Calibrated FWD Power";
-                case Reading.CFC_G: return "CFC Comp";
-                case Reading.CFC_PK: return "CFC";// Peak";
+                case Reading.CFC_G: return "CFC Compression";
+                case Reading.CFC_PK: return "CFC Compression";// Peak";
                 case Reading.COMP: return "Compression";
                 case Reading.COMP_PK: return "Compression";// Peak";
                 //case Reading.CPDR: return "TODO Compander";
@@ -564,6 +552,29 @@ namespace Thetis
                 clsMeter m = mkvp.Value;
                 m.MOX = rx == m.RX && newMox;
             }
+
+            if(oldMox && !newMox)
+            {
+                // tx to rx
+                // set tx values to min as now not getting any readings
+                foreach(KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.ZeroOut(true);
+                }
+            }
+            else if(!oldMox && newMox)
+            {
+                // rx to tx
+                // set rx values to min as now not getting any readings
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.ZeroOut(false);
+                }
+            }
         }
         public static int CurrentPowerRating
         {
@@ -663,6 +674,8 @@ namespace Thetis
                     setReading(rx, Reading.AGC_AV, ref readings);
                     setReading(rx, Reading.AGC_GAIN, ref readings);
                     setReading(rx, Reading.EYE_PERCENT, ref readings);
+
+                    setReading(rx, Reading.ESTIMATED_PBSNR, ref readings);
                 }
                 else
                 {
@@ -702,9 +715,7 @@ namespace Thetis
                     }
                 }
                 setReading(rx, Reading.VOLTS, ref readings);
-                setReading(rx, Reading.AMPS, ref readings);
-
-                setReading(rx, Reading.ESTIMATED_PBSNR, ref readings);
+                setReading(rx, Reading.AMPS, ref readings);                
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -938,7 +949,7 @@ namespace Thetis
                         {
                             KeyValuePair<string, string> md = meterData.First();
 
-                            clsMeter tmpMeter = new clsMeter();
+                            clsMeter tmpMeter = new clsMeter(1,""); // dummy init data, will get replaced by tryparse below
                             tmpMeter.TryParse(md.Value);
 
                             // copy to actual meter
@@ -1056,8 +1067,7 @@ namespace Thetis
             private bool _storeSettings;
 
             private PointF _topLeft; // 0-1,0-1
-            //private PointF _bottomRight; // 0-1,0-1
-            private PointF _originalTopLeft;
+            private PointF _displayTopLeft; // 0-1,0-1
             private SizeF _size;  // 0-1,0-1
             private int _zOrder; // lower first
             private int _msUpdateInterval; //ms
@@ -1083,9 +1093,9 @@ namespace Thetis
                 _readingType = Reading.NONE;
                 _topLeft.X = 0;
                 _topLeft.Y = 0;
+                _displayTopLeft.X = _topLeft.X;
+                _displayTopLeft.Y = _topLeft.Y;
                 _zOrder = 0;
-                //_bottomRight.X = 1;
-                //_bottomRight.Y = 1;
                 _msUpdateInterval = 5000; //ms
                 _attackRatio = 0.8f;
                 _decayRatio = 0.2f;
@@ -1099,15 +1109,6 @@ namespace Thetis
                 _bOnlyWhenTx = false;
                 _bOnlyWhenRx = false;                
                 _updateStopwatch = new Stopwatch();
-                _originalTopLeft.X = 0;
-                _originalTopLeft.Y = 0;
-            }
-            public void ZeroOut()
-            {
-                if (_scaleCalibration.Count > 0)
-                    Value = _scaleCalibration.First().Key; // first entry always lowest
-                else
-                    Value = -200f;
             }
             public string ID { 
                 get { return _sId; } 
@@ -1123,37 +1124,23 @@ namespace Thetis
                 get { return _storeSettings; }
                 set { _storeSettings = value; }
             }
-            private bool _topLeftInit = false;
             public PointF TopLeft {
                 get { return _topLeft; }
                 set { 
                     _topLeft = value;
-                    if (!_topLeftInit)
-                    {
-                        _originalTopLeft.X = _topLeft.X;
-                        _originalTopLeft.Y = _topLeft.Y;
-                        _topLeftInit = true;
-                    }
+                    _displayTopLeft = new PointF(_topLeft.X, _topLeft.Y);
                 }
             }
-            public PointF OriginalTopLeft
+            public PointF DisplayTopLeft
             {
-                get { return _originalTopLeft; }
-                set { _originalTopLeft = value; }
+                get { return _displayTopLeft; }
+                set { _displayTopLeft = value; }
             }
-            //public PointF BottomRight {
-            //    get { return _bottomRight; } // readonly
-            //    set { /*_bottomRight = value;*/ }
-            //}
             public SizeF Size
             {
                 get { return _size; }
                 set 
-                { 
-                    _size = value;
-                    //_bottomRight.X = _topLeft.X + _size.Width;
-                    //_bottomRight.Y = _topLeft.Y + _size.Height;
-                }
+                { _size = value; }
             }
             public int DisplayGroup
             {
@@ -2256,9 +2243,8 @@ namespace Thetis
 
             private int _quickestRXUpdate;
             private int _quickestTXUpdate;
-
-            #region meterDefs
             private Object _objMeterItemLock = new Object();
+
             private void addMeterItem(clsMeterItem mi)
             {
                 lock (_objMeterItemLock)
@@ -2271,7 +2257,8 @@ namespace Thetis
                 //restoreIg is passed in when used by restoreSettings, so that the item group can be ordered
                 //correctly and the ID copied over
                 float bBottom = 0;
-                int nDelay = 100;
+                int nDelay = 50;
+
                 switch (meter)
                 {
                     case MeterType.SIGNAL_STRENGTH: AddSMeterBarSignal(nDelay, 0, out bBottom, restoreIg); break;
@@ -2298,6 +2285,8 @@ namespace Thetis
                     case MeterType.SWR: AddSWRBar(nDelay, 0, out bBottom, restoreIg); break;
                 }
             }
+
+            #region meterDefs
             public string AddSMeterBarSignal(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             { 
                 return addSMeterBar(nMSupdate, Reading.SIGNAL_STRENGTH, fTop, out fBottom, restoreIg);
@@ -3878,10 +3867,6 @@ namespace Thetis
                 return cb.ID;
             }
             #endregion
-            public clsMeter()
-            {
-                // to be used when restoring from db, everything initialised via TryParse
-            }
             public clsMeter(int rx, string sName, float XRatio = 1f, float YRatio = 1f, bool mox = false)
             {
                 // constructor
@@ -3902,36 +3887,65 @@ namespace Thetis
                 _meterItems = new Dictionary<string, clsMeterItem>();
                 _sortedMeterItemsForZOrder = null; // only after setupSortedZOrder is called
                 _displayGroups = new List<string>();
-
                 _displayGroup = 0;
-
-                //float fBottom;
-                //AddSMeterBarSignalAvg(50, 0, out fBottom);
-                //AddSMeterBarSignal(50, fBottom, out fBottom);
-                //AddADCBar(50, fBottom, out fBottom);
-                //AddPBSNRBar(50, fBottom, out fBottom);
-                //AddAGCGainBar(50, fBottom, out fBottom);
-                //AddAGCBar(50, fBottom, out fBottom);
-                //AddMagicEye(50, fBottom, out fBottom, 0.2f);
-                //AddKenwood(50, fBottom, out fBottom);
-                //AddCrossNeedle(50, fBottom, out fBottom);
-                //AddMicBar(50, fBottom, out fBottom);
-                //AddEQBar(50, fBottom, out fBottom);
-                //AddLevelerBar(50, fBottom, out fBottom);
-                //AddLevelerGainBar(50, fBottom, out fBottom);
-                //AddALCBar(50, fBottom, out fBottom);
-                //AddALCGainBar(50, fBottom, out fBottom);
-                //AddALCGroupBar(50, fBottom, out fBottom);
-                //AddCFCBar(50, fBottom, out fBottom);
-                //AddCompBar(50, fBottom, out fBottom);
-                //AddPWRBar(50, fBottom, out fBottom);
-                //AddREVPWRBar(50, fBottom, out fBottom);
-                //AddSWRBar(50, fBottom, out fBottom);
-
-                // last thing to do
-                //setupSortedZOrder();
             }
+            public void ZeroOut(bool zeroTxReadings)
+            {
+                lock (_objMeterItemLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
 
+                        if (!zeroTxReadings && (
+                            mi.ReadingSource == Reading.SIGNAL_STRENGTH ||
+                            mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH ||
+                            mi.ReadingSource == Reading.ADC_PK ||
+                            mi.ReadingSource == Reading.ADC_AV ||
+                            mi.ReadingSource == Reading.AGC_PK ||
+                            mi.ReadingSource == Reading.AGC_AV ||
+                            mi.ReadingSource == Reading.AGC_GAIN ||
+                            mi.ReadingSource == Reading.ESTIMATED_PBSNR
+                            ))
+                        {
+                            float lowValue = -200f;
+                            if (mi.ScaleCalibration.Count > 0)
+                                lowValue = mi.ScaleCalibration.First().Key;
+
+                            setReading(RX, mi.ReadingSource, lowValue);
+                        }
+                        else if (zeroTxReadings && (
+                            mi.ReadingSource == Reading.MIC ||
+                            mi.ReadingSource == Reading.MIC_PK ||
+                            mi.ReadingSource == Reading.EQ ||
+                            mi.ReadingSource == Reading.EQ_PK ||
+                            mi.ReadingSource == Reading.LEVELER ||
+                            mi.ReadingSource == Reading.LEVELER_PK ||
+                            mi.ReadingSource == Reading.LVL_G ||
+                            mi.ReadingSource == Reading.CFC_G ||
+                            mi.ReadingSource == Reading.CFC_PK ||
+                            //mi.ReadingSource == Reading.CPDR ||
+                            //mi.ReadingSource == Reading.CPDR_PK ||
+                            mi.ReadingSource == Reading.COMP ||
+                            mi.ReadingSource == Reading.COMP_PK ||
+                            mi.ReadingSource == Reading.ALC ||
+                            mi.ReadingSource == Reading.ALC_PK ||
+                            mi.ReadingSource == Reading.ALC_G ||
+                            mi.ReadingSource == Reading.ALC_GROUP ||
+                            mi.ReadingSource == Reading.PWR ||
+                            mi.ReadingSource == Reading.REVERSE_PWR ||
+                            mi.ReadingSource == Reading.SWR
+                            ))
+                        {
+                            float lowValue = -200f;
+                            if (mi.ScaleCalibration.Count > 0)
+                                lowValue = mi.ScaleCalibration.First().Key;
+
+                            setReading(RX, mi.ReadingSource, lowValue);
+                        }                        
+                    }
+                }
+            }
             public bool TryParse(string str)
             {
                 bool bOk = false;
@@ -4209,8 +4223,7 @@ namespace Thetis
                             foreach (KeyValuePair<string, clsMeterItem> kvp2 in itemsInGroup)
                             {
                                 clsMeterItem mi = kvp2.Value;
-
-                                mi.TopLeft = new PointF(mi.OriginalTopLeft.X, mi.OriginalTopLeft.Y + fTop);
+                                mi.DisplayTopLeft = new PointF(mi.TopLeft.X, mi.TopLeft.Y + fTop);
                             }
 
                             fTop += ig.Size.Height;
@@ -4300,7 +4313,12 @@ namespace Thetis
             }
             public Dictionary<string, clsMeterItem> SortedMeterItemsForZOrder
             {
-                get { return _sortedMeterItemsForZOrder; }
+                get {
+                    lock (_objMeterItemLock)
+                    {
+                        return _sortedMeterItemsForZOrder;
+                    }
+                }
             }
             public void IncrementDisplayGroup()
             {
@@ -5123,8 +5141,8 @@ namespace Thetis
                     {
                         clsClickBox cb = (clsClickBox)mi;
 
-                        float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                        float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                        float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                        float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                         float w = rect.Width * (mi.Size.Width / m.XRatio);
                         float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -5250,8 +5268,8 @@ namespace Thetis
             {
                 clsScaleItem scale = (clsScaleItem)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -5726,8 +5744,8 @@ namespace Thetis
             {
                 clsItemGroup ig = (clsItemGroup)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -5742,8 +5760,8 @@ namespace Thetis
             {
                 clsMagicEyeItem magicEye = (clsMagicEyeItem)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -5816,8 +5834,8 @@ namespace Thetis
             {
                 clsText txt = (clsText)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -5858,8 +5876,8 @@ namespace Thetis
             {
                 clsBarItem cbi = (clsBarItem)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -5998,8 +6016,8 @@ namespace Thetis
             {
                 clsBarItem cbi = (clsBarItem)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -6136,8 +6154,8 @@ namespace Thetis
             {
                 clsSolidColour sc = (clsSolidColour)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -6148,8 +6166,8 @@ namespace Thetis
             {
                 clsImage ipg = (clsImage)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
@@ -6210,8 +6228,8 @@ namespace Thetis
             {
                 clsNeedleItem ni = (clsNeedleItem)mi;
 
-                float x = (mi.TopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.TopLeft.Y / m.YRatio) * rect.Height;
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 

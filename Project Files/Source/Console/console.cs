@@ -63,8 +63,7 @@ namespace Thetis
     using System.Xml.Linq;
     using System.Text.RegularExpressions;
     using System.Collections.Concurrent;
-    using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
-
+    
     public partial class Console : Form
     {
         //MULTIMETERS MW0LGE [2.9.0.7]
