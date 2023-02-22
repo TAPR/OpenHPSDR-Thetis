@@ -657,6 +657,10 @@
     <None Include="Resources\down.png" />
     <None Include="Resources\pin_not_on_top.png" />
     <None Include="Resources\pin_on_top.png" />
+    <None Include="Resources\down_black.png" />
+    <None Include="Resources\arrow_left_black.png" />
+    <None Include="Resources\arrow_right_black.png" />
+    <None Include="Resources\arrow_up_black.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />

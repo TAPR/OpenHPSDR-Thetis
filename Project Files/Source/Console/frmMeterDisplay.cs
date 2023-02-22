@@ -34,6 +34,9 @@ namespace Thetis
 
                 Common.RestoreForm(this, "MeterDisplay_" + _id, true);
                 Common.ForceFormOnScreen(this);
+
+                // so each meter title is 'unique'. Useful for streaming software such as OBS
+                this.Text = "Thetis Meter [" + Common.FiveDigitHash(_id).ToString("00000") + "]";
             }
         }
         private void frmMeterDisplay_FormClosing(object sender, FormClosingEventArgs e)

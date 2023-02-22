@@ -38,10 +38,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Net.NetworkInformation;
 using System.Text;
-using System.Net;
 using System.Security.Principal;
+using System.Security.Cryptography;
 
 namespace Thetis
 {
@@ -785,5 +784,26 @@ namespace Thetis
 			{ 
 			}
 		}
+
+		public static int FiveDigitHash(string str)
+		{
+			if(str == "") return 0;
+
+            //MD5 md5Hasher = MD5.Create();
+            //byte[] hashed = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(str),);
+            //return BitConverter.ToInt32(hashed, 0) % 99999;
+
+            uint hash = 0;
+            foreach (byte b in System.Text.Encoding.Unicode.GetBytes(str))
+            {
+                hash += b;
+                hash += (hash << 10);
+                hash ^= (hash >> 6);
+            }
+            hash += (hash << 3);
+            hash ^= (hash >> 11);
+            hash += (hash << 15);
+            return (int)(hash % 99999);
+        }
 	}
 }

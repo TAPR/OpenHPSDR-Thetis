@@ -1151,6 +1151,8 @@ namespace Thetis
             // shadow method to unset m_bShown when .Hide called from anywhere
             m_bShown = false;
 
+            chkContainerHighlight.Checked = false; // no point highlighting when setup closed
+
             base.Hide();
         }
         // shadow property to unset m_bShown when .Visible called from anywhere
@@ -25281,7 +25283,6 @@ namespace Thetis
         {
             private MeterType _meterType;
             private int _order;
-
             public clsMeterTypeComboboxItem(MeterType mt, int nOrder)
             {
                 _meterType = mt;
@@ -25406,6 +25407,9 @@ namespace Thetis
             {
                 lstMetersInUse.Items.Add(mtci);
             }
+
+            lstMetersAvailable_SelectedIndexChanged(this, EventArgs.Empty);
+            lstMetersInUse_SelectedIndexChanged(this, EventArgs.Empty);
         }
 
         private void btnContainerDelete_Click(object sender, EventArgs e)
@@ -25461,16 +25465,20 @@ namespace Thetis
             m.AddMeter(mti.MeterType);
             m.Rebuild();
             updateMeterLists();
+
+            lstMetersAvailable_SelectedIndexChanged(sender, e);
         }
 
         private void lstMetersAvailable_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            btnRemoveMeterItem.Enabled = lstMetersInUse.SelectedIndex >= 0;
+            btnMeterUp.Enabled = btnRemoveMeterItem.Enabled;
+            btnMeterDown.Enabled = btnRemoveMeterItem.Enabled;
         }
 
         private void btnRemoveMeterItem_Click(object sender, EventArgs e)
@@ -25484,6 +25492,8 @@ namespace Thetis
             m.RemoveMeterType(mti.MeterType, true);
 
             updateMeterLists();
+
+            lstMetersInUse_SelectedIndexChanged(sender, e);
         }
 
         private void btnMeterUp_Click(object sender, EventArgs e)
@@ -25530,6 +25540,55 @@ namespace Thetis
         private void lstMetersInUse_DoubleClick(object sender, EventArgs e)
         {
             btnRemoveMeterItem_Click(sender, e);
+        }
+
+        private void lstMetersAvailable_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            lstMetersInUse_DrawItem(sender, e);
+        }
+
+        private void lstMetersInUse_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+
+            Graphics g = e.Graphics;
+
+            if (e.Index >= 0)
+            {
+                clsMeterTypeComboboxItem mtci = (clsMeterTypeComboboxItem)((ListBox)sender).Items[e.Index];
+                if (mtci != null)
+                {
+                    SolidBrush sb;
+
+                    int n = MeterManager.GetMeterTXRXType(mtci.MeterType);
+                    switch (n)
+                    {
+                        case 0:
+                            sb = new SolidBrush(Color.PaleGreen);
+                            break;
+                        case 1:
+                            sb = new SolidBrush(Color.PaleVioletRed);
+                            break;
+                        default:
+                            sb = new SolidBrush(Color.PaleTurquoise);
+                            break;
+                    }
+
+                    Rectangle r = new Rectangle(e.Bounds.X, e.Bounds.Y, 4, e.Bounds.Height);
+
+                    g.FillRectangle(sb, r);
+                    sb.Dispose();
+                }
+                SolidBrush sbt;
+                if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                    sbt = new SolidBrush(Color.White);
+                else
+                    sbt = new SolidBrush(Color.Black);
+                g.DrawString(" " + ((ListBox)sender).Items[e.Index].ToString(), e.Font, sbt, e.Bounds, StringFormat.GenericDefault);
+                sbt.Dispose();
+
+                e.DrawFocusRectangle();
+            }            
         }
     }
 

@@ -7355,7 +7355,6 @@
             // 
             // picWarningRegionExtended
             // 
-            this.picWarningRegionExtended.Image = global::Thetis.Properties.Resources.warning4;
             this.picWarningRegionExtended.Location = new System.Drawing.Point(12, 75);
             this.picWarningRegionExtended.Name = "picWarningRegionExtended";
             this.picWarningRegionExtended.Size = new System.Drawing.Size(20, 20);
@@ -8971,7 +8970,7 @@
             // 
             // btnQSOTimerPlaySelectedWAV
             // 
-            this.btnQSOTimerPlaySelectedWAV.Image = global::Thetis.Properties.Resources.play;
+            this.btnQSOTimerPlaySelectedWAV.Image = null;
             this.btnQSOTimerPlaySelectedWAV.Location = new System.Drawing.Point(124, 137);
             this.btnQSOTimerPlaySelectedWAV.Name = "btnQSOTimerPlaySelectedWAV";
             this.btnQSOTimerPlaySelectedWAV.Selectable = true;
@@ -28158,7 +28157,6 @@
             // 
             // pbVAC1FFAlphaInfo
             // 
-            this.pbVAC1FFAlphaInfo.Image = global::Thetis.Properties.Resources.info;
             this.pbVAC1FFAlphaInfo.Location = new System.Drawing.Point(325, 197);
             this.pbVAC1FFAlphaInfo.Name = "pbVAC1FFAlphaInfo";
             this.pbVAC1FFAlphaInfo.Size = new System.Drawing.Size(20, 20);
@@ -28169,7 +28167,6 @@
             // 
             // pbVAC1FFMaxInfo
             // 
-            this.pbVAC1FFMaxInfo.Image = global::Thetis.Properties.Resources.info;
             this.pbVAC1FFMaxInfo.Location = new System.Drawing.Point(325, 173);
             this.pbVAC1FFMaxInfo.Name = "pbVAC1FFMaxInfo";
             this.pbVAC1FFMaxInfo.Size = new System.Drawing.Size(20, 20);
@@ -28180,7 +28177,6 @@
             // 
             // pbVAC1FFMinInfo
             // 
-            this.pbVAC1FFMinInfo.Image = global::Thetis.Properties.Resources.info;
             this.pbVAC1FFMinInfo.Location = new System.Drawing.Point(325, 147);
             this.pbVAC1FFMinInfo.Name = "pbVAC1FFMinInfo";
             this.pbVAC1FFMinInfo.Size = new System.Drawing.Size(20, 20);
@@ -28191,7 +28187,6 @@
             // 
             // pbVAC1PropFeedbackMaxInfo
             // 
-            this.pbVAC1PropFeedbackMaxInfo.Image = global::Thetis.Properties.Resources.info;
             this.pbVAC1PropFeedbackMaxInfo.Location = new System.Drawing.Point(326, 121);
             this.pbVAC1PropFeedbackMaxInfo.Name = "pbVAC1PropFeedbackMaxInfo";
             this.pbVAC1PropFeedbackMaxInfo.Size = new System.Drawing.Size(20, 20);
@@ -28202,7 +28197,6 @@
             // 
             // pbVAC1PropFeedbackMinInfo
             // 
-            this.pbVAC1PropFeedbackMinInfo.Image = global::Thetis.Properties.Resources.info;
             this.pbVAC1PropFeedbackMinInfo.Location = new System.Drawing.Point(326, 95);
             this.pbVAC1PropFeedbackMinInfo.Name = "pbVAC1PropFeedbackMinInfo";
             this.pbVAC1PropFeedbackMinInfo.Size = new System.Drawing.Size(20, 20);
@@ -28663,7 +28657,6 @@
             // 
             // pbVAC1SlewTimeInfo
             // 
-            this.pbVAC1SlewTimeInfo.Image = global::Thetis.Properties.Resources.info;
             this.pbVAC1SlewTimeInfo.Location = new System.Drawing.Point(325, 69);
             this.pbVAC1SlewTimeInfo.Name = "pbVAC1SlewTimeInfo";
             this.pbVAC1SlewTimeInfo.Size = new System.Drawing.Size(20, 20);
@@ -28674,7 +28667,6 @@
             // 
             // pbVAC1FeedbackGainInfo
             // 
-            this.pbVAC1FeedbackGainInfo.Image = global::Thetis.Properties.Resources.info;
             this.pbVAC1FeedbackGainInfo.Location = new System.Drawing.Point(325, 43);
             this.pbVAC1FeedbackGainInfo.Name = "pbVAC1FeedbackGainInfo";
             this.pbVAC1FeedbackGainInfo.Size = new System.Drawing.Size(20, 20);
@@ -32855,7 +32847,6 @@
             // 
             // pbWarningBufferType
             // 
-            this.pbWarningBufferType.Image = global::Thetis.Properties.Resources.warning4;
             this.pbWarningBufferType.Location = new System.Drawing.Point(260, 334);
             this.pbWarningBufferType.Name = "pbWarningBufferType";
             this.pbWarningBufferType.Size = new System.Drawing.Size(20, 20);
@@ -32864,7 +32855,6 @@
             // 
             // pbWarningFilterSize
             // 
-            this.pbWarningFilterSize.Image = global::Thetis.Properties.Resources.warning4;
             this.pbWarningFilterSize.Location = new System.Drawing.Point(142, 334);
             this.pbWarningFilterSize.Name = "pbWarningFilterSize";
             this.pbWarningFilterSize.Size = new System.Drawing.Size(20, 20);
@@ -32873,7 +32863,6 @@
             // 
             // pbWarningBufferSize
             // 
-            this.pbWarningBufferSize.Image = global::Thetis.Properties.Resources.warning4;
             this.pbWarningBufferSize.Location = new System.Drawing.Point(16, 334);
             this.pbWarningBufferSize.Name = "pbWarningBufferSize";
             this.pbWarningBufferSize.Size = new System.Drawing.Size(20, 20);
@@ -46751,69 +46740,69 @@
             // 
             // btnMeterUp
             // 
-            this.btnMeterUp.Image = null;
-            this.btnMeterUp.Location = new System.Drawing.Point(343, 115);
+            this.btnMeterUp.Image = global::Thetis.Properties.Resources.arrow_up_black;
+            this.btnMeterUp.Location = new System.Drawing.Point(348, 115);
             this.btnMeterUp.Name = "btnMeterUp";
             this.btnMeterUp.Selectable = true;
-            this.btnMeterUp.Size = new System.Drawing.Size(31, 23);
+            this.btnMeterUp.Size = new System.Drawing.Size(32, 32);
             this.btnMeterUp.TabIndex = 95;
-            this.btnMeterUp.Text = "U";
             this.btnMeterUp.UseVisualStyleBackColor = true;
             this.btnMeterUp.Click += new System.EventHandler(this.btnMeterUp_Click);
             // 
             // btnMeterDown
             // 
-            this.btnMeterDown.Image = null;
-            this.btnMeterDown.Location = new System.Drawing.Point(342, 144);
+            this.btnMeterDown.Image = global::Thetis.Properties.Resources.down_black;
+            this.btnMeterDown.Location = new System.Drawing.Point(348, 162);
             this.btnMeterDown.Name = "btnMeterDown";
             this.btnMeterDown.Selectable = true;
-            this.btnMeterDown.Size = new System.Drawing.Size(31, 23);
+            this.btnMeterDown.Size = new System.Drawing.Size(32, 32);
             this.btnMeterDown.TabIndex = 94;
-            this.btnMeterDown.Text = "D";
             this.btnMeterDown.UseVisualStyleBackColor = true;
             this.btnMeterDown.Click += new System.EventHandler(this.btnMeterDown_Click);
             // 
             // btnRemoveMeterItem
             // 
-            this.btnRemoveMeterItem.Image = null;
-            this.btnRemoveMeterItem.Location = new System.Drawing.Point(144, 144);
+            this.btnRemoveMeterItem.Image = global::Thetis.Properties.Resources.arrow_left_black;
+            this.btnRemoveMeterItem.Location = new System.Drawing.Point(164, 162);
             this.btnRemoveMeterItem.Name = "btnRemoveMeterItem";
             this.btnRemoveMeterItem.Selectable = true;
-            this.btnRemoveMeterItem.Size = new System.Drawing.Size(67, 23);
+            this.btnRemoveMeterItem.Size = new System.Drawing.Size(32, 32);
             this.btnRemoveMeterItem.TabIndex = 93;
-            this.btnRemoveMeterItem.Text = "<";
             this.btnRemoveMeterItem.UseVisualStyleBackColor = true;
             this.btnRemoveMeterItem.Click += new System.EventHandler(this.btnRemoveMeterItem_Click);
             // 
             // btnAddMeterItem
             // 
-            this.btnAddMeterItem.Image = null;
-            this.btnAddMeterItem.Location = new System.Drawing.Point(144, 115);
+            this.btnAddMeterItem.Image = global::Thetis.Properties.Resources.arrow_right_black;
+            this.btnAddMeterItem.Location = new System.Drawing.Point(164, 115);
             this.btnAddMeterItem.Name = "btnAddMeterItem";
             this.btnAddMeterItem.Selectable = true;
-            this.btnAddMeterItem.Size = new System.Drawing.Size(67, 23);
+            this.btnAddMeterItem.Size = new System.Drawing.Size(32, 32);
             this.btnAddMeterItem.TabIndex = 92;
-            this.btnAddMeterItem.Text = ">";
             this.btnAddMeterItem.UseVisualStyleBackColor = true;
             this.btnAddMeterItem.Click += new System.EventHandler(this.btnAddMeterItem_Click);
             // 
             // lstMetersInUse
             // 
+            this.lstMetersInUse.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lstMetersInUse.FormattingEnabled = true;
-            this.lstMetersInUse.Location = new System.Drawing.Point(217, 90);
+            this.lstMetersInUse.Location = new System.Drawing.Point(202, 90);
             this.lstMetersInUse.Name = "lstMetersInUse";
-            this.lstMetersInUse.Size = new System.Drawing.Size(120, 134);
+            this.lstMetersInUse.Size = new System.Drawing.Size(140, 134);
             this.lstMetersInUse.TabIndex = 91;
+            this.lstMetersInUse.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersInUse_DrawItem);
             this.lstMetersInUse.SelectedIndexChanged += new System.EventHandler(this.lstMetersInUse_SelectedIndexChanged);
             this.lstMetersInUse.DoubleClick += new System.EventHandler(this.lstMetersInUse_DoubleClick);
             // 
             // lstMetersAvailable
             // 
+            this.lstMetersAvailable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lstMetersAvailable.FormattingEnabled = true;
             this.lstMetersAvailable.Location = new System.Drawing.Point(18, 90);
             this.lstMetersAvailable.Name = "lstMetersAvailable";
-            this.lstMetersAvailable.Size = new System.Drawing.Size(120, 134);
+            this.lstMetersAvailable.Size = new System.Drawing.Size(140, 134);
             this.lstMetersAvailable.TabIndex = 90;
+            this.lstMetersAvailable.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersAvailable_DrawItem);
             this.lstMetersAvailable.SelectedIndexChanged += new System.EventHandler(this.lstMetersAvailable_SelectedIndexChanged);
             this.lstMetersAvailable.DoubleClick += new System.EventHandler(this.lstMetersAvailable_DoubleClick);
             // 
@@ -46821,8 +46810,9 @@
             // 
             this.chkContainerHighlight.AutoSize = true;
             this.chkContainerHighlight.Image = null;
-            this.chkContainerHighlight.Location = new System.Drawing.Point(32, 54);
+            this.chkContainerHighlight.Location = new System.Drawing.Point(144, 57);
             this.chkContainerHighlight.Name = "chkContainerHighlight";
+            this.chkContainerHighlight.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkContainerHighlight.Size = new System.Drawing.Size(67, 17);
             this.chkContainerHighlight.TabIndex = 89;
             this.chkContainerHighlight.Text = "Highlight";
@@ -46832,12 +46822,13 @@
             // btnContainerDelete
             // 
             this.btnContainerDelete.Image = null;
-            this.btnContainerDelete.Location = new System.Drawing.Point(152, 46);
+            this.btnContainerDelete.Location = new System.Drawing.Point(18, 48);
             this.btnContainerDelete.Name = "btnContainerDelete";
             this.btnContainerDelete.Selectable = true;
             this.btnContainerDelete.Size = new System.Drawing.Size(59, 32);
             this.btnContainerDelete.TabIndex = 88;
-            this.btnContainerDelete.Text = "Delete";
+            this.btnContainerDelete.Text = "Remove";
+            this.toolTip1.SetToolTip(this.btnContainerDelete, "Removes the selected container and all meter items contained within");
             this.btnContainerDelete.UseVisualStyleBackColor = true;
             this.btnContainerDelete.Click += new System.EventHandler(this.btnContainerDelete_Click);
             // 
@@ -46845,7 +46836,7 @@
             // 
             this.comboContainerSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboContainerSelect.FormattingEnabled = true;
-            this.comboContainerSelect.Location = new System.Drawing.Point(18, 19);
+            this.comboContainerSelect.Location = new System.Drawing.Point(18, 21);
             this.comboContainerSelect.Name = "comboContainerSelect";
             this.comboContainerSelect.Size = new System.Drawing.Size(193, 21);
             this.comboContainerSelect.TabIndex = 87;
@@ -46854,24 +46845,26 @@
             // btnAddRX2Container
             // 
             this.btnAddRX2Container.Image = null;
-            this.btnAddRX2Container.Location = new System.Drawing.Point(309, 15);
+            this.btnAddRX2Container.Location = new System.Drawing.Point(319, 15);
             this.btnAddRX2Container.Name = "btnAddRX2Container";
             this.btnAddRX2Container.Selectable = true;
-            this.btnAddRX2Container.Size = new System.Drawing.Size(75, 44);
+            this.btnAddRX2Container.Size = new System.Drawing.Size(65, 56);
             this.btnAddRX2Container.TabIndex = 1;
             this.btnAddRX2Container.Text = "Add RX2 Container";
+            this.toolTip1.SetToolTip(this.btnAddRX2Container, "Add a meter item container that uses RX2 readings");
             this.btnAddRX2Container.UseVisualStyleBackColor = true;
             this.btnAddRX2Container.Click += new System.EventHandler(this.btnAddRX2Container_Click);
             // 
             // btnAddRX1Container
             // 
             this.btnAddRX1Container.Image = null;
-            this.btnAddRX1Container.Location = new System.Drawing.Point(228, 16);
+            this.btnAddRX1Container.Location = new System.Drawing.Point(248, 15);
             this.btnAddRX1Container.Name = "btnAddRX1Container";
             this.btnAddRX1Container.Selectable = true;
-            this.btnAddRX1Container.Size = new System.Drawing.Size(75, 44);
+            this.btnAddRX1Container.Size = new System.Drawing.Size(65, 56);
             this.btnAddRX1Container.TabIndex = 0;
             this.btnAddRX1Container.Text = "Add RX1 Container";
+            this.toolTip1.SetToolTip(this.btnAddRX1Container, "Add a meter item container that uses RX1 readings");
             this.btnAddRX1Container.UseVisualStyleBackColor = true;
             this.btnAddRX1Container.Click += new System.EventHandler(this.btnAddRX1Container_Click);
             // 
@@ -53239,6 +53232,7 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.tcSetup);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
