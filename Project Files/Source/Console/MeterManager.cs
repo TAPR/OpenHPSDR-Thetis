@@ -5961,7 +5961,7 @@ namespace Thetis
                         case clsBarItem.BarStyle.Line:
                             {
                                 SharpDX.RectangleF history = new SharpDX.RectangleF(minHistory_x, y, maxHistory_x - minHistory_x, h);
-                                _renderTarget.FillRectangle(history, getDXBrushForColour(cbi.HistoryColour, nFade));
+                                _renderTarget.FillRectangle(history, getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A));
                             }
                             break;
                         case clsBarItem.BarStyle.Segments:
@@ -5974,14 +5974,14 @@ namespace Thetis
                                 for (i = startX; i < maxHistory_x - segmentStep; i += segmentStep)
                                 {
                                     barrect = new SharpDX.RectangleF(i, y, segmentBlockSize, h);
-                                    _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour, nFade));
+                                    _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A));
                                 }
 
                                 // complete the sliver
                                 if (i < maxHistory_x)
                                 {
                                     barrect = new SharpDX.RectangleF(i, y, maxHistory_x - i, h);
-                                    _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour, nFade));
+                                    _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A));
                                 }
                             }
                             break;
