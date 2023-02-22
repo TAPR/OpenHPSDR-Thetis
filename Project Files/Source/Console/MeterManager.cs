@@ -5309,7 +5309,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = m.MOX ? 64 : 255;
+                int nFade = m.MOX ? 255 : 255;
 
                 SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.CornflowerBlue));
@@ -5919,7 +5919,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = m.MOX ? 64 : 255;
+                int nFade = m.MOX ? 255 : 255;
 
                 //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Red));
