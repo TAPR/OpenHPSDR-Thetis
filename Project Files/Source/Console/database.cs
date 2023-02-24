@@ -8812,6 +8812,7 @@ namespace Thetis
             purgeStateTableEntries("meterContData_*");
             purgeStateTableEntries("meterData_*");
             purgeStateTableEntries("meterIGData_*");
+            purgeStateTableEntries("meterIGSettings_*");
         }
         private static void purgeStateTableEntries(string sKey)
         {

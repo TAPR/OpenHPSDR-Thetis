@@ -127,6 +127,150 @@ namespace Thetis
         private static Dictionary<string, DataStream> _pooledStreamData;
         private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;        
 
+        public class clsIGSettings
+        {
+            private int _updateInterval;
+            private float _decay;
+            private float _attack;
+            private int _historyDuration;
+            private bool _shadow;
+            private bool _showHistory;
+            private System.Drawing.Color _historyColor;
+            private bool _peakHold;
+            private System.Drawing.Color _peakHoldMarkerColor;
+            private System.Drawing.Color _lowColor;
+            private System.Drawing.Color _highColor;
+            private System.Drawing.Color _titleColor;
+            private Reading _readingSource;
+            private System.Drawing.Color _colour;
+            private System.Drawing.Color _markerColour;
+            private clsBarItem.BarStyle _barStyle;
+            private string _text;
+            private bool _fadeOnRx;
+            private bool _fadeOnTx;
+            private bool _showType;
+            private System.Drawing.Color _segmentedColour;
+            private bool _peakValue;
+            private System.Drawing.Color _peakValueColour;
+            private float _eyeScale;
+
+            public clsIGSettings() 
+            {
+                _readingSource = Reading.NONE;
+                _barStyle = clsBarItem.BarStyle.None;
+            }
+            private string colourToString(System.Drawing.Color c)
+            {
+                return c.A.ToString() + "." + c.R.ToString() + "." + c.G.ToString() + "." + c.B.ToString();
+            }
+            private System.Drawing.Color colourFromString(string str)
+            {
+                string[] tmp = str.Split('.');
+                if (tmp.Length == 4)
+                {
+                    return System.Drawing.Color.FromArgb(Int32.Parse(tmp[0]), Int32.Parse(tmp[1]), Int32.Parse(tmp[2]), Int32.Parse(tmp[3]) );
+                }
+                return System.Drawing.Color.Transparent;
+            }
+            public override string ToString()
+            {
+                string sRet = _updateInterval.ToString() + "|" +
+                    _decay.ToString("f4") + "|" +
+                    _attack.ToString("f4") + "|" +
+                    _historyDuration.ToString() + "|" +
+                    _shadow.ToString() + "|" +
+                    _showHistory.ToString() + "|" +
+                    colourToString(_historyColor) + "|" +
+                    _peakHold.ToString() + "|" +
+                    colourToString(_peakHoldMarkerColor) + "|" +
+                    colourToString(_lowColor) + "|" +
+                    colourToString(_highColor) + "|" +
+                    colourToString(_titleColor) + "|" +
+                    _readingSource.ToString() + "|" +
+                    colourToString(_colour) + "|" +
+                    colourToString(_markerColour) + "|" +
+                    _barStyle.ToString() + "|" +
+                    _text + "|" + //handle pipe in string??? to do
+                    _fadeOnRx.ToString() + "|" +
+                    _fadeOnTx.ToString() + "|" +
+                    _showType.ToString() + "|" +
+                    colourToString(_segmentedColour) + "|" +
+                    _peakValue.ToString() + "|" +
+                    colourToString(_peakValueColour) + "|" +
+                    _eyeScale.ToString("f4");
+
+                return sRet;
+            }
+            public bool TryParse(string str)
+            {
+                if (str == "") return false;
+
+                bool bOk = false;
+
+                string[] tmp = str.Split('|');
+                if (tmp.Length == 24)
+                {
+                    int tmpInt = 0;
+                    float tmpFloat = 0;
+                    System.Drawing.Color tmpColour = System.Drawing.Color.White;
+                    bool tmpBool = false;
+                    Reading tmpReading = Reading.NONE;
+                    clsBarItem.BarStyle tmpBarStyle = clsBarItem.BarStyle.None;
+
+                    bOk = int.TryParse(tmp[0], out tmpInt); if (bOk) { _updateInterval = tmpInt; }
+                    if (bOk) bOk = float.TryParse(tmp[1], out tmpFloat); if (bOk) { _decay = tmpFloat; }
+                    if (bOk) bOk = float.TryParse(tmp[2], out tmpFloat); if (bOk) { _attack = tmpFloat; }
+                    if (bOk) bOk = int.TryParse(tmp[3], out tmpInt); if (bOk) { _historyDuration = tmpInt; }
+                    if (bOk) bOk = bool.TryParse(tmp[4], out tmpBool); if (bOk) { _shadow = tmpBool; }
+                    if (bOk) bOk = bool.TryParse(tmp[5], out tmpBool); if (bOk) { _showHistory = tmpBool; }
+                    if (bOk) tmpColour = colourFromString(tmp[6]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _historyColor = tmpColour; }
+                    if (bOk) bOk = bool.TryParse(tmp[7], out tmpBool); if (bOk) { _peakHold = tmpBool; }
+                    if (bOk) tmpColour = colourFromString(tmp[8]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakHoldMarkerColor = tmpColour; }
+                    if (bOk) tmpColour = colourFromString(tmp[9]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _lowColor = tmpColour; }
+                    if (bOk) tmpColour = colourFromString(tmp[10]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _highColor = tmpColour; }
+                    if (bOk) tmpColour = colourFromString(tmp[11]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _titleColor = tmpColour; }
+                    if (bOk) bOk = Enum.TryParse<Reading>(tmp[12], out tmpReading); if (bOk) { _readingSource = tmpReading; }
+                    if (bOk) tmpColour = colourFromString(tmp[13]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _colour = tmpColour; }
+                    if (bOk) tmpColour = colourFromString(tmp[14]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _markerColour = tmpColour; }
+                    if (bOk) bOk = Enum.TryParse<clsBarItem.BarStyle>(tmp[15], out tmpBarStyle); if (bOk) { _barStyle = tmpBarStyle; }
+                    if (bOk) _text = tmp[16];
+                    if (bOk) bOk = bool.TryParse(tmp[17], out tmpBool); if (bOk) { _fadeOnRx = tmpBool; }
+                    if (bOk) bOk = bool.TryParse(tmp[18], out tmpBool); if (bOk) { _fadeOnTx = tmpBool; }
+                    if (bOk) bOk = bool.TryParse(tmp[19], out tmpBool); if (bOk) { _showType = tmpBool; }
+                    if (bOk) tmpColour = colourFromString(tmp[20]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _segmentedColour = tmpColour; }
+                    if (bOk) bOk = bool.TryParse(tmp[21], out tmpBool); if (bOk) { _peakValue = tmpBool; }
+                    if (bOk) tmpColour = colourFromString(tmp[22]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakValueColour = tmpColour; }
+                    if (bOk) bOk = float.TryParse(tmp[23], out tmpFloat); if (bOk) { _eyeScale = tmpFloat; }
+                }
+
+                return bOk;
+            }
+            public int UpdateInterval { get { return _updateInterval; } set { _updateInterval = value; } }
+            public float DecayRatio { get { return _decay; } set { _decay = value; } }
+            public float AttackRatio { get { return _attack; } set { _attack = value; } }
+            public int HistoryDuration { get { return _historyDuration; } set { _historyDuration = value; } }
+            public bool Shadow { get { return _shadow; } set { _shadow = value; } }
+            public bool ShowHistory { get { return _showHistory; } set { _showHistory = value; } }
+            public System.Drawing.Color HistoryColor { get { return _historyColor; } set { _historyColor = value; } }
+            public bool PeakHold { get { return _peakHold; } set { _peakHold = value; } }
+            public System.Drawing.Color PeakHoldMarkerColor { get { return _peakHoldMarkerColor; } set { _peakHoldMarkerColor = value; } }
+            public System.Drawing.Color LowColor { get { return _lowColor; } set { _lowColor = value; } }
+            public System.Drawing.Color HighColor { get { return _highColor; } set { _highColor = value; } }
+            public System.Drawing.Color TitleColor { get { return _titleColor; } set { _titleColor = value; } }
+            public Reading ReadingSource { get { return _readingSource; } set { _readingSource = value; } }
+            public System.Drawing.Color Colour { get { return _colour; } set { _colour = value; } }
+            public System.Drawing.Color MarkerColour { get { return _markerColour; } set { _markerColour = value; } }
+            public clsBarItem.BarStyle BarStyle { get { return _barStyle; } set { _barStyle = value; } }
+            public string Text { get { return _text; } set { _text = value; } }
+            public bool FadeOnRx { get { return _fadeOnRx; } set { _fadeOnRx = value; } }
+            public bool FadeOnTx { get { return _fadeOnTx; } set { _fadeOnTx = value; } }
+            public bool ShowType { get { return _showType; } set { _showType = value; } }
+            public System.Drawing.Color SegmentedColour { get { return _segmentedColour; } set { _segmentedColour = value; } }
+            public bool PeakValue { get { return _peakValue; } set { _peakValue = value; } }
+            public System.Drawing.Color PeakValueColour { get { return _peakValueColour; } set { _peakValueColour = value; } }
+            public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
+
+        }
         static MeterManager()
         {
             // static constructor
@@ -1001,7 +1145,6 @@ namespace Thetis
                         }
 
                         // finally the groups
-
                         IEnumerable<KeyValuePair<string, string>> meterIGData = settings.Where(o => o.Key.StartsWith("meterIGData_") && o.Value.Contains(m.ID)); // parent id, stored in value
                         foreach (KeyValuePair<string, string> igd in meterIGData)
                         {
@@ -1009,6 +1152,15 @@ namespace Thetis
                             ig.TryParse(igd.Value);
 
                             m.AddMeter(ig.MeterType, ig);
+
+                            //and the settings
+                            IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
+                            if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                            {
+                                clsIGSettings igs = new clsIGSettings();
+                                bool bOk = igs.TryParse(meterIGSettings.First().Value);
+                                if(bOk) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                            }
                         }
 
                         m.Rebuild();
@@ -1047,6 +1199,12 @@ namespace Thetis
                                     a.Add("meterIGData_" + kvp2.Value.ID + "/" + mi.ToString());
                                 }
                             }
+                        }
+
+                        clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType);
+                        if(igs != null)
+                        {
+                            a.Add("meterIGSettings_" + ig.Value.ID + "/" + igs.ToString());
                         }
                     }
                 }
@@ -1118,6 +1276,9 @@ namespace Thetis
             private bool _bNormaliseTo100W;
             private bool _bOnlyWhenTx;
             private bool _bOnlyWhenRx;
+            private bool _bFadeOnRx;
+            private bool _bFadeOnTx;
+            private bool _bPrimary;
 
             public clsMeterItem()
             {
@@ -1143,7 +1304,10 @@ namespace Thetis
                 _displayGroup = 0;
                 _bNormaliseTo100W = false;
                 _bOnlyWhenTx = false;
-                _bOnlyWhenRx = false;                
+                _bOnlyWhenRx = false;
+                _bFadeOnRx = false;
+                _bFadeOnTx = false;
+                _bPrimary = false;
                 _updateStopwatch = new Stopwatch();
             }
             public string ID { 
@@ -1155,10 +1319,25 @@ namespace Thetis
                 get { return _sParentId; }
                 set { _sParentId = value; }
             }
+            public bool Primary
+            {
+                get { return _bPrimary; }
+                set { _bPrimary = value; }
+            }
             public bool StoreSettings
             {
                 get { return _storeSettings; }
                 set { _storeSettings = value; }
+            }
+            public bool FadeOnRx
+            {
+                get { return _bFadeOnRx; }
+                set { _bFadeOnRx = value; }
+            }
+            public bool FadeOnTx
+            {
+                get { return _bFadeOnTx; }
+                set { _bFadeOnTx = value; }
             }
             public PointF TopLeft {
                 get { return _topLeft; }
@@ -1331,6 +1510,37 @@ namespace Thetis
             {
                 return false;
             }
+            public virtual clsIGSettings GetSettings()
+            {
+                clsIGSettings igs = new clsIGSettings();
+                igs.UpdateInterval = _msUpdateInterval;
+                igs.DecayRatio = _decayRatio;
+                igs.AttackRatio = _attackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                igs.ShowHistory = ShowHistory;
+                igs.HistoryColor = _historyColour;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented =
+                igs.ReadingSource = _readingType;
+
+                return igs;
+            }
+            public virtual void ApplySettings(clsIGSettings igs)
+            {
+                _msUpdateInterval = igs.UpdateInterval;
+                _decayRatio = igs.DecayRatio;
+                _attackRatio = igs.AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                ShowHistory = igs.ShowHistory;
+                _historyColour = igs.HistoryColor;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented = 
+                _readingType = igs.ReadingSource;
+            }
         }
         //
         internal class clsItemGroup : clsMeterItem
@@ -1343,7 +1553,7 @@ namespace Thetis
                 ItemType = MeterItemType.ITEM_GROUP;
                 _meterType = MeterType.NONE;
                 StoreSettings = true;
-                ZOrder = 20;
+                ZOrder = 999;
             }
             public MeterType MeterType
             {
@@ -1572,6 +1782,43 @@ namespace Thetis
                 DecayRatio = 0.2f;
                 StoreSettings = false;
             }
+            public override clsIGSettings GetSettings()
+            {
+                clsIGSettings igs = new clsIGSettings();
+                igs.UpdateInterval = UpdateInterval;
+                igs.DecayRatio = DecayRatio;
+                igs.AttackRatio = AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                igs.ShowHistory = ShowHistory;
+                igs.HistoryColor = HistoryColour;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented =
+                igs.ReadingSource = ReadingSource;
+                igs.LowColor = _lowColour;
+                igs.HighColor = _highColour;
+                igs.TitleColor = _fontColourType;
+
+                return igs;
+            }
+            public override void ApplySettings(clsIGSettings igs)
+            {
+                UpdateInterval = igs.UpdateInterval;
+                DecayRatio = igs.DecayRatio;
+                AttackRatio = igs.AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                ShowHistory = igs.ShowHistory;
+                HistoryColour = igs.HistoryColor;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented = 
+                ReadingSource = igs.ReadingSource;
+                _lowColour = igs.LowColor;
+                _highColour = igs.HighColor;
+                _fontColourType = igs.TitleColor;
+            }
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -1653,7 +1900,7 @@ namespace Thetis
             public clsMagicEyeItem()
             {
                 _history = new List<float>();
-                _msHistoryDuration = 0;
+                _msHistoryDuration = 500;
                 _showHistory = false;
                 _showValue = true;
 
@@ -1667,6 +1914,38 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
+            }
+            public override clsIGSettings GetSettings()
+            {
+                clsIGSettings igs = new clsIGSettings();
+                igs.UpdateInterval = UpdateInterval;
+                igs.DecayRatio = DecayRatio;
+                igs.AttackRatio = AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                igs.ShowHistory = ShowHistory;
+                igs.HistoryColor = HistoryColour;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented =
+                igs.Colour = _colour;
+
+                return igs;
+            }
+            public override void ApplySettings(clsIGSettings igs)
+            {
+                UpdateInterval = igs.UpdateInterval;
+                DecayRatio = igs.DecayRatio;
+                AttackRatio = igs.AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                ShowHistory = igs.ShowHistory;
+                HistoryColour = igs.HistoryColor;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented = 
+                ReadingSource = igs.ReadingSource;
+                _colour = igs.Colour;
             }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
@@ -1771,11 +2050,13 @@ namespace Thetis
             private int _msHistoryDuration; //ms
             private bool _showHistory;
             private bool _showValue;
+            private bool _showPeakValue;
             private object _historyLock = new object();
             private BarStyle _style;
             private System.Drawing.Color _colour;
             private System.Drawing.Color _markerColour;
             private System.Drawing.Color _peakHoldMarkerColour;
+            private System.Drawing.Color _peakValueColour;
             private float _strokeWidth;
             private bool _peakHold;
             private bool _showMarker;
@@ -1793,11 +2074,13 @@ namespace Thetis
                 _msHistoryDuration = 2000;
                 _showHistory = false;
                 _showValue = true;
+                _showPeakValue = true;
 
                 _style = BarStyle.Line;
                 _colour = System.Drawing.Color.Red;
                 _markerColour = System.Drawing.Color.Yellow;
                 _peakHoldMarkerColour = System.Drawing.Color.Red;
+                _peakValueColour = System.Drawing.Color.Red;
                 _strokeWidth = 3f;
                 _peakHold = false;
                 _showMarker = true;
@@ -1815,6 +2098,43 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
+            }
+            public override clsIGSettings GetSettings()
+            {
+                clsIGSettings igs = new clsIGSettings();
+                igs.UpdateInterval = UpdateInterval;
+                igs.DecayRatio = DecayRatio;
+                igs.AttackRatio = AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                igs.ShowHistory = ShowHistory;
+                igs.HistoryColor = HistoryColour;
+                igs.PeakHold = _peakHold;
+                igs.PeakHoldMarkerColor = _peakHoldMarkerColour;
+                //igs.Segmented =
+                igs.ReadingSource = ReadingSource;
+                igs.Colour = _colour;
+                igs.BarStyle = _style;
+                igs.MarkerColour = _markerColour;
+
+                return igs;
+            }
+            public override void ApplySettings(clsIGSettings igs)
+            {
+                UpdateInterval = igs.UpdateInterval;
+                DecayRatio = igs.DecayRatio;
+                AttackRatio = igs.AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                ShowHistory = igs.ShowHistory;
+                HistoryColour = igs.HistoryColor;
+                _peakHold = igs.PeakHold;
+                _peakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                //igs.Segmented = 
+                ReadingSource = igs.ReadingSource;
+                _colour = igs.Colour;
+                _style = igs.BarStyle;
+                _markerColour = igs.MarkerColour;
             }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
@@ -1854,6 +2174,11 @@ namespace Thetis
             {
                 get { return _showValue; }
                 set { _showValue = value; }
+            }
+            public bool ShowPeakValue
+            {
+                get { return _showPeakValue; }
+                set { _showPeakValue = value; }
             }
             public int HistoryDuration
             {
@@ -1913,6 +2238,11 @@ namespace Thetis
             {
                 get { return _peakHoldMarkerColour; }
                 set { _peakHoldMarkerColour = value; }
+            }
+            public System.Drawing.Color PeakValueColour
+            {
+                get { return _peakValueColour; }
+                set { _peakValueColour = value; }
             }
             public bool PeakHold
             {
@@ -1991,6 +2321,7 @@ namespace Thetis
             private bool _setup;
             private Dictionary<float, PointF> _scaleCalibration;
             private PointF _radiusRatio;
+            private bool _shadow;
 
             public clsNeedleItem()
             {
@@ -2010,6 +2341,7 @@ namespace Thetis
                 _scaleStrokeWidth = false;
                 _needleDirection = NeedleDirection.Clockwise;
                 _scaleCalibration = new Dictionary<float, PointF>();
+                _shadow = true;
 
                 ItemType = MeterItemType.NEEDLE;
                 ReadingSource = Reading.NONE;
@@ -2017,6 +2349,43 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
+            }
+            public override clsIGSettings GetSettings()
+            {
+                clsIGSettings igs = new clsIGSettings();
+                igs.UpdateInterval = UpdateInterval;
+                igs.DecayRatio = DecayRatio;
+                igs.AttackRatio = AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                igs.ShowHistory = ShowHistory;
+                igs.HistoryColor = HistoryColour;
+                //igs.PeakHold = _peakHold;
+                //igs.PeakHoldMarkerColor = _peakHoldMarkerColour;
+                //igs.Segmented =
+                igs.ReadingSource = ReadingSource;
+                //igs.Colour = _colour;
+                //igs.BarStyle = _style;
+                //igs.MarkerColour = _markerColour;
+
+                return igs;
+            }
+            public override void ApplySettings(clsIGSettings igs)
+            {
+                UpdateInterval = igs.UpdateInterval;
+                DecayRatio = igs.DecayRatio;
+                AttackRatio = igs.AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                ShowHistory = igs.ShowHistory;
+                HistoryColour = igs.HistoryColor;
+                //_peakHold = igs.PeakHold;
+                //_peakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                //igs.Segmented = 
+                ReadingSource = igs.ReadingSource;
+                //_colour = igs.Colour;
+                //_style = igs.BarStyle;
+                //_markerColour = igs.MarkerColour;
             }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
@@ -2149,6 +2518,11 @@ namespace Thetis
                 get { return _radiusRatio; }
                 set { _radiusRatio = value; }
             }
+            public bool Shadow
+            {
+                get { return _shadow; }
+                set { _shadow = value; }
+            }
         }
         internal class clsText : clsMeterItem
         {
@@ -2173,7 +2547,46 @@ namespace Thetis
                 UpdateInterval = 100;
                 StoreSettings = false;
             }
-            private void updateReadintText(float reading)
+            public override clsIGSettings GetSettings()
+            {
+                clsIGSettings igs = new clsIGSettings();
+                igs.UpdateInterval = UpdateInterval;
+                igs.DecayRatio = DecayRatio;
+                igs.AttackRatio = AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                igs.ShowHistory = ShowHistory;
+                igs.HistoryColor = HistoryColour;
+                //igs.PeakHold = _peakHold;
+                //igs.PeakHoldMarkerColor = _peakHoldMarkerColour;
+                //igs.Segmented =
+                igs.ReadingSource = ReadingSource;
+                //igs.Colour = _colour;
+                //igs.BarStyle = _style;
+                //igs.MarkerColour = _markerColour;
+                igs.Text = _sText;
+
+                return igs;
+            }
+            public override void ApplySettings(clsIGSettings igs)
+            {
+                UpdateInterval = igs.UpdateInterval;
+                DecayRatio = igs.DecayRatio;
+                AttackRatio = igs.AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                ShowHistory = igs.ShowHistory;
+                HistoryColour = igs.HistoryColor;
+                //_peakHold = igs.PeakHold;
+                //_peakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                //igs.Segmented = 
+                ReadingSource = igs.ReadingSource;
+                //_colour = igs.Colour;
+                //_style = igs.BarStyle;
+                //_markerColour = igs.MarkerColour;
+                _sText = igs.Text;
+            }
+            private void updateReadingText(float reading)
             {
                 switch (_sText)
                 {
@@ -2197,7 +2610,7 @@ namespace Thetis
                 // get latest reading
                 float reading = MeterManager.getReading(rx, ReadingSource);
 
-                updateReadintText(reading);
+                updateReadingText(reading);
 
                 // this reading has been used
                 if (!readingsUsed.Contains(ReadingSource))
@@ -2251,7 +2664,7 @@ namespace Thetis
                 get { return base.Value; }
                 set { 
                     base.Value = value;
-                    updateReadintText(value);
+                    updateReadingText(value);
                 }
             }
         }
@@ -2339,6 +2752,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = reading;
@@ -2402,6 +2816,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ADC_PK;
@@ -2426,6 +2841,7 @@ namespace Thetis
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.ADC_AV;
+                cb2.ShowPeakValue = false;
                 cb2.AttackRatio = 0.2f;
                 cb2.DecayRatio = 0.05f;
                 cb2.UpdateInterval = nMSupdate;
@@ -2478,6 +2894,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ESTIMATED_PBSNR;
@@ -2533,6 +2950,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.AGC_GAIN;
@@ -2588,6 +3006,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.AGC_PK;
@@ -2612,6 +3031,7 @@ namespace Thetis
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.AGC_AV;
+                cb2.ShowPeakValue = false;
                 cb2.AttackRatio = 0.2f;
                 cb2.DecayRatio = 0.05f;
                 cb2.UpdateInterval = nMSupdate;
@@ -2666,7 +3086,8 @@ namespace Thetis
 
                 clsMagicEyeItem me = new clsMagicEyeItem();
                 me.ParentID = ig.ID;
-                me.TopLeft = new PointF(0.5f - (fSize / 2f), fTop + _fPadY);
+                me.Primary = true;
+                me.TopLeft = new PointF(0.5f - (fSize / 2f), fTop + _fPadY - (_fHeight * 0.75f));
                 me.Size = new SizeF(fSize, fSize);
                 me.ZOrder = 2;
                 me.AttackRatio = 0.2f;
@@ -2708,6 +3129,7 @@ namespace Thetis
                 //kenwood
                 clsNeedleItem ni = new clsNeedleItem();
                 ni.ParentID = ig.ID;
+                ni.Primary = true;
                 ni.TopLeft = new PointF(0f, fTop + _fPadY - (_fHeight * 0.75f));
                 ni.Size = new SizeF(1f, 0.441f); // image x to y ratio
 
@@ -2821,8 +3243,8 @@ namespace Thetis
                 sc.TopLeft = clb.TopLeft;
                 sc.Size = clb.Size;
                 sc.OnlyWhenTX = true;
-                sc.ZOrder = 5;
-                sc.Colour = System.Drawing.Color.FromArgb(96, System.Drawing.Color.White);
+                sc.ZOrder = 6;
+                sc.Colour = System.Drawing.Color.FromArgb(48, System.Drawing.Color.White);
                 addMeterItem(sc);
 
                 clsText tx = new clsText();
@@ -2840,6 +3262,7 @@ namespace Thetis
 
                 clsNeedleItem ni4 = new clsNeedleItem();
                 ni4.ParentID = ig.ID;
+                ni4.Primary = true;
                 ni4.TopLeft = ni.TopLeft;
                 ni4.Size = ni.Size;
                 ni4.OnlyWhenTX = true;
@@ -3004,6 +3427,7 @@ namespace Thetis
 
                 clsNeedleItem ni = new clsNeedleItem();
                 ni.ParentID = ig.ID;
+                ni.Primary = true;
                 ni.TopLeft = new PointF(0f, fTop + _fPadY - (_fHeight * 0.75f));
                 ni.Size = new SizeF(1f, 0.782f); // image x to y ratio
                 ni.ReadingSource = Reading.PWR;
@@ -3121,6 +3545,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.MIC;
+                cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -3139,6 +3564,7 @@ namespace Thetis
 
                 clsBarItem cb2 = new clsBarItem();
                 cb2.ParentID = ig.ID;
+                cb2.Primary = true;
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.MIC_PK;
@@ -3196,6 +3622,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.EQ;
+                cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -3213,6 +3640,7 @@ namespace Thetis
 
                 clsBarItem cb2 = new clsBarItem();
                 cb2.ParentID = ig.ID;
+                cb2.Primary = true;
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.EQ_PK;
@@ -3270,6 +3698,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.LEVELER;
+                cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -3287,6 +3716,7 @@ namespace Thetis
 
                 clsBarItem cb2 = new clsBarItem();
                 cb2.ParentID = ig.ID;
+                cb2.Primary = true;
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.LEVELER_PK;
@@ -3341,6 +3771,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.LVL_G;
@@ -3398,6 +3829,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ALC;
+                cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -3415,6 +3847,7 @@ namespace Thetis
 
                 clsBarItem cb2 = new clsBarItem();
                 cb2.ParentID = ig.ID;
+                cb2.Primary = true;
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.ALC_PK;
@@ -3469,6 +3902,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ALC_G;
@@ -3523,6 +3957,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ALC_GROUP;
@@ -3577,6 +4012,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.CFC_PK;
@@ -3591,7 +4027,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb.ZOrder = 2;
+                cb.ZOrder = 3;
                 cb.FontColour = System.Drawing.Color.Yellow;
                 addMeterItem(cb);
 
@@ -3600,6 +4036,7 @@ namespace Thetis
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.CFC_G;
+                cb2.ShowPeakValue = false;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
@@ -3655,6 +4092,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.COMP;
+                cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -3672,6 +4110,7 @@ namespace Thetis
 
                 clsBarItem cb2 = new clsBarItem();
                 cb2.ParentID = ig.ID;
+                cb2.Primary = true;
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.COMP_PK;
@@ -3734,6 +4173,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = reading;
@@ -3854,6 +4294,7 @@ namespace Thetis
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
+                cb.Primary = true;
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.SWR;
@@ -4108,6 +4549,384 @@ namespace Thetis
                     return false;
                 }
             }
+            public string MeterGroupID(MeterType mt)
+            {
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return "";
+
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null && ig.MeterType == mt) return ig.ID;
+                    }
+
+                    return "";
+                }
+            }
+            public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs)
+            {
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return;
+
+                    bool bRebuild = false;
+
+                    Dictionary<string, clsMeterItem> itemGroups = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in itemGroups)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null && ig.MeterType == mt)
+                        {
+                            switch (mt)
+                            {
+                                case MeterType.MAGIC_EYE:
+                                    {
+                                        if (igs.EyeScale != ig.Size.Height)
+                                        {
+                                            ig.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f));
+                                            ig.Size = new SizeF(igs.EyeScale, ig.TopLeft.Y + igs.EyeScale);
+
+                                            bRebuild = true;
+                                        }
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE))
+                                        {
+                                            clsMagicEyeItem magicEye = me.Value as clsMagicEyeItem;
+                                            if (magicEye == null) continue;
+
+                                            magicEye.UpdateInterval = igs.UpdateInterval;
+                                            magicEye.AttackRatio = igs.AttackRatio;
+                                            magicEye.DecayRatio = igs.DecayRatio;
+                                            magicEye.HistoryDuration = igs.HistoryDuration;
+                                            magicEye.HistoryColour = igs.HistoryColor;
+                                            magicEye.ShowHistory = igs.ShowHistory;
+                                            magicEye.FadeOnRx = igs.FadeOnRx;
+                                            magicEye.FadeOnTx = igs.FadeOnTx;
+                                            //bi.Style = igs.BarStyle;
+                                            //bi.MarkerColour = igs.MarkerColour;
+                                            //bi.PeakHold = igs.PeakHold;
+                                            //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                                            magicEye.Colour = igs.MarkerColour;
+                                            //
+                                            if (bRebuild)
+                                            {
+                                                magicEye.TopLeft = new PointF(ig.TopLeft.X, ig.TopLeft.Y);
+                                                magicEye.Size = new SizeF(ig.Size.Width, ig.Size.Width);
+                                            }
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
+                                        {
+                                            clsImage image = img.Value as clsImage;
+                                            if (image == null) continue;
+
+                                            image.FadeOnRx = igs.FadeOnRx;
+                                            image.FadeOnTx = igs.FadeOnTx;
+
+                                            if (bRebuild)
+                                            {
+                                                image.TopLeft = new PointF(ig.TopLeft.X, ig.TopLeft.Y);
+                                                image.Size = new SizeF(ig.Size.Width, ig.Size.Width);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case MeterType.KENWOOD:
+                                case MeterType.CROSS:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //lots of ni objects, and images
+
+                                        foreach (KeyValuePair<string, clsMeterItem> needle in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE))
+                                        {
+                                            clsNeedleItem ni = needle.Value as clsNeedleItem;
+                                            if (ni == null) continue;
+
+                                            if (ni.Primary)
+                                            {
+                                                //primary needle, as has been added first
+                                                ni.UpdateInterval = igs.UpdateInterval;
+                                                ni.AttackRatio = igs.AttackRatio;
+                                                ni.DecayRatio = igs.DecayRatio;
+                                                ni.HistoryDuration = igs.HistoryDuration;
+                                                ni.HistoryColour = igs.HistoryColor;
+                                                ni.ShowHistory = igs.ShowHistory;
+                                                ni.FadeOnRx = igs.FadeOnRx;
+                                                ni.FadeOnTx = igs.FadeOnTx;
+                                                //bi.Style = igs.BarStyle;
+                                                //bi.MarkerColour = igs.MarkerColour;
+                                                //bi.PeakHold = igs.PeakHold;
+                                                //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                                                ni.Shadow = igs.Shadow;
+                                            }
+                                            else
+                                            {
+                                                ni.UpdateInterval = igs.UpdateInterval;
+                                                ni.AttackRatio = igs.AttackRatio;
+                                                ni.DecayRatio = igs.DecayRatio;
+                                                ni.FadeOnRx = igs.FadeOnRx;
+                                                ni.FadeOnTx = igs.FadeOnTx;
+                                                //bi.SubMarkerColour = igs.SubMarkerColour;
+                                                ni.Shadow = igs.Shadow;
+                                            }
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
+                                        {
+                                            clsImage image = img.Value as clsImage;
+                                            if (image == null) continue;
+
+                                            image.FadeOnRx = igs.FadeOnRx;
+                                            image.FadeOnTx = igs.FadeOnTx;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColour = sc.Value as clsSolidColour;
+                                            if (solidColour == null) continue;
+
+                                            solidColour.FadeOnRx = igs.FadeOnRx;
+                                            solidColour.FadeOnTx = igs.FadeOnTx;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        // a bar can be up to 2 hbars (peak/av), back colour, and scale
+
+                                        foreach (KeyValuePair<string, clsMeterItem> hbar in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR))
+                                        {
+                                            clsBarItem bi = hbar.Value as clsBarItem;
+                                            if (bi == null) continue;
+
+                                            if (bi.Primary)
+                                            {
+                                                //primary bar, as has been added first
+                                                bi.UpdateInterval = igs.UpdateInterval;
+                                                bi.AttackRatio = igs.AttackRatio;
+                                                bi.DecayRatio = igs.DecayRatio;
+                                                bi.FadeOnRx = igs.FadeOnRx;
+                                                bi.FadeOnTx = igs.FadeOnTx;
+                                                bi.HistoryDuration = igs.HistoryDuration;
+                                                bi.HistoryColour = igs.HistoryColor;
+                                                bi.ShowHistory = igs.ShowHistory;
+                                                bi.Style = igs.BarStyle;
+                                                bi.MarkerColour = igs.MarkerColour;
+                                                bi.PeakHold = igs.PeakHold;
+                                                bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                                                bi.Colour = igs.SegmentedColour;
+                                                bi.ShowPeakValue = igs.PeakValue;
+                                                bi.PeakValueColour = igs.PeakValueColour;
+                                            }
+                                            else
+                                            {
+                                                bi.UpdateInterval = igs.UpdateInterval;
+                                                bi.AttackRatio = igs.AttackRatio;
+                                                bi.DecayRatio = igs.DecayRatio;
+                                                bi.FadeOnRx = igs.FadeOnRx;
+                                                bi.FadeOnTx = igs.FadeOnTx;
+                                                //igs.SubMarkerColour = bi.SubMarkerColour;
+                                            }
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                            if (solidColor == null) continue;
+
+                                            solidColor.FadeOnRx = igs.FadeOnRx;
+                                            solidColor.FadeOnTx = igs.FadeOnTx;
+                                            solidColor.Colour = igs.Colour;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> si in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.H_SCALE))
+                                        {
+                                            clsScaleItem scaleItem = si.Value as clsScaleItem;
+                                            if (scaleItem == null) continue;
+
+                                            scaleItem.FadeOnRx = igs.FadeOnRx;
+                                            scaleItem.FadeOnTx = igs.FadeOnTx;
+                                            scaleItem.LowColour = igs.LowColor;
+                                            scaleItem.HighColour = igs.HighColor;
+                                            scaleItem.ShowType = igs.ShowType;
+                                            scaleItem.FontColourType = igs.TitleColor;
+                                            scaleItem.FontColourLow = igs.LowColor;
+                                            scaleItem.FontColourHigh = igs.HighColor;
+                                        }
+                                    }
+                                    break;
+                            }
+
+                            if (bRebuild) Rebuild();
+
+                            return;
+                        }
+                    }
+
+                    return;
+                }
+            }
+            public clsIGSettings GetSettingsForMeterGroup(MeterType mt)
+            {
+                lock (_objMeterItemLock)
+                {
+                    if (_meterItems == null) return null;
+
+                    Dictionary<string, clsMeterItem> itemGroups = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in itemGroups)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null && ig.MeterType == mt)
+                        {
+                            clsIGSettings igs = new clsIGSettings();
+                            switch (mt)
+                            {
+                                case MeterType.MAGIC_EYE:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE))
+                                        {
+                                            clsMagicEyeItem magicEye = me.Value as clsMagicEyeItem;
+                                            if (magicEye == null) continue; // skip the img
+
+                                            igs.UpdateInterval = magicEye.UpdateInterval;
+                                            igs.AttackRatio = magicEye.AttackRatio;
+                                            igs.DecayRatio = magicEye.DecayRatio;
+                                            igs.HistoryDuration = magicEye.HistoryDuration;
+                                            igs.HistoryColor = magicEye.HistoryColour;
+                                            igs.ShowHistory = magicEye.ShowHistory;
+                                            igs.FadeOnRx = magicEye.FadeOnRx;
+                                            igs.FadeOnTx = magicEye.FadeOnTx;
+                                            //igs.BarStyle = bi.Style;
+                                            //igs.MarkerColour = bi.MarkerColour;
+                                            //igs.PeakHold = bi.PeakHold;
+                                            //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
+                                            igs.MarkerColour = magicEye.Colour;
+                                            igs.EyeScale = magicEye.Size.Height;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
+                                        {
+                                            clsImage image = img.Value as clsImage;
+                                            if (image == null) continue; // skip the img
+
+                                            //igs.FadeOnRx = image.FadeOnRx;
+                                            //igs.FadeOnTx = image.FadeOnTx;
+                                        }
+                                    }
+                                    break;
+                                case MeterType.KENWOOD:
+                                case MeterType.CROSS:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //lots of ni objects, and images
+
+                                        foreach (KeyValuePair<string, clsMeterItem> needle in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE))
+                                        {
+                                            clsNeedleItem ni = needle.Value as clsNeedleItem;
+                                            if (ni == null) continue; // skip the images
+
+                                            if (ni.Primary)
+                                            {
+                                                //primary needle, as has been added first
+                                                igs.UpdateInterval = ni.UpdateInterval;
+                                                igs.AttackRatio = ni.AttackRatio;
+                                                igs.DecayRatio = ni.DecayRatio;
+                                                igs.HistoryDuration = ni.HistoryDuration;
+                                                igs.HistoryColor = ni.HistoryColour;
+                                                igs.ShowHistory = ni.ShowHistory;
+                                                igs.FadeOnRx = ni.FadeOnRx;
+                                                igs.FadeOnTx = ni.FadeOnTx;
+                                                //igs.BarStyle = bi.Style;
+                                                //igs.MarkerColour = bi.MarkerColour;
+                                                //igs.PeakHold = bi.PeakHold;
+                                                //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
+                                                igs.Shadow = ni.Shadow;
+                                            }
+                                            else
+                                            {
+                                                //igs.SubMarkerColour = bi.SubMarkerColour;
+                                            }
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
+                                        {
+                                            clsImage image = img.Value as clsImage;
+                                            if (image == null) continue; // skip the img
+
+                                            //igs.FadeOnRx = image.FadeOnRx;
+                                            //igs.FadeOnTx = image.FadeOnTx;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        // a bar can be up to 2 hbars (peak/av), back colour, and scale
+
+                                        foreach(KeyValuePair<string, clsMeterItem> hbar in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR))
+                                        {
+                                            clsBarItem bi = hbar.Value as clsBarItem;
+                                            if (bi == null) continue;
+
+                                            if(bi.Primary)
+                                            {
+                                                //primary bar, as has been added first
+                                                igs.UpdateInterval = bi.UpdateInterval;
+                                                igs.AttackRatio = bi.AttackRatio;
+                                                igs.DecayRatio = bi.DecayRatio;
+                                                igs.HistoryDuration = bi.HistoryDuration;
+                                                igs.HistoryColor = bi.HistoryColour;
+                                                igs.ShowHistory = bi.ShowHistory;
+                                                igs.FadeOnRx = bi.FadeOnRx;
+                                                igs.FadeOnTx = bi.FadeOnTx;
+                                                igs.BarStyle = bi.Style;
+                                                igs.MarkerColour = bi.MarkerColour;
+                                                igs.PeakHold = bi.PeakHold;
+                                                igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
+                                                igs.SegmentedColour = bi.Colour;
+                                                igs.PeakValue = bi.ShowPeakValue;
+                                                igs.PeakValueColour = bi.PeakValueColour;
+                                            }
+                                            else
+                                            {
+                                                //igs.FadeOnRx = bi.FadeOnRx;
+                                                //igs.FadeOnTx = bi.FadeOnTx;
+                                                //igs.SubMarkerColour = bi.SubMarkerColour;
+                                            }
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidcolor = sc.Value as clsSolidColour;
+                                            if (solidcolor == null) continue; // skip the sc
+
+                                            igs.Colour = solidcolor.Colour;
+                                            //igs.FadeOnRx = solidcolor.FadeOnRx;
+                                            //igs.FadeOnTx = solidcolor.FadeOnTx;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> si in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.H_SCALE))
+                                        {
+                                            clsScaleItem scaleItem = si.Value as clsScaleItem;
+                                            if (scaleItem == null) continue;
+
+                                            //igs.FadeOnRx = scaleItem.FadeOnRx;
+                                            //igs.FadeOnTx = scaleItem.FadeOnTx;
+                                            igs.LowColor = scaleItem.LowColour;
+                                            igs.HighColor = scaleItem.HighColour;
+                                            //igs.show = scaleItem.ShowType; 
+                                            igs.TitleColor = scaleItem.FontColourType;
+                                            igs.ShowType = scaleItem.ShowType;
+                                        }
+                                    }
+                                    break;
+                            }
+
+                            return igs;
+                        }
+                    }
+
+                    return null;
+                }
+            }
             public int GetOrderForMeterType(MeterType mt)
             {
                 lock (_objMeterItemLock)
@@ -4311,7 +5130,10 @@ namespace Thetis
                 lock (_objMeterItemLock)
                 {
                     int updateInterval = int.MaxValue;
-                    foreach (var kvp in _meterItems.Where(o => ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX)))
+                    foreach (var kvp in _meterItems.Where(o => (o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE || 
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE) &&
+                                                                (((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX))))
                     {
                         clsMeterItem mi = kvp.Value;
                         if (mi.UpdateInterval < updateInterval) updateInterval = mi.UpdateInterval;
@@ -5177,16 +5999,19 @@ namespace Thetis
                     {
                         clsClickBox cb = (clsClickBox)mi;
 
-                        float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-                        float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                        float w = rect.Width * (mi.Size.Width / m.XRatio);
-                        float h = rect.Height * (mi.Size.Height / m.YRatio);
-
-                        SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
-
-                        if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                        if ( (!cb.OnlyWhenRX && !cb.OnlyWhenTX) || ((m.MOX && cb.OnlyWhenTX) || (!m.MOX && cb.OnlyWhenRX)) )
                         {
-                            m.MouseUp(e, m, cb);
+                            float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                            float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                            float w = rect.Width * (mi.Size.Width / m.XRatio);
+                            float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                            SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
+
+                            if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                            {
+                                m.MouseUp(e, m, cb);
+                            } 
                         }
                     }
                 }
@@ -5309,7 +6134,8 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = m.MOX ? 255 : 255;
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
                 SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.CornflowerBlue));
@@ -5803,6 +6629,9 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+
                 //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
 
@@ -5811,9 +6640,9 @@ namespace Thetis
                 Ellipse e = new Ellipse(centre, w / 2f, h / 2f);
 
                 System.Drawing.Color c = magicEye.Colour;
-                SharpDX.Direct2D1.Brush br = getDXBrushForColour(System.Drawing.Color.FromArgb(255, (int)(c.R * 0.35f), (int)(c.G * 0.35f), (int)(c.B * 0.35f)));
+                SharpDX.Direct2D1.Brush closedSectionBrush = getDXBrushForColour(System.Drawing.Color.FromArgb(255, (int)(c.R * 0.35f), (int)(c.G * 0.35f), (int)(c.B * 0.35f)), nFade);
 
-                _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
+                _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour, nFade));
 
                 PointF min, max;
                 float percX, percY;
@@ -5821,11 +6650,11 @@ namespace Thetis
 
                 if (percX <= 0.01f)
                 {
-                    _renderTarget.FillEllipse(e, br);
+                    _renderTarget.FillEllipse(e, closedSectionBrush);
                 }
                 else if (percX >= 0.99f)
                 {
-                    _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour));
+                    _renderTarget.FillEllipse(e, getDXBrushForColour(magicEye.Colour, nFade));
                 }
                 else
                 {
@@ -5856,7 +6685,7 @@ namespace Thetis
                     geo.EndFigure(FigureEnd.Closed); // adds the closing line
                     geo.Close();
 
-                    _renderTarget.FillGeometry(sharpGeometry, br);
+                    _renderTarget.FillGeometry(sharpGeometry, closedSectionBrush);
 
                     Utilities.Dispose(ref geo);
                     geo = null;
@@ -5876,6 +6705,9 @@ namespace Thetis
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
                 string sText;
                 switch (txt.Text.ToLower())
@@ -5908,7 +6740,7 @@ namespace Thetis
                 float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
 
                 SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y, w, h);
-                _renderTarget.DrawText(sText, getDXTextFormatForFont(txt.FontFamily, newSize, txt.Style), txtrect, getDXBrushForColour(txt.Colour));
+                _renderTarget.DrawText(sText, getDXTextFormatForFont(txt.FontFamily, newSize, txt.Style), txtrect, getDXBrushForColour(txt.Colour, nFade));
             }
             private void renderHBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -5919,7 +6751,8 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = m.MOX ? 255 : 255;
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
                 //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Red));
@@ -6042,14 +6875,15 @@ namespace Thetis
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.MarkerColour, nFade));
+                }
+                if (cbi.ShowPeakValue)
+                {
+                    float fontSizeEmScaled = (cbi.FontSize / 16f) * (rect.Width / 52f);
 
-                    if (cbi.PeakHold || cbi.ShowHistory)
-                    {
-                        sText = cbi.MaxHistory.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
-                        szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
-                        txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
-                        _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade));
-                    }
+                    string sText = cbi.MaxHistory.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                    SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
+                    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
+                    _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, getDXBrushForColour(cbi.PeakValueColour, nFade));
                 }
             }
             private void renderVBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
@@ -6199,8 +7033,11 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
-                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(sc.Colour));
+                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(sc.Colour, nFade < sc.Colour.A ? nFade : sc.Colour.A));
             }
             private void renderImage(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -6210,6 +7047,9 @@ namespace Thetis
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
                 string sImage = ipg.ImageName;
 
@@ -6249,7 +7089,7 @@ namespace Thetis
                     else
                         imgRect.Width = imgRect.Height * (im_w / im_h);
 
-                    _renderTarget.DrawBitmap(b, imgRect, 1f, BitmapInterpolationMode.Linear);//, sourceRect);
+                    _renderTarget.DrawBitmap(b, imgRect, nFade / 255f, BitmapInterpolationMode.Linear);//, sourceRect);
 
                     _renderTarget.PopAxisAlignedClip();
                 }
@@ -6272,6 +7112,9 @@ namespace Thetis
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
                 SharpDX.RectangleF nirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(nirect, getDXBrushForColour(System.Drawing.Color.Red));
@@ -6383,7 +7226,7 @@ namespace Thetis
                     geo.EndFigure(FigureEnd.Closed); // adds the closing line
                     geo.Close();
 
-                    _renderTarget.FillGeometry(sharpGeometry, getDXBrushForColour(ni.HistoryColour));
+                    _renderTarget.FillGeometry(sharpGeometry, getDXBrushForColour(ni.HistoryColour, nFade < ni.HistoryColour.A ? nFade : ni.HistoryColour.A));
 
                     Utilities.Dispose(ref geo);
                     geo = null;
@@ -6421,14 +7264,35 @@ namespace Thetis
                     float fDiag = (float)Math.Sqrt((w*w) + (h*h));
                     fScale = fDiag / 450f;
                 }
-                _renderTarget.DrawLine(new SharpDX.Vector2(startX, startY), new SharpDX.Vector2(endX, endY), getDXBrushForColour(ni.Colour), ni.StrokeWidth * fScale);
+                float fStrokeWidth = ni.StrokeWidth * fScale;
+
+                //shadow?
+                if (ni.Shadow)
+                {
+                    float fDeltaFromCentre = -((w / 2f) - (endX - x));
+                    float fR = fDeltaFromCentre / (w / 2f);
+                    float fShift = (fStrokeWidth * 1.5f) * fR;
+                    float fTotalWidth = fStrokeWidth * 3f;
+                    float tmpStartX = startX + fShift;
+                    float tmpStartY = startY + (fStrokeWidth * 1.5f);
+                    float tmpEndX = endX + fShift;
+                    float tmpEndY = endY + (fStrokeWidth * 1.5f);
+
+                    for (int n = 0; n<8; n++) 
+                    {
+                        float fReduce = (n / 7f) * fTotalWidth;
+                        _renderTarget.DrawLine(new SharpDX.Vector2(tmpStartX, tmpStartY), new SharpDX.Vector2(tmpEndX, tmpEndY), getDXBrushForColour(System.Drawing.Color.Black, 12), fTotalWidth - fReduce);
+                    }
+                }
+
+                _renderTarget.DrawLine(new SharpDX.Vector2(startX, startY), new SharpDX.Vector2(endX, endY), getDXBrushForColour(ni.Colour, nFade), fStrokeWidth);
 
                 if (ni.Setup)
                 {
                     foreach (KeyValuePair<float, PointF> kvp in ni.ScaleCalibration)
                     {
                         PointF p = kvp.Value;
-                        _renderTarget.FillEllipse(new Ellipse(new SharpDX.Vector2(x + (p.X * w), y + (p.Y * h)), 2f, 2f), getDXBrushForColour(System.Drawing.Color.Red));
+                        _renderTarget.FillEllipse(new Ellipse(new SharpDX.Vector2(x + (p.X * w), y + (p.Y * h)), 2f, 2f), getDXBrushForColour(System.Drawing.Color.Red, nFade));
                     }
                 }
                 //if (ni.ReadingSource == Reading.PWR)
@@ -6442,7 +7306,7 @@ namespace Thetis
                 //    _q = new Vector(startX, startY);
                 //    _q2 = new Vector(endX, endY);
                 //    _bGotRefPWR = true;
-                    
+
                 //}
                 //if(_bGotPWR && _bGotRefPWR)
                 //{
@@ -6459,7 +7323,7 @@ namespace Thetis
 
                 //        foreach(KeyValuePair<string, SharpDX.Vector2> pair in _fanSWR)
                 //        {
-                //            _renderTarget.DrawLine(new SharpDX.Vector2(xx, yy), new SharpDX.Vector2(pair.Value.X, pair.Value.Y), getDXBrushForColour(System.Drawing.Color.Red), ni.StrokeWidth);
+                //            _renderTarget.DrawLine(new SharpDX.Vector2(xx, yy), new SharpDX.Vector2(pair.Value.X, pair.Value.Y), getDXBrushForColour(System.Drawing.Color.Red, nFade), ni.StrokeWidth);
                 //        }
                 //    }
 

@@ -2886,19 +2886,6 @@
             this.clrbtnPeakText = new Thetis.ColorButton();
             this.lblPeakText = new System.Windows.Forms.LabelTS();
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
-            this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
-            this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
-            this.btnMeterUp = new System.Windows.Forms.ButtonTS();
-            this.btnMeterDown = new System.Windows.Forms.ButtonTS();
-            this.btnRemoveMeterItem = new System.Windows.Forms.ButtonTS();
-            this.btnAddMeterItem = new System.Windows.Forms.ButtonTS();
-            this.lstMetersInUse = new System.Windows.Forms.ListBox();
-            this.lstMetersAvailable = new System.Windows.Forms.ListBox();
-            this.chkContainerHighlight = new System.Windows.Forms.CheckBoxTS();
-            this.btnContainerDelete = new System.Windows.Forms.ButtonTS();
-            this.comboContainerSelect = new System.Windows.Forms.ComboBoxTS();
-            this.btnAddRX2Container = new System.Windows.Forms.ButtonTS();
-            this.btnAddRX1Container = new System.Windows.Forms.ButtonTS();
             this.groupBoxTS14 = new System.Windows.Forms.GroupBoxTS();
             this.tbSignalHistoryAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnSignalHistoryColour = new Thetis.ColorButton();
@@ -2926,6 +2913,50 @@
             this.clrbtnMeterLeft = new Thetis.ColorButton();
             this.lblMeterType = new System.Windows.Forms.LabelTS();
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
+            this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
+            this.grpMeterItemSettings = new System.Windows.Forms.GroupBoxTS();
+            this.clrbtnMeterItemMeterTitle = new Thetis.ColorButton();
+            this.clrbtnMeterItemPeakValueColour = new Thetis.ColorButton();
+            this.clrbtnMeterItemSegmentedColour = new Thetis.ColorButton();
+            this.nudMeterItemDecayRate = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS169 = new System.Windows.Forms.LabelTS();
+            this.nudMeterItemAttackRate = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS168 = new System.Windows.Forms.LabelTS();
+            this.nudMeterItemUpdateRate = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS167 = new System.Windows.Forms.LabelTS();
+            this.tbMeterItemHistoryAlpha = new System.Windows.Forms.TrackBarTS();
+            this.nudMeterItemHistoryDuration = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS166 = new System.Windows.Forms.LabelTS();
+            this.chkMeterItemPeakValue = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemTitle = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemSegmented = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS164 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMeterItemHBackground = new Thetis.ColorButton();
+            this.clrbtnMeterItemHistory = new Thetis.ColorButton();
+            this.clrbtnMeterItemPeakHold = new Thetis.ColorButton();
+            this.labelTS163 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMeterItemIndiciator = new Thetis.ColorButton();
+            this.labelTS162 = new System.Windows.Forms.LabelTS();
+            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMeterItemHigh = new Thetis.ColorButton();
+            this.clrbtnMeterItemLow = new Thetis.ColorButton();
+            this.chkMeterItemShadow = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemPeakHold = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemHistory = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemFadeOnTx = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemFadeOnRx = new System.Windows.Forms.CheckBoxTS();
+            this.btnMeterUp = new System.Windows.Forms.ButtonTS();
+            this.btnMeterDown = new System.Windows.Forms.ButtonTS();
+            this.btnRemoveMeterItem = new System.Windows.Forms.ButtonTS();
+            this.btnAddMeterItem = new System.Windows.Forms.ButtonTS();
+            this.lstMetersInUse = new System.Windows.Forms.ListBox();
+            this.lstMetersAvailable = new System.Windows.Forms.ListBox();
+            this.chkContainerHighlight = new System.Windows.Forms.CheckBoxTS();
+            this.btnContainerDelete = new System.Windows.Forms.ButtonTS();
+            this.comboContainerSelect = new System.Windows.Forms.ComboBoxTS();
+            this.btnAddRX2Container = new System.Windows.Forms.ButtonTS();
+            this.btnAddRX1Container = new System.Windows.Forms.ButtonTS();
             this.tcAppearanceTXDisplay = new System.Windows.Forms.TabPage();
             this.grpAppTXWaterfall = new System.Windows.Forms.GroupBoxTS();
             this.chkShowTXZeroLineOnWaterfall = new System.Windows.Forms.CheckBoxTS();
@@ -3343,6 +3374,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.nudMeterItemEyeScale = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS170 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4108,12 +4141,19 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
             this.grpDisplayPeakCursor.SuspendLayout();
             this.tpAppearanceMeter.SuspendLayout();
-            this.groupBoxTS28.SuspendLayout();
             this.groupBoxTS14.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).BeginInit();
             this.grpMeterEdge.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbMeterEdgeBackgroundAlpha)).BeginInit();
             this.grpAppearanceMeter.SuspendLayout();
+            this.tpAppearanceMeter2.SuspendLayout();
+            this.groupBoxTS28.SuspendLayout();
+            this.grpMeterItemSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemDecayRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemAttackRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMeterItemHistoryAlpha)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemHistoryDuration)).BeginInit();
             this.tcAppearanceTXDisplay.SuspendLayout();
             this.grpAppTXWaterfall.SuspendLayout();
             this.groupBoxTS3.SuspendLayout();
@@ -4240,6 +4280,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -45226,6 +45267,7 @@
             this.tcAppearance.Controls.Add(this.tpAppearanceGeneral);
             this.tcAppearance.Controls.Add(this.tpAppearanceDisplay);
             this.tcAppearance.Controls.Add(this.tpAppearanceMeter);
+            this.tcAppearance.Controls.Add(this.tpAppearanceMeter2);
             this.tcAppearance.Controls.Add(this.tcAppearanceTXDisplay);
             this.tcAppearance.Controls.Add(this.tpAppearanceCollapsible);
             this.tcAppearance.Location = new System.Drawing.Point(0, 0);
@@ -46693,7 +46735,6 @@
             // tpAppearanceMeter
             // 
             this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceMeter.Controls.Add(this.groupBoxTS28);
             this.tpAppearanceMeter.Controls.Add(this.groupBoxTS14);
             this.tpAppearanceMeter.Controls.Add(this.labelTS2);
             this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigBackground);
@@ -46708,165 +46749,6 @@
             this.tpAppearanceMeter.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceMeter.TabIndex = 2;
             this.tpAppearanceMeter.Text = "Meter";
-            // 
-            // groupBoxTS28
-            // 
-            this.groupBoxTS28.Controls.Add(this.groupBoxTS29);
-            this.groupBoxTS28.Controls.Add(this.btnMeterUp);
-            this.groupBoxTS28.Controls.Add(this.btnMeterDown);
-            this.groupBoxTS28.Controls.Add(this.btnRemoveMeterItem);
-            this.groupBoxTS28.Controls.Add(this.btnAddMeterItem);
-            this.groupBoxTS28.Controls.Add(this.lstMetersInUse);
-            this.groupBoxTS28.Controls.Add(this.lstMetersAvailable);
-            this.groupBoxTS28.Controls.Add(this.chkContainerHighlight);
-            this.groupBoxTS28.Controls.Add(this.btnContainerDelete);
-            this.groupBoxTS28.Controls.Add(this.comboContainerSelect);
-            this.groupBoxTS28.Controls.Add(this.btnAddRX2Container);
-            this.groupBoxTS28.Controls.Add(this.btnAddRX1Container);
-            this.groupBoxTS28.Location = new System.Drawing.Point(326, 8);
-            this.groupBoxTS28.Name = "groupBoxTS28";
-            this.groupBoxTS28.Size = new System.Drawing.Size(390, 385);
-            this.groupBoxTS28.TabIndex = 86;
-            this.groupBoxTS28.TabStop = false;
-            this.groupBoxTS28.Text = "MultiMeter 2";
-            // 
-            // groupBoxTS29
-            // 
-            this.groupBoxTS29.Location = new System.Drawing.Point(18, 230);
-            this.groupBoxTS29.Name = "groupBoxTS29";
-            this.groupBoxTS29.Size = new System.Drawing.Size(355, 142);
-            this.groupBoxTS29.TabIndex = 96;
-            this.groupBoxTS29.TabStop = false;
-            // 
-            // btnMeterUp
-            // 
-            this.btnMeterUp.Image = global::Thetis.Properties.Resources.arrow_up_black;
-            this.btnMeterUp.Location = new System.Drawing.Point(348, 115);
-            this.btnMeterUp.Name = "btnMeterUp";
-            this.btnMeterUp.Selectable = true;
-            this.btnMeterUp.Size = new System.Drawing.Size(32, 32);
-            this.btnMeterUp.TabIndex = 95;
-            this.btnMeterUp.UseVisualStyleBackColor = true;
-            this.btnMeterUp.Click += new System.EventHandler(this.btnMeterUp_Click);
-            // 
-            // btnMeterDown
-            // 
-            this.btnMeterDown.Image = global::Thetis.Properties.Resources.down_black;
-            this.btnMeterDown.Location = new System.Drawing.Point(348, 162);
-            this.btnMeterDown.Name = "btnMeterDown";
-            this.btnMeterDown.Selectable = true;
-            this.btnMeterDown.Size = new System.Drawing.Size(32, 32);
-            this.btnMeterDown.TabIndex = 94;
-            this.btnMeterDown.UseVisualStyleBackColor = true;
-            this.btnMeterDown.Click += new System.EventHandler(this.btnMeterDown_Click);
-            // 
-            // btnRemoveMeterItem
-            // 
-            this.btnRemoveMeterItem.Image = global::Thetis.Properties.Resources.arrow_left_black;
-            this.btnRemoveMeterItem.Location = new System.Drawing.Point(164, 162);
-            this.btnRemoveMeterItem.Name = "btnRemoveMeterItem";
-            this.btnRemoveMeterItem.Selectable = true;
-            this.btnRemoveMeterItem.Size = new System.Drawing.Size(32, 32);
-            this.btnRemoveMeterItem.TabIndex = 93;
-            this.btnRemoveMeterItem.UseVisualStyleBackColor = true;
-            this.btnRemoveMeterItem.Click += new System.EventHandler(this.btnRemoveMeterItem_Click);
-            // 
-            // btnAddMeterItem
-            // 
-            this.btnAddMeterItem.Image = global::Thetis.Properties.Resources.arrow_right_black;
-            this.btnAddMeterItem.Location = new System.Drawing.Point(164, 115);
-            this.btnAddMeterItem.Name = "btnAddMeterItem";
-            this.btnAddMeterItem.Selectable = true;
-            this.btnAddMeterItem.Size = new System.Drawing.Size(32, 32);
-            this.btnAddMeterItem.TabIndex = 92;
-            this.btnAddMeterItem.UseVisualStyleBackColor = true;
-            this.btnAddMeterItem.Click += new System.EventHandler(this.btnAddMeterItem_Click);
-            // 
-            // lstMetersInUse
-            // 
-            this.lstMetersInUse.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lstMetersInUse.FormattingEnabled = true;
-            this.lstMetersInUse.Location = new System.Drawing.Point(202, 90);
-            this.lstMetersInUse.Name = "lstMetersInUse";
-            this.lstMetersInUse.Size = new System.Drawing.Size(140, 134);
-            this.lstMetersInUse.TabIndex = 91;
-            this.lstMetersInUse.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersInUse_DrawItem);
-            this.lstMetersInUse.SelectedIndexChanged += new System.EventHandler(this.lstMetersInUse_SelectedIndexChanged);
-            this.lstMetersInUse.DoubleClick += new System.EventHandler(this.lstMetersInUse_DoubleClick);
-            // 
-            // lstMetersAvailable
-            // 
-            this.lstMetersAvailable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lstMetersAvailable.FormattingEnabled = true;
-            this.lstMetersAvailable.Location = new System.Drawing.Point(18, 90);
-            this.lstMetersAvailable.Name = "lstMetersAvailable";
-            this.lstMetersAvailable.Size = new System.Drawing.Size(140, 134);
-            this.lstMetersAvailable.TabIndex = 90;
-            this.lstMetersAvailable.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersAvailable_DrawItem);
-            this.lstMetersAvailable.SelectedIndexChanged += new System.EventHandler(this.lstMetersAvailable_SelectedIndexChanged);
-            this.lstMetersAvailable.DoubleClick += new System.EventHandler(this.lstMetersAvailable_DoubleClick);
-            // 
-            // chkContainerHighlight
-            // 
-            this.chkContainerHighlight.AutoSize = true;
-            this.chkContainerHighlight.Image = null;
-            this.chkContainerHighlight.Location = new System.Drawing.Point(144, 57);
-            this.chkContainerHighlight.Name = "chkContainerHighlight";
-            this.chkContainerHighlight.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkContainerHighlight.Size = new System.Drawing.Size(67, 17);
-            this.chkContainerHighlight.TabIndex = 89;
-            this.chkContainerHighlight.Text = "Highlight";
-            this.chkContainerHighlight.UseVisualStyleBackColor = true;
-            this.chkContainerHighlight.CheckedChanged += new System.EventHandler(this.chkContainerHighlight_CheckedChanged);
-            // 
-            // btnContainerDelete
-            // 
-            this.btnContainerDelete.Image = null;
-            this.btnContainerDelete.Location = new System.Drawing.Point(18, 48);
-            this.btnContainerDelete.Name = "btnContainerDelete";
-            this.btnContainerDelete.Selectable = true;
-            this.btnContainerDelete.Size = new System.Drawing.Size(59, 32);
-            this.btnContainerDelete.TabIndex = 88;
-            this.btnContainerDelete.Text = "Remove";
-            this.toolTip1.SetToolTip(this.btnContainerDelete, "Removes the selected container and all meter items contained within");
-            this.btnContainerDelete.UseVisualStyleBackColor = true;
-            this.btnContainerDelete.Click += new System.EventHandler(this.btnContainerDelete_Click);
-            // 
-            // comboContainerSelect
-            // 
-            this.comboContainerSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboContainerSelect.FormattingEnabled = true;
-            this.comboContainerSelect.Location = new System.Drawing.Point(18, 21);
-            this.comboContainerSelect.Name = "comboContainerSelect";
-            this.comboContainerSelect.Size = new System.Drawing.Size(193, 21);
-            this.comboContainerSelect.TabIndex = 87;
-            this.comboContainerSelect.SelectedIndexChanged += new System.EventHandler(this.comboContainerSelect_SelectedIndexChanged);
-            // 
-            // btnAddRX2Container
-            // 
-            this.btnAddRX2Container.Image = null;
-            this.btnAddRX2Container.Location = new System.Drawing.Point(319, 15);
-            this.btnAddRX2Container.Name = "btnAddRX2Container";
-            this.btnAddRX2Container.Selectable = true;
-            this.btnAddRX2Container.Size = new System.Drawing.Size(65, 56);
-            this.btnAddRX2Container.TabIndex = 1;
-            this.btnAddRX2Container.Text = "Add RX2 Container";
-            this.toolTip1.SetToolTip(this.btnAddRX2Container, "Add a meter item container that uses RX2 readings");
-            this.btnAddRX2Container.UseVisualStyleBackColor = true;
-            this.btnAddRX2Container.Click += new System.EventHandler(this.btnAddRX2Container_Click);
-            // 
-            // btnAddRX1Container
-            // 
-            this.btnAddRX1Container.Image = null;
-            this.btnAddRX1Container.Location = new System.Drawing.Point(248, 15);
-            this.btnAddRX1Container.Name = "btnAddRX1Container";
-            this.btnAddRX1Container.Selectable = true;
-            this.btnAddRX1Container.Size = new System.Drawing.Size(65, 56);
-            this.btnAddRX1Container.TabIndex = 0;
-            this.btnAddRX1Container.Text = "Add RX1 Container";
-            this.toolTip1.SetToolTip(this.btnAddRX1Container, "Add a meter item container that uses RX1 readings");
-            this.btnAddRX1Container.UseVisualStyleBackColor = true;
-            this.btnAddRX1Container.Click += new System.EventHandler(this.btnAddRX1Container_Click);
             // 
             // groupBoxTS14
             // 
@@ -47088,7 +46970,7 @@
             this.grpAppearanceMeter.Controls.Add(this.lblAppearanceMeterRight);
             this.grpAppearanceMeter.Controls.Add(this.lblAppearanceMeterLeft);
             this.grpAppearanceMeter.Controls.Add(this.clrbtnMeterLeft);
-            this.grpAppearanceMeter.Location = new System.Drawing.Point(168, 8);
+            this.grpAppearanceMeter.Location = new System.Drawing.Point(184, 16);
             this.grpAppearanceMeter.Name = "grpAppearanceMeter";
             this.grpAppearanceMeter.Size = new System.Drawing.Size(136, 120);
             this.grpAppearanceMeter.TabIndex = 38;
@@ -47183,6 +47065,642 @@
             this.comboMeterType.TabIndex = 78;
             this.toolTip1.SetToolTip(this.comboMeterType, "Changes the appearance of the Multimeter on the front panel.");
             this.comboMeterType.SelectedIndexChanged += new System.EventHandler(this.comboMeterType_SelectedIndexChanged);
+            // 
+            // tpAppearanceMeter2
+            // 
+            this.tpAppearanceMeter2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceMeter2.Controls.Add(this.groupBoxTS28);
+            this.tpAppearanceMeter2.Location = new System.Drawing.Point(4, 22);
+            this.tpAppearanceMeter2.Name = "tpAppearanceMeter2";
+            this.tpAppearanceMeter2.Size = new System.Drawing.Size(724, 410);
+            this.tpAppearanceMeter2.TabIndex = 5;
+            this.tpAppearanceMeter2.Text = "MultiMeters2";
+            // 
+            // groupBoxTS28
+            // 
+            this.groupBoxTS28.Controls.Add(this.grpMeterItemSettings);
+            this.groupBoxTS28.Controls.Add(this.btnMeterUp);
+            this.groupBoxTS28.Controls.Add(this.btnMeterDown);
+            this.groupBoxTS28.Controls.Add(this.btnRemoveMeterItem);
+            this.groupBoxTS28.Controls.Add(this.btnAddMeterItem);
+            this.groupBoxTS28.Controls.Add(this.lstMetersInUse);
+            this.groupBoxTS28.Controls.Add(this.lstMetersAvailable);
+            this.groupBoxTS28.Controls.Add(this.chkContainerHighlight);
+            this.groupBoxTS28.Controls.Add(this.btnContainerDelete);
+            this.groupBoxTS28.Controls.Add(this.comboContainerSelect);
+            this.groupBoxTS28.Controls.Add(this.btnAddRX2Container);
+            this.groupBoxTS28.Controls.Add(this.btnAddRX1Container);
+            this.groupBoxTS28.Location = new System.Drawing.Point(13, 12);
+            this.groupBoxTS28.Name = "groupBoxTS28";
+            this.groupBoxTS28.Size = new System.Drawing.Size(703, 385);
+            this.groupBoxTS28.TabIndex = 86;
+            this.groupBoxTS28.TabStop = false;
+            // 
+            // grpMeterItemSettings
+            // 
+            this.grpMeterItemSettings.Controls.Add(this.nudMeterItemEyeScale);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS170);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemMeterTitle);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemPeakValueColour);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemSegmentedColour);
+            this.grpMeterItemSettings.Controls.Add(this.nudMeterItemDecayRate);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS169);
+            this.grpMeterItemSettings.Controls.Add(this.nudMeterItemAttackRate);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS168);
+            this.grpMeterItemSettings.Controls.Add(this.nudMeterItemUpdateRate);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS167);
+            this.grpMeterItemSettings.Controls.Add(this.tbMeterItemHistoryAlpha);
+            this.grpMeterItemSettings.Controls.Add(this.nudMeterItemHistoryDuration);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS166);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemPeakValue);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemTitle);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemSegmented);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS164);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemHBackground);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemHistory);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemPeakHold);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS163);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemIndiciator);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS162);
+            this.grpMeterItemSettings.Controls.Add(this.labelTS161);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemHigh);
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemLow);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemShadow);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemPeakHold);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemHistory);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemFadeOnTx);
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemFadeOnRx);
+            this.grpMeterItemSettings.Location = new System.Drawing.Point(403, 15);
+            this.grpMeterItemSettings.Name = "grpMeterItemSettings";
+            this.grpMeterItemSettings.Size = new System.Drawing.Size(294, 352);
+            this.grpMeterItemSettings.TabIndex = 96;
+            this.grpMeterItemSettings.TabStop = false;
+            this.grpMeterItemSettings.Text = "Settings";
+            // 
+            // clrbtnMeterItemMeterTitle
+            // 
+            this.clrbtnMeterItemMeterTitle.Automatic = "Automatic";
+            this.clrbtnMeterItemMeterTitle.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemMeterTitle.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemMeterTitle.Image = null;
+            this.clrbtnMeterItemMeterTitle.Location = new System.Drawing.Point(99, 251);
+            this.clrbtnMeterItemMeterTitle.MoreColors = "More Colors...";
+            this.clrbtnMeterItemMeterTitle.Name = "clrbtnMeterItemMeterTitle";
+            this.clrbtnMeterItemMeterTitle.Selectable = true;
+            this.clrbtnMeterItemMeterTitle.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemMeterTitle.TabIndex = 108;
+            this.clrbtnMeterItemMeterTitle.Changed += new System.EventHandler(this.clrbtnMeterItemMeterTitle_Changed);
+            // 
+            // clrbtnMeterItemPeakValueColour
+            // 
+            this.clrbtnMeterItemPeakValueColour.Automatic = "Automatic";
+            this.clrbtnMeterItemPeakValueColour.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemPeakValueColour.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemPeakValueColour.Image = null;
+            this.clrbtnMeterItemPeakValueColour.Location = new System.Drawing.Point(99, 278);
+            this.clrbtnMeterItemPeakValueColour.MoreColors = "More Colors...";
+            this.clrbtnMeterItemPeakValueColour.Name = "clrbtnMeterItemPeakValueColour";
+            this.clrbtnMeterItemPeakValueColour.Selectable = true;
+            this.clrbtnMeterItemPeakValueColour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemPeakValueColour.TabIndex = 107;
+            this.clrbtnMeterItemPeakValueColour.Changed += new System.EventHandler(this.clrbtnMeterItemPeakValueColour_Changed);
+            // 
+            // clrbtnMeterItemSegmentedColour
+            // 
+            this.clrbtnMeterItemSegmentedColour.Automatic = "Automatic";
+            this.clrbtnMeterItemSegmentedColour.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemSegmentedColour.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemSegmentedColour.Image = null;
+            this.clrbtnMeterItemSegmentedColour.Location = new System.Drawing.Point(99, 224);
+            this.clrbtnMeterItemSegmentedColour.MoreColors = "More Colors...";
+            this.clrbtnMeterItemSegmentedColour.Name = "clrbtnMeterItemSegmentedColour";
+            this.clrbtnMeterItemSegmentedColour.Selectable = true;
+            this.clrbtnMeterItemSegmentedColour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemSegmentedColour.TabIndex = 106;
+            this.clrbtnMeterItemSegmentedColour.Changed += new System.EventHandler(this.clrbtnMeterItemSegmentedColour_Changed);
+            // 
+            // nudMeterItemDecayRate
+            // 
+            this.nudMeterItemDecayRate.DecimalPlaces = 2;
+            this.nudMeterItemDecayRate.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.nudMeterItemDecayRate.Location = new System.Drawing.Point(225, 56);
+            this.nudMeterItemDecayRate.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemDecayRate.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMeterItemDecayRate.Name = "nudMeterItemDecayRate";
+            this.nudMeterItemDecayRate.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemDecayRate.TabIndex = 105;
+            this.nudMeterItemDecayRate.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemDecayRate, "Controls how long the analog peak red line will be held on the multimeter.");
+            this.nudMeterItemDecayRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemDecayRate.ValueChanged += new System.EventHandler(this.nudMeterItemDecayRate_ValueChanged);
+            // 
+            // labelTS169
+            // 
+            this.labelTS169.Image = null;
+            this.labelTS169.Location = new System.Drawing.Point(169, 58);
+            this.labelTS169.Name = "labelTS169";
+            this.labelTS169.Size = new System.Drawing.Size(50, 16);
+            this.labelTS169.TabIndex = 104;
+            this.labelTS169.Text = "Decay:";
+            this.labelTS169.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // nudMeterItemAttackRate
+            // 
+            this.nudMeterItemAttackRate.DecimalPlaces = 2;
+            this.nudMeterItemAttackRate.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.nudMeterItemAttackRate.Location = new System.Drawing.Point(107, 56);
+            this.nudMeterItemAttackRate.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemAttackRate.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMeterItemAttackRate.Name = "nudMeterItemAttackRate";
+            this.nudMeterItemAttackRate.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemAttackRate.TabIndex = 103;
+            this.nudMeterItemAttackRate.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemAttackRate, "Controls how long the analog peak red line will be held on the multimeter.");
+            this.nudMeterItemAttackRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemAttackRate.ValueChanged += new System.EventHandler(this.nudMeterItemAttackRate_ValueChanged);
+            // 
+            // labelTS168
+            // 
+            this.labelTS168.Image = null;
+            this.labelTS168.Location = new System.Drawing.Point(22, 58);
+            this.labelTS168.Name = "labelTS168";
+            this.labelTS168.Size = new System.Drawing.Size(79, 16);
+            this.labelTS168.TabIndex = 102;
+            this.labelTS168.Text = "Attack:";
+            this.labelTS168.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // nudMeterItemUpdateRate
+            // 
+            this.nudMeterItemUpdateRate.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRate.Location = new System.Drawing.Point(107, 31);
+            this.nudMeterItemUpdateRate.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRate.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRate.Name = "nudMeterItemUpdateRate";
+            this.nudMeterItemUpdateRate.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemUpdateRate.TabIndex = 101;
+            this.nudMeterItemUpdateRate.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemUpdateRate, "Controls how long the analog peak red line will be held on the multimeter.");
+            this.nudMeterItemUpdateRate.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRate.ValueChanged += new System.EventHandler(this.nudMeterItemUpdateRate_ValueChanged);
+            // 
+            // labelTS167
+            // 
+            this.labelTS167.Image = null;
+            this.labelTS167.Location = new System.Drawing.Point(22, 33);
+            this.labelTS167.Name = "labelTS167";
+            this.labelTS167.Size = new System.Drawing.Size(79, 16);
+            this.labelTS167.TabIndex = 100;
+            this.labelTS167.Text = "Update (ms):";
+            this.labelTS167.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // tbMeterItemHistoryAlpha
+            // 
+            this.tbMeterItemHistoryAlpha.AutoSize = false;
+            this.tbMeterItemHistoryAlpha.Location = new System.Drawing.Point(221, 227);
+            this.tbMeterItemHistoryAlpha.Maximum = 255;
+            this.tbMeterItemHistoryAlpha.Name = "tbMeterItemHistoryAlpha";
+            this.tbMeterItemHistoryAlpha.Size = new System.Drawing.Size(66, 18);
+            this.tbMeterItemHistoryAlpha.TabIndex = 99;
+            this.tbMeterItemHistoryAlpha.TickFrequency = 64;
+            this.tbMeterItemHistoryAlpha.Value = 255;
+            this.tbMeterItemHistoryAlpha.Scroll += new System.EventHandler(this.tbMeterItemHistoryAlpha_Scroll);
+            // 
+            // nudMeterItemHistoryDuration
+            // 
+            this.nudMeterItemHistoryDuration.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemHistoryDuration.Location = new System.Drawing.Point(207, 144);
+            this.nudMeterItemHistoryDuration.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudMeterItemHistoryDuration.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudMeterItemHistoryDuration.Name = "nudMeterItemHistoryDuration";
+            this.nudMeterItemHistoryDuration.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemHistoryDuration.TabIndex = 98;
+            this.nudMeterItemHistoryDuration.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemHistoryDuration, "Controls how long the analog peak red line will be held on the multimeter.");
+            this.nudMeterItemHistoryDuration.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.nudMeterItemHistoryDuration.ValueChanged += new System.EventHandler(this.nudMeterItemHistoryDuration_ValueChanged);
+            // 
+            // labelTS166
+            // 
+            this.labelTS166.Image = null;
+            this.labelTS166.Location = new System.Drawing.Point(122, 146);
+            this.labelTS166.Name = "labelTS166";
+            this.labelTS166.Size = new System.Drawing.Size(79, 16);
+            this.labelTS166.TabIndex = 97;
+            this.labelTS166.Text = "History (ms):";
+            this.labelTS166.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkMeterItemPeakValue
+            // 
+            this.chkMeterItemPeakValue.AutoSize = true;
+            this.chkMeterItemPeakValue.Image = null;
+            this.chkMeterItemPeakValue.Location = new System.Drawing.Point(17, 280);
+            this.chkMeterItemPeakValue.Name = "chkMeterItemPeakValue";
+            this.chkMeterItemPeakValue.Size = new System.Drawing.Size(81, 17);
+            this.chkMeterItemPeakValue.TabIndex = 96;
+            this.chkMeterItemPeakValue.Text = "Peak Value";
+            this.chkMeterItemPeakValue.UseVisualStyleBackColor = true;
+            this.chkMeterItemPeakValue.CheckedChanged += new System.EventHandler(this.chkMeterItemPeakValue_CheckedChanged);
+            // 
+            // chkMeterItemTitle
+            // 
+            this.chkMeterItemTitle.AutoSize = true;
+            this.chkMeterItemTitle.Image = null;
+            this.chkMeterItemTitle.Location = new System.Drawing.Point(18, 254);
+            this.chkMeterItemTitle.Name = "chkMeterItemTitle";
+            this.chkMeterItemTitle.Size = new System.Drawing.Size(76, 17);
+            this.chkMeterItemTitle.TabIndex = 95;
+            this.chkMeterItemTitle.Text = "Meter Title";
+            this.chkMeterItemTitle.UseVisualStyleBackColor = true;
+            this.chkMeterItemTitle.CheckedChanged += new System.EventHandler(this.chkMeterItemTitle_CheckedChanged);
+            // 
+            // chkMeterItemSegmented
+            // 
+            this.chkMeterItemSegmented.AutoSize = true;
+            this.chkMeterItemSegmented.Image = null;
+            this.chkMeterItemSegmented.Location = new System.Drawing.Point(18, 228);
+            this.chkMeterItemSegmented.Name = "chkMeterItemSegmented";
+            this.chkMeterItemSegmented.Size = new System.Drawing.Size(80, 17);
+            this.chkMeterItemSegmented.TabIndex = 94;
+            this.chkMeterItemSegmented.Text = "Segmented";
+            this.chkMeterItemSegmented.UseVisualStyleBackColor = true;
+            this.chkMeterItemSegmented.CheckedChanged += new System.EventHandler(this.chkMeterItemSegmented_CheckedChanged);
+            // 
+            // labelTS164
+            // 
+            this.labelTS164.AutoSize = true;
+            this.labelTS164.Image = null;
+            this.labelTS164.Location = new System.Drawing.Point(20, 149);
+            this.labelTS164.Name = "labelTS164";
+            this.labelTS164.Size = new System.Drawing.Size(41, 13);
+            this.labelTS164.TabIndex = 93;
+            this.labelTS164.Text = "Backg:";
+            // 
+            // clrbtnMeterItemHBackground
+            // 
+            this.clrbtnMeterItemHBackground.Automatic = "Automatic";
+            this.clrbtnMeterItemHBackground.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnMeterItemHBackground.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemHBackground.Image = null;
+            this.clrbtnMeterItemHBackground.Location = new System.Drawing.Point(61, 144);
+            this.clrbtnMeterItemHBackground.MoreColors = "More Colors...";
+            this.clrbtnMeterItemHBackground.Name = "clrbtnMeterItemHBackground";
+            this.clrbtnMeterItemHBackground.Selectable = true;
+            this.clrbtnMeterItemHBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemHBackground.TabIndex = 92;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemHBackground, "The fill colour of the signal history on the multimeter");
+            this.clrbtnMeterItemHBackground.Changed += new System.EventHandler(this.clrbtnMeterItemHBackground_Changed);
+            // 
+            // clrbtnMeterItemHistory
+            // 
+            this.clrbtnMeterItemHistory.Automatic = "Automatic";
+            this.clrbtnMeterItemHistory.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemHistory.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemHistory.Image = null;
+            this.clrbtnMeterItemHistory.Location = new System.Drawing.Point(179, 222);
+            this.clrbtnMeterItemHistory.MoreColors = "More Colors...";
+            this.clrbtnMeterItemHistory.Name = "clrbtnMeterItemHistory";
+            this.clrbtnMeterItemHistory.Selectable = true;
+            this.clrbtnMeterItemHistory.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemHistory.TabIndex = 83;
+            this.clrbtnMeterItemHistory.Changed += new System.EventHandler(this.clrbtnMeterItemHistory_Changed);
+            // 
+            // clrbtnMeterItemPeakHold
+            // 
+            this.clrbtnMeterItemPeakHold.Automatic = "Automatic";
+            this.clrbtnMeterItemPeakHold.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemPeakHold.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemPeakHold.Image = null;
+            this.clrbtnMeterItemPeakHold.Location = new System.Drawing.Point(179, 272);
+            this.clrbtnMeterItemPeakHold.MoreColors = "More Colors...";
+            this.clrbtnMeterItemPeakHold.Name = "clrbtnMeterItemPeakHold";
+            this.clrbtnMeterItemPeakHold.Selectable = true;
+            this.clrbtnMeterItemPeakHold.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemPeakHold.TabIndex = 82;
+            this.clrbtnMeterItemPeakHold.Changed += new System.EventHandler(this.clrbtnMeterItemPeakHold_Changed);
+            // 
+            // labelTS163
+            // 
+            this.labelTS163.AutoSize = true;
+            this.labelTS163.Image = null;
+            this.labelTS163.Location = new System.Drawing.Point(10, 120);
+            this.labelTS163.Name = "labelTS163";
+            this.labelTS163.Size = new System.Drawing.Size(51, 13);
+            this.labelTS163.TabIndex = 81;
+            this.labelTS163.Text = "Indicator:";
+            // 
+            // clrbtnMeterItemIndiciator
+            // 
+            this.clrbtnMeterItemIndiciator.Automatic = "Automatic";
+            this.clrbtnMeterItemIndiciator.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemIndiciator.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemIndiciator.Image = null;
+            this.clrbtnMeterItemIndiciator.Location = new System.Drawing.Point(61, 115);
+            this.clrbtnMeterItemIndiciator.MoreColors = "More Colors...";
+            this.clrbtnMeterItemIndiciator.Name = "clrbtnMeterItemIndiciator";
+            this.clrbtnMeterItemIndiciator.Selectable = true;
+            this.clrbtnMeterItemIndiciator.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemIndiciator.TabIndex = 80;
+            this.clrbtnMeterItemIndiciator.Changed += new System.EventHandler(this.clrbtnMeterItemIndiciator_Changed);
+            // 
+            // labelTS162
+            // 
+            this.labelTS162.AutoSize = true;
+            this.labelTS162.Image = null;
+            this.labelTS162.Location = new System.Drawing.Point(107, 91);
+            this.labelTS162.Name = "labelTS162";
+            this.labelTS162.Size = new System.Drawing.Size(32, 13);
+            this.labelTS162.TabIndex = 79;
+            this.labelTS162.Text = "High:";
+            // 
+            // labelTS161
+            // 
+            this.labelTS161.AutoSize = true;
+            this.labelTS161.Image = null;
+            this.labelTS161.Location = new System.Drawing.Point(33, 91);
+            this.labelTS161.Name = "labelTS161";
+            this.labelTS161.Size = new System.Drawing.Size(30, 13);
+            this.labelTS161.TabIndex = 78;
+            this.labelTS161.Text = "Low:";
+            // 
+            // clrbtnMeterItemHigh
+            // 
+            this.clrbtnMeterItemHigh.Automatic = "Automatic";
+            this.clrbtnMeterItemHigh.Color = System.Drawing.Color.Red;
+            this.clrbtnMeterItemHigh.Image = null;
+            this.clrbtnMeterItemHigh.Location = new System.Drawing.Point(142, 86);
+            this.clrbtnMeterItemHigh.MoreColors = "More Colors...";
+            this.clrbtnMeterItemHigh.Name = "clrbtnMeterItemHigh";
+            this.clrbtnMeterItemHigh.Selectable = true;
+            this.clrbtnMeterItemHigh.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemHigh.TabIndex = 77;
+            this.clrbtnMeterItemHigh.Changed += new System.EventHandler(this.clrbtnMeterItemHigh_Changed);
+            // 
+            // clrbtnMeterItemLow
+            // 
+            this.clrbtnMeterItemLow.Automatic = "Automatic";
+            this.clrbtnMeterItemLow.Color = System.Drawing.Color.White;
+            this.clrbtnMeterItemLow.Image = null;
+            this.clrbtnMeterItemLow.Location = new System.Drawing.Point(61, 86);
+            this.clrbtnMeterItemLow.MoreColors = "More Colors...";
+            this.clrbtnMeterItemLow.Name = "clrbtnMeterItemLow";
+            this.clrbtnMeterItemLow.Selectable = true;
+            this.clrbtnMeterItemLow.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemLow.TabIndex = 76;
+            this.clrbtnMeterItemLow.Changed += new System.EventHandler(this.clrbtnMeterItemLow_Changed);
+            // 
+            // chkMeterItemShadow
+            // 
+            this.chkMeterItemShadow.AutoSize = true;
+            this.chkMeterItemShadow.Image = null;
+            this.chkMeterItemShadow.Location = new System.Drawing.Point(164, 181);
+            this.chkMeterItemShadow.Name = "chkMeterItemShadow";
+            this.chkMeterItemShadow.Size = new System.Drawing.Size(65, 17);
+            this.chkMeterItemShadow.TabIndex = 4;
+            this.chkMeterItemShadow.Text = "Shadow";
+            this.chkMeterItemShadow.UseVisualStyleBackColor = true;
+            this.chkMeterItemShadow.CheckedChanged += new System.EventHandler(this.chkMeterItemShadow_CheckedChanged);
+            // 
+            // chkMeterItemPeakHold
+            // 
+            this.chkMeterItemPeakHold.AutoSize = true;
+            this.chkMeterItemPeakHold.Image = null;
+            this.chkMeterItemPeakHold.Location = new System.Drawing.Point(164, 251);
+            this.chkMeterItemPeakHold.Name = "chkMeterItemPeakHold";
+            this.chkMeterItemPeakHold.Size = new System.Drawing.Size(106, 17);
+            this.chkMeterItemPeakHold.TabIndex = 3;
+            this.chkMeterItemPeakHold.Text = "Show Peak Hold";
+            this.chkMeterItemPeakHold.UseVisualStyleBackColor = true;
+            this.chkMeterItemPeakHold.CheckedChanged += new System.EventHandler(this.chkMeterItemPeakHold_CheckedChanged);
+            // 
+            // chkMeterItemHistory
+            // 
+            this.chkMeterItemHistory.AutoSize = true;
+            this.chkMeterItemHistory.Image = null;
+            this.chkMeterItemHistory.Location = new System.Drawing.Point(164, 204);
+            this.chkMeterItemHistory.Name = "chkMeterItemHistory";
+            this.chkMeterItemHistory.Size = new System.Drawing.Size(88, 17);
+            this.chkMeterItemHistory.TabIndex = 2;
+            this.chkMeterItemHistory.Text = "Show History";
+            this.chkMeterItemHistory.UseVisualStyleBackColor = true;
+            this.chkMeterItemHistory.CheckedChanged += new System.EventHandler(this.chkMeterItemHistory_CheckedChanged);
+            // 
+            // chkMeterItemFadeOnTx
+            // 
+            this.chkMeterItemFadeOnTx.AutoSize = true;
+            this.chkMeterItemFadeOnTx.Image = null;
+            this.chkMeterItemFadeOnTx.Location = new System.Drawing.Point(18, 205);
+            this.chkMeterItemFadeOnTx.Name = "chkMeterItemFadeOnTx";
+            this.chkMeterItemFadeOnTx.Size = new System.Drawing.Size(82, 17);
+            this.chkMeterItemFadeOnTx.TabIndex = 1;
+            this.chkMeterItemFadeOnTx.Text = "Fade on TX";
+            this.chkMeterItemFadeOnTx.UseVisualStyleBackColor = true;
+            this.chkMeterItemFadeOnTx.CheckedChanged += new System.EventHandler(this.chkMeterItemFadeOnTx_CheckedChanged);
+            // 
+            // chkMeterItemFadeOnRx
+            // 
+            this.chkMeterItemFadeOnRx.AutoSize = true;
+            this.chkMeterItemFadeOnRx.Image = null;
+            this.chkMeterItemFadeOnRx.Location = new System.Drawing.Point(18, 182);
+            this.chkMeterItemFadeOnRx.Name = "chkMeterItemFadeOnRx";
+            this.chkMeterItemFadeOnRx.Size = new System.Drawing.Size(83, 17);
+            this.chkMeterItemFadeOnRx.TabIndex = 0;
+            this.chkMeterItemFadeOnRx.Text = "Fade on RX";
+            this.chkMeterItemFadeOnRx.UseVisualStyleBackColor = true;
+            this.chkMeterItemFadeOnRx.CheckedChanged += new System.EventHandler(this.chkMeterItemFadeOnRx_CheckedChanged);
+            // 
+            // btnMeterUp
+            // 
+            this.btnMeterUp.Image = global::Thetis.Properties.Resources.arrow_up_black;
+            this.btnMeterUp.Location = new System.Drawing.Point(348, 115);
+            this.btnMeterUp.Name = "btnMeterUp";
+            this.btnMeterUp.Selectable = true;
+            this.btnMeterUp.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterUp.TabIndex = 95;
+            this.btnMeterUp.UseVisualStyleBackColor = true;
+            this.btnMeterUp.Click += new System.EventHandler(this.btnMeterUp_Click);
+            // 
+            // btnMeterDown
+            // 
+            this.btnMeterDown.Image = global::Thetis.Properties.Resources.down_black;
+            this.btnMeterDown.Location = new System.Drawing.Point(348, 162);
+            this.btnMeterDown.Name = "btnMeterDown";
+            this.btnMeterDown.Selectable = true;
+            this.btnMeterDown.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterDown.TabIndex = 94;
+            this.btnMeterDown.UseVisualStyleBackColor = true;
+            this.btnMeterDown.Click += new System.EventHandler(this.btnMeterDown_Click);
+            // 
+            // btnRemoveMeterItem
+            // 
+            this.btnRemoveMeterItem.Image = global::Thetis.Properties.Resources.arrow_left_black;
+            this.btnRemoveMeterItem.Location = new System.Drawing.Point(164, 162);
+            this.btnRemoveMeterItem.Name = "btnRemoveMeterItem";
+            this.btnRemoveMeterItem.Selectable = true;
+            this.btnRemoveMeterItem.Size = new System.Drawing.Size(32, 32);
+            this.btnRemoveMeterItem.TabIndex = 93;
+            this.btnRemoveMeterItem.UseVisualStyleBackColor = true;
+            this.btnRemoveMeterItem.Click += new System.EventHandler(this.btnRemoveMeterItem_Click);
+            // 
+            // btnAddMeterItem
+            // 
+            this.btnAddMeterItem.Image = global::Thetis.Properties.Resources.arrow_right_black;
+            this.btnAddMeterItem.Location = new System.Drawing.Point(164, 115);
+            this.btnAddMeterItem.Name = "btnAddMeterItem";
+            this.btnAddMeterItem.Selectable = true;
+            this.btnAddMeterItem.Size = new System.Drawing.Size(32, 32);
+            this.btnAddMeterItem.TabIndex = 92;
+            this.btnAddMeterItem.UseVisualStyleBackColor = true;
+            this.btnAddMeterItem.Click += new System.EventHandler(this.btnAddMeterItem_Click);
+            // 
+            // lstMetersInUse
+            // 
+            this.lstMetersInUse.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.lstMetersInUse.FormattingEnabled = true;
+            this.lstMetersInUse.Location = new System.Drawing.Point(202, 90);
+            this.lstMetersInUse.Name = "lstMetersInUse";
+            this.lstMetersInUse.Size = new System.Drawing.Size(140, 277);
+            this.lstMetersInUse.TabIndex = 91;
+            this.lstMetersInUse.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersInUse_DrawItem);
+            this.lstMetersInUse.SelectedIndexChanged += new System.EventHandler(this.lstMetersInUse_SelectedIndexChanged);
+            this.lstMetersInUse.DoubleClick += new System.EventHandler(this.lstMetersInUse_DoubleClick);
+            // 
+            // lstMetersAvailable
+            // 
+            this.lstMetersAvailable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.lstMetersAvailable.FormattingEnabled = true;
+            this.lstMetersAvailable.Location = new System.Drawing.Point(18, 90);
+            this.lstMetersAvailable.Name = "lstMetersAvailable";
+            this.lstMetersAvailable.Size = new System.Drawing.Size(140, 277);
+            this.lstMetersAvailable.TabIndex = 90;
+            this.lstMetersAvailable.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersAvailable_DrawItem);
+            this.lstMetersAvailable.SelectedIndexChanged += new System.EventHandler(this.lstMetersAvailable_SelectedIndexChanged);
+            this.lstMetersAvailable.DoubleClick += new System.EventHandler(this.lstMetersAvailable_DoubleClick);
+            // 
+            // chkContainerHighlight
+            // 
+            this.chkContainerHighlight.AutoSize = true;
+            this.chkContainerHighlight.Image = null;
+            this.chkContainerHighlight.Location = new System.Drawing.Point(144, 57);
+            this.chkContainerHighlight.Name = "chkContainerHighlight";
+            this.chkContainerHighlight.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkContainerHighlight.Size = new System.Drawing.Size(67, 17);
+            this.chkContainerHighlight.TabIndex = 89;
+            this.chkContainerHighlight.Text = "Highlight";
+            this.chkContainerHighlight.UseVisualStyleBackColor = true;
+            this.chkContainerHighlight.CheckedChanged += new System.EventHandler(this.chkContainerHighlight_CheckedChanged);
+            // 
+            // btnContainerDelete
+            // 
+            this.btnContainerDelete.Image = null;
+            this.btnContainerDelete.Location = new System.Drawing.Point(18, 48);
+            this.btnContainerDelete.Name = "btnContainerDelete";
+            this.btnContainerDelete.Selectable = true;
+            this.btnContainerDelete.Size = new System.Drawing.Size(59, 32);
+            this.btnContainerDelete.TabIndex = 88;
+            this.btnContainerDelete.Text = "Remove";
+            this.toolTip1.SetToolTip(this.btnContainerDelete, "Removes the selected container and all meter items contained within");
+            this.btnContainerDelete.UseVisualStyleBackColor = true;
+            this.btnContainerDelete.Click += new System.EventHandler(this.btnContainerDelete_Click);
+            // 
+            // comboContainerSelect
+            // 
+            this.comboContainerSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboContainerSelect.FormattingEnabled = true;
+            this.comboContainerSelect.Location = new System.Drawing.Point(18, 21);
+            this.comboContainerSelect.Name = "comboContainerSelect";
+            this.comboContainerSelect.Size = new System.Drawing.Size(193, 21);
+            this.comboContainerSelect.TabIndex = 87;
+            this.comboContainerSelect.SelectedIndexChanged += new System.EventHandler(this.comboContainerSelect_SelectedIndexChanged);
+            // 
+            // btnAddRX2Container
+            // 
+            this.btnAddRX2Container.Image = null;
+            this.btnAddRX2Container.Location = new System.Drawing.Point(310, 15);
+            this.btnAddRX2Container.Name = "btnAddRX2Container";
+            this.btnAddRX2Container.Selectable = true;
+            this.btnAddRX2Container.Size = new System.Drawing.Size(70, 56);
+            this.btnAddRX2Container.TabIndex = 1;
+            this.btnAddRX2Container.Text = "Add TRX2 Container";
+            this.toolTip1.SetToolTip(this.btnAddRX2Container, "Add a meter item container that uses RX2 readings");
+            this.btnAddRX2Container.UseVisualStyleBackColor = true;
+            this.btnAddRX2Container.Click += new System.EventHandler(this.btnAddRX2Container_Click);
+            // 
+            // btnAddRX1Container
+            // 
+            this.btnAddRX1Container.Image = null;
+            this.btnAddRX1Container.Location = new System.Drawing.Point(237, 15);
+            this.btnAddRX1Container.Name = "btnAddRX1Container";
+            this.btnAddRX1Container.Selectable = true;
+            this.btnAddRX1Container.Size = new System.Drawing.Size(70, 56);
+            this.btnAddRX1Container.TabIndex = 0;
+            this.btnAddRX1Container.Text = "Add TRX1 Container";
+            this.toolTip1.SetToolTip(this.btnAddRX1Container, "Add a meter item container that uses RX1 readings");
+            this.btnAddRX1Container.UseVisualStyleBackColor = true;
+            this.btnAddRX1Container.Click += new System.EventHandler(this.btnAddRX1Container_Click);
             // 
             // tcAppearanceTXDisplay
             // 
@@ -53219,6 +53737,47 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // nudMeterItemEyeScale
+            // 
+            this.nudMeterItemEyeScale.DecimalPlaces = 2;
+            this.nudMeterItemEyeScale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudMeterItemEyeScale.Location = new System.Drawing.Point(83, 307);
+            this.nudMeterItemEyeScale.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemEyeScale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudMeterItemEyeScale.Name = "nudMeterItemEyeScale";
+            this.nudMeterItemEyeScale.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemEyeScale.TabIndex = 110;
+            this.nudMeterItemEyeScale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemEyeScale, "Controls how long the analog peak red line will be held on the multimeter.");
+            this.nudMeterItemEyeScale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemEyeScale.ValueChanged += new System.EventHandler(this.nudMeterItemEyeScale_ValueChanged);
+            // 
+            // labelTS170
+            // 
+            this.labelTS170.Image = null;
+            this.labelTS170.Location = new System.Drawing.Point(13, 309);
+            this.labelTS170.Name = "labelTS170";
+            this.labelTS170.Size = new System.Drawing.Size(64, 16);
+            this.labelTS170.TabIndex = 109;
+            this.labelTS170.Text = "Eye Size:";
+            this.labelTS170.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -54141,13 +54700,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
             this.grpDisplayPeakCursor.ResumeLayout(false);
             this.tpAppearanceMeter.ResumeLayout(false);
-            this.groupBoxTS28.ResumeLayout(false);
-            this.groupBoxTS28.PerformLayout();
             this.groupBoxTS14.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).EndInit();
             this.grpMeterEdge.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbMeterEdgeBackgroundAlpha)).EndInit();
             this.grpAppearanceMeter.ResumeLayout(false);
+            this.tpAppearanceMeter2.ResumeLayout(false);
+            this.groupBoxTS28.ResumeLayout(false);
+            this.groupBoxTS28.PerformLayout();
+            this.grpMeterItemSettings.ResumeLayout(false);
+            this.grpMeterItemSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemDecayRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemAttackRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMeterItemHistoryAlpha)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemHistoryDuration)).EndInit();
             this.tcAppearanceTXDisplay.ResumeLayout(false);
             this.grpAppTXWaterfall.ResumeLayout(false);
             this.grpAppTXWaterfall.PerformLayout();
@@ -54295,6 +54862,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -57633,12 +58201,45 @@
         private ButtonTS btnContainerDelete;
         private ComboBoxTS comboContainerSelect;
         private CheckBoxTS chkPreventTXonDifferentBandToRX;
-        private GroupBoxTS groupBoxTS29;
+        private GroupBoxTS grpMeterItemSettings;
         private ButtonTS btnMeterUp;
         private ButtonTS btnMeterDown;
         private ButtonTS btnRemoveMeterItem;
         private ButtonTS btnAddMeterItem;
         private ListBox lstMetersInUse;
         private ListBox lstMetersAvailable;
+        private TabPage tpAppearanceMeter2;
+        private CheckBoxTS chkMeterItemPeakValue;
+        private CheckBoxTS chkMeterItemTitle;
+        private CheckBoxTS chkMeterItemSegmented;
+        private LabelTS labelTS164;
+        private ColorButton clrbtnMeterItemHBackground;
+        private ColorButton clrbtnMeterItemHistory;
+        private ColorButton clrbtnMeterItemPeakHold;
+        private LabelTS labelTS163;
+        private ColorButton clrbtnMeterItemIndiciator;
+        private LabelTS labelTS162;
+        private LabelTS labelTS161;
+        private ColorButton clrbtnMeterItemHigh;
+        private ColorButton clrbtnMeterItemLow;
+        private CheckBoxTS chkMeterItemShadow;
+        private CheckBoxTS chkMeterItemPeakHold;
+        private CheckBoxTS chkMeterItemHistory;
+        private CheckBoxTS chkMeterItemFadeOnTx;
+        private CheckBoxTS chkMeterItemFadeOnRx;
+        private NumericUpDownTS nudMeterItemHistoryDuration;
+        private LabelTS labelTS166;
+        private TrackBarTS tbMeterItemHistoryAlpha;
+        private NumericUpDownTS nudMeterItemDecayRate;
+        private LabelTS labelTS169;
+        private NumericUpDownTS nudMeterItemAttackRate;
+        private LabelTS labelTS168;
+        private NumericUpDownTS nudMeterItemUpdateRate;
+        private LabelTS labelTS167;
+        private ColorButton clrbtnMeterItemMeterTitle;
+        private ColorButton clrbtnMeterItemPeakValueColour;
+        private ColorButton clrbtnMeterItemSegmentedColour;
+        private NumericUpDownTS nudMeterItemEyeScale;
+        private LabelTS labelTS170;
     }
 }
