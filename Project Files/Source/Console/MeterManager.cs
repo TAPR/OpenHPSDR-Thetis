@@ -153,6 +153,7 @@ namespace Thetis
             private bool _peakValue;
             private System.Drawing.Color _peakValueColour;
             private float _eyeScale;
+            private bool _average;
 
             public clsIGSettings() 
             {
@@ -197,7 +198,8 @@ namespace Thetis
                     colourToString(_segmentedColour) + "|" +
                     _peakValue.ToString() + "|" +
                     colourToString(_peakValueColour) + "|" +
-                    _eyeScale.ToString("f4");
+                    _eyeScale.ToString("f4") + "|" +
+                    _average.ToString();
 
                 return sRet;
             }
@@ -208,7 +210,7 @@ namespace Thetis
                 bool bOk = false;
 
                 string[] tmp = str.Split('|');
-                if (tmp.Length == 24)
+                if (tmp.Length == 25)
                 {
                     int tmpInt = 0;
                     float tmpFloat = 0;
@@ -241,6 +243,7 @@ namespace Thetis
                     if (bOk) bOk = bool.TryParse(tmp[21], out tmpBool); if (bOk) { _peakValue = tmpBool; }
                     if (bOk) tmpColour = colourFromString(tmp[22]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakValueColour = tmpColour; }
                     if (bOk) bOk = float.TryParse(tmp[23], out tmpFloat); if (bOk) { _eyeScale = tmpFloat; }
+                    if (bOk) bOk = bool.TryParse(tmp[24], out tmpBool); if (bOk) { _average = tmpBool; }
                 }
 
                 return bOk;
@@ -269,6 +272,7 @@ namespace Thetis
             public bool PeakValue { get { return _peakValue; } set { _peakValue = value; } }
             public System.Drawing.Color PeakValueColour { get { return _peakValueColour; } set { _peakValueColour = value; } }
             public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
+            public bool Average { get { return _average; } set { _average = value; } }
 
         }
         static MeterManager()
@@ -760,7 +764,7 @@ namespace Thetis
         {
             get
             {
-                // power choice based on console.getMeterPixelPosAndDrawScales
+                // power choice based on code from console.getMeterPixelPosAndDrawScales
                 // TODO: 8000mk2  !!!!!!!!!!!!!!!!!!!!
 
                 int nWatts = 500;
@@ -1149,17 +1153,20 @@ namespace Thetis
                         foreach (KeyValuePair<string, string> igd in meterIGData)
                         {
                             clsItemGroup ig = new clsItemGroup();
-                            ig.TryParse(igd.Value);
+                            bool bOk = ig.TryParse(igd.Value);
 
-                            m.AddMeter(ig.MeterType, ig);
-
-                            //and the settings
-                            IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
-                            if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                            if (bOk)
                             {
-                                clsIGSettings igs = new clsIGSettings();
-                                bool bOk = igs.TryParse(meterIGSettings.First().Value);
-                                if(bOk) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                                m.AddMeter(ig.MeterType, ig);
+
+                                //and the settings
+                                IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
+                                if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                                {
+                                    clsIGSettings igs = new clsIGSettings();
+                                    bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
+                                    if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                                }
                             }
                         }
 
@@ -2322,6 +2329,9 @@ namespace Thetis
             private Dictionary<float, PointF> _scaleCalibration;
             private PointF _radiusRatio;
             private bool _shadow;
+            private bool _peakHold;
+            private System.Drawing.Color _peakHoldMarkerColour;
+            private int _peakNeedleFadeIn;
 
             public clsNeedleItem()
             {
@@ -2342,6 +2352,8 @@ namespace Thetis
                 _needleDirection = NeedleDirection.Clockwise;
                 _scaleCalibration = new Dictionary<float, PointF>();
                 _shadow = true;
+                _peakHold = false;
+                _peakHoldMarkerColour = System.Drawing.Color.Red;
 
                 ItemType = MeterItemType.NEEDLE;
                 ReadingSource = Reading.NONE;
@@ -2349,6 +2361,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
+                _peakNeedleFadeIn = 0;
             }
             public override clsIGSettings GetSettings()
             {
@@ -2451,6 +2464,16 @@ namespace Thetis
                 get { return _style; }
                 set { _style = value; }
             }
+            public System.Drawing.Color PeakHoldMarkerColour
+            {
+                get { return _peakHoldMarkerColour; }
+                set { _peakHoldMarkerColour = value; }
+            }
+            public bool PeakHold
+            {
+                get { return _peakHold; }
+                set { _peakHold = value; }
+            }
             public override bool ShowHistory
             {
                 get { return _showHistory; }
@@ -2522,6 +2545,15 @@ namespace Thetis
             {
                 get { return _shadow; }
                 set { _shadow = value; }
+            }
+            public int PeakNeedleShadowFade
+            {
+                get { return _peakNeedleFadeIn; }
+                set {
+                    _peakNeedleFadeIn = value;
+                    if (_peakNeedleFadeIn > 12) _peakNeedleFadeIn = 12;
+                    if (_peakNeedleFadeIn < 0) _peakNeedleFadeIn = 0;
+                }
             }
         }
         internal class clsText : clsMeterItem
@@ -3232,24 +3264,24 @@ namespace Thetis
                 //
                 clsClickBox clb = new clsClickBox();
                 clb.ParentID = ig.ID;
-                clb.TopLeft = new PointF(ni.TopLeft.X + 0.74f, ni.TopLeft.Y + 0.48f); // tl;
-                clb.Size = new SizeF(0.2f, 0.05f);
+                clb.TopLeft = new PointF(ni.TopLeft.X + 0.76f, ni.TopLeft.Y + 0.46f); // tl;
+                clb.Size = new SizeF(0.18f, 0.044f);
                 clb.OnlyWhenTX = true;
                 clb.Button = MouseButtons.Left;
                 addMeterItem(clb);
 
-                clsSolidColour sc = new clsSolidColour();
-                sc.ParentID = ig.ID;
-                sc.TopLeft = clb.TopLeft;
-                sc.Size = clb.Size;
-                sc.OnlyWhenTX = true;
-                sc.ZOrder = 6;
-                sc.Colour = System.Drawing.Color.FromArgb(48, System.Drawing.Color.White);
-                addMeterItem(sc);
+                //clsSolidColour sc = new clsSolidColour();
+                //sc.ParentID = ig.ID;
+                //sc.TopLeft = clb.TopLeft;
+                //sc.Size = clb.Size;
+                //sc.OnlyWhenTX = true;
+                //sc.ZOrder = 6;
+                //sc.Colour = System.Drawing.Color.FromArgb(48, System.Drawing.Color.White);
+                //addMeterItem(sc);
 
                 clsText tx = new clsText();
                 tx.ParentID = ig.ID;
-                tx.TopLeft = clb.TopLeft;
+                tx.TopLeft = new PointF(clb.TopLeft.X + 0.02f, clb.TopLeft.Y + 0.005f);
                 tx.Size = clb.Size;
                 tx.OnlyWhenTX = true;
                 tx.Text = "%group%";
@@ -3395,10 +3427,20 @@ namespace Thetis
 
                 img = new clsImage();
                 img.ParentID = ig.ID;
+                img.OnlyWhenRX = true;
                 img.TopLeft = new PointF(ni.TopLeft.X, ni.TopLeft.Y + ni.Size.Height);
-                img.Size = new SizeF(1f, 0.101f); // image x to y ratio
+                img.Size = new SizeF(1f, 75 / 900f);//0.101f); // image x to y ratio : 75 pixels y, 900 x
                 img.ZOrder = 5;
                 img.ImageName = "kenwood-s-meter-bg";
+                addMeterItem(img);
+
+                img = new clsImage();
+                img.ParentID = ig.ID;
+                img.OnlyWhenTX = true;
+                img.TopLeft = new PointF(ni.TopLeft.X, ni.TopLeft.Y + ni.Size.Height);
+                img.Size = new SizeF(1f, 75 / 900f);//0.101f); // image x to y ratio : 75 pixels y, 900 x
+                img.ZOrder = 5;
+                img.ImageName = "kenwood-s-meter-bg-tx";
                 addMeterItem(img);
 
                 fBottom = img.TopLeft.Y + img.Size.Height;
@@ -4611,6 +4653,7 @@ namespace Thetis
                                             //bi.PeakHold = igs.PeakHold;
                                             //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                             magicEye.Colour = igs.MarkerColour;
+                                            magicEye.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
                                             //
                                             if (bRebuild)
                                             {
@@ -4661,6 +4704,20 @@ namespace Thetis
                                                 //bi.PeakHold = igs.PeakHold;
                                                 //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                                 ni.Shadow = igs.Shadow;
+                                                if (mt == MeterType.KENWOOD) 
+                                                {
+                                                    if (ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_STRENGTH)
+                                                    {
+                                                        ni.PeakHold = igs.PeakHold;
+                                                        ni.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                                                        ni.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                                    }
+                                                    else if(ni.ReadingSource == Reading.PWR)
+                                                    {
+                                                        ni.PeakHold = igs.PeakHold;
+                                                        ni.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
+                                                    }
+                                                }
                                             }
                                             else
                                             {
@@ -4804,6 +4861,7 @@ namespace Thetis
                                             //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
                                             igs.MarkerColour = magicEye.Colour;
                                             igs.EyeScale = magicEye.Size.Height;
+                                            igs.Average = magicEye.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
                                         {
@@ -4842,6 +4900,14 @@ namespace Thetis
                                                 //igs.PeakHold = bi.PeakHold;
                                                 //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
                                                 igs.Shadow = ni.Shadow;
+                                                if (mt == MeterType.KENWOOD) {
+                                                    if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
+                                                    {
+                                                        igs.PeakHold = ni.PeakHold;
+                                                        igs.PeakHoldMarkerColor = ni.PeakHoldMarkerColour;
+                                                        igs.Average = ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+                                                    }
+                                                }
                                             }
                                             else
                                             {
@@ -7054,12 +7120,12 @@ namespace Thetis
                 string sImage = ipg.ImageName;
 
                 string sKey = sImage + "-" + MeterManager.CurrentPowerRating.ToString();
-                if (/*_images.ContainsKey*/MeterManager.ContainsBitmap(sKey)) sImage = sKey;
+                if (MeterManager.ContainsBitmap(sKey)) sImage = sKey;
 
                 sKey = sImage + "-small";
-                if ((w <= 200 || h <= 200) && /*_images.ContainsKey*/MeterManager.ContainsBitmap(sKey)) sImage = sKey; // use small version of the image if available
+                if ((w <= 200 || h <= 200) && MeterManager.ContainsBitmap(sKey)) sImage = sKey; // use small version of the image if available
 
-                if (/*_images.ContainsKey*/MeterManager.ContainsBitmap(sImage))
+                if (MeterManager.ContainsBitmap(sImage))
                 {
                     SharpDX.RectangleF imgRect = new SharpDX.RectangleF(x, y, w, h);
 
@@ -7153,8 +7219,9 @@ namespace Thetis
                 }
 
                 float eX, eY, dX, dY;
+                float endMaxX = 0 , endMaxY = 0;
 
-                if (ni.ShowHistory || ni.Setup)
+                if (ni.ShowHistory || ni.Setup || ni.PeakHold)
                 {
                     float valueMin;
                     float valueMax;
@@ -7206,32 +7273,35 @@ namespace Thetis
 
                     float endMinX = startX + (float)(Math.Cos(angMin + degToRad(rotation)) * radiusX);
                     float endMinY = startY + (float)(Math.Sin(angMin + degToRad(rotation)) * radiusY);
-                    float endMaxX = startX + (float)(Math.Cos(angMax + degToRad(rotation)) * radiusX);
-                    float endMaxY = startY + (float)(Math.Sin(angMax + degToRad(rotation)) * radiusY);
+                    endMaxX = startX + (float)(Math.Cos(angMax + degToRad(rotation)) * radiusX);
+                    endMaxY = startY + (float)(Math.Sin(angMax + degToRad(rotation)) * radiusY);
 
-                    PathGeometry sharpGeometry = new PathGeometry(_renderTarget.Factory);
+                    if (ni.ShowHistory || ni.Setup)
+                    {
+                        PathGeometry sharpGeometry = new PathGeometry(_renderTarget.Factory);
 
-                    GeometrySink geo = sharpGeometry.Open();
-                    geo.BeginFigure(new SharpDX.Vector2(startX, startY), FigureBegin.Filled);
+                        GeometrySink geo = sharpGeometry.Open();
+                        geo.BeginFigure(new SharpDX.Vector2(startX, startY), FigureBegin.Filled);
 
-                    geo.AddLine(new SharpDX.Vector2(endMinX, endMinY));
+                        geo.AddLine(new SharpDX.Vector2(endMinX, endMinY));
 
-                    ArcSegment arcSegment = new ArcSegment();
-                    arcSegment.Point = new SharpDX.Vector2(endMaxX, endMaxY);
-                    arcSegment.SweepDirection = ni.Direction == clsNeedleItem.NeedleDirection.Clockwise ? SweepDirection.Clockwise : SweepDirection.CounterClockwise;
-                    arcSegment.ArcSize = Math.Abs(radToDeg(angMax) - radToDeg(angMin)) <= 180f ? ArcSize.Small : ArcSize.Large;
-                    arcSegment.Size = new Size2F(radiusX, radiusY);
-                    geo.AddArc(arcSegment);
+                        ArcSegment arcSegment = new ArcSegment();
+                        arcSegment.Point = new SharpDX.Vector2(endMaxX, endMaxY);
+                        arcSegment.SweepDirection = ni.Direction == clsNeedleItem.NeedleDirection.Clockwise ? SweepDirection.Clockwise : SweepDirection.CounterClockwise;
+                        arcSegment.ArcSize = Math.Abs(radToDeg(angMax) - radToDeg(angMin)) <= 180f ? ArcSize.Small : ArcSize.Large;
+                        arcSegment.Size = new Size2F(radiusX, radiusY);
+                        geo.AddArc(arcSegment);
 
-                    geo.EndFigure(FigureEnd.Closed); // adds the closing line
-                    geo.Close();
+                        geo.EndFigure(FigureEnd.Closed); // adds the closing line
+                        geo.Close();
 
-                    _renderTarget.FillGeometry(sharpGeometry, getDXBrushForColour(ni.HistoryColour, nFade < ni.HistoryColour.A ? nFade : ni.HistoryColour.A));
+                        _renderTarget.FillGeometry(sharpGeometry, getDXBrushForColour(ni.HistoryColour, nFade < ni.HistoryColour.A ? nFade : ni.HistoryColour.A));
 
-                    Utilities.Dispose(ref geo);
-                    geo = null;
-                    Utilities.Dispose(ref sharpGeometry);
-                    sharpGeometry = null;
+                        Utilities.Dispose(ref geo);
+                        geo = null;
+                        Utilities.Dispose(ref sharpGeometry);
+                        sharpGeometry = null;
+                    }
                 }
 
                 getPerc(ni, ni.Value, out float percX, out float percY, out PointF min, out PointF max);
@@ -7265,6 +7335,33 @@ namespace Thetis
                     fScale = fDiag / 450f;
                 }
                 float fStrokeWidth = ni.StrokeWidth * fScale;
+
+                if (ni.PeakHold)
+                {
+                    if (ni.Shadow)
+                    {
+                        float fDeltaFromCentre = -((w / 2f) - (endMaxX - x));
+                        float fR = fDeltaFromCentre / (w / 2f);
+                        float fShift = (fStrokeWidth * 1.5f) * fR;
+                        float fTotalWidth = fStrokeWidth * 3f;
+                        float tmpStartX = startX + fShift;
+                        float tmpStartY = startY + (fStrokeWidth * 1.5f);
+                        float tmpEndX = endMaxX + fShift;
+                        float tmpEndY = endMaxY + (fStrokeWidth * 1.5f);
+
+                        for (int n = 0; n < 8; n++)
+                        {
+                            float fReduce = (n / 7f) * fTotalWidth;
+                            _renderTarget.DrawLine(new SharpDX.Vector2(tmpStartX, tmpStartY), new SharpDX.Vector2(tmpEndX, tmpEndY), getDXBrushForColour(System.Drawing.Color.Black, (int)ni.PeakNeedleShadowFade), fTotalWidth - fReduce);
+                        }
+
+                        if (Math.Abs(endX - endMaxX) > fStrokeWidth) 
+                            ni.PeakNeedleShadowFade += 1;
+                        else
+                            ni.PeakNeedleShadowFade -= 1;
+                    }
+                    _renderTarget.DrawLine(new SharpDX.Vector2(startX, startY), new SharpDX.Vector2(endMaxX, endMaxY), getDXBrushForColour(ni.PeakHoldMarkerColour, nFade), fStrokeWidth);
+                }
 
                 //shadow?
                 if (ni.Shadow)

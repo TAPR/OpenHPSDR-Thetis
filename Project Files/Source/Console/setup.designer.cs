@@ -2916,6 +2916,8 @@
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
             this.grpMeterItemSettings = new System.Windows.Forms.GroupBoxTS();
+            this.nudMeterItemEyeScale = new System.Windows.Forms.NumericUpDownTS();
+            this.lblMMEyeSize = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemMeterTitle = new Thetis.ColorButton();
             this.clrbtnMeterItemPeakValueColour = new Thetis.ColorButton();
             this.clrbtnMeterItemSegmentedColour = new Thetis.ColorButton();
@@ -2931,14 +2933,14 @@
             this.chkMeterItemPeakValue = new System.Windows.Forms.CheckBoxTS();
             this.chkMeterItemTitle = new System.Windows.Forms.CheckBoxTS();
             this.chkMeterItemSegmented = new System.Windows.Forms.CheckBoxTS();
-            this.labelTS164 = new System.Windows.Forms.LabelTS();
+            this.lblMMBackground = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemHBackground = new Thetis.ColorButton();
             this.clrbtnMeterItemHistory = new Thetis.ColorButton();
             this.clrbtnMeterItemPeakHold = new Thetis.ColorButton();
             this.labelTS163 = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemIndiciator = new Thetis.ColorButton();
-            this.labelTS162 = new System.Windows.Forms.LabelTS();
-            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.lblMMHigh = new System.Windows.Forms.LabelTS();
+            this.lblMMLow = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemHigh = new Thetis.ColorButton();
             this.clrbtnMeterItemLow = new Thetis.ColorButton();
             this.chkMeterItemShadow = new System.Windows.Forms.CheckBoxTS();
@@ -3374,8 +3376,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.nudMeterItemEyeScale = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS170 = new System.Windows.Forms.LabelTS();
+            this.chkMeterItemSignalAverage = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4149,6 +4150,7 @@
             this.tpAppearanceMeter2.SuspendLayout();
             this.groupBoxTS28.SuspendLayout();
             this.grpMeterItemSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemDecayRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemAttackRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRate)).BeginInit();
@@ -4280,7 +4282,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -47098,8 +47099,9 @@
             // 
             // grpMeterItemSettings
             // 
+            this.grpMeterItemSettings.Controls.Add(this.chkMeterItemSignalAverage);
             this.grpMeterItemSettings.Controls.Add(this.nudMeterItemEyeScale);
-            this.grpMeterItemSettings.Controls.Add(this.labelTS170);
+            this.grpMeterItemSettings.Controls.Add(this.lblMMEyeSize);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemMeterTitle);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemPeakValueColour);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemSegmentedColour);
@@ -47115,14 +47117,14 @@
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemPeakValue);
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemTitle);
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemSegmented);
-            this.grpMeterItemSettings.Controls.Add(this.labelTS164);
+            this.grpMeterItemSettings.Controls.Add(this.lblMMBackground);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemHBackground);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemHistory);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemPeakHold);
             this.grpMeterItemSettings.Controls.Add(this.labelTS163);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemIndiciator);
-            this.grpMeterItemSettings.Controls.Add(this.labelTS162);
-            this.grpMeterItemSettings.Controls.Add(this.labelTS161);
+            this.grpMeterItemSettings.Controls.Add(this.lblMMHigh);
+            this.grpMeterItemSettings.Controls.Add(this.lblMMLow);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemHigh);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemLow);
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemShadow);
@@ -47136,6 +47138,47 @@
             this.grpMeterItemSettings.TabIndex = 96;
             this.grpMeterItemSettings.TabStop = false;
             this.grpMeterItemSettings.Text = "Settings";
+            // 
+            // nudMeterItemEyeScale
+            // 
+            this.nudMeterItemEyeScale.DecimalPlaces = 2;
+            this.nudMeterItemEyeScale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudMeterItemEyeScale.Location = new System.Drawing.Point(83, 307);
+            this.nudMeterItemEyeScale.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemEyeScale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudMeterItemEyeScale.Name = "nudMeterItemEyeScale";
+            this.nudMeterItemEyeScale.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemEyeScale.TabIndex = 110;
+            this.nudMeterItemEyeScale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemEyeScale, "Controls how long the analog peak red line will be held on the multimeter.");
+            this.nudMeterItemEyeScale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemEyeScale.ValueChanged += new System.EventHandler(this.nudMeterItemEyeScale_ValueChanged);
+            // 
+            // lblMMEyeSize
+            // 
+            this.lblMMEyeSize.Image = null;
+            this.lblMMEyeSize.Location = new System.Drawing.Point(13, 309);
+            this.lblMMEyeSize.Name = "lblMMEyeSize";
+            this.lblMMEyeSize.Size = new System.Drawing.Size(64, 16);
+            this.lblMMEyeSize.TabIndex = 109;
+            this.lblMMEyeSize.Text = "Eye Size:";
+            this.lblMMEyeSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // clrbtnMeterItemMeterTitle
             // 
@@ -47320,7 +47363,7 @@
             0,
             0,
             0});
-            this.nudMeterItemHistoryDuration.Location = new System.Drawing.Point(207, 144);
+            this.nudMeterItemHistoryDuration.Location = new System.Drawing.Point(214, 147);
             this.nudMeterItemHistoryDuration.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -47346,7 +47389,7 @@
             // labelTS166
             // 
             this.labelTS166.Image = null;
-            this.labelTS166.Location = new System.Drawing.Point(122, 146);
+            this.labelTS166.Location = new System.Drawing.Point(129, 149);
             this.labelTS166.Name = "labelTS166";
             this.labelTS166.Size = new System.Drawing.Size(79, 16);
             this.labelTS166.TabIndex = 97;
@@ -47389,15 +47432,15 @@
             this.chkMeterItemSegmented.UseVisualStyleBackColor = true;
             this.chkMeterItemSegmented.CheckedChanged += new System.EventHandler(this.chkMeterItemSegmented_CheckedChanged);
             // 
-            // labelTS164
+            // lblMMBackground
             // 
-            this.labelTS164.AutoSize = true;
-            this.labelTS164.Image = null;
-            this.labelTS164.Location = new System.Drawing.Point(20, 149);
-            this.labelTS164.Name = "labelTS164";
-            this.labelTS164.Size = new System.Drawing.Size(41, 13);
-            this.labelTS164.TabIndex = 93;
-            this.labelTS164.Text = "Backg:";
+            this.lblMMBackground.AutoSize = true;
+            this.lblMMBackground.Image = null;
+            this.lblMMBackground.Location = new System.Drawing.Point(9, 149);
+            this.lblMMBackground.Name = "lblMMBackground";
+            this.lblMMBackground.Size = new System.Drawing.Size(68, 13);
+            this.lblMMBackground.TabIndex = 93;
+            this.lblMMBackground.Text = "Background:";
             // 
             // clrbtnMeterItemHBackground
             // 
@@ -47405,7 +47448,7 @@
             this.clrbtnMeterItemHBackground.Color = System.Drawing.Color.LimeGreen;
             this.clrbtnMeterItemHBackground.ForeColor = System.Drawing.Color.Black;
             this.clrbtnMeterItemHBackground.Image = null;
-            this.clrbtnMeterItemHBackground.Location = new System.Drawing.Point(61, 144);
+            this.clrbtnMeterItemHBackground.Location = new System.Drawing.Point(83, 144);
             this.clrbtnMeterItemHBackground.MoreColors = "More Colors...";
             this.clrbtnMeterItemHBackground.Name = "clrbtnMeterItemHBackground";
             this.clrbtnMeterItemHBackground.Selectable = true;
@@ -47446,7 +47489,7 @@
             // 
             this.labelTS163.AutoSize = true;
             this.labelTS163.Image = null;
-            this.labelTS163.Location = new System.Drawing.Point(10, 120);
+            this.labelTS163.Location = new System.Drawing.Point(26, 119);
             this.labelTS163.Name = "labelTS163";
             this.labelTS163.Size = new System.Drawing.Size(51, 13);
             this.labelTS163.TabIndex = 81;
@@ -47458,7 +47501,7 @@
             this.clrbtnMeterItemIndiciator.Color = System.Drawing.Color.Yellow;
             this.clrbtnMeterItemIndiciator.ForeColor = System.Drawing.Color.Black;
             this.clrbtnMeterItemIndiciator.Image = null;
-            this.clrbtnMeterItemIndiciator.Location = new System.Drawing.Point(61, 115);
+            this.clrbtnMeterItemIndiciator.Location = new System.Drawing.Point(83, 115);
             this.clrbtnMeterItemIndiciator.MoreColors = "More Colors...";
             this.clrbtnMeterItemIndiciator.Name = "clrbtnMeterItemIndiciator";
             this.clrbtnMeterItemIndiciator.Selectable = true;
@@ -47466,32 +47509,32 @@
             this.clrbtnMeterItemIndiciator.TabIndex = 80;
             this.clrbtnMeterItemIndiciator.Changed += new System.EventHandler(this.clrbtnMeterItemIndiciator_Changed);
             // 
-            // labelTS162
+            // lblMMHigh
             // 
-            this.labelTS162.AutoSize = true;
-            this.labelTS162.Image = null;
-            this.labelTS162.Location = new System.Drawing.Point(107, 91);
-            this.labelTS162.Name = "labelTS162";
-            this.labelTS162.Size = new System.Drawing.Size(32, 13);
-            this.labelTS162.TabIndex = 79;
-            this.labelTS162.Text = "High:";
+            this.lblMMHigh.AutoSize = true;
+            this.lblMMHigh.Image = null;
+            this.lblMMHigh.Location = new System.Drawing.Point(126, 90);
+            this.lblMMHigh.Name = "lblMMHigh";
+            this.lblMMHigh.Size = new System.Drawing.Size(32, 13);
+            this.lblMMHigh.TabIndex = 79;
+            this.lblMMHigh.Text = "High:";
             // 
-            // labelTS161
+            // lblMMLow
             // 
-            this.labelTS161.AutoSize = true;
-            this.labelTS161.Image = null;
-            this.labelTS161.Location = new System.Drawing.Point(33, 91);
-            this.labelTS161.Name = "labelTS161";
-            this.labelTS161.Size = new System.Drawing.Size(30, 13);
-            this.labelTS161.TabIndex = 78;
-            this.labelTS161.Text = "Low:";
+            this.lblMMLow.AutoSize = true;
+            this.lblMMLow.Image = null;
+            this.lblMMLow.Location = new System.Drawing.Point(47, 90);
+            this.lblMMLow.Name = "lblMMLow";
+            this.lblMMLow.Size = new System.Drawing.Size(30, 13);
+            this.lblMMLow.TabIndex = 78;
+            this.lblMMLow.Text = "Low:";
             // 
             // clrbtnMeterItemHigh
             // 
             this.clrbtnMeterItemHigh.Automatic = "Automatic";
             this.clrbtnMeterItemHigh.Color = System.Drawing.Color.Red;
             this.clrbtnMeterItemHigh.Image = null;
-            this.clrbtnMeterItemHigh.Location = new System.Drawing.Point(142, 86);
+            this.clrbtnMeterItemHigh.Location = new System.Drawing.Point(164, 85);
             this.clrbtnMeterItemHigh.MoreColors = "More Colors...";
             this.clrbtnMeterItemHigh.Name = "clrbtnMeterItemHigh";
             this.clrbtnMeterItemHigh.Selectable = true;
@@ -47504,7 +47547,7 @@
             this.clrbtnMeterItemLow.Automatic = "Automatic";
             this.clrbtnMeterItemLow.Color = System.Drawing.Color.White;
             this.clrbtnMeterItemLow.Image = null;
-            this.clrbtnMeterItemLow.Location = new System.Drawing.Point(61, 86);
+            this.clrbtnMeterItemLow.Location = new System.Drawing.Point(83, 85);
             this.clrbtnMeterItemLow.MoreColors = "More Colors...";
             this.clrbtnMeterItemLow.Name = "clrbtnMeterItemLow";
             this.clrbtnMeterItemLow.Selectable = true;
@@ -53737,46 +53780,17 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // nudMeterItemEyeScale
+            // chkMeterItemSignalAverage
             // 
-            this.nudMeterItemEyeScale.DecimalPlaces = 2;
-            this.nudMeterItemEyeScale.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.nudMeterItemEyeScale.Location = new System.Drawing.Point(83, 307);
-            this.nudMeterItemEyeScale.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudMeterItemEyeScale.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.nudMeterItemEyeScale.Name = "nudMeterItemEyeScale";
-            this.nudMeterItemEyeScale.Size = new System.Drawing.Size(56, 20);
-            this.nudMeterItemEyeScale.TabIndex = 110;
-            this.nudMeterItemEyeScale.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudMeterItemEyeScale, "Controls how long the analog peak red line will be held on the multimeter.");
-            this.nudMeterItemEyeScale.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudMeterItemEyeScale.ValueChanged += new System.EventHandler(this.nudMeterItemEyeScale_ValueChanged);
-            // 
-            // labelTS170
-            // 
-            this.labelTS170.Image = null;
-            this.labelTS170.Location = new System.Drawing.Point(13, 309);
-            this.labelTS170.Name = "labelTS170";
-            this.labelTS170.Size = new System.Drawing.Size(64, 16);
-            this.labelTS170.TabIndex = 109;
-            this.labelTS170.Text = "Eye Size:";
-            this.labelTS170.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.chkMeterItemSignalAverage.AutoSize = true;
+            this.chkMeterItemSignalAverage.Image = null;
+            this.chkMeterItemSignalAverage.Location = new System.Drawing.Point(164, 310);
+            this.chkMeterItemSignalAverage.Name = "chkMeterItemSignalAverage";
+            this.chkMeterItemSignalAverage.Size = new System.Drawing.Size(98, 17);
+            this.chkMeterItemSignalAverage.TabIndex = 111;
+            this.chkMeterItemSignalAverage.Text = "Signal Average";
+            this.chkMeterItemSignalAverage.UseVisualStyleBackColor = true;
+            this.chkMeterItemSignalAverage.CheckedChanged += new System.EventHandler(this.chkMeterItemSignalAverage_CheckedChanged);
             // 
             // Setup
             // 
@@ -54710,6 +54724,7 @@
             this.groupBoxTS28.PerformLayout();
             this.grpMeterItemSettings.ResumeLayout(false);
             this.grpMeterItemSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemDecayRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemAttackRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRate)).EndInit();
@@ -54862,7 +54877,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -58212,14 +58226,14 @@
         private CheckBoxTS chkMeterItemPeakValue;
         private CheckBoxTS chkMeterItemTitle;
         private CheckBoxTS chkMeterItemSegmented;
-        private LabelTS labelTS164;
+        private LabelTS lblMMBackground;
         private ColorButton clrbtnMeterItemHBackground;
         private ColorButton clrbtnMeterItemHistory;
         private ColorButton clrbtnMeterItemPeakHold;
         private LabelTS labelTS163;
         private ColorButton clrbtnMeterItemIndiciator;
-        private LabelTS labelTS162;
-        private LabelTS labelTS161;
+        private LabelTS lblMMHigh;
+        private LabelTS lblMMLow;
         private ColorButton clrbtnMeterItemHigh;
         private ColorButton clrbtnMeterItemLow;
         private CheckBoxTS chkMeterItemShadow;
@@ -58240,6 +58254,7 @@
         private ColorButton clrbtnMeterItemPeakValueColour;
         private ColorButton clrbtnMeterItemSegmentedColour;
         private NumericUpDownTS nudMeterItemEyeScale;
-        private LabelTS labelTS170;
+        private LabelTS lblMMEyeSize;
+        private CheckBoxTS chkMeterItemSignalAverage;
     }
 }

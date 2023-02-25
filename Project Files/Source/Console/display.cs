@@ -3993,7 +3993,7 @@ namespace Thetis
             int yRange;
             float[] data;
 
-            bool bNotch = false;
+            bool bDoVisualNotch = false;
 
             if (rx == 1)
             {
@@ -4018,7 +4018,7 @@ namespace Thetis
 
                 if (data_ready)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     if (!displayduplex && (local_mox || (mox && tx_on_vfob)) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth/*current_display_data.Length*/; i++)
@@ -4063,7 +4063,7 @@ namespace Thetis
 
                 if (data_ready_bottom)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     //MW0LGE//if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     if (blank_bottom_display || (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)))
                     {
@@ -4217,7 +4217,7 @@ namespace Thetis
             unchecked // we dont expect any overflows
             {
                 // modify the data for visual notches
-                if (bNotch && m_bShowVisualNotch)
+                if (bDoVisualNotch && m_bShowVisualNotch && !local_mox)
                 {
                     modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
                 }
@@ -4650,7 +4650,7 @@ namespace Thetis
             Color mid_color = Color.Red;
             Color high_color = Color.Blue;
 
-            bool bNotch = false;
+            bool bDoVisualNotch = false;
             int nDecimatedWidth = W / m_nDecimation;
 
             if (rx == 2)
@@ -4717,7 +4717,7 @@ namespace Thetis
             {
                 if (rx == 1 && waterfall_data_ready)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     if (!displayduplex && local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
@@ -4740,7 +4740,7 @@ namespace Thetis
                 }
                 else if (rx == 2 && waterfall_data_ready_bottom)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
@@ -4800,7 +4800,7 @@ namespace Thetis
                         if (rx == 1) fOffset += rx1_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
                         else if (rx == 2) fOffset += rx2_display_cal_offset + (rx2_preamp_offset);
 
-                        if (bNotch && m_bShowVisualNotch)
+                        if (bDoVisualNotch && m_bShowVisualNotch)
                         {
                             // modify the data for visual notches
                             modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);

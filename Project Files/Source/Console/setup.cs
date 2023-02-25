@@ -25475,16 +25475,16 @@ namespace Thetis
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        {           
             bool bEnabled = lstMetersInUse.SelectedIndex >= 0;
+
+            if(bEnabled) updateItemSettingsControlsForSelected();
 
             btnRemoveMeterItem.Enabled = bEnabled;
             btnMeterUp.Enabled = bEnabled;
             btnMeterDown.Enabled = bEnabled;
 
-            grpMeterItemSettings.Enabled = bEnabled;
-
-            updateItemSettingsControlsForSelected();
+            grpMeterItemSettings.Enabled = bEnabled;            
         }
 
         private void btnRemoveMeterItem_Click(object sender, EventArgs e)
@@ -25665,6 +25665,7 @@ namespace Thetis
             igs.PeakValue = chkMeterItemPeakValue.Checked;
             igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
             igs.EyeScale = (float)nudMeterItemEyeScale.Value;
+            if (mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
 
             m.ApplySettingsForMeterGroup(mt, igs);
         }
@@ -25698,10 +25699,7 @@ namespace Thetis
             clrbtnMeterItemSegmentedColour.Color = igs.SegmentedColour;
             updateSegmentedControls();
             updatePeakHoldControls(igs.PeakHold, igs.PeakHoldMarkerColor, igs.PeakHold);
-
             chkMeterItemShadow.Checked = igs.Shadow;
-            chkMeterItemShadow.Enabled = mt == MeterType.KENWOOD || mt == MeterType.CROSS;
-
             chkMeterItemFadeOnRx.Checked = igs.FadeOnRx;
             chkMeterItemFadeOnTx.Checked = igs.FadeOnTx;
             chkMeterItemTitle.Checked = igs.ShowType;
@@ -25711,8 +25709,34 @@ namespace Thetis
             clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
             updatePeakValueControls();
 
-            if(mt == MeterType.MAGIC_EYE) nudMeterItemEyeScale.Value = (decimal)igs.EyeScale;
-            nudMeterItemEyeScale.Enabled = mt == MeterType.MAGIC_EYE;
+            // specific to mt
+            bool bMagicEye = mt == MeterType.MAGIC_EYE;
+            if (bMagicEye) nudMeterItemEyeScale.Value = (decimal)igs.EyeScale; // prevents setting it to 0 as other items will have 0
+            nudMeterItemEyeScale.Enabled = bMagicEye;
+            lblMMEyeSize.Enabled = bMagicEye;
+            chkMeterItemHistory.Enabled = !bMagicEye;
+            clrbtnMeterItemHistory.Enabled = !bMagicEye;
+            chkMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
+            clrbtnMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
+
+            chkMeterItemShadow.Enabled = mt == MeterType.KENWOOD || mt == MeterType.CROSS;
+            bool bEnable = mt == MeterType.KENWOOD || mt == MeterType.CROSS || mt == MeterType.MAGIC_EYE;            
+            chkMeterItemSegmented.Enabled = !bEnable;
+            clrbtnMeterItemSegmentedColour.Enabled = !bEnable;
+            chkMeterItemTitle.Enabled = !bEnable;
+            clrbtnMeterItemMeterTitle.Enabled = !bEnable;
+            chkMeterItemPeakValue.Enabled = !bEnable;
+            clrbtnMeterItemPeakValueColour.Enabled = !bEnable;
+            lblMMLow.Enabled = !bEnable;
+            lblMMHigh.Enabled = !bEnable;
+            lblMMBackground.Enabled = !bEnable;
+            clrbtnMeterItemLow.Enabled = !bEnable;
+            clrbtnMeterItemHigh.Enabled = !bEnable;
+            clrbtnMeterItemHBackground.Enabled = !bEnable;
+
+            chkMeterItemSignalAverage.Enabled = mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE;
+            if (mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE) chkMeterItemSignalAverage.Checked = igs.Average;
+            //
 
             _ignoreMeterItemChangeEvents = false;
         }
@@ -25864,6 +25888,11 @@ namespace Thetis
         }
 
         private void nudMeterItemEyeScale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemSignalAverage_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }
