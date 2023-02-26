@@ -1119,6 +1119,8 @@
             this.tbAndromedaEncoderSlider = new System.Windows.Forms.TrackBarTS();
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
+            this.nudPwrTemp = new System.Windows.Forms.NumericUpDownTS();
+            this.nudPwrTemp2 = new System.Windows.Forms.NumericUpDownTS();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
@@ -1216,6 +1218,8 @@
             this.grpMultimeterMenus.SuspendLayout();
             this.panelAndromedaMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).BeginInit();
             this.SuspendLayout();
             // 
             // timer_cpu_meter
@@ -7335,11 +7339,67 @@
             this.lblATUTuneLabel.ForeColor = System.Drawing.Color.White;
             this.lblATUTuneLabel.Name = "lblATUTuneLabel";
             // 
+            // nudPwrTemp
+            // 
+            this.nudPwrTemp.DecimalPlaces = 1;
+            this.nudPwrTemp.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            resources.ApplyResources(this.nudPwrTemp, "nudPwrTemp");
+            this.nudPwrTemp.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPwrTemp.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPwrTemp.Name = "nudPwrTemp";
+            this.nudPwrTemp.TinyStep = false;
+            this.nudPwrTemp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // nudPwrTemp2
+            // 
+            this.nudPwrTemp2.DecimalPlaces = 2;
+            this.nudPwrTemp2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            resources.ApplyResources(this.nudPwrTemp2, "nudPwrTemp2");
+            this.nudPwrTemp2.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPwrTemp2.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPwrTemp2.Name = "nudPwrTemp2";
+            this.nudPwrTemp2.TinyStep = false;
+            this.nudPwrTemp2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.nudPwrTemp2);
+            this.Controls.Add(this.nudPwrTemp);
             this.Controls.Add(this.statusStripMain);
             this.Controls.Add(this.grpMultimeter);
             this.Controls.Add(this.panelFilter);
@@ -7511,6 +7571,8 @@
             this.grpMultimeterMenus.ResumeLayout(false);
             this.panelAndromedaMisc.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -7645,5 +7707,7 @@
         private LabelTS lblTune;
         private LabelTS lblPAProfile;
         private LabelTS labelTS2;
+        private NumericUpDownTS nudPwrTemp;
+        private NumericUpDownTS nudPwrTemp2;
     }
 }

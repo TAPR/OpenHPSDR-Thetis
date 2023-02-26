@@ -52255,6 +52255,10 @@ namespace Thetis
             set {
                 if (!value) Display.DebugText = "";
                 m_bEnableControlDebug = value;
+
+                ////for power xmeter config
+                //nudPwrTemp.Visible = m_bEnableControlDebug;
+                //nudPwrTemp2.Visible = m_bEnableControlDebug;
             }
         }
         private bool m_bEnableDisplayDebug = false;
@@ -54204,7 +54208,18 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.PWR)) _RX1MeterValues[Reading.PWR] = (alexpresent || apollopresent) && current_hpsdr_model == HPSDRModel.ANAN8000D && tx_xvtr_index >= 0 ? drivepwr : calfwdpower;
                     if (MeterManager.RequiresUpdate(1, Reading.REVERSE_PWR)) _RX1MeterValues[Reading.REVERSE_PWR] = (alexpresent || apollopresent) ? alex_rev : -200f;
                     if (MeterManager.RequiresUpdate(1, Reading.SWR)) _RX1MeterValues[Reading.SWR] = alex_swr;
-
+                    //test code, uses 2 number controls on main console
+                    //if (EnableControlDebug)
+                    //{
+                    //    _RX1MeterValues[Reading.PWR] = (float)nudPwrTemp.Value;
+                    //    _RX1MeterValues[Reading.REVERSE_PWR] = (float)nudPwrTemp2.Value;
+                    //    float vswr;
+                    //    if (_RX1MeterValues[Reading.PWR] == 0)
+                    //        vswr = 1;
+                    //    else
+                    //        vswr = (1 + (float)Math.Sqrt(_RX1MeterValues[Reading.REVERSE_PWR] / _RX1MeterValues[Reading.PWR])) / (1 - (float)Math.Sqrt(_RX1MeterValues[Reading.REVERSE_PWR] / _RX1MeterValues[Reading.PWR]));
+                    //    _RX1MeterValues[Reading.SWR] = vswr;
+                    //}
                     // pa
                     // note: there are others distributed around the console.cs, search for MeterManager.RequiresUpdate.
                     if (MeterManager.RequiresUpdate(1, Reading.DRIVE_FWD_ADC)) _RX1MeterValues[Reading.DRIVE_FWD_ADC] = average_drvadc;

@@ -2916,6 +2916,7 @@
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
             this.grpMeterItemSettings = new System.Windows.Forms.GroupBoxTS();
+            this.chkMeterItemSignalAverage = new System.Windows.Forms.CheckBoxTS();
             this.nudMeterItemEyeScale = new System.Windows.Forms.NumericUpDownTS();
             this.lblMMEyeSize = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemMeterTitle = new Thetis.ColorButton();
@@ -3376,7 +3377,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkMeterItemSignalAverage = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -47139,6 +47139,18 @@
             this.grpMeterItemSettings.TabStop = false;
             this.grpMeterItemSettings.Text = "Settings";
             // 
+            // chkMeterItemSignalAverage
+            // 
+            this.chkMeterItemSignalAverage.AutoSize = true;
+            this.chkMeterItemSignalAverage.Image = null;
+            this.chkMeterItemSignalAverage.Location = new System.Drawing.Point(164, 310);
+            this.chkMeterItemSignalAverage.Name = "chkMeterItemSignalAverage";
+            this.chkMeterItemSignalAverage.Size = new System.Drawing.Size(98, 17);
+            this.chkMeterItemSignalAverage.TabIndex = 111;
+            this.chkMeterItemSignalAverage.Text = "Signal Average";
+            this.chkMeterItemSignalAverage.UseVisualStyleBackColor = true;
+            this.chkMeterItemSignalAverage.CheckedChanged += new System.EventHandler(this.chkMeterItemSignalAverage_CheckedChanged);
+            // 
             // nudMeterItemEyeScale
             // 
             this.nudMeterItemEyeScale.DecimalPlaces = 2;
@@ -47365,7 +47377,7 @@
             0});
             this.nudMeterItemHistoryDuration.Location = new System.Drawing.Point(214, 147);
             this.nudMeterItemHistoryDuration.Maximum = new decimal(new int[] {
-            10000,
+            30000,
             0,
             0,
             0});
@@ -53779,18 +53791,6 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
-            // 
-            // chkMeterItemSignalAverage
-            // 
-            this.chkMeterItemSignalAverage.AutoSize = true;
-            this.chkMeterItemSignalAverage.Image = null;
-            this.chkMeterItemSignalAverage.Location = new System.Drawing.Point(164, 310);
-            this.chkMeterItemSignalAverage.Name = "chkMeterItemSignalAverage";
-            this.chkMeterItemSignalAverage.Size = new System.Drawing.Size(98, 17);
-            this.chkMeterItemSignalAverage.TabIndex = 111;
-            this.chkMeterItemSignalAverage.Text = "Signal Average";
-            this.chkMeterItemSignalAverage.UseVisualStyleBackColor = true;
-            this.chkMeterItemSignalAverage.CheckedChanged += new System.EventHandler(this.chkMeterItemSignalAverage_CheckedChanged);
             // 
             // Setup
             // 
