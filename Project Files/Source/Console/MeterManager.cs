@@ -100,7 +100,7 @@ namespace Thetis
         //CPDR, //not used
         //special
         MAGIC_EYE,
-        KENWOOD,
+        ANANMM,
         CROSS,
         //HISTORY,
         LAST
@@ -166,19 +166,7 @@ namespace Thetis
                 _readingSource = Reading.NONE;
                 _barStyle = clsBarItem.BarStyle.None;
             }
-            private string colourToString(System.Drawing.Color c)
-            {
-                return c.A.ToString() + "." + c.R.ToString() + "." + c.G.ToString() + "." + c.B.ToString();
-            }
-            private System.Drawing.Color colourFromString(string str)
-            {
-                string[] tmp = str.Split('.');
-                if (tmp.Length == 4)
-                {
-                    return System.Drawing.Color.FromArgb(Int32.Parse(tmp[0]), Int32.Parse(tmp[1]), Int32.Parse(tmp[2]), Int32.Parse(tmp[3]) );
-                }
-                return System.Drawing.Color.Transparent;
-            }
+
             public override string ToString()
             {
                 string sRet = _updateInterval.ToString() + "|" +
@@ -187,23 +175,23 @@ namespace Thetis
                     _historyDuration.ToString() + "|" +
                     _shadow.ToString() + "|" +
                     _showHistory.ToString() + "|" +
-                    colourToString(_historyColor) + "|" +
+                    Common.ColourToString(_historyColor) + "|" +
                     _peakHold.ToString() + "|" +
-                    colourToString(_peakHoldMarkerColor) + "|" +
-                    colourToString(_lowColor) + "|" +
-                    colourToString(_highColor) + "|" +
-                    colourToString(_titleColor) + "|" +
+                    Common.ColourToString(_peakHoldMarkerColor) + "|" +
+                    Common.ColourToString(_lowColor) + "|" +
+                    Common.ColourToString(_highColor) + "|" +
+                    Common.ColourToString(_titleColor) + "|" +
                     _readingSource.ToString() + "|" +
-                    colourToString(_colour) + "|" +
-                    colourToString(_markerColour) + "|" +
+                    Common.ColourToString(_colour) + "|" +
+                    Common.ColourToString(_markerColour) + "|" +
                     _barStyle.ToString() + "|" +
                     _text + "|" + //handle pipe in string??? to do
                     _fadeOnRx.ToString() + "|" +
                     _fadeOnTx.ToString() + "|" +
                     _showType.ToString() + "|" +
-                    colourToString(_segmentedColour) + "|" +
+                    Common.ColourToString(_segmentedColour) + "|" +
                     _peakValue.ToString() + "|" +
-                    colourToString(_peakValueColour) + "|" +
+                    Common.ColourToString(_peakValueColour) + "|" +
                     _eyeScale.ToString("f4") + "|" +
                     _average.ToString() + "|" +
                     _darkMode.ToString();
@@ -232,23 +220,23 @@ namespace Thetis
                     if (bOk) bOk = int.TryParse(tmp[3], out tmpInt); if (bOk) { _historyDuration = tmpInt; }
                     if (bOk) bOk = bool.TryParse(tmp[4], out tmpBool); if (bOk) { _shadow = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[5], out tmpBool); if (bOk) { _showHistory = tmpBool; }
-                    if (bOk) tmpColour = colourFromString(tmp[6]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _historyColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[6]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _historyColor = tmpColour; }
                     if (bOk) bOk = bool.TryParse(tmp[7], out tmpBool); if (bOk) { _peakHold = tmpBool; }
-                    if (bOk) tmpColour = colourFromString(tmp[8]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakHoldMarkerColor = tmpColour; }
-                    if (bOk) tmpColour = colourFromString(tmp[9]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _lowColor = tmpColour; }
-                    if (bOk) tmpColour = colourFromString(tmp[10]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _highColor = tmpColour; }
-                    if (bOk) tmpColour = colourFromString(tmp[11]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _titleColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[8]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakHoldMarkerColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[9]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _lowColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[10]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _highColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[11]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _titleColor = tmpColour; }
                     if (bOk) bOk = Enum.TryParse<Reading>(tmp[12], out tmpReading); if (bOk) { _readingSource = tmpReading; }
-                    if (bOk) tmpColour = colourFromString(tmp[13]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _colour = tmpColour; }
-                    if (bOk) tmpColour = colourFromString(tmp[14]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _markerColour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[13]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _colour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[14]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _markerColour = tmpColour; }
                     if (bOk) bOk = Enum.TryParse<clsBarItem.BarStyle>(tmp[15], out tmpBarStyle); if (bOk) { _barStyle = tmpBarStyle; }
                     if (bOk) _text = tmp[16];
                     if (bOk) bOk = bool.TryParse(tmp[17], out tmpBool); if (bOk) { _fadeOnRx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[18], out tmpBool); if (bOk) { _fadeOnTx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[19], out tmpBool); if (bOk) { _showType = tmpBool; }
-                    if (bOk) tmpColour = colourFromString(tmp[20]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _segmentedColour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[20]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _segmentedColour = tmpColour; }
                     if (bOk) bOk = bool.TryParse(tmp[21], out tmpBool); if (bOk) { _peakValue = tmpBool; }
-                    if (bOk) tmpColour = colourFromString(tmp[22]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakValueColour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[22]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakValueColour = tmpColour; }
                     if (bOk) bOk = float.TryParse(tmp[23], out tmpFloat); if (bOk) { _eyeScale = tmpFloat; }
                     if (bOk) bOk = bool.TryParse(tmp[24], out tmpBool); if (bOk) { _average = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[25], out tmpBool); if (bOk) { _darkMode = tmpBool; }
@@ -340,7 +328,7 @@ namespace Thetis
                 case MeterType.SWR: return 1;
 
                 case MeterType.MAGIC_EYE: return 2;
-                case MeterType.KENWOOD: return 2;
+                case MeterType.ANANMM: return 2;
                 case MeterType.CROSS: return 2;
                 //case MeterType.HISTORY: return 2;
             }
@@ -371,7 +359,7 @@ namespace Thetis
                 case MeterType.CFC_GAIN: return "CFC Compression Gain";
                 case MeterType.MAGIC_EYE: return "Magic Eye";
                 case MeterType.ESTIMATED_PBSNR: return "Estimated PBSNR";
-                case MeterType.KENWOOD: return "Kenwood Meter";
+                case MeterType.ANANMM: return "Anan Multi Meter";
                 case MeterType.CROSS: return "Cross Meter";
                 case MeterType.SWR: return "SWR";
                 //case MeterType.HISTORY: return "History";
@@ -574,14 +562,62 @@ namespace Thetis
                 return _pooledStreamData.ContainsKey(sKey);
             }
         }
+        public static void ContainerBorder(string sId, bool border)
+        {
+            lock (_metersLock) {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.UCBorder = border;
+            }
+        }
+        public static bool ContainerHasBorder(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.UCBorder;
+            }
+        }
+        public static void ContainerBackgroundColour(string sId, System.Drawing.Color c)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+                if (!_DXrenderers.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.BackColor = c;
+                DXRenderer r = _DXrenderers[sId];
+                r.BackgroundColour = c;
+            }
+        }
+        public static System.Drawing.Color GetContainerBackgroundColour(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return System.Drawing.Color.Transparent;
+                if (!_lstUCMeters.ContainsKey(sId)) return System.Drawing.Color.Transparent;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.BackColor;
+            }
+        }
         public static void HighlightContainer(string sId)
         {
-            foreach(KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            if (_DXrenderers == null) return;
+
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
                 kvp.Value.HighlightEdge = false;
             }
 
-            if (sId != "" && _DXrenderers.ContainsKey(sId))
+            if (_DXrenderers.ContainsKey(sId))
             {
                 _DXrenderers[sId].HighlightEdge = true;
             }
@@ -632,9 +668,10 @@ namespace Thetis
             set { _imagePath = value; }
         }
         private static Dictionary<string, DXRenderer> _DXrenderers = new Dictionary<string, DXRenderer>();
-        private static void addRenderer(string sId, int rx, PictureBox target, clsMeter meter)
+        private static void addRenderer(string sId, int rx, PictureBox target, clsMeter meter, System.Drawing.Color backColour)
         {
-            DXRenderer renderer = new DXRenderer(sId, rx, target, _console, MeterManager.ImagePath, meter);            
+            DXRenderer renderer = new DXRenderer(sId, rx, target, _console, MeterManager.ImagePath, meter);
+            renderer.BackgroundColour = backColour;
 
             _DXrenderers.Add(sId, renderer);
         }
@@ -978,7 +1015,7 @@ namespace Thetis
                 meter.ID = ucM.ID;
 
                 // a renderer
-                addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter);
+                addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter, ucM.BackColor);
 
                 // store everything
                 _lstMeterDisplayForms.Add(f.ID, f);
@@ -3091,7 +3128,7 @@ namespace Thetis
                     case MeterType.CFC_GAIN: AddCFCGainBar(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.MAGIC_EYE: AddMagicEye(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
                     case MeterType.ESTIMATED_PBSNR: AddPBSNRBar(nDelay, 0, out bBottom, restoreIg); break;
-                    case MeterType.KENWOOD: AddKenwood(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.ANANMM: AddAnanMM(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.CROSS: AddCrossNeedle(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SWR: AddSWRBar(nDelay, 0, out bBottom, restoreIg); break;
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
@@ -3483,13 +3520,13 @@ namespace Thetis
 
                 return me.ID;
             }
-            public string AddKenwood(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddAnanMM(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
                 if(restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
-                //kenwood
+                //anan multi meter
                 clsNeedleItem ni = new clsNeedleItem();
                 ni.ParentID = ig.ID;
                 ni.Primary = true;
@@ -3754,7 +3791,7 @@ namespace Thetis
                 img.TopLeft = ni.TopLeft;
                 img.Size = ni.Size;
                 img.ZOrder = 1;
-                img.ImageName = "kenwood-s-meter";
+                img.ImageName = "ananMM";
                 addMeterItem(img);
 
                 img = new clsImage();
@@ -3763,7 +3800,7 @@ namespace Thetis
                 img.TopLeft = new PointF(ni.TopLeft.X, ni.TopLeft.Y + ni.Size.Height);
                 img.Size = new SizeF(1f, 75 / 900f);//0.101f); // image x to y ratio : 75 pixels y, 900 x
                 img.ZOrder = 5;
-                img.ImageName = "kenwood-s-meter-bg";
+                img.ImageName = "ananMM-bg";
                 addMeterItem(img);
 
                 img = new clsImage();
@@ -3773,14 +3810,14 @@ namespace Thetis
                 img.TopLeft = new PointF(ni.TopLeft.X, ni.TopLeft.Y + ni.Size.Height);
                 img.Size = new SizeF(1f, 75 / 900f);//0.101f); // image x to y ratio : 75 pixels y, 900 x
                 img.ZOrder = 5;
-                img.ImageName = "kenwood-s-meter-bg-tx";
+                img.ImageName = "ananMM-bg-tx";
                 addMeterItem(img);
 
                 fBottom = img.TopLeft.Y + img.Size.Height;
 
                 ig.TopLeft = ni.TopLeft;
                 ig.Size = new SizeF(ni.Size.Width, fBottom);
-                ig.MeterType = MeterType.KENWOOD;
+                ig.MeterType = MeterType.ANANMM;
                 ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
                 addMeterItem(ig);
@@ -4963,8 +5000,8 @@ namespace Thetis
                 {
                     if (_meterItems == null) return;
 
-                    //special for kenwood
-                    if(mt == MeterType.KENWOOD)
+                    //special for ananMM
+                    if(mt == MeterType.ANANMM)
                     {
                         RemoveDisplayGroup("ALL");
                         RemoveDisplayGroup("PWR/SWR");
@@ -5101,7 +5138,7 @@ namespace Thetis
                                         }
                                     }
                                     break;
-                                case MeterType.KENWOOD:
+                                case MeterType.ANANMM:
                                 case MeterType.CROSS:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -5129,7 +5166,7 @@ namespace Thetis
                                                 //bi.PeakHold = igs.PeakHold;
                                                 //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                                 ni.Shadow = igs.Shadow;
-                                                if (mt == MeterType.KENWOOD) 
+                                                if (mt == MeterType.ANANMM) 
                                                 {
                                                     if (ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_STRENGTH)
                                                     {
@@ -5155,7 +5192,7 @@ namespace Thetis
                                                 //bi.SubMarkerColour = igs.SubMarkerColour;
                                                 ni.Shadow = igs.Shadow;
 
-                                                if (mt == MeterType.KENWOOD && ni.ReadingSource == Reading.SWR)
+                                                if (mt == MeterType.ANANMM && ni.ReadingSource == Reading.SWR)
                                                 {
                                                     ni.ShowHistory = igs.ShowHistory;
                                                 }
@@ -5342,7 +5379,7 @@ namespace Thetis
                                         }
                                     }
                                     break;
-                                case MeterType.KENWOOD:
+                                case MeterType.ANANMM:
                                 case MeterType.CROSS:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -5370,7 +5407,7 @@ namespace Thetis
                                                 //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
                                                 igs.Shadow = ni.Shadow;
                                                 igs.MarkerColour = ni.Colour;
-                                                if (mt == MeterType.KENWOOD) {
+                                                if (mt == MeterType.ANANMM) {
                                                     if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                                                     {
                                                         igs.PeakHold = ni.PeakHold;
@@ -5885,6 +5922,7 @@ namespace Thetis
             //
             private Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush> _DXBrushes;
             private Color4 _backColour;
+            private System.Drawing.Color _backgroundColour;
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
             //
             private Dictionary<string, SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
@@ -5928,7 +5966,10 @@ namespace Thetis
                 _nVBlanks = 0;
                 _displayTarget = target;
                 _displayTarget.Tag = sId; // use the tag to hold sId, we can then use this in mouse event OnMouseUp
-                _backColour = convertColour(System.Drawing.Color.Black);
+
+                _backgroundColour = System.Drawing.Color.Black;
+                _backColour = convertColour(_backgroundColour);
+                
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
 
                 _fLastTime = _objFrameStartTimer.ElapsedMsec;
@@ -5960,6 +6001,15 @@ namespace Thetis
             {
                 get { return _highlightEdge; }
                 set { _highlightEdge = value; }
+            }
+            public System.Drawing.Color BackgroundColour
+            {
+                get { return _backgroundColour; }
+                set 
+                {
+                    _backgroundColour = value;
+                    _backColour = convertColour(_backgroundColour);
+                }
             }
             //public int UpdateInterval
             //{

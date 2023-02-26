@@ -25437,6 +25437,9 @@ namespace Thetis
                 MeterManager.HighlightContainer(cci.ID);
             }
 
+            chkContainerBorder.Checked = MeterManager.ContainerHasBorder(cci.ID);
+            clrbtnContainerBackground.Color = MeterManager.GetContainerBackgroundColour(cci.ID);
+
             updateMeterLists();
         }
 
@@ -25667,8 +25670,8 @@ namespace Thetis
             igs.PeakValue = chkMeterItemPeakValue.Checked;
             igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
             igs.EyeScale = (float)nudMeterItemEyeScale.Value;
-            if (mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
-            if (mt == MeterType.KENWOOD || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
+            if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
+            if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
 
             m.ApplySettingsForMeterGroup(mt, igs);
         }
@@ -25722,10 +25725,10 @@ namespace Thetis
             chkMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
             clrbtnMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
 
-            chkMeterItemShadow.Enabled = mt == MeterType.KENWOOD || mt == MeterType.CROSS;
-            chkMeterItemDarkMode.Enabled = mt == MeterType.KENWOOD || mt == MeterType.CROSS;
+            chkMeterItemShadow.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
+            chkMeterItemDarkMode.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
 
-            bool bEnable = mt == MeterType.KENWOOD || mt == MeterType.CROSS || mt == MeterType.MAGIC_EYE;            
+            bool bEnable = mt == MeterType.ANANMM || mt == MeterType.CROSS || mt == MeterType.MAGIC_EYE;            
             chkMeterItemSegmented.Enabled = !bEnable;
             clrbtnMeterItemSegmentedColour.Enabled = !bEnable;
             chkMeterItemTitle.Enabled = !bEnable;
@@ -25739,9 +25742,9 @@ namespace Thetis
             clrbtnMeterItemHigh.Enabled = !bEnable;
             clrbtnMeterItemHBackground.Enabled = !bEnable;
 
-            chkMeterItemSignalAverage.Enabled = mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE;
-            if (mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE) chkMeterItemSignalAverage.Checked = igs.Average;
-            if (mt == MeterType.KENWOOD || mt == MeterType.CROSS) chkMeterItemDarkMode.Checked = igs.DarkMode;
+            chkMeterItemSignalAverage.Enabled = mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE;
+            if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) chkMeterItemSignalAverage.Checked = igs.Average;
+            if (mt == MeterType.ANANMM || mt == MeterType.CROSS) chkMeterItemDarkMode.Checked = igs.DarkMode;
             //
 
             _ignoreMeterItemChangeEvents = false;
@@ -25916,6 +25919,24 @@ namespace Thetis
         private void chkMaintainNFAdjustDeltaRX1_CheckedChanged(object sender, EventArgs e)
         {
             console.MaintainNFAdjustDeltaRX1 = chkMaintainNFAdjustDeltaRX1.Checked;
+        }
+
+        private void chkContainerBorder_CheckedChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ContainerBorder(cci.ID, chkContainerBorder.Checked);
+            }
+        }
+
+        private void clrbtnContainerBackground_Changed(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ContainerBackgroundColour(cci.ID, clrbtnContainerBackground.Color);
+            }
         }
     }
 

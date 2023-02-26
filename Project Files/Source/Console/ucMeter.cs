@@ -31,6 +31,7 @@ namespace Thetis
 
             _console = null;
             _id = System.Guid.NewGuid().ToString();
+            _border = true;
 
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
@@ -41,6 +42,7 @@ namespace Thetis
             storeLocation();
             setTopBarButtons();
             setTitle();
+            setupBorder();
 
             //btnFloat.foc
             //btnFloat.SetStyle(ControlStyles.Selectable, false);
@@ -68,6 +70,7 @@ namespace Thetis
         private Console _console;
         private bool _mox;
         private string _id;
+        private bool _border;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -277,7 +280,10 @@ namespace Thetis
             string sPrefix = _mox ? "TX" : "RX";
             lblRX.Text = sPrefix + _rx.ToString();
         }
-
+        private void setupBorder()
+        {
+            this.BorderStyle = _border ? BorderStyle.FixedSingle : BorderStyle.None;
+        }
         private void btnFloat_Click(object sender, EventArgs e)
         {
             FloatingDockedClicked?.Invoke(this, e);
@@ -455,6 +461,16 @@ namespace Thetis
                 _axisLock = value; 
             }
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool UCBorder
+        {
+            get { return _border; }
+            set 
+            { 
+                _border = value;
+                setupBorder();
+            }
+        }
 
         private void btnAxis_Click(object sender, EventArgs e)
         {
@@ -548,7 +564,9 @@ namespace Thetis
                 Delta.X.ToString() + "|" +
                 Delta.Y.ToString() + "|" +
                 AxisLock.ToString() + "|" +
-                PinOnTop.ToString();
+                PinOnTop.ToString() + "|" +
+                UCBorder.ToString() + "|" +
+                Common.ColourToString(this.BackColor);
         }
         public bool TryParse(string str)
         {
@@ -556,11 +574,12 @@ namespace Thetis
             int x = 0, y = 0, w = 0, h = 0, rx = 0;
             bool floating = false;
             bool pinOnTop = false;
+            bool border = false;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length == 11)
+                if(tmp.Length == 13)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -597,6 +616,11 @@ namespace Thetis
 
                     if (bOk) bOk = bool.TryParse(tmp[10], out pinOnTop);
                     if (bOk) PinOnTop = pinOnTop;
+                    if (bOk) bOk = bool.TryParse(tmp[11], out border);
+                    if (bOk) UCBorder = border;
+                    Color c = Common.ColourFromString(tmp[12]);
+                    bOk = c != System.Drawing.Color.Transparent;
+                    if(bOk) this.BackColor = c;
                 }
             }
 

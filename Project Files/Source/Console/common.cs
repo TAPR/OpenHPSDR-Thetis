@@ -805,5 +805,18 @@ namespace Thetis
             hash += (hash << 15);
             return (int)(hash % 99999);
         }
-	}
+        public static string ColourToString(System.Drawing.Color c)
+        {
+            return c.A.ToString() + "." + c.R.ToString() + "." + c.G.ToString() + "." + c.B.ToString();
+        }
+        public static System.Drawing.Color ColourFromString(string str)
+        {
+            string[] tmp = str.Split('.');
+            if (tmp.Length == 4)
+            {
+                return System.Drawing.Color.FromArgb(Int32.Parse(tmp[0]), Int32.Parse(tmp[1]), Int32.Parse(tmp[2]), Int32.Parse(tmp[3]));
+            }
+            return System.Drawing.Color.Transparent;
+        }
+    }
 }
