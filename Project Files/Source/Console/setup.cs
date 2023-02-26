@@ -25159,12 +25159,14 @@ namespace Thetis
         {
             console.GridMinFollowsNFRX1 = chkAdjustGridMinToNFRX1.Checked;
             nudRX1NFoffsetGridFollow.Enabled = chkAdjustGridMinToNFRX1.Checked;
+            chkMaintainNFAdjustDeltaRX1.Enabled = chkAdjustGridMinToNFRX1.Checked;
         }
 
         private void chkAdjustGridMinToNFRX2_CheckedChanged(object sender, EventArgs e)
         {
             console.GridMinFollowsNFRX2 = chkAdjustGridMinToNFRX2.Checked;
             nudRX2NFoffsetGridFollow.Enabled = chkAdjustGridMinToNFRX2.Checked;
+            chkMaintainNFAdjustDeltaRX2.Enabled = chkAdjustGridMinToNFRX2.Checked;
         }
 
         private void nudRX2NFoffsetGridFollow_ValueChanged(object sender, EventArgs e)
@@ -25666,6 +25668,7 @@ namespace Thetis
             igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
             igs.EyeScale = (float)nudMeterItemEyeScale.Value;
             if (mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
+            if (mt == MeterType.KENWOOD || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
 
             m.ApplySettingsForMeterGroup(mt, igs);
         }
@@ -25720,6 +25723,8 @@ namespace Thetis
             clrbtnMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
 
             chkMeterItemShadow.Enabled = mt == MeterType.KENWOOD || mt == MeterType.CROSS;
+            chkMeterItemDarkMode.Enabled = mt == MeterType.KENWOOD || mt == MeterType.CROSS;
+
             bool bEnable = mt == MeterType.KENWOOD || mt == MeterType.CROSS || mt == MeterType.MAGIC_EYE;            
             chkMeterItemSegmented.Enabled = !bEnable;
             clrbtnMeterItemSegmentedColour.Enabled = !bEnable;
@@ -25736,6 +25741,7 @@ namespace Thetis
 
             chkMeterItemSignalAverage.Enabled = mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE;
             if (mt == MeterType.KENWOOD || mt == MeterType.MAGIC_EYE) chkMeterItemSignalAverage.Checked = igs.Average;
+            if (mt == MeterType.KENWOOD || mt == MeterType.CROSS) chkMeterItemDarkMode.Checked = igs.DarkMode;
             //
 
             _ignoreMeterItemChangeEvents = false;
@@ -25895,6 +25901,21 @@ namespace Thetis
         private void chkMeterItemSignalAverage_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void chkMeterItemDarkMode_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMaintainNFAdjustDeltaRX2_CheckedChanged(object sender, EventArgs e)
+        {
+            console.MaintainNFAdjustDeltaRX2 = chkMaintainNFAdjustDeltaRX2.Checked;
+        }
+
+        private void chkMaintainNFAdjustDeltaRX1_CheckedChanged(object sender, EventArgs e)
+        {
+            console.MaintainNFAdjustDeltaRX1 = chkMaintainNFAdjustDeltaRX1.Checked;
         }
     }
 

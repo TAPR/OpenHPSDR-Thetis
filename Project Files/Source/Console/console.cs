@@ -53201,6 +53201,18 @@ namespace Thetis
                     break;
             }
         }
+        private bool _maintainNFAdjustDeltaRX1 = false;
+        private bool _maintainNFAdjustDeltaRX2 = false;
+        public bool MaintainNFAdjustDeltaRX1
+        {
+            get { return _maintainNFAdjustDeltaRX1; }
+            set { _maintainNFAdjustDeltaRX1 = value; }
+        }
+        public bool MaintainNFAdjustDeltaRX2
+        {
+            get { return _maintainNFAdjustDeltaRX2; }
+            set { _maintainNFAdjustDeltaRX2 = value; }
+        }
         private float _lastRX1NoiseFloor = -200;
         private float _lastRX2NoiseFloor = -200;
         private bool _gridMinFollowsNFRX1 = false;
@@ -53252,7 +53264,12 @@ namespace Thetis
                                             Display.CurrentDisplayMode == DisplayMode.WATERFALL))
                 {
                     float setPoint = _lastRX1NoiseFloor - _RX1NFoffsetGridFollow;
-                    if (Math.Abs(SetupForm.DisplayGridMin - setPoint) >= 2) SetupForm.DisplayGridMin = setPoint;
+                    float fDelta = (float)Math.Abs(SetupForm.DisplayGridMax - SetupForm.DisplayGridMin); // abs incase MW0LGE [2.9.0.7]
+                    if (Math.Abs(SetupForm.DisplayGridMin - setPoint) >= 2)
+                    {
+                        SetupForm.DisplayGridMin = setPoint;
+                        if (_maintainNFAdjustDeltaRX1) SetupForm.DisplayGridMax = setPoint + fDelta;
+                    }
                 }
 
                 if (bRX2Good && RX2Enabled && GridMinFollowsNFRX2 &&
@@ -53263,7 +53280,12 @@ namespace Thetis
                                             Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL))
                 {
                     float setPoint = _lastRX2NoiseFloor - _RX2NFoffsetGridFollow;
-                    if (Math.Abs(SetupForm.RX2DisplayGridMin - setPoint) >= 2) SetupForm.RX2DisplayGridMin = setPoint; // at least 2dB to move
+                    float fDelta = (float)Math.Abs(SetupForm.RX2DisplayGridMax - SetupForm.RX2DisplayGridMin); // abs incase MW0LGE [2.9.0.7]
+                    if (Math.Abs(SetupForm.RX2DisplayGridMin - setPoint) >= 2)
+                    {
+                        SetupForm.RX2DisplayGridMin = setPoint; // at least 2dB to move
+                        if (_maintainNFAdjustDeltaRX2) SetupForm.RX2DisplayGridMax = setPoint + fDelta;
+                    }
                 }
             }
             //
@@ -54181,6 +54203,7 @@ namespace Thetis
                     if (MeterManager.RequiresUpdate(1, Reading.LVL_G)) _RX1MeterValues[Reading.LVL_G] = (float)Math.Max(0, WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
                     if (MeterManager.RequiresUpdate(1, Reading.CFC_G)) _RX1MeterValues[Reading.CFC_G] = (float)Math.Max(0, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_G));
                     if (MeterManager.RequiresUpdate(1, Reading.CFC_PK)) _RX1MeterValues[Reading.CFC_PK] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_PK));
+                    if (MeterManager.RequiresUpdate(1, Reading.CFC_PK)) _RX1MeterValues[Reading.CFC_AV] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CFC_AV));
                     //if (MeterManager.RequiresUpdate(1, Reading.CPDR)) _RX1MeterValues[Reading.CPDR] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR));
                     //if (MeterManager.RequiresUpdate(1, Reading.CPDR_PK)) _RX1MeterValues[Reading.CPDR_PK] = (float)Math.Max(-195.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.CPDR_PK));
                     if (MeterManager.RequiresUpdate(1, Reading.COMP)) _RX1MeterValues[Reading.COMP] = (float)Math.Max(-30.0f, -WDSP.CalculateTXMeter(1, WDSP.MeterType.COMP));

@@ -49,6 +49,7 @@ namespace Thetis
         COMP_PK,
         CPDR_PK,
         CFC_PK,
+        CFC_AV,
         CFC_G,
         //additional to MeterRXMode & MeterTXMode
         REVERSE_PWR,
@@ -90,6 +91,7 @@ namespace Thetis
         ALC_GAIN,
         ALC_GROUP,
         CFC,
+        CFC_GAIN,
         COMP,
         //--
         PWR,
@@ -157,6 +159,7 @@ namespace Thetis
             private System.Drawing.Color _peakValueColour;
             private float _eyeScale;
             private bool _average;
+            private bool _darkMode;
 
             public clsIGSettings() 
             {
@@ -202,7 +205,8 @@ namespace Thetis
                     _peakValue.ToString() + "|" +
                     colourToString(_peakValueColour) + "|" +
                     _eyeScale.ToString("f4") + "|" +
-                    _average.ToString();
+                    _average.ToString() + "|" +
+                    _darkMode.ToString();
 
                 return sRet;
             }
@@ -213,7 +217,7 @@ namespace Thetis
                 bool bOk = false;
 
                 string[] tmp = str.Split('|');
-                if (tmp.Length == 25)
+                if (tmp.Length == 26)
                 {
                     int tmpInt = 0;
                     float tmpFloat = 0;
@@ -247,6 +251,7 @@ namespace Thetis
                     if (bOk) tmpColour = colourFromString(tmp[22]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakValueColour = tmpColour; }
                     if (bOk) bOk = float.TryParse(tmp[23], out tmpFloat); if (bOk) { _eyeScale = tmpFloat; }
                     if (bOk) bOk = bool.TryParse(tmp[24], out tmpBool); if (bOk) { _average = tmpBool; }
+                    if (bOk) bOk = bool.TryParse(tmp[25], out tmpBool); if (bOk) { _darkMode = tmpBool; }
                 }
 
                 return bOk;
@@ -276,6 +281,7 @@ namespace Thetis
             public System.Drawing.Color PeakValueColour { get { return _peakValueColour; } set { _peakValueColour = value; } }
             public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
             public bool Average { get { return _average; } set { _average = value; } }
+            public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
 
         }
         static MeterManager()
@@ -330,6 +336,7 @@ namespace Thetis
                 case MeterType.ALC_GROUP: return 1;
                 case MeterType.LEVELER_GAIN: return 1;
                 case MeterType.CFC: return 1;
+                case MeterType.CFC_GAIN: return 1;
                 case MeterType.SWR: return 1;
 
                 case MeterType.MAGIC_EYE: return 2;
@@ -361,6 +368,7 @@ namespace Thetis
                 case MeterType.ALC_GROUP: return "ALC Group";
                 case MeterType.LEVELER_GAIN: return "Leveler Gain";
                 case MeterType.CFC: return "CFC Compression";
+                case MeterType.CFC_GAIN: return "CFC Compression Gain";
                 case MeterType.MAGIC_EYE: return "Magic Eye";
                 case MeterType.ESTIMATED_PBSNR: return "Estimated PBSNR";
                 case MeterType.KENWOOD: return "Kenwood Meter";
@@ -385,27 +393,28 @@ namespace Thetis
                 case Reading.ALC_G: return "ALC Compression";
                 case Reading.ALC_GROUP: return "ALC Group";
                 case Reading.ESTIMATED_PBSNR: return "Estimated PBSNR";
-                case Reading.ALC_PK: return "ALC";// Peak";
+                case Reading.ALC_PK: return "ALC (av/pk)";// Peak";
                 case Reading.AMPS: return "Amps";
                 case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
                 case Reading.CAL_FWD_PWR: return "Calibrated FWD Power";
                 case Reading.CFC_G: return "CFC Compression";
-                case Reading.CFC_PK: return "CFC Compression";// Peak";
+                case Reading.CFC_PK: return "CFC Compression (av/pk)";// Peak";
+                case Reading.CFC_AV: return "CFC Compression Average";
                 case Reading.COMP: return "Compression";
-                case Reading.COMP_PK: return "Compression";// Peak";
+                case Reading.COMP_PK: return "Compression (av/pk)";// Peak";
                 //case Reading.CPDR: return "TODO Compander";
                 //case Reading.CPDR_PK: return "Compander Peak";
                 case Reading.DRIVE_FWD_ADC: return "Drive Forward ADC";
                 case Reading.DRIVE_PWR: return "Drive Power";
                 case Reading.EQ: return "EQ";
-                case Reading.EQ_PK: return "EQ";// Peak";
+                case Reading.EQ_PK: return "EQ (av/pk)";// Peak";
                 case Reading.FWD_ADC: return "Forward ADC";
                 case Reading.FWD_VOLT: return "Forward Volt";
                 case Reading.LEVELER: return "Leveler";
-                case Reading.LEVELER_PK: return "Leveler";// Peak";
+                case Reading.LEVELER_PK: return "Leveler (av/pk)";// Peak";
                 case Reading.LVL_G: return "Leveler Gain";
                 case Reading.MIC: return "MIC";
-                case Reading.MIC_PK: return "MIC";// Peak";
+                case Reading.MIC_PK: return "MIC (av/pk)";// Peak";
                 case Reading.PA_FWD_PWR: return "PA Forward Power";
                 case Reading.PA_REV_PWR: return "PA Reverse Power";
                 case Reading.PWR: return "Power";
@@ -439,6 +448,7 @@ namespace Thetis
                 case Reading.CAL_FWD_PWR: return "W";
                 case Reading.CFC_G: return "dB";
                 case Reading.CFC_PK: return "dB";
+                case Reading.CFC_AV: return "dB";
                 case Reading.COMP: return "dB";
                 case Reading.COMP_PK: return "dB";
                 //case Reading.CPDR: return "dB";
@@ -880,6 +890,7 @@ namespace Thetis
                     setReading(rx, Reading.LEVELER, ref readings);
                     setReading(rx, Reading.LVL_G, ref readings);
                     setReading(rx, Reading.CFC_PK, ref readings);
+                    setReading(rx, Reading.CFC_AV, ref readings);
                     setReading(rx, Reading.CFC_G, ref readings);
                     //setReading(rx, Reading.CPDR_PK, ref readings);
                     //setReading(rx, Reading.CPDR, ref readings);
@@ -1755,6 +1766,7 @@ namespace Thetis
             private PointF _clipTopLeft;
             private SizeF _clipSize;
             private bool _clipped;
+            private bool _darkMode;
             public clsImage()
             {
                 ItemType = MeterItemType.IMAGE;
@@ -1763,6 +1775,7 @@ namespace Thetis
                 _clipTopLeft = new PointF(0f, 0f);
                 _clipSize = new SizeF(1f, 1f);
                 _clipped = false;
+                _darkMode = false;
                 StoreSettings = false;
             }
             public string ImageName
@@ -1787,6 +1800,11 @@ namespace Thetis
             {
                 get { return _clipped; }
                 set { _clipped = value; }
+            }
+            public bool DarkMode
+            {
+                get { return _darkMode; }
+                set { _darkMode = value; }
             }
             //public override string ToString()
             //{
@@ -3070,6 +3088,7 @@ namespace Thetis
                     case MeterType.ALC_GROUP: AddALCGroupBar(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.LEVELER_GAIN: AddLevelerGainBar(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.CFC: AddCFCBar(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.CFC_GAIN: AddCFCGainBar(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.MAGIC_EYE: AddMagicEye(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
                     case MeterType.ESTIMATED_PBSNR: AddPBSNRBar(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.KENWOOD: AddKenwood(nDelay, 0, out bBottom, restoreIg); break;
@@ -3731,6 +3750,7 @@ namespace Thetis
 
                 clsImage img = new clsImage();
                 img.ParentID = ig.ID;
+                img.Primary = true;
                 img.TopLeft = ni.TopLeft;
                 img.Size = ni.Size;
                 img.ZOrder = 1;
@@ -3748,6 +3768,7 @@ namespace Thetis
 
                 img = new clsImage();
                 img.ParentID = ig.ID;
+                img.Primary = true;
                 img.OnlyWhenTX = true;
                 img.TopLeft = new PointF(ni.TopLeft.X, ni.TopLeft.Y + ni.Size.Height);
                 img.Size = new SizeF(1f, 75 / 900f);//0.101f); // image x to y ratio : 75 pixels y, 900 x
@@ -3863,6 +3884,7 @@ namespace Thetis
 
                 clsImage img = new clsImage();
                 img.ParentID = ig.ID;
+                img.Primary = true;
                 img.TopLeft = ni.TopLeft;
                 img.Size = ni.Size;
                 img.ZOrder = 1;
@@ -4389,19 +4411,19 @@ namespace Thetis
                 cb2.ParentID = ig.ID;
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
-                cb2.ReadingSource = Reading.CFC_G;
+                cb2.ReadingSource = Reading.CFC_AV;
                 cb2.ShowPeakValue = false;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
                 cb2.HistoryDuration = 2000;
                 cb2.ShowHistory = false;
-                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.MarkerColour = System.Drawing.Color.DarkGray;
                 cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
                 cb2.Style = clsBarItem.BarStyle.Line;
-                cb2.ScaleCalibration.Add(0, new PointF(0, 0));
-                cb2.ScaleCalibration.Add(20, new PointF(0.8f, 0));
-                cb2.ScaleCalibration.Add(25, new PointF(0.99f, 0));
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
@@ -4429,6 +4451,61 @@ namespace Thetis
                 ig.TopLeft = cb.TopLeft;
                 ig.Size = new SizeF(cb.Size.Width, fBottom);
                 ig.MeterType = MeterType.CFC;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddCFCGainBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.ParentID = ig.ID;
+                cb.Primary = true;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.CFC_G;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.1f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 2000;
+                cb.ShowHistory = true;
+                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                cb.ScaleCalibration.Add(20, new PointF(0.8f, 0));
+                cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
+                cb.ZOrder = 3;
+                cb.FontColour = System.Drawing.Color.Yellow;
+                addMeterItem(cb);               
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.CFC_GAIN;
                 ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
                 addMeterItem(ig);
@@ -4789,6 +4866,7 @@ namespace Thetis
                             mi.ReadingSource == Reading.LVL_G ||
                             mi.ReadingSource == Reading.CFC_G ||
                             mi.ReadingSource == Reading.CFC_PK ||
+                            mi.ReadingSource == Reading.CFC_AV ||
                             //mi.ReadingSource == Reading.CPDR ||
                             //mi.ReadingSource == Reading.CPDR_PK ||
                             mi.ReadingSource == Reading.COMP ||
@@ -5086,6 +5164,7 @@ namespace Thetis
 
                                             image.FadeOnRx = igs.FadeOnRx;
                                             image.FadeOnTx = igs.FadeOnTx;
+                                            if(image.Primary) image.DarkMode = igs.DarkMode;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -5302,6 +5381,7 @@ namespace Thetis
 
                                             //igs.FadeOnRx = image.FadeOnRx;
                                             //igs.FadeOnTx = image.FadeOnTx;
+                                            if (image.Primary) igs.DarkMode = image.DarkMode;
                                         }
                                     }
                                     break;
@@ -6684,6 +6764,7 @@ namespace Thetis
                         case Reading.EQ_PK:
                         case Reading.LEVELER:
                         case Reading.LEVELER_PK:
+                        case Reading.CFC_AV:
                         case Reading.CFC_PK:
                         case Reading.COMP:
                         case Reading.COMP_PK:
@@ -7588,7 +7669,7 @@ namespace Thetis
             }
             private void renderImage(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
-                clsImage ipg = (clsImage)mi;
+                clsImage img = (clsImage)mi;
 
                 float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
@@ -7598,31 +7679,33 @@ namespace Thetis
                 int nFade = 255;
                 if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
-                string sImage = ipg.ImageName;
+                string sImage = img.ImageName + (img.DarkMode ? "-dark" : "");
 
                 string sKey = sImage + "-" + MeterManager.CurrentPowerRating.ToString();
                 if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with power rating
 
-                if (w <= 225 || h <= 225) // one half of the X/Y dim
+                float fDiag = (float)Math.Sqrt((w * w) + (h * h));
+                if(fDiag <= 450)
                     sKey = sImage + "-small";
-                else if (w >= 600 || h >= 600)
+                else if(fDiag >= 1200)
                     sKey = sImage + "-large";
+
                 if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with size
 
                 if (MeterManager.ContainsBitmap(sImage))
                 {
                     SharpDX.RectangleF imgRect = new SharpDX.RectangleF(x, y, w, h);
 
-                    if (!ipg.Clipped)
+                    if (!img.Clipped)
                     {
                         _renderTarget.PushAxisAlignedClip(imgRect, AntialiasMode.Aliased); // prevent anything drawing from outside the rectangle, no need to cut the image
                     }
                     else
                     {
-                        float cx = (ipg.ClipTopLeft.X / m.XRatio) * rect.Width;
-                        float cy = (ipg.ClipTopLeft.Y / m.YRatio) * rect.Height;
-                        float cw = rect.Width * (ipg.ClipSize.Width / m.XRatio);
-                        float ch = rect.Height * (ipg.ClipSize.Height / m.YRatio);
+                        float cx = (img.ClipTopLeft.X / m.XRatio) * rect.Width;
+                        float cy = (img.ClipTopLeft.Y / m.YRatio) * rect.Height;
+                        float cw = rect.Width * (img.ClipSize.Width / m.XRatio);
+                        float ch = rect.Height * (img.ClipSize.Height / m.YRatio);
 
                         SharpDX.RectangleF clipRect = new SharpDX.RectangleF(cx, cy, cw, ch);
                         _renderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased); // prevent anything drawing from outside the rectangle, no nee to cut the image

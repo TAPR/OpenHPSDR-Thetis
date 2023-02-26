@@ -690,6 +690,7 @@ namespace Thetis
             CFC_G,
             AGC_PK, // MW0LGE [2.9.0.7] added pk + av + last
             AGC_AV,
+            CFC_AV, // MW0LGE [2.9.0.7] added av
             METERTYPE_LAST
         }
 
@@ -857,7 +858,10 @@ namespace Thetis
             case MeterType.CFC_G:
                 val = GetTXAMeter(channel, txaMeterType.TXA_CFC_GAIN);
                 break;
-	        default:
+            case MeterType.CFC_AV:
+                val = GetTXAMeter(channel, txaMeterType.TXA_CFC_AV);
+                break;
+            default:
 		        val = -400.0;
 		        break;
 	        }
