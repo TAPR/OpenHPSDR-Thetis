@@ -5123,6 +5123,7 @@ namespace Thetis
                                                 ni.ShowHistory = igs.ShowHistory;
                                                 ni.FadeOnRx = igs.FadeOnRx;
                                                 ni.FadeOnTx = igs.FadeOnTx;
+                                                ni.Colour = igs.MarkerColour;
                                                 //bi.Style = igs.BarStyle;
                                                 //bi.MarkerColour = igs.MarkerColour;
                                                 //bi.PeakHold = igs.PeakHold;
@@ -5154,7 +5155,15 @@ namespace Thetis
                                                 //bi.SubMarkerColour = igs.SubMarkerColour;
                                                 ni.Shadow = igs.Shadow;
 
-                                                if (ni.ReadingSource == Reading.SWR) ni.ShowHistory = igs.ShowHistory;
+                                                if (mt == MeterType.KENWOOD && ni.ReadingSource == Reading.SWR)
+                                                {
+                                                    ni.ShowHistory = igs.ShowHistory;
+                                                }
+                                                else if (mt == MeterType.CROSS && ni.ReadingSource == Reading.REVERSE_PWR)
+                                                {
+                                                    ni.Colour = igs.MarkerColour;
+                                                    ni.ShowHistory = igs.ShowHistory;
+                                                }
                                             }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
@@ -5360,6 +5369,7 @@ namespace Thetis
                                                 //igs.PeakHold = bi.PeakHold;
                                                 //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
                                                 igs.Shadow = ni.Shadow;
+                                                igs.MarkerColour = ni.Colour;
                                                 if (mt == MeterType.KENWOOD) {
                                                     if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                                                     {
@@ -5372,6 +5382,7 @@ namespace Thetis
                                             else
                                             {
                                                 //igs.SubMarkerColour = bi.SubMarkerColour;
+                                                //if(mt == MeterType.CROSS) igs.MarkerColour = ni.Colour;
                                             }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
