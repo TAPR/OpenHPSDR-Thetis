@@ -2919,8 +2919,12 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.clrbtnContainerBackground = new Thetis.ColorButton();
             this.chkContainerBorder = new System.Windows.Forms.CheckBoxTS();
             this.grpMeterItemSettings = new System.Windows.Forms.GroupBoxTS();
+            this.nudMeterItemsPowerLimit = new System.Windows.Forms.NumericUpDownTS();
+            this.lblMMPowerLimit = new System.Windows.Forms.LabelTS();
             this.chkMeterItemDarkMode = new System.Windows.Forms.CheckBoxTS();
             this.chkMeterItemSignalAverage = new System.Windows.Forms.CheckBoxTS();
             this.nudMeterItemEyeScale = new System.Windows.Forms.NumericUpDownTS();
@@ -3383,8 +3387,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS161 = new System.Windows.Forms.LabelTS();
-            this.clrbtnContainerBackground = new Thetis.ColorButton();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4158,6 +4160,7 @@
             this.tpAppearanceMeter2.SuspendLayout();
             this.groupBoxTS28.SuspendLayout();
             this.grpMeterItemSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemsPowerLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemDecayRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemAttackRate)).BeginInit();
@@ -47158,6 +47161,30 @@
             this.groupBoxTS28.TabIndex = 86;
             this.groupBoxTS28.TabStop = false;
             // 
+            // labelTS161
+            // 
+            this.labelTS161.AutoSize = true;
+            this.labelTS161.Image = null;
+            this.labelTS161.Location = new System.Drawing.Point(182, 55);
+            this.labelTS161.Name = "labelTS161";
+            this.labelTS161.Size = new System.Drawing.Size(41, 13);
+            this.labelTS161.TabIndex = 99;
+            this.labelTS161.Text = "Backg:";
+            // 
+            // clrbtnContainerBackground
+            // 
+            this.clrbtnContainerBackground.Automatic = "Automatic";
+            this.clrbtnContainerBackground.Color = System.Drawing.Color.Black;
+            this.clrbtnContainerBackground.Image = null;
+            this.clrbtnContainerBackground.Location = new System.Drawing.Point(181, 71);
+            this.clrbtnContainerBackground.MoreColors = "More Colors...";
+            this.clrbtnContainerBackground.Name = "clrbtnContainerBackground";
+            this.clrbtnContainerBackground.Selectable = true;
+            this.clrbtnContainerBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnContainerBackground.TabIndex = 98;
+            this.toolTip1.SetToolTip(this.clrbtnContainerBackground, "Container Background Colour");
+            this.clrbtnContainerBackground.Changed += new System.EventHandler(this.clrbtnContainerBackground_Changed);
+            // 
             // chkContainerBorder
             // 
             this.chkContainerBorder.AutoSize = true;
@@ -47174,6 +47201,8 @@
             // 
             // grpMeterItemSettings
             // 
+            this.grpMeterItemSettings.Controls.Add(this.nudMeterItemsPowerLimit);
+            this.grpMeterItemSettings.Controls.Add(this.lblMMPowerLimit);
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemDarkMode);
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemSignalAverage);
             this.grpMeterItemSettings.Controls.Add(this.nudMeterItemEyeScale);
@@ -47210,10 +47239,51 @@
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemFadeOnRx);
             this.grpMeterItemSettings.Location = new System.Drawing.Point(403, 15);
             this.grpMeterItemSettings.Name = "grpMeterItemSettings";
-            this.grpMeterItemSettings.Size = new System.Drawing.Size(294, 352);
+            this.grpMeterItemSettings.Size = new System.Drawing.Size(294, 364);
             this.grpMeterItemSettings.TabIndex = 96;
             this.grpMeterItemSettings.TabStop = false;
             this.grpMeterItemSettings.Text = "Settings";
+            // 
+            // nudMeterItemsPowerLimit
+            // 
+            this.nudMeterItemsPowerLimit.DecimalPlaces = 1;
+            this.nudMeterItemsPowerLimit.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudMeterItemsPowerLimit.Location = new System.Drawing.Point(83, 333);
+            this.nudMeterItemsPowerLimit.Maximum = new decimal(new int[] {
+            2500,
+            0,
+            0,
+            0});
+            this.nudMeterItemsPowerLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudMeterItemsPowerLimit.Name = "nudMeterItemsPowerLimit";
+            this.nudMeterItemsPowerLimit.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemsPowerLimit.TabIndex = 114;
+            this.nudMeterItemsPowerLimit.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemsPowerLimit, "Power limit of scale");
+            this.nudMeterItemsPowerLimit.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudMeterItemsPowerLimit.ValueChanged += new System.EventHandler(this.nudMeterItemsPowerLimit_ValueChanged);
+            // 
+            // lblMMPowerLimit
+            // 
+            this.lblMMPowerLimit.Image = null;
+            this.lblMMPowerLimit.Location = new System.Drawing.Point(13, 335);
+            this.lblMMPowerLimit.Name = "lblMMPowerLimit";
+            this.lblMMPowerLimit.Size = new System.Drawing.Size(64, 16);
+            this.lblMMPowerLimit.TabIndex = 113;
+            this.lblMMPowerLimit.Text = "Power:";
+            this.lblMMPowerLimit.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // chkMeterItemDarkMode
             // 
@@ -53891,30 +53961,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // labelTS161
-            // 
-            this.labelTS161.AutoSize = true;
-            this.labelTS161.Image = null;
-            this.labelTS161.Location = new System.Drawing.Point(182, 55);
-            this.labelTS161.Name = "labelTS161";
-            this.labelTS161.Size = new System.Drawing.Size(41, 13);
-            this.labelTS161.TabIndex = 99;
-            this.labelTS161.Text = "Backg:";
-            // 
-            // clrbtnContainerBackground
-            // 
-            this.clrbtnContainerBackground.Automatic = "Automatic";
-            this.clrbtnContainerBackground.Color = System.Drawing.Color.Black;
-            this.clrbtnContainerBackground.Image = null;
-            this.clrbtnContainerBackground.Location = new System.Drawing.Point(181, 71);
-            this.clrbtnContainerBackground.MoreColors = "More Colors...";
-            this.clrbtnContainerBackground.Name = "clrbtnContainerBackground";
-            this.clrbtnContainerBackground.Selectable = true;
-            this.clrbtnContainerBackground.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnContainerBackground.TabIndex = 98;
-            this.toolTip1.SetToolTip(this.clrbtnContainerBackground, "Container Background Colour");
-            this.clrbtnContainerBackground.Changed += new System.EventHandler(this.clrbtnContainerBackground_Changed);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -54847,6 +54893,7 @@
             this.groupBoxTS28.PerformLayout();
             this.grpMeterItemSettings.ResumeLayout(false);
             this.grpMeterItemSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemsPowerLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemDecayRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemAttackRate)).EndInit();
@@ -58387,5 +58434,7 @@
         private CheckBoxTS chkContainerBorder;
         private LabelTS labelTS161;
         private ColorButton clrbtnContainerBackground;
+        private NumericUpDownTS nudMeterItemsPowerLimit;
+        private LabelTS lblMMPowerLimit;
     }
 }

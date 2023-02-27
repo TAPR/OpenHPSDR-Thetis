@@ -25670,6 +25670,7 @@ namespace Thetis
             igs.PeakValue = chkMeterItemPeakValue.Checked;
             igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
             igs.EyeScale = (float)nudMeterItemEyeScale.Value;
+            igs.PowerLimit = (float)nudMeterItemsPowerLimit.Value;
             if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
             if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
 
@@ -25714,6 +25715,7 @@ namespace Thetis
             chkMeterItemPeakValue.Checked = igs.PeakValue;
             clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
             updatePeakValueControls();
+            nudMeterItemsPowerLimit.Value = (decimal)igs.PowerLimit;
 
             // specific to mt
             bool bMagicEye = mt == MeterType.MAGIC_EYE;
@@ -25727,6 +25729,8 @@ namespace Thetis
 
             chkMeterItemShadow.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
             chkMeterItemDarkMode.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
+            lblMMPowerLimit.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
+            nudMeterItemsPowerLimit.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
 
             bool bEnable = mt == MeterType.ANANMM || mt == MeterType.CROSS || mt == MeterType.MAGIC_EYE;            
             chkMeterItemSegmented.Enabled = !bEnable;
@@ -25937,6 +25941,11 @@ namespace Thetis
             {
                 MeterManager.ContainerBackgroundColour(cci.ID, clrbtnContainerBackground.Color);
             }
+        }
+
+        private void nudMeterItemsPowerLimit_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

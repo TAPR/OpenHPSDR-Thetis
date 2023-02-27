@@ -16,6 +16,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using System.Security.Policy;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Thetis
 {
@@ -160,6 +161,7 @@ namespace Thetis
             private float _eyeScale;
             private bool _average;
             private bool _darkMode;
+            private float _powerLimit;
 
             public clsIGSettings() 
             {
@@ -194,7 +196,8 @@ namespace Thetis
                     Common.ColourToString(_peakValueColour) + "|" +
                     _eyeScale.ToString("f4") + "|" +
                     _average.ToString() + "|" +
-                    _darkMode.ToString();
+                    _darkMode.ToString() + "|" +
+                    _powerLimit.ToString("f2");
 
                 return sRet;
             }
@@ -205,7 +208,7 @@ namespace Thetis
                 bool bOk = false;
 
                 string[] tmp = str.Split('|');
-                if (tmp.Length == 26)
+                if (tmp.Length == 27)
                 {
                     int tmpInt = 0;
                     float tmpFloat = 0;
@@ -240,6 +243,7 @@ namespace Thetis
                     if (bOk) bOk = float.TryParse(tmp[23], out tmpFloat); if (bOk) { _eyeScale = tmpFloat; }
                     if (bOk) bOk = bool.TryParse(tmp[24], out tmpBool); if (bOk) { _average = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[25], out tmpBool); if (bOk) { _darkMode = tmpBool; }
+                    if (bOk) bOk = float.TryParse(tmp[26], out tmpFloat); if (bOk) { _powerLimit = tmpFloat; }
                 }
 
                 return bOk;
@@ -270,6 +274,7 @@ namespace Thetis
             public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
             public bool Average { get { return _average; } set { _average = value; } }
             public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
+            public float PowerLimit { get { return _powerLimit; } set { _powerLimit = value; } }
 
         }
         static MeterManager()
@@ -862,22 +867,23 @@ namespace Thetis
             else
                 return 0f;
         }
-        private static float normaliseTo100W()
-        {
-            // return a factor to apply to power values to bring them to 100w
-            // this is needed because power meter scaling is based on 100w at full deflection
-            switch(CurrentPowerRating)
-            {
-                case 500: return 1 / 5f;
-                case 200: return 1 / 2f;
-                case 100: return 1f;
-                case 30: return 100 / 30f;
-                case 15: return 100 / 15f;
-                case 1: return 100f;
-            }
+        //private static float normalisePower()
+        //{
+        //    return a factor to apply to power values to bring them to 100w
+        //     this is needed because power meter scaling is based on 100w at full deflection
+        //    switch (CurrentPowerRating)
+        //    {
+        //        case 500: return 1 / 5f;
+        //        case 200: return 1 / 2f;
+        //        case 100: return 1f;
+        //        case 30: return 100 / 30f;
+        //        case 15: return 100 / 15f;
+        //        case 1: return 100f;
+        //    }
 
-            return 1f;
-        }
+        //    return 1f;
+
+        //}
         private static float getReading(int rx, Reading rt, bool bUseReading = false)
         {
             if (rt == Reading.NONE) return -200f;
@@ -1322,6 +1328,7 @@ namespace Thetis
                 H_SCALE,
                 V_SCALE,
                 NEEDLE,
+                NEEDLE_SCALE_PWR,
                 TEXT,
                 IMAGE,
                 SOLID_COLOUR,
@@ -1367,6 +1374,7 @@ namespace Thetis
             private bool _bFadeOnRx;
             private bool _bFadeOnTx;
             private bool _bPrimary;
+            private float _maxPower;
 
             public clsMeterItem()
             {
@@ -1396,6 +1404,7 @@ namespace Thetis
                 _bFadeOnRx = false;
                 _bFadeOnTx = false;
                 _bPrimary = false;
+                _maxPower = 100f;
                 _percCache = new Dictionary<float, clsPercCache>();
                 _updateStopwatch = new Stopwatch();
             }
@@ -1645,6 +1654,11 @@ namespace Thetis
                 //igs.PeakHoldMarkerColor = 
                 //igs.Segmented = 
                 _readingType = igs.ReadingSource;
+            }
+            public float MaxPower
+            {
+                get { return _maxPower; }
+                set { _maxPower = value; }
             }
         }
         //
@@ -1991,11 +2005,210 @@ namespace Thetis
                     TopLeft.X.ToString("f4") + "|" +
                     TopLeft.Y.ToString("f4") + "|" +
                     Size.Width.ToString("f4") + "|" +
-                    Size.Height.ToString("f4") + "|";
+                    Size.Height.ToString("f4");
                     //
 
 
                 return sRet;
+            }
+        }
+        internal class clsNeedleScalePwrItem : clsMeterItem
+        {
+            private System.Drawing.Color _lowColour;
+            private System.Drawing.Color _highColour;
+            private string _fontFamily;
+            private FontStyle _fontStyle;
+            private System.Drawing.Color _fontColorLow;
+            private System.Drawing.Color _fontColorHigh;
+            private System.Drawing.Color _fontColourType;
+            private float _fontSize;
+            private bool _showType;
+            private bool _showMarkers;
+            private int _marks;
+            private bool _darkMode;
+
+            private clsNeedleItem.NeedleDirection _needleDirection;
+            private float _lengthFactor;
+            private PointF _radiusRatio;
+            private clsNeedleItem.NeedlePlacement _placement;
+            private PointF _needleOffset;
+
+            public clsNeedleScalePwrItem()
+            {
+                _lowColour = System.Drawing.Color.White;
+                _highColour = System.Drawing.Color.Red;
+                _fontColourType = System.Drawing.Color.DarkGray;
+
+                _showType = false;
+                _showMarkers = true;
+
+                _fontFamily = "Trebuchet MS";
+                _fontStyle = FontStyle.Regular;
+                _fontColorLow = System.Drawing.Color.White;
+                _fontColorHigh = System.Drawing.Color.Red;
+                _fontColourType = System.Drawing.Color.DarkGray;
+                _fontSize = 20f;
+
+                ItemType = MeterItemType.NEEDLE_SCALE_PWR;
+                ReadingSource = Reading.NONE;
+                UpdateInterval = 100;
+                AttackRatio = 0.8f;
+                DecayRatio = 0.2f;
+                StoreSettings = false;
+
+                _radiusRatio.X = 1f;
+                _radiusRatio.Y = 1f;
+                _lengthFactor = 1f;
+                _needleDirection = clsNeedleItem.NeedleDirection.Clockwise;
+                _placement = clsNeedleItem.NeedlePlacement.Bottom;
+                _needleOffset.X = 0f;
+                _needleOffset.Y = 0.5f;
+                _darkMode = false;
+            }
+            public override clsIGSettings GetSettings()
+            {
+                clsIGSettings igs = new clsIGSettings();
+                igs.UpdateInterval = UpdateInterval;
+                igs.DecayRatio = DecayRatio;
+                igs.AttackRatio = AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                igs.ShowHistory = ShowHistory;
+                igs.HistoryColor = HistoryColour;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented =
+                igs.ReadingSource = ReadingSource;
+                igs.LowColor = _lowColour;
+                igs.HighColor = _highColour;
+                igs.TitleColor = _fontColourType;
+
+                return igs;
+            }
+            public override void ApplySettings(clsIGSettings igs)
+            {
+                UpdateInterval = igs.UpdateInterval;
+                DecayRatio = igs.DecayRatio;
+                AttackRatio = igs.AttackRatio;
+                //igs.HistoryDuration =
+                //igs.Shadow = 
+                ShowHistory = igs.ShowHistory;
+                HistoryColour = igs.HistoryColor;
+                //igs.PeakHold = 
+                //igs.PeakHoldMarkerColor = 
+                //igs.Segmented = 
+                ReadingSource = igs.ReadingSource;
+                _lowColour = igs.LowColor;
+                _highColour = igs.HighColor;
+                _fontColourType = igs.TitleColor;
+
+                _radiusRatio.X = 1f;
+                _radiusRatio.Y = 1f;
+                _placement = clsNeedleItem.NeedlePlacement.Bottom;
+                _needleOffset.X = 0f;
+                _needleOffset.Y = 0.5f;
+                _lengthFactor = 1f;
+                _needleDirection = clsNeedleItem.NeedleDirection.Clockwise;
+            }
+            public System.Drawing.Color LowColour
+            {
+                get { return _lowColour; }
+                set { _lowColour = value; }
+            }
+            public System.Drawing.Color HighColour
+            {
+                get { return _highColour; }
+                set { _highColour = value; }
+            }
+            public System.Drawing.Color FontColourType
+            {
+                get { return _fontColourType; }
+                set { _fontColourType = value; }
+            }
+            public string FontFamily
+            {
+                get { return _fontFamily; }
+                set { _fontFamily = value; }
+            }
+            public FontStyle FntStyle
+            {
+                get { return _fontStyle; }
+                set { _fontStyle = value; }
+            }
+            public System.Drawing.Color FontColourLow
+            {
+                get { return _fontColorLow; }
+                set { _fontColorLow = value; }
+            }
+            public System.Drawing.Color FontColourHigh
+            {
+                get { return _fontColorHigh; }
+                set { _fontColorHigh = value; }
+            }
+            public float FontSize
+            {
+                get { return _fontSize; }
+                set { _fontSize = value; }
+            }
+            public bool ShowType
+            {
+                get { return _showType; }
+                set { _showType = value; }
+            }
+            public bool ShowMarkers
+            {
+                get { return _showMarkers; }
+                set { _showMarkers = value; }
+            }
+            public override string ToString()
+            {
+                string sRet;
+
+                sRet = ID + "|" +
+                    ParentID + "|" +
+                    ItemType.ToString() + "|" +
+                    TopLeft.X.ToString("f4") + "|" +
+                    TopLeft.Y.ToString("f4") + "|" +
+                    Size.Width.ToString("f4") + "|" +
+                    Size.Height.ToString("f4");
+                //
+
+                return sRet;
+            }
+            public clsNeedleItem.NeedlePlacement Placement
+            {
+                get { return _placement; }
+                set { _placement = value; }
+            }
+            public clsNeedleItem.NeedleDirection Direction
+            {
+                get { return _needleDirection; }
+                set { _needleDirection = value; }
+            }
+            public PointF NeedleOffset
+            {
+                get { return _needleOffset; }
+                set { _needleOffset = value; }
+            }
+            public PointF RadiusRatio
+            {
+                get { return _radiusRatio; }
+                set { _radiusRatio = value; }
+            }
+            public float LengthFactor
+            {
+                get { return _lengthFactor; }
+                set { _lengthFactor = value; }
+            }
+            public int Marks
+            {
+                get { return _marks; }
+                set { _marks = value; }
+            }
+            public bool DarkMode
+            {
+                get { return _darkMode; }
+                set { _darkMode = value; }
             }
         }
         internal class clsMagicEyeItem : clsMeterItem
@@ -3666,6 +3879,7 @@ namespace Thetis
                 ni4.TopLeft = ni.TopLeft;
                 ni4.Size = ni.Size;
                 ni4.OnlyWhenTX = true;
+                ni4.NormaliseTo100W = true;
                 ni4.ReadingSource = Reading.PWR;
                 ni4.AttackRatio = 0.2f;//0.325f;
                 ni4.DecayRatio = 0.1f;//0.5f;
@@ -3695,6 +3909,31 @@ namespace Thetis
                 ni4.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                 addMeterItem(ni4);
+
+                clsNeedleScalePwrItem nspi = new clsNeedleScalePwrItem();
+                nspi.ParentID = ig.ID;
+                nspi.TopLeft = ni.TopLeft;
+                nspi.Size = ni.Size;
+                nspi.Marks = 7;
+                nspi.ReadingSource = Reading.PWR;
+                nspi.NeedleOffset = new PointF(0.004f, 0.736f);
+                nspi.RadiusRatio = new PointF(1f, 0.55f);
+                nspi.LengthFactor = 1.51f;
+                nspi.ZOrder = 2;
+                nspi.LowColour = System.Drawing.Color.Black;
+                nspi.FntStyle = FontStyle.Bold;
+                nspi.FontSize = 22;
+                nspi.ScaleCalibration.Add(0f, new PointF(0.099f, 0.352f));
+                nspi.ScaleCalibration.Add(5f, new PointF(0.164f, 0.312f));
+                nspi.ScaleCalibration.Add(10f, new PointF(0.224f, 0.28f));
+                nspi.ScaleCalibration.Add(25f, new PointF(0.335f, 0.236f));
+                nspi.ScaleCalibration.Add(30f, new PointF(0.367f, 0.228f));
+                nspi.ScaleCalibration.Add(40f, new PointF(0.436f, 0.22f));
+                nspi.ScaleCalibration.Add(50f, new PointF(0.499f, 0.212f));
+                nspi.ScaleCalibration.Add(60f, new PointF(0.559f, 0.216f));
+                nspi.ScaleCalibration.Add(100f, new PointF(0.751f, 0.272f));
+                nspi.ScaleCalibration.Add(150f, new PointF(0.899f, 0.352f));
+                addMeterItem(nspi);
 
                 clsNeedleItem ni5 = new clsNeedleItem();
                 ni5.ParentID = ig.ID;
@@ -3876,6 +4115,35 @@ namespace Thetis
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                 addMeterItem(ni);
 
+                clsNeedleScalePwrItem nspi = new clsNeedleScalePwrItem();
+                nspi.ParentID = ig.ID;
+                nspi.TopLeft = ni.TopLeft;
+                nspi.Size = ni.Size;
+                nspi.Marks = 8;
+                nspi.ReadingSource = Reading.PWR;
+                nspi.NeedleOffset = new PointF(0.318f, 0.611f);
+                nspi.LengthFactor = 1.685f;
+                nspi.ZOrder = 5;
+                nspi.LowColour = System.Drawing.Color.Black;
+                nspi.FntStyle = FontStyle.Bold;
+                nspi.FontSize = 16;
+                nspi.ScaleCalibration.Add(0f, new PointF(0.052f, 0.732f));
+                nspi.ScaleCalibration.Add(5f, new PointF(0.146f, 0.528f));
+                nspi.ScaleCalibration.Add(10f, new PointF(0.188f, 0.434f));
+                nspi.ScaleCalibration.Add(15f, new PointF(0.235f, 0.387f));
+                nspi.ScaleCalibration.Add(20f, new PointF(0.258f, 0.338f));
+                nspi.ScaleCalibration.Add(25f, new PointF(0.303f, 0.313f));
+                nspi.ScaleCalibration.Add(30f, new PointF(0.321f, 0.272f));
+                nspi.ScaleCalibration.Add(35f, new PointF(0.361f, 0.257f));
+                nspi.ScaleCalibration.Add(40f, new PointF(0.381f, 0.223f));
+                nspi.ScaleCalibration.Add(50f, new PointF(0.438f, 0.181f));
+                nspi.ScaleCalibration.Add(60f, new PointF(0.483f, 0.155f));
+                nspi.ScaleCalibration.Add(70f, new PointF(0.532f, 0.13f));
+                nspi.ScaleCalibration.Add(80f, new PointF(0.577f, 0.111f));
+                nspi.ScaleCalibration.Add(90f, new PointF(0.619f, 0.098f));
+                nspi.ScaleCalibration.Add(100f, new PointF(0.662f, 0.083f));
+                addMeterItem(nspi);
+
                 clsNeedleItem ni2 = new clsNeedleItem();
                 ni2.ParentID = ig.ID;
                 ni2.TopLeft = ni.TopLeft;
@@ -3918,6 +4186,40 @@ namespace Thetis
                 ni2.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                 addMeterItem(ni2);
+
+                clsNeedleScalePwrItem nspi2 = new clsNeedleScalePwrItem();
+                nspi2.ParentID = ig.ID;
+                nspi2.TopLeft = ni.TopLeft;
+                nspi2.Size = ni.Size;
+                nspi2.Marks = 8;
+                nspi2.ReadingSource = Reading.PWR;
+                nspi2.Direction = clsNeedleItem.NeedleDirection.CounterClockwise;
+                nspi2.NeedleOffset = new PointF(-0.322f, 0.611f);
+                nspi2.LengthFactor = 1.685f;
+                nspi2.ZOrder = 5;
+                nspi2.LowColour = System.Drawing.Color.Black;
+                nspi2.FntStyle = FontStyle.Bold;
+                nspi2.FontSize = 16;
+                nspi2.ScaleCalibration.Add(0f, new PointF(0.948f, 0.74f));
+                nspi2.ScaleCalibration.Add(0.25f, new PointF(0.913f, 0.7f));
+                nspi2.ScaleCalibration.Add(0.5f, new PointF(0.899f, 0.638f));
+                nspi2.ScaleCalibration.Add(0.75f, new PointF(0.875f, 0.594f));
+                nspi2.ScaleCalibration.Add(1f, new PointF(0.854f, 0.538f));
+                nspi2.ScaleCalibration.Add(2f, new PointF(0.814f, 0.443f));
+                nspi2.ScaleCalibration.Add(3f, new PointF(0.769f, 0.4f));
+                nspi2.ScaleCalibration.Add(4f, new PointF(0.744f, 0.351f));
+                nspi2.ScaleCalibration.Add(5f, new PointF(0.702f, 0.321f));
+                nspi2.ScaleCalibration.Add(6f, new PointF(0.682f, 0.285f));
+                nspi2.ScaleCalibration.Add(7f, new PointF(0.646f, 0.268f));
+                nspi2.ScaleCalibration.Add(8f, new PointF(0.626f, 0.234f));
+                nspi2.ScaleCalibration.Add(9f, new PointF(0.596f, 0.228f));
+                nspi2.ScaleCalibration.Add(10f, new PointF(0.569f, 0.196f));
+                nspi2.ScaleCalibration.Add(12f, new PointF(0.524f, 0.166f));
+                nspi2.ScaleCalibration.Add(14f, new PointF(0.476f, 0.14f));
+                nspi2.ScaleCalibration.Add(16f, new PointF(0.431f, 0.121f));
+                nspi2.ScaleCalibration.Add(18f, new PointF(0.393f, 0.109f));
+                nspi2.ScaleCalibration.Add(20f, new PointF(0.349f, 0.098f));
+                addMeterItem(nspi2);
 
                 clsImage img = new clsImage();
                 img.ParentID = ig.ID;
@@ -5180,6 +5482,7 @@ namespace Thetis
                                                         ni.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                                     }
                                                 }
+                                                ni.MaxPower = igs.PowerLimit;
                                             }
                                             else
                                             {
@@ -5200,6 +5503,7 @@ namespace Thetis
                                                 {
                                                     ni.Colour = igs.MarkerColour;
                                                     ni.ShowHistory = igs.ShowHistory;
+                                                    ni.MaxPower = igs.PowerLimit;
                                                 }
                                             }
                                         }
@@ -5219,6 +5523,16 @@ namespace Thetis
 
                                             solidColour.FadeOnRx = igs.FadeOnRx;
                                             solidColour.FadeOnTx = igs.FadeOnTx;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> nsi in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE_SCALE_PWR))
+                                        {
+                                            clsNeedleScalePwrItem nspi = nsi.Value as clsNeedleScalePwrItem;
+                                            if (nspi == null) continue;
+
+                                            nspi.FadeOnRx = igs.FadeOnRx;
+                                            nspi.FadeOnTx = igs.FadeOnTx;
+                                            nspi.MaxPower = igs.PowerLimit;
+                                            nspi.DarkMode = igs.DarkMode;
                                         }
                                     }
                                     break;
@@ -5415,6 +5729,7 @@ namespace Thetis
                                                         igs.Average = ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
                                                     }
                                                 }
+                                                igs.PowerLimit = ni.MaxPower;
                                             }
                                             else
                                             {
@@ -5430,6 +5745,15 @@ namespace Thetis
                                             //igs.FadeOnRx = image.FadeOnRx;
                                             //igs.FadeOnTx = image.FadeOnTx;
                                             if (image.Primary) igs.DarkMode = image.DarkMode;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE_SCALE_PWR))
+                                        {
+                                            clsNeedleScalePwrItem nspi = sc.Value as clsNeedleScalePwrItem;
+                                            if (nspi == null) continue;
+
+                                            //nspi.FadeOnRx = igs.FadeOnRx;
+                                            //nspi.FadeOnTx = igs.FadeOnTx;
+                                            if (nspi.Primary) igs.PowerLimit = nspi.MaxPower;
                                         }
                                     }
                                     break;
@@ -6026,7 +6350,51 @@ namespace Thetis
                 {
                     string[] sFiles = System.IO.Directory.GetFiles(sImagePath);
                     foreach (string sFile in sFiles)
-                    {                        
+                    {
+                        //bool bLoad = false;
+
+                        //// ignore any file that has power in the filname, but doesnt match our power
+                        //if (sFile.Contains("-1.") ||
+                        //    sFile.Contains("-1-l") ||
+                        //    sFile.Contains("-1-s") ||
+
+                        //    sFile.Contains("-10.") ||
+                        //    sFile.Contains("-10-l") ||
+                        //    sFile.Contains("-10-s") ||
+
+                        //    sFile.Contains("-15.") ||
+                        //    sFile.Contains("-15-") ||
+                        //    sFile.Contains("-15-") ||
+
+                        //    sFile.Contains("-30.") ||
+                        //    sFile.Contains("-30-l") ||
+                        //    sFile.Contains("-30-s") ||
+
+                        //    sFile.Contains("-100.") ||
+                        //    sFile.Contains("-100-l") ||
+                        //    sFile.Contains("-100-s") ||
+
+                        //    sFile.Contains("-200.") ||
+                        //    sFile.Contains("-200-l") ||
+                        //    sFile.Contains("-200-s") ||
+
+                        //    sFile.Contains("-500.") ||
+                        //    sFile.Contains("-500-l") ||
+                        //    sFile.Contains("-500-s")
+                        //    )
+                        //{                            
+                        //    int nPower = MeterManager.CurrentPowerRating;
+                        //    string s1 = "-" + nPower.ToString() + ".";
+                        //    string s2 = "-" + nPower.ToString() + "-l";
+                        //    string s3 = "-" + nPower.ToString() + "-s";
+
+                        //    bLoad = sFile.Contains(s1) || sFile.Contains(s2) || sFile.Contains(s3);
+                        //}
+                        //else
+                        //    bLoad = true;
+                        ////
+                        //if(bLoad) 
+                            
                         loadImage(sFile);
                     }
                 }
@@ -6043,7 +6411,9 @@ namespace Thetis
                         {
                             System.Drawing.Image image = System.Drawing.Image.FromFile(sFilePath);
                             System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(image);
-                            MeterManager.AddImage(sID, bmp2);                                                            
+                            MeterManager.AddImage(sID, bmp2);
+
+                            Debug.Print("Loaded image : " + sFilePath);
                         }
 
                         System.Drawing.Bitmap bmp = MeterManager.GetImage(sID);
@@ -6686,8 +7056,11 @@ namespace Thetis
                                     renderText(rect, mi, m);                                            
                                     break;
                                 case clsMeterItem.MeterItemType.H_SCALE:
-                                case clsMeterItem.MeterItemType.V_SCALE:
+                                case clsMeterItem.MeterItemType.V_SCALE:                                
                                     renderScale(rect, mi, m);
+                                    break;
+                                case clsMeterItem.MeterItemType.NEEDLE_SCALE_PWR:
+                                    renderNeedleScale(rect, mi, m);
                                     break;
                                 case clsMeterItem.MeterItemType.MAGIC_EYE:
                                     renderEye(rect, mi, m);
@@ -6752,6 +7125,220 @@ namespace Thetis
 
                 return size;
             }
+            private void renderNeedleScale(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsNeedleScalePwrItem scale = (clsNeedleScalePwrItem)mi;
+
+                if (scale.ScaleCalibration == null || scale.ScaleCalibration.Count == 0) return;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+
+                SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.CornflowerBlue));
+
+                if (scale.ItemType == clsMeterItem.MeterItemType.NEEDLE_SCALE_PWR && (scale.ReadingSource == Reading.PWR || scale.ReadingSource == Reading.REVERSE_PWR))
+                {
+                    // go through subset of scalecalibration items to get positions for text       (10 for ananmm, 15 for crosspwr, 19 for crosspwrref )  7 8 8          
+                    float fontSizeEmScaled = (scale.FontSize / 16f) * (rect.Width / 52f);
+                    SizeF szTextSize;
+                    int nMaxIndex = -1;
+
+                    for (int n = 0; n < scale.Marks; n++)
+                    {
+                        int index = 0;
+                        float reduceAngle = 0;
+
+                        if (scale.ScaleCalibration.Count == 10) // the ananmm
+                        {
+                            switch (n)
+                            {
+                                case 0: //0
+                                    index = 0;
+                                    reduceAngle = (float)degToRad(15);
+                                    break;
+                                case 1: //5
+                                    index = 1;
+                                    reduceAngle = (float)degToRad(8f);
+                                    break;
+                                case 2: //10
+                                    index = 2;
+                                    reduceAngle = (float)degToRad(10);
+                                    break;
+                                case 3: //25
+                                    index = 3;
+                                    reduceAngle = (float)degToRad(5);
+                                    break;
+                                case 4: //50
+                                    index = 6;
+                                    reduceAngle = 0;
+                                    break;
+                                case 5: //100
+                                    index = 8;
+                                    reduceAngle = -(float)degToRad(8);
+                                    break;
+                                case 6: //150
+                                    index = 9;
+                                    reduceAngle = -(float)degToRad(10);
+                                    nMaxIndex = index;
+                                    break;
+                            }
+                        }
+                        else if (scale.ScaleCalibration.Count == 15) // the cross pwr
+                        {
+                            switch (n)
+                            {
+                                case 0: //0
+                                    index = 0;
+                                    break;
+                                case 1: //10
+                                    index = 2;
+                                    break;
+                                case 2: //20
+                                    index = 4;
+                                    break;
+                                case 3: //30
+                                    index = 6;
+                                    break;
+                                case 4: //40
+                                    index = 8;
+                                    break;
+                                case 5: //70
+                                    index = 11;
+                                    break;
+                                case 6: //80
+                                    index = 12;
+                                    break;
+                                case 7: //100
+                                    index = 14;
+                                    nMaxIndex = index;
+                                    break;
+                            }
+                        }
+                        else if (scale.ScaleCalibration.Count == 19) // the cross ref
+                        {
+                            switch (n)
+                            {
+                                case 0: //0
+                                    index = 0;
+                                    break;
+                                case 1: //1
+                                    index = 4;
+                                    break;
+                                case 2: //2
+                                    index = 5;
+                                    break;
+                                case 3: //4
+                                    index = 7;
+                                    break;
+                                case 4: //6
+                                    index = 9;
+                                    break;
+                                case 5: //8
+                                    index = 11;
+                                    break;
+                                case 6: //16
+                                    index = 16;
+                                    break;
+                                case 7: //20
+                                    index = 18;
+                                    nMaxIndex = index;
+                                    break;
+                            }
+                        }
+
+                        Dictionary<float, PointF>.KeyCollection kc = mi.ScaleCalibration.Keys;
+                        int key = 0;
+                        foreach (float k in kc)
+                        {
+                            if (index == key)
+                            {
+                                getPerc(mi, k, out float percX, out float percY, out PointF min, out PointF max);
+
+                                //offset from centre
+                                float cX = x + (w / 2);
+                                float cY = y + (h / 2);
+                                float startX = cX + (w * scale.NeedleOffset.X);
+                                float startY = cY + (h * scale.NeedleOffset.Y);
+
+                                float rotation = 180f;
+
+                                float radiusX = (w / 2) * (scale.LengthFactor * scale.RadiusRatio.X);
+                                float radiusY = (w / 2) * (scale.LengthFactor * scale.RadiusRatio.Y);
+
+                                //todo
+                                switch (scale.Placement)
+                                {
+                                    case clsNeedleItem.NeedlePlacement.Bottom:
+                                        rotation = 180f;
+                                        break;
+                                    case clsNeedleItem.NeedlePlacement.Left:
+                                        //rotation = 90f;
+                                        break;
+                                    case clsNeedleItem.NeedlePlacement.Top:
+                                        //rotation = 0f;
+                                        break;
+                                    case clsNeedleItem.NeedlePlacement.Right:
+                                        //rotation = 270f;
+                                        break;
+                                }
+
+                                float eX, eY, dX, dY;
+
+                                // map the meter scales to pixels
+                                eX = x + (min.X * w) + (percX * ((max.X - min.X) * w));
+                                eY = y + (min.Y * h) + (percY * ((max.Y - min.Y) * h));
+
+                                // calc angle required
+                                dX = startX - eX;
+                                dY = startY - eY;
+                                // expand
+                                dX /= scale.RadiusRatio.X;
+                                dY /= scale.RadiusRatio.Y;
+                                float ang = (float)Math.Atan2(dY, dX);
+
+                                float endX = startX + (float)(Math.Cos(ang + degToRad(rotation)) * radiusX);
+                                float endY = startY + (float)(Math.Sin(ang + degToRad(rotation)) * radiusY);
+
+                                float fPower = k * (scale.MaxPower / 100f);
+                                bool bmW = scale.MaxPower <= 1f; // switch to mW if sub 1 watt
+                                if (bmW) fPower *= 1000f;
+
+                                float fRemainder = fPower - (int)Math.Floor(fPower);
+                                string sFormat = "f0";
+                                if(fRemainder >= 0.1f && fPower <= 8f) sFormat = "f1";
+                                string sText = fPower.ToString(sFormat);
+                                if (index == nMaxIndex) sText += bmW ? "mW" : "W"; // last index, add W or mW
+
+                                szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
+
+                                float fontEndX = endX - (szTextSize.Width / 2f);
+                                float fontEndY = endY - (szTextSize.Height / 2f);
+
+                                Matrix3x2 currentTransform = _renderTarget.Transform;
+
+                                Matrix3x2 t = Matrix3x2.Rotation((ang + reduceAngle) + (float)(degToRad(90f + rotation))/*(float)radToDeg(ang) + rotation*/, new Vector2(endX, endY));
+                                t.TranslationVector += _pixelShift;
+                                _renderTarget.Transform = t;
+
+                                SharpDX.RectangleF txtrect = new SharpDX.RectangleF(fontEndX, fontEndY, szTextSize.Width, szTextSize.Height);
+                                System.Drawing.Color c = scale.DarkMode ? System.Drawing.Color.FromArgb(186, 186, 186) : System.Drawing.Color.Black;
+                                _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(c, nFade));
+
+                                _renderTarget.Transform = currentTransform;
+
+                                break;
+                            }
+                            key++;
+                        }
+                    }
+                }
+            }
             private void renderScale(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsScaleItem scale = (clsScaleItem)mi;
@@ -6773,7 +7360,6 @@ namespace Thetis
                 if (scale.ItemType == clsMeterItem.MeterItemType.H_SCALE)
                 {
                     float fontSizeEmScaled = (scale.FontSize / 16f) * (rect.Width / 52f);
-
                     SizeF szTextSize;
 
                     if (scale.ShowType)
@@ -7742,8 +8328,8 @@ namespace Thetis
 
                 string sImage = img.ImageName + (img.DarkMode ? "-dark" : "");
 
-                string sKey = sImage + "-" + MeterManager.CurrentPowerRating.ToString();
-                if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with power rating
+                string sKey = sImage;// + "-" + MeterManager.CurrentPowerRating.ToString();
+                //if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with power rating
 
                 float fDiag = (float)Math.Sqrt((w * w) + (h * h));
                 if(fDiag <= 450)
@@ -8079,9 +8665,12 @@ namespace Thetis
                 if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                     value += MeterManager.dbmOffsetForAbove30(_rx);
 
-                // normalise to 100w for needles?
+                // normalise to 100w
                 else if (mi.NormaliseTo100W)
-                    value *= MeterManager.normaliseTo100W();
+                {
+                    //value *= MeterManager.normalisePower();
+                    value *= (100 / mi.MaxPower);
+                }
 
                 clsMeterItem.clsPercCache pc = mi.GetPerc(value);
                 if (pc != null)
