@@ -25714,8 +25714,8 @@ namespace Thetis
             updateTitleControls();
             chkMeterItemPeakValue.Checked = igs.PeakValue;
             clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
-            updatePeakValueControls();
-            nudMeterItemsPowerLimit.Value = (decimal)igs.PowerLimit;
+            updatePeakValueControls();            
+            if(mt == MeterType.CROSS || mt == MeterType.ANANMM) nudMeterItemsPowerLimit.Value = (decimal)igs.PowerLimit;
 
             // specific to mt
             bool bMagicEye = mt == MeterType.MAGIC_EYE;
