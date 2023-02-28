@@ -1056,6 +1056,9 @@ namespace Thetis
                 if (RX2Enabled) N1MM.Resize(2);
                 //
 
+                // go for launch -- display forms, or controls in thetis
+                MeterManager.FinishSetupAndDisplay();
+
                 //display render thread
                 m_bResizeDX2Display = true;
                 if (draw_display_thread == null || !draw_display_thread.IsAlive)
@@ -3034,7 +3037,11 @@ namespace Thetis
             a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("f4")); //MW0LGE_21k9c changed format
 
             //
-            MeterManager.StoreSettings(ref a);
+            if (!MeterManager.StoreSettings(ref a))
+            {
+                MessageBox.Show("There was an issue storing the settings for MultiMeter2.", "MultiMeter2 StoreSettings",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
             //
 
             a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
@@ -4345,21 +4352,15 @@ namespace Thetis
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                         }
                         break;
-
-                    //case var nam when name.StartsWith("meterContData"):
-                    //    {
-                    //        ucMeter ucM = new ucMeter();
-                    //        bool bUcMeterOk = ucM.TryParse(val);
-
-                    //        if (bUcMeterOk)
-                    //            MeterManager.AddMeterContainer(ucM, MOX);
-                    //    }
-                    //    break;
                 }
             }
-
+            
             //
-            MeterManager.RestoreSettings(ref toDoList); // pass this list of settings to the meter manager
+            if(!MeterManager.RestoreSettings(ref toDoList)) // pass this list of settings to the meter manager to restore from
+            {
+                MessageBox.Show("There was an issue restoring the settings for MultiMeter2. Please remove all meters, re-add, and restart Thetis.", "MultiMeter2 RestoreSettings",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
             //
 
             //MW0LGE_21c
@@ -25428,70 +25429,6 @@ namespace Thetis
         //    return num;
         //}
 
-        private double getUVfromDBM(double dbm)
-        {
-            //return uV (rms) from dBm (50 ohms)
-            return Math.Sqrt(Math.Pow(10, dbm / 10) * 50 * 1e-3) * 1e6;
-        }
-        private string getSMeter(int nRX, double dbm)
-        {
-            string sRet;
-            bool bAbove30;
-
-            if (nRX == 2)
-            {
-                bAbove30 = (VFOBFreq >= 30.0); // MW0LGE_21a
-            }
-            else
-            {
-                bAbove30 = (VFOAFreq >= 30.0); // MW0LGE_21a
-            }
-
-            if (bAbove30)
-            {
-                if (dbm <= -144.0f) sRet = "S 0";
-                else if (dbm > -144.0f & dbm <= -138.0f) sRet = "S 1";
-                else if (dbm > -138.0f & dbm <= -132.0f) sRet = "S 2";
-                else if (dbm > -132.0f & dbm <= -126.0f) sRet = "S 3";
-                else if (dbm > -126.0f & dbm <= -120.0f) sRet = "S 4";
-                else if (dbm > -120.0f & dbm <= -114.0f) sRet = "S 5";
-                else if (dbm > -114.0f & dbm <= -108.0f) sRet = "S 6";
-                else if (dbm > -108.0f & dbm <= -102.0f) sRet = "S 7";
-                else if (dbm > -102.0f & dbm <= -96.0f) sRet = "S 8";
-                else if (dbm > -96.0f & dbm <= -90.0f) sRet = "S 9";
-                else if (dbm > -90.0f & dbm <= -86.0f) sRet = "S 9 + 5";
-                else if (dbm > -86.0f & dbm <= -80.0f) sRet = "S 9 + 10";
-                else if (dbm > -80.0f & dbm <= -76.0f) sRet = "S 9 + 15";
-                else if (dbm > -76.0f & dbm <= -66.0f) sRet = "S 9 + 20";
-                else if (dbm > -66.0f & dbm <= -56.0f) sRet = "S 9 + 30";
-                else if (dbm > -56.0f & dbm <= -46.0f) sRet = "S 9 + 40";
-                else if (dbm > -46.0f & dbm <= -36.0f) sRet = "S 9 + 50";
-                else /*if (dbm > -36.0f)*/ sRet = "S 9 + 60";
-            }
-            else
-            {
-                if (dbm <= -124.0f) sRet = "S 0";
-                else if (dbm > -124.0f & dbm <= -118.0f) sRet = "S 1";
-                else if (dbm > -118.0f & dbm <= -112.0f) sRet = "S 2";
-                else if (dbm > -112.0f & dbm <= -106.0f) sRet = "S 3";
-                else if (dbm > -106.0f & dbm <= -100.0f) sRet = "S 4";
-                else if (dbm > -100.0f & dbm <= -94.0f) sRet = "S 5";
-                else if (dbm > -94.0f & dbm <= -88.0f) sRet = "S 6";
-                else if (dbm > -88.0f & dbm <= -82.0f) sRet = "S 7";
-                else if (dbm > -82.0f & dbm <= -76.0f) sRet = "S 8";
-                else if (dbm > -76.0f & dbm <= -70.0f) sRet = "S 9";
-                else if (dbm > -70.0f & dbm <= -66.0f) sRet = "S 9 + 5";
-                else if (dbm > -66.0f & dbm <= -60.0f) sRet = "S 9 + 10";
-                else if (dbm > -60.0f & dbm <= -56.0f) sRet = "S 9 + 15";
-                else if (dbm > -56.0f & dbm <= -46.0f) sRet = "S 9 + 20";
-                else if (dbm > -46.0f & dbm <= -36.0f) sRet = "S 9 + 30";
-                else if (dbm > -36.0f & dbm <= -26.0f) sRet = "S 9 + 40";
-                else if (dbm > -26.0f & dbm <= -16.0f) sRet = "S 9 + 50";
-                else /*if (dbm > -16.0f)*/ sRet = "S 9 + 60";
-            }
-            return "    " + sRet;
-        }
-
         private int m_nSignalHistoryDuration = 2000;
         private HiPerfTimer m_objRX1HistoryDelayTimer = new HiPerfTimer();
         private HiPerfTimer m_objRX2HistoryDelayTimer = new HiPerfTimer();
@@ -25817,14 +25754,16 @@ namespace Thetis
                             switch (m_eMeasureMode)
                             {
                                 case MultiMeterMeasureMode.SMeter:
-                                    output = getSMeter(1, num);
+                                    //output = getSMeter(1, num);
+                                    output = Common.SMeterFromDBM(num, VFOAFreq >= 30);
                                     break;
                                 case MultiMeterMeasureMode.DBM:
                                     output = num.ToString(format) + " dBm";
                                     break;
                                 case MultiMeterMeasureMode.UV:
                                     if (meter_detail) format = "f2";
-                                    output = getUVfromDBM(num).ToString(format) + " uV";
+                                    //output = getUVfromDBM(num).ToString(format) + " uV";
+                                    output = Common.UVfromDBM(num).ToString(format) + " uV";
                                     break;
                             }
                             break;
@@ -26059,14 +25998,16 @@ namespace Thetis
                         switch (m_eMeasureMode)
                         {
                             case MultiMeterMeasureMode.SMeter:
-                                output = getSMeter(2, num);
+                                //output = getSMeter(2, num);
+                                output = Common.SMeterFromDBM(num, VFOBFreq >= 30);
                                 break;
                             case MultiMeterMeasureMode.DBM:
                                 output = num.ToString(format) + " dBm";
                                 break;
                             case MultiMeterMeasureMode.UV:
                                 if (meter_detail) format = "f2";
-                                output = getUVfromDBM(num).ToString(format) + " uV";
+                                //output = getUVfromDBM(num).ToString(format) + " uV";
+                                output = Common.UVfromDBM(num).ToString(format) + " uV";
                                 break;
                         }
                         break;

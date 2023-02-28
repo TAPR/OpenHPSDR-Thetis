@@ -162,6 +162,7 @@ namespace Thetis
             private bool _average;
             private bool _darkMode;
             private float _powerLimit;
+            private clsBarItem.Units _units;
 
             public clsIGSettings() 
             {
@@ -197,7 +198,8 @@ namespace Thetis
                     _eyeScale.ToString("f4") + "|" +
                     _average.ToString() + "|" +
                     _darkMode.ToString() + "|" +
-                    _powerLimit.ToString("f2");
+                    _powerLimit.ToString("f2") + "|" +
+                    _units.ToString();
 
                 return sRet;
             }
@@ -208,7 +210,7 @@ namespace Thetis
                 bool bOk = false;
 
                 string[] tmp = str.Split('|');
-                if (tmp.Length == 27)
+                if (tmp.Length == 28)
                 {
                     int tmpInt = 0;
                     float tmpFloat = 0;
@@ -216,6 +218,7 @@ namespace Thetis
                     bool tmpBool = false;
                     Reading tmpReading = Reading.NONE;
                     clsBarItem.BarStyle tmpBarStyle = clsBarItem.BarStyle.None;
+                    clsBarItem.Units tmpUnit = clsBarItem.Units.DBM;
 
                     bOk = int.TryParse(tmp[0], out tmpInt); if (bOk) { _updateInterval = tmpInt; }
                     if (bOk) bOk = float.TryParse(tmp[1], out tmpFloat); if (bOk) { _decay = tmpFloat; }
@@ -223,27 +226,28 @@ namespace Thetis
                     if (bOk) bOk = int.TryParse(tmp[3], out tmpInt); if (bOk) { _historyDuration = tmpInt; }
                     if (bOk) bOk = bool.TryParse(tmp[4], out tmpBool); if (bOk) { _shadow = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[5], out tmpBool); if (bOk) { _showHistory = tmpBool; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[6]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _historyColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[6]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _historyColor = tmpColour; }
                     if (bOk) bOk = bool.TryParse(tmp[7], out tmpBool); if (bOk) { _peakHold = tmpBool; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[8]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakHoldMarkerColor = tmpColour; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[9]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _lowColor = tmpColour; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[10]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _highColor = tmpColour; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[11]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _titleColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[8]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _peakHoldMarkerColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[9]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _lowColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[10]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _highColor = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[11]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _titleColor = tmpColour; }
                     if (bOk) bOk = Enum.TryParse<Reading>(tmp[12], out tmpReading); if (bOk) { _readingSource = tmpReading; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[13]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _colour = tmpColour; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[14]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _markerColour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[13]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _colour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[14]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _markerColour = tmpColour; }
                     if (bOk) bOk = Enum.TryParse<clsBarItem.BarStyle>(tmp[15], out tmpBarStyle); if (bOk) { _barStyle = tmpBarStyle; }
                     if (bOk) _text = tmp[16];
                     if (bOk) bOk = bool.TryParse(tmp[17], out tmpBool); if (bOk) { _fadeOnRx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[18], out tmpBool); if (bOk) { _fadeOnTx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[19], out tmpBool); if (bOk) { _showType = tmpBool; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[20]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _segmentedColour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[20]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _segmentedColour = tmpColour; }
                     if (bOk) bOk = bool.TryParse(tmp[21], out tmpBool); if (bOk) { _peakValue = tmpBool; }
-                    if (bOk) tmpColour = Common.ColourFromString(tmp[22]); bOk = tmpColour != System.Drawing.Color.Transparent; if (bOk) { _peakValueColour = tmpColour; }
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[22]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _peakValueColour = tmpColour; }
                     if (bOk) bOk = float.TryParse(tmp[23], out tmpFloat); if (bOk) { _eyeScale = tmpFloat; }
                     if (bOk) bOk = bool.TryParse(tmp[24], out tmpBool); if (bOk) { _average = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[25], out tmpBool); if (bOk) { _darkMode = tmpBool; }
                     if (bOk) bOk = float.TryParse(tmp[26], out tmpFloat); if (bOk) { _powerLimit = tmpFloat; }
+                    if (bOk) bOk = Enum.TryParse<clsBarItem.Units>(tmp[27], out tmpUnit); if (bOk) { _units = tmpUnit; }
                 }
 
                 return bOk;
@@ -275,6 +279,7 @@ namespace Thetis
             public bool Average { get { return _average; } set { _average = value; } }
             public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
             public float PowerLimit { get { return _powerLimit; } set { _powerLimit = value; } }
+            public clsBarItem.Units Unit { get { return _units; } set { _units = value; } }
 
         }
         static MeterManager()
@@ -512,8 +517,9 @@ namespace Thetis
                     Thread.Sleep(100);
                 }
             }
-        }              
-        public static void AddImage(string sKey, System.Drawing.Bitmap image)
+        }
+        //image caching, used by dxrenderer
+        internal static void AddImage(string sKey, System.Drawing.Bitmap image)
         {
             lock (_imageLock)
             {
@@ -522,7 +528,7 @@ namespace Thetis
                 _pooledImages.Add(sKey, image);
             }
         }
-        public static System.Drawing.Bitmap GetImage(string sKey)
+        internal static System.Drawing.Bitmap GetImage(string sKey)
         {
             lock (_imageLock)
             {
@@ -532,7 +538,7 @@ namespace Thetis
                 return _pooledImages[sKey];
             }
         }
-        public static bool ContainsBitmap(string sKey)
+        internal static bool ContainsBitmap(string sKey)
         {
             lock (_imageLock)
             {
@@ -540,7 +546,7 @@ namespace Thetis
                 return _pooledImages.ContainsKey(sKey);
             }
         }
-        public static void AddStreamData(string sId, DataStream tempStream)
+        internal static void AddStreamData(string sId, DataStream tempStream)
         {
             lock (_imageLock)
             {
@@ -549,7 +555,7 @@ namespace Thetis
                 _pooledStreamData.Add(sId, tempStream);
             }
         }
-        public static DataStream GetStreamData(string sKey)
+        internal static DataStream GetStreamData(string sKey)
         {
             lock (_imageLock)
             {
@@ -559,7 +565,7 @@ namespace Thetis
                 return _pooledStreamData[sKey];
             }
         }
-        public static bool ContainsStreamData(string sKey)
+        internal static bool ContainsStreamData(string sKey)
         {
             lock (_imageLock)
             {
@@ -606,8 +612,8 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                if (_lstUCMeters == null) return System.Drawing.Color.Transparent;
-                if (!_lstUCMeters.ContainsKey(sId)) return System.Drawing.Color.Transparent;
+                if (_lstUCMeters == null) return System.Drawing.Color.Empty;
+                if (!_lstUCMeters.ContainsKey(sId)) return System.Drawing.Color.Empty;
 
                 ucMeter uc = _lstUCMeters[sId];
                 return uc.BackColor;
@@ -862,10 +868,14 @@ namespace Thetis
         }
         private static float dbmOffsetForAbove30(int rx)
         {
-            if ((rx == 1 && _rx1VHForAbove) || (rx == 2 && _rx2VHForAbove))
+            if (IsAbove30(rx))
                 return 20f;
             else
                 return 0f;
+        }
+        private static bool IsAbove30(int rx)
+        {
+            return (rx == 1 && _rx1VHForAbove) || (rx == 2 && _rx2VHForAbove);
         }
         //private static float normalisePower()
         //{
@@ -1027,14 +1037,27 @@ namespace Thetis
                 _lstMeterDisplayForms.Add(f.ID, f);
                 _lstUCMeters.Add(ucM.ID, ucM);
                 _meters.Add(meter.ID, meter);
+            }
+        }
+        public static void FinishSetupAndDisplay()
+        {
+            if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
 
-                // setup
-                if (ucM.Floating)
+            foreach (KeyValuePair<string, ucMeter> ucms in _lstUCMeters)
+            {
+                ucMeter ucm = ucms.Value;
+                if (_lstMeterDisplayForms.ContainsKey(ucm.ID))
                 {
-                    setMeterFloating(ucM, f);
+                    // setup
+                    frmMeterDisplay f = _lstMeterDisplayForms[ucm.ID];
+
+                    if (ucm.Floating)
+                    {
+                        setMeterFloating(ucm, f);
+                    }
+                    else
+                        returnMeterFromFloating(ucm, f);
                 }
-                else
-                    returnMeterFromFloating(ucM, f);
             }
         }
 
@@ -1186,109 +1209,129 @@ namespace Thetis
                 }
             }
         }
-        public static void RestoreSettings(ref List<KeyValuePair<string, string>> settings)
+        public static bool RestoreSettings(ref List<KeyValuePair<string, string>> settings)
         {
-            foreach(KeyValuePair<string, string> kvp in settings.Where(o => o.Key.StartsWith("meterContData")))
+            bool bRestoreOk = true;
+            try
             {
-                ucMeter ucM = new ucMeter();
-                bool bUcMeterOk = ucM.TryParse(kvp.Value);
-                if (bUcMeterOk)
+                foreach (KeyValuePair<string, string> kvp in settings.Where(o => o.Key.StartsWith("meterContData_")))
                 {
-                    AddMeterContainer(ucM, false);
+                    ucMeter ucM = new ucMeter();
+                    bool bUcMeterOk = ucM.TryParse(kvp.Value);
+                    if (bUcMeterOk)
+                    {
+                        AddMeterContainer(ucM, false);
 
-                    clsMeter m = MeterFromId(ucM.ID);
+                        clsMeter m = MeterFromId(ucM.ID);
 
+                        if (m != null)
+                        {
+                            // now the meter
+                            IEnumerable<KeyValuePair<string, string>> meterData = settings.Where(o => o.Key.StartsWith("meterData_" + m.ID));
+                            if (meterData != null && meterData.Count() == 1)
+                            {
+                                KeyValuePair<string, string> md = meterData.First();
+
+                                clsMeter tmpMeter = new clsMeter(1, ""); // dummy init data, will get replaced by tryparse below
+                                tmpMeter.TryParse(md.Value);
+
+                                // copy to actual meter
+                                // id will be the same
+                                m.Name = tmpMeter.Name;
+                                m.RX = tmpMeter.RX;
+                                m.XRatio = tmpMeter.XRatio;
+                                m.YRatio = tmpMeter.YRatio;
+                                m.DisplayGroup = tmpMeter.DisplayGroup;
+                                m.PadX = tmpMeter.PadX;
+                                m.PadY = tmpMeter.PadY;
+                                m.Height = tmpMeter.Height;
+                            }
+
+                            // finally the groups
+                            IEnumerable<KeyValuePair<string, string>> meterIGData = settings.Where(o => o.Key.StartsWith("meterIGData_") && o.Value.Contains(m.ID)); // parent id, stored in value
+                            foreach (KeyValuePair<string, string> igd in meterIGData)
+                            {
+                                clsItemGroup ig = new clsItemGroup();
+                                bool bOk = ig.TryParse(igd.Value);
+
+                                if (bOk)
+                                {
+                                    m.AddMeter(ig.MeterType, ig);
+
+                                    //and the settings
+                                    IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
+                                    if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                                    {
+                                        clsIGSettings igs = new clsIGSettings();
+                                        bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
+                                        if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                                    }
+                                }
+                            }
+
+                            m.Rebuild();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                bRestoreOk = false;
+            }
+            return bRestoreOk;
+        }
+        public static bool StoreSettings(ref ArrayList a)
+        {
+            if (a == null) return false;
+
+            bool bStoreOk = true;
+
+            try
+            {
+                // meter container data
+                foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
+                {
+                    a.Add("meterContData_" + kvp.Value.ID + "/" + kvp.Value.ToString());
+
+                    // then the meter itself which holds multiple meter items
+                    clsMeter m = MeterFromId(kvp.Value.ID);
                     if (m != null)
                     {
-                        // now the meter
-                        IEnumerable<KeyValuePair<string, string>> meterData = settings.Where(o => o.Key.StartsWith("meterData_" + m.ID));
-                        if (meterData != null && meterData.Count() == 1)
+                        a.Add("meterData_" + kvp.Value.ID + "/" + m.ToString());
+
+                        Dictionary<string, clsItemGroup> groupItems = m.getMeterGroups();
+
+                        // then each meter item which are groups in this case
+                        foreach (KeyValuePair<string, clsItemGroup> ig in groupItems)
                         {
-                            KeyValuePair<string, string> md = meterData.First();
-
-                            clsMeter tmpMeter = new clsMeter(1,""); // dummy init data, will get replaced by tryparse below
-                            tmpMeter.TryParse(md.Value);
-
-                            // copy to actual meter
-                            // id will be the same
-                            m.Name = tmpMeter.Name;
-                            m.RX = tmpMeter.RX;
-                            m.XRatio = tmpMeter.XRatio;
-                            m.YRatio = tmpMeter.YRatio;
-                            m.DisplayGroup = tmpMeter.DisplayGroup;
-                            m.PadX = tmpMeter.PadX;
-                            m.PadY = tmpMeter.PadY;
-                            m.Height = tmpMeter.Height;
-                        }
-
-                        // finally the groups
-                        IEnumerable<KeyValuePair<string, string>> meterIGData = settings.Where(o => o.Key.StartsWith("meterIGData_") && o.Value.Contains(m.ID)); // parent id, stored in value
-                        foreach (KeyValuePair<string, string> igd in meterIGData)
-                        {
-                            clsItemGroup ig = new clsItemGroup();
-                            bool bOk = ig.TryParse(igd.Value);
-
-                            if (bOk)
+                            Dictionary<string, clsMeterItem> mis = m.itemsFromID(ig.Value.ID);
+                            if (mis != null)
                             {
-                                m.AddMeter(ig.MeterType, ig);
-
-                                //and the settings
-                                IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
-                                if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                                foreach (KeyValuePair<string, clsMeterItem> kvp2 in mis.Where(o => o.Value.StoreSettings == true))
                                 {
-                                    clsIGSettings igs = new clsIGSettings();
-                                    bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
-                                    if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                                    clsMeterItem mi = kvp2.Value;
+                                    if (mi != null)
+                                    {
+                                        a.Add("meterIGData_" + kvp2.Value.ID + "/" + mi.ToString());
+                                    }
                                 }
                             }
-                        }
 
-                        m.Rebuild();
+                            clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType);
+                            if (igs != null)
+                            {
+                                a.Add("meterIGSettings_" + ig.Value.ID + "/" + igs.ToString());
+                            }
+                        }
                     }
                 }
             }
-        }
-        public static void StoreSettings(ref ArrayList a)
-        {
-            if (a == null) return;
-
-            // meter container data
-            foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
+            catch
             {
-                a.Add("meterContData_" + kvp.Value.ID + "/" + kvp.Value.ToString());
-
-                // then the meter itself which holds multiple meter items
-                clsMeter m = MeterFromId(kvp.Value.ID);
-                if (m != null)
-                {           
-                    a.Add("meterData_" + kvp.Value.ID + "/" + m.ToString());
-
-                    Dictionary<string, clsItemGroup> groupItems = m.getMeterGroups();
-
-                    // then each meter item which are groups in this case
-                    foreach (KeyValuePair<string, clsItemGroup> ig in groupItems)
-                    {
-                        Dictionary<string, clsMeterItem> mis = m.itemsFromID(ig.Value.ID);
-                        if (mis != null)
-                        {
-                            foreach (KeyValuePair<string, clsMeterItem> kvp2 in mis.Where(o => o.Value.StoreSettings == true))
-                            {
-                                clsMeterItem mi = kvp2.Value;
-                                if (mi != null)
-                                {
-                                    a.Add("meterIGData_" + kvp2.Value.ID + "/" + mi.ToString());
-                                }
-                            }
-                        }
-
-                        clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType);
-                        if(igs != null)
-                        {
-                            a.Add("meterIGSettings_" + ig.Value.ID + "/" + igs.ToString());
-                        }
-                    }
-                }
+                bStoreOk = false;
             }
+
+            return bStoreOk;
         }
         public static Dictionary<string, ucMeter> MeterContainers
         {
@@ -1660,6 +1703,12 @@ namespace Thetis
                 get { return _maxPower; }
                 set { _maxPower = value; }
             }
+            public virtual void HandleIncrement()
+            {
+            }
+            public virtual void HandleDecrement()
+            {
+            }
         }
         //
         internal class clsItemGroup : clsMeterItem
@@ -1742,12 +1791,18 @@ namespace Thetis
         {
             private MouseButtons _button;
             private int _gotoGroup;
+            private bool _changesGroup;
+            private bool _performsIncDec;
+            private clsMeterItem _relatedMeterItem = null;
+
             public clsClickBox()
             {
                 ItemType = MeterItemType.CLICKBOX;
 
                 _button = MouseButtons.Left | MouseButtons.Right | MouseButtons.Middle;
                 _gotoGroup = 0;
+                _changesGroup = true;
+                _performsIncDec = false;
                 StoreSettings = false;
             }
             public MouseButtons Button
@@ -1759,6 +1814,21 @@ namespace Thetis
             {
                 get { return _gotoGroup; }
                 set { _gotoGroup = value; }
+            }
+            public bool ChangesGroup
+            {
+                get { return _changesGroup; }
+                set { _changesGroup = value; }
+            }
+            public bool PerformsIncDec
+            {
+                get { return _performsIncDec; }
+                set { _performsIncDec = value; }
+            }
+            public clsMeterItem RelatedMeterItem
+            {
+                get { return _relatedMeterItem; }
+                set { _relatedMeterItem = value; }
             }
             //public override string ToString()
             //{
@@ -1899,7 +1969,7 @@ namespace Thetis
                 _fontColorLow = System.Drawing.Color.White;
                 _fontColorHigh = System.Drawing.Color.Red;
                 _fontColourType = System.Drawing.Color.DarkGray;
-                _fontSize = 20f;
+                _fontSize = 20f;               
 
                 ItemType = MeterItemType.H_SCALE;
                 ReadingSource = Reading.NONE;
@@ -2010,7 +2080,7 @@ namespace Thetis
 
 
                 return sRet;
-            }
+            }            
         }
         internal class clsNeedleScalePwrItem : clsMeterItem
         {
@@ -2624,6 +2694,12 @@ namespace Thetis
 
         internal class clsBarItem : clsMeterItem
         {
+            public enum Units
+            {
+                DBM = 0,
+                S_UNTS,
+                U_V
+            }
             public enum BarStyle
             {
                 None = 0,
@@ -2646,6 +2722,7 @@ namespace Thetis
             private float _strokeWidth;
             private bool _peakHold;
             private bool _showMarker;
+            private Units _units;
 
             private string _fontFamily;
             private FontStyle _fontStyle;
@@ -2670,6 +2747,8 @@ namespace Thetis
                 _strokeWidth = 3f;
                 _peakHold = false;
                 _showMarker = true;
+
+                _units = Units.DBM;
 
                 _scaleCalibration = new Dictionary<float, PointF>();
 
@@ -2870,6 +2949,32 @@ namespace Thetis
             {
                 get { return _fontSize; }
                 set { _fontSize = value; }
+            }
+
+            public override void HandleIncrement()
+            {
+                int n = (int)_units;
+                n++;
+                if (n > (int)Units.U_V) n = (int)Units.DBM;
+
+                _units = (Units)n;
+
+                Debug.Print("Units = " + _units.ToString());
+            }
+            public override void HandleDecrement()
+            {
+                int n = (int)_units;
+                n--;
+                if (n < (int)Units.DBM) n = (int)Units.U_V;
+
+                _units = (Units)n;
+
+                Debug.Print("Units = " + _units.ToString());
+            }
+            public Units Unit
+            {
+                get { return _units; }
+                set { _units = value; }
             }
         }
         internal class clsNeedleItem : clsMeterItem
@@ -3404,6 +3509,15 @@ namespace Thetis
                 sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
                 sc.ZOrder = 1;
                 addMeterItem(sc);
+
+                clsClickBox clb = new clsClickBox();
+                clb.ParentID = ig.ID;
+                clb.TopLeft = sc.TopLeft;
+                clb.Size = sc.Size;
+                clb.ChangesGroup = false;
+                clb.PerformsIncDec = true;
+                clb.RelatedMeterItem = cb;
+                addMeterItem(clb);
 
                 fBottom = cb.TopLeft.Y + cb.Size.Height;
 
@@ -5596,6 +5710,7 @@ namespace Thetis
                                                 bi.Colour = igs.SegmentedColour;
                                                 bi.ShowPeakValue = igs.PeakValue;
                                                 bi.PeakValueColour = igs.PeakValueColour;
+                                                bi.Unit = igs.Unit;
                                             }
                                             else
                                             {
@@ -5817,6 +5932,7 @@ namespace Thetis
                                                 igs.SegmentedColour = bi.Colour;
                                                 igs.PeakValue = bi.ShowPeakValue;
                                                 igs.PeakValueColour = bi.PeakValueColour;
+                                                igs.Unit = bi.Unit;
                                             }
                                             else
                                             {
@@ -6032,10 +6148,30 @@ namespace Thetis
                 }
                 else
                 {
-                    if (e.Button == MouseButtons.Left)
-                        IncrementDisplayGroup();
-                    else if (e.Button == MouseButtons.Right)
-                        DecrementDisplayGroup();
+                    if (cb.ChangesGroup)
+                    {
+                        if (e.Button == MouseButtons.Left)
+                            incrementDisplayGroup();
+                        else if (e.Button == MouseButtons.Right)
+                            decrementDisplayGroup();
+                    }
+                    if (cb.PerformsIncDec)
+                    {
+                        if (e.Button == MouseButtons.Left)
+                        {
+                            lock (_objMeterItemLock)
+                            {
+                                incrementMeterItem(cb);
+                            }
+                        }
+                        else if (e.Button == MouseButtons.Right)
+                        {
+                            lock (_objMeterItemLock)
+                            {
+                                decrementMeterItem(cb);
+                            }
+                        }
+                    }
                 }
             }
             public bool MOX
@@ -6110,15 +6246,27 @@ namespace Thetis
                     }
                 }
             }
-            public void IncrementDisplayGroup()
+            private void incrementDisplayGroup()
             {
                 _displayGroup++;
                 if (_displayGroup > _displayGroups.Count - 1) _displayGroup = 0;
             }
-            public void DecrementDisplayGroup()
+            private void decrementDisplayGroup()
             {
                 _displayGroup--;
                 if (_displayGroup < 0) _displayGroup = _displayGroups.Count - 1;
+            }
+            private void incrementMeterItem(clsClickBox cb)
+            {
+                if (cb == null || cb.RelatedMeterItem == null) return;
+
+                cb.RelatedMeterItem.HandleIncrement();
+            }
+            private void decrementMeterItem(clsClickBox cb)
+            {
+                if (cb == null || cb.RelatedMeterItem == null) return;
+
+                cb.RelatedMeterItem.HandleDecrement();
             }
             public int DisplayGroups
             {
@@ -6335,67 +6483,37 @@ namespace Thetis
                     _backColour = convertColour(_backgroundColour);
                 }
             }
-            //public int UpdateInterval
-            //{
-            //    get { return _updateInterval; }
-            //    set { _updateInterval = value; }
-            //}
 
             //DIRECTX
+            private string[] _imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel-glass" };
             private void loadImages(string sImagePath)
             {
                 if (!sImagePath.EndsWith("\\")) sImagePath += "\\";
 
                 if (System.IO.Directory.Exists(sImagePath))
                 {
-                    string[] sFiles = System.IO.Directory.GetFiles(sImagePath);
-                    foreach (string sFile in sFiles)
+                    for(int n = 0;n < _imageFileNames.Length;n++)
                     {
-                        //bool bLoad = false;
+                        string sFileName = sImagePath + _imageFileNames[n];
 
-                        //// ignore any file that has power in the filname, but doesnt match our power
-                        //if (sFile.Contains("-1.") ||
-                        //    sFile.Contains("-1-l") ||
-                        //    sFile.Contains("-1-s") ||
+                        //normal
+                        loadImage(sFileName + ".png");
 
-                        //    sFile.Contains("-10.") ||
-                        //    sFile.Contains("-10-l") ||
-                        //    sFile.Contains("-10-s") ||
+                        //small
+                        loadImage(sFileName + "-small" + ".png");
 
-                        //    sFile.Contains("-15.") ||
-                        //    sFile.Contains("-15-") ||
-                        //    sFile.Contains("-15-") ||
+                        //large
+                        loadImage(sFileName + "-large" + ".png");
 
-                        //    sFile.Contains("-30.") ||
-                        //    sFile.Contains("-30-l") ||
-                        //    sFile.Contains("-30-s") ||
+                        //dark
+                        //normal
+                        loadImage(sFileName + "-dark.png");
 
-                        //    sFile.Contains("-100.") ||
-                        //    sFile.Contains("-100-l") ||
-                        //    sFile.Contains("-100-s") ||
+                        //small
+                        loadImage(sFileName + "-dark-small" + ".png");
 
-                        //    sFile.Contains("-200.") ||
-                        //    sFile.Contains("-200-l") ||
-                        //    sFile.Contains("-200-s") ||
-
-                        //    sFile.Contains("-500.") ||
-                        //    sFile.Contains("-500-l") ||
-                        //    sFile.Contains("-500-s")
-                        //    )
-                        //{                            
-                        //    int nPower = MeterManager.CurrentPowerRating;
-                        //    string s1 = "-" + nPower.ToString() + ".";
-                        //    string s2 = "-" + nPower.ToString() + "-l";
-                        //    string s3 = "-" + nPower.ToString() + "-s";
-
-                        //    bLoad = sFile.Contains(s1) || sFile.Contains(s2) || sFile.Contains(s3);
-                        //}
-                        //else
-                        //    bLoad = true;
-                        ////
-                        //if(bLoad) 
-                            
-                        loadImage(sFile);
+                        //large
+                        loadImage(sFileName + "-dark-large" + ".png");
                     }
                 }
             }
@@ -7090,8 +7208,6 @@ namespace Thetis
             {
                 if (!_bDXSetup) return SizeF.Empty;
 
-                //if (_stringMeasure == null) _stringMeasure = new Dictionary<string, SizeF>();
-
                 emSize = (float)Math.Round(emSize, 1);
 
                 string sKey = sText + emSize.ToString("0.0");
@@ -7118,7 +7234,7 @@ namespace Thetis
                 SizeF size = new SizeF(width, height);
 
                 //why these fudge factors? not sure, is it a font proportion issue?
-                size.Width *= 1.3f;
+                size.Width *= 1.338f;
                 size.Height *= 1.1f;
 
                 _stringMeasure.Add(sKey, size);
@@ -7152,7 +7268,7 @@ namespace Thetis
                     for (int n = 0; n < scale.Marks; n++)
                     {
                         int index = 0;
-                        float reduceAngle = 0;
+                        float fChangeAngle = 0;
 
                         if (scale.ScaleCalibration.Count == 10) // the ananmm
                         {
@@ -7160,31 +7276,30 @@ namespace Thetis
                             {
                                 case 0: //0
                                     index = 0;
-                                    reduceAngle = (float)degToRad(15);
+                                    fChangeAngle = (float)degToRad(-11);
                                     break;
                                 case 1: //5
                                     index = 1;
-                                    reduceAngle = (float)degToRad(8f);
+                                    fChangeAngle = (float)degToRad(8);
                                     break;
                                 case 2: //10
                                     index = 2;
-                                    reduceAngle = (float)degToRad(10);
+                                    fChangeAngle = (float)degToRad(10);
                                     break;
                                 case 3: //25
                                     index = 3;
-                                    reduceAngle = (float)degToRad(5);
+                                    fChangeAngle = (float)degToRad(5);
                                     break;
                                 case 4: //50
                                     index = 6;
-                                    reduceAngle = 0;
                                     break;
                                 case 5: //100
                                     index = 8;
-                                    reduceAngle = -(float)degToRad(8);
+                                    fChangeAngle = (float)degToRad(-8);
                                     break;
                                 case 6: //150
                                     index = 9;
-                                    reduceAngle = -(float)degToRad(10);
+                                    fChangeAngle = (float)degToRad(-10);
                                     nMaxIndex = index;
                                     break;
                             }
@@ -7322,7 +7437,7 @@ namespace Thetis
 
                                 Matrix3x2 currentTransform = _renderTarget.Transform;
 
-                                Matrix3x2 t = Matrix3x2.Rotation((ang + reduceAngle) + (float)(degToRad(90f + rotation))/*(float)radToDeg(ang) + rotation*/, new Vector2(endX, endY));
+                                Matrix3x2 t = Matrix3x2.Rotation((ang + fChangeAngle) + (float)(degToRad(90f + rotation))/*(float)radToDeg(ang) + rotation*/, new Vector2(endX, endY));
                                 t.TranslationVector += _pixelShift;
                                 _renderTarget.Transform = t;
 
@@ -8146,7 +8261,20 @@ namespace Thetis
                 {
                     float fontSizeEmScaled = (cbi.FontSize / 16f) * (rect.Width / 52f);
 
-                    string sText = cbi.Value.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                    string sText;
+                    switch (cbi.Unit)
+                    {
+                        case clsBarItem.Units.S_UNTS:
+                            sText = Common.SMeterFromDBM(cbi.Value, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                            break;
+                        case clsBarItem.Units.U_V:
+                            sText = Common.UVfromDBM(cbi.Value).ToString("f2") + "uV";
+                            break;
+                        default:
+                            sText = cbi.Value.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                            break;
+                    }
+                
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.MarkerColour, nFade));
@@ -8155,150 +8283,163 @@ namespace Thetis
                 {
                     float fontSizeEmScaled = (cbi.FontSize / 16f) * (rect.Width / 52f);
 
-                    string sText = cbi.MaxHistory.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                    string sText;
+                    switch (cbi.Unit)
+                    {
+                        case clsBarItem.Units.S_UNTS:
+                            sText = Common.SMeterFromDBM(cbi.MaxHistory, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                            break;
+                        case clsBarItem.Units.U_V:
+                            sText = Common.UVfromDBM(cbi.MaxHistory).ToString("f2") + "uV";
+                            break;
+                        default:
+                            sText = cbi.MaxHistory.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                            break;
+                    }
+
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, getDXBrushForColour(cbi.PeakValueColour, nFade));
                 }
             }
-            private void renderVBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
-            {
-                clsBarItem cbi = (clsBarItem)mi;
+            //private void renderVBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            //{
+            //    clsBarItem cbi = (clsBarItem)mi;
 
-                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                float w = rect.Width * (mi.Size.Width / m.XRatio);
-                float h = rect.Height * (mi.Size.Height / m.YRatio);
+            //    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+            //    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+            //    float w = rect.Width * (mi.Size.Width / m.XRatio);
+            //    float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
-                //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
+            //    //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
+            //    //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
 
-                PointF min, max;
-                float percX, percY;
+            //    PointF min, max;
+            //    float percX, percY;
 
-                getPerc(cbi, cbi.Value, out percX, out percY, out min, out max);
+            //    getPerc(cbi, cbi.Value, out percX, out percY, out min, out max);
 
-                //top left is 0,0
-                float yBottom = y + h;
-                //float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
-                float yPos = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+            //    //top left is 0,0
+            //    float yBottom = y + h;
+            //    //float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
+            //    float yPos = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
 
-                float minHistory_y = y;
-                float maxHistory_y = y;
-                if (cbi.ShowHistory)
-                {
-                    getPerc(cbi, cbi.MinHistory, out percX, out percY, out min, out max);
-                    minHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
-                    getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
-                    maxHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
-                }
-                else if (cbi.PeakHold) // max is used for peak hold
-                {
-                    getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
-                    maxHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
-                }
+            //    float minHistory_y = y;
+            //    float maxHistory_y = y;
+            //    if (cbi.ShowHistory)
+            //    {
+            //        getPerc(cbi, cbi.MinHistory, out percX, out percY, out min, out max);
+            //        minHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+            //        getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
+            //        maxHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+            //    }
+            //    else if (cbi.PeakHold) // max is used for peak hold
+            //    {
+            //        getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
+            //        maxHistory_y = yBottom - ((min.Y * h) + (percY * ((max.Y - min.Y) * h)));
+            //    }
 
-                int segmentBlockSize = (int)(w * 0.02f);
-                if (segmentBlockSize < 7) segmentBlockSize = 7;
-                int segmentGapSize = (int)(segmentBlockSize * 0.2f);
-                if (segmentBlockSize < 2) segmentBlockSize = 2;
-                int segmentStep = segmentBlockSize + segmentGapSize;
+            //    int segmentBlockSize = (int)(w * 0.02f);
+            //    if (segmentBlockSize < 7) segmentBlockSize = 7;
+            //    int segmentGapSize = (int)(segmentBlockSize * 0.2f);
+            //    if (segmentBlockSize < 2) segmentBlockSize = 2;
+            //    int segmentStep = segmentBlockSize + segmentGapSize;
 
-                if (cbi.ShowHistory)
-                {
-                    switch (cbi.Style)
-                    {
-                        case clsBarItem.BarStyle.None:
-                        case clsBarItem.BarStyle.SolidFilled:
-                        case clsBarItem.BarStyle.Line:
-                            {
-                                SharpDX.RectangleF history = new SharpDX.RectangleF(x, maxHistory_y, w, minHistory_y - maxHistory_y); // drawn TL to BR
-                                _renderTarget.FillRectangle(history, getDXBrushForColour(cbi.HistoryColour));
-                            }
-                            break;
-                        //case clsBarItem.BarStyle.Segments:
-                        //    {
-                        //        int numValueBlocks = (int)((xPos - x) / (float)segmentStep);
+            //    if (cbi.ShowHistory)
+            //    {
+            //        switch (cbi.Style)
+            //        {
+            //            case clsBarItem.BarStyle.None:
+            //            case clsBarItem.BarStyle.SolidFilled:
+            //            case clsBarItem.BarStyle.Line:
+            //                {
+            //                    SharpDX.RectangleF history = new SharpDX.RectangleF(x, maxHistory_y, w, minHistory_y - maxHistory_y); // drawn TL to BR
+            //                    _renderTarget.FillRectangle(history, getDXBrushForColour(cbi.HistoryColour));
+            //                }
+            //                break;
+            //            //case clsBarItem.BarStyle.Segments:
+            //            //    {
+            //            //        int numValueBlocks = (int)((xPos - x) / (float)segmentStep);
 
-                        //        float i;
-                        //        float startX = (numValueBlocks * segmentStep) + x;
-                        //        SharpDX.RectangleF barrect;
-                        //        for (i = startX; i < maxHistory_x - segmentStep; i += segmentStep)
-                        //        {
-                        //            barrect = new SharpDX.RectangleF(i, y, segmentBlockSize, h);
-                        //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour));
-                        //        }
+            //            //        float i;
+            //            //        float startX = (numValueBlocks * segmentStep) + x;
+            //            //        SharpDX.RectangleF barrect;
+            //            //        for (i = startX; i < maxHistory_x - segmentStep; i += segmentStep)
+            //            //        {
+            //            //            barrect = new SharpDX.RectangleF(i, y, segmentBlockSize, h);
+            //            //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour));
+            //            //        }
 
-                        //        // complete the sliver
-                        //        if (i < maxHistory_x)
-                        //        {
-                        //            barrect = new SharpDX.RectangleF(i, y, maxHistory_x - i, h);
-                        //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour));
-                        //        }
-                        //    }
-                        //    break;
-                    }
-                }
+            //            //        // complete the sliver
+            //            //        if (i < maxHistory_x)
+            //            //        {
+            //            //            barrect = new SharpDX.RectangleF(i, y, maxHistory_x - i, h);
+            //            //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.HistoryColour));
+            //            //        }
+            //            //    }
+            //            //    break;
+            //        }
+            //    }
 
-                switch (cbi.Style)
-                {
-                    case clsBarItem.BarStyle.SolidFilled:
-                        {
-                            SharpDX.RectangleF barrect = new SharpDX.RectangleF(x, yPos, w, yBottom - yPos);
+            //    switch (cbi.Style)
+            //    {
+            //        case clsBarItem.BarStyle.SolidFilled:
+            //            {
+            //                SharpDX.RectangleF barrect = new SharpDX.RectangleF(x, yPos, w, yBottom - yPos);
 
-                            if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(x, maxHistory_y), new SharpDX.Vector2(x + w, maxHistory_y), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
+            //                if (cbi.PeakHold)
+            //                    _renderTarget.DrawLine(new SharpDX.Vector2(x, maxHistory_y), new SharpDX.Vector2(x + w, maxHistory_y), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
 
-                            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
-                        }
-                        break;
-                    case clsBarItem.BarStyle.Line:
-                        {
-                            if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(x, maxHistory_y), new SharpDX.Vector2(x + w, maxHistory_y), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
+            //                _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
+            //            }
+            //            break;
+            //        case clsBarItem.BarStyle.Line:
+            //            {
+            //                if (cbi.PeakHold)
+            //                    _renderTarget.DrawLine(new SharpDX.Vector2(x, maxHistory_y), new SharpDX.Vector2(x + w, maxHistory_y), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
 
-                            _renderTarget.DrawLine(new SharpDX.Vector2(x, yPos), new SharpDX.Vector2(x + w, yPos), getDXBrushForColour(cbi.MarkerColour), cbi.StrokeWidth);
-                        }
-                        break;
-                    //case clsBarItem.BarStyle.Segments:
-                    //    {
-                    //        float i;
-                    //        SharpDX.RectangleF barrect;
-                    //        for (i = x; i < xPos - segmentStep; i += segmentStep)
-                    //        {
-                    //            barrect = new SharpDX.RectangleF(i, y, segmentBlockSize, h);
-                    //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
-                    //        }
+            //                _renderTarget.DrawLine(new SharpDX.Vector2(x, yPos), new SharpDX.Vector2(x + w, yPos), getDXBrushForColour(cbi.MarkerColour), cbi.StrokeWidth);
+            //            }
+            //            break;
+            //        //case clsBarItem.BarStyle.Segments:
+            //        //    {
+            //        //        float i;
+            //        //        SharpDX.RectangleF barrect;
+            //        //        for (i = x; i < xPos - segmentStep; i += segmentStep)
+            //        //        {
+            //        //            barrect = new SharpDX.RectangleF(i, y, segmentBlockSize, h);
+            //        //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
+            //        //        }
 
-                    //        // complete the sliver
-                    //        if (i < xPos)
-                    //        {
-                    //            barrect = new SharpDX.RectangleF(i, y, xPos - i, h);
-                    //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
-                    //        }
+            //        //        // complete the sliver
+            //        //        if (i < xPos)
+            //        //        {
+            //        //            barrect = new SharpDX.RectangleF(i, y, xPos - i, h);
+            //        //            _renderTarget.FillRectangle(barrect, getDXBrushForColour(cbi.Colour));
+            //        //        }
 
-                    //        if (cbi.PeakHold)
-                    //            _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
+            //        //        if (cbi.PeakHold)
+            //        //            _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), getDXBrushForColour(cbi.PeakHoldMarkerColour), cbi.StrokeWidth);
 
-                    //        if (cbi.ShowMarker)
-                    //            _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), getDXBrushForColour(cbi.MarkerColour), cbi.StrokeWidth);
-                    //    }
-                    //    break;
-                }
+            //        //        if (cbi.ShowMarker)
+            //        //            _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), getDXBrushForColour(cbi.MarkerColour), cbi.StrokeWidth);
+            //        //    }
+            //        //    break;
+            //    }
 
-                if (cbi.ShowValue)
-                {
-                    string sText = cbi.Value.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
+            //    if (cbi.ShowValue)
+            //    {
+            //        string sText = cbi.Value.ToString("0.0") + MeterManager.ReadingUnits(cbi.ReadingSource);
 
-                    float fontSize = 38f;//cbi.FontSize; //38f;
-                    SizeF adjustedFontSize = measureString("0", cbi.FontFamily, cbi.FntStyle, fontSize);
-                    float ratio = h / adjustedFontSize.Height;
-                    float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+            //        float fontSize = 38f;//cbi.FontSize; //38f;
+            //        SizeF adjustedFontSize = measureString("0", cbi.FontFamily, cbi.FntStyle, fontSize);
+            //        float ratio = h / adjustedFontSize.Height;
+            //        float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
 
-                    SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y + (h * 0.2f), w, h);
-                    _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, newSize, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.FontColour));
-                }
-            }
+            //        SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y + (h * 0.2f), w, h);
+            //        _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, newSize, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.FontColour));
+            //    }
+            //}
             private void renderSolidColour(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsSolidColour sc = (clsSolidColour)mi;
@@ -8326,10 +8467,12 @@ namespace Thetis
                 int nFade = 255;
                 if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
-                string sImage = img.ImageName + (img.DarkMode ? "-dark" : "");
+                string sImage = img.ImageName;
 
-                string sKey = sImage;// + "-" + MeterManager.CurrentPowerRating.ToString();
+                //string sKey = sImage;// + "-" + MeterManager.CurrentPowerRating.ToString();
                 //if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with power rating
+                string sKey = sImage + (img.DarkMode ? "-dark" : "");
+                if (MeterManager.ContainsBitmap(sKey)) sImage = sKey;
 
                 float fDiag = (float)Math.Sqrt((w * w) + (h * h));
                 if(fDiag <= 450)
@@ -8828,6 +8971,8 @@ namespace Thetis
                     DataStream tempStream = MeterManager.GetStreamData(sId);
                     tempStream.Position = 0;
 
+                    // bitmaps need to be built per render target, which use their own factory
+                    // these can not be shared
                     dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
                 }
                 else

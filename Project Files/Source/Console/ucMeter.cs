@@ -201,16 +201,14 @@ namespace Thetis
 
                 if (_floating)
                 {
-                    Size newSize = new Size(x, y);
-                    Parent.Size = newSize;
+                    Parent.Size = new Size(x, y);
                 }
                 else
                 {
                     if (this.Left + x > Parent.ClientSize.Width) x = Parent.ClientSize.Width - this.Left;
                     if (this.Top + y > Parent.ClientSize.Height) y = Parent.ClientSize.Height - this.Top;
 
-                    Size newSize = new Size(x, y);
-                    this.Size = newSize;
+                    this.Size = new Size(x, y);
                 }
             }
         }
