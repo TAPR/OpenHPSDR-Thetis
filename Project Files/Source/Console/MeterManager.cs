@@ -1012,7 +1012,7 @@ namespace Thetis
                 return _meters[sId];
             }
         }
-        public static void AddMeterContainer(ucMeter ucM, bool mox)
+        public static void AddMeterContainer(ucMeter ucM, bool mox, bool bShow = false)
         {
             if (_console == null) return;
 
@@ -1037,6 +1037,16 @@ namespace Thetis
                 _lstMeterDisplayForms.Add(f.ID, f);
                 _lstUCMeters.Add(ucM.ID, ucM);
                 _meters.Add(meter.ID, meter);
+
+                if (bShow)
+                {
+                    if (ucM.Floating)
+                    {
+                        setMeterFloating(ucM, f);
+                    }
+                    else
+                        returnMeterFromFloating(ucM, f);
+                }
             }
         }
         public static void FinishSetupAndDisplay()
@@ -1061,13 +1071,13 @@ namespace Thetis
             }
         }
 
-        public static string AddMeterContainer(int nRx, bool bFloating, bool mox)
+        public static string AddMeterContainer(int nRx, bool bFloating, bool mox, bool bShow = false)
         {
             ucMeter ucM = new ucMeter();
             ucM.RX = nRx;
             ucM.Floating = bFloating;
 
-            AddMeterContainer(ucM, mox);
+            AddMeterContainer(ucM, mox, bShow);
 
             return ucM.ID;
         }

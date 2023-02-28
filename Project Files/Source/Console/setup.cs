@@ -25316,7 +25316,7 @@ namespace Thetis
         {
             if (MeterManager.TotalMeterContainers < 10)
             {
-                string sId = MeterManager.AddMeterContainer(1, false, mox);
+                string sId = MeterManager.AddMeterContainer(1, false, mox, true);
                 updateMeter2Controls(sId);
             }
         }
@@ -25325,7 +25325,7 @@ namespace Thetis
         {
             if (MeterManager.TotalMeterContainers < 10)
             {
-                string sId = MeterManager.AddMeterContainer(2, false, mox);
+                string sId = MeterManager.AddMeterContainer(2, false, mox, true);
                 updateMeter2Controls(sId);
             }
         }
