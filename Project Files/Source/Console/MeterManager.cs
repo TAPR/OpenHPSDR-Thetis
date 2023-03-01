@@ -32,6 +32,7 @@ namespace Thetis
         AGC_PK,
         AGC_AV,
         AGC_GAIN,
+        ESTIMATED_PBSNR,
         //TX
         MIC,
         PWR,
@@ -68,7 +69,7 @@ namespace Thetis
         // volts/amps
         VOLTS,
         AMPS,
-        ESTIMATED_PBSNR,
+        // special
         EYE_PERCENT,
         LAST
     }
@@ -114,6 +115,7 @@ namespace Thetis
         private static bool _delegatesAdded;
         private static Dictionary<int, clsReadings> _readings;
         private static Dictionary<string, clsMeter> _meters;
+        private static Dictionary<int, bool> _readingIgnore;
         private static Thread _meterThread;
         private static bool _meterThreadRunning;
         //private static object _readingsLock = new object();
@@ -291,6 +293,7 @@ namespace Thetis
             _console = null;
             _readings = new Dictionary<int, clsReadings>();
             _meters = new Dictionary<string, clsMeter>();
+            _readingIgnore = new Dictionary<int, bool>();
 
             _currentHPSDRmodel = HPSDRModel.HERMES;
             _alexPresent = false;
@@ -305,6 +308,10 @@ namespace Thetis
             // two sets of readings, for each trx
             _readings.Add(1, new clsReadings());
             _readings.Add(2, new clsReadings());
+
+            // two trx reading ignore flags
+            _readingIgnore.Add(1, false);
+            _readingIgnore.Add(2, false);
 
             _meterThreadRunning = false;
         }
@@ -719,10 +726,13 @@ namespace Thetis
             if (_delegatesAdded || _console == null) return;
 
             _console.MeterReadingsChangedHandlers += OnMeterReadings;
+            _console.MoxPreChangeHandlers += OnPreMox; 
             _console.MoxChangeHandlers += OnMox;
             _console.PowerChangeHanders += OnPower;
             _console.VFOAFrequencyChangeHandlers += OnVFOA;
             _console.VFOBFrequencyChangeHandlers += OnVFOB;
+            _console.BandChangeHandlers += OnBandChange;
+            _console.BandPreChangeHandlers += OnPreBandChange;
 
             _console.AlexPresentChangedHandlers += OnAlexPresentChanged;
             _console.PAPresentChangedHandlers += OnPAPresentChanged;
@@ -740,10 +750,13 @@ namespace Thetis
             if (!_delegatesAdded || _console == null) return;
 
             _console.MeterReadingsChangedHandlers -= OnMeterReadings;
+            _console.MoxPreChangeHandlers -= OnPreMox;
             _console.MoxChangeHandlers -= OnMox;
             _console.PowerChangeHanders -= OnPower;
             _console.VFOAFrequencyChangeHandlers -= OnVFOA;
             _console.VFOBFrequencyChangeHandlers -= OnVFOB;
+            _console.BandChangeHandlers -= OnBandChange;
+            _console.BandPreChangeHandlers -= OnPreBandChange;
 
             _console.AlexPresentChangedHandlers -= OnAlexPresentChanged;
             _console.PAPresentChangedHandlers -= OnPAPresentChanged;
@@ -760,6 +773,19 @@ namespace Thetis
             }
 
             _delegatesAdded = false;
+        }
+        private static void OnBandChange(int rx, Band oldBand, Band newBand)
+        {
+            foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+            {
+                clsMeter m = ms.Value;
+
+                m.ZeroOut(true, false);
+            }
+        }
+        private static void OnPreBandChange(int rx, Band currentBand)
+        {
+            OnBandChange(rx, currentBand, currentBand);
         }
         private static void OnTransverterIndexChanged(int oldIndex, int newIndex)
         {
@@ -793,6 +819,14 @@ namespace Thetis
         {
             _power = newPower;
         }
+        private static void OnPreMox(int rx, bool oldMox, bool newMox)
+        {
+            lock (_metersLock)
+            {
+                if (_readingIgnore != null && _readingIgnore.ContainsKey(rx))
+                    _readingIgnore[rx] = true;
+            }
+        }
         private static void OnMox(int rx, bool oldMox, bool newMox)
         {
             lock (_metersLock)
@@ -803,28 +837,20 @@ namespace Thetis
                     m.MOX = rx == m.RX && newMox;
                 }
 
-                if (oldMox && !newMox)
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
                 {
-                    // tx to rx
-                    // set tx values to min as now not getting any readings
-                    foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
-                    {
-                        clsMeter m = ms.Value;
+                    clsMeter m = ms.Value;
 
-                        m.ZeroOut(true);
-                    }
+                    if(newMox && !oldMox)
+                        // now tx from rx
+                        m.ZeroOut(true, false); // reset rx readings
+                    else if (!newMox && oldMox)
+                        // now rx from tx
+                        m.ZeroOut(false, true); // reset tx readings
                 }
-                else if (!oldMox && newMox)
-                {
-                    // rx to tx
-                    // set rx values to min as now not getting any readings
-                    foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
-                    {
-                        clsMeter m = ms.Value;
 
-                        m.ZeroOut(false);
-                    }
-                }
+                if (_readingIgnore != null && _readingIgnore.ContainsKey(rx))
+                    _readingIgnore[rx] = false;
             }
         }
         public static int CurrentPowerRating
@@ -903,16 +929,16 @@ namespace Thetis
                 return _readings[rx].GetReading(rt, bUseReading);
             }
         }
-        private static void setReading(int rx, Reading rt, ref Dictionary<Reading, float> readings)
+        private static void setReading(int rx, Reading rt, ref Dictionary<Reading, float> readings, bool bChangeOverride = false)
         {
             // locked outside
-            if (_readings[rx].RequiresUpdate(rt)) _readings[rx].SetReading(rt, readings[rt]);
+            if (_readings[rx].RequiresUpdate(rt) && (!_readingIgnore[rx] || bChangeOverride)) _readings[rx].SetReading(rt, readings[rt]);
         }
-        private static void setReading(int rx, Reading rt, float reading)
+        private static void setReading(int rx, Reading rt, float reading, bool bChangeOverride = false)
         {
             //lock (_readingsLock)
             {
-                if (_readings[rx].RequiresUpdate(rt)) _readings[rx].SetReading(rt, reading);
+                if (_readings[rx].RequiresUpdate(rt) && (!_readingIgnore[rx] || bChangeOverride)) _readings[rx].SetReading(rt, reading);
             }
         }
         private static void OnMeterReadings(int rx, bool mox, ref Dictionary<Reading, float> readings)
@@ -1037,7 +1063,7 @@ namespace Thetis
                 _lstMeterDisplayForms.Add(f.ID, f);
                 _lstUCMeters.Add(ucM.ID, ucM);
                 _meters.Add(meter.ID, meter);
-
+                
                 if (bShow)
                 {
                     if (ucM.Floating)
@@ -1278,6 +1304,7 @@ namespace Thetis
                                     }
                                 }
                             }
+                            m.ZeroOut(true, true);
 
                             m.Rebuild();
                         }
@@ -1624,6 +1651,9 @@ namespace Thetis
             {
                 get { return _zOrder; }
                 set { _zOrder = value; }
+            }
+            public virtual void ClearHistory()
+            {
             }
             public virtual void History(out float minHistory, out float maxHistory)
             {
@@ -2299,6 +2329,7 @@ namespace Thetis
             private bool _showValue;
             private object _historyLock = new object();
             private System.Drawing.Color _colour;
+            private int _nIgnoringNext;
 
             private Dictionary<float, PointF> _scaleCalibration;
 
@@ -2310,6 +2341,7 @@ namespace Thetis
                 _showValue = true;
 
                 _colour = System.Drawing.Color.Lime;
+                _nIgnoringNext = 0;
 
                 _scaleCalibration = new Dictionary<float, PointF>();
 
@@ -2364,11 +2396,18 @@ namespace Thetis
                     else
                         Value = (reading * DecayRatio) + (Value * (1f - DecayRatio));
 
-                    // signal history
-                    _history.Add(Value); // adds to end of the list
-                    int numberToRemove = _history.Count - (_msHistoryDuration / UpdateInterval);
-                    // the list is sized based on delay
-                    if (numberToRemove > 0) _history.RemoveRange(0, numberToRemove); // remove the oldest, the head of the list
+                    if (_nIgnoringNext <= 0)
+                    {
+                        // signal history
+                        _history.Add(Value); // adds to end of the list
+                        int numberToRemove = _history.Count - (_msHistoryDuration / UpdateInterval);
+                        // the list is sized based on delay
+                        if (numberToRemove > 0) _history.RemoveRange(0, numberToRemove); // remove the oldest, the head of the list
+                    }
+                    else
+                    {
+                        _nIgnoringNext--;
+                    }
                 }
 
                 // this reading has been used
@@ -2414,6 +2453,15 @@ namespace Thetis
                         if (_history.Count == 0) return Value;
                         return _history.Max();
                     }
+                }
+            }
+            public override void ClearHistory()
+            {
+                lock (_historyLock)
+                {
+                    _history.Clear();
+
+                    _nIgnoringNext = 2000 / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
@@ -2738,6 +2786,7 @@ namespace Thetis
             private FontStyle _fontStyle;
             private System.Drawing.Color _fontColor;
             private float _fontSize;
+            private int _nIgnoringNext;
 
             private Dictionary<float, PointF> _scaleCalibration;
 
@@ -2748,6 +2797,7 @@ namespace Thetis
                 _showHistory = false;
                 _showValue = true;
                 _showPeakValue = true;
+                _nIgnoringNext = 0;
 
                 _style = BarStyle.Line;
                 _colour = System.Drawing.Color.Red;
@@ -2823,11 +2873,18 @@ namespace Thetis
                     else
                         Value = (reading * DecayRatio) + (Value * (1f - DecayRatio));
 
-                    // signal history
-                    _history.Add(Value); // adds to end of the list
-                    int numberToRemove = _history.Count - (_msHistoryDuration / UpdateInterval);
-                    // the list is sized based on delay
-                    if (numberToRemove > 0) _history.RemoveRange(0, numberToRemove); // remove the oldest, the head of the list
+                    if (_nIgnoringNext <= 0)
+                    {
+                        // signal history
+                        _history.Add(Value); // adds to end of the list
+                        int numberToRemove = _history.Count - (_msHistoryDuration / UpdateInterval);
+                        // the list is sized based on delay
+                        if (numberToRemove > 0) _history.RemoveRange(0, numberToRemove); // remove the oldest, the head of the list
+                    }
+                    else
+                    {
+                        _nIgnoringNext--;
+                    }
                 }
 
                 // this reading has been used
@@ -2884,6 +2941,15 @@ namespace Thetis
                         if (_history.Count == 0) return Value;
                         return _history.Max();
                     }
+                }
+            }
+            public override void ClearHistory()
+            {
+                lock (_historyLock)
+                {
+                    _history.Clear();
+
+                    _nIgnoringNext = 2000 / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
@@ -3026,6 +3092,7 @@ namespace Thetis
             private bool _peakHold;
             private System.Drawing.Color _peakHoldMarkerColour;
             private int _peakNeedleFadeIn;
+            private int _nIgnoringNext;
 
             public clsNeedleItem()
             {
@@ -3048,6 +3115,7 @@ namespace Thetis
                 _shadow = true;
                 _peakHold = false;
                 _peakHoldMarkerColour = System.Drawing.Color.Red;
+                _nIgnoringNext = 0;
 
                 ItemType = MeterItemType.NEEDLE;
                 ReadingSource = Reading.NONE;
@@ -3106,11 +3174,18 @@ namespace Thetis
                     else
                         Value = (reading * DecayRatio) + (Value * (1f - DecayRatio));
 
-                    // signal history
-                    _history.Add(Value); // adds to end of the list
-                    int numberToRemove = _history.Count - (_msHistoryDuration / UpdateInterval);
-                    // the list is sized based on delay
-                    if (numberToRemove > 0) _history.RemoveRange(0, numberToRemove); // remove the oldest, the head of the list
+                    if (_nIgnoringNext <= 0)
+                    {
+                        // signal history
+                        _history.Add(Value); // adds to end of the list
+                        int numberToRemove = _history.Count - (_msHistoryDuration / UpdateInterval);
+                        // the list is sized based on delay
+                        if (numberToRemove > 0) _history.RemoveRange(0, numberToRemove); // remove the oldest, the head of the list
+                    }
+                    else
+                    {
+                        _nIgnoringNext--;
+                    }
                 }
 
                 // this reading has been used
@@ -3202,6 +3277,15 @@ namespace Thetis
                         if (_history.Count == 0) return Value;
                         return _history.Max();
                     }
+                }
+            }
+            public override void ClearHistory()
+            {
+                lock (_historyLock)
+                {
+                    _history.Clear();
+
+                    _nIgnoringNext = 2000 / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
@@ -3499,6 +3583,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
                 cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
                 cb.FontColour = System.Drawing.Color.Yellow;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 cb.ZOrder = 2;
                 addMeterItem(cb);
 
@@ -3570,6 +3655,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 3;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2;
@@ -3593,6 +3679,7 @@ namespace Thetis
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
                 cb2.ZOrder = 2;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -3649,6 +3736,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(60, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -3705,6 +3793,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -3761,6 +3850,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 3;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -3785,6 +3875,7 @@ namespace Thetis
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
                 cb2.ZOrder = 2;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -3835,7 +3926,7 @@ namespace Thetis
                 me.ScaleCalibration.Add(-127f, new PointF(0, 0));
                 me.ScaleCalibration.Add(-73f, new PointF(0.85f, 0));
                 me.ScaleCalibration.Add(-13f, new PointF(1f, 0));
-                me.Value = -127f;
+                me.Value = me.ScaleCalibration.First().Key;
                 addMeterItem(me);
 
                 clsImage img = new clsImage();
@@ -3902,8 +3993,9 @@ namespace Thetis
                 ni.ScaleCalibration.Add(-33f, new PointF(0.769f, 0.211f));
                 ni.ScaleCalibration.Add(-23f, new PointF(0.838f, 0.272f));
                 ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
-                ni.Value = -127f;
+                //ni.Value = -127f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                ni.Value = ni.ScaleCalibration.First().Key;
                 addMeterItem(ni);
 
                 //volts
@@ -3929,6 +4021,7 @@ namespace Thetis
                 ni2.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
                 ni2.Value = 10f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                //ni2.Value = ni2.ScaleCalibration.First().Key;
                 addMeterItem(ni2);
 
                 //amps
@@ -3964,6 +4057,7 @@ namespace Thetis
                 ni3.ScaleCalibration.Add(20f, new PointF(0.799f, 0.576f));
                 ni3.Value = 10f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                //ni3.Value = ni3.ScaleCalibration.First().Key;
                 addMeterItem(ni3);
 
                 //
@@ -4030,8 +4124,9 @@ namespace Thetis
                 ni4.ScaleCalibration.Add(60f, new PointF(0.559f, 0.216f));
                 ni4.ScaleCalibration.Add(100f, new PointF(0.751f, 0.272f));
                 ni4.ScaleCalibration.Add(150f, new PointF(0.899f, 0.352f));
-                ni4.Value = 0f;
+                //ni4.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                ni4.Value = ni4.ScaleCalibration.First().Key;
                 addMeterItem(ni4);
 
                 clsNeedleScalePwrItem nspi = new clsNeedleScalePwrItem();
@@ -4085,8 +4180,9 @@ namespace Thetis
                 ni5.ScaleCalibration.Add(2.5f, new PointF(0.448f, 0.36f));
                 ni5.ScaleCalibration.Add(3f, new PointF(0.499f, 0.36f));
                 ni5.ScaleCalibration.Add(10f, new PointF(0.847f, 0.476f));
-                ni5.Value = 1f;
+                //ni5.Value = 1f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                ni5.Value = ni5.ScaleCalibration.First().Key;
                 addMeterItem(ni5);
 
                 clsNeedleItem ni6 = new clsNeedleItem();
@@ -4115,8 +4211,9 @@ namespace Thetis
                 ni6.ScaleCalibration.Add(20f, new PointF(0.571f, 0.628f));
                 ni6.ScaleCalibration.Add(25f, new PointF(0.656f, 0.64f));
                 ni6.ScaleCalibration.Add(30f, new PointF(0.751f, 0.688f));
-                ni6.Value = 0f;
+                //ni6.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                ni6.Value = ni6.ScaleCalibration.First().Key;
                 addMeterItem(ni6);
 
                 clsNeedleItem ni7 = new clsNeedleItem();
@@ -4143,8 +4240,9 @@ namespace Thetis
                 ni7.ScaleCalibration.Add(-30f, new PointF(0.295f, 0.804f));
                 ni7.ScaleCalibration.Add(0f, new PointF(0.332f, 0.784f));
                 ni7.ScaleCalibration.Add(25f, new PointF(0.499f, 0.756f));
-                ni7.Value = -30f;
+                //ni7.Value = -30f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                ni7.Value = ni7.ScaleCalibration.First().Key;
                 addMeterItem(ni7);
                 //
 
@@ -4235,8 +4333,9 @@ namespace Thetis
                 ni.ScaleCalibration.Add(90f, new PointF(0.619f, 0.098f));
                 ni.ScaleCalibration.Add(100f, new PointF(0.662f, 0.083f));
                 ni.NormaliseTo100W = true;
-                ni.Value = 0f;
+                //ni.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                ni.Value = ni.ScaleCalibration.First().Key;
                 addMeterItem(ni);
 
                 clsNeedleScalePwrItem nspi = new clsNeedleScalePwrItem();
@@ -4307,8 +4406,9 @@ namespace Thetis
                 ni2.ScaleCalibration.Add(18f, new PointF(0.393f, 0.109f));
                 ni2.ScaleCalibration.Add(20f, new PointF(0.349f, 0.098f));
                 ni2.NormaliseTo100W = true;
-                ni2.Value = 0f;
+                //ni2.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
+                ni2.Value = ni2.ScaleCalibration.First().Key;
                 addMeterItem(ni2);
 
                 clsNeedleScalePwrItem nspi2 = new clsNeedleScalePwrItem();
@@ -4399,6 +4499,7 @@ namespace Thetis
                 cb.ShowValue = false;
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -4420,6 +4521,7 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 3;
                 cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4475,6 +4577,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.ShowValue = false;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -4496,6 +4599,7 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 3;
                 cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4551,6 +4655,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.ShowValue = false;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -4572,6 +4677,7 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 3;
                 cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4627,6 +4733,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.FontColour = System.Drawing.Color.Yellow;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4682,6 +4789,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.ShowValue = false;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -4703,6 +4811,7 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 3;
                 cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4758,6 +4867,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.FontColour = System.Drawing.Color.Yellow;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4813,6 +4923,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.FontColour = System.Drawing.Color.Yellow;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4868,6 +4979,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
                 cb.FontColour = System.Drawing.Color.Yellow;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -4890,6 +5002,7 @@ namespace Thetis
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4945,6 +5058,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
                 cb.FontColour = System.Drawing.Color.Yellow;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);               
 
                 clsScaleItem cs = new clsScaleItem();
@@ -5000,6 +5114,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.ShowValue = false;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -5021,6 +5136,7 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 3;
                 cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -5147,6 +5263,7 @@ namespace Thetis
 
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -5207,6 +5324,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(5, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
+                cb.Value = cb.ScaleCalibration.First().Key;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -5294,7 +5412,7 @@ namespace Thetis
                 _displayGroups = new List<string>();
                 _displayGroup = 0;
             }
-            public void ZeroOut(bool zeroTxReadings)
+            public void ZeroOut(bool bRxReadings, bool bTxReadings)
             {
                 lock (_objMeterItemLock)
                 {
@@ -5302,7 +5420,12 @@ namespace Thetis
                     {
                         clsMeterItem mi = mis.Value;
 
-                        if (!zeroTxReadings && (
+                        bool bModifyReading = mi.ItemType == clsMeterItem.MeterItemType.NEEDLE || mi.ItemType == clsMeterItem.MeterItemType.H_BAR
+                            || mi.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE;
+
+                        mi.ClearHistory();
+
+                        if (bRxReadings && bModifyReading && (
                             mi.ReadingSource == Reading.SIGNAL_STRENGTH ||
                             mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH ||
                             mi.ReadingSource == Reading.ADC_PK ||
@@ -5310,16 +5433,19 @@ namespace Thetis
                             mi.ReadingSource == Reading.AGC_PK ||
                             mi.ReadingSource == Reading.AGC_AV ||
                             mi.ReadingSource == Reading.AGC_GAIN ||
-                            mi.ReadingSource == Reading.ESTIMATED_PBSNR
+                            mi.ReadingSource == Reading.ESTIMATED_PBSNR ||
+                            mi.ReadingSource == Reading.EYE_PERCENT
                             ))
                         {
-                            float lowValue = -200f;
                             if (mi.ScaleCalibration.Count > 0)
-                                lowValue = mi.ScaleCalibration.First().Key;
-
-                            setReading(RX, mi.ReadingSource, lowValue);
+                            {
+                                float lowValue = mi.ScaleCalibration.First().Key;
+                                setReading(RX, mi.ReadingSource, lowValue, true);
+                                Debug.Print("reset rx reading : " + mi.ReadingSource.ToString());
+                            }
                         }
-                        else if (zeroTxReadings && (
+
+                        if (bTxReadings && bModifyReading && (
                             mi.ReadingSource == Reading.MIC ||
                             mi.ReadingSource == Reading.MIC_PK ||
                             mi.ReadingSource == Reading.EQ ||
@@ -5343,12 +5469,13 @@ namespace Thetis
                             mi.ReadingSource == Reading.SWR
                             ))
                         {
-                            float lowValue = -200f;
                             if (mi.ScaleCalibration.Count > 0)
-                                lowValue = mi.ScaleCalibration.First().Key;
-
-                            setReading(RX, mi.ReadingSource, lowValue);
-                        }                        
+                            {
+                                float lowValue = mi.ScaleCalibration.First().Key;
+                                setReading(RX, mi.ReadingSource, lowValue, true);
+                                Debug.Print("reset tx reading : " + mi.ReadingSource.ToString());
+                            }
+                        }
                     }
                 }
             }

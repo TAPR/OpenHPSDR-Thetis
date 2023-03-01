@@ -10110,85 +10110,85 @@ namespace Thetis
         private void radBandGEN0_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.BLMF);
+            BandPreChangeHandlers?.Invoke(1, Band.BLMF);
         } // MF or AM band in USA
 
         private void radBandGEN1_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B120M);
+            BandPreChangeHandlers?.Invoke(1, Band.B120M);
         } // 120m
 
         private void radBandGEN2_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B90M);
+            BandPreChangeHandlers?.Invoke(1, Band.B90M);
         } // 90m
 
         private void radBandGEN3_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B61M);
+            BandPreChangeHandlers?.Invoke(1, Band.B61M);
         } // 60m
 
         private void radBandGEN4_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B49M);
+            BandPreChangeHandlers?.Invoke(1, Band.B49M);
         } // 49m
 
         private void radBandGEN5_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B41M);
+            BandPreChangeHandlers?.Invoke(1, Band.B41M);
         } // 41m
 
         private void radBandGEN6_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B31M);
+            BandPreChangeHandlers?.Invoke(1, Band.B31M);
         } //31m
 
         private void radBandGEN7_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B25M);
+            BandPreChangeHandlers?.Invoke(1, Band.B25M);
         } // 25m
 
         private void radBandGEN8_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B22M);
+            BandPreChangeHandlers?.Invoke(1, Band.B22M);
         } // 22m
 
         private void radBandGEN9_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B19M);
+            BandPreChangeHandlers?.Invoke(1, Band.B19M);
         } // 19m
 
         private void radBandGEN10_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B16M);
+            BandPreChangeHandlers?.Invoke(1, Band.B16M);
         } //16m
 
         private void radBandGEN11_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B14M);
+            BandPreChangeHandlers?.Invoke(1, Band.B14M);
         } // 14m
 
         private void radBandGEN12_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B13M);
+            BandPreChangeHandlers?.Invoke(1, Band.B13M);
         } // 13m 
 
         private void radBandGEN13_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B11M);
+            BandPreChangeHandlers?.Invoke(1, Band.B11M);
         } // 11m
 
         //==========================================================================
@@ -32292,7 +32292,7 @@ namespace Thetis
         {
             bool bOldMox = mox; //MW0LGE_21b used for state change delgates at end of fn
 
-            MoxPreChangeHandlers?.Invoke(mox, chkMOX.Checked); // MW0LGE_21k8
+            MoxPreChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, mox, chkMOX.Checked); // MW0LGE_21k8
 
             NetworkIO.SendHighPriority(1);
             if (rx_only && chkMOX.Checked)
@@ -39149,7 +39149,7 @@ namespace Thetis
         private void radBand160_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B160M);
+            BandPreChangeHandlers?.Invoke(1, Band.B160M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39186,7 +39186,7 @@ namespace Thetis
         private void radBand80_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B80M);
+            BandPreChangeHandlers?.Invoke(1, Band.B80M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);         
@@ -39223,7 +39223,7 @@ namespace Thetis
         private void radBand60_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B60M);
+            BandPreChangeHandlers?.Invoke(1, Band.B60M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39287,7 +39287,7 @@ namespace Thetis
         private void radBand40_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B40M);
+            BandPreChangeHandlers?.Invoke(1, Band.B40M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39323,7 +39323,7 @@ namespace Thetis
         private void radBand30_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B30M);
+            BandPreChangeHandlers?.Invoke(1, Band.B30M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39359,7 +39359,7 @@ namespace Thetis
         private void radBand20_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B20M);
+            BandPreChangeHandlers?.Invoke(1, Band.B20M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39395,7 +39395,7 @@ namespace Thetis
         private void radBand17_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B17M);
+            BandPreChangeHandlers?.Invoke(1, Band.B17M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39431,7 +39431,7 @@ namespace Thetis
         private void radBand15_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B15M);
+            BandPreChangeHandlers?.Invoke(1, Band.B15M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39467,7 +39467,7 @@ namespace Thetis
         private void radBand12_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B12M);
+            BandPreChangeHandlers?.Invoke(1, Band.B12M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39503,7 +39503,7 @@ namespace Thetis
         private void radBand10_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B10M);
+            BandPreChangeHandlers?.Invoke(1, Band.B10M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39539,7 +39539,7 @@ namespace Thetis
         private void radBand6_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B6M);
+            BandPreChangeHandlers?.Invoke(1, Band.B6M);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39575,7 +39575,7 @@ namespace Thetis
         private void radBand2_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.B2M);
+            BandPreChangeHandlers?.Invoke(1, Band.B2M);
             //MW0LGE_21d end new bandstack
 
             //SaveBand();
@@ -39608,7 +39608,7 @@ namespace Thetis
         private void radBandWWV_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
-            BandBeforeChangeHandlers?.Invoke(1, Band.WWV);
+            BandPreChangeHandlers?.Invoke(1, Band.WWV);
             //MW0LGE_21d end new bandstack
 
             //NetworkIO.SendHighPriority(0);
@@ -39651,7 +39651,7 @@ namespace Thetis
             //MW0LGE_21d new bandstack system
             string band = ((Control)sender).Name.Substring(7); // cut the radBand off, and just use VHF
             Band b = BandStackManager.StringToBand(band);
-            BandBeforeChangeHandlers?.Invoke(1, b);
+            BandPreChangeHandlers?.Invoke(1, b);
 
             // this needs work TODO
 
@@ -52223,7 +52223,7 @@ namespace Thetis
         public delegate void VFOAFrequencyChanged(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx);
         public delegate void VFOBFrequencyChanged(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx);
         public delegate void MoxChanged(int rx, bool oldMox, bool newMox);
-        public delegate void MoxPreChanged(bool currentMox, bool expectedMox);
+        public delegate void MoxPreChanged(int rx, bool currentMox, bool expectedMox);
         public delegate void SetBandChanged(int rx, Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider);
         public delegate void PowerChanged(bool oldPower, bool newPower);
 
@@ -52261,7 +52261,7 @@ namespace Thetis
         public delegate void CurrentModelChanged(HPSDRModel oldModel, HPSDRModel newModel);
         public delegate void TransverterIndexChanged(int oldIndex, int newIndex);
 
-        public BandPreChange BandBeforeChangeHandlers; // when someone clicks a band button, before a change is made
+        public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
         public ModeChanged ModeChangeHandlers;
@@ -52313,7 +52313,7 @@ namespace Thetis
 
             m_frmSeqLog.ClearButtonEvent += onClearButton;
 
-            BandBeforeChangeHandlers += OnBandBeforeChangeHandler;            // just a band button is pressed
+            BandPreChangeHandlers += OnBandBeforeChangeHandler;            // just a band button is pressed
             BandNoChangeHandlers += OnBandNoChangeHandler;              // no change made to band
             BandChangeHandlers += OnBandChangeHandler;                  // band was changed
             ModeChangeHandlers += OnModeChangeHandler;                  // mode was changed
@@ -52363,7 +52363,7 @@ namespace Thetis
 
             m_frmSeqLog.ClearButtonEvent -= onClearButton;
 
-            BandBeforeChangeHandlers -= OnBandBeforeChangeHandler;
+            BandPreChangeHandlers -= OnBandBeforeChangeHandler;
             BandNoChangeHandlers -= OnBandNoChangeHandler;
             BandChangeHandlers -= OnBandChangeHandler;
             ModeChangeHandlers -= OnModeChangeHandler;
@@ -52941,7 +52941,7 @@ namespace Thetis
 
             //Debug.Print("mox changed : old:" + oldMox.ToString() + "   new:" + newMox.ToString());
         }
-        private void OnMoxPreChangeHandler(bool currentMox, bool expectedMox)
+        private void OnMoxPreChangeHandler(int rx, bool currentMox, bool expectedMox)
         {
             
         }
