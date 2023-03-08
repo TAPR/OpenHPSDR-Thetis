@@ -54113,7 +54113,12 @@ namespace Thetis
 
                     // get all readings
                     if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
-                    if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                    bool bNeedAvg = true;
+                    if (MeterManager.RequiresUpdate(1, Reading.AVG_SIGNAL_STRENGTH))
+                    {
+                        _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                        bNeedAvg = false;
+                    }
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_PK)) _RX1MeterValues[Reading.ADC_PK] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_AV)) _RX1MeterValues[Reading.ADC_AV] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
 
@@ -54125,7 +54130,8 @@ namespace Thetis
                     {
                         if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
                         {
-                            spectralCalculations(1, _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                            float avg = bNeedAvg ? WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH];
+                            spectralCalculations(1, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
                             _RX1MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
                         }
                         else
@@ -54261,7 +54267,12 @@ namespace Thetis
 
                     // get all readings
                     if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH)) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
-                    if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH)) _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                    bool bNeedAvg = true;
+                    if (MeterManager.RequiresUpdate(2, Reading.AVG_SIGNAL_STRENGTH))
+                    {
+                        _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                        bNeedAvg = false;
+                    }
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_PK)) _RX2MeterValues[Reading.ADC_PK] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(2, Reading.ADC_AV)) _RX2MeterValues[Reading.ADC_AV] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.ADC_IMAG);
 
@@ -54273,7 +54284,8 @@ namespace Thetis
                     {
                         if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
                         {
-                            spectralCalculations(2, _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                            float avg = bNeedAvg ? WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH];
+                            spectralCalculations(2, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
                             _RX2MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
                         }
                         else

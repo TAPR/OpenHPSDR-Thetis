@@ -25574,14 +25574,14 @@ namespace Thetis
                     int n = MeterManager.GetMeterTXRXType(mtci.MeterType);
                     switch (n)
                     {
-                        case 0:
+                        case 0: //rx
                             sb = new SolidBrush(Color.PaleGreen);
                             break;
-                        case 1:
+                        case 1: //tx
                             sb = new SolidBrush(Color.PaleVioletRed);
                             break;
-                        default:
-                            sb = new SolidBrush(Color.PaleTurquoise);
+                        default: //other
+                            sb = new SolidBrush(Color.LightGray);
                             break;
                     }
 
@@ -25650,6 +25650,9 @@ namespace Thetis
             igs.LowColor = Color.FromArgb(255, clrbtnMeterItemLow.Color);
             igs.HighColor = Color.FromArgb(255, clrbtnMeterItemHigh.Color);
             igs.MarkerColour = Color.FromArgb(255, clrbtnMeterItemIndiciator.Color);
+            igs.SubMarkerColour = Color.FromArgb(255, clrbtnMeterItemSubIndiciator.Color);
+            igs.ShowMarker = chkMeterItemShowIndicator.Checked;
+            igs.ShowSubMarker = chkMeterItemShowSubIndicator.Checked;
             igs.Colour = Color.FromArgb(255, clrbtnMeterItemHBackground.Color);
             igs.UpdateInterval = (int)nudMeterItemUpdateRate.Value;
             igs.AttackRatio = (float)nudMeterItemAttackRate.Value;
@@ -25658,8 +25661,17 @@ namespace Thetis
             igs.HistoryColor = Color.FromArgb(tbMeterItemHistoryAlpha.Value, clrbtnMeterItemHistory.Color);
             igs.Shadow = chkMeterItemShadow.Checked;
             igs.HistoryDuration = (int)nudMeterItemHistoryDuration.Value;
-            igs.BarStyle = chkMeterItemSegmented.Checked ? MeterManager.clsBarItem.BarStyle.Segments : MeterManager.clsBarItem.BarStyle.Line;
-            igs.SegmentedColour = clrbtnMeterItemSegmentedColour.Color;
+
+            if (chkMeterItemSegmented.Checked)
+                igs.BarStyle = MeterManager.clsBarItem.BarStyle.Segments;
+            else if (chkMeterItemSolid.Checked)
+                igs.BarStyle = MeterManager.clsBarItem.BarStyle.SolidFilled;
+            else
+                igs.BarStyle = MeterManager.clsBarItem.BarStyle.Line;
+
+            igs.SegmentedSolidLowColour = clrbtnMeterItemSegmentedSolidColourLow.Color;
+            igs.SegmentedSolidHighColour = clrbtnMeterItemSegmentedSolidColourHigh.Color;
+
             igs.PeakHold = chkMeterItemPeakHold.Checked;
             igs.PeakHoldMarkerColor = Color.FromArgb(255, clrbtnMeterItemPeakHold.Color);
             igs.HistoryDuration = (int)nudMeterItemHistoryDuration.Value;
@@ -25670,7 +25682,7 @@ namespace Thetis
             igs.PeakValue = chkMeterItemPeakValue.Checked;
             igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
             igs.EyeScale = (float)nudMeterItemEyeScale.Value;
-            igs.PowerLimit = (float)nudMeterItemsPowerLimit.Value;
+            igs.MaxPower = (float)nudMeterItemsPowerLimit.Value;
             if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
             if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
 
@@ -25696,15 +25708,30 @@ namespace Thetis
             clrbtnMeterItemLow.Color = igs.LowColor;
             clrbtnMeterItemHigh.Color = igs.HighColor;
             clrbtnMeterItemIndiciator.Color = igs.MarkerColour;
+            clrbtnMeterItemSubIndiciator.Color = igs.SubMarkerColour;
+            chkMeterItemShowIndicator.Checked = igs.ShowMarker;
+            chkMeterItemShowSubIndicator.Checked = igs.ShowSubMarker;
             clrbtnMeterItemHBackground.Color = igs.Colour;
             nudMeterItemUpdateRate.Value = igs.UpdateInterval;
             nudMeterItemAttackRate.Value = (decimal)igs.AttackRatio;
             nudMeterItemDecayRate.Value = (decimal)igs.DecayRatio;
             updateHistoryControls(igs.ShowHistory, igs.HistoryColor, igs.ShowHistory);
             nudMeterItemHistoryDuration.Value = igs.HistoryDuration;
-            chkMeterItemSegmented.Checked = igs.BarStyle == MeterManager.clsBarItem.BarStyle.Segments;
-            clrbtnMeterItemSegmentedColour.Color = igs.SegmentedColour;
-            updateSegmentedControls();
+
+            if (igs.BarStyle == MeterManager.clsBarItem.BarStyle.Segments)
+                chkMeterItemSegmented.Checked = true; // will cause solid to turn off
+            else if (igs.BarStyle == MeterManager.clsBarItem.BarStyle.SolidFilled)
+                chkMeterItemSolid.Checked = true; // will cause segment to turn off
+            else
+            {
+                chkMeterItemSegmented.Checked = false;
+                chkMeterItemSolid.Checked = false;
+            }
+
+            clrbtnMeterItemSegmentedSolidColourLow.Color = igs.SegmentedSolidLowColour;
+            clrbtnMeterItemSegmentedSolidColourHigh.Color = igs.SegmentedSolidHighColour;
+
+            updateSegmentedSolidControls();
             updatePeakHoldControls(igs.PeakHold, igs.PeakHoldMarkerColor, igs.PeakHold);
             chkMeterItemShadow.Checked = igs.Shadow;
             chkMeterItemFadeOnRx.Checked = igs.FadeOnRx;
@@ -25715,7 +25742,7 @@ namespace Thetis
             chkMeterItemPeakValue.Checked = igs.PeakValue;
             clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
             updatePeakValueControls();            
-            if(mt == MeterType.CROSS || mt == MeterType.ANANMM || mt == MeterType.PWR || mt == MeterType.REVERSE_PWR) nudMeterItemsPowerLimit.Value = (decimal)igs.PowerLimit;
+            if(mt == MeterType.CROSS || mt == MeterType.ANANMM || mt == MeterType.PWR || mt == MeterType.REVERSE_PWR) nudMeterItemsPowerLimit.Value = (decimal)igs.MaxPower;
 
             // specific to mt
             bool bMagicEye = mt == MeterType.MAGIC_EYE;
@@ -25723,9 +25750,9 @@ namespace Thetis
             nudMeterItemEyeScale.Enabled = bMagicEye;
             lblMMEyeSize.Enabled = bMagicEye;
             chkMeterItemHistory.Enabled = !bMagicEye;
-            clrbtnMeterItemHistory.Enabled = !bMagicEye;
+            clrbtnMeterItemHistory.Enabled = !bMagicEye && chkMeterItemHistory.Checked;
             chkMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
-            clrbtnMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
+            clrbtnMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS) && chkMeterItemPeakHold.Checked;
 
             chkMeterItemShadow.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
             chkMeterItemDarkMode.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
@@ -25734,7 +25761,13 @@ namespace Thetis
 
             bool bEnable = mt == MeterType.ANANMM || mt == MeterType.CROSS || mt == MeterType.MAGIC_EYE;            
             chkMeterItemSegmented.Enabled = !bEnable;
-            clrbtnMeterItemSegmentedColour.Enabled = !bEnable;
+            chkMeterItemSolid.Enabled = !bEnable;
+
+            clrbtnMeterItemSegmentedSolidColourLow.Enabled = !bEnable && (chkMeterItemSegmented.Checked || chkMeterItemSolid.Checked);
+            clrbtnMeterItemSegmentedSolidColourHigh.Enabled = !bEnable && (chkMeterItemSegmented.Checked || chkMeterItemSolid.Checked);
+            lblMMsegSolLow.Enabled = !bEnable && (chkMeterItemSegmented.Checked || chkMeterItemSolid.Checked);
+            lblMMsegSolHigh.Enabled = !bEnable && (chkMeterItemSegmented.Checked || chkMeterItemSolid.Checked);
+
             chkMeterItemTitle.Enabled = !bEnable;
             clrbtnMeterItemMeterTitle.Enabled = !bEnable;
             chkMeterItemPeakValue.Enabled = !bEnable;
@@ -25745,6 +25778,12 @@ namespace Thetis
             clrbtnMeterItemLow.Enabled = !bEnable;
             clrbtnMeterItemHigh.Enabled = !bEnable;
             clrbtnMeterItemHBackground.Enabled = !bEnable;
+            chkMeterItemShowIndicator.Enabled = !bEnable;
+            //
+            lblMMIndicatorSub.Enabled = igs.SubIndicators;
+            clrbtnMeterItemSubIndiciator.Enabled = igs.SubIndicators;
+            chkMeterItemShowSubIndicator.Enabled = !bEnable && igs.SubIndicators;
+            //
 
             chkMeterItemSignalAverage.Enabled = mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE;
             if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) chkMeterItemSignalAverage.Checked = igs.Average;
@@ -25765,9 +25804,13 @@ namespace Thetis
                 clrbtnMeterItemHistory.Color = Color.FromArgb(255, c);
             }
         }
-        private void updateSegmentedControls()
+        private void updateSegmentedSolidControls()
         {
-            clrbtnMeterItemSegmentedColour.Enabled = chkMeterItemSegmented.Checked;
+            bool bEnabled = chkMeterItemSegmented.Checked || chkMeterItemSolid.Checked;
+            clrbtnMeterItemSegmentedSolidColourLow.Enabled = bEnabled;
+            clrbtnMeterItemSegmentedSolidColourHigh.Enabled = bEnabled;
+            lblMMsegSolLow.Enabled = bEnabled;
+            lblMMsegSolHigh.Enabled = bEnabled;
         }
         private void updateTitleControls()
         {
@@ -25810,7 +25853,9 @@ namespace Thetis
 
         private void chkMeterItemSegmented_CheckedChanged(object sender, EventArgs e)
         {
-            updateSegmentedControls();
+            if (chkMeterItemSegmented.Checked) chkMeterItemSolid.Checked = false; // can only be one
+
+            updateSegmentedSolidControls();
             updateMeterType();
         }
 
@@ -25884,12 +25929,6 @@ namespace Thetis
         {
             updateMeterType();
         }
-
-        private void clrbtnMeterItemSegmentedColour_Changed(object sender, EventArgs e)
-        {
-            updateMeterType();
-        }
-
         private void clrbtnMeterItemMeterTitle_Changed(object sender, EventArgs e)
         {
             updateMeterType();
@@ -25944,6 +25983,39 @@ namespace Thetis
         }
 
         private void nudMeterItemsPowerLimit_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemSolid_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkMeterItemSolid.Checked) chkMeterItemSegmented.Checked = false; // can only be one
+
+            updateSegmentedSolidControls();
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemSegmentedSolidColourHigh_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemSegmentedSolidColourLow_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemShowIndicator_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemSubIndiciator_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemShowSubIndicator_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }
