@@ -10088,54 +10088,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <metadata name="tmrAutoAGC.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>589, 54</value>
   </metadata>
-  <data name="ucDockedMeterRX2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="ucDockedMeterRX2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>364, 234</value>
-  </data>
-  <data name="ucDockedMeterRX2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 252</value>
-  </data>
-  <data name="ucDockedMeterRX2.TabIndex" type="System.Int32, mscorlib">
-    <value>147</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.Name" xml:space="preserve">
-    <value>ucDockedMeterRX2</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.Type" xml:space="preserve">
-    <value>Thetis.ucMeter, Thetis, Version=2.9.0.7, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="ucDockedMeterRX1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="ucDockedMeterRX1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>594, 102</value>
-  </data>
-  <data name="ucDockedMeterRX1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 252</value>
-  </data>
-  <data name="ucDockedMeterRX1.TabIndex" type="System.Int32, mscorlib">
-    <value>69</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX1.Name" xml:space="preserve">
-    <value>ucDockedMeterRX1</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX1.Type" xml:space="preserve">
-    <value>Thetis.ucMeter, Thetis, Version=2.9.0.7, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX1.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <data name="pnlResizeMeter.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -17371,6 +17323,54 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;panelAndromedaMisc.ZOrder" xml:space="preserve">
     <value>50</value>
+  </data>
+  <data name="nudPwrTemp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>86, 527</value>
+  </data>
+  <data name="nudPwrTemp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 20</value>
+  </data>
+  <data name="nudPwrTemp.TabIndex" type="System.Int32, mscorlib">
+    <value>146</value>
+  </data>
+  <data name="nudPwrTemp.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp.Name" xml:space="preserve">
+    <value>nudPwrTemp</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDownTS, Thetis, Version=2.9.0.7, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="nudPwrTemp2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>86, 547</value>
+  </data>
+  <data name="nudPwrTemp2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 20</value>
+  </data>
+  <data name="nudPwrTemp2.TabIndex" type="System.Int32, mscorlib">
+    <value>147</value>
+  </data>
+  <data name="nudPwrTemp2.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp2.Name" xml:space="preserve">
+    <value>nudPwrTemp2</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDownTS, Thetis, Version=2.9.0.7, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;nudPwrTemp2.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

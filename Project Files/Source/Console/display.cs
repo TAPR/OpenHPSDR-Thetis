@@ -63,7 +63,6 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
-    using WindowsFirewallHelper.Addresses;
 
     class Display
     {
@@ -78,13 +77,15 @@ namespace Thetis
         public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs and dx spotter
         public static string background_image = null;
 
-        private static int[] histogram_data = null;					// histogram display buffer
+        private static int[] histogram_data = null;				// histogram display buffer
         private static int[] histogram_history;					// histogram counter
 
         public static float[] new_display_data;					// Buffer used to store the new data from the DSP for the display
         public static float[] current_display_data;				// Buffer used to store the current data for the display
         public static float[] new_display_data_bottom;
         public static float[] current_display_data_bottom;
+
+        public static float[] current_display_data_copy;
 
         //waterfall
         public static float[] new_waterfall_data;
@@ -94,6 +95,8 @@ namespace Thetis
 
         private static float[] waterfall_data;
 
+        public static float[] current_waterfall_data_copy;
+
         private static SharpDX.Direct2D1.Bitmap _waterfall_bmp_dx2d = null;					// MW0LGE
         private static SharpDX.Direct2D1.Bitmap _waterfall_bmp2_dx2d = null;
         #endregion
@@ -102,13 +105,13 @@ namespace Thetis
 
         public static float FrameDelta { get; private set; }
 
-        private static bool tnf_active = true;
+        private static bool _tnf_active = true;
         public static bool TNFActive
         {
-            get { return tnf_active; }
+            get { return _tnf_active; }
             set
             {
-                tnf_active = value;
+                _tnf_active = value;
             }
         }
 
@@ -751,7 +754,12 @@ namespace Thetis
             get { return m_bShowFPS; }
             set { m_bShowFPS = value; }
         }
-
+        private static bool m_bShowVisualNotch = false;
+        public static bool ShowVisualNotch
+        {
+            get { return m_bShowVisualNotch; }
+            set { m_bShowVisualNotch = value; }
+        }
         //=======================================================
 
         private static bool m_bSpecialPanafall = false; // ke9ns add 1=map mode (panafall but only a small waterfall) and only when just in RX1 mode)
@@ -2286,6 +2294,7 @@ namespace Thetis
                     current_display_data[i] = -200.0f;
                     new_waterfall_data[i] = -200.0f;
                     current_waterfall_data[i] = -200.0f;
+                    current_display_data_copy[i] = -200.0f;
                 });
 
                 FastAttackNoiseFloorRX1 = true;
@@ -2298,6 +2307,7 @@ namespace Thetis
                     current_display_data_bottom[i] = -200.0f;
                     new_waterfall_data_bottom[i] = -200.0f;
                     current_waterfall_data_bottom[i] = -200.0f;
+                    current_waterfall_data_copy[i] = -200.0f;
                 });
 
                 FastAttackNoiseFloorRX2 = true;
@@ -2332,6 +2342,9 @@ namespace Thetis
                 if (new_waterfall_data_bottom != null) m_objFloatPool.Return(new_waterfall_data_bottom);
                 if (current_waterfall_data_bottom != null) m_objFloatPool.Return(current_waterfall_data_bottom);
 
+                if (current_display_data_copy != null) m_objFloatPool.Return(current_display_data_copy);
+                if (current_waterfall_data_copy != null) m_objFloatPool.Return(current_waterfall_data_copy);
+
                 // cant be W width, as more info can be stored in these, for example scope data
                 new_display_data = m_objFloatPool.Rent(BUFFER_SIZE);
                 current_display_data = m_objFloatPool.Rent(BUFFER_SIZE);
@@ -2339,11 +2352,15 @@ namespace Thetis
                 new_display_data_bottom = m_objFloatPool.Rent(BUFFER_SIZE);
                 current_display_data_bottom = m_objFloatPool.Rent(BUFFER_SIZE);
 
+                current_display_data_copy = m_objFloatPool.Rent(BUFFER_SIZE);
+
                 new_waterfall_data = m_objFloatPool.Rent(W);
                 current_waterfall_data = m_objFloatPool.Rent(W);
 
                 new_waterfall_data_bottom = m_objFloatPool.Rent(W);
                 current_waterfall_data_bottom = m_objFloatPool.Rent(W);
+
+                current_waterfall_data_copy = m_objFloatPool.Rent(W);
 
                 m_rx1_spectrumPeaks = new Maximums[W];
                 m_rx2_spectrumPeaks = new Maximums[W];
@@ -3907,7 +3924,7 @@ namespace Thetis
                     High = rx2_display_high;
                 }
             }
-            float fAttenuation = 200f;
+            float fAttenuation = 100f;
             int width = High - Low;
 
             List<clsNotchCoords> notchData = handleNotches(rx, bottom, getCWSideToneShift(rx), Low, High, 0, 0, width, W, 0, false);//, 50);
@@ -3976,7 +3993,7 @@ namespace Thetis
             int yRange;
             float[] data;
 
-            bool bNotch = false;
+            bool bDoVisualNotch = false;
 
             if (rx == 1)
             {
@@ -4001,7 +4018,7 @@ namespace Thetis
 
                 if (data_ready)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     if (!displayduplex && (local_mox || (mox && tx_on_vfob)) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth/*current_display_data.Length*/; i++)
@@ -4013,6 +4030,12 @@ namespace Thetis
                         fixed (void* wptr = &current_display_data[0])
                             Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
                     }
+
+                    // make copy of the data so visual notch does not change the average noise floor
+                    fixed (void* rptr = &current_display_data[0])
+                    fixed (void* wptr = &current_display_data_copy[0])
+                        Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
+
                     data_ready = false;
                 }
                 data = current_display_data;
@@ -4040,7 +4063,7 @@ namespace Thetis
 
                 if (data_ready_bottom)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     //MW0LGE//if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     if (blank_bottom_display || (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)))
                     {
@@ -4054,6 +4077,11 @@ namespace Thetis
                             Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
                     }
 
+                    // make copy of the data so visual notch does not change the average noise floor
+                    fixed (void* rptr = &current_display_data_bottom[0])
+                    fixed (void* wptr = &current_display_data_copy[0])
+                        Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
+
                     data_ready_bottom = false;
                 }
                 data = current_display_data_bottom;
@@ -4062,6 +4090,7 @@ namespace Thetis
             dBmSpectralPeakFall /= (float)m_nFps;
 
             float max;
+            float max_copy;
             float fOffset;
 
             if (rx == 1)
@@ -4185,14 +4214,14 @@ namespace Thetis
             //List <(int pos, float val)> maxtab_tmp = new List<(int pos, float val)>();
             float triggerDelta = 10; //db
 
-            //
-            if (bNotch)
-            {
-                modifyDataForNotches(ref data, rx, bottom,local_mox,displayduplex,W);
-            }
-
             unchecked // we dont expect any overflows
             {
+                // modify the data for visual notches
+                if (bDoVisualNotch && m_bShowVisualNotch && !local_mox)
+                {
+                    modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
+                }
+
                 float averageSum = 0;
                 int averageCount = 0;
                 float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2; // +2db to add some extras above the average
@@ -4200,11 +4229,12 @@ namespace Thetis
                 for (int i = 0; i < nDecimatedWidth; i++)
                 {
                     max = data[i] + fOffset;
+                    max_copy = current_display_data_copy[i] + fOffset; ;
 
                     // noise floor
-                    if (!local_mox && (max < currentAverage))
+                    if (!local_mox && (max_copy < currentAverage))
                     {
-                        averageSum += max;
+                        averageSum += max_copy;
                         averageCount++;
                     }
                     //
@@ -4492,15 +4522,15 @@ namespace Thetis
 
             return true;
         }
-        private static int _fNFshiftDBM = 0;
-        public static int NFshiftDBM
+        private static float _fNFshiftDBM = 0;
+        public static float NFshiftDBM
         {
             get { return NFshiftDBM; }
             set
             {
-                int t = value;
-                if (t < -6) t = 6;
-                if (t > 6) t = 6;
+                float t = value;
+                if (t < -12f) t = 12f;
+                if (t > 12f) t = 12f;
                 _fNFshiftDBM = t;
             }
         }
@@ -4620,7 +4650,7 @@ namespace Thetis
             Color mid_color = Color.Red;
             Color high_color = Color.Blue;
 
-            bool bNotch = false;
+            bool bDoVisualNotch = false;
             int nDecimatedWidth = W / m_nDecimation;
 
             if (rx == 2)
@@ -4687,7 +4717,7 @@ namespace Thetis
             {
                 if (rx == 1 && waterfall_data_ready)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     if (!displayduplex && local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
@@ -4699,12 +4729,18 @@ namespace Thetis
                         fixed (void* wptr = &current_waterfall_data[0])
                             Win32.memcpy(wptr, rptr, nDecimatedWidth * sizeof(float));
 
-                    }                    
+                    }
+
+                    // make copy of the data so visual notch does not change the average noise floor
+                    fixed (void* rptr = &current_waterfall_data[0])
+                    fixed (void* wptr = &current_waterfall_data_copy[0])
+                        Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
+
                     waterfall_data_ready = false;
                 }
                 else if (rx == 2 && waterfall_data_ready_bottom)
                 {
-                    bNotch = true;
+                    bDoVisualNotch = true;
                     if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth; i++)
@@ -4716,6 +4752,12 @@ namespace Thetis
                         fixed (void* wptr = &current_waterfall_data_bottom[0])
                             Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
                     }
+
+                    // make copy of the data so visual notch does not change the average noise floor
+                    fixed (void* rptr = &current_waterfall_data_bottom[0])
+                    fixed (void* wptr = &current_waterfall_data_copy[0])
+                        Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
+
                     waterfall_data_ready_bottom = false;
                 }
 
@@ -4750,6 +4792,7 @@ namespace Thetis
                         data = current_waterfall_data_bottom;
 
                     float max;
+                    float max_copy;
                     float fOffset = 0; ///MW0LGE - block of code moved out of for loop +- for now, TODO
 
                     if (!local_mox)
@@ -4757,8 +4800,9 @@ namespace Thetis
                         if (rx == 1) fOffset += rx1_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
                         else if (rx == 2) fOffset += rx2_display_cal_offset + (rx2_preamp_offset);
 
-                        if (bNotch)
+                        if (bDoVisualNotch && m_bShowVisualNotch)
                         {
+                            // modify the data for visual notches
                             modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
                         }
                     }
@@ -4775,11 +4819,12 @@ namespace Thetis
                     for (int i = 0; i < nDecimatedWidth; i++)
                     {
                         max = data[i] + fOffset; //MW0LGE
+                        max_copy = current_waterfall_data_copy[i] + fOffset;
 
                         // noise floor
-                        if (!local_mox && (max < currentAverage))
+                        if (!local_mox && (max_copy < currentAverage))
                         {
-                            averageSum += max;
+                            averageSum += max_copy;
                             averageCount++;
                         }
                         //
@@ -6590,17 +6635,18 @@ namespace Thetis
                     //int expandHz = (int)(_dMNFminSize * 0.5);
                     //double nw = n.FWidth < 100 ? 100 : n.FWidth;
                     double dNewWidth = n.FWidth < _mnfMinSize ? _mnfMinSize : n.FWidth; // use the min width of filter from WDSP
+                    dNewWidth += 20; // fudge factor to align better with spectrum notch
                     notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
                     notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - rit/* - expandHz*/) / width * W);
                     notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - rit/* + expandHz*/) / width * W);
                 }
 
-                clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, tnf_active && n.Active, (int)n.FWidth);
+                clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, _tnf_active && n.Active, (int)n.FWidth);
                 notchData.Add(nc);
 
                 if (bDraw)
                 {
-                    if (tnf_active)
+                    if (_tnf_active)
                     {
                         if (n.Active)
                         {
@@ -9705,15 +9751,16 @@ namespace Thetis
         private static void ukraineFlag()
         {
             //#UKRAINE
-            if ((DateTime.Now - _lastFlagCheck).TotalMinutes >= 120)
-            {
-                _lastFlagCheck = DateTime.Now;
 
-                console.CheckIfRussian();
+            //if ((DateTime.Now - _lastFlagCheck).TotalMinutes >= 120)
+            //{
+            //    _lastFlagCheck = DateTime.Now;
 
-                if (console.IsRussian)
-                    _showFlag = true; // every two hours, replace the flag if russian
-            }
+            //    console.CheckIfRussian();
+
+            //    if (console.IsRussian)
+            //        _showFlag = true; // every two hours, replace the flag if russian
+            //}
 
             if (_showFlag)
             {

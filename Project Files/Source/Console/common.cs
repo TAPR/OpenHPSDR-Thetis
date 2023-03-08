@@ -38,10 +38,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Net.NetworkInformation;
 using System.Text;
-using System.Net;
 using System.Security.Principal;
+using System.Security.Cryptography;
 
 namespace Thetis
 {
@@ -785,5 +784,93 @@ namespace Thetis
 			{ 
 			}
 		}
-	}
+
+		public static int FiveDigitHash(string str)
+		{
+			if(str == "") return 0;
+
+            //MD5 md5Hasher = MD5.Create();
+            //byte[] hashed = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(str),);
+            //return BitConverter.ToInt32(hashed, 0) % 99999;
+
+            uint hash = 0;
+            foreach (byte b in System.Text.Encoding.Unicode.GetBytes(str))
+            {
+                hash += b;
+                hash += (hash << 10);
+                hash ^= (hash >> 6);
+            }
+            hash += (hash << 3);
+            hash ^= (hash >> 11);
+            hash += (hash << 15);
+            return (int)(hash % 99999);
+        }
+        public static string ColourToString(System.Drawing.Color c)
+        {
+            return c.A.ToString() + "." + c.R.ToString() + "." + c.G.ToString() + "." + c.B.ToString();
+        }
+        public static System.Drawing.Color ColourFromString(string str)
+        {
+            string[] tmp = str.Split('.');
+            if (tmp.Length == 4)
+            {
+                return System.Drawing.Color.FromArgb(Int32.Parse(tmp[0]), Int32.Parse(tmp[1]), Int32.Parse(tmp[2]), Int32.Parse(tmp[3]));
+            }
+            return System.Drawing.Color.Empty;
+        }
+
+        public static double UVfromDBM(double dbm)
+        {
+            //return uV (rms) from dBm (50 ohms)
+            return Math.Sqrt(Math.Pow(10, dbm / 10) * 50 * 1e-3) * 1e6;
+        }
+        public static string SMeterFromDBM(double dbm, bool bAbove30)
+        {
+            string sRet;
+
+            if (bAbove30)
+            {
+                if (dbm <= -144.0f) sRet = "S 0";
+                else if (dbm > -144.0f & dbm <= -138.0f) sRet = "S 1";
+                else if (dbm > -138.0f & dbm <= -132.0f) sRet = "S 2";
+                else if (dbm > -132.0f & dbm <= -126.0f) sRet = "S 3";
+                else if (dbm > -126.0f & dbm <= -120.0f) sRet = "S 4";
+                else if (dbm > -120.0f & dbm <= -114.0f) sRet = "S 5";
+                else if (dbm > -114.0f & dbm <= -108.0f) sRet = "S 6";
+                else if (dbm > -108.0f & dbm <= -102.0f) sRet = "S 7";
+                else if (dbm > -102.0f & dbm <= -96.0f) sRet = "S 8";
+                else if (dbm > -96.0f & dbm <= -90.0f) sRet = "S 9";
+                else if (dbm > -90.0f & dbm <= -86.0f) sRet = "S 9 + 5";
+                else if (dbm > -86.0f & dbm <= -80.0f) sRet = "S 9 + 10";
+                else if (dbm > -80.0f & dbm <= -76.0f) sRet = "S 9 + 15";
+                else if (dbm > -76.0f & dbm <= -66.0f) sRet = "S 9 + 20";
+                else if (dbm > -66.0f & dbm <= -56.0f) sRet = "S 9 + 30";
+                else if (dbm > -56.0f & dbm <= -46.0f) sRet = "S 9 + 40";
+                else if (dbm > -46.0f & dbm <= -36.0f) sRet = "S 9 + 50";
+                else sRet = "S 9 + 60";
+            }
+            else
+            {
+                if (dbm <= -124.0f) sRet = "S 0";
+                else if (dbm > -124.0f & dbm <= -118.0f) sRet = "S 1";
+                else if (dbm > -118.0f & dbm <= -112.0f) sRet = "S 2";
+                else if (dbm > -112.0f & dbm <= -106.0f) sRet = "S 3";
+                else if (dbm > -106.0f & dbm <= -100.0f) sRet = "S 4";
+                else if (dbm > -100.0f & dbm <= -94.0f) sRet = "S 5";
+                else if (dbm > -94.0f & dbm <= -88.0f) sRet = "S 6";
+                else if (dbm > -88.0f & dbm <= -82.0f) sRet = "S 7";
+                else if (dbm > -82.0f & dbm <= -76.0f) sRet = "S 8";
+                else if (dbm > -76.0f & dbm <= -70.0f) sRet = "S 9";
+                else if (dbm > -70.0f & dbm <= -66.0f) sRet = "S 9 + 5";
+                else if (dbm > -66.0f & dbm <= -60.0f) sRet = "S 9 + 10";
+                else if (dbm > -60.0f & dbm <= -56.0f) sRet = "S 9 + 15";
+                else if (dbm > -56.0f & dbm <= -46.0f) sRet = "S 9 + 20";
+                else if (dbm > -46.0f & dbm <= -36.0f) sRet = "S 9 + 30";
+                else if (dbm > -36.0f & dbm <= -26.0f) sRet = "S 9 + 40";
+                else if (dbm > -26.0f & dbm <= -16.0f) sRet = "S 9 + 50";
+                else sRet = "S 9 + 60";
+            }
+            return "    " + sRet;
+        }
+    }
 }

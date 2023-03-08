@@ -904,8 +904,6 @@
             this.toolStripStatusLabel_Date = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_LocalTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
-            this.ucDockedMeterRX2 = new Thetis.ucMeter();
-            this.ucDockedMeterRX1 = new Thetis.ucMeter();
             this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
             this.pnlResizeMeter = new System.Windows.Forms.PanelTS();
             this.picMultiMeterDigital = new System.Windows.Forms.PictureBox();
@@ -1121,6 +1119,8 @@
             this.tbAndromedaEncoderSlider = new System.Windows.Forms.TrackBarTS();
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
+            this.nudPwrTemp = new System.Windows.Forms.NumericUpDownTS();
+            this.nudPwrTemp2 = new System.Windows.Forms.NumericUpDownTS();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
@@ -1218,6 +1218,8 @@
             this.grpMultimeterMenus.SuspendLayout();
             this.panelAndromedaMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).BeginInit();
             this.SuspendLayout();
             // 
             // timer_cpu_meter
@@ -5261,36 +5263,6 @@
             this.tmrAutoAGC.Interval = 500;
             this.tmrAutoAGC.Tick += new System.EventHandler(this.tmrAutoAGC_Tick);
             // 
-            // ucDockedMeterRX2
-            // 
-            resources.ApplyResources(this.ucDockedMeterRX2, "ucDockedMeterRX2");
-            this.ucDockedMeterRX2.AxisLock = Thetis.Axis.NONE;
-            this.ucDockedMeterRX2.BackColor = System.Drawing.Color.Transparent;
-            this.ucDockedMeterRX2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ucDockedMeterRX2.Delta = new System.Drawing.Point(0, 0);
-            this.ucDockedMeterRX2.DockedLocation = new System.Drawing.Point(0, 0);
-            this.ucDockedMeterRX2.DockedSize = new System.Drawing.Size(407, 403);
-            this.ucDockedMeterRX2.Floating = false;
-            this.ucDockedMeterRX2.Name = "ucDockedMeterRX2";
-            this.ucDockedMeterRX2.RX = 2;
-            this.ucDockedMeterRX2.FloatingDockedClicked += new System.EventHandler(this.ucDockedMeterRX2_FloatingDockedClicked);
-            this.ucDockedMeterRX2.DockedMoved += new System.EventHandler(this.ucDockedMeterRX2_DockedMoved);
-            // 
-            // ucDockedMeterRX1
-            // 
-            resources.ApplyResources(this.ucDockedMeterRX1, "ucDockedMeterRX1");
-            this.ucDockedMeterRX1.AxisLock = Thetis.Axis.NONE;
-            this.ucDockedMeterRX1.BackColor = System.Drawing.Color.Black;
-            this.ucDockedMeterRX1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ucDockedMeterRX1.Delta = new System.Drawing.Point(0, 0);
-            this.ucDockedMeterRX1.DockedLocation = new System.Drawing.Point(0, 0);
-            this.ucDockedMeterRX1.DockedSize = new System.Drawing.Size(407, 403);
-            this.ucDockedMeterRX1.Floating = false;
-            this.ucDockedMeterRX1.Name = "ucDockedMeterRX1";
-            this.ucDockedMeterRX1.RX = 1;
-            this.ucDockedMeterRX1.FloatingDockedClicked += new System.EventHandler(this.ucDockedMeterRX1_FloatingDockedClicked);
-            this.ucDockedMeterRX1.DockedMoved += new System.EventHandler(this.ucDockedMeterRX1_DockedMoved);
-            // 
             // grpMultimeter
             // 
             this.grpMultimeter.BackColor = System.Drawing.Color.Transparent;
@@ -7367,13 +7339,67 @@
             this.lblATUTuneLabel.ForeColor = System.Drawing.Color.White;
             this.lblATUTuneLabel.Name = "lblATUTuneLabel";
             // 
+            // nudPwrTemp
+            // 
+            this.nudPwrTemp.DecimalPlaces = 1;
+            this.nudPwrTemp.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            resources.ApplyResources(this.nudPwrTemp, "nudPwrTemp");
+            this.nudPwrTemp.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPwrTemp.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPwrTemp.Name = "nudPwrTemp";
+            this.nudPwrTemp.TinyStep = false;
+            this.nudPwrTemp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // nudPwrTemp2
+            // 
+            this.nudPwrTemp2.DecimalPlaces = 2;
+            this.nudPwrTemp2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            resources.ApplyResources(this.nudPwrTemp2, "nudPwrTemp2");
+            this.nudPwrTemp2.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPwrTemp2.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPwrTemp2.Name = "nudPwrTemp2";
+            this.nudPwrTemp2.TinyStep = false;
+            this.nudPwrTemp2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Controls.Add(this.ucDockedMeterRX2);
-            this.Controls.Add(this.ucDockedMeterRX1);
+            this.Controls.Add(this.nudPwrTemp2);
+            this.Controls.Add(this.nudPwrTemp);
             this.Controls.Add(this.statusStripMain);
             this.Controls.Add(this.grpMultimeter);
             this.Controls.Add(this.panelFilter);
@@ -7545,6 +7571,8 @@
             this.grpMultimeterMenus.ResumeLayout(false);
             this.panelAndromedaMisc.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -7679,7 +7707,7 @@
         private LabelTS lblTune;
         private LabelTS lblPAProfile;
         private LabelTS labelTS2;
-        private ucMeter ucDockedMeterRX1;
-        private ucMeter ucDockedMeterRX2;
+        private NumericUpDownTS nudPwrTemp;
+        private NumericUpDownTS nudPwrTemp2;
     }
 }

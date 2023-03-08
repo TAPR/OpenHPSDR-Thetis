@@ -465,7 +465,7 @@ namespace Thetis
                 _psTimer.Stop();
             }
             else
-                _psTimer.Start(); // fade more
+                if(_psTimer != null) _psTimer.Start(); // fade more
         }
 
         public void LateInit(Console c)
