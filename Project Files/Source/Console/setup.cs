@@ -25712,11 +25712,11 @@ namespace Thetis
             chkMeterItemShowIndicator.Checked = igs.ShowMarker;
             chkMeterItemShowSubIndicator.Checked = igs.ShowSubMarker;
             clrbtnMeterItemHBackground.Color = igs.Colour;
-            nudMeterItemUpdateRate.Value = igs.UpdateInterval;
+            nudMeterItemUpdateRate.Value = igs.UpdateInterval < nudMeterItemUpdateRate.Minimum ? nudMeterItemUpdateRate.Minimum : igs.UpdateInterval;
             nudMeterItemAttackRate.Value = (decimal)igs.AttackRatio;
             nudMeterItemDecayRate.Value = (decimal)igs.DecayRatio;
             updateHistoryControls(igs.ShowHistory, igs.HistoryColor, igs.ShowHistory);
-            nudMeterItemHistoryDuration.Value = igs.HistoryDuration;
+            nudMeterItemHistoryDuration.Value = igs.HistoryDuration < nudMeterItemHistoryDuration.Minimum ? nudMeterItemHistoryDuration.Minimum : igs.HistoryDuration;
 
             if (igs.BarStyle == MeterManager.clsBarItem.BarStyle.Segments)
                 chkMeterItemSegmented.Checked = true; // will cause solid to turn off

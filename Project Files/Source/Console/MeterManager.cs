@@ -71,6 +71,16 @@ namespace Thetis
         AMPS,
         // special
         EYE_PERCENT,
+        //// private used in metermanager only
+        //VFOA,
+        //VFOB,
+        //VFOSUB,
+        //DSPMODE,
+        //BANDVFOA,
+        //BANDVFOB,
+        //SPLIT,
+        //TXVFOB,
+        //
         LAST
     }
 
@@ -105,6 +115,7 @@ namespace Thetis
         ANANMM,
         CROSS,
         //HISTORY,
+        //VFO_DISPLAY,
         LAST
     }    
     internal static class MeterManager
@@ -122,6 +133,7 @@ namespace Thetis
         private static bool _power;
         private static bool _rx1VHForAbove;
         private static bool _rx2VHForAbove;
+
         private static HPSDRModel _currentHPSDRmodel;
         private static bool _alexPresent;
         private static bool _paPresent;
@@ -369,6 +381,7 @@ namespace Thetis
                 case MeterType.ANANMM: return 2;
                 case MeterType.CROSS: return 2;
                 //case MeterType.HISTORY: return 2;
+                //case MeterType.VFO_DISPLAY: return 2;
             }
 
             return 0;
@@ -401,6 +414,7 @@ namespace Thetis
                 case MeterType.CROSS: return "Cross Meter";
                 case MeterType.SWR: return "SWR";
                 //case MeterType.HISTORY: return "History";
+                //case MeterType.VFO_DISPLAY: return "Vfo Display";
             }
 
             return meter.ToString();
@@ -511,8 +525,8 @@ namespace Thetis
             _meterThreadRunning = true;
             while (_meterThreadRunning)
             {
-                if (_power)
-                {
+                //if (_power)
+                //{
                     int nDelay = int.MaxValue;
                     lock (_metersLock)
                     {
@@ -540,11 +554,11 @@ namespace Thetis
                     }
                     if (nDelay == int.MaxValue) nDelay = 250;
                     Thread.Sleep(nDelay);
-                }
-                else
-                {
-                    Thread.Sleep(100);
-                }
+                //}
+                //else
+                //{
+                //    Thread.Sleep(100);
+                //}
             }
         }
         //image caching, used by dxrenderer
@@ -755,6 +769,8 @@ namespace Thetis
             _console.VFOBFrequencyChangeHandlers += OnVFOB;
             _console.BandChangeHandlers += OnBandChange;
             _console.BandPreChangeHandlers += OnPreBandChange;
+            _console.ModeChangeHandlers += OnModeChangeHandler;
+            _console.SplitChangedHandlers += OnSplitChanged;
 
             _console.AlexPresentChangedHandlers += OnAlexPresentChanged;
             _console.PAPresentChangedHandlers += OnPAPresentChanged;
@@ -779,6 +795,8 @@ namespace Thetis
             _console.VFOBFrequencyChangeHandlers -= OnVFOB;
             _console.BandChangeHandlers -= OnBandChange;
             _console.BandPreChangeHandlers -= OnPreBandChange;
+            _console.ModeChangeHandlers -= OnModeChangeHandler;
+            _console.SplitChangedHandlers -= OnSplitChanged;
 
             _console.AlexPresentChangedHandlers -= OnAlexPresentChanged;
             _console.PAPresentChangedHandlers -= OnPAPresentChanged;
@@ -795,6 +813,24 @@ namespace Thetis
             }
 
             _delegatesAdded = false;
+        }
+        private static void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
+        {
+            //_readings[rx].SetReading(Reading.SPLIT, newSplit ? 1f : 0f); // direct update  
+
+            //lock (_metersLock)
+            //{
+            //    foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+            //    {
+            //        clsMeter m = mkvp.Value;
+            //        m.Split = rx == m.RX && newSplit;
+            //    }
+            //}
+        }
+        private static void OnModeChangeHandler(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
+        {
+            //// this is using a float to store the DSPMode, not ideal
+            //_readings[rx].SetReading(Reading.DSPMODE, (float)newMode); // direct update
         }
         private static void OnBandChange(int rx, Band oldBand, Band newBand)
         {
@@ -832,10 +868,18 @@ namespace Thetis
         private static void OnVFOA(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
             _rx1VHForAbove = _console.VFOAFreq >= 30;
+
+            //_readings[rx].SetReading(Reading.VFOA, (float)newFreq); // direct update                                                                    
+            //_readings[rx].SetReading(Reading.BANDVFOA, (float)newBand); // direct update
+            //_readings[rx].SetReading(Reading.DSPMODE, (float)newMode); // direct update
         }
         private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
+
+            //_readings[rx].SetReading(Reading.VFOB, (float)newFreq); // direct update
+            //_readings[rx].SetReading(Reading.BANDVFOB, (float)newBand); // direct update
+            //_readings[rx].SetReading(Reading.DSPMODE, (float)newMode); // direct update
         }
         private static void OnPower(bool oldPower, bool newPower)
         {
@@ -1022,7 +1066,7 @@ namespace Thetis
                     }
                 }
                 setReading(rx, Reading.VOLTS, ref readings);
-                setReading(rx, Reading.AMPS, ref readings);                
+                setReading(rx, Reading.AMPS, ref readings);    
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -1441,7 +1485,8 @@ namespace Thetis
                 CLICKBOX,
                 MAGIC_EYE,
                 HISTORY,
-                ITEM_GROUP
+                ITEM_GROUP,
+                VFO_DISPLAY
             }
 
             public class clsPercCache
@@ -1924,6 +1969,152 @@ namespace Thetis
             //    return sRet;
             //}
         }
+        //internal class clsVfoDisplay : clsMeterItem
+        //{
+        //    private System.Drawing.Color _colour;
+        //    private string _fontFamily;
+        //    private FontStyle _fontStyle;
+        //    private float _fontSize;
+
+        //    private double _vfoA;
+        //    private double _vfoB;
+        //    private double _vfoSub;
+        //    private DSPMode _mode;
+        //    private Band _bandVfoA;
+        //    private Band _bandVfoB;
+        //    private bool _split;
+        //    private bool _txvfob;
+
+        //    public clsVfoDisplay()
+        //    {
+        //        _fontFamily = "Trebuchet MS";
+        //        _fontStyle = FontStyle.Regular;
+        //        _fontSize = 18f;
+
+        //        ItemType = MeterItemType.VFO_DISPLAY;
+        //        _colour = System.Drawing.Color.White;
+        //        StoreSettings = false;
+
+        //        _vfoA = 0f;
+        //        _vfoB = 0f;
+        //        _vfoSub = 0f;
+        //        _mode = DSPMode.FIRST;
+        //        _bandVfoA = Band.FIRST;
+        //        _bandVfoB = Band.FIRST;
+        //        _split = false;
+        //        _txvfob = false;
+        //    }
+        //    public override void Update(int rx, ref List<Reading> readingsUsed)
+        //    {
+        //        // get latest readings
+        //        _vfoA = MeterManager.getReading(rx, Reading.VFOA);
+        //        _vfoB = MeterManager.getReading(rx, Reading.VFOB);
+        //        _vfoSub = MeterManager.getReading(rx, Reading.VFOSUB);
+
+        //        _mode = (DSPMode)(int)MeterManager.getReading(rx, Reading.DSPMODE);
+        //        _bandVfoA = (Band)(int)MeterManager.getReading(rx, Reading.BANDVFOA);
+        //        _bandVfoB = (Band)(int)MeterManager.getReading(rx, Reading.BANDVFOB);
+
+        //        _split = MeterManager.getReading(rx, Reading.SPLIT) > 0;
+        //        _txvfob = MeterManager.getReading(rx, Reading.TXVFOB) > 0;
+
+        //        // these reading have been used
+        //        if (!readingsUsed.Contains(Reading.VFOA))
+        //            readingsUsed.Add(Reading.VFOA);
+
+        //        if (!readingsUsed.Contains(Reading.VFOB))
+        //            readingsUsed.Add(Reading.VFOB);
+
+        //        if (!readingsUsed.Contains(Reading.VFOSUB))
+        //            readingsUsed.Add(Reading.VFOSUB);
+
+        //        if (!readingsUsed.Contains(Reading.DSPMODE))
+        //            readingsUsed.Add(Reading.DSPMODE);
+
+        //        if (!readingsUsed.Contains(Reading.BANDVFOA))
+        //            readingsUsed.Add(Reading.BANDVFOA);
+        //        if (!readingsUsed.Contains(Reading.BANDVFOB))
+        //            readingsUsed.Add(Reading.BANDVFOB);
+
+        //        if (!readingsUsed.Contains(Reading.SPLIT))
+        //            readingsUsed.Add(Reading.SPLIT);
+
+        //        if (!readingsUsed.Contains(Reading.TXVFOB))
+        //            readingsUsed.Add(Reading.TXVFOB);
+        //    }
+        //    public double VFOA
+        //    {
+        //        get { return _vfoA; }
+        //        set { _vfoA = value; }
+        //    }
+        //    public double VFOB
+        //    {
+        //        get { return _vfoB; }
+        //        set { _vfoB = value; }
+        //    }
+        //    public double VFOSub
+        //    {
+        //        get { return _vfoSub; }
+        //        set { _vfoSub = value; }
+        //    }
+        //    public DSPMode Mode
+        //    {
+        //        get { return _mode; }
+        //        set { _mode = value; }
+        //    }
+        //    public Band BandVfoA
+        //    {
+        //        get { return _bandVfoA; }
+        //        set { _bandVfoA = value; }
+        //    }
+        //    public Band BandVfoB
+        //    {
+        //        get { return _bandVfoB; }
+        //        set { _bandVfoB = value; }
+        //    }
+        //    public bool Split
+        //    {
+        //        get { return _split; }
+        //        set { _split = value; }
+        //    }
+        //    public string FontFamily
+        //    {
+        //        get { return _fontFamily; }
+        //        set { _fontFamily = value; }
+        //    }
+        //    public FontStyle Style
+        //    {
+        //        get { return _fontStyle; }
+        //        set { _fontStyle = value; }
+        //    }
+        //    public System.Drawing.Color Colour
+        //    {
+        //        get { return _colour; }
+        //        set { _colour = value; }
+        //    }
+        //    public float FontSize
+        //    {
+        //        get { return _fontSize; }
+        //        set { _fontSize = value; }
+        //    }
+
+        //    //public override string ToString()
+        //    //{
+        //    //    string sRet;
+
+        //    //    sRet = ID + "|" +
+        //    //        ParentID + "|" +
+        //    //        ItemType.ToString() + "|" +
+        //    //        TopLeft.X.ToString("f4") + "|" +
+        //    //        TopLeft.Y.ToString("f4") + "|" +
+        //    //        Size.Width.ToString("f4") + "|" +
+        //    //        Size.Height.ToString("f4") + "|" +
+        //    //        //
+        //    //        _colour.ToString();
+
+        //    //    return sRet;
+        //    //}
+        //}
         internal class clsImage : clsMeterItem
         {
             private string _name;
@@ -1993,7 +2184,7 @@ namespace Thetis
             private FontStyle _fontStyle;
             private System.Drawing.Color _fontColorLow;
             private System.Drawing.Color _fontColorHigh;
-            private System.Drawing.Color _fontColourType;
+            private System.Drawing.Color _fontColourMeterType;
             private float _fontSize;
             private bool _showType;
             private bool _showMarkers;
@@ -2002,7 +2193,7 @@ namespace Thetis
             {
                 _lowColour = System.Drawing.Color.White;
                 _highColour = System.Drawing.Color.Red;
-                _fontColourType = System.Drawing.Color.DarkGray;
+                _fontColourMeterType = System.Drawing.Color.DarkGray;
 
                 _showType = false;
                 _showMarkers = true;
@@ -2011,7 +2202,7 @@ namespace Thetis
                 _fontStyle = FontStyle.Regular;
                 _fontColorLow = System.Drawing.Color.White;
                 _fontColorHigh = System.Drawing.Color.Red;
-                _fontColourType = System.Drawing.Color.DarkGray;
+                _fontColourMeterType = System.Drawing.Color.DarkGray;
                 _fontSize = 20f;               
 
                 ItemType = MeterItemType.H_SCALE;
@@ -2033,8 +2224,8 @@ namespace Thetis
             }
             public System.Drawing.Color FontColourType
             {
-                get { return _fontColourType; }
-                set { _fontColourType = value; }
+                get { return _fontColourMeterType; }
+                set { _fontColourMeterType = value; }
             }
             public string FontFamily
             {
@@ -3177,7 +3368,7 @@ namespace Thetis
 
                 ItemType = MeterItemType.TEXT;
                 ReadingSource = Reading.NONE;
-                UpdateInterval = 100;
+                UpdateInterval = int.MaxValue; // very slow update
                 StoreSettings = false;
             }            
             private void updateReadingText(float reading)
@@ -3261,7 +3452,7 @@ namespace Thetis
                     updateReadingText(value);
                 }
             }
-        }
+        }        
         //
         #endregion
         #region clsMeterItems
@@ -3328,6 +3519,7 @@ namespace Thetis
                     case MeterType.CROSS: AddCrossNeedle(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SWR: AddSWRBar(nDelay, 0, out bBottom, restoreIg); break;
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
+                    //case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
                 }
             }
 
@@ -5165,6 +5357,63 @@ namespace Thetis
 
                 return cb.ID;
             }
+            //public string AddVFODisplay(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            //{
+            //    clsItemGroup ig = new clsItemGroup();
+            //    if (restoreIg != null) ig.ID = restoreIg.ID;
+            //    ig.ParentID = ID;
+
+            //    clsSolidColour sc = new clsSolidColour();
+            //    sc.ParentID = ig.ID;
+            //    sc.TopLeft = new PointF(_fPadX, fTop + _fPadY - _fHeight * 0.75f);
+            //    sc.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+            //    sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+            //    sc.ZOrder = 1;
+            //    addMeterItem(sc);
+
+            //    clsSolidColour sc2 = new clsSolidColour();
+            //    sc2.ParentID = ig.ID;
+            //    sc2.TopLeft = new PointF(0.5f + (_fPadX * 0.5f), fTop + _fPadY - _fHeight * 0.75f);
+            //    sc2.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+            //    sc2.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+            //    sc2.ZOrder = 1;
+            //    addMeterItem(sc2);
+
+            //    //
+            //    clsVfoDisplay vfo = new clsVfoDisplay();
+            //    vfo.ParentID = ig.ID;
+            //    vfo.TopLeft = sc.TopLeft;
+            //    vfo.Size = new SizeF(1f - _fPadX * 2f, _fHeight + _fHeight * 0.75f);
+            //    vfo.UpdateInterval = nMSupdate;
+            //    vfo.Primary = true;
+            //    vfo.ZOrder = 2;
+            //    if (RX == 1)
+            //    {
+            //        vfo.VFOA = _console.VFOAFreq;
+            //        vfo.VFOB = _console.VFOBFreq;
+            //        vfo.VFOSub = _console.VFOASubFreq;
+            //    }
+            //    else
+            //    {
+            //        // rx2
+            //        vfo.VFOA = 0; // not used
+            //        vfo.VFOB = _console.VFOBFreq;
+            //        vfo.VFOSub = 0;//check?
+            //    }
+            //    addMeterItem(vfo);
+            //    //
+
+            //    fBottom = sc.TopLeft.Y + sc.Size.Height;
+
+            //    ig.TopLeft = sc.TopLeft;
+            //    ig.Size = new SizeF(sc.Size.Width, fBottom);
+            //    ig.MeterType = MeterType.VFO_DISPLAY;
+            //    ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+            //    addMeterItem(ig);
+
+            //    return sc.ID;
+            //}
             //private string AddHistory(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             //{
             //    clsItemGroup ig = new clsItemGroup();
@@ -5207,8 +5456,8 @@ namespace Thetis
                 _rx = rx;
                 _name = sName;
                 _mox = mox;
-                _quickestRXUpdate = 500;
-                _quickestTXUpdate = 500;
+                _quickestRXUpdate = 250;
+                _quickestTXUpdate = 250;
 
                 _fPadX = 0.02f;
                 _fPadY = 0.05f;
@@ -5591,6 +5840,31 @@ namespace Thetis
                                 //        }
                                 //    }
                                 //    break;
+                                //case MeterType.VFO_DISPLAY:
+                                //    {
+                                //        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+
+                                //        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                //        {
+                                //            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                //            if (solidColor == null) continue;
+
+                                //            solidColor.FadeOnRx = igs.FadeOnRx;
+                                //            solidColor.FadeOnTx = igs.FadeOnTx;
+                                //            solidColor.Colour = igs.Colour;
+                                //        }
+                                //        foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
+                                //        {
+                                //            clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
+                                //            if (vfo == null) continue;
+
+                                //            vfo.UpdateInterval = igs.UpdateInterval;
+                                //            vfo.FadeOnRx = igs.FadeOnRx;
+                                //            vfo.FadeOnTx = igs.FadeOnTx;
+                                //            vfo.Colour = igs.MarkerColour;
+                                //        }
+                                //    }
+                                //    break;
                                 default:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -5664,7 +5938,14 @@ namespace Thetis
                                     break;
                             }
 
-                            if (bRebuild) Rebuild();
+                            if (bRebuild)
+                            {
+                                Rebuild();
+                            }
+                            else
+                            {
+                                UpdateIntervals();
+                            }
 
                             return;
                         }
@@ -5790,38 +6071,70 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                //case MeterType.VFO_DISPLAY:
+                                //    {
+                                //        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+
+                                //        foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
+                                //        {
+                                //            clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
+                                //            if (vfo == null) continue;
+
+                                //            if (vfo.Primary)
+                                //            {
+                                //                igs.UpdateInterval = vfo.UpdateInterval;
+                                //                igs.FadeOnRx = vfo.FadeOnRx;
+                                //                igs.FadeOnTx = vfo.FadeOnTx;
+                                //                igs.MarkerColour = vfo.Colour;
+                                //            }
+                                //            else
+                                //            {
+
+                                //            }
+                                //        }
+                                //        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                //        {
+                                //            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                //            if (solidColor == null) continue;
+
+                                //            //igs.FadeOnRx = solidColor.FadeOnRx;
+                                //            //solidColor.FadeOnTx = igs.FadeOnTx;
+                                //            igs.Colour = solidColor.Colour;
+                                //        }
+                                //    }
+                                //    break;
                                 //case MeterType.HISTORY:
-                                    //{
-                                    //    Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                //{
+                                //    Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
 
-                                    //    foreach (KeyValuePair<string, clsMeterItem> history in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY))
-                                    //    {
-                                    //        clsHistoryItem hi = history.Value as clsHistoryItem;
-                                    //        if (hi == null) continue;
+                                //    foreach (KeyValuePair<string, clsMeterItem> history in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY))
+                                //    {
+                                //        clsHistoryItem hi = history.Value as clsHistoryItem;
+                                //        if (hi == null) continue;
 
-                                    //        if (hi.Primary)
-                                    //        {
-                                    //            //primary needle, as has been added first
-                                    //            igs.UpdateInterval = hi.UpdateInterval;
-                                    //            //igs.AttackRatio = hi.AttackRatio;
-                                    //            //igs.DecayRatio = hi.DecayRatio;
-                                    //            igs.HistoryDuration = hi.HistoryDuration;
-                                    //            igs.HistoryColor = hi.HistoryColour;
-                                    //            igs.ShowHistory = hi.ShowHistory;
-                                    //            igs.FadeOnRx = hi.FadeOnRx;
-                                    //            igs.FadeOnTx = hi.FadeOnTx;
-                                    //            //igs.BarStyle = bi.Style;
-                                    //            //igs.MarkerColour = bi.MarkerColour;
-                                    //            //igs.PeakHold = bi.PeakHold;
-                                    //            //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
-                                    //        }
-                                    //        else
-                                    //        {
-                                    //            //igs.SubMarkerColour = bi.SubMarkerColour;
-                                    //        }
-                                    //    }
-                                    //}
-                                    //break;
+                                //        if (hi.Primary)
+                                //        {
+                                //            //primary needle, as has been added first
+                                //            igs.UpdateInterval = hi.UpdateInterval;
+                                //            //igs.AttackRatio = hi.AttackRatio;
+                                //            //igs.DecayRatio = hi.DecayRatio;
+                                //            igs.HistoryDuration = hi.HistoryDuration;
+                                //            igs.HistoryColor = hi.HistoryColour;
+                                //            igs.ShowHistory = hi.ShowHistory;
+                                //            igs.FadeOnRx = hi.FadeOnRx;
+                                //            igs.FadeOnTx = hi.FadeOnTx;
+                                //            //igs.BarStyle = bi.Style;
+                                //            //igs.MarkerColour = bi.MarkerColour;
+                                //            //igs.PeakHold = bi.PeakHold;
+                                //            //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
+                                //        }
+                                //        else
+                                //        {
+                                //            //igs.SubMarkerColour = bi.SubMarkerColour;
+                                //        }
+                                //    }
+                                //}
+                                //break;
                                 default:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -6023,10 +6336,14 @@ namespace Thetis
 
                 return groupItems;
             }
-            public void Rebuild()
+            public void UpdateIntervals()
             {
                 _quickestRXUpdate = QuickestUpdateInterval(false);
                 _quickestTXUpdate = QuickestUpdateInterval(true);
+            }
+            public void Rebuild()
+            {
+                UpdateIntervals();
 
                 setupSortedZOrder();
 
@@ -6105,6 +6422,17 @@ namespace Thetis
                 get { return _mox; }
                 set { _mox = value; }
             }
+            //public bool Split
+            //{
+            //    get { return _split; }
+            //    set { _split = value; }
+            //}
+            //public bool TXVFOb
+            //{
+            //    get { return _txVfoB; }
+            //    set { _txVfoB = value; }
+            //}
+
             public float PadX { get { return _fPadX; } set { _fPadX = value; } }
             public float PadY { get { return _fPadY; } set { _fPadY = value; } }
             public float Height { get { return _fHeight; } set { _fHeight = value; } }
@@ -6125,8 +6453,9 @@ namespace Thetis
                     int updateInterval = int.MaxValue;
                     foreach (var kvp in _meterItems.Where(o => (o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE || 
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE /*||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY
+                                                                /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
                                                                 (((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX))))
                     {
                         clsMeterItem mi = kvp.Value;
@@ -6806,10 +7135,13 @@ namespace Thetis
                                 }
                             }
                         }
-                        if(_displayTarget.Visible)
+                        if (_displayTarget.Visible)
+                        {
+                            if (nSleepTime == int.MaxValue) nSleepTime = 250;
                             Thread.Sleep(nSleepTime);
+                        }                            
                         else
-                            Thread.Sleep(500); // if not visible, sleep for half second
+                            Thread.Sleep(250); // if not visible, sleep for quarter second
                     }
                 }
                 catch (Exception e)
@@ -7058,7 +7390,7 @@ namespace Thetis
             //
             private int drawMeters()
             {
-                int nRedrawDelay = 500;
+                int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
 
                 if (m.RX == _rx && m.SortedMeterItemsForZOrder != null)
@@ -7115,6 +7447,9 @@ namespace Thetis
                                 //    break;
                                 //case clsMeterItem.MeterItemType.ITEM_GROUP:
                                 //    renderGroup(rect, mi, m);
+                                //    break;
+                                //case clsMeterItem.MeterItemType.VFO_DISPLAY:
+                                //    renderVfoDisplay(rect, mi, m);
                                 //    break;
                             }
                         }
@@ -8460,6 +8795,91 @@ namespace Thetis
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
                 _renderTarget.FillRectangle(rectSC, getDXBrushForColour(sc.Colour, nFade < sc.Colour.A ? nFade : sc.Colour.A));
             }
+            private void getParts(double vfoFreq, out string MHz, out string kHz, out string hz)
+            {
+                string vfo = vfoFreq.ToString("0.000000");
+                int index = vfo.IndexOf(".");
+                MHz = vfo.Substring(0, index);
+                kHz = vfo.Substring(index + 1, 3);
+                hz = vfo.Substring(index + 4, 3);                
+            }
+            private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false)
+            {
+                float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
+                SizeF szTextSize;
+
+                szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled);
+
+                SharpDX.RectangleF txtrect;
+                if (!bAlignRight)
+                {
+                    txtrect = new SharpDX.RectangleF(x, y, szTextSize.Width, szTextSize.Height);
+                } 
+                else
+                {
+                    // use x is now right edge
+                    txtrect = new SharpDX.RectangleF(x - szTextSize.Width, y, szTextSize.Width, szTextSize.Height);
+                }    
+                _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
+            }
+            //private void renderVfoDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            //{
+            //    clsVfoDisplay vfo = (clsVfoDisplay)mi;
+
+            //    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+            //    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+            //    float w = rect.Width * (mi.Size.Width / m.XRatio);
+            //    float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+            //    int nFade = 255;
+            //    if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+
+            //    // frequency
+            //    plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, System.Drawing.Color.Gray, nFade, vfo.FontFamily, vfo.Style);
+            //    plotText("VFO B", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, System.Drawing.Color.Gray, nFade, vfo.FontFamily, vfo.Style);
+
+            //    getParts(vfo.VFOA, out string MHz, out string kHz, out string hz);
+            //    string sVfoA = MHz + "." + kHz + "." + hz;
+            //    plotText(sVfoA, x + (w * 0.48f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.6f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style, true);
+
+            //    getParts(vfo.VFOB, out MHz, out kHz, out hz);
+            //    string sVfoB = MHz + "." + kHz + "." + hz;
+            //    plotText(sVfoB, x + (w * 0.99f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.6f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style, true);
+
+            //    // mode
+            //    plotText(vfo.Mode.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style);
+            //    plotText(vfo.Mode.ToString(), x + (w * 0.52f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style);
+
+            //    //band
+            //    System.Drawing.Color bandColor = BandStackManager.BandToColour(vfo.BandVfoA);
+            //    string sBand = BandStackManager.BandToString(vfo.BandVfoA);
+            //    if (sBand.EndsWith("M")) sBand = sBand.ToLower();
+            //    plotText(sBand + " band", x + (w * 0.48f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, bandColor, nFade, vfo.FontFamily, vfo.Style, true);
+
+            //    bandColor = BandStackManager.BandToColour(vfo.BandVfoB);
+            //    sBand = BandStackManager.BandToString(vfo.BandVfoB);
+            //    if (sBand.EndsWith("M")) sBand = sBand.ToLower();
+
+            //    plotText(sBand + " band", x + (w * 0.99f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, bandColor, nFade, vfo.FontFamily, vfo.Style, true);
+
+            //    //split only on vfoA
+            //    SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.03f), w * 0.1f, h * 0.4f);
+            //    _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(System.Drawing.Color.FromArgb(64,64,64), nFade));
+            //    System.Drawing.Color splitColor = vfo.Split ? System.Drawing.Color.Orange : System.Drawing.Color.Black;
+            //    plotText("SPLIT", rectSplit.X + (w * 0.015f), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nFade, vfo.FontFamily, vfo.Style);
+                
+            //    //rx red box
+            //    SharpDX.RectangleF rct = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+            //    _renderTarget.FillRectangle(rct, getDXBrushForColour(System.Drawing.Color.FromArgb(96, 48, 48), nFade));
+            //    System.Drawing.Color txtColour = !m.MOX ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+            //    plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nFade, vfo.FontFamily, vfo.Style);
+
+            //    //tx green
+            //    rct = new SharpDX.RectangleF(x + (w * 0.152f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+            //    _renderTarget.FillRectangle(rct, getDXBrushForColour(System.Drawing.Color.FromArgb(48, 96, 48), nFade));
+            //    txtColour = m.MOX ? System.Drawing.Color.LimeGreen : System.Drawing.Color.Black;
+            //    plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nFade, vfo.FontFamily, vfo.Style);
+            //}
             private void renderImage(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsImage img = (clsImage)mi;
