@@ -6206,6 +6206,7 @@
             resources.ApplyResources(this.ucVAC2UnderOver, "ucVAC2UnderOver");
             this.ucVAC2UnderOver.Name = "ucVAC2UnderOver";
             this.ucVAC2UnderOver.NoFade = false;
+            this.ucVAC2UnderOver.ClearIssuesClick += new System.EventHandler(this.ucVAC2UnderOver_ClearIssuesClick);
             // 
             // ucVAC1UnderOver
             // 
@@ -6214,6 +6215,7 @@
             resources.ApplyResources(this.ucVAC1UnderOver, "ucVAC1UnderOver");
             this.ucVAC1UnderOver.Name = "ucVAC1UnderOver";
             this.ucVAC1UnderOver.NoFade = false;
+            this.ucVAC1UnderOver.ClearIssuesClick += new System.EventHandler(this.ucVAC1UnderOver_ClearIssuesClick);
             // 
             // panelSoundControls
             // 

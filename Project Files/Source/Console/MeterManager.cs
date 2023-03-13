@@ -115,9 +115,10 @@ namespace Thetis
         ANANMM,
         CROSS,
         //HISTORY,
-        //VFO_DISPLAY,
+        VFO_DISPLAY,
+        CLOCK,
         LAST
-    }    
+    }
     internal static class MeterManager
     {
         #region MeterManager
@@ -145,7 +146,7 @@ namespace Thetis
         private static Object _metersLock = new Object();
 
         private static Dictionary<string, DataStream> _pooledStreamData;
-        private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;        
+        private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;
 
         public class clsIGSettings
         {
@@ -183,7 +184,7 @@ namespace Thetis
             private bool _showSubMarker;
             private bool _hasSubIndicators;
 
-            public clsIGSettings() 
+            public clsIGSettings()
             {
                 _hasSubIndicators = false;
                 _readingSource = Reading.NONE;
@@ -381,7 +382,8 @@ namespace Thetis
                 case MeterType.ANANMM: return 2;
                 case MeterType.CROSS: return 2;
                 //case MeterType.HISTORY: return 2;
-                //case MeterType.VFO_DISPLAY: return 2;
+                case MeterType.VFO_DISPLAY: return 2;
+                case MeterType.CLOCK: return 2;
             }
 
             return 0;
@@ -414,7 +416,8 @@ namespace Thetis
                 case MeterType.CROSS: return "Cross Meter";
                 case MeterType.SWR: return "SWR";
                 //case MeterType.HISTORY: return "History";
-                //case MeterType.VFO_DISPLAY: return "Vfo Display";
+                case MeterType.VFO_DISPLAY: return "Vfo Display";
+                case MeterType.CLOCK: return "Clock";
             }
 
             return meter.ToString();
@@ -527,33 +530,33 @@ namespace Thetis
             {
                 //if (_power)
                 //{
-                    int nDelay = int.MaxValue;
-                    lock (_metersLock)
+                int nDelay = int.MaxValue;
+                lock (_metersLock)
+                {
+                    // udpate any meter
+                    foreach (KeyValuePair<string, clsMeter> kvp in _meters)
                     {
-                        // udpate any meter
-                        foreach (KeyValuePair<string, clsMeter> kvp in _meters)
+                        readingsUsed.Clear();
+
+                        clsMeter m = kvp.Value;
+
+                        m.Update(ref readingsUsed);
+
+                        int nTmp = m.DelayForUpdate();
+                        if (nTmp < nDelay) nDelay = nTmp;
+
+                        //lock (_readingsLock)
                         {
-                            readingsUsed.Clear();
-
-                            clsMeter m = kvp.Value;
-
-                            m.Update(ref readingsUsed);
-
-                            int nTmp = m.DelayForUpdate();
-                            if (nTmp < nDelay) nDelay = nTmp;
-
-                            //lock (_readingsLock)
+                            // use/invalidate any readings that have been used, so that they can be updated
+                            foreach (Reading rt in readingsUsed)
                             {
-                                // use/invalidate any readings that have been used, so that they can be updated
-                                foreach (Reading rt in readingsUsed)
-                                {
-                                    _readings[m.RX].UseReading(rt);
-                                }
+                                _readings[m.RX].UseReading(rt);
                             }
                         }
                     }
-                    if (nDelay == int.MaxValue) nDelay = 250;
-                    Thread.Sleep(nDelay);
+                }
+                if (nDelay == int.MaxValue) nDelay = 250;
+                Thread.Sleep(nDelay);
                 //}
                 //else
                 //{
@@ -706,7 +709,7 @@ namespace Thetis
             _transverterIndex = _console.TXXVTRIndex;
             _imagePath = sImagePath;
 
-            addDelegates();                       
+            addDelegates();
 
             _meterThread = new Thread(new ThreadStart(UpdateMeters))
             {
@@ -747,8 +750,8 @@ namespace Thetis
                 kvp.Value.ShutdownDX();
             }
 
-            DisposeImageData();           
-            
+            DisposeImageData();
+
             _meterThreadRunning = false;
             if (_meterThread != null && _meterThread.IsAlive) _meterThread.Join();
 
@@ -762,7 +765,7 @@ namespace Thetis
             if (_delegatesAdded || _console == null) return;
 
             _console.MeterReadingsChangedHandlers += OnMeterReadings;
-            _console.MoxPreChangeHandlers += OnPreMox; 
+            _console.MoxPreChangeHandlers += OnPreMox;
             _console.MoxChangeHandlers += OnMox;
             _console.PowerChangeHanders += OnPower;
             _console.VFOAFrequencyChangeHandlers += OnVFOA;
@@ -771,6 +774,11 @@ namespace Thetis
             _console.BandPreChangeHandlers += OnPreBandChange;
             _console.ModeChangeHandlers += OnModeChangeHandler;
             _console.SplitChangedHandlers += OnSplitChanged;
+            _console.VFOTXChangedHandlers += OnVFOTXChanged;
+            _console.TXBandChangeHandlers += OnTXBandChanged;
+            _console.FilterChangedHandlers += OnFilterChanged;
+            _console.MultiRxHandlers += OnMultiRxChanged;
+            _console.VFOASubFrequencyChangeHandlers += OnVFOASub;
 
             _console.AlexPresentChangedHandlers += OnAlexPresentChanged;
             _console.PAPresentChangedHandlers += OnPAPresentChanged;
@@ -797,6 +805,11 @@ namespace Thetis
             _console.BandPreChangeHandlers -= OnPreBandChange;
             _console.ModeChangeHandlers -= OnModeChangeHandler;
             _console.SplitChangedHandlers -= OnSplitChanged;
+            _console.VFOTXChangedHandlers -= OnVFOTXChanged;
+            _console.TXBandChangeHandlers -= OnTXBandChanged;
+            _console.FilterChangedHandlers -= OnFilterChanged;
+            _console.MultiRxHandlers -= OnMultiRxChanged;
+            _console.VFOASubFrequencyChangeHandlers -= OnVFOASub;
 
             _console.AlexPresentChangedHandlers -= OnAlexPresentChanged;
             _console.PAPresentChangedHandlers -= OnPAPresentChanged;
@@ -816,29 +829,93 @@ namespace Thetis
         }
         private static void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
         {
-            //_readings[rx].SetReading(Reading.SPLIT, newSplit ? 1f : 0f); // direct update  
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    clsMeter m = mkvp.Value;
+                    m.Split = rx == m.RX && newSplit;
+                }
+            }
+        }
+        private static void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
 
-            //lock (_metersLock)
-            //{
-            //    foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
-            //    {
-            //        clsMeter m = mkvp.Value;
-            //        m.Split = rx == m.RX && newSplit;
-            //    }
-            //}
+                    m.FilterVfoA = newFilter;
+                    m.FilterVfoB = newFilter;
+
+                    m.FilterVfoAName = sName;
+                    m.FilterVfoBName = sName;
+                }
+            }
+        }
+        private static void OnMultiRxChanged(bool newState, bool oldState, double vfoASubFrequency, Band b, bool bRx2Enabled)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+                    m.MultiRxEnabled = newState;
+                    m.VfoSub = vfoASubFrequency;
+                    m.BandVfoASub = b;
+                }
+            }
+        }
+
+        private static void OnTXBandChanged(Band oldBand, Band newBand)
+        {
+        }
+        private static void OnVFOTXChanged(bool vfoB, bool oldState, bool newState)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+                    m.TXVFOb = vfoB && newState;
+                }
+            }
         }
         private static void OnModeChangeHandler(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
         {
-            //// this is using a float to store the DSPMode, not ideal
-            //_readings[rx].SetReading(Reading.DSPMODE, (float)newMode); // direct update
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+                    if (rx == 1)
+                    {
+                        m.ModeVfoA = newMode;
+                        m.ModeVfoB = newMode;
+                    }
+                    else
+                    {
+                        m.ModeVfoB = newMode;
+                    }
+                }
+            }
         }
         private static void OnBandChange(int rx, Band oldBand, Band newBand)
         {
-            foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+            lock (_metersLock)
             {
-                clsMeter m = ms.Value;
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
 
-                m.ZeroOut(true, false);
+                    if (rx == 1)
+                        m.BandVfoA = newBand;
+                    else
+                        m.BandVfoB = newBand;
+
+                    m.ZeroOut(true, false);
+                }
             }
         }
         private static void OnPreBandChange(int rx, Band currentBand)
@@ -869,17 +946,109 @@ namespace Thetis
         {
             _rx1VHForAbove = _console.VFOAFreq >= 30;
 
-            //_readings[rx].SetReading(Reading.VFOA, (float)newFreq); // direct update                                                                    
-            //_readings[rx].SetReading(Reading.BANDVFOA, (float)newBand); // direct update
-            //_readings[rx].SetReading(Reading.DSPMODE, (float)newMode); // direct update
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = mkvp.Value;
+                    m.VfoA = newFreq;
+                    m.ModeVfoA = newMode;
+                    m.BandVfoA = newBand;
+                }
+            }
         }
         private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
 
-            //_readings[rx].SetReading(Reading.VFOB, (float)newFreq); // direct update
-            //_readings[rx].SetReading(Reading.BANDVFOB, (float)newBand); // direct update
-            //_readings[rx].SetReading(Reading.DSPMODE, (float)newMode); // direct update
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = mkvp.Value;
+                    m.VfoB = newFreq;
+                    m.ModeVfoB = newMode;
+                    m.BandVfoB = newBand;
+                }
+            }
+        }
+        public static void OnVFOASub(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == 1)) // only applies to rx1
+                {
+                    clsMeter m = mkvp.Value;
+                    m.VfoSub = newFreq;
+                    //m.ModeVfoA = newMode;
+                    m.BandVfoASub = newBand;
+                }
+            }
+        }
+        private static void initAllConsoleData()
+        {
+            // list used so that not limited to rx1/rx2
+            List<int> rxNumbers = new List<int>();
+
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    // get rx numbers
+                    if (!rxNumbers.Contains(mkvp.Value.RX)) rxNumbers.Add(mkvp.Value.RX);
+                }
+            }
+
+            // gather all the data again
+            foreach (int rx in rxNumbers)
+            {
+                initConsoleData(rx);
+            }
+
+        }
+        private static void initConsoleData(int rx)
+        {
+            if (_console == null) return;
+
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = mkvp.Value;
+
+                    m.MOX = _console.MOX;
+                    m.Split = _console.VFOSplit;
+                    m.TXVFOb = _console.VFOBTX;
+                    m.RX2Enabled = _console.RX2Enabled;
+                    m.MultiRxEnabled = _console.chkEnableMultiRX.Checked;
+
+                    m.VfoA = _console.VFOAFreq;
+                    m.ModeVfoA = _console.RX1DSPMode;
+                    m.BandVfoA = _console.RX1Band;
+                    m.FilterVfoA = _console.RX1Filter;
+                    m.FilterVfoAName = _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
+
+                    m.VfoB = _console.VFOBFreq;
+
+                    m.VfoSub = _console.VFOASubFreq;
+
+                    if (!_console.RX2Enabled)
+                    {
+                        // same as rx1 unless rx2 enabled
+                        m.ModeVfoB = _console.RX1DSPMode;
+                        m.BandVfoB = _console.GetRX1BandForVFOb();//_console.RX1Band;
+                        m.FilterVfoB = _console.RX1Filter;
+                        m.FilterVfoBName = _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
+                    }
+                    else
+                    {
+                        m.ModeVfoB = _console.RX2DSPMode;
+                        m.BandVfoB = _console.RX2Band;
+                        m.FilterVfoB = _console.RX2Filter;
+                        m.FilterVfoBName = _console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
+                    }
+                }
+            }
         }
         private static void OnPower(bool oldPower, bool newPower)
         {
@@ -905,7 +1074,7 @@ namespace Thetis
                     m.MOX = rx == m.RX && newMox;
                 }
 
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                foreach (KeyValuePair<string, clsMeter> ms in _meters) //.Where(o => o.Value.RX == rx))  // reset them all
                 {
                     clsMeter m = ms.Value;
 
@@ -1002,11 +1171,11 @@ namespace Thetis
             // locked outside
             if (_readings[rx].RequiresUpdate(rt) && (!_readingIgnore[rx] || bChangeOverride)) _readings[rx].SetReading(rt, readings[rt]);
         }
-        private static void setReading(int rx, Reading rt, float reading, bool bChangeOverride = false)
+        private static void setReadingForced(int rx, Reading rt, float reading)
         {
             //lock (_readingsLock)
             {
-                if (_readings[rx].RequiresUpdate(rt) && (!_readingIgnore[rx] || bChangeOverride)) _readings[rx].SetReading(rt, reading);
+                _readings[rx].SetReading(rt, reading);
             }
         }
         private static void OnMeterReadings(int rx, bool mox, ref Dictionary<Reading, float> readings)
@@ -1108,7 +1277,7 @@ namespace Thetis
                 return _meters[sId];
             }
         }
-        public static void AddMeterContainer(ucMeter ucM, bool mox, bool bShow = false)
+        public static void AddMeterContainer(ucMeter ucM, bool bShow = false)
         {
             if (_console == null) return;
 
@@ -1123,17 +1292,23 @@ namespace Thetis
                 f.ID = ucM.ID;
 
                 // meter items
-                clsMeter meter = new clsMeter(ucM.RX, "", 1f, 1f, mox);
+                clsMeter meter = new clsMeter(ucM.RX, "", 1f, 1f);
                 meter.ID = ucM.ID;
 
                 // a renderer
                 addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter, ucM.BackColor);
 
-                // store everything
-                _lstMeterDisplayForms.Add(f.ID, f);
-                _lstUCMeters.Add(ucM.ID, ucM);
-                _meters.Add(meter.ID, meter);
-                
+                lock (_metersLock)
+                {
+                    // store everything
+                    _lstMeterDisplayForms.Add(f.ID, f);
+                    _lstUCMeters.Add(ucM.ID, ucM);
+                    _meters.Add(meter.ID, meter);
+                }
+
+                // init all the meter info from console
+                initConsoleData(ucM.RX);
+
                 if (bShow)
                 {
                     if (ucM.Floating)
@@ -1149,37 +1324,46 @@ namespace Thetis
         {
             if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
 
-            foreach (KeyValuePair<string, ucMeter> ucms in _lstUCMeters)
+            lock (_metersLock)
             {
-                ucMeter ucm = ucms.Value;
-                if (_lstMeterDisplayForms.ContainsKey(ucm.ID))
+                foreach (KeyValuePair<string, ucMeter> ucms in _lstUCMeters)
                 {
-                    // setup
-                    frmMeterDisplay f = _lstMeterDisplayForms[ucm.ID];
-
-                    if (ucm.Floating)
+                    ucMeter ucm = ucms.Value;
+                    if (_lstMeterDisplayForms.ContainsKey(ucm.ID))
                     {
-                        setMeterFloating(ucm, f);
+                        // setup
+                        frmMeterDisplay f = _lstMeterDisplayForms[ucm.ID];
+
+                        if (ucm.Floating)
+                        {
+                            setMeterFloating(ucm, f);
+                        }
+                        else
+                            returnMeterFromFloating(ucm, f);
                     }
-                    else
-                        returnMeterFromFloating(ucm, f);
                 }
             }
         }
 
-        public static string AddMeterContainer(int nRx, bool bFloating, bool mox, bool bShow = false)
+        public static string AddMeterContainer(int nRx, bool bFloating, bool bShow = false)
         {
             ucMeter ucM = new ucMeter();
             ucM.RX = nRx;
             ucM.Floating = bFloating;
 
-            AddMeterContainer(ucM, mox, bShow);
+            AddMeterContainer(ucM, bShow);
 
             return ucM.ID;
         }
         public static int TotalMeterContainers
         {
-            get { return _lstUCMeters.Count; }
+            get 
+            {
+                lock (_metersLock)
+                {
+                    return _lstUCMeters.Count;
+                }
+            }
         }
         private static void ucMeter_FloatingDockedClicked(object sender, EventArgs e)
         {
@@ -1200,9 +1384,12 @@ namespace Thetis
         }
         public static void SetPositionOfDockedMeters()
         {
-            foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
+            lock (_metersLock)
             {
-                setPoisitionOfDockedMeter(kvp.Value);
+                foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
+                {
+                    setPoisitionOfDockedMeter(kvp.Value);
+                }
             }
         }
         private static void setPoisitionOfDockedMeter(ucMeter m)
@@ -1283,35 +1470,43 @@ namespace Thetis
         }
         private static void OnRX2EnabledChanged(bool enabled)
         {
-            if (enabled)
+            lock (_metersLock)
             {
-                foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters.Where(o => o.Value.RX == 2))
+                if (enabled)
                 {
-                    ucMeter ucM = kvp.Value;
+                    foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters.Where(o => o.Value.RX == 2))
+                    {
+                        ucMeter ucM = kvp.Value;
 
-                    if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
 
-                    if (ucM.Floating)
-                        setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
-                    else
-                        returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                        if (ucM.Floating)
+                            setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                        else
+                            returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                    }
                 }
             }
+
+            initAllConsoleData();
         }
         private static void OnRX2EnabledPreChanged(bool enabled)
         {
             if (!enabled)
             {
-                foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters.Where(o => o.Value.RX == 2))
+                lock (_metersLock)
                 {
-                    ucMeter ucM = kvp.Value;
+                    foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters.Where(o => o.Value.RX == 2))
+                    {
+                        ucMeter ucM = kvp.Value;
 
-                    if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
 
-                    if (ucM.Floating)
-                        _lstMeterDisplayForms[ucM.ID].Hide();
-                    else
-                        ucM.Hide();
+                        if (ucM.Floating)
+                            _lstMeterDisplayForms[ucM.ID].Hide();
+                        else
+                            ucM.Hide();
+                    }
                 }
             }
         }
@@ -1395,39 +1590,42 @@ namespace Thetis
 
             try
             {
-                // meter container data
-                foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
+                lock (_metersLock)
                 {
-                    a.Add("meterContData_" + kvp.Value.ID + "/" + kvp.Value.ToString());
-
-                    // then the meter itself which holds multiple meter items
-                    clsMeter m = MeterFromId(kvp.Value.ID);
-                    if (m != null)
+                    // meter container data
+                    foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
                     {
-                        a.Add("meterData_" + kvp.Value.ID + "/" + m.ToString());
+                        a.Add("meterContData_" + kvp.Value.ID + "/" + kvp.Value.ToString());
 
-                        Dictionary<string, clsItemGroup> groupItems = m.getMeterGroups();
-
-                        // then each meter item which are groups in this case
-                        foreach (KeyValuePair<string, clsItemGroup> ig in groupItems)
+                        // then the meter itself which holds multiple meter items
+                        clsMeter m = MeterFromId(kvp.Value.ID);
+                        if (m != null)
                         {
-                            Dictionary<string, clsMeterItem> mis = m.itemsFromID(ig.Value.ID);
-                            if (mis != null)
+                            a.Add("meterData_" + kvp.Value.ID + "/" + m.ToString());
+
+                            Dictionary<string, clsItemGroup> groupItems = m.getMeterGroups();
+
+                            // then each meter item which are groups in this case
+                            foreach (KeyValuePair<string, clsItemGroup> ig in groupItems)
                             {
-                                foreach (KeyValuePair<string, clsMeterItem> kvp2 in mis.Where(o => o.Value.StoreSettings == true))
+                                Dictionary<string, clsMeterItem> mis = m.itemsFromID(ig.Value.ID);
+                                if (mis != null)
                                 {
-                                    clsMeterItem mi = kvp2.Value;
-                                    if (mi != null)
+                                    foreach (KeyValuePair<string, clsMeterItem> kvp2 in mis.Where(o => o.Value.StoreSettings == true))
                                     {
-                                        a.Add("meterIGData_" + kvp2.Value.ID + "/" + mi.ToString());
+                                        clsMeterItem mi = kvp2.Value;
+                                        if (mi != null)
+                                        {
+                                            a.Add("meterIGData_" + kvp2.Value.ID + "/" + mi.ToString());
+                                        }
                                     }
                                 }
-                            }
 
-                            clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType);
-                            if (igs != null)
-                            {
-                                a.Add("meterIGSettings_" + ig.Value.ID + "/" + igs.ToString());
+                                clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType);
+                                if (igs != null)
+                                {
+                                    a.Add("meterIGSettings_" + ig.Value.ID + "/" + igs.ToString());
+                                }
                             }
                         }
                     }
@@ -1442,7 +1640,13 @@ namespace Thetis
         }
         public static Dictionary<string, ucMeter> MeterContainers
         {
-            get { return _lstUCMeters; }
+            get 
+            {
+                lock (_metersLock)
+                {
+                    return _lstUCMeters;
+                }
+            }
         }
         public static void RemoveMeterContainer(string sId)
         {
@@ -1486,7 +1690,8 @@ namespace Thetis
                 MAGIC_EYE,
                 HISTORY,
                 ITEM_GROUP,
-                VFO_DISPLAY
+                VFO_DISPLAY,
+                CLOCK
             }
 
             public class clsPercCache
@@ -1969,152 +2174,152 @@ namespace Thetis
             //    return sRet;
             //}
         }
-        //internal class clsVfoDisplay : clsMeterItem
-        //{
-        //    private System.Drawing.Color _colour;
-        //    private string _fontFamily;
-        //    private FontStyle _fontStyle;
-        //    private float _fontSize;
+        internal class clsVfoDisplay : clsMeterItem
+        {
+            private System.Drawing.Color _colour;
+            private string _fontFamily;
+            private FontStyle _fontStyle;
+            private float _fontSize;
 
-        //    private double _vfoA;
-        //    private double _vfoB;
-        //    private double _vfoSub;
-        //    private DSPMode _mode;
-        //    private Band _bandVfoA;
-        //    private Band _bandVfoB;
-        //    private bool _split;
-        //    private bool _txvfob;
+            public clsVfoDisplay()
+            {
+                _fontFamily = "Trebuchet MS";
+                _fontStyle = FontStyle.Regular;
+                _fontSize = 18f;
 
-        //    public clsVfoDisplay()
-        //    {
-        //        _fontFamily = "Trebuchet MS";
-        //        _fontStyle = FontStyle.Regular;
-        //        _fontSize = 18f;
+                ItemType = MeterItemType.VFO_DISPLAY;
+                _colour = System.Drawing.Color.White;
+                StoreSettings = false;
+                UpdateInterval = 50; // fixed
+            }
+            public string FontFamily
+            {
+                get { return _fontFamily; }
+                set { _fontFamily = value; }
+            }
+            public FontStyle Style
+            {
+                get { return _fontStyle; }
+                set { _fontStyle = value; }
+            }
+            public System.Drawing.Color Colour
+            {
+                get { return _colour; }
+                set { _colour = value; }
+            }
+            public float FontSize
+            {
+                get { return _fontSize; }
+                set { _fontSize = value; }
+            }
 
-        //        ItemType = MeterItemType.VFO_DISPLAY;
-        //        _colour = System.Drawing.Color.White;
-        //        StoreSettings = false;
+            //public override string ToString()
+            //{
+            //    string sRet;
 
-        //        _vfoA = 0f;
-        //        _vfoB = 0f;
-        //        _vfoSub = 0f;
-        //        _mode = DSPMode.FIRST;
-        //        _bandVfoA = Band.FIRST;
-        //        _bandVfoB = Band.FIRST;
-        //        _split = false;
-        //        _txvfob = false;
-        //    }
-        //    public override void Update(int rx, ref List<Reading> readingsUsed)
-        //    {
-        //        // get latest readings
-        //        _vfoA = MeterManager.getReading(rx, Reading.VFOA);
-        //        _vfoB = MeterManager.getReading(rx, Reading.VFOB);
-        //        _vfoSub = MeterManager.getReading(rx, Reading.VFOSUB);
+            //    sRet = ID + "|" +
+            //        ParentID + "|" +
+            //        ItemType.ToString() + "|" +
+            //        TopLeft.X.ToString("f4") + "|" +
+            //        TopLeft.Y.ToString("f4") + "|" +
+            //        Size.Width.ToString("f4") + "|" +
+            //        Size.Height.ToString("f4") + "|" +
+            //        //
+            //        _colour.ToString();
 
-        //        _mode = (DSPMode)(int)MeterManager.getReading(rx, Reading.DSPMODE);
-        //        _bandVfoA = (Band)(int)MeterManager.getReading(rx, Reading.BANDVFOA);
-        //        _bandVfoB = (Band)(int)MeterManager.getReading(rx, Reading.BANDVFOB);
+            //    return sRet;
+            //}
+        }
+        internal class clsClock : clsMeterItem
+        {
+            private System.Drawing.Color _colour;
+            private string _fontFamily;
+            private FontStyle _fontStyle;
+            private float _fontSize;
+            private System.Drawing.Color _timeColour;
+            private System.Drawing.Color _dateColour;
+            private System.Drawing.Color _typeTitleColour;
+            private bool _showType;
+            private bool _24HourClock;
 
-        //        _split = MeterManager.getReading(rx, Reading.SPLIT) > 0;
-        //        _txvfob = MeterManager.getReading(rx, Reading.TXVFOB) > 0;
+            public clsClock()
+            {
+                _fontFamily = "Trebuchet MS";
+                _fontStyle = FontStyle.Regular;
+                _fontSize = 18f;
+                _showType = true;
+                _timeColour = System.Drawing.Color.Orange;
+                _dateColour = System.Drawing.Color.Gray;
+                _typeTitleColour = System.Drawing.Color.Gray;
+                _24HourClock = true;
 
-        //        // these reading have been used
-        //        if (!readingsUsed.Contains(Reading.VFOA))
-        //            readingsUsed.Add(Reading.VFOA);
+                ItemType = MeterItemType.CLOCK;
+                _colour = System.Drawing.Color.White;
+                StoreSettings = false;
+                UpdateInterval = 250; // fixed
+            }
+            public bool Show24HourCLock
+            {
+                get { return _24HourClock; }
+                set { _24HourClock = value; }
+            }
+            public bool ShowType
+            {
+                get { return _showType; }
+                set { _showType = value; }
+            }
+            public System.Drawing.Color TimeColour
+            {
+                get { return _timeColour; }
+                set { _timeColour = value; }
+            }
+            public System.Drawing.Color DateColour
+            {
+                get { return _dateColour; }
+                set { _dateColour = value; }
+            }
+            public System.Drawing.Color TypeTitleColour
+            {
+                get { return _typeTitleColour; }
+                set { _typeTitleColour = value; }
+            }
+            public string FontFamily
+            {
+                get { return _fontFamily; }
+                set { _fontFamily = value; }
+            }
+            public FontStyle Style
+            {
+                get { return _fontStyle; }
+                set { _fontStyle = value; }
+            }
+            public System.Drawing.Color Colour
+            {
+                get { return _colour; }
+                set { _colour = value; }
+            }
+            public float FontSize
+            {
+                get { return _fontSize; }
+                set { _fontSize = value; }
+            }
+            //public override string ToString()
+            //{
+            //    string sRet;
 
-        //        if (!readingsUsed.Contains(Reading.VFOB))
-        //            readingsUsed.Add(Reading.VFOB);
+            //    sRet = ID + "|" +
+            //        ParentID + "|" +
+            //        ItemType.ToString() + "|" +
+            //        TopLeft.X.ToString("f4") + "|" +
+            //        TopLeft.Y.ToString("f4") + "|" +
+            //        Size.Width.ToString("f4") + "|" +
+            //        Size.Height.ToString("f4") + "|" +
+            //        //
+            //        _colour.ToString();
 
-        //        if (!readingsUsed.Contains(Reading.VFOSUB))
-        //            readingsUsed.Add(Reading.VFOSUB);
-
-        //        if (!readingsUsed.Contains(Reading.DSPMODE))
-        //            readingsUsed.Add(Reading.DSPMODE);
-
-        //        if (!readingsUsed.Contains(Reading.BANDVFOA))
-        //            readingsUsed.Add(Reading.BANDVFOA);
-        //        if (!readingsUsed.Contains(Reading.BANDVFOB))
-        //            readingsUsed.Add(Reading.BANDVFOB);
-
-        //        if (!readingsUsed.Contains(Reading.SPLIT))
-        //            readingsUsed.Add(Reading.SPLIT);
-
-        //        if (!readingsUsed.Contains(Reading.TXVFOB))
-        //            readingsUsed.Add(Reading.TXVFOB);
-        //    }
-        //    public double VFOA
-        //    {
-        //        get { return _vfoA; }
-        //        set { _vfoA = value; }
-        //    }
-        //    public double VFOB
-        //    {
-        //        get { return _vfoB; }
-        //        set { _vfoB = value; }
-        //    }
-        //    public double VFOSub
-        //    {
-        //        get { return _vfoSub; }
-        //        set { _vfoSub = value; }
-        //    }
-        //    public DSPMode Mode
-        //    {
-        //        get { return _mode; }
-        //        set { _mode = value; }
-        //    }
-        //    public Band BandVfoA
-        //    {
-        //        get { return _bandVfoA; }
-        //        set { _bandVfoA = value; }
-        //    }
-        //    public Band BandVfoB
-        //    {
-        //        get { return _bandVfoB; }
-        //        set { _bandVfoB = value; }
-        //    }
-        //    public bool Split
-        //    {
-        //        get { return _split; }
-        //        set { _split = value; }
-        //    }
-        //    public string FontFamily
-        //    {
-        //        get { return _fontFamily; }
-        //        set { _fontFamily = value; }
-        //    }
-        //    public FontStyle Style
-        //    {
-        //        get { return _fontStyle; }
-        //        set { _fontStyle = value; }
-        //    }
-        //    public System.Drawing.Color Colour
-        //    {
-        //        get { return _colour; }
-        //        set { _colour = value; }
-        //    }
-        //    public float FontSize
-        //    {
-        //        get { return _fontSize; }
-        //        set { _fontSize = value; }
-        //    }
-
-        //    //public override string ToString()
-        //    //{
-        //    //    string sRet;
-
-        //    //    sRet = ID + "|" +
-        //    //        ParentID + "|" +
-        //    //        ItemType.ToString() + "|" +
-        //    //        TopLeft.X.ToString("f4") + "|" +
-        //    //        TopLeft.Y.ToString("f4") + "|" +
-        //    //        Size.Width.ToString("f4") + "|" +
-        //    //        Size.Height.ToString("f4") + "|" +
-        //    //        //
-        //    //        _colour.ToString();
-
-        //    //    return sRet;
-        //    //}
-        //}
+            //    return sRet;
+            //}
+        }
         internal class clsImage : clsMeterItem
         {
             private string _name;
@@ -3475,6 +3680,24 @@ namespace Thetis
             private float _fPadY = 0.05f;
             private float _fHeight = 0.05f;
 
+            private bool _split;
+            private double _vfoA;
+            private double _vfoB;
+            private double _vfoSub;
+            private bool _txVfoB;
+            private DSPMode _modeVfoA;
+            private DSPMode _modeVfoB;
+            private Band _bandVfoA;
+            private Band _bandVfoB;
+            private Band _bandVfoASub;
+            private string _filterVfoAname;
+            private string _filterVfoBname;
+            private bool _rx2Enabled;
+            private bool _multiRxEnabled;
+
+            private Filter _filterVfoA;
+            private Filter _filterVfoB;
+
             private int _quickestRXUpdate;
             private int _quickestTXUpdate;
             private Object _objMeterItemLock = new Object();
@@ -3519,7 +3742,8 @@ namespace Thetis
                     case MeterType.CROSS: AddCrossNeedle(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SWR: AddSWRBar(nDelay, 0, out bBottom, restoreIg); break;
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
-                    //case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
                 }
             }
 
@@ -3704,7 +3928,7 @@ namespace Thetis
                 cb.AttackRatio = 0.2f;
                 cb.DecayRatio = 0.05f;
                 cb.UpdateInterval = nMSupdate;
-                cb.HistoryDuration = 1000;
+                cb.HistoryDuration = 4000;
                 cb.ShowHistory = false;
                 cb.PeakHold = true;
                 cb.Colour = System.Drawing.Color.DarkCyan;
@@ -3762,7 +3986,7 @@ namespace Thetis
                 cb.AttackRatio = 0.2f;
                 cb.DecayRatio = 0.05f;
                 cb.UpdateInterval = nMSupdate;
-                cb.HistoryDuration = 1000;
+                cb.HistoryDuration = 4000;
                 cb.ShowHistory = true;
                 cb.PeakHold = false;
                 cb.Colour = System.Drawing.Color.DarkCyan;
@@ -3820,7 +4044,7 @@ namespace Thetis
                 cb.AttackRatio = 0.2f;
                 cb.DecayRatio = 0.05f;
                 cb.UpdateInterval = nMSupdate;
-                cb.HistoryDuration = 1000;
+                cb.HistoryDuration = 4000;
                 cb.ShowHistory = true;
                 cb.PeakHold = false;
                 cb.Colour = System.Drawing.Color.DarkCyan;
@@ -4085,7 +4309,7 @@ namespace Thetis
                 ni4.AttackRatio = 0.2f;//0.325f;
                 ni4.DecayRatio = 0.1f;//0.5f;
                 ni4.UpdateInterval = nMSupdate;
-                ni4.HistoryDuration = 1000;
+                ni4.HistoryDuration = 4000;
                 ni4.ShowHistory = true;
                 ni4.Style = clsNeedleItem.NeedleStyle.Line;
                 ni4.Colour = System.Drawing.Color.FromArgb(255, 233, 51, 50);
@@ -4146,7 +4370,7 @@ namespace Thetis
                 ni5.AttackRatio = 0.2f;//0.325f;
                 ni5.DecayRatio = 0.1f;//0.5f;
                 ni5.UpdateInterval = nMSupdate;
-                ni5.HistoryDuration = 1000;
+                ni5.HistoryDuration = 4000;
                 ni5.ShowHistory = true;
                 ni5.Style = clsNeedleItem.NeedleStyle.Line;
                 ni5.Colour = System.Drawing.Color.Black;
@@ -4177,7 +4401,7 @@ namespace Thetis
                 ni6.AttackRatio = 0.2f;//0.325f;
                 ni6.DecayRatio = 0.1f;//0.5f;
                 ni6.UpdateInterval = nMSupdate;
-                ni6.HistoryDuration = 1000;
+                ni6.HistoryDuration = 4000;
                 ni6.ShowHistory = false;
                 ni6.Style = clsNeedleItem.NeedleStyle.Line;
                 ni6.Colour = System.Drawing.Color.Black;
@@ -4208,7 +4432,7 @@ namespace Thetis
                 ni7.AttackRatio = 0.2f;//0.325f;
                 ni7.DecayRatio = 0.1f;//0.5f;
                 ni7.UpdateInterval = nMSupdate;
-                ni7.HistoryDuration = 1000;
+                ni7.HistoryDuration = 4000;
                 ni7.ShowHistory = false;
                 ni7.Style = clsNeedleItem.NeedleStyle.Line;
                 ni7.Colour = System.Drawing.Color.Black;
@@ -4290,7 +4514,7 @@ namespace Thetis
                 ni.AttackRatio = 0.2f;
                 ni.DecayRatio = 0.1f;
                 ni.UpdateInterval = nMSupdate;
-                ni.HistoryDuration = 1000;
+                ni.HistoryDuration = 4000;
                 ni.ShowHistory = true;
                 ni.StrokeWidth = 2.5f;
                 ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -4358,7 +4582,7 @@ namespace Thetis
                 ni2.AttackRatio = 0.2f;//0.325f;
                 ni2.DecayRatio = 0.1f;//0.5f;
                 ni2.UpdateInterval = nMSupdate;
-                ni2.HistoryDuration = 1000;
+                ni2.HistoryDuration = 4000;
                 ni2.ShowHistory = true;
                 ni2.StrokeWidth = 2.5f;
                 ni2.Direction = clsNeedleItem.NeedleDirection.CounterClockwise;
@@ -5357,63 +5581,94 @@ namespace Thetis
 
                 return cb.ID;
             }
-            //public string AddVFODisplay(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
-            //{
-            //    clsItemGroup ig = new clsItemGroup();
-            //    if (restoreIg != null) ig.ID = restoreIg.ID;
-            //    ig.ParentID = ID;
+            public string AddVFODisplay(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
 
-            //    clsSolidColour sc = new clsSolidColour();
-            //    sc.ParentID = ig.ID;
-            //    sc.TopLeft = new PointF(_fPadX, fTop + _fPadY - _fHeight * 0.75f);
-            //    sc.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
-            //    sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
-            //    sc.ZOrder = 1;
-            //    addMeterItem(sc);
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(_fPadX, fTop + _fPadY - _fHeight * 0.75f);
+                sc.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
 
-            //    clsSolidColour sc2 = new clsSolidColour();
-            //    sc2.ParentID = ig.ID;
-            //    sc2.TopLeft = new PointF(0.5f + (_fPadX * 0.5f), fTop + _fPadY - _fHeight * 0.75f);
-            //    sc2.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
-            //    sc2.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
-            //    sc2.ZOrder = 1;
-            //    addMeterItem(sc2);
+                clsSolidColour sc2 = new clsSolidColour();
+                sc2.ParentID = ig.ID;
+                sc2.TopLeft = new PointF(0.5f + (_fPadX * 0.5f), fTop + _fPadY - _fHeight * 0.75f);
+                sc2.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                sc2.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc2.ZOrder = 1;
+                addMeterItem(sc2);
 
-            //    //
-            //    clsVfoDisplay vfo = new clsVfoDisplay();
-            //    vfo.ParentID = ig.ID;
-            //    vfo.TopLeft = sc.TopLeft;
-            //    vfo.Size = new SizeF(1f - _fPadX * 2f, _fHeight + _fHeight * 0.75f);
-            //    vfo.UpdateInterval = nMSupdate;
-            //    vfo.Primary = true;
-            //    vfo.ZOrder = 2;
-            //    if (RX == 1)
-            //    {
-            //        vfo.VFOA = _console.VFOAFreq;
-            //        vfo.VFOB = _console.VFOBFreq;
-            //        vfo.VFOSub = _console.VFOASubFreq;
-            //    }
-            //    else
-            //    {
-            //        // rx2
-            //        vfo.VFOA = 0; // not used
-            //        vfo.VFOB = _console.VFOBFreq;
-            //        vfo.VFOSub = 0;//check?
-            //    }
-            //    addMeterItem(vfo);
-            //    //
+                //
+                clsVfoDisplay vfo = new clsVfoDisplay();
+                vfo.ParentID = ig.ID;
+                vfo.TopLeft = sc.TopLeft;
+                vfo.Size = new SizeF(1f - _fPadX * 2f, _fHeight + _fHeight * 0.75f);
+                //vfo.UpdateInterval = nMSupdate;  //Fixed by constructor, should not be changed by user
+                vfo.Primary = true;
+                vfo.ZOrder = 2;
+                addMeterItem(vfo);
+                //
 
-            //    fBottom = sc.TopLeft.Y + sc.Size.Height;
+                fBottom = sc.TopLeft.Y + sc.Size.Height;
 
-            //    ig.TopLeft = sc.TopLeft;
-            //    ig.Size = new SizeF(sc.Size.Width, fBottom);
-            //    ig.MeterType = MeterType.VFO_DISPLAY;
-            //    ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+                ig.TopLeft = sc.TopLeft;
+                ig.Size = new SizeF(sc.Size.Width, fBottom);
+                ig.MeterType = MeterType.VFO_DISPLAY;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
-            //    addMeterItem(ig);
+                addMeterItem(ig);
 
-            //    return sc.ID;
-            //}
+                return sc.ID;
+            }
+            public string AddClock(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(_fPadX, fTop + _fPadY - _fHeight * 0.75f);
+                sc.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                clsSolidColour sc2 = new clsSolidColour();
+                sc2.ParentID = ig.ID;
+                sc2.TopLeft = new PointF(0.5f + (_fPadX * 0.5f), fTop + _fPadY - _fHeight * 0.75f);
+                sc2.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                sc2.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc2.ZOrder = 1;
+                addMeterItem(sc2);
+
+                //
+                clsClock clk = new clsClock();
+                clk.ParentID = ig.ID;
+                clk.TopLeft = sc.TopLeft;
+                clk.Size = new SizeF(1f - _fPadX * 2f, _fHeight + _fHeight * 0.75f);
+                //vfo.UpdateInterval = nMSupdate;  //Fixed by constructor, can not be changed by user
+                clk.Primary = true;
+                clk.ZOrder = 2;
+                addMeterItem(clk);
+                //
+
+                fBottom = sc.TopLeft.Y + sc.Size.Height;
+
+                ig.TopLeft = sc.TopLeft;
+                ig.Size = new SizeF(sc.Size.Width, fBottom);
+                ig.MeterType = MeterType.CLOCK;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                addMeterItem(ig);
+
+                return sc.ID;
+            }
             //private string AddHistory(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             //{
             //    clsItemGroup ig = new clsItemGroup();
@@ -5449,15 +5704,30 @@ namespace Thetis
             //    return hi.ID;
             //}
             #endregion
-            public clsMeter(int rx, string sName, float XRatio = 1f, float YRatio = 1f, bool mox = false)
+            public clsMeter(int rx, string sName, float XRatio = 1f, float YRatio = 1f)
             {
                 // constructor
                 _sId = Guid.NewGuid().ToString();
                 _rx = rx;
                 _name = sName;
-                _mox = mox;
                 _quickestRXUpdate = 250;
                 _quickestTXUpdate = 250;
+                _split = false;
+                _vfoA = 0;
+                _vfoB = 0;
+                _vfoSub = 0;
+                _txVfoB = false;
+                _bandVfoA = Band.FIRST;
+                _bandVfoB = Band.FIRST;
+                _bandVfoASub = Band.FIRST;
+                _modeVfoA = DSPMode.FIRST;
+                _modeVfoB = DSPMode.FIRST;
+                _filterVfoA = Filter.FIRST;
+                _filterVfoB = Filter.FIRST;
+                _filterVfoAname = "";
+                _filterVfoBname = "";
+                _rx2Enabled = false;
+                _multiRxEnabled = false;
 
                 _fPadX = 0.02f;
                 _fPadY = 0.05f;
@@ -5485,8 +5755,8 @@ namespace Thetis
 
                         if (bOk)
                         {
-                            if (bRxReadings) setReading(RX, mi.ReadingSource, value, true);
-                            if (bTxReadings) setReading(RX, mi.ReadingSource, value, true);
+                            if (bRxReadings) setReadingForced(RX, mi.ReadingSource, value);
+                            if (bTxReadings) setReadingForced(RX, mi.ReadingSource, value);
                         }
                     }
                 }
@@ -5840,31 +6110,61 @@ namespace Thetis
                                 //        }
                                 //    }
                                 //    break;
-                                //case MeterType.VFO_DISPLAY:
-                                //    {
-                                //        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                case MeterType.VFO_DISPLAY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
 
-                                //        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
-                                //        {
-                                //            clsSolidColour solidColor = sc.Value as clsSolidColour;
-                                //            if (solidColor == null) continue;
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                            if (solidColor == null) continue;
 
-                                //            solidColor.FadeOnRx = igs.FadeOnRx;
-                                //            solidColor.FadeOnTx = igs.FadeOnTx;
-                                //            solidColor.Colour = igs.Colour;
-                                //        }
-                                //        foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
-                                //        {
-                                //            clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
-                                //            if (vfo == null) continue;
+                                            solidColor.FadeOnRx = igs.FadeOnRx;
+                                            solidColor.FadeOnTx = igs.FadeOnTx;
+                                            solidColor.Colour = igs.Colour;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
+                                        {
+                                            clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
+                                            if (vfo == null) continue;
 
-                                //            vfo.UpdateInterval = igs.UpdateInterval;
-                                //            vfo.FadeOnRx = igs.FadeOnRx;
-                                //            vfo.FadeOnTx = igs.FadeOnTx;
-                                //            vfo.Colour = igs.MarkerColour;
-                                //        }
-                                //    }
-                                //    break;
+                                            //vfo.UpdateInterval = igs.UpdateInterval;
+                                            vfo.FadeOnRx = igs.FadeOnRx;
+                                            vfo.FadeOnTx = igs.FadeOnTx;
+                                            vfo.Colour = igs.MarkerColour;
+                                        }
+                                    }
+                                    break;
+                                case MeterType.CLOCK:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                            if (solidColor == null) continue;
+
+                                            solidColor.FadeOnRx = igs.FadeOnRx;
+                                            solidColor.FadeOnTx = igs.FadeOnTx;
+                                            solidColor.Colour = igs.Colour;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> clks in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.CLOCK))
+                                        {
+                                            clsClock clk = clks.Value as clsClock;
+                                            if (clk == null) continue;
+
+                                            //vfo.UpdateInterval = igs.UpdateInterval;
+                                            //clk.Show24HourCLock = igs.Clock24Hr;
+                                            clk.FadeOnRx = igs.FadeOnRx;
+                                            clk.FadeOnTx = igs.FadeOnTx;
+                                            clk.TimeColour = igs.MarkerColour;
+                                            clk.DateColour = igs.SubMarkerColour;
+                                            clk.ShowType = igs.ShowType;
+                                            clk.TypeTitleColour = igs.TitleColor;
+                                            clk.Show24HourCLock = igs.ShowMarker; // showmarker is used for the bool
+                                        }
+                                    }
+                                    break;
                                 default:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -6071,38 +6371,69 @@ namespace Thetis
                                         }
                                     }
                                     break;
-                                //case MeterType.VFO_DISPLAY:
-                                //    {
-                                //        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                case MeterType.VFO_DISPLAY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
 
-                                //        foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
-                                //        {
-                                //            clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
-                                //            if (vfo == null) continue;
+                                        foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
+                                        {
+                                            clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
+                                            if (vfo == null) continue;
 
-                                //            if (vfo.Primary)
-                                //            {
-                                //                igs.UpdateInterval = vfo.UpdateInterval;
-                                //                igs.FadeOnRx = vfo.FadeOnRx;
-                                //                igs.FadeOnTx = vfo.FadeOnTx;
-                                //                igs.MarkerColour = vfo.Colour;
-                                //            }
-                                //            else
-                                //            {
+                                            if (vfo.Primary)
+                                            {
+                                                //igs.UpdateInterval = vfo.UpdateInterval;
+                                                igs.FadeOnRx = vfo.FadeOnRx;
+                                                igs.FadeOnTx = vfo.FadeOnTx;
+                                                igs.MarkerColour = vfo.Colour;
+                                            }
+                                            else
+                                            {
 
-                                //            }
-                                //        }
-                                //        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
-                                //        {
-                                //            clsSolidColour solidColor = sc.Value as clsSolidColour;
-                                //            if (solidColor == null) continue;
+                                            }
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                            if (solidColor == null) continue;
 
-                                //            //igs.FadeOnRx = solidColor.FadeOnRx;
-                                //            //solidColor.FadeOnTx = igs.FadeOnTx;
-                                //            igs.Colour = solidColor.Colour;
-                                //        }
-                                //    }
-                                //    break;
+                                            //igs.FadeOnRx = solidColor.FadeOnRx;
+                                            //solidColor.FadeOnTx = igs.FadeOnTx;
+                                            igs.Colour = solidColor.Colour;
+                                        }
+                                    }
+                                    break;
+                                case MeterType.CLOCK:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+
+                                        foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.CLOCK))
+                                        {
+                                            clsClock clk = vfos.Value as clsClock;
+                                            if (clk == null) continue;
+
+                                            //igs.UpdateInterval = vfo.UpdateInterval;
+                                            igs.FadeOnRx = clk.FadeOnRx;
+                                            igs.FadeOnTx = clk.FadeOnTx;
+
+                                            //igs.Clock24Hr = clk.Show24HourCLock;
+                                            igs.MarkerColour = clk.TimeColour;
+                                            igs.SubMarkerColour = clk.DateColour;
+                                            igs.ShowType = clk.ShowType;
+                                            igs.TitleColor = clk.TypeTitleColour;
+                                            igs.ShowMarker = clk.Show24HourCLock; // showmarker is used for the bool
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                            if (solidColor == null) continue;
+
+                                            //igs.FadeOnRx = solidColor.FadeOnRx;
+                                            //solidColor.FadeOnTx = igs.FadeOnTx;
+                                            igs.Colour = solidColor.Colour;
+                                        }
+                                    }
+                                    break;
                                 //case MeterType.HISTORY:
                                 //{
                                 //    Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -6422,17 +6753,86 @@ namespace Thetis
                 get { return _mox; }
                 set { _mox = value; }
             }
-            //public bool Split
-            //{
-            //    get { return _split; }
-            //    set { _split = value; }
-            //}
-            //public bool TXVFOb
-            //{
-            //    get { return _txVfoB; }
-            //    set { _txVfoB = value; }
-            //}
-
+            public bool Split
+            {
+                get { return _split; }
+                set { _split = value; }
+            }
+            public bool TXVFOb
+            {
+                get { return _txVfoB; }
+                set { _txVfoB = value; }
+            }
+            public double VfoA
+            {
+                get { return _vfoA; }
+                set { _vfoA = value; }
+            }
+            public double VfoB
+            {
+                get { return _vfoB; }
+                set { _vfoB = value; }
+            }
+            public double VfoSub
+            {
+                get { return _vfoSub; }
+                set { _vfoSub = value; }
+            }
+            public DSPMode ModeVfoA
+            {
+                get { return _modeVfoA; }
+                set { _modeVfoA = value; }
+            }
+            public DSPMode ModeVfoB
+            {
+                get { return _modeVfoB; }
+                set { _modeVfoB = value; }
+            }
+            public Band BandVfoA
+            {
+                get { return _bandVfoA; }
+                set { _bandVfoA = value; }
+            }
+            public Band BandVfoB
+            {
+                get { return _bandVfoB; }
+                set { _bandVfoB = value; }
+            }
+            public Band BandVfoASub
+            {
+                get { return _bandVfoASub; }
+                set { _bandVfoASub = value; }
+            }
+            public Filter FilterVfoA
+            {
+                get { return _filterVfoA; }
+                set { _filterVfoA = value; }
+            }
+            public Filter FilterVfoB
+            {
+                get { return _filterVfoB; }
+                set { _filterVfoB = value; }
+            }
+            public string FilterVfoAName
+            {
+                get { return _filterVfoAname; }
+                set { _filterVfoAname = value; }
+            }
+            public string FilterVfoBName
+            {
+                get { return _filterVfoBname; }
+                set { _filterVfoBname = value; }
+            }
+            public bool RX2Enabled
+            {
+                get { return _rx2Enabled; }
+                set { _rx2Enabled = value; }
+            }
+            public bool MultiRxEnabled
+            {
+                get { return _multiRxEnabled; }
+                set { _multiRxEnabled = value; }
+            }
             public float PadX { get { return _fPadX; } set { _fPadX = value; } }
             public float PadY { get { return _fPadY; } set { _fPadY = value; } }
             public float Height { get { return _fHeight; } set { _fHeight = value; } }
@@ -6454,7 +6854,8 @@ namespace Thetis
                     foreach (var kvp in _meterItems.Where(o => (o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE || 
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.CLOCK
                                                                 /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
                                                                 (((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX))))
                     {
@@ -7448,9 +7849,12 @@ namespace Thetis
                                 //case clsMeterItem.MeterItemType.ITEM_GROUP:
                                 //    renderGroup(rect, mi, m);
                                 //    break;
-                                //case clsMeterItem.MeterItemType.VFO_DISPLAY:
-                                //    renderVfoDisplay(rect, mi, m);
-                                //    break;
+                                case clsMeterItem.MeterItemType.VFO_DISPLAY:
+                                    renderVfoDisplay(rect, mi, m);
+                                    break;
+                                case clsMeterItem.MeterItemType.CLOCK:
+                                    renderClock(rect, mi, m);
+                                    break;
                             }
                         }
                     }
@@ -8801,7 +9205,7 @@ namespace Thetis
                 int index = vfo.IndexOf(".");
                 MHz = vfo.Substring(0, index);
                 kHz = vfo.Substring(index + 1, 3);
-                hz = vfo.Substring(index + 4, 3);                
+                hz = vfo.Substring(index + 4, 3);
             }
             private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false)
             {
@@ -8814,72 +9218,204 @@ namespace Thetis
                 if (!bAlignRight)
                 {
                     txtrect = new SharpDX.RectangleF(x, y, szTextSize.Width, szTextSize.Height);
-                } 
+                }
                 else
                 {
                     // use x is now right edge
                     txtrect = new SharpDX.RectangleF(x - szTextSize.Width, y, szTextSize.Width, szTextSize.Height);
-                }    
+                }
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
             }
-            //private void renderVfoDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
-            //{
-            //    clsVfoDisplay vfo = (clsVfoDisplay)mi;
+            private void renderVfoDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsVfoDisplay vfo = (clsVfoDisplay)mi;
 
-            //    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-            //    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-            //    float w = rect.Width * (mi.Size.Width / m.XRatio);
-            //    float h = rect.Height * (mi.Size.Height / m.YRatio);
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-            //    int nFade = 255;
-            //    if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
-            //    // frequency
-            //    plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, System.Drawing.Color.Gray, nFade, vfo.FontFamily, vfo.Style);
-            //    plotText("VFO B", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, System.Drawing.Color.Gray, nFade, vfo.FontFamily, vfo.Style);
+                int nVfoAFade = nFade;
+                int nVfoBFade = nFade;
+                if (m.RX == 1)
+                {
+                    if (m.RX2Enabled && !(m.MultiRxEnabled || m.Split)) nVfoBFade = 24; // vfoB is 'disabled' on rx1 if rx2 in use, but not if multirxenabled/splt
+                }
+                else
+                {
+                    if (m.RX2Enabled) nVfoAFade = 24; // vfoA is 'disabled' on rx2 if rx2 in use always
+                }
 
-            //    getParts(vfo.VFOA, out string MHz, out string kHz, out string hz);
-            //    string sVfoA = MHz + "." + kHz + "." + hz;
-            //    plotText(sVfoA, x + (w * 0.48f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.6f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style, true);
+                // frequency
+                plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, System.Drawing.Color.Gray, nVfoAFade, vfo.FontFamily, vfo.Style);
+                if(m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split))
+                {
+                    // vfoa sub
+                    plotText("VFO Sub", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, System.Drawing.Color.Gray, nVfoBFade, vfo.FontFamily, vfo.Style);
+                }
+                else
+                    plotText("VFO B", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, System.Drawing.Color.Gray, nVfoBFade, vfo.FontFamily, vfo.Style);
 
-            //    getParts(vfo.VFOB, out MHz, out kHz, out hz);
-            //    string sVfoB = MHz + "." + kHz + "." + hz;
-            //    plotText(sVfoB, x + (w * 0.99f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.6f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style, true);
+                getParts(m.VfoA, out string MHz, out string kHz, out string hz);
+                string sVfoA = MHz + "." + kHz + "." + hz;
+                plotText(sVfoA, x + (w * 0.48f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, System.Drawing.Color.Orange, nVfoAFade, vfo.FontFamily, vfo.Style, true);
 
-            //    // mode
-            //    plotText(vfo.Mode.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style);
-            //    plotText(vfo.Mode.ToString(), x + (w * 0.52f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Orange, nFade, vfo.FontFamily, vfo.Style);
+                double tmpVfoB;
+                Band tmpVfoBBand;
+                DSPMode tmpVfoBMode;
+                string tmpVfoBName;
 
-            //    //band
-            //    System.Drawing.Color bandColor = BandStackManager.BandToColour(vfo.BandVfoA);
-            //    string sBand = BandStackManager.BandToString(vfo.BandVfoA);
-            //    if (sBand.EndsWith("M")) sBand = sBand.ToLower();
-            //    plotText(sBand + " band", x + (w * 0.48f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, bandColor, nFade, vfo.FontFamily, vfo.Style, true);
+                if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split))
+                {
+                    tmpVfoB = m.VfoSub;
+                    tmpVfoBBand = m.BandVfoASub;
+                    tmpVfoBMode = m.ModeVfoA;
+                    tmpVfoBName = m.FilterVfoAName;
+                }
+                else
+                {
+                    tmpVfoB = m.VfoB;
+                    tmpVfoBBand = m.BandVfoB;
+                    tmpVfoBMode = m.ModeVfoB;
+                    tmpVfoBName = m.FilterVfoBName;
+                }
 
-            //    bandColor = BandStackManager.BandToColour(vfo.BandVfoB);
-            //    sBand = BandStackManager.BandToString(vfo.BandVfoB);
-            //    if (sBand.EndsWith("M")) sBand = sBand.ToLower();
+                getParts(tmpVfoB, out MHz, out kHz, out hz);
+                string sVfoB = MHz + "." + kHz + "." + hz;
+                plotText(sVfoB, x + (w * 0.99f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, System.Drawing.Color.Orange, nVfoBFade, vfo.FontFamily, vfo.Style, true);
 
-            //    plotText(sBand + " band", x + (w * 0.99f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, bandColor, nFade, vfo.FontFamily, vfo.Style, true);
+                // mode
+                plotText(m.ModeVfoA.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Orange, nVfoAFade, vfo.FontFamily, vfo.Style);
+                plotText(tmpVfoBMode.ToString(), x + (w * 0.52f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Orange, nVfoBFade, vfo.FontFamily, vfo.Style);
 
-            //    //split only on vfoA
-            //    SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.03f), w * 0.1f, h * 0.4f);
-            //    _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(System.Drawing.Color.FromArgb(64,64,64), nFade));
-            //    System.Drawing.Color splitColor = vfo.Split ? System.Drawing.Color.Orange : System.Drawing.Color.Black;
-            //    plotText("SPLIT", rectSplit.X + (w * 0.015f), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nFade, vfo.FontFamily, vfo.Style);
-                
-            //    //rx red box
-            //    SharpDX.RectangleF rct = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
-            //    _renderTarget.FillRectangle(rct, getDXBrushForColour(System.Drawing.Color.FromArgb(96, 48, 48), nFade));
-            //    System.Drawing.Color txtColour = !m.MOX ? System.Drawing.Color.Red : System.Drawing.Color.Black;
-            //    plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nFade, vfo.FontFamily, vfo.Style);
+                //band
+                System.Drawing.Color bandColor = BandStackManager.BandToColour(m.BandVfoA);
+                string sBand = BandStackManager.BandToString(m.BandVfoA);
+                if (sBand.EndsWith("M")) sBand = sBand.ToLower();
+                plotText(sBand + " band", x + (w * 0.48f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, bandColor, nVfoAFade, vfo.FontFamily, vfo.Style, true);
 
-            //    //tx green
-            //    rct = new SharpDX.RectangleF(x + (w * 0.152f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
-            //    _renderTarget.FillRectangle(rct, getDXBrushForColour(System.Drawing.Color.FromArgb(48, 96, 48), nFade));
-            //    txtColour = m.MOX ? System.Drawing.Color.LimeGreen : System.Drawing.Color.Black;
-            //    plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nFade, vfo.FontFamily, vfo.Style);
-            //}
+                bandColor = BandStackManager.BandToColour(tmpVfoBBand);
+                sBand = BandStackManager.BandToString(tmpVfoBBand);
+                if (sBand.EndsWith("M")) sBand = sBand.ToLower();
+                plotText(sBand + " band", x + (w * 0.99f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, bandColor, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+
+                //split only on vfoA
+                SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.03f), w * 0.1f, h * 0.4f);
+                _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(System.Drawing.Color.FromArgb(64, 64, 64), nVfoAFade));
+                System.Drawing.Color splitColor = m.Split ? System.Drawing.Color.Orange : System.Drawing.Color.Black;
+                plotText("SPLIT", rectSplit.X + (w * 0.015f), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
+
+                //-- tx/rx state
+
+                bool bRxA = !m.MOX;
+                bool bTxA = m.MOX && !(m.TXVFOb || (m.Split && m.RX == 1));
+
+                bool bRxB = !m.MOX && (m.MultiRxEnabled || (m.RX2Enabled && m.RX == 2));
+                bool bTxB = m.MOX && (m.TXVFOb || (m.Split &&  m.RX == 1));
+
+                //rx green box vfoA
+                SharpDX.RectangleF rct = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                System.Drawing.Color boxColour = bRxA ? System.Drawing.Color.FromArgb(64, 128, 64) : System.Drawing.Color.FromArgb(48, 96, 48);
+                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
+                System.Drawing.Color txtColour = bRxA ? System.Drawing.Color.LimeGreen : System.Drawing.Color.Black;
+                plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+
+                //tx red box vfoA
+                rct = new SharpDX.RectangleF(x + (w * 0.152f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                boxColour = bTxA ? System.Drawing.Color.FromArgb(128, 64, 64) : System.Drawing.Color.FromArgb(96, 48, 48);
+                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
+                txtColour = bTxA ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+                plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);                
+
+
+                //rx green box vfoB
+                rct = new SharpDX.RectangleF(x + (w * 0.1f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                boxColour = bRxB ? System.Drawing.Color.FromArgb(64, 128, 64) : System.Drawing.Color.FromArgb(48, 96, 48);
+                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
+                txtColour = bRxB ? System.Drawing.Color.LimeGreen : System.Drawing.Color.Black;
+                plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+
+                //tx red box vfoB
+                rct = new SharpDX.RectangleF(x + (w * 0.152f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                boxColour = bTxB ? System.Drawing.Color.FromArgb(128, 64, 64) : System.Drawing.Color.FromArgb(96, 48, 48);
+                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
+                txtColour = bTxB ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+                plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+
+
+                //filter
+                rct = new SharpDX.RectangleF(x + (w * 0.25f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
+                plotText(m.FilterVfoAName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Gray, nVfoAFade, vfo.FontFamily, vfo.Style);
+
+                rct = new SharpDX.RectangleF(x + (w * 0.25f) + (w * 0.52f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
+                plotText(tmpVfoBName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, System.Drawing.Color.Gray, nVfoBFade, vfo.FontFamily, vfo.Style);
+            }
+            private void renderClock(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsClock clk = (clsClock)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+
+                DateTime now = DateTime.Now;
+                DateTime UTCnow = DateTime.UtcNow;
+
+                string sUtc;
+                string sUtcAmPm = "";
+                if (clk.Show24HourCLock)
+                    sUtc = UTCnow.ToString("HH:mm:ss");
+                else
+                {
+                    sUtc = UTCnow.ToString("hh:mm:ss");
+                    sUtcAmPm = UTCnow.Hour >= 12 ? "pm" : "am";
+                }
+
+                string sLoc;
+                string sLocAmPm = "";
+                if (clk.Show24HourCLock)
+                    sLoc = now.ToString("HH:mm:ss");
+                else
+                {
+                    sLoc = now.ToString("hh:mm:ss");
+                    sLocAmPm = now.Hour >= 12 ? "pm" : "am";
+                }
+
+                string sUtcDate = UTCnow.ToString("ddd d MMM yyyy");
+                string sLocDate = now.ToString("ddd d MMM yyyy");
+
+                if (clk.ShowType)
+                {
+                    plotText("local", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, clk.FontSize, clk.TypeTitleColour, nFade, clk.FontFamily, clk.Style);
+                    plotText("utc", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, clk.FontSize, clk.TypeTitleColour, nFade, clk.FontFamily, clk.Style);
+                }
+
+                SharpDX.RectangleF rct;
+
+                //time
+                rct = new SharpDX.RectangleF(x + (w * 0.12f), y + (h * 0.02f), w, h);
+                plotText(sLoc, rct.X, rct.Y, h, rect.Width, clk.FontSize * 1.9f, clk.TimeColour, nFade, clk.FontFamily, clk.Style);
+                if (!clk.Show24HourCLock)
+                    plotText(sLocAmPm, rct.X + (w * 0.228f), rct.Y + (h * 0.285f), h, rect.Width, clk.FontSize * 0.8f, clk.TimeColour, nFade, clk.FontFamily, clk.Style);
+
+                rct = new SharpDX.RectangleF(x + (w * 0.12f) + (w * 0.52f), y + (h * 0.02f), w, h);
+                plotText(sUtc, rct.X, rct.Y, h, rect.Width, clk.FontSize * 1.9f, clk.TimeColour, nFade, clk.FontFamily, clk.Style);
+                if (!clk.Show24HourCLock)
+                    plotText(sUtcAmPm, rct.X + (w * 0.228f), rct.Y + (h * 0.285f), h, rect.Width, clk.FontSize * 0.8f, clk.TimeColour, nFade, clk.FontFamily, clk.Style);
+
+                //date
+                rct = new SharpDX.RectangleF(x + (w * 0.132f), y + (h * 0.6f), w, h);
+                plotText(sLocDate, rct.X, rct.Y, h, rect.Width, clk.FontSize * 0.9f, clk.DateColour, nFade, clk.FontFamily, clk.Style);
+                rct = new SharpDX.RectangleF(x + (w * 0.132f) + (w * 0.52f), y + (h * 0.6f), w, h);
+                plotText(sUtcDate, rct.X, rct.Y, h, rect.Width, clk.FontSize * 0.9f, clk.DateColour, nFade, clk.FontFamily, clk.Style);
+            }
             private void renderImage(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsImage img = (clsImage)mi;

@@ -2384,7 +2384,7 @@ namespace Thetis
                 }
             }
         }
-		public void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high)
+		public void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
 		{
 			lock (m_objLocker)
 			{
@@ -2394,7 +2394,7 @@ namespace Thetis
 				}
 			}
 		}
-		public void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high)
+		public void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName)
 		{
 			lock (m_objLocker)
 			{

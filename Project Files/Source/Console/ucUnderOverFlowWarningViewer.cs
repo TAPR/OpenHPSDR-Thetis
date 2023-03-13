@@ -17,6 +17,8 @@ namespace Thetis
 {
     public partial class ucUnderOverFlowWarningViewer : UserControl
     {
+        public event EventHandler ClearIssuesClick;
+
         private bool[] _hasHadIssues;
         private Color _OutOverflowsColour = Color.Transparent;
         private Color _OutUnderflowsColour = Color.Transparent;
@@ -225,7 +227,11 @@ namespace Thetis
         private void UnderOverFlowWarningViewer_Click(object sender, EventArgs e)
         {
             if (_noFade)
+            {
                 clearIssues();
+
+                ClearIssuesClick?.Invoke(sender, e);
+            }
         }
     }
 }

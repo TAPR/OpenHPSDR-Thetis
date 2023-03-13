@@ -5805,7 +5805,11 @@ namespace Thetis
 
             }
         }
-
+        public Band GetRX1BandForVFOb()
+        {
+            // used by multimeter initialisation
+            return BandByFreq(VFOBFreq, rx1_xvtr_index, false, current_region, false);
+        }
         private Band BandByFreq(double freq, int xvtr_index, bool tx, FRSRegion region, bool updatePanelsForVFOA)
         {
             if (xvtr_index >= 0)
@@ -8151,7 +8155,7 @@ namespace Thetis
                     filterRX1Form.CurrentFilter = rx1_filter;
             }
 
-            if (oldLow != low || oldHigh != high) FilterEdgesChangedHandlers?.Invoke(1, rx1_filter, RX1Band, low, high); //MW0LGE_21k9d
+            if (oldLow != low || oldHigh != high) FilterEdgesChangedHandlers?.Invoke(1, rx1_filter, RX1Band, low, high, rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter)); //MW0LGE [2.9.0.7]
 
             m_nLowOutRX1 = low;
             m_nHighOutRX1 = high;
@@ -8252,7 +8256,7 @@ namespace Thetis
                     filterRX2Form.CurrentFilter = rx2_filter;
             }
 
-            if (oldLow != low || oldHigh != high) FilterEdgesChangedHandlers?.Invoke(2, rx2_filter, RX2Band, low, high); //MW0LGE_21k9d
+            if (oldLow != low || oldHigh != high) FilterEdgesChangedHandlers?.Invoke(2, rx2_filter, RX2Band, low, high, rx1_filters[(int)rx2_dsp_mode].GetName(rx2_filter)); //MW0LGE [2.9.0.7]
 
             m_nLowOutRX2 = low;
             m_nHighOutRX2 = high;
@@ -19843,9 +19847,21 @@ namespace Thetis
         }
         private void VFOASubUpdate(double freq)
         {
+            double dOldVFOASubFreq = VFOASubFreq; // can return -999
+
             m_dVFOASubFreq = Math.Round(freq, 6);// MW0LGE_21d rounded to 6
             txtVFOABand.Text = freq.ToString("f6");
             txtVFOABand_LostFocus(this, EventArgs.Empty);
+
+            //MW0LGE [2.9.0.7] also in UpdateVFOASub
+            if(dOldVFOASubFreq != VFOASubFreq)
+            {
+                Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, false, current_region, false);
+                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, false, current_region, false);
+
+                VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, dOldVFOASubFreq, VFOASubFreq,
+                    CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
+            }
         }
 
         private double m_dVFOASubFreq = 0;
@@ -35051,11 +35067,35 @@ namespace Thetis
 
             //MW0LGE_21d
             double dOldFreq = Math.Round(saved_vfob_freq, 6);
-            Band oldBand = RX2Band;
-            DSPMode oldMode = RX2DSPMode;
-            Filter oldFilter = RX2Filter;
-            double oldCentreFreq = CentreRX2Frequency;
-            bool oldCtun = ClickTuneRX2Display;
+
+            //MW0LGE [2.9.0.7] need to use rx1 if rx2 is not enabled
+            //Band oldBand = RX2Band;
+            //DSPMode oldMode = RX2DSPMode;
+            //Filter oldFilter = RX2Filter;
+            //double oldCentreFreq = CentreRX2Frequency;
+            //bool oldCtun = ClickTuneRX2Display;
+            Band oldBand;
+            DSPMode oldMode;
+            Filter oldFilter;
+            double oldCentreFreq;
+            bool oldCtun;
+            if (rx2_enabled)
+            {
+                oldBand = RX2Band;
+                oldMode = RX2DSPMode;
+                oldFilter = RX2Filter;
+                oldCentreFreq = CentreRX2Frequency;
+                oldCtun = ClickTuneRX2Display;
+            }
+            else
+            {
+                oldBand = RX1Band;
+                oldMode = RX1DSPMode;
+                oldFilter = RX1Filter;
+                oldCentreFreq = CentreFrequency;
+                oldCtun = ClickTuneDisplay;
+            }
+
             int oldZoomSlider = ptbDisplayZoom.Value;
             //
 
@@ -35756,9 +35796,26 @@ namespace Thetis
             last_rx2_xvtr_index = rx2_xvtr_index;
 
             //MW0LGE_21d
-            if (dOldFreq != VFOBFreq)
-                VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, dOldFreq, VFOBFreq,
-                    oldCentreFreq, CentreRX2Frequency, oldCtun, ClickTuneRX2Display, oldZoomSlider, ptbDisplayZoom.Value, RX2Enabled ? radio.GetDSPRX(1, 0).RXOsc : radio.GetDSPRX(0, 0).RXOsc, RX2Enabled ? 2 : 1);
+            //MW0LGE [2.9.0.7] need to use rx1 if rx2 is not enabled
+            //if (dOldFreq != VFOBFreq)
+            //    VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, dOldFreq, VFOBFreq,
+            //        oldCentreFreq, CentreRX2Frequency, oldCtun, ClickTuneRX2Display, oldZoomSlider, ptbDisplayZoom.Value, RX2Enabled ? radio.GetDSPRX(1, 0).RXOsc : radio.GetDSPRX(0, 0).RXOsc, RX2Enabled ? 2 : 1);
+            if(RX2Enabled)
+            {
+                if (dOldFreq != VFOBFreq)
+                    VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, dOldFreq, VFOBFreq,
+                        oldCentreFreq, CentreRX2Frequency, oldCtun, ClickTuneRX2Display, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(1, 0).RXOsc, 2);
+            }
+            else
+            {
+                if (dOldFreq != VFOBFreq)
+                {
+                    Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, false, current_region, false);
+
+                    VFOBFrequencyChangeHandlers?.Invoke(oldBand, tmpBand, oldMode, RX1DSPMode, oldFilter, RX1Filter, dOldFreq, VFOBFreq,
+                        oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
+                }
+            }
         }
 
         private void txtVFOBFreq_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -40754,7 +40811,7 @@ namespace Thetis
                     return;
             }
             UpdateRX1Filters(low, high);
-            if (oldFilter != rx1_filter) FilterChangedHandlers?.Invoke(1, oldFilter, rx1_filter, RX1Band, low, high);
+            if (oldFilter != rx1_filter) FilterChangedHandlers?.Invoke(1, oldFilter, rx1_filter, RX1Band, low, high, rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter));
         }
 
         //private void setRX2SmallFilterLabel()
@@ -41856,6 +41913,9 @@ namespace Thetis
 
         private void UpdateVFOASub()
         {
+            bool bIgnore = false;
+            double dOldVFOASubFreq = VFOASubFreq;
+
             if (rx2_enabled)
             {
                 if (chkVFOSplit.Checked)
@@ -41873,7 +41933,8 @@ namespace Thetis
                     txtVFOABand.ReadOnly = false;
                     txtVFOABand_LostFocus(this, EventArgs.Empty);
                     panelVFOASubHover.Visible = true;
-                    return;
+
+                    bIgnore = true;
                 }
                 else if (chkEnableMultiRX.Checked)
                 {
@@ -41888,25 +41949,38 @@ namespace Thetis
                     txtVFOABand_LostFocus(this, EventArgs.Empty);
                     panelVFOASubHover.Visible = true;
 
-                    return;
+                    bIgnore = true;
                 }
             }
 
-            if (chkPower.Checked)
+            if (!bIgnore)
             {
-                txtVFOABand.Font = new Font("Microsoft Sans Sarif", 12.0f, FontStyle.Regular);
-                txtVFOABand.ForeColor = band_text_light_color;
-                txtVFOABand.TextAlign = HorizontalAlignment.Center;
-                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                panelVFOASubHover.Visible = false;
+                if (chkPower.Checked)
+                {
+                    txtVFOABand.Font = new Font("Microsoft Sans Sarif", 12.0f, FontStyle.Regular);
+                    txtVFOABand.ForeColor = band_text_light_color;
+                    txtVFOABand.TextAlign = HorizontalAlignment.Center;
+                    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                    panelVFOASubHover.Visible = false;
+                }
+                else
+                {
+                    txtVFOABand.Font = new Font("Microsoft Sans Sarif", 12.0f, FontStyle.Regular);
+                    txtVFOABand.ForeColor = band_text_dark_color;
+                    txtVFOABand.TextAlign = HorizontalAlignment.Center;
+                    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                    panelVFOASubHover.Visible = false;
+                }
             }
-            else
+
+            //MW0LGE [2.9.0.7] also in VFOASubUpdate
+            if (dOldVFOASubFreq != VFOASubFreq)
             {
-                txtVFOABand.Font = new Font("Microsoft Sans Sarif", 12.0f, FontStyle.Regular);
-                txtVFOABand.ForeColor = band_text_dark_color;
-                txtVFOABand.TextAlign = HorizontalAlignment.Center;
-                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                panelVFOASubHover.Visible = false;
+                Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, false, current_region, false);
+                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, false, current_region, false);
+
+                VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, dOldVFOASubFreq, VFOASubFreq,
+                    CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
             }
         }
         private bool _bOldVFOSplit = false; //MW0LGE_22a
@@ -42784,10 +42858,11 @@ namespace Thetis
                 sliderForm.SubRXLRPan = ptbPanSubRX.Value;
 
         }
-
+        private bool _oldMultiRX = false;
         unsafe private void chkEnableMultiRX_CheckedChanged(object sender, System.EventArgs e)
         {
-            if (initializing) return; // ignore this if initalising, as it also gets called from powerON/OFF MW0LGE_21k9
+            //if (initializing) return; // ignore this if initalising, as it also gets called from powerON/OFF MW0LGE_21k9
+            //MW0LGE [2.9.0.7] need to remove this so sub values get initialiased
 
             radio.GetDSPRX(0, 1).Active = chkEnableMultiRX.Checked;
             if (chkEnableMultiRX.Checked)
@@ -42830,21 +42905,21 @@ namespace Thetis
                 chkEnableMultiRX.BackColor = SystemColors.Control;
                 //if(chkPower.Checked)
                 {
-                    if (rx2_enabled)
+                    if (rx2_enabled)   // <-- rx2_enabled, so how can it be also in the else, bunch commented out MW0LGE [2.9.0.7]
                     {
                         UpdateVFOASub();
                     }
                     else
                     {
-                        if (chkVFOSplit.Checked && !rx2_enabled)
+                        if (chkVFOSplit.Checked)// && !rx2_enabled)
                         {
                             chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
                         }
-                        else if (rx2_enabled)
-                        {
-                            update_rx2_display = false;
-                            chkRX2_CheckedChanged(this, EventArgs.Empty);
-                        }
+                        //else if (rx2_enabled)
+                        //{
+                        //    update_rx2_display = false;
+                        //    chkRX2_CheckedChanged(this, EventArgs.Empty);
+                        //}
                         else
                         {
                             txtVFOBFreq.ForeColor = vfo_text_dark_color;
@@ -42864,6 +42939,14 @@ namespace Thetis
 
             // MW0LGE
             setSmallRX2ModeFilterLabels();
+
+            if (chkEnableMultiRX.Checked != _oldMultiRX)
+            {
+                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, false, current_region, false);
+
+                MultiRxHandlers?.Invoke(chkEnableMultiRX.Checked, _oldMultiRX, VFOASubFreq, nb, RX2Enabled);
+                _oldMultiRX = chkEnableMultiRX.Checked;
+            }
         }
 
         private void chkPanSwap_CheckedChanged(object sender, System.EventArgs e)
@@ -44680,7 +44763,7 @@ namespace Thetis
 
             UpdateRX2Filters(low, high);
 
-            if (oldFilter != rx2_filter) FilterChangedHandlers?.Invoke(2, oldFilter, rx2_filter, RX2Band, low, high); //MW0LGE_21d
+            if (oldFilter != rx2_filter) FilterChangedHandlers?.Invoke(2, oldFilter, rx2_filter, RX2Band, low, high, rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter)); //MW0LGE [2.9.0.7]
         }
 
         private void radRX2Filter1_CheckedChanged(object sender, System.EventArgs e)
@@ -52222,6 +52305,7 @@ namespace Thetis
         public delegate void ModeChanged(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand);
         public delegate void VFOAFrequencyChanged(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx);
         public delegate void VFOBFrequencyChanged(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx);
+        public delegate void VFOASubFrequencyChanged(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx);
         public delegate void MoxChanged(int rx, bool oldMox, bool newMox);
         public delegate void MoxPreChanged(int rx, bool currentMox, bool expectedMox);
         public delegate void SetBandChanged(int rx, Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider);
@@ -52229,13 +52313,13 @@ namespace Thetis
 
         public delegate void CentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band);
         public delegate void CTUNChanged(int rx, bool oldCTUN, bool newCTUN, Band band);
-        public delegate void FilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high);
+        public delegate void FilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName);
         public delegate void ZoomFactorChanged(double oldZoomFactor, double newZoomFactor, int sliderValue);
 
         public delegate void AttenuatorDataChanged(int rx, int oldAtt, int newAtt);
         public delegate void PreampModeChanged(int rx, PreampMode oldMode, PreampMode newMode);
 
-        public delegate void FilterEdgesChanged(int rx, Filter filter, Band band, int low, int high);
+        public delegate void FilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName);
         public delegate void SplitChanged(int rx, bool oldSplit, bool newSplit);
         public delegate void TuneChanged(int rx, bool oldTune, bool newTune);
         public delegate void DrivePowerChanged(int rx, int newPower, bool tune);
@@ -52244,6 +52328,7 @@ namespace Thetis
         public delegate void RX2EnabledChanged(bool enabled);
         public delegate void RX2EnabledPreChanged(bool enabled); // before the change
         public delegate void SpotClicked(string callsign, long frequencyHz, int rx = -1, bool vfoB = false);
+        public delegate void MultiRxChanged(bool newState, bool oldState, double vfoASubFrequency, Band band, bool rx2Enabled);
 
         public delegate void VFOTXChanged(bool vfoB, bool oldState, bool newState);
         public delegate void TXBandChanged(Band oldBand, Band newBand);
@@ -52267,6 +52352,7 @@ namespace Thetis
         public ModeChanged ModeChangeHandlers;
         public VFOAFrequencyChanged VFOAFrequencyChangeHandlers;
         public VFOBFrequencyChanged VFOBFrequencyChangeHandlers;
+        public VFOASubFrequencyChanged VFOASubFrequencyChangeHandlers;
         public MoxChanged MoxChangeHandlers;
         public MoxPreChanged MoxPreChangeHandlers;
         public SetBandChanged SetBandChangeHanders;
@@ -52289,6 +52375,7 @@ namespace Thetis
         public RX2EnabledChanged RX2EnabledChangedHandlers;
         public RX2EnabledPreChanged RX2EnabledPreChangedHandlers;
         public SpotClicked SpotClickedHandlers;
+        public MultiRxChanged MultiRxHandlers;
 
         public VFOTXChanged VFOTXChangedHandlers;
         public TXBandChanged TXBandChangeHandlers;
@@ -52319,6 +52406,7 @@ namespace Thetis
             ModeChangeHandlers += OnModeChangeHandler;                  // mode was changed
             VFOAFrequencyChangeHandlers += OnVFOAFrequencyChangeHandler;    //VFOA changed
             VFOBFrequencyChangeHandlers += OnVFOBFrequencyChangeHandler;    //VFOB changed
+            VFOASubFrequencyChangeHandlers += OnVFOASubFrequencyChangeHandler;    //VFOASub changed
             MoxChangeHandlers += OnMoxChangeHandler;                    // mox changed
             MoxPreChangeHandlers += OnMoxPreChangeHandler;              // mox is about to change
             SetBandChangeHanders += OnSetBandChangeHander;              // SetBand completed
@@ -52341,6 +52429,7 @@ namespace Thetis
             //RX2EnabledChangedHandlers += OnRX2EnabledChanged;
             //RX2EnabledPreChangedHandlers += OnRX2EnabledPreChanged;
             SpotClickedHandlers += OnSpotClicked;
+            MultiRxHandlers += OnMultiRxChanged;
 
             VFOTXChangedHandlers += OnVFOTXChanged;
             TXBandChangeHandlers += OnTXBandChanged;
@@ -52369,6 +52458,7 @@ namespace Thetis
             ModeChangeHandlers -= OnModeChangeHandler;
             VFOAFrequencyChangeHandlers -= OnVFOAFrequencyChangeHandler;
             VFOBFrequencyChangeHandlers -= OnVFOBFrequencyChangeHandler;
+            VFOASubFrequencyChangeHandlers = OnVFOASubFrequencyChangeHandler;
             MoxChangeHandlers -= OnMoxChangeHandler;
             MoxPreChangeHandlers -= OnMoxPreChangeHandler;
             SetBandChangeHanders -= OnSetBandChangeHander;
@@ -52378,8 +52468,8 @@ namespace Thetis
             ZoomFactorChangedHandlers -= OnZoomChanged;
             PowerChangeHanders -= OnPowerChangeHander;
 
-            AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;                 // att data change
-            PreampModeChangedHandlers -= OnPreampModeChanged;                 // preamp mode change
+            AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
+            PreampModeChangedHandlers -= OnPreampModeChanged;
 
             FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
             SplitChangedHandlers -= OnSplitChanged;
@@ -52390,6 +52480,7 @@ namespace Thetis
             //RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
             //RX2EnabledPreChangedHandlers -= OnRX2EnabledPreChanged;
             SpotClickedHandlers -= OnSpotClicked;
+            MultiRxHandlers -= OnMultiRxChanged;
 
             VFOTXChangedHandlers -= OnVFOTXChanged;
             TXBandChangeHandlers -= OnTXBandChanged;
@@ -52469,6 +52560,10 @@ namespace Thetis
         {
 
         }
+        private void OnMultiRxChanged(bool newState, bool oldState, double vfoASubFrequency, Band b, bool rx2Enabled)
+        {
+
+        }
         private void OnThetisFocusChanged(bool focus)
         {
 
@@ -52493,7 +52588,7 @@ namespace Thetis
         {
 
         }
-        private void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high)
+        private void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName)
         {
 
         }
@@ -52653,7 +52748,7 @@ namespace Thetis
             BandStackFilter bsf = BandStackManager.GetFilter(band, false);
             if (bsf != null) bsf.LastVisited.CTUNEnabled = newCTUN;
         }
-        private void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high)
+        private void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
         {
             if (m_bSetBandRunning) return;
             if (rx != 1) return;
@@ -52924,6 +53019,9 @@ namespace Thetis
                 BroadcastFreqChange("B", newFreq);
 
             //Debug.Print("vfoB changed : old:" + oldFreq.ToString() + "   new:" + newFreq.ToString());
+        }
+        private void OnVFOASubFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
+        {
         }
         private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
         {
@@ -54360,7 +54458,19 @@ namespace Thetis
 
         private void picRX2Meter_Click(object sender, EventArgs e)
         {
-        }              
+        }
+
+        private void ucVAC1UnderOver_ClearIssuesClick(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(0, 0);
+            ivac.resetIVACdiags(0, 1);
+        }
+
+        private void ucVAC2UnderOver_ClearIssuesClick(object sender, EventArgs e)
+        {
+            ivac.resetIVACdiags(1, 0);
+            ivac.resetIVACdiags(1, 1);
+        }
     }
 
     public class DigiMode
