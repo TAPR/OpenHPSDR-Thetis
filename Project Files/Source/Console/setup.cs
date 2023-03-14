@@ -25363,14 +25363,14 @@ namespace Thetis
 
                 bEnableControls = true;
             }
-            else
-            {
-                comboContainerSelect.Text = "";
-            }
 
             btnContainerDelete.Enabled = bEnableControls;
             chkContainerHighlight.Enabled = bEnableControls;
             comboContainerSelect.Enabled = bEnableControls;
+            clrbtnContainerBackground.Enabled = bEnableControls;
+            chkContainerBorder.Enabled = bEnableControls;
+
+            if (!bEnableControls) comboContainerSelect.Text = "";
 
             updateMeterLists();
         }
@@ -25582,7 +25582,7 @@ namespace Thetis
                             sb = new SolidBrush(Color.PaleVioletRed);
                             break;
                         default: //other
-                            sb = new SolidBrush(Color.LightGray);
+                            sb = new SolidBrush(Color.LightBlue);
                             break;
                     }
 
@@ -25648,14 +25648,29 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);
             if (igs == null) return;
 
-            if (mt == MeterType.CLOCK)
+            if(mt == MeterType.VFO_DISPLAY)
             {
-                //radMM12Clock.Checked = igs.24hrClock;
+                igs.Colour = clrbtnMMVfoDisplayBackground.Color;
+                igs.TitleColor = clrbtnMMVfoDisplayTitle.Color;
+
+                //using exisinng igs settings
+                igs.MarkerColour = clrbtnMMVfoDisplayFrequency.Color;
+                igs.SubMarkerColour = clrbtnMMVfoDisplayMode.Color;
+                igs.LowColor = clrbtnMMVfoDisplaySplitBack.Color;
+                igs.HighColor = clrbtnMMVfoDisplaySplit.Color;
+                igs.PeakValueColour = clrbtnMMVfoDisplayRx.Color;
+                igs.PeakHoldMarkerColor = clrbtnMMVfoDisplayTx.Color;
+                igs.HistoryColor = clrbtnMMVfoDisplayFilter.Color;
+                igs.SegmentedSolidLowColour = clrbtnMMVfoDisplayBand.Color;
+            }
+            else if (mt == MeterType.CLOCK)
+            {
+                igs.Colour = clrbtnMMClockBackground.Color;
                 igs.ShowType = chkMMClockTitle.Checked;
                 igs.TitleColor = clrbtnMMClockTitle.Color;
                 igs.MarkerColour = clrbtnMMTime.Color;
                 igs.SubMarkerColour = clrbtnMMDate.Color;
-                igs.ShowMarker = radMM24Clock.Checked; // use the show marker bool for this
+                igs.ShowMarker = radMM24Clock.Checked; // use the show marker bool for this                
             }
             else
             {
@@ -25694,6 +25709,7 @@ namespace Thetis
                 igs.PeakValue = chkMeterItemPeakValue.Checked;
                 igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
                 igs.EyeScale = (float)nudMeterItemEyeScale.Value;
+                igs.EyeBezelScale = (float)nudMeterItemEyeBezelScale.Value;
                 igs.MaxPower = (float)nudMeterItemsPowerLimit.Value;
                 if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
@@ -25718,9 +25734,24 @@ namespace Thetis
 
             _ignoreMeterItemChangeEvents = true;
 
-            if (mt == MeterType.CLOCK)
+            if (mt == MeterType.VFO_DISPLAY)
             {
-                //radMM12Clock.Checked = igs.24hrClock;
+                clrbtnMMVfoDisplayBackground.Color = igs.Colour;
+                clrbtnMMVfoDisplayTitle.Color = igs.TitleColor;
+
+                //using exisinng igs settings
+                clrbtnMMVfoDisplayFrequency.Color = igs.MarkerColour;
+                clrbtnMMVfoDisplayMode.Color = igs.SubMarkerColour;
+                clrbtnMMVfoDisplaySplitBack.Color = igs.LowColor;
+                clrbtnMMVfoDisplaySplit.Color = igs.HighColor;
+                clrbtnMMVfoDisplayRx.Color = igs.PeakValueColour;
+                clrbtnMMVfoDisplayTx.Color = igs.PeakHoldMarkerColor;
+                clrbtnMMVfoDisplayFilter.Color = igs.HistoryColor;
+                clrbtnMMVfoDisplayBand.Color = igs.SegmentedSolidLowColour;
+            }
+            else if (mt == MeterType.CLOCK)
+            {
+                clrbtnMMClockBackground.Color = igs.Colour;
                 chkMMClockTitle.Checked = igs.ShowType;
                 clrbtnMMClockTitle.Color = igs.TitleColor;
                 clrbtnMMTime.Color = igs.MarkerColour;
@@ -25776,9 +25807,15 @@ namespace Thetis
 
                 // specific to mt
                 bool bMagicEye = mt == MeterType.MAGIC_EYE;
-                if (bMagicEye) nudMeterItemEyeScale.Value = (decimal)igs.EyeScale; // prevents setting it to 0 as other items will have 0
+                if (bMagicEye)
+                {
+                    nudMeterItemEyeScale.Value = (decimal)igs.EyeScale; // prevents setting it to 0 as other items will have 0 //FIX THIS
+                    nudMeterItemEyeBezelScale.Value = (decimal)igs.EyeBezelScale;
+                }
                 nudMeterItemEyeScale.Enabled = bMagicEye;
+                nudMeterItemEyeBezelScale.Enabled = bMagicEye;
                 lblMMEyeSize.Enabled = bMagicEye;
+                lblMMEyeBezelSize.Enabled = bMagicEye;
                 lblMMHistory.Enabled = !bMagicEye;
                 nudMeterItemHistoryDuration.Enabled = !bMagicEye;
                 chkMeterItemHistory.Enabled = !bMagicEye;
@@ -26069,16 +26106,25 @@ namespace Thetis
                     grpMeterItemSettings.Enabled = false;
                     grpMeterItemSettings.Visible = true;                    
                     grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    break;
+                case MeterType.VFO_DISPLAY:
+                    grpMeterItemVfoDisplaySettings.Location = loc;
+                    grpMeterItemVfoDisplaySettings.Visible = true;
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
                     break;
                 case MeterType.CLOCK:
                     grpMeterItemClockSettings.Location = loc;
                     grpMeterItemClockSettings.Visible = true;
                     grpMeterItemSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
                     break;
                 default:
                     grpMeterItemSettings.Enabled = true;
                     grpMeterItemSettings.Visible = true;
                     grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
                     break;
             }
         }
@@ -26110,6 +26156,66 @@ namespace Thetis
         }
 
         private void clrbtnMMDate_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMClockBackground_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayBackground_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayTitle_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayFrequency_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayMode_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplaySplitBack_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplaySplit_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayRx_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayTx_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayFilter_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMMVfoDisplayBand_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudMeterItemEyeBezelScale_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

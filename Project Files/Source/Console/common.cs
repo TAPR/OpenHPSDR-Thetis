@@ -824,7 +824,7 @@ namespace Thetis
             //return uV (rms) from dBm (50 ohms)
             return Math.Sqrt(Math.Pow(10, dbm / 10) * 50 * 1e-3) * 1e6;
         }
-        public static string SMeterFromDBM(double dbm, bool bAbove30)
+		public static string SMeterFromDBM(double dbm, bool bAbove30)
         {
             string sRet;
 
@@ -871,6 +871,13 @@ namespace Thetis
                 else sRet = "S 9 + 60";
             }
             return "    " + sRet;
+        }
+        public static double GetSMeterUnits(double dbm, bool bAbove30)
+        {
+            if (bAbove30)
+                return 9 + ((dbm + 93) / 6f); //MW0LGE_[2.9.0.7] fixed to 93
+            else
+                return 9 + ((dbm + 73) / 6f);
         }
     }
 }

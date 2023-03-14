@@ -22991,7 +22991,7 @@ namespace Thetis
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = getSMeterUnits(1, estimated_passband_noise_power).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOAFreq >= 30).ToString("N1") + "su";
                             sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "su";
                         }
                         else
@@ -23054,7 +23054,7 @@ namespace Thetis
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = getSMeterUnits(2, estimated_passband_noise_power).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOBFreq >= 30).ToString("N1") + "su";
                             sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "sU";
                         }
                         else
@@ -23098,20 +23098,6 @@ namespace Thetis
         {
             get { return _UseSUnitsForPBNPPBSNR; }
             set { _UseSUnitsForPBNPPBSNR = value; }
-        }
-        private double getSMeterUnits(int nRX, double dbm)
-        {           
-            bool bAbove30;
-
-            if (nRX == 2)
-                bAbove30 = (VFOBFreq >= 30.0);
-            else
-                bAbove30 = (VFOAFreq >= 30.0); 
-
-            if (bAbove30)
-                return 9 + ((dbm + 93) / 6f); //MW0LGE_[2.9.0.7] fixed to 93
-            else
-                return 9 + ((dbm + 73) / 6f);
         }
         private int HzInNPixels(int nPixelCount, int rx)
         {
