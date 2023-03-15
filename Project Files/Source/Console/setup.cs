@@ -25582,7 +25582,7 @@ namespace Thetis
                             sb = new SolidBrush(Color.PaleVioletRed);
                             break;
                         default: //other
-                            sb = new SolidBrush(Color.LightBlue);
+                            sb = new SolidBrush(Color.AliceBlue);
                             break;
                     }
 
@@ -25648,7 +25648,21 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);
             if (igs == null) return;
 
-            if(mt == MeterType.VFO_DISPLAY)
+            if (mt == MeterType.SIGNAL_TEXT)
+            {
+                igs.UpdateInterval = (int)nudMeterItemUpdateRate.Value;
+                igs.AttackRatio = (float)nudMeterItemAttackRate.Value;
+                igs.DecayRatio = (float)nudMeterItemDecayRate.Value;
+                igs.FadeOnRx = chkMeterItemFadeOnRx.Checked;
+                igs.FadeOnTx = chkMeterItemFadeOnTx.Checked;
+                igs.Colour = clrbtnMeterItemHBackground.Color;
+                igs.MarkerColour = clrbtnMeterItemIndiciator.Color;
+                igs.SubMarkerColour = clrbtnMeterItemSubIndiciator.Color;
+                igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
+                igs.PeakValue = chkMeterItemPeakValue.Checked;
+                igs.Average = chkMeterItemSignalAverage.Checked;
+            }
+            else if (mt == MeterType.VFO_DISPLAY)
             {
                 igs.Colour = clrbtnMMVfoDisplayBackground.Color;
                 igs.TitleColor = clrbtnMMVfoDisplayTitle.Color;
@@ -25734,7 +25748,65 @@ namespace Thetis
 
             _ignoreMeterItemChangeEvents = true;
 
-            if (mt == MeterType.VFO_DISPLAY)
+            if (mt == MeterType.SIGNAL_TEXT)
+            {
+                nudMeterItemUpdateRate.Value = igs.UpdateInterval < nudMeterItemUpdateRate.Minimum ? nudMeterItemUpdateRate.Minimum : igs.UpdateInterval;
+                nudMeterItemAttackRate.Value = (decimal)igs.AttackRatio;
+                nudMeterItemDecayRate.Value = (decimal)igs.DecayRatio;
+
+                chkMeterItemFadeOnRx.Checked = igs.FadeOnRx;
+                chkMeterItemFadeOnTx.Checked = igs.FadeOnTx;
+                clrbtnMeterItemHBackground.Color = igs.Colour;
+                clrbtnMeterItemIndiciator.Color = igs.MarkerColour;
+                clrbtnMeterItemSubIndiciator.Color = igs.SubMarkerColour;
+                clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
+                chkMeterItemPeakValue.Checked = igs.PeakValue;
+                chkMeterItemSignalAverage.Checked = igs.Average;
+
+                lblMMLow.Enabled = false;
+                lblMMHigh.Enabled = false;
+                clrbtnMeterItemLow.Enabled = false;
+                clrbtnMeterItemHigh.Enabled = false;
+
+                lblMMIndicator.Enabled = true;
+                clrbtnMeterItemIndiciator.Enabled = true;
+                chkMeterItemShowIndicator.Enabled = false;
+
+                lblMMIndicatorSub.Enabled = true;
+                clrbtnMeterItemSubIndiciator.Enabled = true;
+                chkMeterItemShowSubIndicator.Enabled = false;
+
+                lblMMBackground.Enabled = true;
+                clrbtnMeterItemHBackground.Enabled = true;
+                chkMeterItemFadeOnRx.Enabled = true;
+                chkMeterItemFadeOnTx.Enabled = true;
+                chkMeterItemSegmented.Enabled = false;
+                chkMeterItemSolid.Enabled = false;
+                lblMMsegSolLow.Enabled = false;
+                lblMMsegSolHigh.Enabled = false;
+                clrbtnMeterItemSegmentedSolidColourLow.Enabled = false;
+                clrbtnMeterItemSegmentedSolidColourHigh.Enabled = false;
+                chkMeterItemTitle.Enabled = false;
+                clrbtnMeterItemMeterTitle.Enabled = false;
+                chkMeterItemPeakValue.Enabled = true;
+                updatePeakValueControls();
+                lblMMEyeSize.Enabled = false;
+                lblMMEyeBezelSize.Enabled = false;
+                nudMeterItemEyeScale.Enabled = false;
+                nudMeterItemEyeBezelScale.Enabled = false;
+                chkMeterItemShadow.Enabled = false;
+                lblMMHistory.Enabled = true;
+                nudMeterItemHistoryDuration.Enabled = true;
+                chkMeterItemHistory.Enabled = false;
+                clrbtnMeterItemHistory.Enabled = false;
+                chkMeterItemPeakHold.Enabled = false;
+                clrbtnMeterItemPeakHold.Enabled = false;
+                chkMeterItemSignalAverage.Enabled = true;
+                chkMeterItemDarkMode.Enabled = false;
+                lblMMPowerLimit.Enabled = false;
+                nudMeterItemsPowerLimit.Enabled = false;
+            }
+            else if (mt == MeterType.VFO_DISPLAY)
             {
                 clrbtnMMVfoDisplayBackground.Color = igs.Colour;
                 clrbtnMMVfoDisplayTitle.Color = igs.TitleColor;

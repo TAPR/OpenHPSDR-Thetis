@@ -47230,7 +47230,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(22, 15);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(7, 92);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -47295,7 +47295,7 @@
             this.clrbtnMMVfoDisplayFrequency.Selectable = true;
             this.clrbtnMMVfoDisplayFrequency.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplayFrequency.TabIndex = 125;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFrequency, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFrequency, "Frequency Colour");
             this.clrbtnMMVfoDisplayFrequency.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayFrequency_Changed);
             // 
             // labelTS174
@@ -47320,7 +47320,7 @@
             this.clrbtnMMVfoDisplayBand.Selectable = true;
             this.clrbtnMMVfoDisplayBand.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplayBand.TabIndex = 123;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayBand, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayBand, "Band colour");
             this.clrbtnMMVfoDisplayBand.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayBand_Changed);
             // 
             // labelTS173
@@ -47345,7 +47345,7 @@
             this.clrbtnMMVfoDisplayFilter.Selectable = true;
             this.clrbtnMMVfoDisplayFilter.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplayFilter.TabIndex = 121;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFilter, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFilter, "Filter colour");
             this.clrbtnMMVfoDisplayFilter.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayFilter_Changed);
             // 
             // labelTS172
@@ -47370,7 +47370,7 @@
             this.clrbtnMMVfoDisplayTx.Selectable = true;
             this.clrbtnMMVfoDisplayTx.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplayTx.TabIndex = 119;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayTx, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayTx, "TX box colour");
             this.clrbtnMMVfoDisplayTx.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayTx_Changed);
             // 
             // labelTS171
@@ -47395,7 +47395,7 @@
             this.clrbtnMMVfoDisplayRx.Selectable = true;
             this.clrbtnMMVfoDisplayRx.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplayRx.TabIndex = 117;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayRx, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayRx, "RX box colour");
             this.clrbtnMMVfoDisplayRx.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayRx_Changed);
             // 
             // labelTS170
@@ -47420,7 +47420,7 @@
             this.clrbtnMMVfoDisplaySplit.Selectable = true;
             this.clrbtnMMVfoDisplaySplit.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplaySplit.TabIndex = 115;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplit, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplit, "Split colour");
             this.clrbtnMMVfoDisplaySplit.Changed += new System.EventHandler(this.clrbtnMMVfoDisplaySplit_Changed);
             // 
             // labelTS163
@@ -47429,9 +47429,9 @@
             this.labelTS163.Image = null;
             this.labelTS163.Location = new System.Drawing.Point(44, 147);
             this.labelTS163.Name = "labelTS163";
-            this.labelTS163.Size = new System.Drawing.Size(56, 13);
+            this.labelTS163.Size = new System.Drawing.Size(58, 13);
             this.labelTS163.TabIndex = 114;
-            this.labelTS163.Text = "Splt Back:";
+            this.labelTS163.Text = "Split Back:";
             // 
             // clrbtnMMVfoDisplaySplitBack
             // 
@@ -47445,7 +47445,7 @@
             this.clrbtnMMVfoDisplaySplitBack.Selectable = true;
             this.clrbtnMMVfoDisplaySplitBack.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplaySplitBack.TabIndex = 113;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplitBack, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplitBack, "Background of the split");
             this.clrbtnMMVfoDisplaySplitBack.Changed += new System.EventHandler(this.clrbtnMMVfoDisplaySplitBack_Changed);
             // 
             // labelTS166
@@ -47470,7 +47470,7 @@
             this.clrbtnMMVfoDisplayMode.Selectable = true;
             this.clrbtnMMVfoDisplayMode.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplayMode.TabIndex = 111;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayMode, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayMode, "Mode colour");
             this.clrbtnMMVfoDisplayMode.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayMode_Changed);
             // 
             // clrbtnMMVfoDisplayTitle
@@ -47485,6 +47485,7 @@
             this.clrbtnMMVfoDisplayTitle.Selectable = true;
             this.clrbtnMMVfoDisplayTitle.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDisplayTitle.TabIndex = 110;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayTitle, "Titles colour");
             this.clrbtnMMVfoDisplayTitle.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayTitle_Changed);
             // 
             // grpMeterItemClockSettings
@@ -47554,7 +47555,7 @@
             this.clrbtnMMDate.Selectable = true;
             this.clrbtnMMDate.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMDate.TabIndex = 113;
-            this.toolTip1.SetToolTip(this.clrbtnMMDate, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMDate, "Date colour");
             this.clrbtnMMDate.Changed += new System.EventHandler(this.clrbtnMMDate_Changed);
             // 
             // labelTS162
@@ -47579,7 +47580,7 @@
             this.clrbtnMMTime.Selectable = true;
             this.clrbtnMMTime.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMTime.TabIndex = 111;
-            this.toolTip1.SetToolTip(this.clrbtnMMTime, "Indicator colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMTime, "Time");
             this.clrbtnMMTime.Changed += new System.EventHandler(this.clrbtnMMTime_Changed);
             // 
             // clrbtnMMClockTitle
@@ -47594,6 +47595,7 @@
             this.clrbtnMMClockTitle.Selectable = true;
             this.clrbtnMMClockTitle.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMClockTitle.TabIndex = 110;
+            this.toolTip1.SetToolTip(this.clrbtnMMClockTitle, "Meter title colour");
             this.clrbtnMMClockTitle.Changed += new System.EventHandler(this.clrbtnMMClockTitle_Changed);
             // 
             // chkMMClockTitle
@@ -47605,6 +47607,7 @@
             this.chkMMClockTitle.Size = new System.Drawing.Size(76, 17);
             this.chkMMClockTitle.TabIndex = 109;
             this.chkMMClockTitle.Text = "Meter Title";
+            this.toolTip1.SetToolTip(this.chkMMClockTitle, "Show meter title");
             this.chkMMClockTitle.UseVisualStyleBackColor = true;
             this.chkMMClockTitle.CheckedChanged += new System.EventHandler(this.chkMMClockTitle_CheckedChanged);
             // 
@@ -47618,6 +47621,7 @@
             this.radMM24Clock.TabIndex = 1;
             this.radMM24Clock.TabStop = true;
             this.radMM24Clock.Text = "24 hr";
+            this.toolTip1.SetToolTip(this.radMM24Clock, "24 hr clock");
             this.radMM24Clock.UseVisualStyleBackColor = true;
             this.radMM24Clock.CheckedChanged += new System.EventHandler(this.radMM24Clock_CheckedChanged);
             // 
@@ -47631,6 +47635,7 @@
             this.radMM12Clock.TabIndex = 0;
             this.radMM12Clock.TabStop = true;
             this.radMM12Clock.Text = "12 hr";
+            this.toolTip1.SetToolTip(this.radMM12Clock, "12 hr clock");
             this.radMM12Clock.UseVisualStyleBackColor = true;
             this.radMM12Clock.CheckedChanged += new System.EventHandler(this.radMM12Clock_CheckedChanged);
             // 
@@ -47778,6 +47783,7 @@
             this.chkMeterItemShowSubIndicator.Size = new System.Drawing.Size(53, 17);
             this.chkMeterItemShowSubIndicator.TabIndex = 122;
             this.chkMeterItemShowSubIndicator.Text = "Show";
+            this.toolTip1.SetToolTip(this.chkMeterItemShowSubIndicator, "Show sub indicators");
             this.chkMeterItemShowSubIndicator.UseVisualStyleBackColor = true;
             this.chkMeterItemShowSubIndicator.CheckedChanged += new System.EventHandler(this.chkMeterItemShowSubIndicator_CheckedChanged);
             // 
@@ -47851,6 +47857,7 @@
             this.clrbtnMeterItemSegmentedSolidColourHigh.Selectable = true;
             this.clrbtnMeterItemSegmentedSolidColourHigh.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterItemSegmentedSolidColourHigh.TabIndex = 116;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemSegmentedSolidColourHigh, "High section colour");
             this.clrbtnMeterItemSegmentedSolidColourHigh.Changed += new System.EventHandler(this.clrbtnMeterItemSegmentedSolidColourHigh_Changed);
             // 
             // chkMeterItemSolid
@@ -47862,6 +47869,7 @@
             this.chkMeterItemSolid.Size = new System.Drawing.Size(49, 17);
             this.chkMeterItemSolid.TabIndex = 115;
             this.chkMeterItemSolid.Text = "Solid";
+            this.toolTip1.SetToolTip(this.chkMeterItemSolid, "Solid bar");
             this.chkMeterItemSolid.UseVisualStyleBackColor = true;
             this.chkMeterItemSolid.CheckedChanged += new System.EventHandler(this.chkMeterItemSolid_CheckedChanged);
             // 
@@ -47984,6 +47992,7 @@
             this.clrbtnMeterItemMeterTitle.Selectable = true;
             this.clrbtnMeterItemMeterTitle.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterItemMeterTitle.TabIndex = 108;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemMeterTitle, "Meter title colour");
             this.clrbtnMeterItemMeterTitle.Changed += new System.EventHandler(this.clrbtnMeterItemMeterTitle_Changed);
             // 
             // clrbtnMeterItemPeakValueColour
@@ -47998,6 +48007,7 @@
             this.clrbtnMeterItemPeakValueColour.Selectable = true;
             this.clrbtnMeterItemPeakValueColour.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterItemPeakValueColour.TabIndex = 107;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemPeakValueColour, "Peak value colour");
             this.clrbtnMeterItemPeakValueColour.Changed += new System.EventHandler(this.clrbtnMeterItemPeakValueColour_Changed);
             // 
             // clrbtnMeterItemSegmentedSolidColourLow
@@ -48012,6 +48022,7 @@
             this.clrbtnMeterItemSegmentedSolidColourLow.Selectable = true;
             this.clrbtnMeterItemSegmentedSolidColourLow.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterItemSegmentedSolidColourLow.TabIndex = 106;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemSegmentedSolidColourLow, "Low section colour");
             this.clrbtnMeterItemSegmentedSolidColourLow.Changed += new System.EventHandler(this.clrbtnMeterItemSegmentedSolidColourLow_Changed);
             // 
             // nudMeterItemDecayRate
@@ -48197,6 +48208,7 @@
             this.chkMeterItemPeakValue.Size = new System.Drawing.Size(81, 17);
             this.chkMeterItemPeakValue.TabIndex = 96;
             this.chkMeterItemPeakValue.Text = "Peak Value";
+            this.toolTip1.SetToolTip(this.chkMeterItemPeakValue, "Show peak value");
             this.chkMeterItemPeakValue.UseVisualStyleBackColor = true;
             this.chkMeterItemPeakValue.CheckedChanged += new System.EventHandler(this.chkMeterItemPeakValue_CheckedChanged);
             // 
@@ -48209,6 +48221,7 @@
             this.chkMeterItemTitle.Size = new System.Drawing.Size(76, 17);
             this.chkMeterItemTitle.TabIndex = 95;
             this.chkMeterItemTitle.Text = "Meter Title";
+            this.toolTip1.SetToolTip(this.chkMeterItemTitle, "Show meter title");
             this.chkMeterItemTitle.UseVisualStyleBackColor = true;
             this.chkMeterItemTitle.CheckedChanged += new System.EventHandler(this.chkMeterItemTitle_CheckedChanged);
             // 
@@ -48221,6 +48234,7 @@
             this.chkMeterItemSegmented.Size = new System.Drawing.Size(80, 17);
             this.chkMeterItemSegmented.TabIndex = 94;
             this.chkMeterItemSegmented.Text = "Segmented";
+            this.toolTip1.SetToolTip(this.chkMeterItemSegmented, "Segmented bar");
             this.chkMeterItemSegmented.UseVisualStyleBackColor = true;
             this.chkMeterItemSegmented.CheckedChanged += new System.EventHandler(this.chkMeterItemSegmented_CheckedChanged);
             // 

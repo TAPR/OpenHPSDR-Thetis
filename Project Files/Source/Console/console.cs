@@ -3039,7 +3039,7 @@ namespace Thetis
             //
             if (!MeterManager.StoreSettings(ref a))
             {
-                MessageBox.Show("There was an issue storing the settings for MultiMeter2.", "MultiMeter2 StoreSettings",
+                MessageBox.Show("There was an issue storing the settings for MultiMeter.", "MultiMeter StoreSettings",
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
             //
@@ -4358,7 +4358,7 @@ namespace Thetis
             //
             if(!MeterManager.RestoreSettings(ref toDoList)) // pass this list of settings to the meter manager to restore from
             {
-                MessageBox.Show("There was an issue restoring the settings for MultiMeter2. Please remove all meters, re-add, and restart Thetis.", "MultiMeter2 RestoreSettings",
+                MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
             //
@@ -26702,6 +26702,22 @@ namespace Thetis
                         }
                     }
 
+                    //if (!MeterManager.SpectrumReady)
+                    //{
+                    //    float[] spec = passbandSpectrum(1);
+                    //    if (spec != null)
+                    //    {
+                    //        int nLength = spec.Length;
+                    //        MeterManager.ResizeSpectrum(nLength);
+
+                    //        fixed (void* srcptr = &spec[0])
+                    //        fixed (void* destptr = &MeterManager.newSpectrumPassband[0])
+                    //            Win32.memcpy(destptr, srcptr, nLength * sizeof(float));
+
+                    //        MeterManager.SpectrumReady = true;
+                    //    }                        
+                    //}
+
                     //
                     Display.GetPixelsIssue = bGetPixelIssue;
 
@@ -42421,6 +42437,10 @@ namespace Thetis
                     SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr);        //depends upon receiver configuration, want center sub-span from disp 0, I think
 
                 double mag_sqr;
+
+                int fft_size = specRX.GetSpecRX(0).FFTSize;
+                double[] dbm = new double[hi_bucket - lo_bucket + 1];
+
                 for (int i = lo_bucket; i <= hi_bucket; i++)
                 {
                     mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
@@ -42433,6 +42453,8 @@ namespace Thetis
                     {
                         min_val = mag_sqr;
                     }
+
+                    dbm[i - lo_bucket] = 10.0f * Math.Log10(mag_sqr / Math.Pow(fft_size, 2));
                 }
 
                 int peak_hz = (int)((max_bucket - zero_hz_bucket) * hz_per_bucket);
@@ -54457,6 +54479,91 @@ namespace Thetis
             ivac.resetIVACdiags(1, 0);
             ivac.resetIVACdiags(1, 1);
         }
+
+        //private object _passbandSpectrum = new object();
+        //private float[] passbandSpectrum(int rx)
+        //{
+        //    lock (_passbandSpectrum)
+        //    {
+        //        if (rx < 1 || rx > 2 || !PowerOn) return null;
+        //        if (!specRX.GetSpecRX(rx - 1).AnalyzerInitialised) return null;
+                
+        //        // convert hz to buckets in the averaging data
+        //        int lo_cut_hz;
+        //        int hi_cut_hz;
+        //        double hz_per_bucket;
+        //        int fft_size = specRX.GetSpecRX(rx - 1).FFTSize;
+        //        int zero_hz_bucket = fft_size / 2;
+
+        //        if (rx == 1) {
+        //            hz_per_bucket = sample_rate_rx1 / (double)fft_size;
+        //            lo_cut_hz = RX1FilterLow;
+        //            hi_cut_hz = RX1FilterHigh;                    
+        //        }
+        //        else
+        //        {
+        //            hz_per_bucket = sample_rate_rx2 / (double)fft_size;
+        //            lo_cut_hz = RX2FilterLow;
+        //            hi_cut_hz = RX2FilterHigh;
+        //        }                
+
+        //        if (click_tune_display) //MW0LGE_21d
+        //        {
+        //            // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
+        //            double dBucketOffset;
+        //            if (rx == 1)
+        //                dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
+        //            else
+        //                dBucketOffset = ((VFOBFreq - CentreRX2Frequency) * 1e6) / hz_per_bucket;
+
+        //            zero_hz_bucket += (int)dBucketOffset;
+        //        }
+
+        //        int lo_bucket = (int)(lo_cut_hz / hz_per_bucket) + zero_hz_bucket;
+        //        int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
+
+        //        //MW0LGE_21d belts and braces
+        //        if (lo_bucket < 0 || hi_bucket > fft_size - 1)
+        //        {
+        //            return null;
+        //        }
+
+        //        int ss = 0;
+        //        double[,] spectrum_data;
+
+        //        spectrum_data = new double[fft_size, 2];
+        //        if (spectrum_data == null)
+        //        {
+        //            return null; // bail out - not buffer 
+        //        }
+
+        //        if (!specRX.GetSpecRX(rx - 1).AnalyzerInitialised) return null;
+        //        unsafe
+        //        {
+        //            fixed (double* ptr = &(spectrum_data[0, 0]))
+        //                SpecHPSDRDLL.SnapSpectrum(rx - 1, ss, 0, ptr);
+        //        }
+
+        //        double mag_sqr;                
+        //        float[] dbm = new float[hi_bucket - lo_bucket + 1];
+        //        double pow2fft = Math.Pow(fft_size, 2);
+
+        //        // all the offsets, use display
+        //        float fOffset;
+        //        if (rx == 1)
+        //            fOffset = Display.RX1Offset;
+        //        else
+        //            fOffset = Display.RX2Offset;
+
+        //        for (int i = lo_bucket; i <= hi_bucket; i++)
+        //        {
+        //            mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
+        //            dbm[i - lo_bucket] = (float)(10.0f * Math.Log10(mag_sqr / pow2fft)) + fOffset;
+        //        }
+
+        //        return dbm;
+        //    }
+        //}
     }
 
     public class DigiMode
