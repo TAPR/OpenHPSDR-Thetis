@@ -3432,6 +3432,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.labelTS161 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4342,6 +4344,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -6688,6 +6691,9 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralHardware.Controls.Add(this.labelTS161);
+            this.tpGeneralHardware.Controls.Add(this.pictureBox1);
+            this.tpGeneralHardware.Controls.Add(this.chkSupportUkraine);
             this.tpGeneralHardware.Controls.Add(this.lblTimeout);
             this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
             this.tpGeneralHardware.Controls.Add(this.grpFirmware);
@@ -7875,7 +7881,6 @@
             // tpOptions1
             // 
             this.tpOptions1.BackColor = System.Drawing.SystemColors.Control;
-            this.tpOptions1.Controls.Add(this.chkSupportUkraine);
             this.tpOptions1.Controls.Add(this.grpGeneralProcessPriority);
             this.tpOptions1.Controls.Add(this.grpGeneralOptions);
             this.tpOptions1.Controls.Add(this.grpHermesStepAttenuator);
@@ -7894,7 +7899,7 @@
             // 
             this.chkSupportUkraine.AutoSize = true;
             this.chkSupportUkraine.Image = null;
-            this.chkSupportUkraine.Location = new System.Drawing.Point(72, 347);
+            this.chkSupportUkraine.Location = new System.Drawing.Point(175, 248);
             this.chkSupportUkraine.Name = "chkSupportUkraine";
             this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
             this.chkSupportUkraine.TabIndex = 39;
@@ -54658,6 +54663,26 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::Thetis.Properties.Resources.ukraine_flag;
+            this.pictureBox1.Location = new System.Drawing.Point(112, 248);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(57, 34);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 40;
+            this.pictureBox1.TabStop = false;
+            // 
+            // labelTS161
+            // 
+            this.labelTS161.AutoSize = true;
+            this.labelTS161.Image = null;
+            this.labelTS161.Location = new System.Drawing.Point(175, 269);
+            this.labelTS161.Name = "labelTS161";
+            this.labelTS161.Size = new System.Drawing.Size(83, 13);
+            this.labelTS161.TabIndex = 41;
+            this.labelTS161.Text = "for Ivan UR8GX";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -54724,6 +54749,7 @@
             this.tpGeneral.ResumeLayout(false);
             this.tcGeneral.ResumeLayout(false);
             this.tpGeneralHardware.ResumeLayout(false);
+            this.tpGeneralHardware.PerformLayout();
             this.grpFirmware.ResumeLayout(false);
             this.grpOzyType.ResumeLayout(false);
             this.panelTS7.ResumeLayout(false);
@@ -54762,7 +54788,6 @@
             this.tpGeneralOptions.ResumeLayout(false);
             this.tcOptions.ResumeLayout(false);
             this.tpOptions1.ResumeLayout(false);
-            this.tpOptions1.PerformLayout();
             this.grpGeneralProcessPriority.ResumeLayout(false);
             this.grpGeneralOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udSpaceMoxDelay)).EndInit();
@@ -55750,6 +55775,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -59184,5 +59210,7 @@
         private ColorButton clrbtnMeterItemPowerScale;
         private NumericUpDownTS nudMeterItemIgnoreHistoryDuration;
         private LabelTS lblMMHistoryIgnore;
+        private LabelTS labelTS161;
+        private PictureBox pictureBox1;
     }
 }
