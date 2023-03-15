@@ -25382,12 +25382,23 @@ namespace Thetis
 
                 bEnableControls = true;
             }
+            else
+            {
+                comboContainerSelect.Text = "";
+            }
 
             btnContainerDelete.Enabled = bEnableControls;
             chkContainerHighlight.Enabled = bEnableControls;
             comboContainerSelect.Enabled = bEnableControls;
             clrbtnContainerBackground.Enabled = bEnableControls;
             chkContainerBorder.Enabled = bEnableControls;
+            lblMMContainerBackground.Enabled = bEnableControls;
+            lstMetersAvailable.Enabled = bEnableControls;
+            lstMetersInUse.Enabled = bEnableControls;
+            btnAddMeterItem.Enabled = bEnableControls;
+            btnRemoveMeterItem.Enabled = bEnableControls;
+            btnMeterUp.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
+            btnMeterDown.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
 
             if (!bEnableControls) comboContainerSelect.Text = "";
 

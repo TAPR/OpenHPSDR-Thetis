@@ -2951,10 +2951,12 @@
             this.chkMMClockTitle = new System.Windows.Forms.CheckBoxTS();
             this.radMM24Clock = new System.Windows.Forms.RadioButtonTS();
             this.radMM12Clock = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.lblMMContainerBackground = new System.Windows.Forms.LabelTS();
             this.clrbtnContainerBackground = new Thetis.ColorButton();
             this.chkContainerBorder = new System.Windows.Forms.CheckBoxTS();
             this.grpMeterItemSettings = new System.Windows.Forms.GroupBoxTS();
+            this.nudMeterItemIgnoreHistoryDuration = new System.Windows.Forms.NumericUpDownTS();
+            this.lblMMHistoryIgnore = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemPowerScale = new Thetis.ColorButton();
             this.nudMeterItemEyeBezelScale = new System.Windows.Forms.NumericUpDownTS();
             this.lblMMEyeBezelSize = new System.Windows.Forms.LabelTS();
@@ -3430,8 +3432,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.nudMeterItemIgnoreHistoryDuration = new System.Windows.Forms.NumericUpDownTS();
-            this.lblMMHistoryIgnore = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4207,6 +4207,7 @@
             this.grpMeterItemVfoDisplaySettings.SuspendLayout();
             this.grpMeterItemClockSettings.SuspendLayout();
             this.grpMeterItemSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemIgnoreHistoryDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeBezelScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemsPowerLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).BeginInit();
@@ -4341,7 +4342,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemIgnoreHistoryDuration)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -47191,7 +47191,7 @@
             // 
             this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemVfoDisplaySettings);
             this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemClockSettings);
-            this.grpMultiMeterHolder.Controls.Add(this.labelTS161);
+            this.grpMultiMeterHolder.Controls.Add(this.lblMMContainerBackground);
             this.grpMultiMeterHolder.Controls.Add(this.clrbtnContainerBackground);
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerBorder);
             this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemSettings);
@@ -47643,15 +47643,15 @@
             this.radMM12Clock.UseVisualStyleBackColor = true;
             this.radMM12Clock.CheckedChanged += new System.EventHandler(this.radMM12Clock_CheckedChanged);
             // 
-            // labelTS161
+            // lblMMContainerBackground
             // 
-            this.labelTS161.AutoSize = true;
-            this.labelTS161.Image = null;
-            this.labelTS161.Location = new System.Drawing.Point(170, 61);
-            this.labelTS161.Name = "labelTS161";
-            this.labelTS161.Size = new System.Drawing.Size(41, 13);
-            this.labelTS161.TabIndex = 99;
-            this.labelTS161.Text = "Backg:";
+            this.lblMMContainerBackground.AutoSize = true;
+            this.lblMMContainerBackground.Image = null;
+            this.lblMMContainerBackground.Location = new System.Drawing.Point(170, 61);
+            this.lblMMContainerBackground.Name = "lblMMContainerBackground";
+            this.lblMMContainerBackground.Size = new System.Drawing.Size(41, 13);
+            this.lblMMContainerBackground.TabIndex = 99;
+            this.lblMMContainerBackground.Text = "Backg:";
             // 
             // clrbtnContainerBackground
             // 
@@ -47739,6 +47739,47 @@
             this.grpMeterItemSettings.TabStop = false;
             this.grpMeterItemSettings.Text = "Settings";
             this.grpMeterItemSettings.Visible = false;
+            // 
+            // nudMeterItemIgnoreHistoryDuration
+            // 
+            this.nudMeterItemIgnoreHistoryDuration.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemIgnoreHistoryDuration.Location = new System.Drawing.Point(247, 161);
+            this.nudMeterItemIgnoreHistoryDuration.Maximum = new decimal(new int[] {
+            4000,
+            0,
+            0,
+            0});
+            this.nudMeterItemIgnoreHistoryDuration.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMeterItemIgnoreHistoryDuration.Name = "nudMeterItemIgnoreHistoryDuration";
+            this.nudMeterItemIgnoreHistoryDuration.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemIgnoreHistoryDuration.TabIndex = 127;
+            this.nudMeterItemIgnoreHistoryDuration.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemIgnoreHistoryDuration, "When rx/tx transition or band change let meters settle before gathering history/p" +
+        "eak values");
+            this.nudMeterItemIgnoreHistoryDuration.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.nudMeterItemIgnoreHistoryDuration.ValueChanged += new System.EventHandler(this.nudMeterItemIgnoreHistoryDuration_ValueChanged);
+            // 
+            // lblMMHistoryIgnore
+            // 
+            this.lblMMHistoryIgnore.Image = null;
+            this.lblMMHistoryIgnore.Location = new System.Drawing.Point(107, 163);
+            this.lblMMHistoryIgnore.Name = "lblMMHistoryIgnore";
+            this.lblMMHistoryIgnore.Size = new System.Drawing.Size(134, 16);
+            this.lblMMHistoryIgnore.TabIndex = 126;
+            this.lblMMHistoryIgnore.Text = "Ignore History/Peak (ms):";
+            this.lblMMHistoryIgnore.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // clrbtnMeterItemPowerScale
             // 
@@ -54617,47 +54658,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // nudMeterItemIgnoreHistoryDuration
-            // 
-            this.nudMeterItemIgnoreHistoryDuration.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudMeterItemIgnoreHistoryDuration.Location = new System.Drawing.Point(247, 161);
-            this.nudMeterItemIgnoreHistoryDuration.Maximum = new decimal(new int[] {
-            4000,
-            0,
-            0,
-            0});
-            this.nudMeterItemIgnoreHistoryDuration.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudMeterItemIgnoreHistoryDuration.Name = "nudMeterItemIgnoreHistoryDuration";
-            this.nudMeterItemIgnoreHistoryDuration.Size = new System.Drawing.Size(56, 20);
-            this.nudMeterItemIgnoreHistoryDuration.TabIndex = 127;
-            this.nudMeterItemIgnoreHistoryDuration.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudMeterItemIgnoreHistoryDuration, "When rx/tx transition or band change let meters settle before gathering history/p" +
-        "eak values");
-            this.nudMeterItemIgnoreHistoryDuration.Value = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
-            this.nudMeterItemIgnoreHistoryDuration.ValueChanged += new System.EventHandler(this.nudMeterItemIgnoreHistoryDuration_ValueChanged);
-            // 
-            // lblMMHistoryIgnore
-            // 
-            this.lblMMHistoryIgnore.Image = null;
-            this.lblMMHistoryIgnore.Location = new System.Drawing.Point(107, 163);
-            this.lblMMHistoryIgnore.Name = "lblMMHistoryIgnore";
-            this.lblMMHistoryIgnore.Size = new System.Drawing.Size(134, 16);
-            this.lblMMHistoryIgnore.TabIndex = 126;
-            this.lblMMHistoryIgnore.Text = "Ignore History/Peak (ms):";
-            this.lblMMHistoryIgnore.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55594,6 +55594,7 @@
             this.grpMeterItemClockSettings.PerformLayout();
             this.grpMeterItemSettings.ResumeLayout(false);
             this.grpMeterItemSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemIgnoreHistoryDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeBezelScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemsPowerLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeScale)).EndInit();
@@ -55749,7 +55750,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemIgnoreHistoryDuration)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -59135,7 +59135,7 @@
         private Label label20;
         private CheckBoxTS chkMaintainNFAdjustDeltaRX2;
         private CheckBoxTS chkContainerBorder;
-        private LabelTS labelTS161;
+        private LabelTS lblMMContainerBackground;
         private ColorButton clrbtnContainerBackground;
         private NumericUpDownTS nudMeterItemsPowerLimit;
         private LabelTS lblMMPowerLimit;
