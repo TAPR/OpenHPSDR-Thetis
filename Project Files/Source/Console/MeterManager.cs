@@ -4106,11 +4106,11 @@ namespace Thetis
 
             private int _quickestRXUpdate;
             private int _quickestTXUpdate;
-            private Object _objMeterItemLock = new Object();
+            internal Object _meterItemLock = new Object();
 
             private void addMeterItem(clsMeterItem mi)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     _meterItems.Add(mi.ID, mi);
                 }
@@ -4231,7 +4231,7 @@ namespace Thetis
                     ig.MeterType = MeterType.SIGNAL_STRENGTH;
                 else
                     ig.MeterType = MeterType.AVG_SIGNAL_STRENGTH;
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
                 }
@@ -4288,7 +4288,7 @@ namespace Thetis
                 ig.TopLeft = sc.TopLeft;
                 ig.Size = new SizeF(sc.Size.Width, fBottom);
                 ig.MeterType = MeterType.SIGNAL_TEXT;
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
                 }
@@ -6267,7 +6267,7 @@ namespace Thetis
             }
             public void ZeroOut(bool bRxReadings, bool bTxReadings)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
                     {
@@ -6327,7 +6327,7 @@ namespace Thetis
             }
             private int numberOfMeterGroups()
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return 0;
 
@@ -6338,7 +6338,7 @@ namespace Thetis
             }
             private void removeMeterItem(string sId, bool bRebuild = false)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     // remove this item, plus all items that are children
 
@@ -6355,7 +6355,7 @@ namespace Thetis
             }
             public void RemoveMeterType(MeterType mt, bool bRebuild = false)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return;
 
@@ -6396,7 +6396,7 @@ namespace Thetis
             }
             public bool HasMeterType(MeterType mt)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 { 
                     if (_meterItems == null) return false;
 
@@ -6413,7 +6413,7 @@ namespace Thetis
             }
             public string MeterGroupID(MeterType mt)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return "";
 
@@ -6429,7 +6429,7 @@ namespace Thetis
             }
             public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return;
 
@@ -6818,7 +6818,7 @@ namespace Thetis
             }
             public clsIGSettings GetSettingsForMeterGroup(MeterType mt)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return null;
 
@@ -7148,7 +7148,7 @@ namespace Thetis
             }
             public int GetOrderForMeterType(MeterType mt)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return -1;
 
@@ -7165,7 +7165,7 @@ namespace Thetis
             public void SetOrderForMeterType(MeterType mt, int nOrder, bool bRebuild, bool bUp)
             {
                 // only works for up/down 1 place
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return;
 
@@ -7197,7 +7197,7 @@ namespace Thetis
             }
             private clsMeterItem itemFromID(string sId)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return null;
                     if (!_meterItems.ContainsKey(sId)) return null;
@@ -7208,7 +7208,7 @@ namespace Thetis
             internal Dictionary<string, clsMeterItem> itemsFromID(string sId, bool bIncludeParent = true)
             {
                 // obtains all items that have given ID and also the parent
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     if (_meterItems == null) return null;
                     if (!_meterItems.ContainsKey(sId)) return null;
@@ -7236,7 +7236,7 @@ namespace Thetis
             }
             public float GetBottom()
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     float fBottom = 0;
 
@@ -7280,7 +7280,7 @@ namespace Thetis
 
                 setupSortedZOrder();
 
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     // shift top
                     //Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
@@ -7311,7 +7311,7 @@ namespace Thetis
             }
             private void setupSortedZOrder()
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
                 }
@@ -7335,14 +7335,14 @@ namespace Thetis
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            lock (_objMeterItemLock)
+                            lock (_meterItemLock)
                             {
                                 incrementMeterItem(cb);
                             }
                         }
                         else if (e.Button == MouseButtons.Right)
                         {
-                            lock (_objMeterItemLock)
+                            lock (_meterItemLock)
                             {
                                 decrementMeterItem(cb);
                             }
@@ -7450,7 +7450,7 @@ namespace Thetis
             public int RX { get { return _rx; } set { _rx = value; } }
             public int QuickestUpdateInterval(bool mox)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     int updateInterval = int.MaxValue;
                     foreach (var kvp in _meterItems.Where(o => (o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE || 
@@ -7471,7 +7471,7 @@ namespace Thetis
             }
             public void Update(ref List<Reading> readingsUsed)
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     // this is called for each meter from the meter manager thread
                     foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
@@ -7484,7 +7484,7 @@ namespace Thetis
             }
             public int DelayForUpdate()
             {
-                lock (_objMeterItemLock)
+                lock (_meterItemLock)
                 {
                     // this is called for each meter from the meter manager thread
                     int nDelay = int.MaxValue;
@@ -7501,7 +7501,7 @@ namespace Thetis
             public Dictionary<string, clsMeterItem> SortedMeterItemsForZOrder
             {
                 get {
-                    lock (_objMeterItemLock)
+                    lock (_meterItemLock)
                     {
                         return _sortedMeterItemsForZOrder;
                     }
@@ -8102,7 +8102,7 @@ namespace Thetis
 
                                 // background for entire form/area?
                                 _renderTarget.Clear(_backColour);
-
+                                
                                 nSleepTime = drawMeters();
 
                                 if (_highlightEdge)
@@ -8359,33 +8359,37 @@ namespace Thetis
                     if (!_meters.ContainsKey(sId)) return;
 
                     clsMeter m = _meters[sId];
-                    if (m.SortedMeterItemsForZOrder == null) return;
 
-                    float tw = targetWidth - 1f;// 0.5f;
-                    float rw = m.XRatio;
-                    float rh = m.YRatio;
-
-                    SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
-
-                    foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                    lock (m._meterItemLock)
                     {
-                        clsMeterItem mi = mikvp.Value;
-                        if (mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
+                        if (m.SortedMeterItemsForZOrder == null) return;
+
+                        float tw = targetWidth - 1f;// 0.5f;
+                        float rw = m.XRatio;
+                        float rh = m.YRatio;
+
+                        SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                        foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                         {
-                            clsClickBox cb = (clsClickBox)mi;
-
-                            if ((!cb.OnlyWhenRX && !cb.OnlyWhenTX) || ((m.MOX && cb.OnlyWhenTX) || (!m.MOX && cb.OnlyWhenRX)))
+                            clsMeterItem mi = mikvp.Value;
+                            if (mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
                             {
-                                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-                                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                float w = rect.Width * (mi.Size.Width / m.XRatio);
-                                float h = rect.Height * (mi.Size.Height / m.YRatio);
+                                clsClickBox cb = (clsClickBox)mi;
 
-                                SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
-
-                                if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                                if ((!cb.OnlyWhenRX && !cb.OnlyWhenTX) || ((m.MOX && cb.OnlyWhenTX) || (!m.MOX && cb.OnlyWhenRX)))
                                 {
-                                    m.MouseUp(e, m, cb);
+                                    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                                    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                    float w = rect.Width * (mi.Size.Width / m.XRatio);
+                                    float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                                    SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
+
+                                    if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                                    {
+                                        m.MouseUp(e, m, cb);
+                                    }
                                 }
                             }
                         }
@@ -8398,79 +8402,81 @@ namespace Thetis
                 int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
 
-                if (m.RX == _rx && m.SortedMeterItemsForZOrder != null)
+                lock (m._meterItemLock)
                 {
-                    int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
-                    if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
-
-                    foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                    if (m.RX == _rx && m.SortedMeterItemsForZOrder != null)
                     {
-                        clsMeterItem mi = mikvp.Value;
+                        int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
+                        if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
 
-                        bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
-
-                        if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
+                        foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                         {
-                            float tw = targetWidth - 1f;
-                            float rw = m.XRatio;
-                            float rh = m.YRatio;
+                            clsMeterItem mi = mikvp.Value;
 
-                            SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+                            bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
 
-                            switch (mi.ItemType)
+                            if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
                             {
-                                //case clsMeterItem.MeterItemType.V_BAR:
-                                //    renderVBar(rect, mi, m);
-                                //    break;
-                                case clsMeterItem.MeterItemType.H_BAR:
-                                    renderHBar(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.SOLID_COLOUR:
-                                    renderSolidColour(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.NEEDLE:
-                                    renderNeedle(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.IMAGE:
-                                    renderImage(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.TEXT:
-                                    renderText(rect, mi, m);                                            
-                                    break;
-                                case clsMeterItem.MeterItemType.H_SCALE:
-                                case clsMeterItem.MeterItemType.V_SCALE:                                
-                                    renderScale(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.NEEDLE_SCALE_PWR:
-                                    renderNeedleScale(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.MAGIC_EYE:
-                                    renderEye(rect, mi, m);
-                                    break;
-                                //case clsMeterItem.MeterItemType.HISTORY:
-                                //    renderHistory(rect, mi, m);
-                                //    break;
-                                //case clsMeterItem.MeterItemType.ITEM_GROUP:
-                                //    renderGroup(rect, mi, m);
-                                //    break;
-                                case clsMeterItem.MeterItemType.VFO_DISPLAY:
-                                    renderVfoDisplay(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.CLOCK:
-                                    renderClock(rect, mi, m);
-                                    break;
-                                case clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY:
-                                    renderSignalTextDisplay(rect, mi, m);
-                                    break;
-                                //case clsMeterItem.MeterItemType.SPECTRUM:
-                                //    renderSpectrum(rect, mi, m);
-                                //    break;
+                                float tw = targetWidth - 1f;
+                                float rw = m.XRatio;
+                                float rh = m.YRatio;
+
+                                SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                                switch (mi.ItemType)
+                                {
+                                    //case clsMeterItem.MeterItemType.V_BAR:
+                                    //    renderVBar(rect, mi, m);
+                                    //    break;
+                                    case clsMeterItem.MeterItemType.H_BAR:
+                                        renderHBar(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.SOLID_COLOUR:
+                                        renderSolidColour(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.NEEDLE:
+                                        renderNeedle(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.IMAGE:
+                                        renderImage(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.TEXT:
+                                        renderText(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.H_SCALE:
+                                    case clsMeterItem.MeterItemType.V_SCALE:
+                                        renderScale(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.NEEDLE_SCALE_PWR:
+                                        renderNeedleScale(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.MAGIC_EYE:
+                                        renderEye(rect, mi, m);
+                                        break;
+                                    //case clsMeterItem.MeterItemType.HISTORY:
+                                    //    renderHistory(rect, mi, m);
+                                    //    break;
+                                    //case clsMeterItem.MeterItemType.ITEM_GROUP:
+                                    //    renderGroup(rect, mi, m);
+                                    //    break;
+                                    case clsMeterItem.MeterItemType.VFO_DISPLAY:
+                                        renderVfoDisplay(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.CLOCK:
+                                        renderClock(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY:
+                                        renderSignalTextDisplay(rect, mi, m);
+                                        break;
+                                        //case clsMeterItem.MeterItemType.SPECTRUM:
+                                        //    renderSpectrum(rect, mi, m);
+                                        //    break;
+                                }
                             }
                         }
+
                     }
-
                 }
-
                 return nRedrawDelay;
             }
 
@@ -8862,6 +8868,9 @@ namespace Thetis
                                 //        break;
                                 //}
 
+                                SharpDX.Direct2D1.Brush lowColour = getDXBrushForColour(scale.LowColour, nFade);
+                                SharpDX.Direct2D1.Brush highColour = getDXBrushForColour(scale.HighColour, nFade);
+
                                 string[] powerList = new string[5];
                                 float fMaxPower = scale.MaxPower <= 1f ? scale.MaxPower * 1000f : scale.MaxPower;
 
@@ -8879,11 +8888,11 @@ namespace Thetis
                                 startPoint.Y = fLineBaseY;
                                 endPoint.X = x + (w * 0.75f);
                                 endPoint.Y = startPoint.Y;
-                                _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                                _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                                 startPoint.X = endPoint.X;
                                 endPoint.X = x + (w * 0.99f);
-                                _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                                _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
 
                                 //low markers
                                 for (int i = 1; i < 5; i++)
@@ -8893,20 +8902,20 @@ namespace Thetis
                                     endPoint.X = startPoint.X;
                                     endPoint.Y = fLineBaseY - (h * 0.15f);
 
-                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                                     // long ticks
                                     startPoint.X = x + (i * spacing);
                                     endPoint.X = startPoint.X;
                                     endPoint.Y = fLineBaseY - (h * 0.3f);
 
-                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                                     // text
                                     string sText = powerList[i - 1];
                                     szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (szTextSize.Width * 0.5f), endPoint.Y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
-                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.LowColour, nFade));
+                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, lowColour);
                                 }
 
                                 //high markers
@@ -8917,20 +8926,20 @@ namespace Thetis
                                 endPoint.X = startPoint.X;
                                 endPoint.Y = fLineBaseY - (h * 0.15f);
 
-                                _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                                _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
 
                                 // long ticks
                                 startPoint.X = x + (w * 0.75f) + (1 * spacing);
                                 endPoint.X = startPoint.X;
                                 endPoint.Y = fLineBaseY - (h * 0.3f);
 
-                                _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                                _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
 
                                 // text
                                 string sText2 = powerList[4];
                                 szTextSize = measureString(sText2, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                                 SharpDX.RectangleF txtrect2 = new SharpDX.RectangleF(startPoint.X - szTextSize.Width, endPoint.Y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
-                                _renderTarget.DrawText(sText2, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect2, getDXBrushForColour(scale.HighColour, nFade));
+                                _renderTarget.DrawText(sText2, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect2, highColour);
                             }
                             break;
                         //case MeterTXMode.SWR_POWER:
@@ -8940,6 +8949,9 @@ namespace Thetis
                         //    break;
                         case Reading.SWR:
                             {
+                                SharpDX.Direct2D1.Brush lowColour = getDXBrushForColour(scale.LowColour, nFade);
+                                SharpDX.Direct2D1.Brush highColour = getDXBrushForColour(scale.HighColour, nFade);
+
                                 float spacing = (w * 0.75f) / 15.0f;
                                 string[] swr_list = { "1.5", "2" };
                                 string[] swr_hi_list = { "3", "4", "5" };
@@ -8952,11 +8964,11 @@ namespace Thetis
                                 startPoint.Y = fLineBaseY;
                                 endPoint.X = x + (w * 0.75f);
                                 endPoint.Y = startPoint.Y;
-                                _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                                _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                                 startPoint.X = endPoint.X;
                                 endPoint.X = x + (w * 0.99f);
-                                _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                                _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
 
                                 //low markers
                                 for (int i = 1; i < 15; i++)
@@ -8966,7 +8978,7 @@ namespace Thetis
                                     endPoint.X = startPoint.X;
                                     endPoint.Y = fLineBaseY - (h * 0.15f);
 
-                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
                                 }
 
                                 //low markers
@@ -8977,7 +8989,7 @@ namespace Thetis
                                     endPoint.X = startPoint.X;
                                     endPoint.Y = fLineBaseY - (h * 0.15f);
 
-                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
                                 }
                                 for (int i = 1; i < 3; i++)
                                 {
@@ -8988,13 +9000,13 @@ namespace Thetis
                                     endPoint.X = startPoint.X;
                                     endPoint.Y = fLineBaseY - (h * 0.3f);
 
-                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                                     // text
                                     string sText = swr_list[i - 1];
                                     szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (szTextSize.Width / 2f), endPoint.Y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
-                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.LowColour, nFade));
+                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, lowColour);
                                 }
 
                                 //high markers
@@ -9009,7 +9021,7 @@ namespace Thetis
                                         endPoint.X = startPoint.X;
                                         endPoint.Y = fLineBaseY - (h * 0.15f);
 
-                                        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                                        _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
                                     }
 
                                     // long ticks 
@@ -9017,13 +9029,13 @@ namespace Thetis
                                     endPoint.X = startPoint.X;
                                     endPoint.Y = fLineBaseY - (h * 0.3f);
 
-                                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                                    _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
 
                                     // text
                                     string sText = swr_hi_list[i - 1];
                                     szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (szTextSize.Width / 2f), endPoint.Y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
-                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.HighColour, nFade));
+                                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, highColour);
                                 }
                             }
                             break;
@@ -9155,6 +9167,11 @@ namespace Thetis
                 RawVector2 startPoint = new RawVector2();
                 RawVector2 endPoint = new RawVector2();
 
+                SharpDX.Direct2D1.Brush lowColour = getDXBrushForColour(scale.LowColour, nFade);
+                SharpDX.Direct2D1.Brush fontLowColour = getDXBrushForColour(scale.FontColourLow, nFade);
+                SharpDX.Direct2D1.Brush highColour = getDXBrushForColour(scale.HighColour, nFade);
+                SharpDX.Direct2D1.Brush fontHighColour = getDXBrushForColour(scale.FontColourHigh, nFade);
+
                 if (scale.ShowMarkers)
                 {
                     // horiz line
@@ -9162,11 +9179,11 @@ namespace Thetis
                     startPoint.Y = fLineBaseY;
                     endPoint.X = x + (spacing * (float)(lowLongTicks - 1));//(w * 0.6666f);
                     endPoint.Y = startPoint.Y;
-                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                    _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                     startPoint.X = endPoint.X;
                     endPoint.X = x + (w * 0.99f);
-                    _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                    _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
                 }
 
                 // markers low                                
@@ -9179,7 +9196,7 @@ namespace Thetis
                         endPoint.X = startPoint.X;
                         endPoint.Y = fLineBaseY - (h * 0.15f);
 
-                        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                        _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
                     }
 
                     // long ticks
@@ -9187,13 +9204,13 @@ namespace Thetis
                     endPoint.X = startPoint.X;
                     endPoint.Y = fLineBaseY - (h * 0.3f);
 
-                    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.LowColour, nFade), 2f);
+                    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                     // text
                     string sText = (lowStartNumner + i * lowIncrement).ToString();
                     SizeF szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, newSize);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (szTextSize.Width / 2f), endPoint.Y - szTextSize.Height, szTextSize.Width, szTextSize.Height);
-                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourLow, nFade));
+                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, fontLowColour);
                 }
                 
                 // markers high
@@ -9209,7 +9226,7 @@ namespace Thetis
                         endPoint.X = startPoint.X;
                         endPoint.Y = fLineBaseY - (h * 0.15f);
 
-                        _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                        _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
                     }
 
                     // long ticks
@@ -9217,14 +9234,14 @@ namespace Thetis
                     endPoint.X = startPoint.X;
                     endPoint.Y = fLineBaseY - (h * 0.3f);
 
-                    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, getDXBrushForColour(scale.HighColour, nFade), 2f);
+                    if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
 
                     // text
                     string sText = /*"+" +*/ ((highEndNumber - (highLongTicks * highIngrement)) + i * highIngrement).ToString();
                     if (addAllTrailingPlus || (i == highLongTicks && addTrailingPlus)) sText += "+";
                     SizeF szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, newSize);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(i == highLongTicks ? x + w - szTextSize.Width : startPoint.X - szTextSize.Width / 2f, endPoint.Y - szTextSize.Height, szTextSize.Width, szTextSize.Height);
-                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourHigh, nFade));
+                    _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, fontHighColour);
                 }
             }
             private void renderGroup(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
@@ -9570,6 +9587,13 @@ namespace Thetis
                     }
                 }
 
+                SharpDX.Direct2D1.Brush historyColour = getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A);
+                SharpDX.Direct2D1.Brush colour = getDXBrushForColour(cbi.Colour, nFade);
+                SharpDX.Direct2D1.Brush colourHigh = getDXBrushForColour(cbi.ColourHigh, nFade);
+                SharpDX.Direct2D1.Brush peakHoldMarkerColour = getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade);
+                SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
+                SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
+
                 if (cbi.ShowHistory)
                 {                   
                     switch (cbi.Style)
@@ -9579,7 +9603,7 @@ namespace Thetis
                         case clsBarItem.BarStyle.Line:
                             {
                                 SharpDX.RectangleF history = new SharpDX.RectangleF(minHistory_x, y, maxHistory_x - minHistory_x, fBarHeight);
-                                _renderTarget.FillRectangle(history, getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A));
+                                _renderTarget.FillRectangle(history, historyColour);
                             }
                             break;
                         case clsBarItem.BarStyle.Segments:
@@ -9589,19 +9613,18 @@ namespace Thetis
                                 float i;
                                 float startX = (numValueBlocks * segmentStep) + x;
                                 SharpDX.RectangleF barRect;
-                                int nAlphaForFade = nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A;
 
                                 for (i = startX; i < maxHistory_x - segmentStep; i += segmentStep)
                                 {
                                     barRect = new SharpDX.RectangleF(i, y, segmentBlockSize, fBarHeight);
-                                    _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.HistoryColour, nAlphaForFade));
+                                    _renderTarget.FillRectangle(barRect, historyColour);
                                 }
 
                                 // complete the end sliver
                                 if (i < maxHistory_x)
                                 {
                                     barRect = new SharpDX.RectangleF(i, y, maxHistory_x - i, fBarHeight);
-                                    _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.HistoryColour, nAlphaForFade));
+                                    _renderTarget.FillRectangle(barRect, historyColour);
                                 }
                             }
                             break;
@@ -9616,29 +9639,29 @@ namespace Thetis
 
                             SharpDX.RectangleF barRect = new SharpDX.RectangleF(x, y, fEnd - x, fBarHeight);
 
-                            _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.Colour, nFade));
+                            _renderTarget.FillRectangle(barRect, colour);
 
                             if(fEnd < xPos) // the area in the high range
                             {
                                 // complete the bar
                                 barRect = new SharpDX.RectangleF(fEnd, y, xPos - fEnd, fBarHeight);
-                                _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.ColourHigh, nFade));
+                                _renderTarget.FillRectangle(barRect, colourHigh);
                             }
 
                             if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade), cbi.StrokeWidth);
+                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
 
                             if (cbi.ShowMarker)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), getDXBrushForColour(cbi.MarkerColour, nFade), cbi.StrokeWidth);
+                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
                         }
                         break;
                     case clsBarItem.BarStyle.Line:
                         {
                             if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade), cbi.StrokeWidth);
+                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
 
                             if (cbi.ShowMarker)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), getDXBrushForColour(cbi.MarkerColour, nFade), cbi.StrokeWidth);
+                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
                         }
                         break;
                     case clsBarItem.BarStyle.Segments:
@@ -9651,14 +9674,14 @@ namespace Thetis
                             for (i = x; i < fEnd - segmentStep; i += segmentStep)
                             {
                                 barRect = new SharpDX.RectangleF(i, y, segmentBlockSize, fBarHeight);
-                                _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.Colour, nFade));
+                                _renderTarget.FillRectangle(barRect, colour);
                             }
 
                             // complete the end sliver up to the high transition
                             if (i < fEnd)
                             {
                                 barRect = new SharpDX.RectangleF(i, y, fEnd - i, fBarHeight);
-                                _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.Colour, nFade));
+                                _renderTarget.FillRectangle(barRect, colour);
                             }
 
                             if (xPos > fHighXPosTransition) // the area in the high range
@@ -9667,29 +9690,29 @@ namespace Thetis
                                 if(i < fEnd)
                                 {
                                     barRect = new SharpDX.RectangleF(fEnd, y, i + segmentBlockSize - fEnd, fBarHeight);
-                                    _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.ColourHigh, nFade));
+                                    _renderTarget.FillRectangle(barRect, colourHigh);
                                 }
 
                                 float j;
                                 for (j = i + segmentStep; j < xPos - segmentStep; j += segmentStep)
                                 {
                                     barRect = new SharpDX.RectangleF(j, y, segmentBlockSize, fBarHeight);
-                                    _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.ColourHigh, nFade));
+                                    _renderTarget.FillRectangle(barRect, colourHigh);
                                 }
 
                                 // complete the end sliver
                                 if (j < xPos)
                                 {
                                     barRect = new SharpDX.RectangleF(j, y, xPos - j, fBarHeight);
-                                    _renderTarget.FillRectangle(barRect, getDXBrushForColour(cbi.ColourHigh, nFade));
+                                    _renderTarget.FillRectangle(barRect, colourHigh);
                                 }
                             }
 
                             if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade), cbi.StrokeWidth);
+                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
 
                             if (cbi.ShowMarker)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), getDXBrushForColour(cbi.MarkerColour, nFade), cbi.StrokeWidth);
+                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
 
                             //if(fHighXPosTransition != -1)
                             //    _renderTarget.DrawLine(new SharpDX.Vector2(fHighXPosTransition, y), new SharpDX.Vector2(fHighXPosTransition, y + h), getDXBrushForColour(cbi.MarkerColour, nFade), cbi.StrokeWidth);
@@ -9720,7 +9743,7 @@ namespace Thetis
                 
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
-                    _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.MarkerColour, nFade));
+                    _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle), txtrect, markerColour);
                 }
                 if (cbi.ShowPeakValue)
                 {
@@ -9745,7 +9768,7 @@ namespace Thetis
 
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
-                    _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, getDXBrushForColour(cbi.PeakValueColour, nFade));
+                    _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, peakValueColour);
                 }
             }
             //private void renderVBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
