@@ -25680,6 +25680,8 @@ namespace Thetis
                 igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
                 igs.PeakValue = chkMeterItemPeakValue.Checked;
                 igs.Average = chkMeterItemSignalAverage.Checked;
+                igs.HistoryDuration = (int)nudMeterItemHistoryDuration.Value;
+                igs.IgnoreHistoryDuration = (int)nudMeterItemIgnoreHistoryDuration.Value;
             }
             else if (mt == MeterType.VFO_DISPLAY)
             {
@@ -25721,6 +25723,7 @@ namespace Thetis
                 igs.HistoryColor = Color.FromArgb(tbMeterItemHistoryAlpha.Value, clrbtnMeterItemHistory.Color);
                 igs.Shadow = chkMeterItemShadow.Checked;
                 igs.HistoryDuration = (int)nudMeterItemHistoryDuration.Value;
+                igs.IgnoreHistoryDuration = (int)nudMeterItemIgnoreHistoryDuration.Value;
 
                 if (chkMeterItemSegmented.Checked)
                     igs.BarStyle = MeterManager.clsBarItem.BarStyle.Segments;
@@ -25786,6 +25789,9 @@ namespace Thetis
                 chkMeterItemPeakValue.Checked = igs.PeakValue;
                 chkMeterItemSignalAverage.Checked = igs.Average;
 
+                nudMeterItemHistoryDuration.Value = igs.HistoryDuration < nudMeterItemHistoryDuration.Minimum ? nudMeterItemHistoryDuration.Minimum : igs.HistoryDuration;
+                nudMeterItemIgnoreHistoryDuration.Value = igs.IgnoreHistoryDuration;
+
                 lblMMLow.Enabled = false;
                 lblMMHigh.Enabled = false;
                 clrbtnMeterItemLow.Enabled = false;
@@ -25819,7 +25825,9 @@ namespace Thetis
                 nudMeterItemEyeBezelScale.Enabled = false;
                 chkMeterItemShadow.Enabled = false;
                 lblMMHistory.Enabled = true;
+                lblMMHistoryIgnore.Enabled = true;
                 nudMeterItemHistoryDuration.Enabled = true;
+                nudMeterItemIgnoreHistoryDuration.Enabled = true;
                 chkMeterItemHistory.Enabled = false;
                 clrbtnMeterItemHistory.Enabled = false;
                 chkMeterItemPeakHold.Enabled = false;
@@ -25915,6 +25923,8 @@ namespace Thetis
                 lblMMEyeBezelSize.Enabled = bMagicEye;
                 lblMMHistory.Enabled = !bMagicEye;
                 nudMeterItemHistoryDuration.Enabled = !bMagicEye;
+                lblMMHistoryIgnore.Enabled = !bMagicEye;
+                nudMeterItemIgnoreHistoryDuration.Enabled = !bMagicEye;
                 chkMeterItemHistory.Enabled = !bMagicEye;
                 clrbtnMeterItemHistory.Enabled = !bMagicEye && chkMeterItemHistory.Checked;
                 chkMeterItemPeakHold.Enabled = !(bMagicEye || mt == MeterType.CROSS);
@@ -26321,6 +26331,11 @@ namespace Thetis
         }
 
         private void clrbtnMeterItemPowerScale_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudMeterItemIgnoreHistoryDuration_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

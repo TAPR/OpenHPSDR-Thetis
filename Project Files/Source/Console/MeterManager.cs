@@ -191,6 +191,7 @@ namespace Thetis
             private bool _showMarker;
             private bool _showSubMarker;
             private bool _hasSubIndicators;
+            private int _ignoreHistoryDuration;
 
             public clsIGSettings()
             {
@@ -199,6 +200,8 @@ namespace Thetis
                 _barStyle = clsBarItem.BarStyle.None;
                 _maxPower = CurrentPowerRating;
                 _units = clsBarItem.Units.DBM;
+                _ignoreHistoryDuration = 2000;
+                _historyDuration = 50;
             }
 
             public override string ToString()
@@ -236,7 +239,8 @@ namespace Thetis
                     Common.ColourToString(_subMarkerColour) + "|" +
                     _showSubMarker.ToString() + "|" +
                     _eyeBezelScale.ToString("f4") + "|" +
-                    Common.ColourToString(_powerScaleColour);
+                    Common.ColourToString(_powerScaleColour) + "|" +
+                    _ignoreHistoryDuration.ToString();
 
                 return sRet;
             }
@@ -292,6 +296,7 @@ namespace Thetis
                     if (bOk) bOk = bool.TryParse(tmp[31], out tmpBool); if (bOk) { _showSubMarker = tmpBool; }
                 }
 
+                // this is due to new versions requiring more and more settings
                 if(bOk && tmp.Length >= 33)
                 {
                     if (bOk) bOk = float.TryParse(tmp[32], out tmpFloat); if (bOk) { _eyeBezelScale = tmpFloat; }
@@ -299,6 +304,10 @@ namespace Thetis
                 if (bOk && tmp.Length >= 34)
                 {
                     if (bOk) tmpColour = Common.ColourFromString(tmp[33]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _powerScaleColour = tmpColour; }
+                }
+                if(bOk && tmp.Length >= 35)
+                {
+                    if (bOk) bOk = int.TryParse(tmp[34], out tmpInt); if (bOk) { _ignoreHistoryDuration = tmpInt; }
                 }
 
                 return bOk;
@@ -308,6 +317,7 @@ namespace Thetis
             public float DecayRatio { get { return _decay; } set { _decay = value; } }
             public float AttackRatio { get { return _attack; } set { _attack = value; } }
             public int HistoryDuration { get { return _historyDuration; } set { _historyDuration = value; } }
+            public int IgnoreHistoryDuration { get { return _ignoreHistoryDuration; } set { _ignoreHistoryDuration = value; } }
             public bool Shadow { get { return _shadow; } set { _shadow = value; } }
             public bool ShowHistory { get { return _showHistory; } set { _showHistory = value; } }
             public System.Drawing.Color HistoryColor { get { return _historyColor; } set { _historyColor = value; } }
@@ -2775,6 +2785,7 @@ namespace Thetis
         {
             private List<float> _history;
             private int _msHistoryDuration; //ms
+            private int _msIgnoreHistoryDuration;
             private bool _showHistory;
             private bool _showValue;
             private object _historyLock = new object();
@@ -2787,6 +2798,7 @@ namespace Thetis
             {
                 _history = new List<float>();
                 _msHistoryDuration = 500;
+                _msIgnoreHistoryDuration = 2000;
                 _showHistory = false;
                 _showValue = true;
 
@@ -2842,6 +2854,11 @@ namespace Thetis
                 get { return _showValue; }
                 set { _showValue = value; }
             }
+            public int IgnoreHistoryDuration
+            {
+                get { return _msIgnoreHistoryDuration; }
+                set { _msIgnoreHistoryDuration = value; }
+            }
             public int HistoryDuration
             {
                 get { return _msHistoryDuration; }
@@ -2879,7 +2896,7 @@ namespace Thetis
                 {
                     _history.Clear();
 
-                    _nIgnoringNext = 2000 / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
+                    _nIgnoringNext = _msIgnoreHistoryDuration / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
@@ -3159,6 +3176,7 @@ namespace Thetis
             }
             private List<float> _history;
             private int _msHistoryDuration; //ms
+            private int _msIgnoreHistoryDuration;
             private bool _showHistory;
             private bool _showValue;
             private bool _showPeakValue;
@@ -3187,6 +3205,7 @@ namespace Thetis
             {
                 _history = new List<float>();
                 _msHistoryDuration = 2000;
+                _msIgnoreHistoryDuration = 2000;
                 _showHistory = false;
                 _showValue = true;
                 _showPeakValue = true;
@@ -3279,6 +3298,11 @@ namespace Thetis
                     if (_msHistoryDuration < UpdateInterval) _msHistoryDuration = UpdateInterval;
                 }
             }
+            public int IgnoreHistoryDuration
+            {
+                get { return _msIgnoreHistoryDuration; }
+                set { _msIgnoreHistoryDuration = value; }
+            }
             public override float MinHistory
             {
                 get
@@ -3307,7 +3331,7 @@ namespace Thetis
                 {
                     _history.Clear();
 
-                    _nIgnoringNext = 2000 / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
+                    _nIgnoringNext = _msIgnoreHistoryDuration / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
@@ -3470,6 +3494,7 @@ namespace Thetis
             }
             private List<float> _history;
             private int _msHistoryDuration; //ms
+            private int _msIgnoreHistoryDuration;
             private bool _showValue;
             private bool _showPeakValue;
             private object _historyLock = new object();
@@ -3490,6 +3515,7 @@ namespace Thetis
             {
                 _history = new List<float>();
                 _msHistoryDuration = 2000;
+                _msIgnoreHistoryDuration = 2000;
                 _showValue = true;
                 _showPeakValue = true;
                 _nIgnoringNext = 0;
@@ -3554,6 +3580,11 @@ namespace Thetis
                 get { return _showPeakValue; }
                 set { _showPeakValue = value; }
             }
+            public int IgnoreHistoryDuration
+            {
+                get { return _msIgnoreHistoryDuration; }
+                set { _msIgnoreHistoryDuration = value; }
+            }
             public int HistoryDuration
             {
                 get { return _msHistoryDuration; }
@@ -3591,7 +3622,7 @@ namespace Thetis
                 {
                     _history.Clear();
 
-                    _nIgnoringNext = 2000 / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
+                    _nIgnoringNext = _msIgnoreHistoryDuration / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
@@ -3715,6 +3746,7 @@ namespace Thetis
             }
             private List<float> _history;
             private int _msHistoryDuration; //ms
+            private int _msIgnoreHistoryDuration;
             private bool _showHistory;
             private object _historyLock = new object();
             private NeedleStyle _style;
@@ -3738,6 +3770,7 @@ namespace Thetis
             {
                 _history = new List<float>();
                 _msHistoryDuration = 500;
+                _msIgnoreHistoryDuration = 2000;
                 _showHistory = false;
                 _placement = NeedlePlacement.Bottom;
                 _needleOffset.X = 0f;
@@ -3851,6 +3884,11 @@ namespace Thetis
                 get { return _showHistory; }
                 set { _showHistory = value; }
             }
+            public int IgnoreHistoryDuration
+            {
+                get { return _msIgnoreHistoryDuration; }
+                set { _msIgnoreHistoryDuration = value; }
+            }
             public int HistoryDuration
             {
                 get { return _msHistoryDuration; }
@@ -3888,7 +3926,7 @@ namespace Thetis
                 {
                     _history.Clear();
 
-                    _nIgnoringNext = 2000 / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
+                    _nIgnoringNext = _msIgnoreHistoryDuration / UpdateInterval;  // ignore next N readings to make up 2 second of ignore
                 }
             }
             public override void History(out float minHistory, out float maxHistory)
@@ -6511,6 +6549,7 @@ namespace Thetis
                                                 ni.AttackRatio = igs.AttackRatio;
                                                 ni.DecayRatio = igs.DecayRatio;
                                                 ni.HistoryDuration = igs.HistoryDuration;
+                                                ni.IgnoreHistoryDuration = igs.IgnoreHistoryDuration;
                                                 ni.HistoryColour = igs.HistoryColor;
                                                 ni.ShowHistory = igs.ShowHistory;
                                                 ni.FadeOnRx = igs.FadeOnRx;
@@ -6551,11 +6590,15 @@ namespace Thetis
                                                 if (mt == MeterType.ANANMM && ni.ReadingSource == Reading.SWR)
                                                 {
                                                     ni.ShowHistory = igs.ShowHistory;
+                                                    ni.HistoryDuration = igs.HistoryDuration;
+                                                    ni.IgnoreHistoryDuration = igs.IgnoreHistoryDuration;
                                                 }
                                                 else if (mt == MeterType.CROSS && ni.ReadingSource == Reading.REVERSE_PWR)
                                                 {
                                                     //ni.Colour = igs.MarkerColour;
                                                     ni.ShowHistory = igs.ShowHistory;
+                                                    ni.HistoryDuration = igs.HistoryDuration;
+                                                    ni.IgnoreHistoryDuration = igs.IgnoreHistoryDuration;
                                                     ni.MaxPower = igs.MaxPower;
                                                 }
                                                 ni.Colour = igs.SubMarkerColour;
@@ -6716,6 +6759,8 @@ namespace Thetis
                                             cst.UpdateInterval = igs.UpdateInterval;
                                             cst.AttackRatio = igs.AttackRatio;
                                             cst.DecayRatio = igs.DecayRatio;
+                                            cst.HistoryDuration = igs.HistoryDuration;
+                                            cst.IgnoreHistoryDuration = igs.IgnoreHistoryDuration;
                                             cst.FadeOnRx = igs.FadeOnRx;
                                             cst.FadeOnTx = igs.FadeOnTx;
                                             //cst.Colour = igs.Colour;
@@ -6746,6 +6791,7 @@ namespace Thetis
                                                 bi.FadeOnRx = igs.FadeOnRx;
                                                 bi.FadeOnTx = igs.FadeOnTx;
                                                 bi.HistoryDuration = igs.HistoryDuration;
+                                                bi.IgnoreHistoryDuration = igs.IgnoreHistoryDuration;
                                                 bi.HistoryColour = igs.HistoryColor;
                                                 bi.ShowHistory = igs.ShowHistory;
                                                 bi.Style = igs.BarStyle;
@@ -6844,6 +6890,7 @@ namespace Thetis
                                             igs.AttackRatio = magicEye.AttackRatio;
                                             igs.DecayRatio = magicEye.DecayRatio;
                                             igs.HistoryDuration = magicEye.HistoryDuration;
+                                            igs.IgnoreHistoryDuration = magicEye.IgnoreHistoryDuration;
                                             igs.HistoryColor = magicEye.HistoryColour;
                                             igs.ShowHistory = magicEye.ShowHistory;
                                             igs.FadeOnRx = magicEye.FadeOnRx;
@@ -6886,6 +6933,7 @@ namespace Thetis
                                                 igs.AttackRatio = ni.AttackRatio;
                                                 igs.DecayRatio = ni.DecayRatio;
                                                 igs.HistoryDuration = ni.HistoryDuration;
+                                                igs.IgnoreHistoryDuration = ni.IgnoreHistoryDuration;
                                                 igs.HistoryColor = ni.HistoryColour;
                                                 igs.ShowHistory = ni.ShowHistory;
                                                 igs.FadeOnRx = ni.FadeOnRx;
@@ -7025,6 +7073,8 @@ namespace Thetis
                                             igs.UpdateInterval = cst.UpdateInterval;
                                             igs.AttackRatio = cst.AttackRatio;
                                             igs.DecayRatio = cst.DecayRatio;
+                                            igs.HistoryDuration = cst.HistoryDuration;
+                                            igs.IgnoreHistoryDuration = cst.IgnoreHistoryDuration;
                                             igs.FadeOnRx = cst.FadeOnRx;
                                             igs.FadeOnTx = cst.FadeOnTx;
                                             //igs.Colour = cst.Colour;
@@ -7085,6 +7135,7 @@ namespace Thetis
                                                 igs.AttackRatio = bi.AttackRatio;
                                                 igs.DecayRatio = bi.DecayRatio;
                                                 igs.HistoryDuration = bi.HistoryDuration;
+                                                igs.IgnoreHistoryDuration = bi.IgnoreHistoryDuration;
                                                 igs.HistoryColor = bi.HistoryColour;
                                                 igs.ShowHistory = bi.ShowHistory;
                                                 igs.FadeOnRx = bi.FadeOnRx;
