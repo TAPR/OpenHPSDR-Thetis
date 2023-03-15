@@ -2918,7 +2918,7 @@
             this.lblMeterType = new System.Windows.Forms.LabelTS();
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
-            this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
+            this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
             this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
             this.labelTS177 = new System.Windows.Forms.LabelTS();
             this.labelTS176 = new System.Windows.Forms.LabelTS();
@@ -3429,6 +3429,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.clrbtnMeterItemPowerScale = new Thetis.ColorButton();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4200,7 +4201,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMeterEdgeBackgroundAlpha)).BeginInit();
             this.grpAppearanceMeter.SuspendLayout();
             this.tpAppearanceMeter2.SuspendLayout();
-            this.groupBoxTS28.SuspendLayout();
+            this.grpMultiMeterHolder.SuspendLayout();
             this.grpMeterItemVfoDisplaySettings.SuspendLayout();
             this.grpMeterItemClockSettings.SuspendLayout();
             this.grpMeterItemSettings.SuspendLayout();
@@ -47176,37 +47177,37 @@
             // tpAppearanceMeter2
             // 
             this.tpAppearanceMeter2.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceMeter2.Controls.Add(this.groupBoxTS28);
+            this.tpAppearanceMeter2.Controls.Add(this.grpMultiMeterHolder);
             this.tpAppearanceMeter2.Location = new System.Drawing.Point(4, 22);
             this.tpAppearanceMeter2.Name = "tpAppearanceMeter2";
             this.tpAppearanceMeter2.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceMeter2.TabIndex = 5;
             this.tpAppearanceMeter2.Text = "Multi Meters";
             // 
-            // groupBoxTS28
+            // grpMultiMeterHolder
             // 
-            this.groupBoxTS28.Controls.Add(this.grpMeterItemVfoDisplaySettings);
-            this.groupBoxTS28.Controls.Add(this.grpMeterItemClockSettings);
-            this.groupBoxTS28.Controls.Add(this.labelTS161);
-            this.groupBoxTS28.Controls.Add(this.clrbtnContainerBackground);
-            this.groupBoxTS28.Controls.Add(this.chkContainerBorder);
-            this.groupBoxTS28.Controls.Add(this.grpMeterItemSettings);
-            this.groupBoxTS28.Controls.Add(this.btnMeterUp);
-            this.groupBoxTS28.Controls.Add(this.btnMeterDown);
-            this.groupBoxTS28.Controls.Add(this.btnRemoveMeterItem);
-            this.groupBoxTS28.Controls.Add(this.btnAddMeterItem);
-            this.groupBoxTS28.Controls.Add(this.lstMetersInUse);
-            this.groupBoxTS28.Controls.Add(this.lstMetersAvailable);
-            this.groupBoxTS28.Controls.Add(this.chkContainerHighlight);
-            this.groupBoxTS28.Controls.Add(this.btnContainerDelete);
-            this.groupBoxTS28.Controls.Add(this.comboContainerSelect);
-            this.groupBoxTS28.Controls.Add(this.btnAddRX2Container);
-            this.groupBoxTS28.Controls.Add(this.btnAddRX1Container);
-            this.groupBoxTS28.Location = new System.Drawing.Point(13, 12);
-            this.groupBoxTS28.Name = "groupBoxTS28";
-            this.groupBoxTS28.Size = new System.Drawing.Size(703, 385);
-            this.groupBoxTS28.TabIndex = 86;
-            this.groupBoxTS28.TabStop = false;
+            this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemVfoDisplaySettings);
+            this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemClockSettings);
+            this.grpMultiMeterHolder.Controls.Add(this.labelTS161);
+            this.grpMultiMeterHolder.Controls.Add(this.clrbtnContainerBackground);
+            this.grpMultiMeterHolder.Controls.Add(this.chkContainerBorder);
+            this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemSettings);
+            this.grpMultiMeterHolder.Controls.Add(this.btnMeterUp);
+            this.grpMultiMeterHolder.Controls.Add(this.btnMeterDown);
+            this.grpMultiMeterHolder.Controls.Add(this.btnRemoveMeterItem);
+            this.grpMultiMeterHolder.Controls.Add(this.btnAddMeterItem);
+            this.grpMultiMeterHolder.Controls.Add(this.lstMetersInUse);
+            this.grpMultiMeterHolder.Controls.Add(this.lstMetersAvailable);
+            this.grpMultiMeterHolder.Controls.Add(this.chkContainerHighlight);
+            this.grpMultiMeterHolder.Controls.Add(this.btnContainerDelete);
+            this.grpMultiMeterHolder.Controls.Add(this.comboContainerSelect);
+            this.grpMultiMeterHolder.Controls.Add(this.btnAddRX2Container);
+            this.grpMultiMeterHolder.Controls.Add(this.btnAddRX1Container);
+            this.grpMultiMeterHolder.Location = new System.Drawing.Point(13, 12);
+            this.grpMultiMeterHolder.Name = "grpMultiMeterHolder";
+            this.grpMultiMeterHolder.Size = new System.Drawing.Size(703, 385);
+            this.grpMultiMeterHolder.TabIndex = 86;
+            this.grpMultiMeterHolder.TabStop = false;
             // 
             // grpMeterItemVfoDisplaySettings
             // 
@@ -47679,6 +47680,7 @@
             // 
             // grpMeterItemSettings
             // 
+            this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemPowerScale);
             this.grpMeterItemSettings.Controls.Add(this.nudMeterItemEyeBezelScale);
             this.grpMeterItemSettings.Controls.Add(this.lblMMEyeBezelSize);
             this.grpMeterItemSettings.Controls.Add(this.chkMeterItemShowSubIndicator);
@@ -47881,7 +47883,7 @@
             0,
             0,
             65536});
-            this.nudMeterItemsPowerLimit.Location = new System.Drawing.Point(247, 338);
+            this.nudMeterItemsPowerLimit.Location = new System.Drawing.Point(214, 336);
             this.nudMeterItemsPowerLimit.Maximum = new decimal(new int[] {
             2500,
             0,
@@ -47907,9 +47909,9 @@
             // lblMMPowerLimit
             // 
             this.lblMMPowerLimit.Image = null;
-            this.lblMMPowerLimit.Location = new System.Drawing.Point(177, 340);
+            this.lblMMPowerLimit.Location = new System.Drawing.Point(164, 338);
             this.lblMMPowerLimit.Name = "lblMMPowerLimit";
-            this.lblMMPowerLimit.Size = new System.Drawing.Size(64, 16);
+            this.lblMMPowerLimit.Size = new System.Drawing.Size(44, 16);
             this.lblMMPowerLimit.TabIndex = 113;
             this.lblMMPowerLimit.Text = "Power:";
             this.lblMMPowerLimit.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -54596,6 +54598,20 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // clrbtnMeterItemPowerScale
+            // 
+            this.clrbtnMeterItemPowerScale.Automatic = "Automatic";
+            this.clrbtnMeterItemPowerScale.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemPowerScale.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemPowerScale.Image = null;
+            this.clrbtnMeterItemPowerScale.Location = new System.Drawing.Point(272, 333);
+            this.clrbtnMeterItemPowerScale.MoreColors = "More Colors...";
+            this.clrbtnMeterItemPowerScale.Name = "clrbtnMeterItemPowerScale";
+            this.clrbtnMeterItemPowerScale.Selectable = true;
+            this.clrbtnMeterItemPowerScale.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemPowerScale.TabIndex = 125;
+            this.clrbtnMeterItemPowerScale.Changed += new System.EventHandler(this.clrbtnMeterItemPowerScale_Changed);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55524,8 +55540,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMeterEdgeBackgroundAlpha)).EndInit();
             this.grpAppearanceMeter.ResumeLayout(false);
             this.tpAppearanceMeter2.ResumeLayout(false);
-            this.groupBoxTS28.ResumeLayout(false);
-            this.groupBoxTS28.PerformLayout();
+            this.grpMultiMeterHolder.ResumeLayout(false);
+            this.grpMultiMeterHolder.PerformLayout();
             this.grpMeterItemVfoDisplaySettings.ResumeLayout(false);
             this.grpMeterItemVfoDisplaySettings.PerformLayout();
             this.grpMeterItemClockSettings.ResumeLayout(false);
@@ -59018,7 +59034,7 @@
         private ButtonTS btnRX1PBsnr;
         private LabelTS labelTS160;
         private ButtonTS btnResetNFShift;
-        private GroupBoxTS groupBoxTS28;
+        private GroupBoxTS grpMultiMeterHolder;
         private ButtonTS btnAddRX2Container;
         private ButtonTS btnAddRX1Container;
         private CheckBoxTS chkContainerHighlight;
@@ -59118,5 +59134,6 @@
         private LabelTS labelTS177;
         private NumericUpDownTS nudMeterItemEyeBezelScale;
         private LabelTS lblMMEyeBezelSize;
+        private ColorButton clrbtnMeterItemPowerScale;
     }
 }

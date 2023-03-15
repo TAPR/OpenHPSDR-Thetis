@@ -186,6 +186,7 @@ namespace Thetis
             private bool _average;
             private bool _darkMode;
             private float _maxPower;
+            private System.Drawing.Color _powerScaleColour;
             private clsBarItem.Units _units;
             private bool _showMarker;
             private bool _showSubMarker;
@@ -234,7 +235,8 @@ namespace Thetis
                     _showMarker.ToString() + "|" +
                     Common.ColourToString(_subMarkerColour) + "|" +
                     _showSubMarker.ToString() + "|" +
-                    _eyeBezelScale.ToString("f4");
+                    _eyeBezelScale.ToString("f4") + "|" +
+                    Common.ColourToString(_powerScaleColour);
 
                 return sRet;
             }
@@ -294,6 +296,10 @@ namespace Thetis
                 {
                     if (bOk) bOk = float.TryParse(tmp[32], out tmpFloat); if (bOk) { _eyeBezelScale = tmpFloat; }
                 }
+                if (bOk && tmp.Length >= 34)
+                {
+                    if (bOk) tmpColour = Common.ColourFromString(tmp[33]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _powerScaleColour = tmpColour; }
+                }
 
                 return bOk;
             }
@@ -330,6 +336,7 @@ namespace Thetis
             public bool Average { get { return _average; } set { _average = value; } }
             public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
             public float MaxPower { get { return _maxPower; } set { _maxPower = value; } }
+            public System.Drawing.Color PowerScaleColour { get { return _powerScaleColour; } set { _powerScaleColour = value; } }
             public clsBarItem.Units Unit { get { return _units; } set { _units = value; } }
 
         }
@@ -4808,13 +4815,14 @@ namespace Thetis
                 nspi.ParentID = ig.ID;
                 nspi.TopLeft = ni.TopLeft;
                 nspi.Size = ni.Size;
+                nspi.Primary = true;
                 nspi.Marks = 7;
                 nspi.ReadingSource = Reading.PWR;
                 nspi.NeedleOffset = new PointF(0.004f, 0.736f);
                 nspi.RadiusRatio = new PointF(1f, 0.55f);
                 nspi.LengthFactor = 1.51f;
                 nspi.ZOrder = 2;
-                nspi.LowColour = System.Drawing.Color.Black;
+                nspi.LowColour = System.Drawing.Color.Gray;
                 nspi.FntStyle = FontStyle.Bold;
                 nspi.FontSize = 22;
                 nspi.ScaleCalibration.Add(0f, new PointF(0.099f, 0.352f));
@@ -5017,12 +5025,13 @@ namespace Thetis
                 nspi.ParentID = ig.ID;
                 nspi.TopLeft = ni.TopLeft;
                 nspi.Size = ni.Size;
+                nspi.Primary = true;
                 nspi.Marks = 8;
                 nspi.ReadingSource = Reading.PWR;
                 nspi.NeedleOffset = new PointF(0.318f, 0.611f);
                 nspi.LengthFactor = 1.685f;
                 nspi.ZOrder = 5;
-                nspi.LowColour = System.Drawing.Color.Black;
+                nspi.LowColour = System.Drawing.Color.Gray;
                 nspi.FntStyle = FontStyle.Bold;
                 nspi.FontSize = 16;
                 nspi.ScaleCalibration.Add(0f, new PointF(0.052f, 0.732f));
@@ -5096,7 +5105,7 @@ namespace Thetis
                 nspi2.NeedleOffset = new PointF(-0.322f, 0.611f);
                 nspi2.LengthFactor = 1.685f;
                 nspi2.ZOrder = 5;
-                nspi2.LowColour = System.Drawing.Color.Black;
+                nspi2.LowColour = System.Drawing.Color.Gray;
                 nspi2.FntStyle = FontStyle.Bold;
                 nspi2.FontSize = 16;
                 nspi2.ScaleCalibration.Add(0f, new PointF(0.948f, 0.74f));
@@ -6578,6 +6587,7 @@ namespace Thetis
                                             nspi.FadeOnTx = igs.FadeOnTx;
                                             nspi.MaxPower = igs.MaxPower;
                                             nspi.DarkMode = igs.DarkMode;
+                                            nspi.LowColour = igs.PowerScaleColour;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> txts in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.TEXT))
                                         {
@@ -6921,7 +6931,11 @@ namespace Thetis
 
                                             //nspi.FadeOnRx = igs.FadeOnRx;
                                             //nspi.FadeOnTx = igs.FadeOnTx;
-                                            if (nspi.Primary) igs.MaxPower = nspi.MaxPower;
+                                            if (nspi.Primary)
+                                            {
+                                                igs.MaxPower = nspi.MaxPower;
+                                                igs.PowerScaleColour = nspi.LowColour;
+                                            }
                                         }
                                     }
                                     break;
@@ -8705,8 +8719,7 @@ namespace Thetis
                                 _renderTarget.Transform = t;
 
                                 SharpDX.RectangleF txtrect = new SharpDX.RectangleF(fontEndX, fontEndY, szTextSize.Width, szTextSize.Height);
-                                System.Drawing.Color c = scale.DarkMode ? System.Drawing.Color.FromArgb(186, 186, 186) : System.Drawing.Color.Black;
-                                _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(c, nFade));
+                                _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.LowColour, nFade));
 
                                 _renderTarget.Transform = currentTransform;
 

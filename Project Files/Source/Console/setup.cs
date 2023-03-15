@@ -1205,6 +1205,25 @@ namespace Thetis
             toRemove.Add("txtVAC2OldVarIn");
             toRemove.Add("txtVAC2OldVarOut");
 
+            // multimeter
+            foreach(Control c in grpMultiMeterHolder.Controls)
+            {
+                toRemove.Add(c.Name);
+            }
+            foreach (Control c in grpMeterItemSettings.Controls)
+            {
+                toRemove.Add(c.Name);
+            }
+            foreach (Control c in grpMeterItemClockSettings.Controls)
+            {
+                toRemove.Add(c.Name);
+            }
+            foreach (Control c in grpMeterItemVfoDisplaySettings.Controls)
+            {
+                toRemove.Add(c.Name);
+            }
+            //
+
             foreach (string sControlName in toRemove)
             {
                 if (m_lstUpdatedControls.Contains(sControlName)) m_lstUpdatedControls.Remove(sControlName);
@@ -25480,7 +25499,7 @@ namespace Thetis
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
-        {           
+        {
             bool bEnabled = lstMetersInUse.SelectedIndex >= 0;
 
             if (bEnabled)
@@ -25634,7 +25653,7 @@ namespace Thetis
         }
         private void updateMeterType()
         {
-            if (_ignoreMeterItemChangeEvents) return;
+            if (initializing || _ignoreMeterItemChangeEvents) return;
 
             string mgID = meterItemGroupIDfromSelected();
             if (mgID == "") return;
@@ -25725,6 +25744,8 @@ namespace Thetis
                 igs.EyeScale = (float)nudMeterItemEyeScale.Value;
                 igs.EyeBezelScale = (float)nudMeterItemEyeBezelScale.Value;
                 igs.MaxPower = (float)nudMeterItemsPowerLimit.Value;
+                igs.PowerScaleColour = clrbtnMeterItemPowerScale.Color;
+
                 if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
             }
@@ -25734,6 +25755,8 @@ namespace Thetis
         private bool _ignoreMeterItemChangeEvents = false;
         private void updateItemSettingsControlsForSelected()
         {
+            if (initializing) return;
+
             string mgID = meterItemGroupIDfromSelected();
             if (mgID == "") return;
 
@@ -25805,6 +25828,7 @@ namespace Thetis
                 chkMeterItemDarkMode.Enabled = false;
                 lblMMPowerLimit.Enabled = false;
                 nudMeterItemsPowerLimit.Enabled = false;
+                clrbtnMeterItemPowerScale.Enabled = false;
             }
             else if (mt == MeterType.VFO_DISPLAY)
             {
@@ -25876,6 +25900,7 @@ namespace Thetis
                 updatePeakValueControls();
 
                 if (mt == MeterType.CROSS || mt == MeterType.ANANMM || mt == MeterType.PWR || mt == MeterType.REVERSE_PWR) nudMeterItemsPowerLimit.Value = (decimal)igs.MaxPower;
+                if (mt == MeterType.CROSS || mt == MeterType.ANANMM) clrbtnMeterItemPowerScale.Color = igs.PowerScaleColour;
 
                 // specific to mt
                 bool bMagicEye = mt == MeterType.MAGIC_EYE;
@@ -25897,7 +25922,10 @@ namespace Thetis
 
                 chkMeterItemShadow.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
                 chkMeterItemDarkMode.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
+
                 lblMMPowerLimit.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
+                clrbtnMeterItemPowerScale.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS;
+
                 nudMeterItemsPowerLimit.Enabled = mt == MeterType.ANANMM || mt == MeterType.CROSS || mt == MeterType.PWR || mt == MeterType.REVERSE_PWR;
 
                 bool bEnable = mt == MeterType.ANANMM || mt == MeterType.CROSS || mt == MeterType.MAGIC_EYE;
@@ -26288,6 +26316,11 @@ namespace Thetis
         }
 
         private void nudMeterItemEyeBezelScale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemPowerScale_Changed(object sender, EventArgs e)
         {
             updateMeterType();
         }

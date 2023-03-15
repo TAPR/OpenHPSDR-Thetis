@@ -196,8 +196,8 @@ namespace Thetis
 
                 int x = _size.Width + dX;
                 int y = _size.Height + dY;
-                if (x < 80) x = 80;
-                if (y < 80) y = 80;
+                if (x < 100) x = 100; // these match max size of parent when floating
+                if (y < 32) y = 32;
 
                 if (_floating)
                 {
@@ -627,6 +627,18 @@ namespace Thetis
         private void btnAxis_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right) btnAxis_Click(sender, e);
+        }
+
+        private void btnAxis_MouseLeave(object sender, EventArgs e)
+        {
+            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
+                mouseLeave();
+        }
+
+        private void btnPin_MouseLeave(object sender, EventArgs e)
+        {
+            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
+                mouseLeave();
         }
     }
 }
