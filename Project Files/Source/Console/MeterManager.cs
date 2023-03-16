@@ -4282,7 +4282,7 @@ namespace Thetis
                 clsItemGroup ig = new clsItemGroup();
                 if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
-
+                
                 clsSolidColour sc;
                 sc = new clsSolidColour();
                 sc.ParentID = ig.ID;
@@ -6132,7 +6132,7 @@ namespace Thetis
                 fBottom = sc.TopLeft.Y + sc.Size.Height;
 
                 ig.TopLeft = sc.TopLeft;
-                ig.Size = new SizeF(sc.Size.Width, fBottom);
+                ig.Size = new SizeF(sc.Size.Width + sc2.Size.Width + _fPadX, fBottom);
                 ig.MeterType = MeterType.VFO_DISPLAY;
                 ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
@@ -6176,7 +6176,7 @@ namespace Thetis
                 fBottom = sc.TopLeft.Y + sc.Size.Height;
 
                 ig.TopLeft = sc.TopLeft;
-                ig.Size = new SizeF(sc.Size.Width, fBottom);
+                ig.Size = new SizeF(sc.Size.Width + sc2.Size.Width + _fPadX, fBottom);
                 ig.MeterType = MeterType.CLOCK;
                 ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
@@ -6742,15 +6742,6 @@ namespace Thetis
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
 
-                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
-                                        {
-                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
-                                            if (solidColor == null) continue;
-
-                                            solidColor.FadeOnRx = igs.FadeOnRx;
-                                            solidColor.FadeOnTx = igs.FadeOnTx;
-                                            solidColor.Colour = igs.Colour;
-                                        }
                                         foreach (KeyValuePair<string, clsMeterItem> stds in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY))
                                         {
                                             clsSignalText cst = stds.Value as clsSignalText;
@@ -6769,6 +6760,25 @@ namespace Thetis
                                             cst.PeakValueColour = igs.PeakValueColour;
                                             cst.ShowPeakValue = igs.PeakValue;
                                             cst.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+
+                                            ig.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            if (cst.ShowPeakValue)
+                                                ig.Size = new SizeF(ig.Size.Width, ig.TopLeft.Y + (_fHeight + _fHeight * 0.75f) * 1.5f);
+                                            else
+                                                ig.Size = new SizeF(ig.Size.Width, ig.TopLeft.Y + (_fHeight + _fHeight * 0.75f) * 1.1f);
+
+                                            bRebuild = true;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                            if (solidColor == null) continue;
+
+                                            solidColor.FadeOnRx = igs.FadeOnRx;
+                                            solidColor.FadeOnTx = igs.FadeOnTx;
+                                            solidColor.Colour = igs.Colour;
+
+                                            solidColor.Size = new SizeF(solidColor.Size.Width, ig.Size.Height - ig.TopLeft.Y);
                                         }
                                     }
                                     break;
@@ -10036,8 +10046,9 @@ namespace Thetis
                     plotText("VFO B", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
 
                 getParts(m.VfoA, out string MHz, out string kHz, out string hz);
-                string sVfoA = MHz + "." + kHz + "." + hz;
-                plotText(sVfoA, x + (w * 0.48f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                string sVfoA = MHz + "." + kHz;// + "." + hz;
+                plotText(sVfoA, x + (w * 0.415f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                plotText(hz, x + (w * 0.48f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
 
                 double tmpVfoB;
                 Band tmpVfoBBand;
@@ -10060,8 +10071,9 @@ namespace Thetis
                 }
 
                 getParts(tmpVfoB, out MHz, out kHz, out hz);
-                string sVfoB = MHz + "." + kHz + "." + hz;
-                plotText(sVfoB, x + (w * 0.99f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                string sVfoB = MHz + "." + kHz;// + "." + hz;
+                plotText(sVfoB, x + (w * 0.925f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                plotText(hz, x + (w * 0.99f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
 
                 // mode
                 plotText(m.ModeVfoA.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
@@ -10223,10 +10235,16 @@ namespace Thetis
                 SizeF szTextSize;
 
                 fontSizeEmScaled = (st.FontSize / 16f) * (w / 52f);
-                string sText = Common.SMeterFromDBM(st.Value, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                //string sText = Common.SMeterFromDBM(st.Value, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                Common.SMeterFromDBM2(st.Value, MeterManager.IsAbove30(_rx), out int S, out int dBmOver);
+                string sText = "S " + S.ToString();
                 szTextSize = measureString(sText, st.FontFamily, st.FntStyle, fontSizeEmScaled);
                 SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width * 0.5f), y, szTextSize.Width, szTextSize.Height);
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(st.FontFamily, fontSizeEmScaled, st.FntStyle), txtrect, getDXBrushForColour(st.FontColour, nFade));
+                if (dBmOver > 0)
+                {
+                    plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.24f), h, rect.Width, st.FontSize * 0.6f, st.FontColour, nFade, st.FontFamily, st.FntStyle);
+                }
 
                 sText = Common.UVfromDBM(st.Value).ToString("f2") + "uV";
                 plotText(sText, x + (w * 0.98f), y + (h * 0.22f), h, rect.Width, st.FontSize * 0.55f, st.HistoryColour, nFade, st.FontFamily, st.FntStyle, true);
@@ -10238,10 +10256,16 @@ namespace Thetis
                 {
                     //peaks
                     fontSizeEmScaled = ((st.FontSize * 0.5f) / 16f) * (w / 52f);
-                    sText = Common.SMeterFromDBM(st.MaxHistory, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                    //sText = Common.SMeterFromDBM(st.MaxHistory, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                    Common.SMeterFromDBM2(st.MaxHistory, MeterManager.IsAbove30(_rx), out S, out dBmOver);
+                    sText = "S " + S.ToString();
                     szTextSize = measureString(sText, st.FontFamily, st.FntStyle, fontSizeEmScaled);
                     txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width * 0.5f), y + (h * 0.62f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(st.FontFamily, fontSizeEmScaled, st.FntStyle), txtrect, getDXBrushForColour(st.PeakValueColour, nFade));
+                    if (dBmOver > 0)
+                    {
+                        plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.12f), h, rect.Width, st.FontSize * 0.3f, st.PeakValueColour, nFade, st.FontFamily, st.FntStyle);
+                    }
 
                     sText = Common.UVfromDBM(st.MaxHistory).ToString("f2") + "uV";
                     plotText(sText, x + (w * 0.98f), y + (h * 0.65f), h, rect.Width, st.FontSize * 0.35f, st.PeakValueColour, nFade, st.FontFamily, st.FntStyle, true);
