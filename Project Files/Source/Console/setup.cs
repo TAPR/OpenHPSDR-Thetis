@@ -25521,6 +25521,9 @@ namespace Thetis
             btnRemoveMeterItem.Enabled = bEnabled;
             btnMeterUp.Enabled = bEnabled;
             btnMeterDown.Enabled = bEnabled;
+
+            btnMeterCopySettings.Enabled = bEnabled;
+            btnMeterPasteSettings.Enabled = bEnabled && canPasteSettings();
         }
 
         private void btnRemoveMeterItem_Click(object sender, EventArgs e)
@@ -25612,7 +25615,7 @@ namespace Thetis
                             sb = new SolidBrush(Color.PaleVioletRed);
                             break;
                         default: //other
-                            sb = new SolidBrush(Color.AliceBlue);
+                            sb = new SolidBrush(Color.CornflowerBlue);
                             break;
                     }
 
@@ -25662,21 +25665,21 @@ namespace Thetis
 
             updateMeterType();
         }
-        private void updateMeterType()
+        private MeterManager.clsIGSettings updateMeterType()
         {
-            if (initializing || _ignoreMeterItemChangeEvents) return;
+            if (initializing || _ignoreMeterItemChangeEvents) return null;
 
             string mgID = meterItemGroupIDfromSelected();
-            if (mgID == "") return;
+            if (mgID == "") return null;
 
             MeterManager.clsMeter m = meterFromSelectedContainer();
-            if (m == null) return;
+            if (m == null) return null;
 
             MeterType mt = meterItemGroupTypefromSelected();
-            if (mt == MeterType.NONE) return;
+            if (mt == MeterType.NONE) return null;
 
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);
-            if (igs == null) return;
+            if (igs == null) return null;
 
             if (mt == MeterType.SIGNAL_TEXT)
             {
@@ -25765,6 +25768,8 @@ namespace Thetis
             }
 
             m.ApplySettingsForMeterGroup(mt, igs);
+
+            return igs;
         }
         private bool _ignoreMeterItemChangeEvents = false;
         private void updateItemSettingsControlsForSelected()
@@ -25780,7 +25785,7 @@ namespace Thetis
             MeterType mt = meterItemGroupTypefromSelected();
             if (mt == MeterType.NONE) return;
 
-            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);                
             if (igs == null) return;
 
             _ignoreMeterItemChangeEvents = true;
@@ -25872,6 +25877,7 @@ namespace Thetis
                 clrbtnMMTime.Color = igs.MarkerColour;
                 clrbtnMMDate.Color = igs.SubMarkerColour;
                 radMM24Clock.Checked = igs.ShowMarker; // use the show marker bool for this
+                if(!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
                 updateTitleControlsClock();
             }
             else
@@ -26349,6 +26355,75 @@ namespace Thetis
         private void nudMeterItemIgnoreHistoryDuration_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private MeterManager.clsIGSettings _itemGroupSettings = null;
+        private MeterType _itemGroupSettingsMeterType = MeterType.NONE;
+
+        private void btnMeterCopySettings_Click(object sender, EventArgs e)
+        {
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            MeterType mt = meterItemGroupTypefromSelected();
+            if (mt == MeterType.NONE) return;
+
+            // copy settings into igs
+            _itemGroupSettings = m.GetSettingsForMeterGroup(mt);
+            if (_itemGroupSettings != null)
+                _itemGroupSettingsMeterType = meterItemGroupTypefromSelected();
+            else
+                _itemGroupSettingsMeterType = MeterType.NONE;
+        }
+
+        private void btnMeterPasteSettings_Click(object sender, EventArgs e)
+        {
+            if (_itemGroupSettings == null || _itemGroupSettingsMeterType == MeterType.NONE) return;
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            MeterType mt = meterItemGroupTypefromSelected();
+            if (mt == MeterType.NONE) return;
+
+            if (canPasteSettings())
+            {
+                //updateItemSettingsControlsForSelected(_itemGroupSettings);
+                //updateMeterType();
+
+                m.ApplySettingsForMeterGroup(mt, _itemGroupSettings);
+                updateItemSettingsControlsForSelected();
+            }
+        }
+        private bool canPasteSettings()
+        {
+            if (_itemGroupSettings == null || _itemGroupSettingsMeterType == MeterType.NONE) return false;
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return false;
+
+            MeterType mt = meterItemGroupTypefromSelected();
+            if (mt == MeterType.NONE) return false;
+
+            bool bPaste;
+
+            // only allow paste into matching
+            if (mt == MeterType.MAGIC_EYE || mt == MeterType.CROSS ||
+                mt == MeterType.ANANMM || mt == MeterType.SIGNAL_TEXT ||
+                mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK)
+            {
+                bPaste = _itemGroupSettingsMeterType == mt;
+            }
+            else if (_itemGroupSettingsMeterType == MeterType.MAGIC_EYE || _itemGroupSettingsMeterType == MeterType.CROSS ||
+                _itemGroupSettingsMeterType == MeterType.ANANMM || _itemGroupSettingsMeterType == MeterType.SIGNAL_TEXT ||
+                _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK)
+            {
+                bPaste = mt == _itemGroupSettingsMeterType;
+            }
+            else
+                bPaste = true;
+
+            return bPaste;
         }
     }
 

@@ -2920,6 +2920,8 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
+            this.btnMeterCopySettings = new System.Windows.Forms.ButtonTS();
+            this.btnMeterPasteSettings = new System.Windows.Forms.ButtonTS();
             this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
             this.labelTS177 = new System.Windows.Forms.LabelTS();
             this.labelTS176 = new System.Windows.Forms.LabelTS();
@@ -47204,6 +47206,8 @@
             // 
             // grpMultiMeterHolder
             // 
+            this.grpMultiMeterHolder.Controls.Add(this.btnMeterCopySettings);
+            this.grpMultiMeterHolder.Controls.Add(this.btnMeterPasteSettings);
             this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemVfoDisplaySettings);
             this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemClockSettings);
             this.grpMultiMeterHolder.Controls.Add(this.lblMMContainerBackground);
@@ -47227,6 +47231,30 @@
             this.grpMultiMeterHolder.TabIndex = 86;
             this.grpMultiMeterHolder.TabStop = false;
             // 
+            // btnMeterCopySettings
+            // 
+            this.btnMeterCopySettings.Image = global::Thetis.Properties.Resources.pipette32;
+            this.btnMeterCopySettings.Location = new System.Drawing.Point(336, 293);
+            this.btnMeterCopySettings.Name = "btnMeterCopySettings";
+            this.btnMeterCopySettings.Selectable = true;
+            this.btnMeterCopySettings.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterCopySettings.TabIndex = 103;
+            this.toolTip1.SetToolTip(this.btnMeterCopySettings, "Copy settings and colours");
+            this.btnMeterCopySettings.UseVisualStyleBackColor = true;
+            this.btnMeterCopySettings.Click += new System.EventHandler(this.btnMeterCopySettings_Click);
+            // 
+            // btnMeterPasteSettings
+            // 
+            this.btnMeterPasteSettings.Image = global::Thetis.Properties.Resources.brush32;
+            this.btnMeterPasteSettings.Location = new System.Drawing.Point(336, 340);
+            this.btnMeterPasteSettings.Name = "btnMeterPasteSettings";
+            this.btnMeterPasteSettings.Selectable = true;
+            this.btnMeterPasteSettings.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterPasteSettings.TabIndex = 102;
+            this.toolTip1.SetToolTip(this.btnMeterPasteSettings, "Paste settings and colours into suitable meter item");
+            this.btnMeterPasteSettings.UseVisualStyleBackColor = true;
+            this.btnMeterPasteSettings.Click += new System.EventHandler(this.btnMeterPasteSettings_Click);
+            // 
             // grpMeterItemVfoDisplaySettings
             // 
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS177);
@@ -47249,7 +47277,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(7, 92);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(363, 353);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -47519,7 +47547,7 @@
             this.grpMeterItemClockSettings.Controls.Add(this.chkMMClockTitle);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM24Clock);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM12Clock);
-            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(28, 102);
+            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(346, 363);
             this.grpMeterItemClockSettings.Name = "grpMeterItemClockSettings";
             this.grpMeterItemClockSettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemClockSettings.TabIndex = 100;
@@ -59201,5 +59229,7 @@
         private NumericUpDownTS nudMeterItemIgnoreHistoryDuration;
         private LabelTS lblMMHistoryIgnore;
         private PictureBox pictureBox1;
+        private ButtonTS btnMeterCopySettings;
+        private ButtonTS btnMeterPasteSettings;
     }
 }
