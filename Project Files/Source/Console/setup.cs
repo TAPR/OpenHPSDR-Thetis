@@ -25400,6 +25400,9 @@ namespace Thetis
             btnMeterUp.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
             btnMeterDown.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
 
+            btnMeterCopySettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
+            btnMeterPasteSettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
+
             if (!bEnableControls) comboContainerSelect.Text = "";
 
             updateMeterLists();
