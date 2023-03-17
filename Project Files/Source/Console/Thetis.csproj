@@ -661,6 +661,13 @@
     <None Include="Resources\arrow_left_black.png" />
     <None Include="Resources\arrow_right_black.png" />
     <None Include="Resources\arrow_up_black.png" />
+    <None Include="Resources\ukraine_flag.png" />
+    <None Include="Resources\brush.png" />
+    <None Include="Resources\bucket.png" />
+    <None Include="Resources\pipette16.png" />
+    <None Include="Resources\brush16.png" />
+    <None Include="Resources\pipette32.png" />
+    <None Include="Resources\brush32.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />

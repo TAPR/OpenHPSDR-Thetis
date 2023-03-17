@@ -3725,26 +3725,32 @@ namespace Thetis
             }
 
             if (rx == 1)
-            {
-                if (local_mox) fOffset = tx_display_cal_offset;
-                else if (mox && tx_on_vfob && !displayduplex)
-                {
-                    if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
-                    else fOffset = tx_display_cal_offset;
-                }
-                else fOffset = rx1_display_cal_offset;
-            }
-            else //if (rx == 2)
-            {
-                if (local_mox) fOffset = tx_display_cal_offset;
-                else fOffset = rx2_display_cal_offset;
-            }
+                fOffset = RX1Offset;
+            else
+                fOffset = RX2Offset;
 
-            if (!local_mox || (local_mox && displayduplex))
-            {
-                if (rx == 1) fOffset += rx1_preamp_offset;
-                else if (rx == 2) fOffset += rx2_preamp_offset;
-            }
+            //MW0LGE [2.9.0.7]
+            //if (rx == 1)
+            //{
+            //    if (local_mox) fOffset = tx_display_cal_offset;
+            //    else if (mox && tx_on_vfob && !displayduplex)
+            //    {
+            //        if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
+            //        else fOffset = tx_display_cal_offset;
+            //    }
+            //    else fOffset = rx1_display_cal_offset;
+            //}
+            //else //if (rx == 2)
+            //{
+            //    if (local_mox) fOffset = tx_display_cal_offset;
+            //    else fOffset = rx2_display_cal_offset;
+            //}
+
+            //if (!local_mox || (local_mox && displayduplex))
+            //{
+            //    if (rx == 1) fOffset += rx1_preamp_offset;
+            //    else if (rx == 2) fOffset += rx2_preamp_offset;
+            //}
 
             int Y;
             dBm += fOffset;
@@ -3963,6 +3969,49 @@ namespace Thetis
                 }
             }
         }
+        public static float RX1Offset
+        {
+            get
+            {
+                float fOffset;
+                bool local_mox = mox && (!tx_on_vfob || (tx_on_vfob && !console.RX2Enabled));
+                bool displayduplex = isRxDuplex(1);
+
+                if (local_mox) fOffset = tx_display_cal_offset;
+                else if (mox && tx_on_vfob && !displayduplex)
+                {
+                    if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
+                    else fOffset = tx_display_cal_offset;
+                }
+                else fOffset = rx1_display_cal_offset;
+
+                if (!local_mox || (local_mox && displayduplex))
+                {
+                    fOffset += rx1_preamp_offset;
+                }
+
+                return fOffset;
+            }
+        }
+        public static float RX2Offset
+        {
+            get
+            {
+                float fOffset;
+                bool local_mox = mox && tx_on_vfob;
+                bool displayduplex = isRxDuplex(2);
+
+                if (local_mox) fOffset = tx_display_cal_offset;
+                else fOffset = rx2_display_cal_offset;
+
+                if (!local_mox || (local_mox && displayduplex))
+                {
+                    fOffset += rx2_preamp_offset;
+                }
+
+                return fOffset;
+            }
+        }
         unsafe static private bool DrawPanadapterDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
             if (grid_control)
@@ -4094,26 +4143,32 @@ namespace Thetis
             float fOffset;
 
             if (rx == 1)
-            {
-                if (local_mox) fOffset = tx_display_cal_offset;
-                else if (mox && tx_on_vfob && !displayduplex)
-                {
-                    if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
-                    else fOffset = tx_display_cal_offset;
-                }
-                else fOffset = rx1_display_cal_offset;
-            }
-            else //if (rx == 2)
-            {
-                if (local_mox) fOffset = tx_display_cal_offset;
-                else fOffset = rx2_display_cal_offset;
-            }
+                fOffset = RX1Offset;
+            else
+                fOffset = RX2Offset;
 
-            if (!local_mox || (local_mox && displayduplex))
-            {
-                if (rx == 1) fOffset += rx1_preamp_offset;
-                else if (rx == 2) fOffset += rx2_preamp_offset;
-            }
+            //MW0LGE [2.9.0.7]
+            //if (rx == 1)
+            //{
+            //    if (local_mox) fOffset = tx_display_cal_offset;
+            //    else if (mox && tx_on_vfob && !displayduplex)
+            //    {
+            //        if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
+            //        else fOffset = tx_display_cal_offset;
+            //    }
+            //    else fOffset = rx1_display_cal_offset;
+            //}
+            //else //if (rx == 2)
+            //{
+            //    if (local_mox) fOffset = tx_display_cal_offset;
+            //    else fOffset = rx2_display_cal_offset;
+            //}
+
+            //if (!local_mox || (local_mox && displayduplex))
+            //{
+            //    if (rx == 1) fOffset += rx1_preamp_offset;
+            //    else if (rx == 2) fOffset += rx2_preamp_offset;
+            //}
 
             //MW0LGE not used, as filling vertically with lines is faster than a filled very detailed
             //geometry. Just kept for reference
@@ -4793,12 +4848,12 @@ namespace Thetis
 
                     float max;
                     float max_copy;
-                    float fOffset = 0; ///MW0LGE - block of code moved out of for loop +- for now, TODO
+                    float fOffset;// = 0; ///MW0LGE - block of code moved out of for loop +- for now, TODO
 
                     if (!local_mox)
                     {
-                        if (rx == 1) fOffset += rx1_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
-                        else if (rx == 2) fOffset += rx2_display_cal_offset + (rx2_preamp_offset);
+                        //if (rx == 1) fOffset += rx1_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
+                        //else if (rx == 2) fOffset += rx2_display_cal_offset + (rx2_preamp_offset);
 
                         if (bDoVisualNotch && m_bShowVisualNotch)
                         {
@@ -4806,11 +4861,17 @@ namespace Thetis
                             modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
                         }
                     }
+                    //else
+                    //{
+                    //if (rx == 1) fOffset += tx_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
+                    //else if (rx == 2) fOffset += tx_display_cal_offset + (rx2_preamp_offset);
+                    //}
+
+                    //MW0LGE [2.9.0.7]
+                    if (rx == 1)
+                        fOffset = RX1Offset;
                     else
-                    {
-                        if (rx == 1) fOffset += tx_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
-                        else if (rx == 2) fOffset += tx_display_cal_offset + (rx2_preamp_offset);
-                    }
+                        fOffset = RX2Offset;
 
                     float averageSum = 0;
                     int averageCount = 0;

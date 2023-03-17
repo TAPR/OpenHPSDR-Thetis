@@ -824,7 +824,7 @@ namespace Thetis
             //return uV (rms) from dBm (50 ohms)
             return Math.Sqrt(Math.Pow(10, dbm / 10) * 50 * 1e-3) * 1e6;
         }
-        public static string SMeterFromDBM(double dbm, bool bAbove30)
+		public static string SMeterFromDBM(double dbm, bool bAbove30)
         {
             string sRet;
 
@@ -871,6 +871,60 @@ namespace Thetis
                 else sRet = "S 9 + 60";
             }
             return "    " + sRet;
+        }
+        public static double GetSMeterUnits(double dbm, bool bAbove30)
+        {
+            if (bAbove30)
+                return 9 + ((dbm + 93) / 6f); //MW0LGE_[2.9.0.7] fixed to 93
+            else
+                return 9 + ((dbm + 73) / 6f);
+        }
+        public static void SMeterFromDBM2(double dbm, bool bAbove30, out int S, out int over9dBm)
+        {
+			// version that returns via out parameters the S reading, and the dbm over reading
+
+            if (bAbove30)
+            {
+				if (dbm <= -144.0f) { S = 0; over9dBm = 0; }
+                else if (dbm > -144.0f & dbm <= -138.0f) { S = 1; over9dBm = 0; }
+				else if (dbm > -138.0f & dbm <= -132.0f) { S = 2; over9dBm = 0; }
+                else if (dbm > -132.0f & dbm <= -126.0f) { S = 3; over9dBm = 0; }
+                else if (dbm > -126.0f & dbm <= -120.0f) { S = 4; over9dBm = 0; }
+                else if (dbm > -120.0f & dbm <= -114.0f) { S = 5; over9dBm = 0; }
+                else if (dbm > -114.0f & dbm <= -108.0f) { S = 6; over9dBm = 0; }
+                else if (dbm > -108.0f & dbm <= -102.0f) { S = 7; over9dBm = 0; }
+                else if (dbm > -102.0f & dbm <= -96.0f) { S = 8; over9dBm = 0; }
+                else if (dbm > -96.0f & dbm <= -90.0f) { S = 9; over9dBm = 0; }
+                else if (dbm > -90.0f & dbm <= -86.0f) { S = 9; over9dBm = 5; }
+                else if (dbm > -86.0f & dbm <= -80.0f) { S = 9; over9dBm = 10; }
+                else if (dbm > -80.0f & dbm <= -76.0f) { S = 9; over9dBm = 15; }
+                else if (dbm > -76.0f & dbm <= -66.0f) { S = 9; over9dBm = 20; }
+                else if (dbm > -66.0f & dbm <= -56.0f) { S = 9; over9dBm = 30; }
+                else if (dbm > -56.0f & dbm <= -46.0f) { S = 9; over9dBm = 40; }
+                else if (dbm > -46.0f & dbm <= -36.0f) { S = 9; over9dBm = 50; }
+                else { S = 9; over9dBm = 60; }
+            }
+            else
+            {
+                if (dbm <= -124.0f) { S = 0; over9dBm = 0; }
+                else if (dbm > -124.0f & dbm <= -118.0f) { S = 1; over9dBm = 0; }
+                else if (dbm > -118.0f & dbm <= -112.0f) { S = 2; over9dBm = 0; }
+                else if (dbm > -112.0f & dbm <= -106.0f) { S = 3; over9dBm = 0; }
+                else if (dbm > -106.0f & dbm <= -100.0f) { S = 4; over9dBm = 0; }
+                else if (dbm > -100.0f & dbm <= -94.0f) { S = 5; over9dBm = 0; }
+                else if (dbm > -94.0f & dbm <= -88.0f) { S = 6; over9dBm = 0; }
+                else if (dbm > -88.0f & dbm <= -82.0f) { S = 7; over9dBm = 0; }
+                else if (dbm > -82.0f & dbm <= -76.0f) { S = 8; over9dBm = 0; }
+                else if (dbm > -76.0f & dbm <= -70.0f) { S = 9; over9dBm = 0; }
+                else if (dbm > -70.0f & dbm <= -66.0f) { S = 9; over9dBm = 5; }
+                else if (dbm > -66.0f & dbm <= -60.0f) { S = 9; over9dBm = 10; }
+                else if (dbm > -60.0f & dbm <= -56.0f) { S = 9; over9dBm = 15; }
+                else if (dbm > -56.0f & dbm <= -46.0f) { S = 9; over9dBm = 20; }
+                else if (dbm > -46.0f & dbm <= -36.0f) { S = 9; over9dBm = 30; }
+                else if (dbm > -36.0f & dbm <= -26.0f) { S = 9; over9dBm = 40; }
+                else if (dbm > -26.0f & dbm <= -16.0f) { S = 9; over9dBm = 50; }
+                else { S = 9; over9dBm = 60; }
+            }
         }
     }
 }
