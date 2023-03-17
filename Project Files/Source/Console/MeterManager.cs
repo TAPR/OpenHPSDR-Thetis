@@ -10073,7 +10073,7 @@ namespace Thetis
                 getParts(tmpVfoB, out MHz, out kHz, out hz);
                 string sVfoB = MHz + "." + kHz;// + "." + hz;
                 plotText(sVfoB, x + (w * 0.925f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
-                plotText(hz, x + (w * 0.99f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                plotText(hz, x + (w * 0.99f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
 
                 // mode
                 plotText(m.ModeVfoA.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
