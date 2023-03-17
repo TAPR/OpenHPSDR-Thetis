@@ -1,11 +1,5 @@
 # NOTE
-My distro is in a state of flux whilst I work on multi-meters, and may not actually build or run as expected. The releases section contains source that will run/compile. I am using this a dumping ground at the moment for a backup in-case something untoward happens.
-
-If you do manage to get it to compile, and want to look at the meters, then you will need some images from the link below. Download the latest exe from the releases section and run it. It will add all necessary folder/images into %appdata%\Roaming\OpenHPSDR\Meters
-
-https://github.com/ramdor/MeterSkinInstaller/releases
-
-I will update this note when everything has settled. Richie.
+TODO
 
 
 # Latest Release v2.9.0 April 03, 2022
