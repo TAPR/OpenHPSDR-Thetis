@@ -8209,7 +8209,8 @@ namespace Thetis
                                     targetHeight = _newTargetHeight;
 
                                     Debug.Print(">> dx is resizing from dxRender <<");
-                                    resizeDX();
+                                    bool bOk = resizeDX();
+                                    if (!bOk) break; // exit do while as resizeDx will have thrown an exception and called shutdowndx
                                 }
 
                                 _renderTarget.BeginDraw();
@@ -8223,6 +8224,7 @@ namespace Thetis
                                 _renderTarget.Clear(_backColour);
                                 
                                 nSleepTime = drawMeters();
+                                if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms
 
                                 if (_highlightEdge)
                                 {
@@ -8269,8 +8271,7 @@ namespace Thetis
                         }
 
                         if (_targetVisible)
-                        {
-                            if (nSleepTime > 250) nSleepTime = 250; // we can live with this display update speed
+                        {                            
                             Thread.Sleep(nSleepTime);
                         }                            
                         else
@@ -8444,11 +8445,11 @@ namespace Thetis
 
                 return null;
             }
-            private void resizeDX()
+            private bool resizeDX()
             {
                 lock (_DXlock)
                 {
-                    if (!_bDXSetup) return;
+                    if (!_bDXSetup) return false;
 
                     try
                     {
@@ -8457,7 +8458,7 @@ namespace Thetis
 
                         _renderTarget = null;
                         _surface = null;
-
+                        
                         _device.ImmediateContext.ClearState();
                         _device.ImmediateContext.Flush();
 
@@ -8467,12 +8468,14 @@ namespace Thetis
                         RenderTargetProperties rtp = new RenderTargetProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));
                         _renderTarget = new RenderTarget(_factory, _surface, rtp);
 
-                        setupAliasing();                        
+                        setupAliasing();
+                        return true;
                     }
                     catch (Exception e)
                     {
                         ShutdownDX();
                         MessageBox.Show("DirectX resizeDX() Meter failure\n" + e.Message, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
                     }
                 }
             }
