@@ -12257,12 +12257,9 @@ namespace Thetis
         }
 
         private Thread m_objSaveLoadThread = null;
-        public Thread SaveLoadThread
+        public bool StillWaitingForSaveLoad
         {
-            get { return m_objSaveLoadThread; }
-            set
-            {
-            }
+            get { return (m_objSaveLoadThread != null && m_objSaveLoadThread.IsAlive); }
         }
         private bool m_bIgnoreButtonState = false;
         public bool IgnoreButtonState
@@ -12270,9 +12267,15 @@ namespace Thetis
             get { return m_bIgnoreButtonState; }
             set { m_bIgnoreButtonState = value; }
         }
-        public void WaitForSaveLoad()
+        public void WaitForSaveLoad(int nWait = -1)
         {
-            if (m_objSaveLoadThread != null && m_objSaveLoadThread.IsAlive) m_objSaveLoadThread.Join();
+            if (m_objSaveLoadThread != null && m_objSaveLoadThread.IsAlive)
+            {
+                if (nWait == -1)
+                    m_objSaveLoadThread.Join();
+                else
+                    m_objSaveLoadThread.Join(nWait);
+            }
         }
 
         private void btnOK_Click(object sender, System.EventArgs e)

@@ -150,7 +150,7 @@
             this.pbGrab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pbGrab.BackColor = System.Drawing.Color.Transparent;
             this.pbGrab.Image = global::Thetis.Properties.Resources.resizegrab;
-            this.pbGrab.Location = new System.Drawing.Point(384, 384);
+            this.pbGrab.Location = new System.Drawing.Point(384, 184);
             this.pbGrab.Name = "pbGrab";
             this.pbGrab.Size = new System.Drawing.Size(16, 16);
             this.pbGrab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -168,10 +168,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picContainer.BackColor = System.Drawing.Color.Black;
-            this.picContainer.Location = new System.Drawing.Point(0, 0);
+            this.picContainer.Location = new System.Drawing.Point(33, 31);
             this.picContainer.Margin = new System.Windows.Forms.Padding(0);
             this.picContainer.Name = "picContainer";
-            this.picContainer.Size = new System.Drawing.Size(400, 400);
+            this.picContainer.Size = new System.Drawing.Size(334, 150);
             this.picContainer.TabIndex = 1;
             this.picContainer.TabStop = false;
             this.picContainer.MouseLeave += new System.EventHandler(this.picContainer_MouseLeave);
@@ -187,7 +187,7 @@
             this.Controls.Add(this.pnlBar);
             this.Controls.Add(this.picContainer);
             this.Name = "ucMeter";
-            this.Size = new System.Drawing.Size(400, 400);
+            this.Size = new System.Drawing.Size(400, 200);
             this.LocationChanged += new System.EventHandler(this.ucMeter_LocationChanged);
             this.SizeChanged += new System.EventHandler(this.ucMeter_SizeChanged);
             this.pnlBar.ResumeLayout(false);

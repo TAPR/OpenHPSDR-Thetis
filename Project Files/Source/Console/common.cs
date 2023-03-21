@@ -811,10 +811,19 @@ namespace Thetis
         }
         public static System.Drawing.Color ColourFromString(string str)
         {
+			//format of string "A.R.G.B"
             string[] tmp = str.Split('.');
             if (tmp.Length == 4)
             {
-                return System.Drawing.Color.FromArgb(Int32.Parse(tmp[0]), Int32.Parse(tmp[1]), Int32.Parse(tmp[2]), Int32.Parse(tmp[3]));
+                bool bOk;
+                int A = 0, R = 0, G = 0, B = 0;
+
+				bOk = int.TryParse(tmp[0], out A);
+				if (bOk) bOk = int.TryParse(tmp[1], out R);
+                if (bOk) bOk = int.TryParse(tmp[2], out G);
+                if (bOk) bOk = int.TryParse(tmp[3], out B);
+
+				if (bOk) return System.Drawing.Color.FromArgb(A, R, G, B);
             }
             return System.Drawing.Color.Empty;
         }

@@ -29,6 +29,9 @@ namespace Thetis
         {
             InitializeComponent();
 
+            picContainer.Location = new Point(0, 0);
+            picContainer.Size = new Size(Size.Width, Size.Height);
+
             _console = null;
             _id = System.Guid.NewGuid().ToString();
             _border = true;
@@ -617,7 +620,7 @@ namespace Thetis
                     if (bOk) bOk = bool.TryParse(tmp[11], out border);
                     if (bOk) UCBorder = border;
                     Color c = Common.ColourFromString(tmp[12]);
-                    bOk = c != System.Drawing.Color.Transparent;
+                    bOk = c != System.Drawing.Color.Empty;
                     if(bOk) this.BackColor = c;
                 }
             }

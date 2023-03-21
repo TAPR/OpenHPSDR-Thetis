@@ -31307,7 +31307,7 @@ namespace Thetis
             cmaster.Hidewb(0);
 
             m_bDisplayLoopRunning = false; // will cause the display loop to exit
-            if (draw_display_thread != null && draw_display_thread.IsAlive) draw_display_thread.Join();
+            if (draw_display_thread != null && draw_display_thread.IsAlive) draw_display_thread.Join(1100); // added 1100, slightly longer than 1fps MW0LGE [2.9.0.7]
             Display.ShutdownDX2D(); // MW0LGE
 
             //MW0LGE_21a un-register delegates
@@ -31323,7 +31323,15 @@ namespace Thetis
                 //if(SetupForm.CompleteAnyExistingSave()) SetupForm.SaveOptions();
                 SetupForm.IgnoreButtonState = true; // prevents threads from updating controls in the blocked thead caused by WaitForSaveLoad
                 Debug.Write("waiting existing save/load...");
-                SetupForm.WaitForSaveLoad();
+                SetupForm.WaitForSaveLoad(10000); // MW0LGE [2.9.0.8] wait 10 seconds, should be enough?
+                if (SetupForm.StillWaitingForSaveLoad)
+                {
+                    // save didnt complete
+                    MessageBox.Show("Saving to the database did not complete in the alloted time. Your settings will not be saved.",
+                    "DB Save TimeOut",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
                 Debug.Write("done...");
                 SetupForm.SaveOptions();
                 Debug.WriteLine("Saved!");
