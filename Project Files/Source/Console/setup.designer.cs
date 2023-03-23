@@ -47233,7 +47233,7 @@
             // 
             // btnMeterCopySettings
             // 
-            this.btnMeterCopySettings.Image = global::Thetis.Properties.Resources.pipette32;
+            this.btnMeterCopySettings.Image = global::Thetis.Properties.Resources.pipette32border;
             this.btnMeterCopySettings.Location = new System.Drawing.Point(336, 293);
             this.btnMeterCopySettings.Name = "btnMeterCopySettings";
             this.btnMeterCopySettings.Selectable = true;
@@ -47245,7 +47245,7 @@
             // 
             // btnMeterPasteSettings
             // 
-            this.btnMeterPasteSettings.Image = global::Thetis.Properties.Resources.brush32;
+            this.btnMeterPasteSettings.Image = global::Thetis.Properties.Resources.brush32border;
             this.btnMeterPasteSettings.Location = new System.Drawing.Point(336, 340);
             this.btnMeterPasteSettings.Name = "btnMeterPasteSettings";
             this.btnMeterPasteSettings.Selectable = true;

@@ -163,29 +163,9 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap brush {
+        internal static System.Drawing.Bitmap brush32border {
             get {
-                object obj = ResourceManager.GetObject("brush", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap brush16 {
-            get {
-                object obj = ResourceManager.GetObject("brush16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap brush32 {
-            get {
-                object obj = ResourceManager.GetObject("brush32", resourceCulture);
+                object obj = ResourceManager.GetObject("brush32border", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -443,19 +423,9 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap pipette16 {
+        internal static System.Drawing.Bitmap pipette32border {
             get {
-                object obj = ResourceManager.GetObject("pipette16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap pipette32 {
-            get {
-                object obj = ResourceManager.GetObject("pipette32", resourceCulture);
+                object obj = ResourceManager.GetObject("pipette32border", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

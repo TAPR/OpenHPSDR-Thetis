@@ -107,12 +107,9 @@ namespace Thetis
 
 		private bool AlexEnableIsStateSaved = false; 
 		private bool AlexEnableSavedState; 
-
 		
 		public static Band AntBandFromFreq() 
 		{
-
-			
 			Band result;
  
 			Console c = Console.getConsole(); 
@@ -129,7 +126,6 @@ namespace Thetis
             else freq = Console.getConsole().VFOAFreq;
 
 			System.Console.WriteLine("Freq is: " + freq); 
-
 
 			if ( freq >= 12.075 ) 
 			{ 
@@ -254,13 +250,11 @@ namespace Thetis
 
 		public void UpdateAlexAntSelection(Band band, bool tx, bool alex_enabled, bool xvtr) 
 		{
-
 			if ( !alex_enabled ) 
 			{ 
 				NetworkIO.SetAntBits(0, 0, 0, false); 
 				return;
-			}
-            
+			}            
 
 			int rx_only_ant; 
 			int trx_ant; 
@@ -280,7 +274,7 @@ namespace Thetis
 				}
 			} 
 
-			System.Console.WriteLine("Ant idx: " + idx);  //moved into different check down below			
+			//System.Console.WriteLine("Ant idx: " + idx);  //moved into different check down below			
 
 			if ( tx ) 
 			{
@@ -346,8 +340,9 @@ namespace Thetis
 				m_nOld_rx_out != rx_out ||
 				m_bOld_tx != tx)
 			{
-				NetworkIO.SetAntBits(rx_only_ant, trx_ant, rx_out, tx);
-				System.Console.WriteLine("Ant Rx Only {0} , Tx Ant {1}, Rx Out {2}", rx_only_ant.ToString(), trx_ant.ToString(), rx_out.ToString());
+                System.Console.WriteLine("Ant idx: " + idx); //MW0LGE [2.9.0.8] moved here
+                NetworkIO.SetAntBits(rx_only_ant, trx_ant, rx_out, tx);
+				System.Console.WriteLine("Ant Rx Only {0} , Tx Ant {1}, Rx Out {2}, TX {3}", rx_only_ant.ToString(), trx_ant.ToString(), rx_out.ToString(), tx.ToString());
 
 				//store old
 				m_nOld_rx_only_ant = rx_only_ant;

@@ -1073,6 +1073,19 @@ namespace Thetis
                 }
                 pause_DisplayThread = false;
 
+                //// test spectrum
+                //if (_spectrum_thread == null || !_spectrum_thread.IsAlive)
+                //{
+                //    _spectrum_thread = new Thread(new ThreadStart(RunSpectrum))
+                //    {
+                //        Name = "Spectrum Thread",
+                //        Priority = ThreadPriority.BelowNormal,
+                //        IsBackground = false
+                //    };
+                //    _spectrum_thread.Start();
+                //}
+                ////
+
                 //autostart?
                 foreach (string s in CmdLineArgs)
                 {
@@ -10428,6 +10441,7 @@ namespace Thetis
             double[,] buf = new double[fft_size, 2];        // buffer for complex spectrum data
             double[] sum = new double[fft_size];            // buffer for "averaged" spectrum data
 
+            _spectrum_mutex.WaitOne();
             for (int i = 0; i < 10; i++)                    // average 10 spectra to reduce noise
             {
                 fixed (double* ptr = &buf[0, 0])
@@ -10436,6 +10450,8 @@ namespace Thetis
                     sum[j] += buf[j, 0] * buf[j, 0] + buf[j, 1] * buf[j, 1];    // compute magnitude and add to "average"
                 Thread.Sleep(50);                                               // wait a little for noise to change
             }
+            _spectrum_mutex.ReleaseMutex();
+
             const double cal_range = 2500.0;                                    // look +/- this much from current freq to find the calibration signal
             double bin_width = (double)(sample_rate_rx1) / (double)fft_size;
             int offset = (int)(cal_range / bin_width);
@@ -10610,6 +10626,7 @@ namespace Thetis
             double maxsumsq = double.MinValue;
             double avgmag = 0;
 
+            _spectrum_mutex.WaitOne();
             for (int i = 0; i < iterations; i++)
             {
                 fixed (double* ptr = &buf[0, 0])
@@ -10620,6 +10637,7 @@ namespace Thetis
                     sum[j] += 10.0 * Math.Log10(buf[j, 0] * buf[j, 0] + buf[j, 1] * buf[j, 1]);     // compute dB level for each bin and add to previous for averaging
                 Thread.Sleep(20);                                               // wait a little for noise to change
             }
+            _spectrum_mutex.ReleaseMutex();
 
             for (int i = fft_size / 2 - offset; i <= fft_size / 2 + offset; i++)// find the max value in any bin
             {
@@ -10815,6 +10833,7 @@ namespace Thetis
             cal_range = 2500.0;                         // look +/- this much from current freq to find the calibration signal
             offset = (int)(cal_range / bin_width);
 
+            _spectrum_mutex.WaitOne();
             for (int i = 0; i < iterations; i++)            // average 10 spectra to reduce noise
             {
                 fixed (double* ptr = &buf[0, 0])
@@ -10823,6 +10842,8 @@ namespace Thetis
                     sum[j] += buf[j, 0] * buf[j, 0] + buf[j, 1] * buf[j, 1];    // compute magnitude^2 and add to sum
                 Thread.Sleep(20);                                               // wait a little for noise to change
             }
+            _spectrum_mutex.ReleaseMutex();
+
             for (int i = fft_size / 2 - offset; i <= fft_size / 2 + offset; i++)// find the max value in any bin
             {
                 if (sum[i] > maxsumsq)
@@ -26363,6 +26384,62 @@ namespace Thetis
             set { m_bUseAccurateFrameTiming = value; }
         }
 
+        //private Thread _spectrum_thread = null;
+        //private bool _spectrumLoopRunning = false;       
+        public Mutex _spectrum_mutex = new Mutex();
+
+        //private void RunSpectrum()
+        //{
+        //    const int centreSubSpan = 0;
+        //    const int nFps = 20;
+
+        //    int nOldFFTSize = -1;
+        //    double[,] spectrum_data = null;
+
+        //    _spectrumLoopRunning = true;
+        //    while (_spectrumLoopRunning)
+        //    {                
+        //        if (chkPower.Checked) 
+        //        {
+        //            if (!MeterManager.SpectrumReady)
+        //            {
+        //                _spectrum_mutex.WaitOne();
+        //                int fftSize = specRX.GetSpecRX(0).FFTSize;
+
+        //                if (spectrum_data == null || nOldFFTSize != fftSize)
+        //                {
+        //                    spectrum_data = new double[fftSize, 2];
+        //                    nOldFFTSize = fftSize;
+        //                }
+
+        //                unsafe
+        //                {
+        //                    fixed (double* ptr = &(spectrum_data[0, 0]))
+        //                        SpecHPSDRDLL.SnapSpectrum(0, centreSubSpan, 0, ptr); // can infinite block !
+        //                }
+        //                _spectrum_mutex.ReleaseMutex();
+
+        //                float[] pbSpec = getPassbandSpectrum(1, fftSize, spectrum_data);
+        //                if (pbSpec != null)
+        //                {
+        //                    int nLen = pbSpec.Length;
+
+        //                    MeterManager.ResizeSpectrum(nLen);
+
+        //                    unsafe
+        //                    {
+        //                        fixed (void* srcptr = &pbSpec[0])
+        //                        fixed (void* destptr = &MeterManager.newSpectrumPassband[0])
+        //                            Win32.memcpy(destptr, srcptr, nLen * sizeof(float));
+        //                    }
+
+        //                    MeterManager.SpectrumReady = true;
+        //                }
+        //            }
+        //        }
+        //        Thread.Sleep(1000 / nFps);
+        //    }
+        //}
         unsafe private void RunDisplay()
         {
             m_bDisplayLoopRunning = true;
@@ -26702,23 +26779,6 @@ namespace Thetis
                         }
                     }
 
-                    //if (!MeterManager.SpectrumReady)
-                    //{
-                    //    float[] spec = passbandSpectrum(1);
-                    //    if (spec != null)
-                    //    {
-                    //        int nLength = spec.Length;
-                    //        MeterManager.ResizeSpectrum(nLength);
-
-                    //        fixed (void* srcptr = &spec[0])
-                    //        fixed (void* destptr = &MeterManager.newSpectrumPassband[0])
-                    //            Win32.memcpy(destptr, srcptr, nLength * sizeof(float));
-
-                    //        MeterManager.SpectrumReady = true;
-                    //    }                        
-                    //}
-
-                    //
                     Display.GetPixelsIssue = bGetPixelIssue;
 
                     // MW0LGE_21k9 always want to run the renderer, as swr warning etc are displayed
@@ -31305,6 +31365,16 @@ namespace Thetis
             //as Hidewb handles null ref ok, then just call cmaster.Hidewb(0);
             //if (cmaster.Getwb(0).WBdisplay != null) cmaster.Hidewb(0);
             cmaster.Hidewb(0);
+
+            ////shutdown spectrum
+            //_spectrumLoopRunning = false;
+            //if (_spectrum_thread != null && _spectrum_thread.IsAlive)
+            //{
+            //    _spectrum_thread.Join(500);
+            //    _spectrum_thread.Interrupt();
+            //    if(_spectrum_thread.IsAlive) _spectrum_thread.Suspend();
+            //}            
+            ////
 
             m_bDisplayLoopRunning = false; // will cause the display loop to exit
             if (draw_display_thread != null && draw_display_thread.IsAlive) draw_display_thread.Join(1100); // added 1100, slightly longer than 1fps MW0LGE [2.9.0.7]
@@ -42398,10 +42468,9 @@ namespace Thetis
         }
         private object _findPeakLock = new Object();
         unsafe private int FindPeakFreqInPassband()
-        {
+        {            
             lock (_findPeakLock)
             {
-
                 // convert hz to buckets in the averaging data
                 int lo_cut_hz = (int)udFilterLow.Value;
                 int hi_cut_hz = (int)udFilterHigh.Value;
@@ -42436,13 +42505,17 @@ namespace Thetis
                 //float[] spectrum_data;
                 double[,] spectrum_data;
 
+                _spectrum_mutex.WaitOne();
                 spectrum_data = new double[specRX.GetSpecRX(0).FFTSize, 2];
                 if (spectrum_data == null)
                 {
+                    _spectrum_mutex.ReleaseMutex();
                     return -1; // bail out - not buffer 
                 }
+
                 fixed (double* ptr = &(spectrum_data[0, 0]))
                     SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr);        //depends upon receiver configuration, want center sub-span from disp 0, I think
+                _spectrum_mutex.ReleaseMutex();
 
                 double mag_sqr;
 
@@ -42467,7 +42540,7 @@ namespace Thetis
 
                 int peak_hz = (int)((max_bucket - zero_hz_bucket) * hz_per_bucket);
                 return peak_hz;
-            }
+            }            
         }
 
         private void btnIFtoVFO_Click(object sender, System.EventArgs e)
@@ -54488,90 +54561,66 @@ namespace Thetis
             ivac.resetIVACdiags(1, 1);
         }
 
-        //private object _passbandSpectrum = new object();
-        //private float[] passbandSpectrum(int rx)
-        //{
-        //    lock (_passbandSpectrum)
-        //    {
-        //        if (rx < 1 || rx > 2 || !PowerOn) return null;
-        //        if (!specRX.GetSpecRX(rx - 1).AnalyzerInitialised) return null;
-                
-        //        // convert hz to buckets in the averaging data
-        //        int lo_cut_hz;
-        //        int hi_cut_hz;
-        //        double hz_per_bucket;
-        //        int fft_size = specRX.GetSpecRX(rx - 1).FFTSize;
-        //        int zero_hz_bucket = fft_size / 2;
+        private float[] getPassbandSpectrum(int rx, int fft_size, double[,] spectrum_data)
+        {
+            int lo_cut_hz;
+            int hi_cut_hz;
+            double hz_per_bucket;
+            int zero_hz_bucket = fft_size / 2;
+            int nExpand = 1000;
 
-        //        if (rx == 1) {
-        //            hz_per_bucket = sample_rate_rx1 / (double)fft_size;
-        //            lo_cut_hz = RX1FilterLow;
-        //            hi_cut_hz = RX1FilterHigh;                    
-        //        }
-        //        else
-        //        {
-        //            hz_per_bucket = sample_rate_rx2 / (double)fft_size;
-        //            lo_cut_hz = RX2FilterLow;
-        //            hi_cut_hz = RX2FilterHigh;
-        //        }                
+            if (rx == 1)
+            {
+                hz_per_bucket = sample_rate_rx1 / (double)fft_size;
+                lo_cut_hz = RX1FilterLow - nExpand;
+                hi_cut_hz = RX1FilterHigh + nExpand;
+            }
+            else
+            {
+                hz_per_bucket = sample_rate_rx2 / (double)fft_size;
+                lo_cut_hz = RX2FilterLow - nExpand;
+                hi_cut_hz = RX2FilterHigh + nExpand;
+            }
 
-        //        if (click_tune_display) //MW0LGE_21d
-        //        {
-        //            // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
-        //            double dBucketOffset;
-        //            if (rx == 1)
-        //                dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
-        //            else
-        //                dBucketOffset = ((VFOBFreq - CentreRX2Frequency) * 1e6) / hz_per_bucket;
+            if (click_tune_display) //MW0LGE_21d
+            {
+                // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
+                double dBucketOffset;
+                if (rx == 1)
+                    dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
+                else
+                    dBucketOffset = ((VFOBFreq - CentreRX2Frequency) * 1e6) / hz_per_bucket;
 
-        //            zero_hz_bucket += (int)dBucketOffset;
-        //        }
+                zero_hz_bucket += (int)dBucketOffset;
+            }
 
-        //        int lo_bucket = (int)(lo_cut_hz / hz_per_bucket) + zero_hz_bucket;
-        //        int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
+            int lo_bucket = (int)(lo_cut_hz / hz_per_bucket) + zero_hz_bucket;
+            int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
 
-        //        //MW0LGE_21d belts and braces
-        //        if (lo_bucket < 0 || hi_bucket > fft_size - 1)
-        //        {
-        //            return null;
-        //        }
+            if (lo_bucket < 0 || hi_bucket > fft_size - 1)
+            {
+                return null;
+            }                
 
-        //        int ss = 0;
-        //        double[,] spectrum_data;
+            double mag_sqr;
+            float[] dbm = new float[hi_bucket - lo_bucket + 1];
+            double pow2fft = Math.Pow(fft_size, 2);
 
-        //        spectrum_data = new double[fft_size, 2];
-        //        if (spectrum_data == null)
-        //        {
-        //            return null; // bail out - not buffer 
-        //        }
+            // all the offsets, use display
+            float fOffset;
+            if (rx == 1)
+                fOffset = Display.RX1Offset;
+            else
+                fOffset = Display.RX2Offset;
 
-        //        if (!specRX.GetSpecRX(rx - 1).AnalyzerInitialised) return null;
-        //        unsafe
-        //        {
-        //            fixed (double* ptr = &(spectrum_data[0, 0]))
-        //                SpecHPSDRDLL.SnapSpectrum(rx - 1, ss, 0, ptr);
-        //        }
+            for (int i = lo_bucket; i <= hi_bucket; i++)
+            {
+                mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
+                dbm[i - lo_bucket] = (float)(10.0f * Math.Log10(mag_sqr / pow2fft)) + fOffset;
+            }
 
-        //        double mag_sqr;                
-        //        float[] dbm = new float[hi_bucket - lo_bucket + 1];
-        //        double pow2fft = Math.Pow(fft_size, 2);
-
-        //        // all the offsets, use display
-        //        float fOffset;
-        //        if (rx == 1)
-        //            fOffset = Display.RX1Offset;
-        //        else
-        //            fOffset = Display.RX2Offset;
-
-        //        for (int i = lo_bucket; i <= hi_bucket; i++)
-        //        {
-        //            mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
-        //            dbm[i - lo_bucket] = (float)(10.0f * Math.Log10(mag_sqr / pow2fft)) + fOffset;
-        //        }
-
-        //        return dbm;
-        //    }
-        //}
+            return dbm;
+        }
     }
 
     public class DigiMode

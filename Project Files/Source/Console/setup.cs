@@ -567,8 +567,6 @@ namespace Thetis
             if (console == null || _bAddedDelegates) return;
 
             console.MoxChangeHandlers += OnMoxChangeHandler;
-            //console.BandChangeHandlers += OnBandChangeHandler;
-            //console.VFOTXChangedHandlers += OnVFOTXChanged;
             console.TXBandChangeHandlers += OnTXBandChanged;
             console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
 
@@ -580,8 +578,6 @@ namespace Thetis
 
             // used outside by console exit
             console.MoxChangeHandlers -= OnMoxChangeHandler;
-            //console.BandChangeHandlers -= OnBandChangeHandler;
-            //console.VFOTXChangedHandlers -= OnVFOTXChanged;
             console.TXBandChangeHandlers -= OnTXBandChanged;
             console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
 
@@ -17330,6 +17326,8 @@ namespace Thetis
 
         private void tbDisplayFFTSize_Scroll(object sender, EventArgs e)
         {
+            if (console._spectrum_mutex != null) console._spectrum_mutex.WaitOne();
+
             console.specRX.GetSpecRX(0).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
             // console.specRX.GetSpecRX(2).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
             //  console.specRX.GetSpecRX(1).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
@@ -17339,10 +17337,14 @@ namespace Thetis
             Display.RX1FFTSizeOffset = tbDisplayFFTSize.Value * 2;
             // Display.RX2FFTSizeOffset = tbDisplayFFTSize.Value * 2;
             Display.FastAttackNoiseFloorRX1 = true;
+
+            if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
         }
 
         private void tbRX2DisplayFFTSize_Scroll(object sender, EventArgs e)
         {
+            if (console._spectrum_mutex != null) console._spectrum_mutex.WaitOne();
+
             // console.specRX.GetSpecRX(0).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
             console.specRX.GetSpecRX(1).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbRX2DisplayFFTSize.Value))));
             double bin_width = (double)Display.SampleRateRX2 / (double)console.specRX.GetSpecRX(1).FFTSize;
@@ -17350,6 +17352,8 @@ namespace Thetis
             // Display.RX1FFTSizeOffset = tbDisplayFFTSize.Value * 2;
             Display.RX2FFTSizeOffset = tbRX2DisplayFFTSize.Value * 2;
             Display.FastAttackNoiseFloorRX2 = true;
+
+            if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
         }
 
         private void comboDispWinType_SelectedIndexChanged(object sender, EventArgs e)
@@ -25697,6 +25701,7 @@ namespace Thetis
                 igs.Colour = clrbtnMeterItemHBackground.Color;
                 igs.MarkerColour = clrbtnMeterItemIndiciator.Color;
                 igs.SubMarkerColour = clrbtnMeterItemSubIndiciator.Color;
+                igs.ShowSubMarker = chkMeterItemShowSubIndicator.Checked;
                 igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
                 igs.PeakValue = chkMeterItemPeakValue.Checked;
                 igs.Average = chkMeterItemSignalAverage.Checked;
@@ -25810,6 +25815,7 @@ namespace Thetis
                 clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
                 chkMeterItemPeakValue.Checked = igs.PeakValue;
                 chkMeterItemSignalAverage.Checked = igs.Average;
+                chkMeterItemShowSubIndicator.Checked = igs.ShowSubMarker;
 
                 nudMeterItemHistoryDuration.Value = igs.HistoryDuration < nudMeterItemHistoryDuration.Minimum ? nudMeterItemHistoryDuration.Minimum : igs.HistoryDuration;
                 nudMeterItemIgnoreHistoryDuration.Value = igs.IgnoreHistoryDuration;
@@ -25825,7 +25831,7 @@ namespace Thetis
 
                 lblMMIndicatorSub.Enabled = true;
                 clrbtnMeterItemSubIndiciator.Enabled = true;
-                chkMeterItemShowSubIndicator.Enabled = false;
+                chkMeterItemShowSubIndicator.Enabled = true;
 
                 lblMMBackground.Enabled = true;
                 clrbtnMeterItemHBackground.Enabled = true;

@@ -28,7 +28,7 @@ namespace Thetis
     public class SpecRX
     {
         private const int NUM_RX_DISP = 8;
-        private SpecHPSDR[] spec_rx;
+        private SpecHPSDR[] spec_rx;        
 
         public SpecRX()
         {
@@ -475,16 +475,8 @@ namespace Thetis
         //    public int[] flip;
         //}
 
-        private bool _analyzerInitialised = false;
-        public bool AnalyzerInitialised
-        {
-            get { return _analyzerInitialised; }
-            set { /*_analyzerInitialised = true;*/ }
-        }
         public void initAnalyzer()
         {
-            _analyzerInitialised = false;
-
             //no spur elimination => only one spur_elim_fft and it's spectrum is not flipped
             int[] flip = { 0 };
             GCHandle handle = GCHandle.Alloc(flip, GCHandleType.Pinned);
@@ -620,8 +612,6 @@ namespace Thetis
                         span_min_freq,
                         span_max_freq,
                         max_w);
-
-            _analyzerInitialised = true;
         }
 
         public void CalcSpectrum(int filter_low, int filter_high, int spec_blocksize, int sample_rate)

@@ -389,7 +389,7 @@ namespace Thetis
         //    {
         //        if (newSpectrumPassband == null || newSpectrumPassband.Length != len)
         //        {
-        //            newSpectrumPassband = new float[len];                    
+        //            newSpectrumPassband = new float[len];
 
         //            if (currentSpectrumPassband == null)
         //            {
@@ -403,6 +403,10 @@ namespace Thetis
         //                for (int i = 0; i < stop; i++)
         //                {
         //                    tmp[i] = currentSpectrumPassband[i];
+        //                }
+        //                for (int i = stop; i < len; i++)
+        //                {
+        //                    tmp[i] = Display.SpectrumGridMin;
         //                }
 
         //                currentSpectrumPassband = tmp;
@@ -1805,6 +1809,7 @@ namespace Thetis
             private bool _bFadeOnTx;
             private bool _bPrimary;
             private float _maxPower;
+            private string _readingName;
 
             public clsMeterItem()
             {
@@ -1814,6 +1819,7 @@ namespace Thetis
                 _ItemType = MeterItemType.BASE;
                 _storeSettings = false;
                 _readingType = Reading.NONE;
+                _readingName = "";
                 _topLeft.X = 0;
                 _topLeft.Y = 0;
                 _displayTopLeft.X = _topLeft.X;
@@ -1947,7 +1953,15 @@ namespace Thetis
             public Reading ReadingSource
             {
                 get { return _readingType; }
-                set { _readingType = value; }
+                set 
+                { 
+                    _readingType = value;
+                    _readingName = MeterManager.ReadingName(_readingType);
+                }
+            }
+            public string ReadingName
+            {
+                get { return _readingName; }
             }
 
             public bool RequiresUpdate
@@ -3204,6 +3218,8 @@ namespace Thetis
             private Dictionary<float, PointF> _scaleCalibration;
             private PointF _highPoint;
 
+            private clsBarItem _postDrawItem;
+
             public clsBarItem()
             {
                 _history = new List<float>();
@@ -3240,6 +3256,8 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
+
+                _postDrawItem = null; // used in render loop to cause another bar's marker to be re-drawn after this bar
             }            
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
@@ -3271,7 +3289,11 @@ namespace Thetis
                 if (!readingsUsed.Contains(ReadingSource))
                     readingsUsed.Add(ReadingSource);
             }
-
+            public clsBarItem PostDrawItem
+            {
+                get { return _postDrawItem; }
+                set { _postDrawItem = value; }
+            }
             public BarStyle Style
             {
                 get { return _style; }
@@ -3506,6 +3528,7 @@ namespace Thetis
             private System.Drawing.Color _peakValueColour;
             private bool _peakHold;
             private bool _showMarker;
+            private bool _showSubMarker;
             private Units _units;
 
             private string _fontFamily;
@@ -3528,6 +3551,7 @@ namespace Thetis
                 _peakValueColour = System.Drawing.Color.Red;
                 _peakHold = false;
                 _showMarker = true;
+                _showSubMarker = true;
 
                 _units = Units.DBM;
 
@@ -3665,6 +3689,11 @@ namespace Thetis
             {
                 get { return _showMarker; }
                 set { _showMarker = value; }
+            }
+            public bool ShowSubMarker
+            {
+                get { return _showSubMarker; }
+                set { _showSubMarker = value; }
             }
             public string FontFamily
             {
@@ -4095,7 +4124,7 @@ namespace Thetis
         }
         //internal class clsSpectrum : clsMeterItem
         //{
-        //    private System.Drawing.Color _color;
+        //    private System.Drawing.Color _color;          
 
         //    public clsSpectrum()
         //    {
@@ -4362,13 +4391,13 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-20, new PointF(0.8333f, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.ZOrder = 3;
+                cb.ZOrder = 2;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
                 addMeterItem(cb);
 
-                clsBarItem cb2;
-                cb2 = new clsBarItem();
+                //avg on top
+                clsBarItem cb2 = new clsBarItem();
                 cb2.ParentID = ig.ID;
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
@@ -4387,9 +4416,10 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(0, new PointF(0.99f, 0));
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
-                cb2.ZOrder = 2;
+                cb2.ZOrder = 3;
                 cb2.Value = cb2.ScaleCalibration.First().Key;
                 cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.PostDrawItem = cb;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4570,7 +4600,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(0, new PointF(0.5f, 0));
                 cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.ZOrder = 3;
+                cb.ZOrder = 2;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
                 addMeterItem(cb);
@@ -4596,9 +4626,10 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(125, new PointF(0.99f, 0));
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
-                cb2.ZOrder = 2;
+                cb2.ZOrder = 3;
                 cb2.Value = cb2.ScaleCalibration.First().Key;
                 cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.PostDrawItem = cb;
                 addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -5204,10 +5235,33 @@ namespace Thetis
                 if(restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.Primary = true;
+                cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb2.ReadingSource = Reading.MIC_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 2;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                addMeterItem(cb2);
+
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
-                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
-                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.TopLeft = cb2.TopLeft;
+                cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.MIC;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
@@ -5223,33 +5277,11 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ShowValue = false;
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.ZOrder = 2;
+                cb.ZOrder = 3;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.PostDrawItem = cb2;
                 addMeterItem(cb);
-
-                clsBarItem cb2 = new clsBarItem();
-                cb2.ParentID = ig.ID;
-                cb2.Primary = true;
-                cb2.TopLeft = cb.TopLeft;
-                cb2.Size = cb.Size;
-                cb2.ReadingSource = Reading.MIC_PK;
-                cb2.AttackRatio = 0.8f;
-                cb2.DecayRatio = 0.1f;
-                cb2.UpdateInterval = nMSupdate;
-                cb2.HistoryDuration = 2000;
-                cb2.ShowHistory = true;
-                cb2.MarkerColour = System.Drawing.Color.Yellow;
-                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Red);
-                cb2.Style = clsBarItem.BarStyle.Line;
-                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
-                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb2.ZOrder = 3;
-                cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
-                addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
                 cs.ParentID = ig.ID;
@@ -5285,10 +5317,33 @@ namespace Thetis
                 if(restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.Primary = true;
+                cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb2.ReadingSource = Reading.EQ_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 2;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;                
+                addMeterItem(cb2);
+
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
-                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
-                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.TopLeft = cb2.TopLeft;
+                cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.EQ;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
@@ -5302,34 +5357,12 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb.ZOrder = 2;
+                cb.ZOrder = 3;
                 cb.ShowValue = false;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.PostDrawItem = cb2;
                 addMeterItem(cb);
-
-                clsBarItem cb2 = new clsBarItem();
-                cb2.ParentID = ig.ID;
-                cb2.Primary = true;
-                cb2.TopLeft = cb.TopLeft;
-                cb2.Size = cb.Size;
-                cb2.ReadingSource = Reading.EQ_PK;
-                cb2.AttackRatio = 0.8f;
-                cb2.DecayRatio = 0.1f;
-                cb2.UpdateInterval = nMSupdate;
-                cb2.HistoryDuration = 2000;
-                cb2.ShowHistory = true;
-                cb2.MarkerColour = System.Drawing.Color.Yellow;
-                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.CornflowerBlue);
-                cb2.Style = clsBarItem.BarStyle.Line;
-                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
-                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb2.ZOrder = 3;
-                cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
-                addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
                 cs.ParentID = ig.ID;
@@ -5365,10 +5398,33 @@ namespace Thetis
                 if(restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.Primary = true;
+                cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb2.ReadingSource = Reading.LEVELER_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 2;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                addMeterItem(cb2);
+
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
-                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
-                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.TopLeft = cb2.TopLeft;
+                cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.LEVELER;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
@@ -5382,34 +5438,12 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb.ZOrder = 2;
+                cb.ZOrder = 3;
                 cb.ShowValue = false;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.PostDrawItem = cb2;
                 addMeterItem(cb);
-
-                clsBarItem cb2 = new clsBarItem();
-                cb2.ParentID = ig.ID;
-                cb2.Primary = true;
-                cb2.TopLeft = cb.TopLeft;
-                cb2.Size = cb.Size;
-                cb2.ReadingSource = Reading.LEVELER_PK;
-                cb2.AttackRatio = 0.8f;
-                cb2.DecayRatio = 0.1f;
-                cb2.UpdateInterval = nMSupdate;
-                cb2.HistoryDuration = 2000;
-                cb2.ShowHistory = true;
-                cb2.MarkerColour = System.Drawing.Color.Yellow;
-                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Purple);
-                cb2.Style = clsBarItem.BarStyle.Line;
-                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
-                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb2.ZOrder = 3;
-                cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
-                addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
                 cs.ParentID = ig.ID;
@@ -5502,10 +5536,33 @@ namespace Thetis
                 if(restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.Primary = true;
+                cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb2.ReadingSource = Reading.ALC_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 2;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                addMeterItem(cb2);
+
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
-                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
-                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.TopLeft = cb2.TopLeft;
+                cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.ALC;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
@@ -5519,34 +5576,12 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb.ZOrder = 2;
+                cb.ZOrder = 3;
                 cb.ShowValue = false;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.PostDrawItem = cb2;
                 addMeterItem(cb);
-
-                clsBarItem cb2 = new clsBarItem();
-                cb2.ParentID = ig.ID;
-                cb2.Primary = true;
-                cb2.TopLeft = cb.TopLeft;
-                cb2.Size = cb.Size;
-                cb2.ReadingSource = Reading.ALC_PK;
-                cb2.AttackRatio = 0.8f;
-                cb2.DecayRatio = 0.1f;
-                cb2.UpdateInterval = nMSupdate;
-                cb2.HistoryDuration = 2000;
-                cb2.ShowHistory = true;
-                cb2.MarkerColour = System.Drawing.Color.Yellow;
-                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.LemonChiffon);
-                cb2.Style = clsBarItem.BarStyle.Line;
-                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
-                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb2.ZOrder = 3;
-                cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
-                addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
                 cs.ParentID = ig.ID;
@@ -5696,11 +5731,35 @@ namespace Thetis
                 if(restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb2.ReadingSource = Reading.CFC_AV;
+                cb2.ShowPeakValue = false;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 0;
+                cb2.ShowHistory = false;
+                cb2.MarkerColour = System.Drawing.Color.DarkGray;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 2;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.ShowValue = false;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                addMeterItem(cb2);
+
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
                 cb.Primary = true;
-                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
-                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.TopLeft = cb2.TopLeft;
+                cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.CFC_PK;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
@@ -5717,31 +5776,8 @@ namespace Thetis
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.PostDrawItem = cb2;
                 addMeterItem(cb);
-
-                clsBarItem cb2 = new clsBarItem();
-                cb2.ParentID = ig.ID;
-                cb2.TopLeft = cb.TopLeft;
-                cb2.Size = cb.Size;
-                cb2.ReadingSource = Reading.CFC_AV;
-                cb2.ShowPeakValue = false;
-                cb2.AttackRatio = 0.8f;
-                cb2.DecayRatio = 0.1f;
-                cb2.UpdateInterval = nMSupdate;
-                cb2.HistoryDuration = 2000;
-                cb2.ShowHistory = false;
-                cb2.MarkerColour = System.Drawing.Color.DarkGray;
-                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
-                cb2.Style = clsBarItem.BarStyle.Line;
-                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
-                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb2.ZOrder = 2;
-                cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.ShowValue = false;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
-                addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
                 cs.ParentID = ig.ID;
@@ -5834,10 +5870,33 @@ namespace Thetis
                 if(restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                clsBarItem cb2 = new clsBarItem();
+                cb2.ParentID = ig.ID;
+                cb2.Primary = true;
+                cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb2.ReadingSource = Reading.COMP_PK;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.1f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
+                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
+                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb2.ZOrder = 2;
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.Value = cb2.ScaleCalibration.First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                addMeterItem(cb2);
+
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
-                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
-                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.TopLeft = cb2.TopLeft;
+                cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.COMP;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
@@ -5851,34 +5910,12 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb.ZOrder = 2;
+                cb.ZOrder = 3;
                 cb.ShowValue = false;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.PostDrawItem = cb2;
                 addMeterItem(cb);
-
-                clsBarItem cb2 = new clsBarItem();
-                cb2.ParentID = ig.ID;
-                cb2.Primary = true;
-                cb2.TopLeft = cb.TopLeft;
-                cb2.Size = cb.Size;
-                cb2.ReadingSource = Reading.COMP_PK;
-                cb2.AttackRatio = 0.8f;
-                cb2.DecayRatio = 0.1f;
-                cb2.UpdateInterval = nMSupdate;
-                cb2.HistoryDuration = 2000;
-                cb2.ShowHistory = true;
-                cb2.MarkerColour = System.Drawing.Color.Yellow;
-                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PeachPuff);
-                cb2.Style = clsBarItem.BarStyle.Line;
-                cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
-                cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
-                cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
-                cb2.ZOrder = 3;
-                cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
-                addMeterItem(cb2);
 
                 clsScaleItem cs = new clsScaleItem();
                 cs.ParentID = ig.ID;
@@ -6225,10 +6262,8 @@ namespace Thetis
             //    ig.TopLeft = sc.TopLeft;
             //    ig.Size = new SizeF(sc.Size.Width, fBottom);
             //    ig.MeterType = MeterType.SPECTRUM;
-            //    lock (_objMeterItemLock)
-            //    {
-            //        ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
-            //    }
+            //    ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
             //    addMeterItem(ig);
 
             //    return sc.ID;
@@ -6763,6 +6798,7 @@ namespace Thetis
                                             cst.PeakValueColour = igs.PeakValueColour;
                                             cst.ShowPeakValue = igs.PeakValue;
                                             cst.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                            cst.ShowSubMarker = igs.ShowSubMarker;
 
                                             ig.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
                                             if (cst.ShowPeakValue)
@@ -7011,7 +7047,6 @@ namespace Thetis
 
                                             igs.FadeOnRx = vfo.FadeOnRx;
                                             igs.FadeOnTx = vfo.FadeOnTx;
-                                            igs.MarkerColour = vfo.Colour;
 
                                             igs.TitleColor = vfo.TypeColour;
                                             igs.MarkerColour = vfo.FrequencyColour;
@@ -7096,6 +7131,7 @@ namespace Thetis
                                             igs.PeakValueColour = cst.PeakValueColour;
                                             igs.PeakValue = cst.ShowPeakValue;
                                             igs.Average = cst.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+                                            igs.ShowSubMarker = cst.ShowSubMarker;
                                         }
                                     }
                                     break;
@@ -8035,7 +8071,7 @@ namespace Thetis
                         SampleDescription = new SampleDescription(1, 0), // no multi sampling (1 sample), no antialiasing
                         SwapEffect = swapEffect,
                         Usage = Usage.RenderTargetOutput,// | Usage.BackBuffer,  // dont need usage.backbuffer as it is implied
-                        Flags = SwapChainFlags.None,
+                        Flags = SwapChainFlags.None                        
                     };
 
                     _factory1.MakeWindowAssociation(_displayTarget.Handle, WindowAssociationFlags.IgnoreAll);
@@ -8071,7 +8107,7 @@ namespace Thetis
                 {
                     // issue setting up dx
                     ShutdownDX();
-                    MessageBox.Show("Problem initialising Meter DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("Problem initialising Meter DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
             private void resetDX2DModeDescription(int fps)
@@ -8171,7 +8207,7 @@ namespace Thetis
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("Problem Shutting Down Meter DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("Problem Shutting Down Meter DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
             private void calcFps()
@@ -8281,7 +8317,7 @@ namespace Thetis
                 catch (Exception e)
                 {
                     ShutdownDX(true);
-                    MessageBox.Show("Problem in DirectX Meter Renderer !" + System.Environment.NewLine + System.Environment.NewLine + "[ " + e.ToString() + " ]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("Problem in DirectX Meter Renderer !" + System.Environment.NewLine + System.Environment.NewLine + "[ " + e.ToString() + " ]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
             private void setupAliasing()
@@ -8474,7 +8510,9 @@ namespace Thetis
                     catch (Exception e)
                     {
                         ShutdownDX();
-                        MessageBox.Show("DirectX resizeDX() Meter failure\n" + e.Message, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("DirectX resizeDX() Meter failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
+                            "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray' and other\n" +
+                            "things as possible and try again.\n\n" + e.Message, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                         return false;
                     }
                 }
@@ -8482,14 +8520,14 @@ namespace Thetis
             //
             private void target_Resize(object sender, System.EventArgs e)
             {
-                Debug.Print(">> target resizing <<");
+                //Debug.Print(">> target resizing <<");
 
                 _newTargetWidth = _displayTarget.Width;
                 _newTargetHeight = _displayTarget.Height;
             }
             private void target_VisibleChanged(object sender, System.EventArgs e)
             {
-                Debug.Print(">> target visible changed <<");
+                //Debug.Print(">> target visible changed <<");
 
                 _targetVisible = _displayTarget.Visible;
             }
@@ -8550,6 +8588,8 @@ namespace Thetis
                 {
                     if (m.RX == _rx && m.SortedMeterItemsForZOrder != null && m.SortedMeterItemsForZOrder.Count > 0)
                     {
+                        float tw = targetWidth - 1f;
+
                         int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
                         if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
 
@@ -8560,8 +8600,7 @@ namespace Thetis
                             bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
 
                             if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
-                            {
-                                float tw = targetWidth - 1f;
+                            {                                
                                 float rw = m.XRatio;
                                 float rh = m.YRatio;
 
@@ -8573,7 +8612,11 @@ namespace Thetis
                                     //    renderVBar(rect, mi, m);
                                     //    break;
                                     case clsMeterItem.MeterItemType.H_BAR:
-                                        renderHBar(rect, mi, m);
+                                        clsMeterItem postDrawItem = renderHBar(rect, mi, m);
+                                        if (postDrawItem != null)
+                                            renderHBarMarkerOnly(rect, postDrawItem, m); // only draw the marker, this is so primary marker over the top of everything
+                                                                                         // reason for this is that zorder for bar_pk and bar_avg causes the avg marker
+                                                                                         // top be on top of the pk marker, which we dont want
                                         break;
                                     case clsMeterItem.MeterItemType.SOLID_COLOUR:
                                         renderSolidColour(rect, mi, m);
@@ -8612,9 +8655,9 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY:
                                         renderSignalTextDisplay(rect, mi, m);
                                         break;
-                                        //case clsMeterItem.MeterItemType.SPECTRUM:
-                                        //    renderSpectrum(rect, mi, m);
-                                        //    break;
+                                    //case clsMeterItem.MeterItemType.SPECTRUM:
+                                    //    renderSpectrum(rect, mi, m);
+                                    //    break;
                                 }
                             }
                         }
@@ -8902,8 +8945,9 @@ namespace Thetis
                     SizeF szTextSize;
 
                     if (scale.ShowType)
-                    {                        
-                        string sText = MeterManager.ReadingName(scale.ReadingSource);
+                    {
+                        // meter type text
+                        string sText = scale.ReadingName;//MeterManager.ReadingName(scale.ReadingSource);
                         szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                         SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width / 2f), y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                         _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourType, nFade));
@@ -9193,7 +9237,7 @@ namespace Thetis
 
                     if (scale.ShowType)
                     {
-                        string sText = MeterManager.ReadingName(scale.ReadingSource);
+                        string sText = scale.ReadingName;//MeterManager.ReadingName(scale.ReadingSource);
                         adjustedFontSize = measureString(sText, scale.FontFamily, scale.FntStyle, newSize);
                         SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - (adjustedFontSize.Height * 1.1f), adjustedFontSize.Width, adjustedFontSize.Height);
                         _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourType, nFade));
@@ -9662,7 +9706,33 @@ namespace Thetis
                 SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y, w, h);
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(txt.FontFamily, newSize, txt.Style), txtrect, getDXBrushForColour(txt.Colour, nFade));
             }
-            private void renderHBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            private void renderHBarMarkerOnly(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                // similar to renderHBar, but only renders the marker
+                clsBarItem cbi = (clsBarItem)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                int nFade = 255;
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+
+                PointF min, max;
+                float percX, percY;
+
+                getPerc(cbi, cbi.Value, out percX, out percY, out min, out max);
+
+                float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
+
+                SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
+
+                //value marker
+                if (cbi.ShowMarker)
+                    _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
+            }
+            private clsMeterItem renderHBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsBarItem cbi = (clsBarItem)mi;
 
@@ -9684,6 +9754,9 @@ namespace Thetis
 
                 float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
 
+                SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
+                SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
+
                 float minHistory_x = x;
                 float maxHistory_x = x;
                 if (cbi.ShowHistory)
@@ -9700,7 +9773,7 @@ namespace Thetis
                 }
 
                 int segmentBlockSize = 7;
-                int segmentStep = 9;                
+                int segmentStep = 9;
                 float fHighXPosTransition = float.MaxValue;
                 float fBarHeight = h * 0.85f; // same as base line % in render scale
 
@@ -9723,11 +9796,9 @@ namespace Thetis
                 SharpDX.Direct2D1.Brush colour = getDXBrushForColour(cbi.Colour, nFade);
                 SharpDX.Direct2D1.Brush colourHigh = getDXBrushForColour(cbi.ColourHigh, nFade);
                 SharpDX.Direct2D1.Brush peakHoldMarkerColour = getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade);
-                SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
-                SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
 
                 if (cbi.ShowHistory)
-                {                   
+                {
                     switch (cbi.Style)
                     {
                         case clsBarItem.BarStyle.None:
@@ -9773,27 +9844,17 @@ namespace Thetis
 
                             _renderTarget.FillRectangle(barRect, colour);
 
-                            if(fEnd < xPos) // the area in the high range
+                            if (fEnd < xPos) // the area in the high range
                             {
                                 // complete the bar
                                 barRect = new SharpDX.RectangleF(fEnd, y, xPos - fEnd, fBarHeight);
                                 _renderTarget.FillRectangle(barRect, colourHigh);
                             }
-
-                            if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
-
-                            if (cbi.ShowMarker)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
                         }
                         break;
                     case clsBarItem.BarStyle.Line:
                         {
-                            if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
-
-                            if (cbi.ShowMarker)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
+                            // marker is drawn below
                         }
                         break;
                     case clsBarItem.BarStyle.Segments:
@@ -9819,7 +9880,7 @@ namespace Thetis
                             if (xPos > fHighXPosTransition) // the area in the high range
                             {
                                 // sliver to complete block at high transition
-                                if(i < fEnd)
+                                if (i < fEnd)
                                 {
                                     barRect = new SharpDX.RectangleF(fEnd, y, i + segmentBlockSize - fEnd, fBarHeight);
                                     _renderTarget.FillRectangle(barRect, colourHigh);
@@ -9839,19 +9900,19 @@ namespace Thetis
                                     _renderTarget.FillRectangle(barRect, colourHigh);
                                 }
                             }
-
-                            if (cbi.PeakHold)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
-
-                            if (cbi.ShowMarker)
-                                _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
-
-                            //if(fHighXPosTransition != -1)
-                            //    _renderTarget.DrawLine(new SharpDX.Vector2(fHighXPosTransition, y), new SharpDX.Vector2(fHighXPosTransition, y + h), getDXBrushForColour(cbi.MarkerColour, nFade), cbi.StrokeWidth);
                         }
                         break;
                 }
 
+                //peak hold marker
+                if (cbi.PeakHold)
+                    _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
+
+                //value marker
+                if (cbi.ShowMarker)
+                    _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
+
+                //value text
                 if (cbi.ShowValue)
                 {
                     float fontSizeEmScaled = (cbi.FontSize / 16f) * (rect.Width / 52f);
@@ -9872,7 +9933,7 @@ namespace Thetis
                             sText = cbi.Value.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
                             break;
                     }
-                
+
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle), txtrect, markerColour);
@@ -9902,6 +9963,8 @@ namespace Thetis
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, peakValueColour);
                 }
+
+                return cbi.PostDrawItem;
             }
             //private void renderVBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             //{
@@ -10305,6 +10368,7 @@ namespace Thetis
                 float fontSizeEmScaled;
                 SizeF szTextSize;
 
+                // s-reading
                 fontSizeEmScaled = (st.FontSize / 16f) * (w / 52f);
                 Common.SMeterFromDBM2(st.Value, MeterManager.IsAbove30(_rx), out int S, out int dBmOver);
                 string sText = "S " + S.ToString();
@@ -10316,11 +10380,16 @@ namespace Thetis
                     plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.24f), h, rect.Width, st.FontSize * 0.6f, st.FontColour, nFade, st.FontFamily, st.FntStyle);
                 }
 
-                sText = Common.UVfromDBM(st.Value).ToString("f2") + "uV";
-                plotText(sText, x + (w * 0.98f), y + (h * 0.22f), h, rect.Width, st.FontSize * 0.55f, st.HistoryColour, nFade, st.FontFamily, st.FntStyle, true);
+                if (st.ShowSubMarker)
+                {
+                    //uv reading
+                    sText = Common.UVfromDBM(st.Value).ToString("f2") + "uV";
+                    plotText(sText, x + (w * 0.98f), y + (h * 0.22f), h, rect.Width, st.FontSize * 0.55f, st.HistoryColour, nFade, st.FontFamily, st.FntStyle, true);
 
-                sText = st.Value.ToString("f1") + MeterManager.ReadingUnits(st.ReadingSource);
-                plotText(sText, x + (w * 0.02f), y + (h * 0.22f), h, rect.Width, st.FontSize * 0.55f, st.HistoryColour, nFade, st.FontFamily, st.FntStyle);
+                    //dbm reading
+                    sText = st.Value.ToString("f1") + MeterManager.ReadingUnits(st.ReadingSource);
+                    plotText(sText, x + (w * 0.02f), y + (h * 0.22f), h, rect.Width, st.FontSize * 0.55f, st.HistoryColour, nFade, st.FontFamily, st.FntStyle);
+                }
 
                 if (st.ShowPeakValue)
                 {
@@ -10336,11 +10405,16 @@ namespace Thetis
                         plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.12f), h, rect.Width, st.FontSize * 0.3f, st.PeakValueColour, nFade, st.FontFamily, st.FntStyle);
                     }
 
-                    sText = Common.UVfromDBM(st.MaxHistory).ToString("f2") + "uV";
-                    plotText(sText, x + (w * 0.98f), y + (h * 0.65f), h, rect.Width, st.FontSize * 0.35f, st.PeakValueColour, nFade, st.FontFamily, st.FntStyle, true);
+                    if (st.ShowSubMarker)
+                    {
+                        //uv peak
+                        sText = Common.UVfromDBM(st.MaxHistory).ToString("f2") + "uV";
+                        plotText(sText, x + (w * 0.98f), y + (h * 0.65f), h, rect.Width, st.FontSize * 0.35f, st.PeakValueColour, nFade, st.FontFamily, st.FntStyle, true);
 
-                    sText = st.MaxHistory.ToString("f1") + MeterManager.ReadingUnits(st.ReadingSource);
-                    plotText(sText, x + (w * 0.02f), y + (h * 0.65f), h, rect.Width, st.FontSize * 0.35f, st.PeakValueColour, nFade, st.FontFamily, st.FntStyle);
+                        //dbm peak
+                        sText = st.MaxHistory.ToString("f1") + MeterManager.ReadingUnits(st.ReadingSource);
+                        plotText(sText, x + (w * 0.02f), y + (h * 0.65f), h, rect.Width, st.FontSize * 0.35f, st.PeakValueColour, nFade, st.FontFamily, st.FntStyle);
+                    }
                 }
             }
             //private void renderSpectrum(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
@@ -10374,7 +10448,7 @@ namespace Thetis
             //                //fixed (void* destptr = &currentSpectrumPassband[0])
             //                //    Win32.memcpy(destptr, srcptr, currentSpectrumPassband.Length * sizeof(float));
 
-            //                for(int i = 0; i < newSpectrumPassband.Length; i++)
+            //                for (int i = 0; i < newSpectrumPassband.Length; i++)
             //                {
             //                    currentSpectrumPassband[i] = (newSpectrumPassband[i] * 0.3f) + (currentSpectrumPassband[i] * 0.7f);
             //                }
