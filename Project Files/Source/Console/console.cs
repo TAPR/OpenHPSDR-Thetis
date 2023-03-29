@@ -3111,7 +3111,7 @@ namespace Thetis
                                                 // and if we had 20 in there before, and now only write 3, how do we know?
                                                 // as it will still be [0]..[19]
 
-            DB.PurgeMeters();
+            DB.PurgeMeters(MeterManager.GetFormGuidList());
 
             DB.SaveVars("State", ref a);		// save the values to the DB
         }

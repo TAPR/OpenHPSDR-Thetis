@@ -1655,6 +1655,22 @@ namespace Thetis
             }
             return bRestoreOk;
         }
+        public static List<string> GetFormGuidList()
+        {
+            List<string> sGuidList = new List<string>();
+
+            lock (_metersLock)
+            {
+                foreach(KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
+                {
+                    frmMeterDisplay fmd = kvp.Value;
+
+                    sGuidList.Add(fmd.ID);
+                }
+            }
+
+            return sGuidList;
+        }
         public static bool StoreSettings(ref ArrayList a)
         {
             if (a == null) return false;
@@ -8614,7 +8630,7 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.H_BAR:
                                         clsMeterItem postDrawItem = renderHBar(rect, mi, m);
                                         if (postDrawItem != null)
-                                            renderHBarMarkerOnly(rect, postDrawItem, m); // only draw the marker, this is so primary marker over the top of everything
+                                            renderHBarMarkersOnly(rect, postDrawItem, m); // only draw the marker, this is so primary marker over the top of everything
                                                                                          // reason for this is that zorder for bar_pk and bar_avg causes the avg marker
                                                                                          // top be on top of the pk marker, which we dont want
                                         break;
@@ -9706,7 +9722,7 @@ namespace Thetis
                 SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y, w, h);
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(txt.FontFamily, newSize, txt.Style), txtrect, getDXBrushForColour(txt.Colour, nFade));
             }
-            private void renderHBarMarkerOnly(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            private void renderHBarMarkersOnly(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 // similar to renderHBar, but only renders the marker
                 clsBarItem cbi = (clsBarItem)mi;
@@ -9727,10 +9743,24 @@ namespace Thetis
                 float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
 
                 SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
+                SharpDX.Direct2D1.Brush peakHoldMarkerColour = getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade);
+
+                float maxHistory_x = x;
+
+                if (cbi.PeakHold) // max is used for peak hold
+                {
+                    getPerc(cbi, cbi.MaxHistory, out percX, out percY, out min, out max);
+                    maxHistory_x = x + (min.X * w) + (percX * ((max.X - min.X) * w));
+                }
+
+                //peak hold marker
+                if (cbi.PeakHold)
+                    _renderTarget.DrawLine(new SharpDX.Vector2(maxHistory_x, y), new SharpDX.Vector2(maxHistory_x, y + h), peakHoldMarkerColour, cbi.StrokeWidth);
 
                 //value marker
                 if (cbi.ShowMarker)
                     _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
+
             }
             private clsMeterItem renderHBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -9753,9 +9783,6 @@ namespace Thetis
                 getPerc(cbi, cbi.Value, out percX, out percY, out min, out max);
 
                 float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
-
-                SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
-                SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
 
                 float minHistory_x = x;
                 float maxHistory_x = x;
@@ -9792,6 +9819,8 @@ namespace Thetis
                     }
                 }
 
+                SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
+                SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
                 SharpDX.Direct2D1.Brush historyColour = getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A);
                 SharpDX.Direct2D1.Brush colour = getDXBrushForColour(cbi.Colour, nFade);
                 SharpDX.Direct2D1.Brush colourHigh = getDXBrushForColour(cbi.ColourHigh, nFade);

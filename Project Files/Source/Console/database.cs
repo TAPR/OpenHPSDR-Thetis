@@ -8807,23 +8807,48 @@ namespace Thetis
         {
             purgeStateTableEntries("mnotchdb*");
         }
-        public static void PurgeMeters()
+        public static void PurgeMeters(List<string>formGuids)
         {
             purgeStateTableEntries("meterContData_*");
             purgeStateTableEntries("meterData_*");
             purgeStateTableEntries("meterIGData_*");
             purgeStateTableEntries("meterIGSettings_*");
+
+            if (formGuids != null)
+            {
+                // housekeeping
+                // need to drop every MeterDisplay_ table that is not in formGuids
+                // we use the SaveForm/RestoreForm form in frmMeterDisplay.cs which will add a table for every added window to store
+                // size/pos amongst other stuff
+                List<string> tablesToRemove = new List<string>();
+
+                foreach (DataTable dt in ds.Tables)
+                {
+                    string sTableName = dt.TableName;
+                    if (sTableName.StartsWith("MeterDisplay_"))
+                    {
+                        string sGuid = sTableName.Substring(sTableName.IndexOf("_") + 1);
+                        if (!formGuids.Contains(sGuid)) tablesToRemove.Add(sTableName); // not in our form guids any more, drop it
+                    }
+                }
+
+                // do the drop
+                foreach (string sDropTable in tablesToRemove)
+                {
+                    if (ds.Tables.Contains(sDropTable)) ds.Tables.Remove(sDropTable);
+                }
+            }
         }
         private static void purgeStateTableEntries(string sKey)
         {
             // make sure there is a State table
             if (!ds.Tables.Contains("State")) return;
 
-            // find all the notches and remove them
-            var rows = ds.Tables["State"].Select("Key like '" + sKey + "'");
+            // find all that match and remove them
+            DataRow[] rows = ds.Tables["State"].Select("Key like '" + sKey + "'");
             if (rows != null)
             {
-                foreach (var row in rows)
+                foreach (DataRow row in rows)
                     row.Delete();
             }
         }
