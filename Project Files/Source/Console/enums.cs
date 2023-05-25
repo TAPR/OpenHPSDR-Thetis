@@ -74,7 +74,9 @@
         ANAN200D,
         ORIONMKII,
         ANAN7000D,
-        ANAN8000D
+        ANAN8000D,
+        ANAN_G2,        //G8NJJ
+        ANAN_G2_1K      //G8NJJ
     }
 
     public enum HPSDRModel
@@ -91,6 +93,8 @@
         ORIONMKII,
         ANAN7000D,
         ANAN8000D,
+        ANAN_G2,        //G8NJJ
+        ANAN_G2_1K,     //G8NJJ
         LAST
     }
 
@@ -352,10 +356,11 @@
     {
         Atlas = 0,
         Hermes = 1,
-        HermesII = 2, // ANAN-10E ANAN-100B HeremesII
-        Angelia = 3,  // ANAN-100D
-        Orion = 4,    // ANAN-200D
-        OrionMKII = 5 // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+        HermesII = 2,       // ANAN-10E ANAN-100B HeremesII
+        Angelia = 3,        // ANAN-100D
+        Orion = 4,          // ANAN-200D
+        OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+        Saturn = 11         // ANAN-G2: added G8NJJ
     }
 
     public enum DSPFilterType
