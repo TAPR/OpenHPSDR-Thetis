@@ -660,6 +660,19 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "GetTXACFCOMPDisplayCompression", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetTXACFCOMPDisplayCompression(int channel, double* comp_values, int* ready);
 
+        // SSQL
+        [DllImport("wdsp.dll", EntryPoint = "SetRXASSQLThreshold", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXASSQLThreshold(int channel, double threshold);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetRXASSQLRun", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXASSQLRun(int channel, bool run);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetRXASSQLTauMute", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXASSQLTauMute(int channel, double tau_mute);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetRXASSQLTauUnMute", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXASSQLTauUnMute(int channel, double tau_unmute);
+
         #endregion
 
         #region Enums

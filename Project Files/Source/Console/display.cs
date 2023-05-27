@@ -2783,7 +2783,6 @@ namespace Thetis
         {
             get { return _bDX2Setup; }
         }
-
         private static void initDX2D(DriverType driverType = DriverType.Hardware)
         {
             lock (_objDX2Lock)

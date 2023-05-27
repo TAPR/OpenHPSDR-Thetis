@@ -512,19 +512,19 @@ namespace Thetis
                                 int[] TWO_DDC_Function = new int[16]
                                     {
                                     2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
-                                    0, 0, 0, 0, 0, 2, 0, 2      // DDC0+DDC1, port 1035, Call 1 //MW0LGE_21d DUP on top panadaptor (warren provided info)
+                                    0, 0, 0, 0, 0, 2, 0, 2      // DDC0+DDC1, port 1035, Call 1 Sends TX_freq data to both RX //MW0LGE_21d DUP on top panadaptor (Warren provided info)
                                     };
                                 int[] TWO_DDC_Callid = new int[16]
                                     {
                                     2, 2, 2, 2, 2, 1, 2, 1,      // DDC0+DDC1, port 1035, Call 0
-                                    0, 0, 0, 0, 0, 3, 0, 3      // DDC0+DDC1, port 1035, Call 1 //MW0LGE_21d DUP on top panadaptor (warren provided info)
+                                    0, 0, 0, 0, 0, 2, 0, 2      // DDC0+DDC1, port 1035, Call 1 Sends TX_freq data to both RX //MW0LGE_21d DUP on top panadaptor (Warren provided info), // MW0LGE [2.9.0.8] from Warren, change 3's to 2's
                                     };
                                 int[] TWO_DDC_nstreams = new int[1]
                                     {
                                     2                           // DDC0+DDC1, port 1035
                                     };
                                 fixed (int* pstreams = &TWO_DDC_nstreams[0], pfunction = &TWO_DDC_Function[0], pcallid = &TWO_DDC_Callid[0])
-                                    LoadRouterAll((void*)0, 0, 1, /*1*/2, 8, pstreams, pfunction, pcallid); //MW0LGE_21d DUP on top panadaptor (warren provided info)
+                                    LoadRouterAll((void*)0, 0, 1, /*1*/2, 8, pstreams, pfunction, pcallid); //MW0LGE_21d DUP on top panadaptor (Warren provided info)
                                 break;
                             case HPSDRModel.HERMES:
                             case HPSDRModel.ANAN10:

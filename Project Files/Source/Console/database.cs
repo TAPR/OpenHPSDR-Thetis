@@ -8805,21 +8805,21 @@ namespace Thetis
         // having one that was previously deleted staying in the database
         public static void PurgeNotches()
         {
-            purgeStateTableEntries("mnotchdb*");
+            purgeTableEntries("State", "mnotchdb*");
         }
         public static void PurgeMeters(List<string>formGuids)
         {
-            purgeStateTableEntries("meterContData_*");
-            purgeStateTableEntries("meterData_*");
-            purgeStateTableEntries("meterIGData_*");
-            purgeStateTableEntries("meterIGSettings_*");
+            purgeTableEntries("Options", "meterContData_*");
+            purgeTableEntries("Options", "meterData_*");
+            purgeTableEntries("Options", "meterIGData_*");
+            purgeTableEntries("Options", "meterIGSettings_*");
 
             if (formGuids != null)
             {
                 // housekeeping
                 // need to drop every MeterDisplay_ table that is not in formGuids
                 // we use the SaveForm/RestoreForm form in frmMeterDisplay.cs which will add a table for every added window to store
-                // size/pos amongst other stuff
+                // size/pos amongst other stuff, and these will need removing if we remove a meter display container
                 List<string> tablesToRemove = new List<string>();
 
                 foreach (DataTable dt in ds.Tables)
@@ -8839,20 +8839,32 @@ namespace Thetis
                 }
             }
         }
-        private static void purgeStateTableEntries(string sKey)
+        //private static void purgeStateTableEntries(string sKey)
+        //{
+        //    // make sure there is a State table
+        //    if (!ds.Tables.Contains("State")) return;
+
+        //    // find all that match and remove them
+        //    DataRow[] rows = ds.Tables["State"].Select("Key like '" + sKey + "'");
+        //    if (rows != null)
+        //    {
+        //        foreach (DataRow row in rows)
+        //            row.Delete();
+        //    }
+        //}
+        private static void purgeTableEntries(string sTable, string sKey)
         {
-            // make sure there is a State table
-            if (!ds.Tables.Contains("State")) return;
+            // make sure there is a table
+            if (!ds.Tables.Contains(sTable)) return;
 
             // find all that match and remove them
-            DataRow[] rows = ds.Tables["State"].Select("Key like '" + sKey + "'");
+            DataRow[] rows = ds.Tables[sTable].Select("Key like '" + sKey + "'");
             if (rows != null)
             {
                 foreach (DataRow row in rows)
                     row.Delete();
             }
         }
-
         public static void RemoveVarsList(string tableName, List<string> list)
         {
             if (!ds.Tables.Contains(tableName))
@@ -8990,6 +9002,10 @@ namespace Thetis
         //-W2PA New version of ImportDatabase to merge an old database or partly corruped one with a new default one
         public static bool ImportAndMergeDatabase(string filename, string appDataPath)
         {
+            //oldDB is the db that is being imported
+            //existingDB is the db that is currently in use / loaded
+            //mergedDB is the db that is built up from the existingDB and the oldDB
+
             string _versionnumber = "";
 
             importedDS = false;
@@ -9031,6 +9047,26 @@ namespace Thetis
             }
 
             DataSet mergedDB = ds.Clone(); // Adopt the new DB schema
+
+            // MW0LGE [2.9.0.8]
+            // check if we have multimeter and/or PA settings in the db that is being imported
+            bool bOldDBhasMultiMeterSettings = false;
+            bool bOldDBhasPAProfiles = false;
+
+            foreach (DataTable oldTable in oldDB.Tables)
+            {
+                if(oldTable.TableName == "Options")
+                {
+                    DataRow[] rows = oldDB.Tables[oldTable.TableName].Select("Key like '" + "meterContData_*" + "'");
+                    bOldDBhasMultiMeterSettings = (rows != null && rows.Length > 0);
+
+                    rows = oldDB.Tables[oldTable.TableName].Select("Key like '" + "PAProfile*" + "'");
+                    bOldDBhasPAProfiles = (rows != null && rows.Length > 0);
+
+                    break;
+                }
+            }
+            //
 
             // Start by merging any tables in the imported DB that don't come with a freshly reset database
             foreach (DataTable oldTable in oldDB.Tables)
@@ -9129,13 +9165,13 @@ namespace Thetis
                             // import the old rows, as this existingDB shouldn't have any
                             // there is no DB initalisation for BandStack2
                             // BandStackManager will add any that are missing
-                            foreach(DataRow dr in tempTable.Rows)
-                            {                                
+                            foreach (DataRow dr in tempTable.Rows)
+                            {
                                 tempMergedTable.ImportRow(dr);
                             }
 
                             //import any from old band stack system into bandstack2entries if coming from older db and we havent added them into the merged table already
-                            if((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
+                            if ((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
                             {
                                 foundTable = false;
                                 foreach (DataTable t in oldDB.Tables)
@@ -9163,9 +9199,9 @@ namespace Thetis
 
                                                 newEntry["GUID"] = (string)Guid.NewGuid().ToString();
                                                 newEntry["Description"] = ConvertFromDBVal<string>(dr["BandName"]);
-                                                
-                                                newEntry["Frequency"] = Math.Round((double)dr["Freq"],6);
-                                                newEntry["CentreFrequency"] = Math.Round((double)dr["CenterFreq"],6);
+
+                                                newEntry["Frequency"] = Math.Round((double)dr["Freq"], 6);
+                                                newEntry["CentreFrequency"] = Math.Round((double)dr["CenterFreq"], 6);
 
                                                 newEntry["Band"] = (int)BandStackManager.StringToBand(ConvertFromDBVal<string>(dr["BandName"]));
                                                 newEntry["Mode"] = (int)BandStackManager.StringToMode(ConvertFromDBVal<string>(dr["Mode"]));
@@ -9285,7 +9321,7 @@ namespace Thetis
                         foreach (DataRow row in table.Rows)
                         {
                             string thisKey = Convert.ToString(row["Key"]);
-                            
+
                             if (thisKey == "VersionNumber") // Exception: don't overwrite version number with an old one
                             {
                                 row["Value"] = VersionNumber;
@@ -9322,7 +9358,7 @@ namespace Thetis
                                 //but only if exists. This will always run even if db being imported does not contain these rad button setting, and
                                 //ideally should only happen if previous verison < 2.7.0. TODO?
                                 string sRad = "";
-                                if (     getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelHPSDR")) sRad = "HPSDR";
+                                if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelHPSDR")) sRad = "HPSDR";
                                 else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelHermes")) sRad = "HERMES";
                                 else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN10")) sRad = "ANAN-10";
                                 else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN10E")) sRad = "ANAN-10E";
@@ -9334,7 +9370,7 @@ namespace Thetis
                                 else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelANAN8000D")) sRad = "ANAN-8000DLE";
                                 //else if (getRadioSelectedFromOldRadButton(ref tempTable, "radGenModelORIONMKII")) sRad = ""; // not implemented in comboRadioModel list items
 
-                                if(sRad != "") // a radio has been previously selected
+                                if (sRad != "") // a radio has been previously selected
                                 {
                                     //Debug.Print("** FOUND OLD RADIO SETTING : " + sRad);
                                     row["Value"] = sRad;
@@ -9347,13 +9383,82 @@ namespace Thetis
                                 // add existing to list, to check at end
                                 foundNotches.Add(row["Value"].ToString());
                             }
+                            else if (bOldDBhasMultiMeterSettings && (tempTable.TableName == "Options" && (
+                                thisKey.StartsWith("meterContData_") ||
+                                thisKey.StartsWith("meterData_") ||
+                                thisKey.StartsWith("meterIGData_") ||
+                                thisKey.StartsWith("meterIGSettings_"))))
+                            {
+                                // skip this, as is done below
+                            }
+                            else if (bOldDBhasPAProfiles && (tempTable.TableName == "Options" && thisKey.StartsWith("PAProfile")))
+                            {
+                                // skip this, as is done below
+                            }
                             else
                             {
                                 string selector = "Key = '" + row["Key"] + "'";
                                 DataRow[] foundRow = tempTable.Select(selector);
                                 if (foundRow.Length != 0) tempMergedTable.ImportRow(foundRow[0]);
                                 else tempMergedTable.ImportRow(row);
-                            }                           
+                            }
+                        }
+
+                        if (tempTable.TableName == "Options")
+                        {
+                            if (bOldDBhasMultiMeterSettings)
+                            {
+                                // import anything multimeter related
+
+                                DataRow[] rows = tempTable.Select("Key like '" + "meterContData_*" + "'");
+                                if (rows != null)
+                                {
+                                    foreach (DataRow dr in rows)
+                                    {
+                                        tempMergedTable.ImportRow(dr);
+                                    }
+                                }
+
+                                rows = tempTable.Select("Key like '" + "meterData_*" + "'");
+                                if (rows != null)
+                                {
+                                    foreach (DataRow dr in rows)
+                                    {
+                                        tempMergedTable.ImportRow(dr);
+                                    }
+                                }
+
+                                rows = tempTable.Select("Key like '" + "meterIGData_*" + "'");
+                                if (rows != null)
+                                {
+                                    foreach (DataRow dr in rows)
+                                    {
+                                        tempMergedTable.ImportRow(dr);
+                                    }
+                                }
+
+                                rows = tempTable.Select("Key like '" + "meterIGSettings_*" + "'");
+                                if (rows != null)
+                                {
+                                    foreach (DataRow dr in rows)
+                                    {
+                                        tempMergedTable.ImportRow(dr);
+                                    }
+                                }
+                            }
+                            if (bOldDBhasPAProfiles)
+                            {
+                                // import anything PAProfile related
+
+                                DataRow[] rows = tempTable.Select("Key like '" + "PAProfile*" + "'");
+                                if (rows != null)
+                                {
+                                    foreach (DataRow dr in rows)
+                                    {
+                                        tempMergedTable.ImportRow(dr);
+                                    }
+                                }
+                            }
                         }
 
                         //MW0LGE_[2.9.0.7] reimplemented
@@ -9414,6 +9519,31 @@ namespace Thetis
                         // Unrecognized table
                         WriteImportLog(logFN, "Unrecognized table: " + table.TableName + "\n");
                         break;                        
+                }
+            }
+
+            if (bOldDBhasMultiMeterSettings)
+            {
+                // drop any existing form tables
+                List<string> toRemove = new List<string>();
+                foreach (DataTable mergedTable in mergedDB.Tables)
+                {
+                    if (mergedTable.TableName.StartsWith("MeterDisplay_")) toRemove.Add(mergedTable.TableName);
+                }
+                foreach (String tableName in toRemove)
+                {
+                    mergedDB.Tables.Remove(tableName);
+                }
+                //
+
+                // merge form positions from old
+                foreach (DataTable oldTable in oldDB.Tables)
+                {
+                    if (oldTable.TableName.StartsWith("MeterDisplay_"))
+                    {
+                        mergedDB.Merge(oldTable);
+                        WriteImportLog(logFN, "Imported table <" + oldTable.TableName + "> into database.\n");
+                    }
                 }
             }
 

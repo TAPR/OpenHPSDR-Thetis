@@ -50,6 +50,7 @@ namespace Thetis
     using System.Threading.Tasks;
     using System.Security.Cryptography;
     using System.Xml;
+    using System.Xml.Serialization;
 
     public partial class Setup : Form
     {
@@ -485,6 +486,8 @@ namespace Thetis
             }
 
             comboKeyerConnSecondary_SelectedIndexChanged(this, EventArgs.Empty);
+
+            chkConsoleDarkModeTitleBar.Visible = Common.IsWindows10OrGreater(); //MW0LGE [2.9.0.8]
 
             ForceAllEvents();
 
@@ -1426,6 +1429,15 @@ namespace Thetis
             }
             //
 
+            //
+            DB.PurgeMeters(MeterManager.GetFormGuidList()); // clear the db of any meter info before we try to add it
+            if (!MeterManager.StoreSettings2(ref a))
+            {
+                MessageBox.Show("There was an issue storing the settings for MultiMeter.", "MultiMeter StoreSettings",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            //
+
             // remove any outdated options from the DB MW0LGE_22b
             handleOutdatedOptions(false);
 
@@ -1600,7 +1612,7 @@ namespace Thetis
                     }
                     else if (name.StartsWith("PAProfile_") || name == "PAProfileCount")
                     {
-                        // ignore
+                        // ignore, done later
                     }
                     else
                     {
@@ -1652,6 +1664,14 @@ namespace Thetis
                     }
                     if (bFound) comboPAProfile.Text = sPAProfileName;
                 }
+            }
+            //
+
+            //
+            if (!MeterManager.RestoreSettings2(ref a)) // pass this dictionary of settings to the meter manager to restore from
+            {
+                MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
             //
 
@@ -1999,6 +2019,8 @@ namespace Thetis
             chkShowRXFilterOnWaterfall_CheckedChanged(this, e);
             chkShowRXZeroLineOnWaterfall_CheckedChanged(this, e);
             chkShowTXFilterOnRXWaterfall_CheckedChanged(this, e);
+
+            chkConsoleDarkModeTitleBar_CheckedChanged(this, e); //MW0LGE [2.9.0.8]
 
             // DSP Tab
             udLMSANF_ValueChanged(this, e);
@@ -12410,7 +12432,19 @@ namespace Thetis
                 if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
                 string justFileName = console.DBFileName.Substring(console.DBFileName.LastIndexOf("\\") + 1);
                 string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
-                File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + ".xml");
+
+                // MW0LGE [2.9.0.8] issue if you do multiple imports in same minute, this will fail, we could add seconds, but let us increment counter
+                //File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + ".xml");
+                string sInc = "";
+                int n = 0;
+                while(File.Exists(archivePath + "Thetis_database_" + datetime + "_" + sInc + ".xml"))
+                {
+                    sInc = n.ToString();
+                    n++;
+                }
+                File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + "_" + sInc + ".xml");
+                //
+
                 File.Delete(console.DBFileName);
                 //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
                 DB.WriteDB(console.DBFileName);
@@ -26436,6 +26470,45 @@ namespace Thetis
                 bPaste = true;
 
             return bPaste;
+        }
+
+        private void udVSQLMuteTimeConstant_ValueChanged(object sender, EventArgs e)
+        {
+            if (console == null || console.radio == null) return;
+
+            float fSeconds = (float)udVSQLMuteTimeConstant.Value / 1000f;
+
+            //rx1
+            console.radio.GetDSPRX(0, 0).SqlMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(0, 1).SqlMuteTimeConstant = fSeconds;
+
+            //rx2
+            console.radio.GetDSPRX(1, 0).SqlMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(1, 1).SqlMuteTimeConstant = fSeconds;
+        }
+
+        private void udVSQLUnMuteTimeConstant_ValueChanged(object sender, EventArgs e)
+        {
+            if (console == null || console.radio == null) return;
+
+            float fSeconds = (float)udVSQLUnMuteTimeConstant.Value / 1000f;
+
+            //rx1
+            console.radio.GetDSPRX(0, 0).SqlUnMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(0, 1).SqlUnMuteTimeConstant = fSeconds;
+
+            //rx2
+            console.radio.GetDSPRX(1, 0).SqlUnMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(1, 1).SqlUnMuteTimeConstant = fSeconds;
+        }
+
+        private void chkConsoleDarkModeTitleBar_CheckedChanged(object sender, EventArgs e)
+        {
+            if(console != null && Common.IsWindows10OrGreater())
+            {
+                Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
+                if (sender != this) console.Invalidate();
+            }
         }
     }
 

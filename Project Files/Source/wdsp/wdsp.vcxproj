@@ -248,6 +248,7 @@
     <ClInclude Include="fmsq.h" />
     <ClInclude Include="slew.h" />
     <ClInclude Include="snb.h" />
+    <ClInclude Include="ssql.h" />
     <ClInclude Include="syncbuffs.h" />
     <ClInclude Include="TXA.h" />
     <ClInclude Include="utilities.h" />
@@ -305,6 +306,7 @@
     <ClCompile Include="fmsq.c" />
     <ClCompile Include="slew.c" />
     <ClCompile Include="snb.c" />
+    <ClCompile Include="ssql.c" />
     <ClCompile Include="syncbuffs.c" />
     <ClCompile Include="TXA.c" />
     <ClCompile Include="utilities.c" />

@@ -156,15 +156,25 @@ namespace Thetis
 
         //=======================================================================================
 
-        private string _sMeterImagePath = "";
-        private int rx1_squelch_threshold_scroll = -160;
-        private int rx2_squelch_threshold_scroll = -160;
-        private bool rx1_squelch_on = false;
-        private bool rx2_squelch_on = false;
-        private bool rx1_fm_squelch_on = true;
-        private bool rx2_fm_squelch_on = true;
+        private int rx1_squelch_threshold_scroll = 0;//-160;
+        private int rx2_squelch_threshold_scroll = 0;//-160;
         private int rx1_fm_squelch_threshold_scroll = 0;
         private int rx2_fm_squelch_threshold_scroll = 0;
+        private int rx1_voice_squelch_threshold_scroll = 0;
+        private int rx2_voice_squelch_threshold_scroll = 0;
+
+        private SquelchState rx1_squelch_state = SquelchState.OFF;
+        private SquelchState rx1_fm_squelch_state = SquelchState.OFF;
+        private SquelchState rx2_squelch_state = SquelchState.OFF;
+        private SquelchState rx2_fm_squelch_state = SquelchState.OFF;
+
+        //private bool rx1_squelch_on = false;
+        //private bool rx2_squelch_on = false;
+        //private bool rx1_fm_squelch_on = false;//true;
+        //private bool rx2_fm_squelch_on = false;//true;
+        //private bool rx1_voice_squelch_on = false;
+        //private bool rx2_voice_squelch_on = false;
+
         private bool whatisVHF = false;
         private bool whatisHF = true;
         private bool whatisGEN = false;
@@ -961,6 +971,11 @@ namespace Thetis
 
             initializing = false;
 
+            //MW0LGE [2.9.0.8]
+            //start multimer renderers
+            Splash.SetStatus("Setting up meters");
+            MeterManager.RunAllRendererDisplays();
+
             Splash.SetStatus("Setting up DSP");                       // Set progress point
 
             selectFilters();
@@ -988,8 +1003,10 @@ namespace Thetis
                 //
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-                chkSquelch_CheckedChanged(this, EventArgs.Empty);
-                chkRX2Squelch_CheckedChanged(this, EventArgs.Empty);
+                //chkSquelch_CheckedChanged(this, EventArgs.Empty); // MW0LGE_[2.9.0.8]
+                chkSquelch_CheckStateChanged(this, EventArgs.Empty);
+                //chkRX2Squelch_CheckedChanged(this, EventArgs.Empty);
+                chkRX2Squelch_CheckStateChanged(this, EventArgs.Empty);
 
                 UpdateWaterfallLevelValues();
                 updateDisplayGridLevelValues();
@@ -1780,8 +1797,8 @@ namespace Thetis
                     _RX2MeterValues.Add((Reading)n, -200f);
                 }
 
-                _sMeterImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
-                MeterManager.Init(this, _sMeterImagePath);
+                string sMeterImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+                MeterManager.Init(this, sMeterImagePath);
             }
             //
 
@@ -1922,14 +1939,15 @@ namespace Thetis
 
             chkDisplayAVG_CheckedChanged(this, EventArgs.Empty);
 
+            //MW0LGE [2.9.0.8] re-implented, have tested and seems to have been resolved in recent updates
             //MW0LGE_21k9 MEMORYLEAK - PerformanceCounter.NextValue() has a memory leak when using process based counter. It is ok with _Total.
             //Hide for now until resolved. m_bShowSystemCPUUsage will always be true as it is not recovered from db at the moment (see GetState)
-            thetisOnlyToolStripMenuItem.Visible = false;
+            //thetisOnlyToolStripMenuItem.Visible = false;
             //
 
             CalcDisplayFreq();
             CalcRX2DisplayFreq();
-            CpuUsage(m_bShowSystemCPUUsage);
+            CpuUsage();// m_bShowSystemCPUUsage);
 
             tune_step_index--;					// Setup wheel tuning
             ChangeTuneStepUp();
@@ -2659,6 +2677,8 @@ namespace Thetis
             a.Add("chkNB_checkstate/" + chkNB.CheckState.ToString());
             a.Add("chkRX2NB_checkstate/" + chkRX2NB.CheckState.ToString());
             a.Add("chkQSK_checkstate/" + chkQSK.CheckState.ToString());
+            a.Add("chkSquelch_checkstate/" + chkSquelch.CheckState.ToString()); //MW0LGE [2.9.0.8]
+            a.Add("chkRX2Squelch_checkstate/" + chkRX2Squelch.CheckState.ToString());
             // a.Add("chkSyncIT_checkstate/" + chkSyncIT.CheckState.ToString());  //-W2PA Checkbox for synched RIT/XIT
 
             //a.Add("current_datetime_mode/" + (int)current_datetime_mode);
@@ -2672,15 +2692,21 @@ namespace Thetis
             a.Add("quick_save_mode/" + (int)quick_save_mode);
             a.Add("quick_save_filter/" + (int)quick_save_filter);
 
-            //FM Squelch Save
-            a.Add("rx1_squelch_on/" + rx1_squelch_on);
-            a.Add("rx1_fm_squelch_on/" + rx1_fm_squelch_on);
+            //Squelch Save
+            //a.Add("rx1_squelch_on/" + rx1_squelch_on); //MW0LGE [2.9.0.8]
+            //a.Add("rx1_fm_squelch_on/" + rx1_fm_squelch_on);
+            a.Add("rx1_squelch_state/" + rx1_squelch_state.ToString());
+            a.Add("rx1_fm_squelch_state/" + rx1_fm_squelch_state.ToString());
             a.Add("rx1_squelch_threshold_scroll/" + rx1_squelch_threshold_scroll);
             a.Add("rx1_fm_squelch_threshold_scroll/" + rx1_fm_squelch_threshold_scroll);
-            a.Add("rx2_squelch_on/" + rx2_squelch_on);
-            a.Add("rx2_fm_squelch_on/" + rx2_fm_squelch_on);
+            a.Add("rx1_voice_squelch_threshold_scroll/" + rx1_voice_squelch_threshold_scroll);
+            //a.Add("rx2_squelch_on/" + rx2_squelch_on);
+            //a.Add("rx2_fm_squelch_on/" + rx2_fm_squelch_on);
+            a.Add("rx2_squelch_state/" + rx2_squelch_state.ToString());
+            a.Add("rx2_fm_squelch_state/" + rx2_fm_squelch_state.ToString());
             a.Add("rx2_squelch_threshold_scroll/" + rx2_squelch_threshold_scroll);
             a.Add("rx2_fm_squelch_threshold_scroll/" + rx2_fm_squelch_threshold_scroll);
+            a.Add("rx2_voice_squelch_threshold_scroll/" + rx2_voice_squelch_threshold_scroll);
 
             a.Add("click_tune_display/" + click_tune_display);
             a.Add("VFOAFreq/" + VFOAFreq);
@@ -3049,14 +3075,6 @@ namespace Thetis
             a.Add("infoBar_button2/" + ((int)infoBar.Button2Action).ToString());
             a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("f4")); //MW0LGE_21k9c changed format
 
-            //
-            if (!MeterManager.StoreSettings(ref a))
-            {
-                MessageBox.Show("There was an issue storing the settings for MultiMeter.", "MultiMeter StoreSettings",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
-            //
-
             a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
             a.Add("vfob_filter/" + ((int)vfob_filter).ToString());
 
@@ -3110,8 +3128,6 @@ namespace Thetis
                                                 // this is done because we have not stored an upper limit the number of notches
                                                 // and if we had 20 in there before, and now only write 3, how do we know?
                                                 // as it will still be [0]..[19]
-
-            DB.PurgeMeters(MeterManager.GetFormGuidList());
 
             DB.SaveVars("State", ref a);		// save the values to the DB
         }
@@ -3401,7 +3417,8 @@ namespace Thetis
                         m_frmSeqLog.StatusBarWarningOnNegativeOnly = bool.Parse(val);
                         break;
                     case "CPU_ShowSystem":
-                        //m_bShowSystemCPUUsage = bool.Parse(val); //MW0LGE_21k9 MEMORYLEAK - commented so it will always be true (memory leak with process based NextValue)
+                        //MW0LGE [2.9.0.8] re-implented, have tested and seems to have been resolved in recent updates
+                        m_bShowSystemCPUUsage = bool.Parse(val); //MW0LGE_21k9 MEMORYLEAK - commented so it will always be true (memory leak with process based NextValue)
                         break;
                     case "SetupWizard":
                         if (val == "1")
@@ -3413,11 +3430,17 @@ namespace Thetis
                     case "mon_recall":
                         mon_recall = bool.Parse(val);
                         break;
-                    case "rx1_squelch_on":
-                        rx1_squelch_on = bool.Parse(val);
+                    //case "rx1_squelch_on":
+                    //    rx1_squelch_on = bool.Parse(val);
+                    //    break;
+                    //case "rx1_fm_squelch_on":
+                    //    rx1_fm_squelch_on = bool.Parse(val);
+                    //    break;
+                    case "rx1_squelch_state":
+                        rx1_squelch_state = (SquelchState)Enum.Parse(typeof(SquelchState), val);
                         break;
-                    case "rx1_fm_squelch_on":
-                        rx1_fm_squelch_on = bool.Parse(val);
+                    case "rx1_fm_squelch_state":
+                        rx1_fm_squelch_state = (SquelchState)Enum.Parse(typeof(SquelchState), val);
                         break;
                     case "rx1_squelch_threshold_scroll":
                         rx1_squelch_threshold_scroll = int.Parse(val);
@@ -3425,17 +3448,29 @@ namespace Thetis
                     case "rx1_fm_squelch_threshold_scroll":
                         rx1_fm_squelch_threshold_scroll = int.Parse(val);
                         break;
-                    case "rx2_squelch_on":
-                        rx2_squelch_on = bool.Parse(val);
+                    case "rx1_voice_squelch_threshold_scroll":
+                        rx1_voice_squelch_threshold_scroll = int.Parse(val);
                         break;
-                    case "rx2_fm_squelch_on":
-                        rx2_fm_squelch_on = bool.Parse(val);
+                    //case "rx2_squelch_on":
+                    //    rx2_squelch_on = bool.Parse(val);
+                    //    break;
+                    //case "rx2_fm_squelch_on":
+                    //    rx2_fm_squelch_on = bool.Parse(val);
+                    //    break;
+                    case "rx2_squelch_state":
+                        rx2_squelch_state = (SquelchState)Enum.Parse(typeof(SquelchState), val);
+                        break;
+                    case "rx2_fm_squelch_state":
+                        rx2_fm_squelch_state = (SquelchState)Enum.Parse(typeof(SquelchState), val);
                         break;
                     case "rx2_squelch_threshold_scroll":
                         rx2_squelch_threshold_scroll = int.Parse(val);
                         break;
                     case "rx2_fm_squelch_threshold_scroll":
                         rx2_fm_squelch_threshold_scroll = int.Parse(val);
+                        break;
+                    case "rx2_voice_squelch_threshold_scroll":
+                        rx2_voice_squelch_threshold_scroll = int.Parse(val);
                         break;
                     case "click_tune_display":
                         click_tune_display = bool.Parse(val);
@@ -4255,6 +4290,13 @@ namespace Thetis
                         chkQSK.CheckState = (CheckState)(Enum.Parse(typeof(CheckState), val));
                         break;
 
+                    case "chkSquelch_checkstate":
+                        chkSquelch.CheckState = (CheckState)(Enum.Parse(typeof(CheckState), val));
+                        break;
+                    case "chkRX2Squelch_checkstate":
+                        chkRX2Squelch.CheckState = (CheckState)(Enum.Parse(typeof(CheckState), val));
+                        break;
+
                     case var nam when name.StartsWith("chk"):
                         for (int i = 0; i < checkbox_list.Count; i++)
                         {   // look through each control to find the matching name
@@ -4367,14 +4409,6 @@ namespace Thetis
                         break;
                 }
             }
-            
-            //
-            if(!MeterManager.RestoreSettings(ref toDoList)) // pass this list of settings to the meter manager to restore from
-            {
-                MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
-            //
 
             //MW0LGE_21c
             //all this is down here now, so that we have the correct centers
@@ -21117,23 +21151,91 @@ namespace Thetis
 
         public int Squelch
         {
-            get { return ptbSquelch.Value; }
+            get 
+            {
+                //return ptbSquelch.Value; 
+
+                // MW0LGE [2.9.0.8] needs to return 0 to -160 range instead of 0 to 100
+                return 0 - (int)(ptbSquelch.Value * 1.6f);
+            }
             set
             {
+                //ptbSquelch.Value = value;
+                //if (chkSquelch.Checked)
+                //    ptbSquelch_Scroll(this, EventArgs.Empty);
+
+                // MW0LGE [2.9.0.8] as the sql sliders have been converted to 0-100 range
+                // note: fm 100 range is also performed in catcommands.cs which is not ideal
+                value = Math.Abs(value); // make +ve
+
+                switch (chkSquelch.CheckState)
+                {
+                    case CheckState.Unchecked:
+                    case CheckState.Checked:
+                        if (rx1_dsp_mode == DSPMode.FM)
+                        {
+                            if (value > 100) value = 100;
+                        }
+                        else
+                        {
+                            if (value > 160) value = 160;
+                            value = (int)((float)(value / 160f) * 100); // convert from 0-160 to 0-100
+                        }
+                        break;
+                    case CheckState.Indeterminate:
+                        if (value > 100) value = 100;
+                        break;
+                }
+
+                _bIgnoreSqlUpdate = true;
                 ptbSquelch.Value = value;
-                if (chkSquelch.Checked)
-                    ptbSquelch_Scroll(this, EventArgs.Empty);
+                _bIgnoreSqlUpdate = false;
+                ptbSquelch_Scroll(this, EventArgs.Empty);
             }
         }
 
         public int Squelch2
         {
-            get { return ptbRX2Squelch.Value; }
+            get
+            {
+                //return ptbRX2Squelch.Value; 
+
+                // MW0LGE [2.9.0.8] needs to return 0 to -160 range instead of 0 to 100
+                return 0 - (int)(ptbRX2Squelch.Value * 1.6f);
+            }
             set
             {
+                //ptbRX2Squelch.Value = value;
+                //if (chkRX2Squelch.Checked)
+                //    ptbRX2Squelch_Scroll(this, EventArgs.Empty);
+
+                // MW0LGE [2.9.0.8] as the sql sliders have been converted to 0-100 range
+                // note: fm 100 range is also performed in catcommands.cs which is not ideal
+                value = Math.Abs(value); // make +ve
+
+                switch (chkRX2Squelch.CheckState)
+                {
+                    case CheckState.Unchecked:
+                    case CheckState.Checked:
+                        if (rx2_dsp_mode == DSPMode.FM)
+                        {
+                            if (value > 100) value = 100;
+                        }
+                        else
+                        {
+                            if (value > 160) value = 160;
+                            value = (int)((float)(value / 160f) * 100); // convert from 0-160 to 0-100
+                        }
+                        break;
+                    case CheckState.Indeterminate:
+                        if (value > 100) value = 100;
+                        break;
+                }
+
+                _bIgnoreSqlUpdate = true;
                 ptbRX2Squelch.Value = value;
-                if (chkRX2Squelch.Checked)
-                    ptbRX2Squelch_Scroll(this, EventArgs.Empty);
+                _bIgnoreSqlUpdate = false;
+                ptbRX2Squelch_Scroll(this, EventArgs.Empty);
             }
         }
 
@@ -22286,7 +22388,7 @@ namespace Thetis
 
         private bool m_bShowSystemCPUUsage = true;
         public PerformanceCounter cpu_usage = null;
-        private void CpuUsage(bool bGetOverallCpuUsage = true)
+        private void CpuUsage(/*bool bGetOverallCpuUsage = true*/)
         {
             try
             {
@@ -22311,7 +22413,7 @@ namespace Thetis
                     }
                 }
 
-                m_bShowSystemCPUUsage = bGetOverallCpuUsage;
+                //m_bShowSystemCPUUsage = bGetOverallCpuUsage;
                 systemToolStripMenuItem.Checked = m_bShowSystemCPUUsage;
                 thetisOnlyToolStripMenuItem.Checked = !m_bShowSystemCPUUsage;
 
@@ -22322,7 +22424,7 @@ namespace Thetis
                     cpu_usage = null;
                 }
 
-                if (bGetOverallCpuUsage || sInstanceName == "")
+                if (m_bShowSystemCPUUsage/*bGetOverallCpuUsage*/ || sInstanceName == "")
                 {
                     if (sInstanceName == "") // if issue with instance name
                     {
@@ -22342,7 +22444,7 @@ namespace Thetis
                     //as .nextvalue returns a % compared to a single processor such that over 100% would mean 100% of a single cpu machine
                     cpu_usage = new PerformanceCounter("Process", "% Processor Time", sInstanceName, sMachineName);
                 }
-                float cpuPerc = cpu_usage.NextValue(); //MW0LGE_21k8 get the next value - prevents status bar showin 0% when swapping from overall to thetis only
+                float cpuPerc = cpu_usage.NextValue(); //MW0LGE_21k8 get the next value - prevents status bar showing 0% when swapping from overall to thetis only
             }
             catch
             {
@@ -26487,7 +26589,17 @@ namespace Thetis
                             "AttackFastFramesRX1 : " + Display.AttackFastFramesRX1.ToString() + Environment.NewLine +
                             "AttackFastFramesRX2 : " + Display.AttackFastFramesRX2.ToString() + Environment.NewLine +
                             "CurrentClickTuneMode : " + CurrentClickTuneMode.ToString() + Environment.NewLine +
-                            "Cursor : " + picDisplay.Cursor.ToString();
+                            "Cursor : " + picDisplay.Cursor.ToString() + Environment.NewLine +
+                            "rx1_squelch_state : " + rx1_squelch_state.ToString() + Environment.NewLine +
+                            "rx1_fm_squelch_state : " + rx1_fm_squelch_state.ToString() + Environment.NewLine +
+                            "rx1_squelch_threshold_scroll : " + rx1_squelch_threshold_scroll.ToString() + Environment.NewLine +
+                            "rx1_fm_squelch_threshold_scroll : " + rx1_fm_squelch_threshold_scroll.ToString() + Environment.NewLine +
+                            "rx1_voice_squelch_threshold_scroll : " + rx1_voice_squelch_threshold_scroll.ToString() + Environment.NewLine +
+                            "rx2_squelch_state : " + rx2_squelch_state.ToString() + Environment.NewLine +
+                            "rx2_fm_squelch_state : " + rx2_fm_squelch_state.ToString() + Environment.NewLine +
+                            "rx2_squelch_threshold_scroll : " + rx2_squelch_threshold_scroll.ToString() + Environment.NewLine +
+                            "rx2_fm_squelch_threshold_scroll : " + rx2_fm_squelch_threshold_scroll.ToString() + Environment.NewLine +
+                            "rx2_voice_squelch_threshold_scroll : " + rx2_voice_squelch_threshold_scroll.ToString();
                     }
 
                     objStopWatch.Reset();
@@ -30711,6 +30823,124 @@ namespace Thetis
         }
         private bool m_bOldPower = false; // used to store the difference in power state from old to new
 
+        //unsafe public void UpdateAAudioMixerStates()
+        //{
+        //    int RX1 = 1 << WDSP.id(0, 0);
+        //    int RX1S = 1 << WDSP.id(0, 1);
+        //    int RX2 = 1 << WDSP.id(2, 0);
+        //    int MON = 1 << WDSP.id(1, 0);
+        //    int RX2EN;
+        //    if (rx2_enabled)
+        //        RX2EN = 1 << WDSP.id(2, 0);
+        //    else
+        //        RX2EN = 0;
+        //    switch (current_hpsdr_model)
+        //    {
+        //        // 2-DDC Models
+        //        case HPSDRModel.HERMES:
+        //        case HPSDRModel.ANAN10E:
+        //        case HPSDRModel.ANAN10:
+        //        case HPSDRModel.ANAN100B:
+        //        case HPSDRModel.ANAN100:
+        //            if (chkPower.Checked)
+        //            {
+        //                if (!mox)
+        //                {
+        //                    if (!diversity2)
+        //                    {
+        //                        if (!psform.PSEnabled)
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+        //                        }
+        //                        else
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        if (!psform.PSEnabled)
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
+        //                        }
+        //                        else
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (!diversity2)
+        //                    {
+        //                        if (!psform.PSEnabled)
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+        //                        }
+        //                        else
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        if (!psform.PSEnabled)
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
+        //                        }
+        //                        else
+        //                        {
+        //                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, MON);
+        //                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
+        //                        }
+        //                    }
+        //                }
+        //                cmaster.MONMixState = true;
+        //            }
+        //            else
+        //            {
+        //                cmaster.MONMixState = false;
+        //                cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, 0);
+        //                cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
+        //            }
+        //            break;
+        //        // 4-DDC Models
+        //        case HPSDRModel.ANAN100D:
+        //        case HPSDRModel.ANAN200D:
+        //        case HPSDRModel.ORIONMKII:
+        //        case HPSDRModel.ANAN7000D:
+        //        case HPSDRModel.ANAN8000D:
+        //            if (chkPower.Checked)
+        //            {
+        //                // If POWER is ON, we always have data flow for RX1 and RX1-Sub; we have data flow for
+        //                // RX2 if 'rx2_enabled'; we always have data flow (MIC samples) for the TX MON.
+        //                cmaster.MONMixState = true;
+        //                cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+        //                cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+        //            }
+        //            else
+        //            {
+        //                // If POWER is OFF, there is no data flow for anything.
+        //                // It's OK to turn something OFF again if it's already OFF.
+        //                cmaster.MONMixState = false;
+        //                cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, 0);
+        //                cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
+        //            }
+        //            break;
+        //        default:
+
+        //            break;
+        //    }
+        //}
+
+        //MW0LGE [2.9.0.8] re-implemented by Warren
         unsafe public void UpdateAAudioMixerStates()
         {
             int RX1 = 1 << WDSP.id(0, 0);
@@ -30722,112 +30952,139 @@ namespace Thetis
                 RX2EN = 1 << WDSP.id(2, 0);
             else
                 RX2EN = 0;
-            switch (current_hpsdr_model)
+            switch (NetworkIO.CurrentRadioProtocol)
             {
-                // 2-DDC Models
-                case HPSDRModel.HERMES:
-                case HPSDRModel.ANAN10E:
-                case HPSDRModel.ANAN10:
-                case HPSDRModel.ANAN100B:
-                case HPSDRModel.ANAN100:
-                    if (chkPower.Checked)
+                case RadioProtocol.USB:
+                    switch (current_hpsdr_model)
                     {
-                        if (!mox)
-                        {
-                            if (!diversity2)
+                        // 2-DDC Models
+                        case HPSDRModel.ANAN10E:
+                        case HPSDRModel.ANAN100B:
+                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2 + MON);
+                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2);
+                            break;
+                        // 4 & 5 DDC Models
+                        case HPSDRModel.HERMES:
+                        case HPSDRModel.ANAN10:
+                        case HPSDRModel.ANAN100:
+                        case HPSDRModel.ANAN100D:
+                        case HPSDRModel.ANAN200D:
+                        case HPSDRModel.ORIONMKII:
+                        case HPSDRModel.ANAN7000D:
+                        case HPSDRModel.ANAN8000D:
+                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2 + MON);
+                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2);
+                            break;
+                    }
+                    break;
+                case RadioProtocol.ETH:
+                    switch (current_hpsdr_model)
+                    {
+                        // 2-DDC Models
+                        case HPSDRModel.HERMES:
+                        case HPSDRModel.ANAN10E:
+                        case HPSDRModel.ANAN10:
+                        case HPSDRModel.ANAN100B:
+                        case HPSDRModel.ANAN100:
+                            if (chkPower.Checked)
                             {
-                                if (!psform.PSEnabled)
+                                if (!mox)
                                 {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+                                    if (!diversity2)
+                                    {
+                                        if (!psform.PSEnabled)
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+                                        }
+                                        else
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!psform.PSEnabled)
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
+                                        }
+                                        else
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+                                    if (!diversity2)
+                                    {
+                                        if (!psform.PSEnabled)
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
+                                        }
+                                        else
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!psform.PSEnabled)
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
+                                        }
+                                        else
+                                        {
+                                            cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, MON);
+                                            cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
+                                        }
+                                    }
                                 }
+                                cmaster.MONMixState = true;
                             }
                             else
                             {
-                                if (!psform.PSEnabled)
-                                {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
-                                }
-                                else
-                                {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
-                                }
+                                cmaster.MONMixState = false;
+                                cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, 0);
+                                cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
                             }
-                        }
-                        else
-                        {
-                            if (!diversity2)
+                            break;
+                        // 4-DDC Models
+                        case HPSDRModel.ANAN100D:
+                        case HPSDRModel.ANAN200D:
+                        case HPSDRModel.ORIONMKII:
+                        case HPSDRModel.ANAN7000D:
+                        case HPSDRModel.ANAN8000D:
+                            if (chkPower.Checked)
                             {
-                                if (!psform.PSEnabled)
-                                {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
-                                }
-                                else
-                                {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
-                                }
+                                // If POWER is ON, we always have data flow for RX1 and RX1-Sub; we have data flow for
+                                // RX2 if 'rx2_enabled'; we always have data flow (MIC samples) for the TX MON.
+                                cmaster.MONMixState = true;
+                                cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
+                                cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
                             }
                             else
                             {
-                                if (!psform.PSEnabled)
-                                {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S);
-                                }
-                                else
-                                {
-                                    cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, MON);
-                                    cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
-                                }
+                                // If POWER is OFF, there is no data flow for anything.
+                                // It's OK to turn something OFF again if it's already OFF.
+                                cmaster.MONMixState = false;
+                                cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, 0);
+                                cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
                             }
-                        }
-                        cmaster.MONMixState = true;
-                    }
-                    else
-                    {
-                        cmaster.MONMixState = false;
-                        cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, 0);
-                        cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
-                    }
-                    break;
-                // 4-DDC Models
-                case HPSDRModel.ANAN100D:
-                case HPSDRModel.ANAN200D:
-                case HPSDRModel.ORIONMKII:
-                case HPSDRModel.ANAN7000D:
-                case HPSDRModel.ANAN8000D:
-                    if (chkPower.Checked)
-                    {
-                        // If POWER is ON, we always have data flow for RX1 and RX1-Sub; we have data flow for
-                        // RX2 if 'rx2_enabled'; we always have data flow (MIC samples) for the TX MON.
-                        cmaster.MONMixState = true;
-                        cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2EN + MON);
-                        cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2EN);
-                    }
-                    else
-                    {
-                        // If POWER is OFF, there is no data flow for anything.
-                        // It's OK to turn something OFF again if it's already OFF.
-                        cmaster.MONMixState = false;
-                        cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, 0);
-                        cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, 0);
-                    }
-                    break;
-                default:
+                            break;
+                        default:
 
+                            break;
+                    }
                     break;
             }
         }
-
         public void comboDisplayMode_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             pause_DisplayThread = true;
@@ -31929,53 +32186,19 @@ namespace Thetis
             }
 
             LineInBoost = line_in_boost;
-        }
-
-        private void ptbSquelch_Scroll(object sender, System.EventArgs e)
-        {
-            chkSquelch.Text = "SQL:  " + ptbSquelch.Value.ToString();
-
-            if (rx1_dsp_mode == DSPMode.FM) //FM Squelch
-            {
-                rx1_fm_squelch_threshold_scroll = ptbSquelch.Value; //MW0LGE_21a
-
-                radio.GetDSPRX(0, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * ptbSquelch.Value / 100.0);
-                radio.GetDSPRX(0, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * ptbSquelch.Value / 100.0);
-            }
-            else //non-FM Squelch
-            {
-                rx1_squelch_threshold_scroll = ptbSquelch.Value; //MW0LGE_21a
-
-                radio.GetDSPRX(0, 0).RXSquelchThreshold = (float)ptbSquelch.Value -
-                  rx1_preamp_offset[(int)rx1_preamp_mode] -
-                  rx1_meter_cal_offset -
-                  //rx1_filter_size_cal_offset -
-                  (-alex_preamp_offset);
-
-                radio.GetDSPRX(0, 1).RXSquelchThreshold = (float)ptbSquelch.Value -
-                    rx1_preamp_offset[(int)rx1_preamp_mode] -
-                    rx1_meter_cal_offset -
-                    //rx1_filter_size_cal_offset -
-                    (-alex_preamp_offset);
-            }
-
-            // if (ptbSquelch.Focused) btnHidden.Focus();
-            if (sender.GetType() == typeof(PrettyTrackBar))
-            {
-                ptbSquelch.Focus();
-            }
-            if (sliderForm != null)
-                sliderForm.RX1Squelch = ptbSquelch.Value;
-
-        }
-
+        }        
         private void picSquelch_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
+            //int signal_x = (int)((sql_data + 160.0) * (picSquelch.Width - 1) / 160.0);
+            //int sql_x = (int)(((float)ptbSquelch.Value + 160.0) * (picSquelch.Width - 1) / 160.0);
+
+            float fValue = -160f + (160f * (ptbSquelch.Value / 100f)); // MW0LGE [2.9.0.8] converted to 0-100, as we are not now chaninging min/max of scroll bar
+
             int signal_x = (int)((sql_data + 160.0) * (picSquelch.Width - 1) / 160.0);
-            int sql_x = (int)(((float)ptbSquelch.Value + 160.0) * (picSquelch.Width - 1) / 160.0);
+            int sql_x = (int)((fValue + 160.0) * (picSquelch.Width - 1) / 160.0);
 
             if (mox) signal_x = sql_x = 0;
-            e.Graphics.FillRectangle(Brushes.LimeGreen, 0, 0, signal_x, picSquelch.Height);
+                e.Graphics.FillRectangle(Brushes.LimeGreen, 0, 0, signal_x, picSquelch.Height);
             if (sql_x < signal_x)
                 e.Graphics.FillRectangle(Brushes.Red, sql_x + 1, 0, signal_x - sql_x - 1, picSquelch.Height);
         }
@@ -32940,38 +33163,38 @@ namespace Thetis
 
         private void chkSquelch_CheckedChanged(object sender, System.EventArgs e)
         {
-            if (initializing) return;
+            //if (initializing) return;
 
-            if (chkSquelch.Checked)
-            {
-                switch (rx1_dsp_mode)
-                {
-                    case DSPMode.FM:
-                        radio.GetDSPRX(0, 0).RXAMSquelchOn = false;
-                        radio.GetDSPRX(0, 1).RXAMSquelchOn = false;
-                        radio.GetDSPRX(0, 0).RXFMSquelchOn = true;
-                        radio.GetDSPRX(0, 1).RXFMSquelchOn = true;
-                        break;
-                    default:
-                        radio.GetDSPRX(0, 0).RXFMSquelchOn = false;
-                        radio.GetDSPRX(0, 1).RXFMSquelchOn = false;
-                        radio.GetDSPRX(0, 0).RXAMSquelchOn = true;
-                        radio.GetDSPRX(0, 1).RXAMSquelchOn = true;
-                        break;
-                }
-            }
-            else
-            {
-                radio.GetDSPRX(0, 0).RXFMSquelchOn = false;
-                radio.GetDSPRX(0, 1).RXFMSquelchOn = false;
-                radio.GetDSPRX(0, 0).RXAMSquelchOn = false;
-                radio.GetDSPRX(0, 1).RXAMSquelchOn = false;
-            }
+            //if (chkSquelch.Checked)
+            //{
+            //    switch (rx1_dsp_mode)
+            //    {
+            //        case DSPMode.FM:
+            //            radio.GetDSPRX(0, 0).RXAMSquelchOn = false;
+            //            radio.GetDSPRX(0, 1).RXAMSquelchOn = false;
+            //            radio.GetDSPRX(0, 0).RXFMSquelchOn = true;
+            //            radio.GetDSPRX(0, 1).RXFMSquelchOn = true;
+            //            break;
+            //        default:
+            //            radio.GetDSPRX(0, 0).RXFMSquelchOn = false;
+            //            radio.GetDSPRX(0, 1).RXFMSquelchOn = false;
+            //            radio.GetDSPRX(0, 0).RXAMSquelchOn = true;
+            //            radio.GetDSPRX(0, 1).RXAMSquelchOn = true;
+            //            break;
+            //    }
+            //}
+            //else
+            //{
+            //    radio.GetDSPRX(0, 0).RXFMSquelchOn = false;
+            //    radio.GetDSPRX(0, 1).RXFMSquelchOn = false;
+            //    radio.GetDSPRX(0, 0).RXAMSquelchOn = false;
+            //    radio.GetDSPRX(0, 1).RXAMSquelchOn = false;
+            //}
 
-            if (rx1_dsp_mode == DSPMode.FM) rx1_fm_squelch_on = chkSquelch.Checked;
-            if (sliderForm != null)
-                sliderForm.RX1SquelchOnOff = chkSquelch.Checked;
-            AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, true, chkSquelch.Checked);
+            //if (rx1_dsp_mode == DSPMode.FM) rx1_fm_squelch_on = chkSquelch.Checked;
+            //if (sliderForm != null)
+            //    sliderForm.RX1SquelchOnOff = chkSquelch.Checked;
+            //AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, true, chkSquelch.Checked);
         }
 
         private void updateVFOFreqs(bool tx, bool isTune = false)
@@ -40122,15 +40345,16 @@ namespace Thetis
                     if (new_mode != DSPMode.SPEC && new_mode != DSPMode.DRM)
                         EnableAllFilters();
 
-                    if (!initializing)
-                        rx1_fm_squelch_threshold_scroll = ptbSquelch.Value;
+                    //if (!initializing)
+                    //    rx1_fm_squelch_threshold_scroll = ptbSquelch.Value;
 
-                    ptbSquelch.Minimum = -160;
-                    ptbSquelch.Maximum = 0;
-                    if (!collapsedDisplay)
-                        picSquelch.Visible = true;
+                    //ptbSquelch.Minimum = -160;
+                    //ptbSquelch.Maximum = 0;
+                    //if (!collapsedDisplay)
+                    //    picSquelch.Visible = true;
 
-                    ptbSquelch.Value = rx1_squelch_threshold_scroll;
+                    //ptbSquelch.Value = rx1_squelch_threshold_scroll;
+                    handleSqlFM(1, false);
                     break;
                 case DSPMode.AM:
                     radModeAM.BackColor = SystemColors.Control;
@@ -40375,19 +40599,21 @@ namespace Thetis
                     DisableAllFilters();
                     if (chkNR.CheckState == CheckState.Indeterminate)
                         chkNR.CheckState = CheckState.Unchecked;
-                    if (!initializing)
-                        rx1_squelch_threshold_scroll = ptbSquelch.Value;
 
-                    ptbSquelch.Minimum = 0;
-                    ptbSquelch.Maximum = 100;
+                    //if (!initializing)
+                    //    rx1_squelch_threshold_scroll = ptbSquelch.Value;
 
-                    ptbSquelch.Value = rx1_fm_squelch_threshold_scroll;
+                    //ptbSquelch.Minimum = 0;
+                    //ptbSquelch.Maximum = 100;
 
-                    picSquelch.Visible = false;
+                    //ptbSquelch.Value = rx1_fm_squelch_threshold_scroll;
 
-                    if (!initializing)
-                        rx1_squelch_on = chkSquelch.Checked;    //save state of non-FM squelch
-                    chkSquelch.Checked = rx1_fm_squelch_on; //set fm squelch state
+                    //picSquelch.Visible = false;
+
+                    //if (!initializing)
+                    //    rx1_squelch_on = chkSquelch.Checked;    //save state of non-FM squelch
+                    //chkSquelch.Checked = rx1_fm_squelch_on; //set fm squelch state
+                    handleSqlFM(1, true);
 
                     if (chkVFOATX.Checked || !rx2_enabled)
                     {
@@ -40552,13 +40778,15 @@ namespace Thetis
 
             SelectModeDependentPanel(); //MW0LGE_21k9d
 
-            if (!initializing && old_mode == DSPMode.FM)
-                chkSquelch.Checked = rx1_squelch_on; //!chkSquelch.Checked;
+            //SQL
+            //if (!initializing && old_mode == DSPMode.FM)
+            //    chkSquelch.Checked = rx1_squelch_on; //!chkSquelch.Checked;
 
-            if (old_mode == DSPMode.FM || new_mode == DSPMode.FM)
-            {
-                ptbSquelch_Scroll(this, EventArgs.Empty);
-            }
+            //SQL
+            //if (old_mode == DSPMode.FM || new_mode == DSPMode.FM)
+            //{
+            //    ptbSquelch_Scroll(this, EventArgs.Empty);
+            //}
 
             if (rx1_dsp_mode != DSPMode.SPEC && rx1_dsp_mode != DSPMode.FM && rx1_dsp_mode != DSPMode.DRM)
             {
@@ -40594,7 +40822,8 @@ namespace Thetis
             ptbPWR_Scroll(this, EventArgs.Empty);
             if (chkVFOSplit.Checked || full_duplex || psstate)
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-            chkSquelch_CheckedChanged(this, EventArgs.Empty);
+            //chkSquelch_CheckedChanged(this, EventArgs.Empty); // MW0LGE [2.9.0.8]
+            chkSquelch_CheckStateChanged(this, EventArgs.Empty);
             CalcDisplayFreq();
             if (new_mode == DSPMode.CWL || new_mode == DSPMode.CWU)
             {
@@ -44141,15 +44370,18 @@ namespace Thetis
                     if (new_mode != DSPMode.DRM)
                         EnableAllRX2Filters();
 
-                    if (!initializing)
-                        rx2_fm_squelch_threshold_scroll = ptbRX2Squelch.Value;
+                    //SQL
+                    //if (!initializing)
+                    //    rx2_fm_squelch_threshold_scroll = ptbRX2Squelch.Value;
 
-                    ptbRX2Squelch.Minimum = -160;
-                    ptbRX2Squelch.Maximum = 0;
+                    //ptbRX2Squelch.Minimum = -160;
+                    //ptbRX2Squelch.Maximum = 0;
 
-                    picRX2Squelch.Visible = true;
+                    //picRX2Squelch.Visible = true;
 
-                    ptbRX2Squelch.Value = rx2_squelch_threshold_scroll;
+                    //ptbRX2Squelch.Value = rx2_squelch_threshold_scroll;
+                    handleSqlFM(2, false);
+
                     break;
                 case DSPMode.AM:
                     radRX2ModeAM.BackColor = SystemColors.Control;
@@ -44321,6 +44553,8 @@ namespace Thetis
                     if (chkRX2NR.CheckState == CheckState.Indeterminate)
                         chkRX2NR.CheckState = CheckState.Unchecked;
 
+                    //SQL
+                    /*
                     if (!initializing)
                         rx2_squelch_threshold_scroll = ptbRX2Squelch.Value;
 
@@ -44330,11 +44564,15 @@ namespace Thetis
                     ptbRX2Squelch.Value = rx2_fm_squelch_threshold_scroll;
 
                     picRX2Squelch.Visible = false;
+                    */
+                    handleSqlFM(2, true);
 
                     //chkRX2Squelch.Enabled = false;
-                    if (!initializing)
-                        rx2_squelch_on = chkRX2Squelch.Checked;    //save state of non-FM squelch
-                    chkRX2Squelch.Checked = rx2_fm_squelch_on; // set fm squelch state
+
+                    //SQL
+                    //if (!initializing)
+                    //    rx2_squelch_on = chkRX2Squelch.Checked;    //save state of non-FM squelch
+                    //chkRX2Squelch.Checked = rx2_fm_squelch_on; // set fm squelch state
 
                     if (rx2_enabled)
                     {
@@ -44478,11 +44716,13 @@ namespace Thetis
 
             rx2_dsp_mode = new_mode;
 
-            if (!initializing && old_mode == DSPMode.FM)
-                chkRX2Squelch.Checked = rx2_squelch_on;
+            //SQL
+            //if (!initializing && old_mode == DSPMode.FM)
+            //    chkRX2Squelch.Checked = rx2_squelch_on;
 
-            if (old_mode == DSPMode.FM || new_mode == DSPMode.FM)
-                ptbRX2Squelch_Scroll(this, EventArgs.Empty);
+            //SQL
+            //if (old_mode == DSPMode.FM || new_mode == DSPMode.FM)
+            //    ptbRX2Squelch_Scroll(this, EventArgs.Empty);
 
             if (rx2_dsp_mode != DSPMode.FM && rx2_dsp_mode != DSPMode.DRM)
             {
@@ -44522,7 +44762,8 @@ namespace Thetis
 
             UpdateDSP();
             txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-            chkRX2Squelch_CheckedChanged(this, EventArgs.Empty);
+            //chkRX2Squelch_CheckedChanged(this, EventArgs.Empty);  // MW0LGE [2.9.0.8]
+            chkRX2Squelch_CheckStateChanged(this, EventArgs.Empty);
             ptbPWR_Scroll(this, EventArgs.Empty);
 
             if (old_mode == DSPMode.FM || new_mode == DSPMode.FM)
@@ -45133,96 +45374,21 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.RX2RFGainAGC = ptbRX2RF.Value;
 
-        }
-
-        private void chkRX2Squelch_CheckedChanged(object sender, System.EventArgs e)
-        {
-            if (initializing) return;
-
-            if (chkRX2Squelch.Checked) chkRX2Squelch.BackColor = button_selected_color;
-            else chkRX2Squelch.BackColor = SystemColors.Control;
-
-            if (chkRX2Squelch.Checked)
-            {
-                switch (rx2_dsp_mode)
-                {
-                    case DSPMode.FM:
-                        radio.GetDSPRX(1, 0).RXAMSquelchOn = false;
-                        radio.GetDSPRX(1, 1).RXAMSquelchOn = false;
-                        radio.GetDSPRX(1, 0).RXFMSquelchOn = true;
-                        radio.GetDSPRX(1, 1).RXFMSquelchOn = true;
-                        break;
-                    default:
-                        radio.GetDSPRX(1, 0).RXFMSquelchOn = false;
-                        radio.GetDSPRX(1, 1).RXFMSquelchOn = false;
-                        radio.GetDSPRX(1, 0).RXAMSquelchOn = true;
-                        radio.GetDSPRX(1, 1).RXAMSquelchOn = true;
-                        break;
-                }
-            }
-            else
-            {
-                radio.GetDSPRX(1, 0).RXFMSquelchOn = false;
-                radio.GetDSPRX(1, 1).RXFMSquelchOn = false;
-                radio.GetDSPRX(1, 0).RXAMSquelchOn = false;
-                radio.GetDSPRX(1, 1).RXAMSquelchOn = false;
-            }
-
-            if (rx2_dsp_mode == DSPMode.FM) rx2_fm_squelch_on = chkRX2Squelch.Checked;
-            // else rx2_squelch_on = chkRX2Squelch.Checked;
-            if (sliderForm != null)
-                sliderForm.RX2SquelchOnOff = chkRX2Squelch.Checked;
-            AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, false, chkRX2Squelch.Checked);
-        }
-
-        private void ptbRX2Squelch_Scroll(object sender, System.EventArgs e)
-        {
-            chkRX2Squelch.Text = "SQL:  " + ptbRX2Squelch.Value.ToString();
-
-            if (rx2_dsp_mode == DSPMode.FM)
-            {
-                rx2_fm_squelch_threshold_scroll = ptbRX2Squelch.Value; //MW0LGE_21a
-
-                radio.GetDSPRX(1, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2 * ptbRX2Squelch.Value / 100.0);
-                radio.GetDSPRX(1, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2 * ptbRX2Squelch.Value / 100.0);
-            }
-            else
-            {
-                rx2_squelch_threshold_scroll = ptbRX2Squelch.Value; //MW0LGE_21a
-
-                radio.GetDSPRX(1, 0).RXSquelchThreshold = ((float)ptbRX2Squelch.Value -
-                    rx2_meter_cal_offset -
-                    rx2_preamp_offset[(int)rx2_preamp_mode] -
-                    //rx2_filter_size_cal_offset -
-                    rx2_path_offset);
-
-                radio.GetDSPRX(1, 1).RXSquelchThreshold = ((float)ptbRX2Squelch.Value -
-                    rx2_meter_cal_offset -
-                    rx2_preamp_offset[(int)rx2_preamp_mode] -
-                    //rx2_filter_size_cal_offset -
-                    rx2_path_offset);
-            }
-
-            // if (ptbRX2Squelch.Focused) btnHidden.Focus();
-            if (sender.GetType() == typeof(PrettyTrackBar))
-            {
-                ptbRX2Squelch.Focus();
-            }
-            if (sliderForm != null)
-                sliderForm.RX2Squelch = ptbRX2Squelch.Value;
-
-        }
-
+        }              
         private void picRX2Squelch_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
+            //int signal_x = (int)((rx2_sql_data + 160.0) * (picRX2Squelch.Width - 1) / 160.0);
+            //int sql_x = (int)(((float)ptbRX2Squelch.Value + 160.0) * (picRX2Squelch.Width - 1) / 160.0);
+
+            float fValue = -160f + (160f * (ptbRX2Squelch.Value / 100f)); // MW0LGE [2.9.0.8] converted to 0-100, as we are not now chaninging min/max of scroll bar
+
             int signal_x = (int)((rx2_sql_data + 160.0) * (picRX2Squelch.Width - 1) / 160.0);
-            int sql_x = (int)(((float)ptbRX2Squelch.Value + 160.0) * (picRX2Squelch.Width - 1) / 160.0);
+            int sql_x = (int)((fValue + 160.0) * (picRX2Squelch.Width - 1) / 160.0);
 
             e.Graphics.FillRectangle(Brushes.LimeGreen, 0, 0, signal_x, picRX2Squelch.Height);
             if (sql_x < signal_x)
                 e.Graphics.FillRectangle(Brushes.Red, sql_x + 1, 0, signal_x - sql_x - 1, picRX2Squelch.Height);
         }
-
         private void chkRX1Preamp_CheckedChanged(object sender, System.EventArgs e)
         {
             // if (!fwc_init || current_model != Model.FLEX5000) return;
@@ -51834,12 +52000,16 @@ namespace Thetis
 
         private void systemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CpuUsage(true);
+            m_bShowSystemCPUUsage = true;
+            //CpuUsage(true);
+            CpuUsage();
         }
 
         private void thetisOnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CpuUsage(false);
+            m_bShowSystemCPUUsage = false;
+            //CpuUsage(false);
+            CpuUsage();
         }
         #region QSOTimer
         //qso timer
@@ -52159,7 +52329,7 @@ namespace Thetis
             }
 
             // wdsp.dll
-            // Version number is in version.c where it is 120.  *10 to match Versions.WDSP_VERSION
+            // Version number is in version.c where it is 121.  *10 to match Versions.WDSP_VERSION
             try
             {
                 nWDSPVersion = WDSP.GetWDSPVersion() * 10; // see comment above
@@ -54561,65 +54731,558 @@ namespace Thetis
             ivac.resetIVACdiags(1, 1);
         }
 
-        private float[] getPassbandSpectrum(int rx, int fft_size, double[,] spectrum_data)
+        //private float[] getPassbandSpectrum(int rx, int fft_size, double[,] spectrum_data)
+        //{
+        //    int lo_cut_hz;
+        //    int hi_cut_hz;
+        //    double hz_per_bucket;
+        //    int zero_hz_bucket = fft_size / 2;
+        //    int nExpand = 1000;
+
+        //    if (rx == 1)
+        //    {
+        //        hz_per_bucket = sample_rate_rx1 / (double)fft_size;
+        //        lo_cut_hz = RX1FilterLow - nExpand;
+        //        hi_cut_hz = RX1FilterHigh + nExpand;
+        //    }
+        //    else
+        //    {
+        //        hz_per_bucket = sample_rate_rx2 / (double)fft_size;
+        //        lo_cut_hz = RX2FilterLow - nExpand;
+        //        hi_cut_hz = RX2FilterHigh + nExpand;
+        //    }
+
+        //    if (click_tune_display) //MW0LGE_21d
+        //    {
+        //        // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
+        //        double dBucketOffset;
+        //        if (rx == 1)
+        //            dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
+        //        else
+        //            dBucketOffset = ((VFOBFreq - CentreRX2Frequency) * 1e6) / hz_per_bucket;
+
+        //        zero_hz_bucket += (int)dBucketOffset;
+        //    }
+
+        //    int lo_bucket = (int)(lo_cut_hz / hz_per_bucket) + zero_hz_bucket;
+        //    int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
+
+        //    if (lo_bucket < 0 || hi_bucket > fft_size - 1)
+        //    {
+        //        return null;
+        //    }                
+
+        //    double mag_sqr;
+        //    float[] dbm = new float[hi_bucket - lo_bucket + 1];
+        //    double pow2fft = Math.Pow(fft_size, 2);
+
+        //    // all the offsets, use display
+        //    float fOffset;
+        //    if (rx == 1)
+        //        fOffset = Display.RX1Offset;
+        //    else
+        //        fOffset = Display.RX2Offset;
+
+        //    for (int i = lo_bucket; i <= hi_bucket; i++)
+        //    {
+        //        mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
+        //        dbm[i - lo_bucket] = (float)(10.0f * Math.Log10(mag_sqr / pow2fft)) + fOffset;
+        //    }
+
+        //    return dbm;
+        //}
+        private bool _bIgnoreSqlUpdate = false;// used by chkSquelch_CheckStateChanged
+        private void ptbSquelch_Scroll(object sender, System.EventArgs e)
         {
-            int lo_cut_hz;
-            int hi_cut_hz;
-            double hz_per_bucket;
-            int zero_hz_bucket = fft_size / 2;
-            int nExpand = 1000;
+            //chkSquelch.Text = "SQL:  " + ptbSquelch.Value.ToString();
+
+            //if (rx1_dsp_mode == DSPMode.FM) //FM Squelch
+            //{
+            //    rx1_fm_squelch_threshold_scroll = ptbSquelch.Value; //MW0LGE_21a
+
+            //    radio.GetDSPRX(0, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * ptbSquelch.Value / 100.0);
+            //    radio.GetDSPRX(0, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * ptbSquelch.Value / 100.0);
+            //}
+            //else //non-FM Squelch
+            //{
+            //    rx1_squelch_threshold_scroll = ptbSquelch.Value; //MW0LGE_21a
+
+            //    radio.GetDSPRX(0, 0).RXSquelchThreshold = (float)ptbSquelch.Value -
+            //      rx1_preamp_offset[(int)rx1_preamp_mode] -
+            //      rx1_meter_cal_offset -
+            //      //rx1_filter_size_cal_offset -
+            //      (-alex_preamp_offset);
+
+            //    radio.GetDSPRX(0, 1).RXSquelchThreshold = (float)ptbSquelch.Value -
+            //        rx1_preamp_offset[(int)rx1_preamp_mode] -
+            //        rx1_meter_cal_offset -
+            //        //rx1_filter_size_cal_offset -
+            //        (-alex_preamp_offset);
+            //}
+
+            //// if (ptbSquelch.Focused) btnHidden.Focus();
+            //if (sender.GetType() == typeof(PrettyTrackBar))
+            //{
+            //    ptbSquelch.Focus();
+            //}
+            //if (sliderForm != null)
+            //    sliderForm.RX1Squelch = ptbSquelch.Value;
+
+            if (_bIgnoreSqlUpdate) return; // used by chkSquelch_CheckStateChanged
+
+            int nValue;
+
+            switch (chkSquelch.CheckState)
+            {
+                case CheckState.Unchecked:
+                    // off
+                case CheckState.Checked:
+                    // sql
+                    if (rx1_dsp_mode == DSPMode.FM) //FM Squelch
+                    {
+                        nValue = ptbSquelch.Value; // 0-100
+
+                        rx1_fm_squelch_threshold_scroll = nValue;
+
+                        radio.GetDSPRX(0, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
+                        radio.GetDSPRX(0, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
+                    }
+                    else
+                    {
+                        rx1_squelch_threshold_scroll = ptbSquelch.Value; // 0-100
+
+                        float fPerc = ptbSquelch.Value / 100f;
+                        nValue = -160 + (int)(160  * fPerc);
+
+                        radio.GetDSPRX(0, 0).RXSquelchThreshold = (float)nValue -
+                          rx1_preamp_offset[(int)rx1_preamp_mode] -
+                          rx1_meter_cal_offset -
+                          //rx1_filter_size_cal_offset -
+                          (-alex_preamp_offset);
+
+                        radio.GetDSPRX(0, 1).RXSquelchThreshold = (float)nValue -
+                            rx1_preamp_offset[(int)rx1_preamp_mode] -
+                            rx1_meter_cal_offset -
+                            //rx1_filter_size_cal_offset -
+                            (-alex_preamp_offset);
+                    }
+
+                    chkSquelch.Text = "SQL:  " + nValue.ToString();
+                    break;
+                case CheckState.Indeterminate:
+                    // vsq
+                    nValue = ptbSquelch.Value; // 0-100
+
+                    rx1_voice_squelch_threshold_scroll = nValue;
+
+                    radio.GetDSPRX(0, 0).SSqlThreshold = nValue / 100f;
+                    radio.GetDSPRX(0, 1).SSqlThreshold = nValue / 100f;
+
+                    chkSquelch.Text = "VSQ:  " + nValue.ToString();
+                    break;
+            }
+
+            if (sliderForm != null)
+                sliderForm.RX1Squelch = -(int)(ptbSquelch.Value * 1.6f); // convert to range 0 to -160
+        }
+        private bool _bIgnoreSqlStateChange = false;// used by handleSqlFM
+        private void chkSquelch_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (initializing || _bIgnoreSqlStateChange) return;
+
+            bool bShowLevelBar = !collapsedDisplay;
+            int nValue = 0;
+
+            switch (chkSquelch.CheckState)
+            {
+                case CheckState.Unchecked:
+                    // all off
+                    radio.GetDSPRX(0, 0).RXFMSquelchOn = false;
+                    radio.GetDSPRX(0, 1).RXFMSquelchOn = false;
+                    radio.GetDSPRX(0, 0).RXAMSquelchOn = false;
+                    radio.GetDSPRX(0, 1).RXAMSquelchOn = false;
+                    radio.GetDSPRX(0, 0).SSqlOn = false;
+                    radio.GetDSPRX(0, 1).SSqlOn = false;
+                    if (rx1_dsp_mode == DSPMode.FM)
+                    {
+                        rx1_fm_squelch_state = SquelchState.OFF;
+                        bShowLevelBar = false;
+                        nValue = rx1_fm_squelch_threshold_scroll;
+                    }
+                    else
+                    {
+                        rx1_squelch_state = SquelchState.OFF;
+                        nValue = rx1_squelch_threshold_scroll;
+                    }
+                    break;
+                case CheckState.Checked:
+                    // sql
+                    switch (rx1_dsp_mode)
+                    {
+                        case DSPMode.FM:
+                            radio.GetDSPRX(0, 0).RXAMSquelchOn = false;
+                            radio.GetDSPRX(0, 1).RXAMSquelchOn = false;
+                            radio.GetDSPRX(0, 0).SSqlOn = false;
+                            radio.GetDSPRX(0, 1).SSqlOn = false;
+                            radio.GetDSPRX(0, 0).RXFMSquelchOn = true;
+                            radio.GetDSPRX(0, 1).RXFMSquelchOn = true;
+                            rx1_fm_squelch_state = SquelchState.SQL;
+                            bShowLevelBar = false;
+                            nValue = rx1_fm_squelch_threshold_scroll;
+                            break;
+                        default:
+                            radio.GetDSPRX(0, 0).RXFMSquelchOn = false;
+                            radio.GetDSPRX(0, 1).RXFMSquelchOn = false;
+                            radio.GetDSPRX(0, 0).SSqlOn = false;
+                            radio.GetDSPRX(0, 1).SSqlOn = false;
+                            radio.GetDSPRX(0, 0).RXAMSquelchOn = true;
+                            radio.GetDSPRX(0, 1).RXAMSquelchOn = true;
+                            rx1_squelch_state = SquelchState.SQL;
+                            nValue = rx1_squelch_threshold_scroll;
+                            break;
+                    }
+                    break;
+                case CheckState.Indeterminate:
+                    // vsq
+                    radio.GetDSPRX(0, 0).RXFMSquelchOn = false;
+                    radio.GetDSPRX(0, 1).RXFMSquelchOn = false;
+                    radio.GetDSPRX(0, 0).RXAMSquelchOn = false;
+                    radio.GetDSPRX(0, 1).RXAMSquelchOn = false;
+                    radio.GetDSPRX(0, 0).SSqlOn = true;
+                    radio.GetDSPRX(0, 1).SSqlOn = true;
+                    if (rx1_dsp_mode == DSPMode.FM)
+                    {
+                        rx1_fm_squelch_state = SquelchState.VSQL;
+                    }
+                    else
+                    {
+                        rx1_squelch_state = SquelchState.VSQL;
+                    }
+                    bShowLevelBar = false;
+                    nValue = rx1_voice_squelch_threshold_scroll;
+                    break;
+            }
+
+            //SQL
+            //if (rx1_dsp_mode == DSPMode.FM) rx1_fm_squelch_on = chkSquelch.Checked;
+
+            if (sliderForm != null)
+                sliderForm.RX1SquelchOnOff = chkSquelch.Checked;
+            AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, true, chkSquelch.Checked);
+
+            //update
+            picSquelch.Visible = bShowLevelBar;
+
+            _bIgnoreSqlUpdate = true;
+            ptbSquelch.Value = nValue;
+            _bIgnoreSqlUpdate = false;
+
+            ptbSquelch_Scroll(this, EventArgs.Empty);
+        }
+        private void handleSqlFM(int rx, bool bFM)
+        {
+            // rx 1,2
+            // bFM - true is starting fm
+            _bIgnoreSqlStateChange = true; // previent the assignment of state from running code in chkSquelch_CheckStateChanged
+                                           // as chkSquelch_CheckStateChanged is already called in SetRX1Mode where this function is used
 
             if (rx == 1)
-            {
-                hz_per_bucket = sample_rate_rx1 / (double)fft_size;
-                lo_cut_hz = RX1FilterLow - nExpand;
-                hi_cut_hz = RX1FilterHigh + nExpand;
-            }
-            else
-            {
-                hz_per_bucket = sample_rate_rx2 / (double)fft_size;
-                lo_cut_hz = RX2FilterLow - nExpand;
-                hi_cut_hz = RX2FilterHigh + nExpand;
-            }
-
-            if (click_tune_display) //MW0LGE_21d
-            {
-                // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
-                double dBucketOffset;
-                if (rx == 1)
-                    dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
+            {                
+                if (bFM)
+                {
+                    // entering FM
+                    switch (rx1_fm_squelch_state)
+                    {
+                        case SquelchState.OFF:
+                            chkSquelch.CheckState = CheckState.Unchecked;
+                            break;
+                        case SquelchState.SQL:
+                            chkSquelch.CheckState = CheckState.Checked;
+                            break;
+                        case SquelchState.VSQL:
+                            chkSquelch.CheckState = CheckState.Indeterminate;
+                            break;
+                    }
+                }
                 else
-                    dBucketOffset = ((VFOBFreq - CentreRX2Frequency) * 1e6) / hz_per_bucket;
-
-                zero_hz_bucket += (int)dBucketOffset;
+                {
+                    // exiting FM
+                    switch (rx1_squelch_state)
+                    {
+                        case SquelchState.OFF:
+                            chkSquelch.CheckState = CheckState.Unchecked;
+                            break;
+                        case SquelchState.SQL:
+                            chkSquelch.CheckState = CheckState.Checked;
+                            break;
+                        case SquelchState.VSQL:
+                            chkSquelch.CheckState = CheckState.Indeterminate;
+                            break;
+                    }
+                }
+            }
+            else if (rx == 2)
+            {
+                if (bFM)
+                {
+                    // entering FM
+                    switch (rx2_fm_squelch_state)
+                    {
+                        case SquelchState.OFF:
+                            chkRX2Squelch.CheckState = CheckState.Unchecked;
+                            break;
+                        case SquelchState.SQL:
+                            chkRX2Squelch.CheckState = CheckState.Checked;
+                            break;
+                        case SquelchState.VSQL:
+                            chkRX2Squelch.CheckState = CheckState.Indeterminate;
+                            break;
+                    }
+                }
+                else
+                {
+                    // exiting FM
+                    switch (rx2_squelch_state)
+                    {
+                        case SquelchState.OFF:
+                            chkRX2Squelch.CheckState = CheckState.Unchecked;
+                            break;
+                        case SquelchState.SQL:
+                            chkRX2Squelch.CheckState = CheckState.Checked;
+                            break;
+                        case SquelchState.VSQL:
+                            chkRX2Squelch.CheckState = CheckState.Indeterminate;
+                            break;
+                    }
+                }
             }
 
-            int lo_bucket = (int)(lo_cut_hz / hz_per_bucket) + zero_hz_bucket;
-            int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
+            _bIgnoreSqlStateChange = false;
+        }
 
-            if (lo_bucket < 0 || hi_bucket > fft_size - 1)
+        private void chkRX2Squelch_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (initializing || _bIgnoreSqlStateChange) return;
+
+            bool bShowLevelBar = !collapsedDisplay;
+            int nValue = 0;
+
+            switch (chkRX2Squelch.CheckState)
             {
-                return null;
-            }                
-
-            double mag_sqr;
-            float[] dbm = new float[hi_bucket - lo_bucket + 1];
-            double pow2fft = Math.Pow(fft_size, 2);
-
-            // all the offsets, use display
-            float fOffset;
-            if (rx == 1)
-                fOffset = Display.RX1Offset;
-            else
-                fOffset = Display.RX2Offset;
-
-            for (int i = lo_bucket; i <= hi_bucket; i++)
-            {
-                mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
-                dbm[i - lo_bucket] = (float)(10.0f * Math.Log10(mag_sqr / pow2fft)) + fOffset;
+                case CheckState.Unchecked:
+                    // all off
+                    radio.GetDSPRX(1, 0).RXFMSquelchOn = false;
+                    radio.GetDSPRX(1, 1).RXFMSquelchOn = false;
+                    radio.GetDSPRX(1, 0).RXAMSquelchOn = false;
+                    radio.GetDSPRX(1, 1).RXAMSquelchOn = false;
+                    radio.GetDSPRX(1, 0).SSqlOn = false;
+                    radio.GetDSPRX(1, 1).SSqlOn = false;
+                    if (rx2_dsp_mode == DSPMode.FM)
+                    {
+                        rx2_fm_squelch_state = SquelchState.OFF;
+                        bShowLevelBar = false;
+                        nValue = rx2_fm_squelch_threshold_scroll;
+                    }
+                    else
+                    {
+                        rx2_squelch_state = SquelchState.OFF;
+                        nValue = rx2_squelch_threshold_scroll;
+                    }
+                    break;
+                case CheckState.Checked:
+                    // sql
+                    switch (rx2_dsp_mode)
+                    {
+                        case DSPMode.FM:
+                            radio.GetDSPRX(1, 0).RXAMSquelchOn = false;
+                            radio.GetDSPRX(1, 1).RXAMSquelchOn = false;
+                            radio.GetDSPRX(1, 0).SSqlOn = false;
+                            radio.GetDSPRX(1, 1).SSqlOn = false;
+                            radio.GetDSPRX(1, 0).RXFMSquelchOn = true;
+                            radio.GetDSPRX(1, 1).RXFMSquelchOn = true;
+                            rx2_fm_squelch_state = SquelchState.SQL;
+                            bShowLevelBar = false;
+                            nValue = rx2_fm_squelch_threshold_scroll;
+                            break;
+                        default:
+                            radio.GetDSPRX(1, 0).RXFMSquelchOn = false;
+                            radio.GetDSPRX(1, 1).RXFMSquelchOn = false;
+                            radio.GetDSPRX(1, 0).SSqlOn = false;
+                            radio.GetDSPRX(1, 1).SSqlOn = false;
+                            radio.GetDSPRX(1, 0).RXAMSquelchOn = true;
+                            radio.GetDSPRX(1, 1).RXAMSquelchOn = true;
+                            rx2_squelch_state = SquelchState.SQL;
+                            nValue = rx2_squelch_threshold_scroll;
+                            break;
+                    }
+                    break;
+                case CheckState.Indeterminate:
+                    // vsq
+                    radio.GetDSPRX(1, 0).RXFMSquelchOn = false;
+                    radio.GetDSPRX(1, 1).RXFMSquelchOn = false;
+                    radio.GetDSPRX(1, 0).RXAMSquelchOn = false;
+                    radio.GetDSPRX(1, 1).RXAMSquelchOn = false;
+                    radio.GetDSPRX(1, 0).SSqlOn = true;
+                    radio.GetDSPRX(1, 1).SSqlOn = true;
+                    if (rx2_dsp_mode == DSPMode.FM)
+                    {
+                        rx2_fm_squelch_state = SquelchState.VSQL;
+                    }
+                    else
+                    {
+                        rx2_squelch_state = SquelchState.VSQL;
+                    }
+                    bShowLevelBar = false;
+                    nValue = rx2_voice_squelch_threshold_scroll;
+                    break;
             }
 
-            return dbm;
+            if (sliderForm != null)
+                sliderForm.RX2SquelchOnOff = chkRX2Squelch.Checked;
+            AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, true, chkRX2Squelch.Checked);
+
+            //update
+            picRX2Squelch.Visible = bShowLevelBar;
+
+            _bIgnoreSqlUpdate = true;
+            ptbRX2Squelch.Value = nValue;
+            _bIgnoreSqlUpdate = false;
+
+            ptbRX2Squelch_Scroll(this, EventArgs.Empty);
+        }
+
+        private void chkRX2Squelch_CheckedChanged(object sender, System.EventArgs e)
+        {
+            //if (initializing) return;
+
+            //if (chkRX2Squelch.Checked) chkRX2Squelch.BackColor = button_selected_color;
+            //else chkRX2Squelch.BackColor = SystemColors.Control;
+
+            //if (chkRX2Squelch.Checked)
+            //{
+            //    switch (rx2_dsp_mode)
+            //    {
+            //        case DSPMode.FM:
+            //            radio.GetDSPRX(1, 0).RXAMSquelchOn = false;
+            //            radio.GetDSPRX(1, 1).RXAMSquelchOn = false;
+            //            radio.GetDSPRX(1, 0).RXFMSquelchOn = true;
+            //            radio.GetDSPRX(1, 1).RXFMSquelchOn = true;
+            //            break;
+            //        default:
+            //            radio.GetDSPRX(1, 0).RXFMSquelchOn = false;
+            //            radio.GetDSPRX(1, 1).RXFMSquelchOn = false;
+            //            radio.GetDSPRX(1, 0).RXAMSquelchOn = true;
+            //            radio.GetDSPRX(1, 1).RXAMSquelchOn = true;
+            //            break;
+            //    }
+            //}
+            //else
+            //{
+            //    radio.GetDSPRX(1, 0).RXFMSquelchOn = false;
+            //    radio.GetDSPRX(1, 1).RXFMSquelchOn = false;
+            //    radio.GetDSPRX(1, 0).RXAMSquelchOn = false;
+            //    radio.GetDSPRX(1, 1).RXAMSquelchOn = false;
+            //}
+
+            //if (rx2_dsp_mode == DSPMode.FM) rx2_fm_squelch_on = chkRX2Squelch.Checked;
+            //// else rx2_squelch_on = chkRX2Squelch.Checked;
+
+            //if (sliderForm != null)
+            //    sliderForm.RX2SquelchOnOff = chkRX2Squelch.Checked;
+            //AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, false, chkRX2Squelch.Checked);
+        }
+        private void ptbRX2Squelch_Scroll(object sender, System.EventArgs e)
+        {
+            //chkRX2Squelch.Text = "SQL:  " + ptbRX2Squelch.Value.ToString();
+
+            //if (rx2_dsp_mode == DSPMode.FM)
+            //{
+            //    rx2_fm_squelch_threshold_scroll = ptbRX2Squelch.Value; //MW0LGE_21a
+
+            //    radio.GetDSPRX(1, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2 * ptbRX2Squelch.Value / 100.0);
+            //    radio.GetDSPRX(1, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2 * ptbRX2Squelch.Value / 100.0);
+            //}
+            //else
+            //{
+            //    rx2_squelch_threshold_scroll = ptbRX2Squelch.Value; //MW0LGE_21a
+
+            //    radio.GetDSPRX(1, 0).RXSquelchThreshold = ((float)ptbRX2Squelch.Value -
+            //        rx2_meter_cal_offset -
+            //        rx2_preamp_offset[(int)rx2_preamp_mode] -
+            //        //rx2_filter_size_cal_offset -
+            //        rx2_path_offset);
+
+            //    radio.GetDSPRX(1, 1).RXSquelchThreshold = ((float)ptbRX2Squelch.Value -
+            //        rx2_meter_cal_offset -
+            //        rx2_preamp_offset[(int)rx2_preamp_mode] -
+            //        //rx2_filter_size_cal_offset -
+            //        rx2_path_offset);
+            //}
+
+            //// if (ptbRX2Squelch.Focused) btnHidden.Focus();
+            //if (sender.GetType() == typeof(PrettyTrackBar))
+            //{
+            //    ptbRX2Squelch.Focus();
+            //}
+            //if (sliderForm != null)
+            //    sliderForm.RX2Squelch = ptbRX2Squelch.Value;
+            
+            if (_bIgnoreSqlUpdate) return; // used by chkRX2Squelch_CheckStateChanged
+
+            int nValue;
+
+            switch (chkRX2Squelch.CheckState)
+            {
+                case CheckState.Unchecked:
+                // off
+                case CheckState.Checked:
+                    // sql
+                    if (rx2_dsp_mode == DSPMode.FM) //FM Squelch
+                    {
+                        nValue = ptbRX2Squelch.Value; // 0-100
+
+                        rx2_fm_squelch_threshold_scroll = nValue;
+
+                        radio.GetDSPRX(1, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
+                        radio.GetDSPRX(1, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
+                    }
+                    else
+                    {
+                        rx2_squelch_threshold_scroll = ptbRX2Squelch.Value; // 0-100
+
+                        float fPerc = ptbRX2Squelch.Value / 100f;
+                        nValue = -160 + (int)(160 * fPerc);
+
+                        radio.GetDSPRX(1, 0).RXSquelchThreshold = (float)nValue -
+                          rx2_preamp_offset[(int)rx2_preamp_mode] -
+                          rx2_meter_cal_offset -
+                          //rx2_filter_size_cal_offset -
+                          rx2_path_offset;
+
+                        radio.GetDSPRX(1, 1).RXSquelchThreshold = (float)nValue -
+                            rx2_preamp_offset[(int)rx2_preamp_mode] -
+                            rx2_meter_cal_offset -
+                            //rx2_filter_size_cal_offset -
+                            rx2_path_offset;
+                    }
+
+                    chkRX2Squelch.Text = "SQL:  " + nValue.ToString();
+                    break;
+                case CheckState.Indeterminate:
+                    // vsq
+                    nValue = ptbRX2Squelch.Value; // 0-100
+
+                    rx2_voice_squelch_threshold_scroll = nValue;
+
+                    radio.GetDSPRX(1, 0).SSqlThreshold = nValue / 100f;
+                    radio.GetDSPRX(1, 1).SSqlThreshold = nValue / 100f;
+
+                    chkRX2Squelch.Text = "VSQ:  " + nValue.ToString();
+                    break;
+            }
+
+            if (sliderForm != null)
+                sliderForm.RX2Squelch = -(int)(ptbRX2Squelch.Value * 1.6f); // convert to range 0 to -160
         }
     }
 

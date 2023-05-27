@@ -5787,14 +5787,14 @@ namespace Thetis
 			if(s.Length == parser.nSet)
 			{
 				level = Convert.ToInt32(s);
-                if (console.RX1DSPMode == DSPMode.FM)
-                {
-				level = Math.Max(0, level);			// lower bound
-                    level = Math.Min(100, level);		// upper bound
-                    level *= -1;
-                }
-                else
-                {
+				if (console.RX1DSPMode == DSPMode.FM)
+				{
+					level = Math.Max(0, level);         // lower bound
+					level = Math.Min(100, level);       // upper bound
+					level *= -1;
+				}
+				else
+				{
                     level = Math.Max(0, level);
                     level = Math.Min(160, level);
                 }

@@ -2197,6 +2197,13 @@
             this.lblDSPAGCFixed = new System.Windows.Forms.LabelTS();
             this.chkDSPTXMeterPeak = new System.Windows.Forms.CheckBoxTS();
             this.tpDSPAMSAM = new System.Windows.Forms.TabPage();
+            this.groupBoxTS28 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS180 = new System.Windows.Forms.LabelTS();
+            this.udVSQLUnMuteTimeConstant = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS179 = new System.Windows.Forms.LabelTS();
+            this.labelTS178 = new System.Windows.Forms.LabelTS();
+            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.udVSQLMuteTimeConstant = new System.Windows.Forms.NumericUpDownTS();
             this.grpAMTX = new System.Windows.Forms.GroupBoxTS();
             this.radTXUSB = new System.Windows.Forms.RadioButtonTS();
             this.radTXLSB = new System.Windows.Forms.RadioButtonTS();
@@ -3435,6 +3442,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkConsoleDarkModeTitleBar = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3923,6 +3931,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).BeginInit();
             this.tpDSPAMSAM.SuspendLayout();
+            this.groupBoxTS28.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVSQLUnMuteTimeConstant)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udVSQLMuteTimeConstant)).BeginInit();
             this.grpAMTX.SuspendLayout();
             this.grpAMSQMaxTail.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udRXAMSQMaxTail)).BeginInit();
@@ -35625,6 +35636,7 @@
             // tpDSPAMSAM
             // 
             this.tpDSPAMSAM.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDSPAMSAM.Controls.Add(this.groupBoxTS28);
             this.tpDSPAMSAM.Controls.Add(this.grpAMTX);
             this.tpDSPAMSAM.Controls.Add(this.grpAMSQMaxTail);
             this.tpDSPAMSAM.Controls.Add(this.grpAMSAM);
@@ -35636,12 +35648,127 @@
             this.tpDSPAMSAM.TabIndex = 4;
             this.tpDSPAMSAM.Text = "AM/SAM";
             // 
+            // groupBoxTS28
+            // 
+            this.groupBoxTS28.Controls.Add(this.labelTS180);
+            this.groupBoxTS28.Controls.Add(this.udVSQLUnMuteTimeConstant);
+            this.groupBoxTS28.Controls.Add(this.labelTS179);
+            this.groupBoxTS28.Controls.Add(this.labelTS178);
+            this.groupBoxTS28.Controls.Add(this.labelTS161);
+            this.groupBoxTS28.Controls.Add(this.udVSQLMuteTimeConstant);
+            this.groupBoxTS28.Location = new System.Drawing.Point(330, 258);
+            this.groupBoxTS28.Name = "groupBoxTS28";
+            this.groupBoxTS28.Size = new System.Drawing.Size(201, 98);
+            this.groupBoxTS28.TabIndex = 45;
+            this.groupBoxTS28.TabStop = false;
+            this.groupBoxTS28.Text = "RX Voice Squelch Time Constants";
+            // 
+            // labelTS180
+            // 
+            this.labelTS180.AutoSize = true;
+            this.labelTS180.Image = null;
+            this.labelTS180.Location = new System.Drawing.Point(129, 65);
+            this.labelTS180.Name = "labelTS180";
+            this.labelTS180.Size = new System.Drawing.Size(26, 13);
+            this.labelTS180.TabIndex = 50;
+            this.labelTS180.Text = "(ms)";
+            // 
+            // udVSQLUnMuteTimeConstant
+            // 
+            this.udVSQLUnMuteTimeConstant.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udVSQLUnMuteTimeConstant.Location = new System.Drawing.Point(70, 63);
+            this.udVSQLUnMuteTimeConstant.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udVSQLUnMuteTimeConstant.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udVSQLUnMuteTimeConstant.Name = "udVSQLUnMuteTimeConstant";
+            this.udVSQLUnMuteTimeConstant.Size = new System.Drawing.Size(53, 20);
+            this.udVSQLUnMuteTimeConstant.TabIndex = 49;
+            this.udVSQLUnMuteTimeConstant.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udVSQLUnMuteTimeConstant, "Time constant (milliseconds) to be used in un-muting the squelch");
+            this.udVSQLUnMuteTimeConstant.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udVSQLUnMuteTimeConstant.ValueChanged += new System.EventHandler(this.udVSQLUnMuteTimeConstant_ValueChanged);
+            // 
+            // labelTS179
+            // 
+            this.labelTS179.AutoSize = true;
+            this.labelTS179.Image = null;
+            this.labelTS179.Location = new System.Drawing.Point(129, 39);
+            this.labelTS179.Name = "labelTS179";
+            this.labelTS179.Size = new System.Drawing.Size(26, 13);
+            this.labelTS179.TabIndex = 48;
+            this.labelTS179.Text = "(ms)";
+            // 
+            // labelTS178
+            // 
+            this.labelTS178.AutoSize = true;
+            this.labelTS178.Image = null;
+            this.labelTS178.Location = new System.Drawing.Point(13, 65);
+            this.labelTS178.Name = "labelTS178";
+            this.labelTS178.Size = new System.Drawing.Size(51, 13);
+            this.labelTS178.TabIndex = 3;
+            this.labelTS178.Text = "Un-Mute:";
+            // 
+            // labelTS161
+            // 
+            this.labelTS161.AutoSize = true;
+            this.labelTS161.Image = null;
+            this.labelTS161.Location = new System.Drawing.Point(30, 39);
+            this.labelTS161.Name = "labelTS161";
+            this.labelTS161.Size = new System.Drawing.Size(34, 13);
+            this.labelTS161.TabIndex = 1;
+            this.labelTS161.Text = "Mute:";
+            // 
+            // udVSQLMuteTimeConstant
+            // 
+            this.udVSQLMuteTimeConstant.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udVSQLMuteTimeConstant.Location = new System.Drawing.Point(70, 37);
+            this.udVSQLMuteTimeConstant.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.udVSQLMuteTimeConstant.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udVSQLMuteTimeConstant.Name = "udVSQLMuteTimeConstant";
+            this.udVSQLMuteTimeConstant.Size = new System.Drawing.Size(53, 20);
+            this.udVSQLMuteTimeConstant.TabIndex = 0;
+            this.udVSQLMuteTimeConstant.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udVSQLMuteTimeConstant, "Time constant (milliseconds) to be used in muting the squelch");
+            this.udVSQLMuteTimeConstant.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udVSQLMuteTimeConstant.ValueChanged += new System.EventHandler(this.udVSQLMuteTimeConstant_ValueChanged);
+            // 
             // grpAMTX
             // 
             this.grpAMTX.Controls.Add(this.radTXUSB);
             this.grpAMTX.Controls.Add(this.radTXLSB);
             this.grpAMTX.Controls.Add(this.radTXDSB);
-            this.grpAMTX.Location = new System.Drawing.Point(330, 175);
+            this.grpAMTX.Location = new System.Drawing.Point(330, 121);
             this.grpAMTX.Name = "grpAMTX";
             this.grpAMTX.Size = new System.Drawing.Size(172, 92);
             this.grpAMTX.TabIndex = 44;
@@ -35692,7 +35819,7 @@
             this.grpAMSQMaxTail.Controls.Add(this.udRXAMSQMaxTail);
             this.grpAMSQMaxTail.Location = new System.Drawing.Point(330, 40);
             this.grpAMSQMaxTail.Name = "grpAMSQMaxTail";
-            this.grpAMSQMaxTail.Size = new System.Drawing.Size(201, 92);
+            this.grpAMSQMaxTail.Size = new System.Drawing.Size(201, 64);
             this.grpAMSQMaxTail.TabIndex = 43;
             this.grpAMSQMaxTail.TabStop = false;
             this.grpAMSQMaxTail.Text = "RX AM/SSB Max Squelch Tail";
@@ -45407,6 +45534,7 @@
             // tpAppearanceGeneral
             // 
             this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceGeneral.Controls.Add(this.chkConsoleDarkModeTitleBar);
             this.tpAppearanceGeneral.Controls.Add(this.labelTS8);
             this.tpAppearanceGeneral.Controls.Add(this.clrbtnSliderLimitBar);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS12);
@@ -54701,6 +54829,20 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkConsoleDarkModeTitleBar
+            // 
+            this.chkConsoleDarkModeTitleBar.AutoSize = true;
+            this.chkConsoleDarkModeTitleBar.Image = null;
+            this.chkConsoleDarkModeTitleBar.Location = new System.Drawing.Point(29, 280);
+            this.chkConsoleDarkModeTitleBar.Name = "chkConsoleDarkModeTitleBar";
+            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(156, 17);
+            this.chkConsoleDarkModeTitleBar.TabIndex = 92;
+            this.chkConsoleDarkModeTitleBar.Text = "Dark mode Console title bar";
+            this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode Console title bar (only on Windows 10 and later)");
+            this.chkConsoleDarkModeTitleBar.UseVisualStyleBackColor = true;
+            this.chkConsoleDarkModeTitleBar.Visible = false;
+            this.chkConsoleDarkModeTitleBar.CheckedChanged += new System.EventHandler(this.chkConsoleDarkModeTitleBar_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55299,6 +55441,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).EndInit();
             this.tpDSPAMSAM.ResumeLayout(false);
+            this.groupBoxTS28.ResumeLayout(false);
+            this.groupBoxTS28.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVSQLUnMuteTimeConstant)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udVSQLMuteTimeConstant)).EndInit();
             this.grpAMTX.ResumeLayout(false);
             this.grpAMTX.PerformLayout();
             this.grpAMSQMaxTail.ResumeLayout(false);
@@ -59231,5 +59377,13 @@
         private PictureBox pictureBox1;
         private ButtonTS btnMeterCopySettings;
         private ButtonTS btnMeterPasteSettings;
+        private GroupBoxTS groupBoxTS28;
+        private LabelTS labelTS161;
+        private NumericUpDownTS udVSQLMuteTimeConstant;
+        private LabelTS labelTS180;
+        private NumericUpDownTS udVSQLUnMuteTimeConstant;
+        private LabelTS labelTS179;
+        private LabelTS labelTS178;
+        private CheckBoxTS chkConsoleDarkModeTitleBar;
     }
 }

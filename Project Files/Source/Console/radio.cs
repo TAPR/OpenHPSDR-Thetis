@@ -1004,6 +1004,97 @@ namespace Thetis
             }
         }
 
+        // MW0LGE [2.9.0.8]
+        // Voice Squeltch - SSQL from 1.21 WDSP
+        private bool _bSSqlOn = false;
+        private bool _bSSqlOn_dsp = false;
+        private float _fSSqlThreshold = 0.16f;
+        private float _fSSqlThreshold_dsp = 0.16f;
+        private float _fSSqlMuteTimeConstant = 0.1f;
+        private float _fSSqlMuteTimeConstant_dsp = 0.1f;
+        private float _fSSqlUnMuteTimeConstant = 0.1f;
+        private float _fSSqlUnMuteTimeConstant_dsp = 0.1f;
+        public bool SSqlOn
+        {
+            get { return _bSSqlOn; }
+            set
+            {
+                _bSSqlOn = value;
+                if (update)
+                {
+                    if (value != _bSSqlOn_dsp || force)
+                    {
+                        WDSP.SetRXASSQLRun(WDSP.id(thread, subrx), value);
+                        _bSSqlOn_dsp = value;
+                    }
+                }
+            }
+        }
+        public float SSqlThreshold
+        {
+            get { return _fSSqlThreshold; }
+            set
+            {
+                _fSSqlThreshold = value;
+
+                // range validate as per ssql.c
+                if (_fSSqlThreshold < 0f) _fSSqlThreshold = 0f;
+                if (_fSSqlThreshold > 1f) _fSSqlThreshold = 1f;
+
+                if (update)
+                {
+                    if (_fSSqlThreshold != _fSSqlThreshold_dsp || force)
+                    {
+                        WDSP.SetRXASSQLThreshold(WDSP.id(thread, subrx), _fSSqlThreshold);
+                        _fSSqlThreshold_dsp = _fSSqlThreshold;
+                    }
+                }
+            }
+        }
+        public float SqlMuteTimeConstant
+        {
+            get { return _fSSqlMuteTimeConstant; }
+            set
+            {
+                _fSSqlMuteTimeConstant = value;
+
+                // range validate as per ssql.c
+                if (_fSSqlMuteTimeConstant < 0.1f) _fSSqlMuteTimeConstant = 0.1f;
+                if (_fSSqlMuteTimeConstant > 2f) _fSSqlMuteTimeConstant = 2f;
+
+                if (update)
+                {
+                    if (_fSSqlMuteTimeConstant != _fSSqlMuteTimeConstant_dsp || force)
+                    {
+                        WDSP.SetRXASSQLTauMute(WDSP.id(thread, subrx), _fSSqlMuteTimeConstant);
+                        _fSSqlMuteTimeConstant_dsp = _fSSqlMuteTimeConstant;
+                    }
+                }
+            }
+        }
+        public float SqlUnMuteTimeConstant
+        {
+            get { return _fSSqlUnMuteTimeConstant; }
+            set
+            {
+                _fSSqlUnMuteTimeConstant = value;
+
+                // range validate as per ssql.c
+                if (_fSSqlUnMuteTimeConstant < 0.1f) _fSSqlUnMuteTimeConstant = 0.1f;
+                if (_fSSqlUnMuteTimeConstant > 1f) _fSSqlUnMuteTimeConstant = 1f;
+
+                if (update)
+                {
+                    if (_fSSqlUnMuteTimeConstant != _fSSqlUnMuteTimeConstant_dsp || force)
+                    {
+                        WDSP.SetRXASSQLTauUnMute(WDSP.id(thread, subrx), _fSSqlUnMuteTimeConstant);
+                        _fSSqlUnMuteTimeConstant_dsp = _fSSqlUnMuteTimeConstant;
+                    }
+                }
+            }
+        }
+        //
+
         private float fm_squelch_threshold = 1.0f;
         private float fm_squelch_threshold_dsp = 1.0f;
         public float FMSquelchThreshold
@@ -1013,16 +1104,15 @@ namespace Thetis
             {
                 fm_squelch_threshold = value;
                 if (update)
+                {
                     if (value != fm_squelch_threshold_dsp || force)
                     {
-                        {
-                            WDSP.SetRXAFMSQThreshold(WDSP.id(thread, subrx), value);
-                            fm_squelch_threshold_dsp = value;
-                        }
+                        WDSP.SetRXAFMSQThreshold(WDSP.id(thread, subrx), value);
+                        fm_squelch_threshold_dsp = value;
                     }
+                }
             }
         }
-
 
 		private bool rx_am_squelch_on_dsp = false;
 		private bool rx_am_squelch_on = false;
