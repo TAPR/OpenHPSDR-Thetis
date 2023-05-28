@@ -1594,7 +1594,7 @@ namespace Thetis
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
 			{
 				long freq = 0;
-				int argb = 0;
+				uint argb = 0;
 				DSPMode mode = DSPMode.FIRST;
 
 				// join 5+ arguments back together
@@ -1606,8 +1606,8 @@ namespace Thetis
 				if(sAdditional.EndsWith(",")) sAdditional = sAdditional.Substring(0, sAdditional.Length - 1);
 				
 				bool bOK = long.TryParse(args[2], out freq);
-				if (bOK)
-					bOK = int.TryParse(args[3], out argb);
+                if (bOK)
+					bOK = uint.TryParse(args[3], out argb);
 				if (bOK)
 				{
 					bOK = Enum.TryParse(args[1].ToUpper(), out mode);
@@ -1663,7 +1663,7 @@ namespace Thetis
 
 					string s = Encoding.Unicode.GetString(converted, 0, converted.Length);
 
-					SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb(argb), s);
+					SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), s);
 				}
 			}
 		}

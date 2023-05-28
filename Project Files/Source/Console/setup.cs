@@ -1668,10 +1668,13 @@ namespace Thetis
             //
 
             //
-            if (!MeterManager.RestoreSettings2(ref a)) // pass this dictionary of settings to the meter manager to restore from
+            if (recoveryList == null) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
             {
-                MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                if (!MeterManager.RestoreSettings2(ref a)) // pass this dictionary of settings to the meter manager to restore from
+                {
+                    MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
             }
             //
 

@@ -2672,6 +2672,8 @@ namespace Thetis
 
             string ver_num = Common.GetVerNum();
 
+            a.Add("last_radio_protocol/" + Audio.LastRadioProtocol.ToString()); // MW0LGE [2.9.0.8] used incase protocol changes from last time. Used in audio.cs tp reset PS feedback level
+
             a.Add("chkNR_checkstate/" + chkNR.CheckState.ToString());
             a.Add("chkRX2NR_checkstate/" + chkRX2NR.CheckState.ToString());
             a.Add("chkNB_checkstate/" + chkNB.CheckState.ToString());
@@ -3275,6 +3277,9 @@ namespace Thetis
 
                 switch (name)
                 {
+                    case "last_radio_protocol":
+                        Audio.LastRadioProtocol = (RadioProtocol)Enum.Parse(typeof(RadioProtocol), val);
+                        break;
                     case "wheel_tune_index":
                         tune_step_index = Int32.Parse(val);
                         break;
