@@ -2481,7 +2481,8 @@ namespace Thetis
 			{
 				foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
 				{
-					socketListener.ClickedOnSpot(callsign, frequencyHz, rx, vfoB ? 1 : 0);
+					socketListener.ClickedOnSpot(callsign, frequencyHz); // also send legacy command (EESDR3 does this)	MW0LGE [2.9.0.8]																	
+                    socketListener.ClickedOnSpot(callsign, frequencyHz, rx, vfoB ? 1 : 0);
 				}
 			}
 		}

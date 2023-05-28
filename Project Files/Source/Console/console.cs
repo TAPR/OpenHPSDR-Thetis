@@ -38126,7 +38126,7 @@ namespace Thetis
                     if (_highlightedSpot.mode != DSPMode.FIRST && RX1DSPMode != _highlightedSpot.mode) RX1DSPMode = _highlightedSpot.mode;
                     if (VFOAFreq != _highlightedSpot.frequencyHZ * 1e-6) VFOAFreq = _highlightedSpot.frequencyHZ * 1e-6;
 
-                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ);//, 1, false);
+                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ, 1, false);
                 }
                 else if (_highlightedSpot.Highlight[1] && rx2_enabled)
                 {
@@ -38134,7 +38134,7 @@ namespace Thetis
                     if (_highlightedSpot.mode != DSPMode.FIRST && RX2DSPMode != _highlightedSpot.mode) RX2DSPMode = _highlightedSpot.mode;
                     if (VFOBFreq != _highlightedSpot.frequencyHZ * 1e-6) VFOBFreq = _highlightedSpot.frequencyHZ * 1e-6;
 
-                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ);//, 2, false);
+                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ, 2, false);
                 }
                 return;
             }
