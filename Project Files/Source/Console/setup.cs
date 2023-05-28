@@ -26504,10 +26504,10 @@ namespace Thetis
 
         private void chkConsoleDarkModeTitleBar_CheckedChanged(object sender, EventArgs e)
         {
-            if(console != null && Common.IsWindows10OrGreater())
+            if(console != null)
             {
-                Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
-                if (sender != this) console.Invalidate();
+                bool bOk = Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
+                if (sender != this && bOk) console.Invalidate();
             }
         }
     }

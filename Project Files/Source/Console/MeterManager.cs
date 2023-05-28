@@ -1383,6 +1383,14 @@ namespace Thetis
                 return _meters[sId];
             }
         }
+        public static bool MeterExists(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_meters == null) return false;
+                return _meters.ContainsKey(sId);
+            }
+        }
         public static void AddMeterContainer(ucMeter ucM, bool bShow = false)
         {
             if (_console == null) return;
@@ -1630,59 +1638,63 @@ namespace Thetis
                 {
                     ucMeter ucM = new ucMeter();
                     bool bUcMeterOk = ucM.TryParse(kvp.Value);
+
                     if (bUcMeterOk)
                     {
-                        AddMeterContainer(ucM, false);
-
-                        clsMeter m = MeterFromId(ucM.ID);
-
-                        if (m != null)
+                        if (!MeterExists(ucM.ID))
                         {
-                            // now the meter
-                            IEnumerable<KeyValuePair<string, string>> meterData = settings.Where(o => o.Key.StartsWith("meterData_" + m.ID));
-                            if (meterData != null && meterData.Count() == 1)
+                            AddMeterContainer(ucM, false);
+
+                            clsMeter m = MeterFromId(ucM.ID);
+
+                            if (m != null)
                             {
-                                KeyValuePair<string, string> md = meterData.First();
-
-                                clsMeter tmpMeter = new clsMeter(1, ""); // dummy init data, will get replaced by tryparse below
-                                tmpMeter.TryParse(md.Value);
-
-                                // copy to actual meter
-                                // id will be the same
-                                m.Name = tmpMeter.Name;
-                                m.RX = tmpMeter.RX;
-                                m.XRatio = tmpMeter.XRatio;
-                                m.YRatio = tmpMeter.YRatio;
-                                m.DisplayGroup = tmpMeter.DisplayGroup;
-                                m.PadX = tmpMeter.PadX;
-                                m.PadY = tmpMeter.PadY;
-                                m.Height = tmpMeter.Height;
-                            }
-
-                            // finally the groups
-                            IEnumerable<KeyValuePair<string, string>> meterIGData = settings.Where(o => o.Key.StartsWith("meterIGData_") && o.Value.Contains(m.ID)); // parent id, stored in value
-                            foreach (KeyValuePair<string, string> igd in meterIGData)
-                            {
-                                clsItemGroup ig = new clsItemGroup();
-                                bool bOk = ig.TryParse(igd.Value);
-
-                                if (bOk)
+                                // now the meter
+                                IEnumerable<KeyValuePair<string, string>> meterData = settings.Where(o => o.Key.StartsWith("meterData_" + m.ID));
+                                if (meterData != null && meterData.Count() == 1)
                                 {
-                                    m.AddMeter(ig.MeterType, ig);
+                                    KeyValuePair<string, string> md = meterData.First();
 
-                                    //and the settings
-                                    IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
-                                    if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                                    clsMeter tmpMeter = new clsMeter(1, ""); // dummy init data, will get replaced by tryparse below
+                                    tmpMeter.TryParse(md.Value);
+
+                                    // copy to actual meter
+                                    // id will be the same
+                                    m.Name = tmpMeter.Name;
+                                    m.RX = tmpMeter.RX;
+                                    m.XRatio = tmpMeter.XRatio;
+                                    m.YRatio = tmpMeter.YRatio;
+                                    m.DisplayGroup = tmpMeter.DisplayGroup;
+                                    m.PadX = tmpMeter.PadX;
+                                    m.PadY = tmpMeter.PadY;
+                                    m.Height = tmpMeter.Height;
+                                }
+
+                                // finally the groups
+                                IEnumerable<KeyValuePair<string, string>> meterIGData = settings.Where(o => o.Key.StartsWith("meterIGData_") && o.Value.Contains(m.ID)); // parent id, stored in value
+                                foreach (KeyValuePair<string, string> igd in meterIGData)
+                                {
+                                    clsItemGroup ig = new clsItemGroup();
+                                    bool bOk = ig.TryParse(igd.Value);
+
+                                    if (bOk)
                                     {
-                                        clsIGSettings igs = new clsIGSettings();
-                                        bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
-                                        if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                                        m.AddMeter(ig.MeterType, ig);
+
+                                        //and the settings
+                                        IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
+                                        if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                                        {
+                                            clsIGSettings igs = new clsIGSettings();
+                                            bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
+                                            if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                                        }
                                     }
                                 }
-                            }
-                            m.ZeroOut(true, true);
+                                m.ZeroOut(true, true);
 
-                            m.Rebuild();
+                                m.Rebuild();
+                            }
                         }
                     }
                 }
