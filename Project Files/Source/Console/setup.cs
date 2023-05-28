@@ -6927,7 +6927,11 @@ namespace Thetis
             get { return tcDisplay; }
             //set { tcDisplay = value; }
         }
-
+        public TabControl TabAppearance
+        {
+            get { return tcAppearance; }
+            //set { tcAppearance = value; }
+        }
         public TabControl TabDSP
         {
             get { return tcDSP; }
@@ -26474,7 +26478,30 @@ namespace Thetis
 
             return bPaste;
         }
+        public void ShowMultiMeterSetupTab(string sID = "")
+        {
+            // show multimeter tab, with meter container already selected if sID is provided
+            if (sID != "" && comboContainerSelect.Items.Count > 0)
+            {
+                for (int n = 0; n < comboContainerSelect.Items.Count; n++)
+                {
+                    clsContainerComboboxItem cci = comboContainerSelect.Items[n] as clsContainerComboboxItem;
+                    if (cci != null && cci.ID == sID)
+                    {
+                        comboContainerSelect.SelectedIndex = n;
+                        break;
+                    }
+                }
+            }
 
+            Show();
+            Focus();
+            WindowState = FormWindowState.Normal;
+            TabSetup.SelectedIndex = 6; // appearance
+            TabAppearance.SelectedIndex = 3; // multimeter
+        }
+
+        #region VoiceSQL
         private void udVSQLMuteTimeConstant_ValueChanged(object sender, EventArgs e)
         {
             if (console == null || console.radio == null) return;
@@ -26513,6 +26540,7 @@ namespace Thetis
                 if (sender != this && bOk) console.Invalidate();
             }
         }
+        #endregion
     }
 
     #region PADeviceInfo Helper Class

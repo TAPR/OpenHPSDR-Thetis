@@ -8734,6 +8734,8 @@ namespace Thetis
             }
             private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
             {
+                bool bClickHandled = false;
+
                 lock (_metersLock)
                 {
                     PictureBox pb = sender as PictureBox;
@@ -8772,11 +8774,19 @@ namespace Thetis
                                     if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
                                     {
                                         m.MouseUp(e, m, cb);
+                                        bClickHandled = true;
                                     }
                                 }
                             }
                         }
                     }
+                }
+
+                //MW0LGE [2.9.0.8] show setuptab related to the container thar owns this renderer
+                if (!bClickHandled && _console != null && e.Button == MouseButtons.Right)
+                {
+                    if (!_console.IsSetupFormNull)
+                        _console.SetupForm.ShowMultiMeterSetupTab(_sId);
                 }
             }
             //            

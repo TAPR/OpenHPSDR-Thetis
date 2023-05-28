@@ -2783,6 +2783,7 @@
             this.tpAppearance = new System.Windows.Forms.TabPage();
             this.tcAppearance = new System.Windows.Forms.TabControl();
             this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
+            this.chkConsoleDarkModeTitleBar = new System.Windows.Forms.CheckBoxTS();
             this.labelTS8 = new System.Windows.Forms.LabelTS();
             this.clrbtnSliderLimitBar = new Thetis.ColorButton();
             this.groupBoxTS12 = new System.Windows.Forms.GroupBoxTS();
@@ -3442,7 +3443,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkConsoleDarkModeTitleBar = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS181 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -35656,7 +35657,7 @@
             this.groupBoxTS28.Controls.Add(this.labelTS178);
             this.groupBoxTS28.Controls.Add(this.labelTS161);
             this.groupBoxTS28.Controls.Add(this.udVSQLMuteTimeConstant);
-            this.groupBoxTS28.Location = new System.Drawing.Point(330, 258);
+            this.groupBoxTS28.Location = new System.Drawing.Point(338, 257);
             this.groupBoxTS28.Name = "groupBoxTS28";
             this.groupBoxTS28.Size = new System.Drawing.Size(201, 98);
             this.groupBoxTS28.TabIndex = 45;
@@ -35768,7 +35769,7 @@
             this.grpAMTX.Controls.Add(this.radTXUSB);
             this.grpAMTX.Controls.Add(this.radTXLSB);
             this.grpAMTX.Controls.Add(this.radTXDSB);
-            this.grpAMTX.Location = new System.Drawing.Point(330, 121);
+            this.grpAMTX.Location = new System.Drawing.Point(338, 40);
             this.grpAMTX.Name = "grpAMTX";
             this.grpAMTX.Size = new System.Drawing.Size(172, 92);
             this.grpAMTX.TabIndex = 44;
@@ -35815,9 +35816,10 @@
             // 
             // grpAMSQMaxTail
             // 
+            this.grpAMSQMaxTail.Controls.Add(this.labelTS181);
             this.grpAMSQMaxTail.Controls.Add(this.labelTS355);
             this.grpAMSQMaxTail.Controls.Add(this.udRXAMSQMaxTail);
-            this.grpAMSQMaxTail.Location = new System.Drawing.Point(330, 40);
+            this.grpAMSQMaxTail.Location = new System.Drawing.Point(338, 175);
             this.grpAMSQMaxTail.Name = "grpAMSQMaxTail";
             this.grpAMSQMaxTail.Size = new System.Drawing.Size(201, 64);
             this.grpAMSQMaxTail.TabIndex = 43;
@@ -45553,6 +45555,20 @@
             this.tpAppearanceGeneral.TabIndex = 0;
             this.tpAppearanceGeneral.Text = "General";
             // 
+            // chkConsoleDarkModeTitleBar
+            // 
+            this.chkConsoleDarkModeTitleBar.AutoSize = true;
+            this.chkConsoleDarkModeTitleBar.Image = null;
+            this.chkConsoleDarkModeTitleBar.Location = new System.Drawing.Point(29, 280);
+            this.chkConsoleDarkModeTitleBar.Name = "chkConsoleDarkModeTitleBar";
+            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(156, 17);
+            this.chkConsoleDarkModeTitleBar.TabIndex = 92;
+            this.chkConsoleDarkModeTitleBar.Text = "Dark mode Console title bar";
+            this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode Console title bar (only on Windows 10 and later)");
+            this.chkConsoleDarkModeTitleBar.UseVisualStyleBackColor = true;
+            this.chkConsoleDarkModeTitleBar.Visible = false;
+            this.chkConsoleDarkModeTitleBar.CheckedChanged += new System.EventHandler(this.chkConsoleDarkModeTitleBar_CheckedChanged);
+            // 
             // labelTS8
             // 
             this.labelTS8.Image = null;
@@ -54829,19 +54845,15 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkConsoleDarkModeTitleBar
+            // labelTS181
             // 
-            this.chkConsoleDarkModeTitleBar.AutoSize = true;
-            this.chkConsoleDarkModeTitleBar.Image = null;
-            this.chkConsoleDarkModeTitleBar.Location = new System.Drawing.Point(29, 280);
-            this.chkConsoleDarkModeTitleBar.Name = "chkConsoleDarkModeTitleBar";
-            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(156, 17);
-            this.chkConsoleDarkModeTitleBar.TabIndex = 92;
-            this.chkConsoleDarkModeTitleBar.Text = "Dark mode Console title bar";
-            this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode Console title bar (only on Windows 10 and later)");
-            this.chkConsoleDarkModeTitleBar.UseVisualStyleBackColor = true;
-            this.chkConsoleDarkModeTitleBar.Visible = false;
-            this.chkConsoleDarkModeTitleBar.CheckedChanged += new System.EventHandler(this.chkConsoleDarkModeTitleBar_CheckedChanged);
+            this.labelTS181.AutoSize = true;
+            this.labelTS181.Image = null;
+            this.labelTS181.Location = new System.Drawing.Point(106, 39);
+            this.labelTS181.Name = "labelTS181";
+            this.labelTS181.Size = new System.Drawing.Size(18, 13);
+            this.labelTS181.TabIndex = 49;
+            this.labelTS181.Text = "(s)";
             // 
             // Setup
             // 
@@ -59385,5 +59397,6 @@
         private LabelTS labelTS179;
         private LabelTS labelTS178;
         private CheckBoxTS chkConsoleDarkModeTitleBar;
+        private LabelTS labelTS181;
     }
 }

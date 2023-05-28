@@ -33166,8 +33166,8 @@ namespace Thetis
             RX1PeakToolStripMenuItem.Checked = chkDisplayPeak.Checked;
         }
 
-        private void chkSquelch_CheckedChanged(object sender, System.EventArgs e)
-        {
+        //private void chkSquelch_CheckedChanged(object sender, System.EventArgs e)
+        //{
             //if (initializing) return;
 
             //if (chkSquelch.Checked)
@@ -33200,7 +33200,7 @@ namespace Thetis
             //if (sliderForm != null)
             //    sliderForm.RX1SquelchOnOff = chkSquelch.Checked;
             //AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, true, chkSquelch.Checked);
-        }
+        //}
 
         private void updateVFOFreqs(bool tx, bool isTune = false)
         {
@@ -54883,7 +54883,7 @@ namespace Thetis
                     radio.GetDSPRX(0, 0).SSqlThreshold = nValue / 100f;
                     radio.GetDSPRX(0, 1).SSqlThreshold = nValue / 100f;
 
-                    chkSquelch.Text = "VSQ:  " + nValue.ToString();
+                    chkSquelch.Text = "VSQL: " + nValue.ToString();
                     break;
             }
 
@@ -55156,8 +55156,8 @@ namespace Thetis
             ptbRX2Squelch_Scroll(this, EventArgs.Empty);
         }
 
-        private void chkRX2Squelch_CheckedChanged(object sender, System.EventArgs e)
-        {
+        //private void chkRX2Squelch_CheckedChanged(object sender, System.EventArgs e)
+        //{
             //if (initializing) return;
 
             //if (chkRX2Squelch.Checked) chkRX2Squelch.BackColor = button_selected_color;
@@ -55195,7 +55195,7 @@ namespace Thetis
             //if (sliderForm != null)
             //    sliderForm.RX2SquelchOnOff = chkRX2Squelch.Checked;
             //AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, false, chkRX2Squelch.Checked);
-        }
+        //}
         private void ptbRX2Squelch_Scroll(object sender, System.EventArgs e)
         {
             //chkRX2Squelch.Text = "SQL:  " + ptbRX2Squelch.Value.ToString();
@@ -55282,12 +55282,22 @@ namespace Thetis
                     radio.GetDSPRX(1, 0).SSqlThreshold = nValue / 100f;
                     radio.GetDSPRX(1, 1).SSqlThreshold = nValue / 100f;
 
-                    chkRX2Squelch.Text = "VSQ:  " + nValue.ToString();
+                    chkRX2Squelch.Text = "VSQL: " + nValue.ToString();
                     break;
             }
 
             if (sliderForm != null)
                 sliderForm.RX2Squelch = -(int)(ptbRX2Squelch.Value * 1.6f); // convert to range 0 to -160
+        }
+
+        private void chkSquelch_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.AM_Tab);
+        }
+
+        private void chkRX2Squelch_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.AM_Tab);
         }
     }
 

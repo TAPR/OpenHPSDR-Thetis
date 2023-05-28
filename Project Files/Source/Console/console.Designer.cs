@@ -1391,8 +1391,8 @@
             this.chkRX2Squelch.Name = "chkRX2Squelch";
             this.chkRX2Squelch.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkRX2Squelch, resources.GetString("chkRX2Squelch.ToolTip"));
-            this.chkRX2Squelch.CheckedChanged += new System.EventHandler(this.chkRX2Squelch_CheckedChanged);
             this.chkRX2Squelch.CheckStateChanged += new System.EventHandler(this.chkRX2Squelch_CheckStateChanged);
+            this.chkRX2Squelch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkRX2Squelch_MouseDown);
             // 
             // chkRX2Mute
             // 
@@ -2573,6 +2573,7 @@
             this.chkSquelch.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkSquelch, resources.GetString("chkSquelch.ToolTip"));
             this.chkSquelch.CheckStateChanged += new System.EventHandler(this.chkSquelch_CheckStateChanged);
+            this.chkSquelch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkSquelch_MouseDown);
             // 
             // btnMemoryQuickRestore
             // 
