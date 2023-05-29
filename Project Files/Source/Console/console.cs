@@ -54887,6 +54887,10 @@ namespace Thetis
                     break;
             }
 
+            if (sender.GetType() == typeof(PrettyTrackBar))
+            {
+                ptbSquelch.Focus();
+            }
             if (sliderForm != null)
                 sliderForm.RX1Squelch = -(int)(ptbSquelch.Value * 1.6f); // convert to range 0 to -160
         }
@@ -55286,6 +55290,10 @@ namespace Thetis
                     break;
             }
 
+            if (sender.GetType() == typeof(PrettyTrackBar))
+            {
+                ptbRX2Squelch.Focus();
+            }
             if (sliderForm != null)
                 sliderForm.RX2Squelch = -(int)(ptbRX2Squelch.Value * 1.6f); // convert to range 0 to -160
         }

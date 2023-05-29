@@ -836,7 +836,21 @@ namespace Thetis
             DisposeImageData();
 
             _meterThreadRunning = false;
-            if (_meterThread != null && _meterThread.IsAlive) _meterThread.Join(5100); // slightly longer than longest possible (5000)
+            if (_meterThread != null && _meterThread.IsAlive)
+            {
+                int nWait = 0;
+                lock (_metersLock)
+                {
+                    foreach (KeyValuePair<string, clsMeter> kvp in _meters)
+                    {
+                        clsMeter m = kvp.Value;
+
+                        int nTmp = m.DelayForUpdate();
+                        if (nTmp > nWait) nWait = nTmp;
+                    }
+                }
+                _meterThread.Join(nWait + 100); // slightly longer
+            }
 
             foreach (KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
             {
@@ -1135,23 +1149,21 @@ namespace Thetis
         }
         private static string getFilterName(int rx)
         {
-            // try catch as during init, rx1dspmode etc can return .First which is not in in rx_filters array
-            try
+            if (rx == 1)
             {
-                if (rx == 1)
-                {
-                    return _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
-                }
-                else if (rx == 2)
-                {
-                    return _console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
-                }
-                else
-                {
-                    return "";
-                }
+                if (_console.RX1DSPMode == DSPMode.FIRST || _console.RX1DSPMode == DSPMode.LAST ||
+                    _console.RX1Filter == Filter.FIRST || _console.RX1Filter == Filter.LAST) return "";
+
+                return _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
             }
-            catch
+            else if (rx == 2)
+            {
+                if (_console.RX2DSPMode == DSPMode.FIRST || _console.RX2DSPMode == DSPMode.LAST ||
+                    _console.RX2Filter == Filter.FIRST || _console.RX2Filter == Filter.LAST) return "";
+
+                return _console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
+            }
+            else
             {
                 return "";
             }
@@ -8348,7 +8360,17 @@ namespace Thetis
                 if (!_bDXSetup) return;
 
                 _dxDisplayThreadRunning = false;
-                if (_dxRenderThread != null && _dxRenderThread.IsAlive && !bFromRenderThread) _dxRenderThread.Join(5100); // slightly longer than longest meter delay possible (5000)
+                if (_dxRenderThread != null && _dxRenderThread.IsAlive && !bFromRenderThread)
+                {
+                    int nWait = 0;
+                    clsMeter m = _meter;
+                    lock (m._meterItemsLock)
+                    {
+                        int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
+                        if (nTmp > nWait) nWait = nTmp;
+                    }
+                    _dxRenderThread.Join(nWait + 100); // slightly longer
+                }
 
                 try
                 {
@@ -8426,13 +8448,17 @@ namespace Thetis
             private void dxRender()
             {
                 if (!_bDXSetup) return;
-                
+
+                HiPerfTimer objStopWatch = new HiPerfTimer();
+
                 try
                 {
                     _dxDisplayThreadRunning = true;
                     while (_dxDisplayThreadRunning)
                     {
                         int nSleepTime = int.MaxValue;
+
+                        objStopWatch.Reset();
 
                         if (_displayRunning && _targetVisible)
                         {
@@ -8445,7 +8471,7 @@ namespace Thetis
                                     targetWidth = _newTargetWidth;
                                     targetHeight = _newTargetHeight;
 
-                                    Debug.Print(">> dx is resizing from dxRender <<");
+                                    //Debug.Print(">> dx is resizing from dxRender <<");
                                     bool bOk = resizeDX();
                                     if (!bOk) break; // exit do while as resizeDx will have thrown an exception and called shutdowndx
                                 }
@@ -8459,9 +8485,9 @@ namespace Thetis
 
                                 // background for entire form/area?
                                 _renderTarget.Clear(_backColour);
-                                
+
                                 nSleepTime = drawMeters();
-                                if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms
+                                if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms for some sensible redraw
 
                                 if (_highlightEdge)
                                 {
@@ -8471,6 +8497,7 @@ namespace Thetis
                                 }
 
                                 calcFps();
+                                //_renderTarget.DrawText(_nFps.ToString(), getDXTextFormatForFont("Trebuchet MS", 18, FontStyle.Regular), new SharpDX.RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), getDXBrushForColour(System.Drawing.Color.White), DrawTextOptions.None);
 
                                 // undo the translate
                                 _renderTarget.Transform = Matrix3x2.Identity;
@@ -8508,7 +8535,10 @@ namespace Thetis
                         }
 
                         if (_targetVisible)
-                        {                            
+                        {
+                            int nMs = (int)objStopWatch.ElapsedMsec; // dont worry about fractions of ms
+                            nSleepTime -= nMs;
+                            if (nSleepTime < 1) nSleepTime = 1;
                             Thread.Sleep(nSleepTime);
                         }                            
                         else
@@ -9955,7 +9985,6 @@ namespace Thetis
                 //value marker
                 if (cbi.ShowMarker)
                     _renderTarget.DrawLine(new SharpDX.Vector2(xPos, y), new SharpDX.Vector2(xPos, y + h), markerColour, cbi.StrokeWidth);
-
             }
             private clsMeterItem renderHBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {

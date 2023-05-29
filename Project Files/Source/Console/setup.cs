@@ -1614,6 +1614,13 @@ namespace Thetis
                     {
                         // ignore, done later
                     }
+                    else if (name.StartsWith("meterContData_") ||
+                        name.StartsWith("meterData_") ||
+                        name.StartsWith("meterIGData_") ||
+                        name.StartsWith("meterIGSettings_"))
+                    {
+                        // ignore, done later
+                    }
                     else
                     {
                         Debug.WriteLine("Control not found: " + name);
