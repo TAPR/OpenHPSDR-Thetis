@@ -360,7 +360,7 @@
         Angelia = 3,        // ANAN-100D
         Orion = 4,          // ANAN-200D
         OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
-        Saturn = 11         // ANAN-G2: added G8NJJ
+        Saturn = 10         // ANAN-G2: added G8NJJ
     }
 
     public enum DSPFilterType
