@@ -7980,13 +7980,14 @@ namespace Thetis
             private int _rx;
             private Console _console;
 
+            //fps          
+            //private int _nFps = 0;
+            //private int _nFrameCount = 0;
+            //private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
+            //private double _fLastTime;
+            //private double _dElapsedFrameStart;
             //
-            //private int _updateInterval = 100;
-            private int _nFps = 0;
-            private int _nFrameCount = 0;
-            private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
-            private double _fLastTime;
-            private double _dElapsedFrameStart;
+
             private string _sId;
             private clsMeter _meter;
             private bool _highlightEdge;
@@ -8036,8 +8037,9 @@ namespace Thetis
                 
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
 
-                _fLastTime = _objFrameStartTimer.ElapsedMsec;
-                _dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
+                //fps
+                //_fLastTime = _objFrameStartTimer.ElapsedMsec;
+                //_dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
 
                 _displayTarget.Resize += target_Resize;
                 _displayTarget.MouseUp += OnMouseUp;
@@ -8442,18 +8444,18 @@ namespace Thetis
                     MessageBox.Show("Problem Shutting Down Meter DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
-            private void calcFps()
-            {
-                _nFrameCount++;
-                if (_dElapsedFrameStart >= _fLastTime + 1000)
-                {
-                    double late = _dElapsedFrameStart - (_fLastTime + 1000);
-                    if (late > 2000 || late < 0) late = 0; // ignore if too late
-                    _nFps = _nFrameCount;
-                    _nFrameCount = 0;
-                    _fLastTime = _dElapsedFrameStart - late;
-                }
-            }
+            //private void calcFps()
+            //{
+            //    _nFrameCount++;
+            //    if (_dElapsedFrameStart >= _fLastTime + 1000)
+            //    {
+            //        double late = _dElapsedFrameStart - (_fLastTime + 1000);
+            //        if (late > 2000 || late < 0) late = 0; // ignore if too late
+            //        _nFps = _nFrameCount;
+            //        _nFrameCount = 0;
+            //        _fLastTime = _dElapsedFrameStart - late;
+            //    }
+            //}
             private void dxRender()
             {
                 if (!_bDXSetup) return;
@@ -8471,7 +8473,8 @@ namespace Thetis
 
                         if (_displayRunning && _targetVisible)
                         {
-                            _dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
+                            //fps
+                            //_dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
 
                             lock (_DXlock)
                             {
@@ -8506,8 +8509,8 @@ namespace Thetis
                                     _renderTarget.DrawRectangle(rect, getDXBrushForColour(System.Drawing.Color.FromArgb(192, System.Drawing.Color.DarkOrange)), 16f);
                                 }
 
-                                calcFps();
-                                _renderTarget.DrawText(_nFps.ToString(), getDXTextFormatForFont("Trebuchet MS", 18, FontStyle.Regular), new SharpDX.RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), getDXBrushForColour(System.Drawing.Color.White), DrawTextOptions.None);
+                                //calcFps();
+                                //_renderTarget.DrawText(_nFps.ToString(), getDXTextFormatForFont("Trebuchet MS", 18, FontStyle.Regular), new SharpDX.RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), getDXBrushForColour(System.Drawing.Color.White), DrawTextOptions.None);
 
                                 // undo the translate
                                 _renderTarget.Transform = Matrix3x2.Identity;
@@ -9930,9 +9933,9 @@ namespace Thetis
                     case "%group%":
                         sText = m.DisplayGroupText;
                         break;
-                    case "%fps%":
-                        sText = _nFps.ToString();
-                        break;
+                    //case "%fps%":
+                    //    sText = _nFps.ToString();
+                    //    break;
                     default:
                         sText = txt.Text;
                         break;
