@@ -1149,21 +1149,28 @@ namespace Thetis
         }
         private static string getFilterName(int rx)
         {
-            if (rx == 1)
+            try
             {
-                if (_console.RX1DSPMode == DSPMode.FIRST || _console.RX1DSPMode == DSPMode.LAST ||
-                    _console.RX1Filter == Filter.FIRST || _console.RX1Filter == Filter.LAST) return "";
+                if (rx == 1)
+                {
+                    if (_console.RX1DSPMode == DSPMode.FIRST || _console.RX1DSPMode == DSPMode.LAST ||
+                        _console.RX1Filter == Filter.FIRST || _console.RX1Filter == Filter.LAST) return "";
 
-                return _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
-            }
-            else if (rx == 2)
-            {
-                if (_console.RX2DSPMode == DSPMode.FIRST || _console.RX2DSPMode == DSPMode.LAST ||
-                    _console.RX2Filter == Filter.FIRST || _console.RX2Filter == Filter.LAST) return "";
+                    return _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
+                }
+                else if (rx == 2)
+                {
+                    if (_console.RX2DSPMode == DSPMode.FIRST || _console.RX2DSPMode == DSPMode.LAST ||
+                        _console.RX2Filter == Filter.FIRST || _console.RX2Filter == Filter.LAST) return "";
 
-                return _console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
+                    return _console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
+                }
+                else
+                {
+                    return "";
+                }
             }
-            else
+            catch
             {
                 return "";
             }
@@ -8051,7 +8058,7 @@ namespace Thetis
                 {
                     Name = "Multimeter DX Render Thread",
                     Priority = ThreadPriority.Lowest,
-                    IsBackground = true
+                    IsBackground = false
                 };
                 _dxRenderThread.Start();
 
@@ -8369,6 +8376,8 @@ namespace Thetis
                         int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
                         if (nTmp > nWait) nWait = nTmp;
                     }
+                    if (nWait > 250) nWait = 250; // maxint can be returned if no meteritem entries
+
                     _dxRenderThread.Join(nWait + 100); // slightly longer
                 }
 
@@ -8488,6 +8497,7 @@ namespace Thetis
 
                                 nSleepTime = drawMeters();
                                 if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms for some sensible redraw
+                                                                        // maxint can be returned if no meteritem entries
 
                                 if (_highlightEdge)
                                 {
@@ -8497,7 +8507,7 @@ namespace Thetis
                                 }
 
                                 calcFps();
-                                //_renderTarget.DrawText(_nFps.ToString(), getDXTextFormatForFont("Trebuchet MS", 18, FontStyle.Regular), new SharpDX.RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), getDXBrushForColour(System.Drawing.Color.White), DrawTextOptions.None);
+                                _renderTarget.DrawText(_nFps.ToString(), getDXTextFormatForFont("Trebuchet MS", 18, FontStyle.Regular), new SharpDX.RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), getDXBrushForColour(System.Drawing.Color.White), DrawTextOptions.None);
 
                                 // undo the translate
                                 _renderTarget.Transform = Matrix3x2.Identity;

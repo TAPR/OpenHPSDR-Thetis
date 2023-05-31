@@ -44,7 +44,7 @@
             this.chkAVShowGain = new System.Windows.Forms.CheckBoxTS();
             this.chkAVLowRes = new System.Windows.Forms.CheckBoxTS();
             this.chkAVPhaseZoom = new System.Windows.Forms.CheckBoxTS();
-            this.chkLegacyPointMethod = new System.Windows.Forms.CheckBoxTS();
+            this.chkStayOnTop = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -191,20 +191,20 @@
             this.chkAVPhaseZoom.UseVisualStyleBackColor = false;
             this.chkAVPhaseZoom.CheckedChanged += new System.EventHandler(this.chkAVPhaseZoom_CheckedChanged);
             // 
-            // chkLegacyPointMethod
+            // chkStayOnTop
             // 
-            this.chkLegacyPointMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkLegacyPointMethod.AutoSize = true;
-            this.chkLegacyPointMethod.BackColor = System.Drawing.Color.Black;
-            this.chkLegacyPointMethod.ForeColor = System.Drawing.Color.LightSalmon;
-            this.chkLegacyPointMethod.Image = null;
-            this.chkLegacyPointMethod.Location = new System.Drawing.Point(491, 378);
-            this.chkLegacyPointMethod.Name = "chkLegacyPointMethod";
-            this.chkLegacyPointMethod.Size = new System.Drawing.Size(61, 17);
-            this.chkLegacyPointMethod.TabIndex = 4;
-            this.chkLegacyPointMethod.Text = "Legacy";
-            this.chkLegacyPointMethod.UseVisualStyleBackColor = false;
-            this.chkLegacyPointMethod.CheckedChanged += new System.EventHandler(this.chkLegacyPointMethod_CheckedChanged);
+            this.chkStayOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkStayOnTop.AutoSize = true;
+            this.chkStayOnTop.BackColor = System.Drawing.Color.Black;
+            this.chkStayOnTop.ForeColor = System.Drawing.Color.LightSalmon;
+            this.chkStayOnTop.Image = null;
+            this.chkStayOnTop.Location = new System.Drawing.Point(490, 378);
+            this.chkStayOnTop.Name = "chkStayOnTop";
+            this.chkStayOnTop.Size = new System.Drawing.Size(62, 17);
+            this.chkStayOnTop.TabIndex = 4;
+            this.chkStayOnTop.Text = "On Top";
+            this.chkStayOnTop.UseVisualStyleBackColor = false;
+            this.chkStayOnTop.CheckedChanged += new System.EventHandler(this.chkStayOnTop_CheckedChanged);
             // 
             // AmpView
             // 
@@ -212,13 +212,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(564, 401);
-            this.Controls.Add(this.chkLegacyPointMethod);
+            this.Controls.Add(this.chkStayOnTop);
             this.Controls.Add(this.chkAVPhaseZoom);
             this.Controls.Add(this.chkAVLowRes);
             this.Controls.Add(this.chkAVShowGain);
             this.Controls.Add(this.chart1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(440, 440);
+            this.MinimumSize = new System.Drawing.Size(440, 380);
             this.Name = "AmpView";
             this.Text = "AmpView 1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AmpView_FormClosing);
@@ -236,6 +236,6 @@
         private System.Windows.Forms.CheckBoxTS chkAVShowGain;
         private System.Windows.Forms.CheckBoxTS chkAVLowRes;
         private System.Windows.Forms.CheckBoxTS chkAVPhaseZoom;
-        private System.Windows.Forms.CheckBoxTS chkLegacyPointMethod;
+        private System.Windows.Forms.CheckBoxTS chkStayOnTop;
     }
 }

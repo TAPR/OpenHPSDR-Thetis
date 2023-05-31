@@ -210,82 +210,80 @@ namespace Thetis
             }
         }
 
-        private void disp_data()
-        {
-            double delta = 1.0 / (double)np;
-            double qx = delta;
-            double dx;
-            double qym, qyc, qys, phs;
-            double phs_base;
-            int k;
-            int ints = psform.Ints;
-            int spi = psform.Spi;
-            double dt = 1.0 / (double)ints;
-            t[0] = 0.0;
-            for (int i = 1; i <= ints; i++)
-                t[i] = t[i - 1] + dt;
-            chart1.Series["Ref"].Points.Clear();
-            chart1.Series["MagCorr"].Points.Clear();
-            chart1.Series["PhsCorr"].Points.Clear();
-            chart1.Series["MagAmp"].Points.Clear();
-            chart1.Series["PhsAmp"].Points.Clear();
-            if (!showgain)
-            {
-                chart1.Series["Ref"].Points.AddXY(0.0, 0.0);
-                chart1.Series["Ref"].Points.AddXY(1.0, 1.0);
-                chart1.Series["Ref"].Points.AddXY(1.0, 0.5);
-                chart1.Series["Ref"].Points.AddXY(0.0, 0.5);
-            }
-            else
-            {
-                chart1.Series["Ref"].Points.AddXY(0.0, 1.0);
-                chart1.Series["Ref"].Points.AddXY(1.0, 1.0);
-            }
-            chart1.Series["MagCorr"].Points.AddXY(0.0, 0.0);
-            k = ints - 1;
-            dx = t[ints] - t[ints - 1];
-            qyc = cc[4 * k + 0] + dx * (cc[4 * k + 1] + dx * (cc[4 * k + 2] + dx * cc[4 * k + 3]));
-            qys = cs[4 * k + 0] + dx * (cs[4 * k + 1] + dx * (cs[4 * k + 2] + dx * cs[4 * k + 3]));
-            phs_base = 180.0 / Math.PI * Math.Atan2(qys, qyc);
-            for (int i = 1; i <= np; i++)
-            {
-                if ((k = (int)(qx * ints)) > ints - 1) k = ints - 1;
-                dx = qx - t[k];
-                qym = cm[4 * k + 0] + dx * (cm[4 * k + 1] + dx * (cm[4 * k + 2] + dx * cm[4 * k + 3]));
-                qyc = cc[4 * k + 0] + dx * (cc[4 * k + 1] + dx * (cc[4 * k + 2] + dx * cc[4 * k + 3]));
-                qys = cs[4 * k + 0] + dx * (cs[4 * k + 1] + dx * (cs[4 * k + 2] + dx * cs[4 * k + 3]));
-                if (!showgain)
-                    chart1.Series["MagCorr"].Points.AddXY(qx, qym * qx);
-                else
-                    chart1.Series["MagCorr"].Points.AddXY(qx, qym);
-                phs = 180.0 / Math.PI * Math.Atan2(qys, qyc) - phs_base;
-                if (phs > -180.0 && phs < +180.0)
-                    chart1.Series["PhsCorr"].Points.AddXY(qx, phs);
-                qx += delta;
-            }
-            k = ints * spi - 1;
-            phs_base = 180.0 / Math.PI * Math.Atan2(yc[k], ys[k]);
-            for (int i = 0; i < ints * spi; i += skip)
-            {
-                if (!showgain)
-                    chart1.Series["MagAmp"].Points.AddXY(ym[i] * x[i], x[i]);
-                else
-                    chart1.Series["MagAmp"].Points.AddXY(ym[i] * x[i], 1.0 / ym[i]);
-                phs = 180.0 / Math.PI * Math.Atan2(yc[i], ys[i]) - phs_base;
-                chart1.Series["PhsAmp"].Points.AddXY(x[i], phs);
-            }
-        }
-
+        // MW0LGE [2.9.0.8] kept for code record
+        //private void disp_data()
+        //{
+        //    double delta = 1.0 / (double)np;
+        //    double qx = delta;
+        //    double dx;
+        //    double qym, qyc, qys, phs;
+        //    double phs_base;
+        //    int k;
+        //    int ints = psform.Ints;
+        //    int spi = psform.Spi;
+        //    double dt = 1.0 / (double)ints;
+        //    t[0] = 0.0;
+        //    for (int i = 1; i <= ints; i++)
+        //        t[i] = t[i - 1] + dt;
+        //    chart1.Series["Ref"].Points.Clear();
+        //    chart1.Series["MagCorr"].Points.Clear();
+        //    chart1.Series["PhsCorr"].Points.Clear();
+        //    chart1.Series["MagAmp"].Points.Clear();
+        //    chart1.Series["PhsAmp"].Points.Clear();
+        //    if (!showgain)
+        //    {
+        //        chart1.Series["Ref"].Points.AddXY(0.0, 0.0);
+        //        chart1.Series["Ref"].Points.AddXY(1.0, 1.0);
+        //        chart1.Series["Ref"].Points.AddXY(1.0, 0.5);
+        //        chart1.Series["Ref"].Points.AddXY(0.0, 0.5);
+        //    }
+        //    else
+        //    {
+        //        chart1.Series["Ref"].Points.AddXY(0.0, 1.0);
+        //        chart1.Series["Ref"].Points.AddXY(1.0, 1.0);
+        //    }
+        //    chart1.Series["MagCorr"].Points.AddXY(0.0, 0.0);
+        //    k = ints - 1;
+        //    dx = t[ints] - t[ints - 1];
+        //    qyc = cc[4 * k + 0] + dx * (cc[4 * k + 1] + dx * (cc[4 * k + 2] + dx * cc[4 * k + 3]));
+        //    qys = cs[4 * k + 0] + dx * (cs[4 * k + 1] + dx * (cs[4 * k + 2] + dx * cs[4 * k + 3]));
+        //    phs_base = 180.0 / Math.PI * Math.Atan2(qys, qyc);
+        //    for (int i = 1; i <= np; i++)
+        //    {
+        //        if ((k = (int)(qx * ints)) > ints - 1) k = ints - 1;
+        //        dx = qx - t[k];
+        //        qym = cm[4 * k + 0] + dx * (cm[4 * k + 1] + dx * (cm[4 * k + 2] + dx * cm[4 * k + 3]));
+        //        qyc = cc[4 * k + 0] + dx * (cc[4 * k + 1] + dx * (cc[4 * k + 2] + dx * cc[4 * k + 3]));
+        //        qys = cs[4 * k + 0] + dx * (cs[4 * k + 1] + dx * (cs[4 * k + 2] + dx * cs[4 * k + 3]));
+        //        if (!showgain)
+        //            chart1.Series["MagCorr"].Points.AddXY(qx, qym * qx);
+        //        else
+        //            chart1.Series["MagCorr"].Points.AddXY(qx, qym);
+        //        phs = 180.0 / Math.PI * Math.Atan2(qys, qyc) - phs_base;
+        //        if (phs > -180.0 && phs < +180.0)
+        //            chart1.Series["PhsCorr"].Points.AddXY(qx, phs);
+        //        qx += delta;
+        //    }
+        //    k = ints * spi - 1;
+        //    phs_base = 180.0 / Math.PI * Math.Atan2(yc[k], ys[k]);
+        //    for (int i = 0; i < ints * spi; i += skip)
+        //    {
+        //        if (!showgain)
+        //            chart1.Series["MagAmp"].Points.AddXY(ym[i] * x[i], x[i]);
+        //        else
+        //            chart1.Series["MagAmp"].Points.AddXY(ym[i] * x[i], 1.0 / ym[i]);
+        //        phs = 180.0 / Math.PI * Math.Atan2(yc[i], ys[i]) - phs_base;
+        //        chart1.Series["PhsAmp"].Points.AddXY(x[i], phs);
+        //    }
+        //}
         
-        private bool _legacyPoints = false;
+        private bool _init = true;
 
-        private void chkLegacyPointMethod_CheckedChanged(object sender, EventArgs e)
+        private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {
-            _legacyPoints = chkLegacyPointMethod.Checked;
-            _init = true;
+            this.TopMost = chkStayOnTop.Checked;
         }
 
-        private bool _init = true;
         private int _oldIntsSpi = -1;
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -307,43 +305,39 @@ namespace Thetis
 
             lock (intslock)
             {
-                if (_legacyPoints)
+                //disp_data(); // MW0LGE [2.9.0.8] changed to an add once, update points method.
+                               // Prevents the chart from having 1000's of points added and removed
+                               // 10 times a second.
+                chart1.Series.SuspendUpdates();
+                chart1.Series["Ref"].Points.SuspendUpdates();
+                chart1.Series["MagCorr"].Points.SuspendUpdates();
+                chart1.Series["PhsCorr"].Points.SuspendUpdates();
+                chart1.Series["MagAmp"].Points.SuspendUpdates();
+                chart1.Series["PhsAmp"].Points.SuspendUpdates();
+
+                int ints = psform.Ints;
+                int spi = psform.Spi;
+                int instSpiTot = ints * spi;
+                if (_oldIntsSpi != instSpiTot)
                 {
-                    disp_data();
+                    _oldIntsSpi = instSpiTot;
+                    _init = true;
                 }
-                else
+                if (_init)
                 {
-                    chart1.Series.SuspendUpdates();
-                    chart1.Series["Ref"].Points.SuspendUpdates();
-                    chart1.Series["MagCorr"].Points.SuspendUpdates();
-                    chart1.Series["PhsCorr"].Points.SuspendUpdates();
-                    chart1.Series["MagAmp"].Points.SuspendUpdates();
-                    chart1.Series["PhsAmp"].Points.SuspendUpdates();
-
-                    int ints = psform.Ints;
-                    int spi = psform.Spi;
-                    int instSpiTot = ints * spi;
-                    if (_oldIntsSpi != instSpiTot)
-                    {
-                        _oldIntsSpi = instSpiTot;
-                        _init = true;
-                    }
-                    if (_init)
-                    {
-                        init_data(ints, spi);
-                        _init = false;
-                    }
-                    disp_data_Update(ints, spi);
-
-                    chart1.Series["PhsAmp"].Points.ResumeUpdates();
-                    chart1.Series["MagAmp"].Points.ResumeUpdates();
-                    chart1.Series["PhsCorr"].Points.ResumeUpdates();
-                    chart1.Series["MagCorr"].Points.ResumeUpdates();
-                    chart1.Series["Ref"].Points.ResumeUpdates();
-                    chart1.Series.ResumeUpdates();
-
-                    chart1.Invalidate();
+                    init_data(ints, spi);
+                    _init = false;
                 }
+                disp_data_Update(ints, spi);
+
+                chart1.Series["PhsAmp"].Points.ResumeUpdates();
+                chart1.Series["MagAmp"].Points.ResumeUpdates();
+                chart1.Series["PhsCorr"].Points.ResumeUpdates();
+                chart1.Series["MagCorr"].Points.ResumeUpdates();
+                chart1.Series["Ref"].Points.ResumeUpdates();
+                chart1.Series.ResumeUpdates();
+
+                chart1.Invalidate();
             }
 
             if (psform.DismissAmpv)
