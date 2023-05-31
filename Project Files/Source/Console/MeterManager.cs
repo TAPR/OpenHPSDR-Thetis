@@ -7948,7 +7948,6 @@ namespace Thetis
         {
             private const SharpDX.Direct2D1.AlphaMode _ALPHA_MODE = SharpDX.Direct2D1.AlphaMode.Premultiplied;
             private bool _bDXSetup;
-            private bool _displayRunning;
             private bool _dxDisplayThreadRunning;
             private Thread _dxRenderThread;
             private PresentFlags _NoVSYNCpresentFlag;
@@ -8013,10 +8012,9 @@ namespace Thetis
                 _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
                 _stringMeasure = new Dictionary<string, SizeF>();
 
-                _displayRunning = false;
+                _dxDisplayThreadRunning = false;
                 _bAntiAlias = true;
                 _bDXSetup = false;
-                _dxDisplayThreadRunning = false;
                 _NoVSYNCpresentFlag = PresentFlags.None;
                 _pixelShift = new Vector2(0.5f, 0.5f);
                 _nVBlanks = 0;
@@ -8046,9 +8044,8 @@ namespace Thetis
                 _displayTarget.VisibleChanged += target_VisibleChanged;
 
                 _imagePath = sImagePath;
-                _dxDisplayThreadRunning = false;
-                _displayRunning = false;
             }
+            private bool _test = false;
             public void RunDisplay()
             {
                 dxInit();
@@ -8063,8 +8060,6 @@ namespace Thetis
                     IsBackground = false
                 };
                 _dxRenderThread.Start();
-
-                _displayRunning = true;
             }
             public string ID
             {
@@ -8465,13 +8460,14 @@ namespace Thetis
                 try
                 {
                     _dxDisplayThreadRunning = true;
+
                     while (_dxDisplayThreadRunning)
                     {
                         int nSleepTime = int.MaxValue;
 
                         objStopWatch.Reset();
 
-                        if (_displayRunning && _targetVisible)
+                        if (_targetVisible)
                         {
                             //fps
                             //_dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
@@ -8544,18 +8540,17 @@ namespace Thetis
 
                                     if (sMsg != "") throw (new Exception(sMsg));
                                 }
-                            }                            
-                        }
+                            }
 
-                        if (_targetVisible)
-                        {
                             int nMs = (int)objStopWatch.ElapsedMsec; // dont worry about fractions of ms
                             nSleepTime -= nMs;
                             if (nSleepTime < 1) nSleepTime = 1;
                             Thread.Sleep(nSleepTime);
-                        }                            
+                        }
                         else
+                        {
                             Thread.Sleep(250); // if not visible, sleep for quarter second
+                        }
                     }
                 }
                 catch (Exception e)
@@ -8790,34 +8785,35 @@ namespace Thetis
 
                     lock (m._meterItemsLock)
                     {
-                        if (m.SortedMeterItemsForZOrder == null) return;
-                        
-                        float tw = targetWidth - 1f;// 0.5f;
-                        float rw = m.XRatio;
-                        float rh = m.YRatio;
-
-                        SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
-
-                        foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                        if (m.SortedMeterItemsForZOrder != null)
                         {
-                            clsMeterItem mi = mikvp.Value;
-                            if (mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
+                            float tw = targetWidth - 1f;// 0.5f;
+                            float rw = m.XRatio;
+                            float rh = m.YRatio;
+
+                            SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                            foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                             {
-                                clsClickBox cb = (clsClickBox)mi;
-
-                                if ((!cb.OnlyWhenRX && !cb.OnlyWhenTX) || ((m.MOX && cb.OnlyWhenTX) || (!m.MOX && cb.OnlyWhenRX)))
+                                clsMeterItem mi = mikvp.Value;
+                                if (mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
                                 {
-                                    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-                                    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                    float w = rect.Width * (mi.Size.Width / m.XRatio);
-                                    float h = rect.Height * (mi.Size.Height / m.YRatio);
+                                    clsClickBox cb = (clsClickBox)mi;
 
-                                    SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
-
-                                    if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                                    if ((!cb.OnlyWhenRX && !cb.OnlyWhenTX) || ((m.MOX && cb.OnlyWhenTX) || (!m.MOX && cb.OnlyWhenRX)))
                                     {
-                                        m.MouseUp(e, m, cb);
-                                        bClickHandled = true;
+                                        float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                                        float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                        float w = rect.Width * (mi.Size.Width / m.XRatio);
+                                        float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                                        SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
+
+                                        if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                                        {
+                                            m.MouseUp(e, m, cb);
+                                            bClickHandled = true;
+                                        }
                                     }
                                 }
                             }

@@ -25343,8 +25343,10 @@ namespace Thetis
         {
             console.PreventTXonDifferentBandToRXband = chkPreventTXonDifferentBandToRX.Checked;
         }
-
+        #region MulitMeter2
         // multimeter 2
+        private const int MAX_CONTAINERS = 10;
+
         private class clsContainerComboboxItem
         {
             public string Text { get; set; }
@@ -25388,7 +25390,7 @@ namespace Thetis
         }
         private void btnAddRX1Container_Click(object sender, EventArgs e)
         {
-            if (MeterManager.TotalMeterContainers < 10)
+            if (MeterManager.TotalMeterContainers < MAX_CONTAINERS)
             {
                 string sId = MeterManager.AddMeterContainer(1, false, true);
                 updateMeter2Controls(sId);
@@ -25397,7 +25399,7 @@ namespace Thetis
 
         private void btnAddRX2Container_Click(object sender, EventArgs e)
         {
-            if (MeterManager.TotalMeterContainers < 10)
+            if (MeterManager.TotalMeterContainers < MAX_CONTAINERS)
             {
                 string sId = MeterManager.AddMeterContainer(2, false, true);
                 updateMeter2Controls(sId);
@@ -25405,7 +25407,7 @@ namespace Thetis
         }
         private void updateMeter2Controls(string sId = "")
         {
-            bool bEnableAdd = MeterManager.TotalMeterContainers < 10;
+            bool bEnableAdd = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
 
             btnAddRX1Container.Enabled = bEnableAdd;
             btnAddRX2Container.Enabled = bEnableAdd && console.RX2Enabled;
@@ -26507,6 +26509,7 @@ namespace Thetis
             TabSetup.SelectedIndex = 6; // appearance
             TabAppearance.SelectedIndex = 3; // multimeter
         }
+        #endregion
 
         #region VoiceSQL
         private void udVSQLMuteTimeConstant_ValueChanged(object sender, EventArgs e)

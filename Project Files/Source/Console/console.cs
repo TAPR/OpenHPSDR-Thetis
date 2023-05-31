@@ -973,8 +973,11 @@ namespace Thetis
 
             //MW0LGE [2.9.0.8]
             //start multimer renderers
-            Splash.SetStatus("Setting up meters");
-            MeterManager.RunAllRendererDisplays();
+            if (USE_MULTIMETERS2)
+            {
+                Splash.SetStatus("Setting up meters");
+                MeterManager.RunAllRendererDisplays();
+            }
 
             Splash.SetStatus("Setting up DSP");                       // Set progress point
 
@@ -1073,8 +1076,11 @@ namespace Thetis
                 if (RX2Enabled) N1MM.Resize(2);
                 //
 
-                // go for launch -- display forms, or controls in thetis
-                MeterManager.FinishSetupAndDisplay();
+                if (USE_MULTIMETERS2)
+                {
+                    // go for launch -- display forms, or controls in thetis
+                    MeterManager.FinishSetupAndDisplay();
+                }
 
                 //display render thread
                 m_bResizeDX2Display = true;
@@ -31565,6 +31571,13 @@ namespace Thetis
 
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            // MW0LGE
+            // show a shutdown window
+            ShutdownForm frmShutDownForm = new ShutdownForm();
+            frmShutDownForm.Location = new Point(this.Location.X + this.Size.Width / 2 - frmShutDownForm.Size.Width / 2, this.Location.Y + this.Size.Height / 2 - frmShutDownForm.Size.Height / 2);
+            frmShutDownForm.Show();
+            Application.DoEvents();
+
             if (m_tcpTCIServer != null)
             {
                 bool wasRunning = m_tcpTCIServer.IsServerRunning;
@@ -31576,11 +31589,6 @@ namespace Thetis
                 bool wasRunning = m_tcpCATServer.IsServerRunning;
                 m_tcpCATServer.StopServer();
                 if (wasRunning) removeTCPIPcatDelegates();
-            }
-
-            if (USE_MULTIMETERS2)
-            {
-                MeterManager.Shutdown();
             }
 
             if (infoBar != null)
@@ -31597,13 +31605,6 @@ namespace Thetis
 
             if (chkPower.Checked == true)  // If we're quitting without first clicking off the "Power" button            
                 chkPower.Checked = false;
-
-            // MW0LGE
-            // show a shutdown window
-            ShutdownForm frmShutDownForm = new ShutdownForm();
-            frmShutDownForm.Location = new Point(this.Location.X + this.Size.Width / 2 - frmShutDownForm.Size.Width / 2, this.Location.Y + this.Size.Height / 2 - frmShutDownForm.Size.Height / 2);
-            frmShutDownForm.Show();
-            Application.DoEvents();
 
             MemoryList.Save();
             SetupForm.SaveNotchesToDatabase();
@@ -31637,6 +31638,11 @@ namespace Thetis
             //    if(_spectrum_thread.IsAlive) _spectrum_thread.Suspend();
             //}            
             ////
+
+            if (USE_MULTIMETERS2)
+            {
+                MeterManager.Shutdown();
+            }
 
             m_bDisplayLoopRunning = false; // will cause the display loop to exit
             if (draw_display_thread != null && draw_display_thread.IsAlive) draw_display_thread.Join(1100); // added 1100, slightly longer than 1fps MW0LGE [2.9.0.7]
