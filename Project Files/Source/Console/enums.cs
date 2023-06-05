@@ -76,7 +76,8 @@
         ANAN7000D,
         ANAN8000D,
         ANAN_G2,        //G8NJJ
-        ANAN_G2_1K      //G8NJJ
+        ANAN_G2_1K,      //G8NJJ
+        LAST
     }
 
     public enum HPSDRModel
