@@ -1419,6 +1419,7 @@ namespace Thetis
                 ucM.Console = _console;
                 ucM.FloatingDockedClicked += ucMeter_FloatingDockedClicked;
                 ucM.DockedMoved += ucMeter_FloatingDockedMoved;
+                ucM.SettingsClicked += ucMeter_SettingsClicked;
 
                 // float form
                 frmMeterDisplay f = new frmMeterDisplay(_console, ucM.RX);
@@ -1501,6 +1502,14 @@ namespace Thetis
                 }
             }
         }
+        private static void ucMeter_SettingsClicked(object sender, EventArgs e)
+        {
+            ucMeter ucM = (ucMeter)sender;
+
+            if (!_console.IsSetupFormNull)
+                _console.SetupForm.ShowMultiMeterSetupTab(ucM.ID);
+        }
+
         private static void ucMeter_FloatingDockedClicked(object sender, EventArgs e)
         {
             ucMeter ucM = (ucMeter)sender;
@@ -1949,6 +1958,7 @@ namespace Thetis
                 // unreg delegates
                 uc.FloatingDockedClicked -= ucMeter_FloatingDockedClicked;
                 uc.DockedMoved -= ucMeter_FloatingDockedMoved;
+                uc.SettingsClicked -= ucMeter_SettingsClicked;
 
                 removeRenderer(sId);
 
@@ -5549,6 +5559,7 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.ShowValue = false;
                 cb2.Value = cb2.ScaleCalibration.First().Key;
                 cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;                
                 addMeterItem(cb2);
@@ -5571,7 +5582,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
-                cb.ShowValue = false;
+                cb.FontColour = System.Drawing.Color.Yellow;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
@@ -5946,47 +5957,46 @@ namespace Thetis
 
                 clsBarItem cb2 = new clsBarItem();
                 cb2.ParentID = ig.ID;
+                cb2.Primary = true;
                 cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
-                cb2.ReadingSource = Reading.CFC_AV;
-                cb2.ShowPeakValue = false;
+                cb2.ReadingSource = Reading.CFC_PK;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
-                cb2.HistoryDuration = 0;
-                cb2.ShowHistory = false;
-                cb2.MarkerColour = System.Drawing.Color.DarkGray;
+                cb2.HistoryDuration = 2000;
+                cb2.ShowHistory = true;
+                cb2.MarkerColour = System.Drawing.Color.Yellow;
                 cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
                 cb2.Style = clsBarItem.BarStyle.Line;
                 cb2.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb2.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
-                cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.ShowValue = false;
+                cb2.FontColour = System.Drawing.Color.Yellow;                
                 cb2.Value = cb2.ScaleCalibration.First().Key;
                 cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
                 addMeterItem(cb2);
 
                 clsBarItem cb = new clsBarItem();
                 cb.ParentID = ig.ID;
-                cb.Primary = true;
                 cb.TopLeft = cb2.TopLeft;
                 cb.Size = cb2.Size;
-                cb.ReadingSource = Reading.CFC_PK;
+                cb.ReadingSource = Reading.CFC_AV;
+                cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
-                cb.HistoryDuration = 2000;
-                cb.ShowHistory = true;
-                cb.MarkerColour = System.Drawing.Color.Yellow;
+                cb.HistoryDuration = 0;
+                cb.ShowHistory = false;
+                cb.MarkerColour = System.Drawing.Color.DarkGray;
                 cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.PaleTurquoise);
                 cb.Style = clsBarItem.BarStyle.Line;
                 cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
-                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ShowValue = false;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
@@ -8044,8 +8054,7 @@ namespace Thetis
                 _displayTarget.VisibleChanged += target_VisibleChanged;
 
                 _imagePath = sImagePath;
-            }
-            private bool _test = false;
+            }            
             public void RunDisplay()
             {
                 dxInit();
@@ -8772,8 +8781,6 @@ namespace Thetis
             }
             private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
             {
-                bool bClickHandled = false;
-
                 lock (_metersLock)
                 {
                     PictureBox pb = sender as PictureBox;
@@ -8812,20 +8819,12 @@ namespace Thetis
                                         if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
                                         {
                                             m.MouseUp(e, m, cb);
-                                            bClickHandled = true;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-
-                //MW0LGE [2.9.0.8] show setuptab related to the container thar owns this renderer
-                if (!bClickHandled && _console != null && e.Button == MouseButtons.Right)
-                {
-                    if (!_console.IsSetupFormNull)
-                        _console.SetupForm.ShowMultiMeterSetupTab(_sId);
                 }
             }
             //            

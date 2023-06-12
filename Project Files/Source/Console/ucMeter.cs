@@ -23,6 +23,10 @@ namespace Thetis
         [Category("Action")]
         public event EventHandler FloatingDockedClicked;
 
+        [Browsable(true)]
+        [Category("Action")]
+        public event EventHandler SettingsClicked;
+
         public event EventHandler DockedMoved;
 
         public ucMeter()
@@ -130,8 +134,7 @@ namespace Thetis
 
         private void pnlBar_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
 
         private void pnlBar_MouseUp(object sender, MouseEventArgs e)
@@ -353,8 +356,7 @@ namespace Thetis
 
         private void btnFloat_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public int RX
@@ -418,8 +420,7 @@ namespace Thetis
 
         private void lblRX_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
 
         private void ucMeter_LocationChanged(object sender, EventArgs e)
@@ -634,11 +635,25 @@ namespace Thetis
 
         private void btnAxis_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
 
         private void btnPin_MouseLeave(object sender, EventArgs e)
+        {
+            uiComponentMouseLeave();
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            SettingsClicked?.Invoke(this, e);
+        }
+
+        private void btnSettings_MouseLeave(object sender, EventArgs e)
+        {
+            uiComponentMouseLeave();
+        }
+
+        private void uiComponentMouseLeave()
         {
             if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
                 mouseLeave();

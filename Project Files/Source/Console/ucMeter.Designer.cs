@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.pnlBar = new System.Windows.Forms.Panel();
+            this.btnSettings = new System.Windows.Forms.ButtonTS();
             this.btnPin = new System.Windows.Forms.ButtonTS();
             this.btnAxis = new System.Windows.Forms.ButtonTS();
             this.lblRX = new System.Windows.Forms.LabelTS();
@@ -45,6 +46,7 @@
             this.pnlBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlBar.BackColor = System.Drawing.Color.DimGray;
+            this.pnlBar.Controls.Add(this.btnSettings);
             this.pnlBar.Controls.Add(this.btnPin);
             this.pnlBar.Controls.Add(this.btnAxis);
             this.pnlBar.Controls.Add(this.lblRX);
@@ -58,6 +60,28 @@
             this.pnlBar.MouseLeave += new System.EventHandler(this.pnlBar_MouseLeave);
             this.pnlBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlBar_MouseMove);
             this.pnlBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlBar_MouseUp);
+            // 
+            // btnSettings
+            // 
+            this.btnSettings.BackColor = System.Drawing.Color.Transparent;
+            this.btnSettings.BackgroundImage = global::Thetis.Properties.Resources.gear;
+            this.btnSettings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnSettings.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.btnSettings.FlatAppearance.BorderSize = 0;
+            this.btnSettings.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnSettings.FlatAppearance.MouseOverBackColor = System.Drawing.Color.DarkGray;
+            this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSettings.Image = null;
+            this.btnSettings.Location = new System.Drawing.Point(3, 0);
+            this.btnSettings.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Selectable = false;
+            this.btnSettings.Size = new System.Drawing.Size(18, 18);
+            this.btnSettings.TabIndex = 4;
+            this.btnSettings.UseVisualStyleBackColor = false;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            this.btnSettings.MouseLeave += new System.EventHandler(this.btnSettings_MouseLeave);
             // 
             // btnPin
             // 
@@ -110,11 +134,12 @@
             // 
             this.lblRX.AutoSize = true;
             this.lblRX.BackColor = System.Drawing.Color.DimGray;
+            this.lblRX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblRX.ForeColor = System.Drawing.Color.White;
             this.lblRX.Image = null;
-            this.lblRX.Location = new System.Drawing.Point(3, 3);
+            this.lblRX.Location = new System.Drawing.Point(24, 3);
             this.lblRX.Name = "lblRX";
-            this.lblRX.Size = new System.Drawing.Size(28, 13);
+            this.lblRX.Size = new System.Drawing.Size(31, 13);
             this.lblRX.TabIndex = 1;
             this.lblRX.Text = "RX0";
             this.lblRX.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblRX_MouseDown);
@@ -207,5 +232,6 @@
         private System.Windows.Forms.LabelTS lblRX;
         private System.Windows.Forms.ButtonTS btnAxis;
         private System.Windows.Forms.ButtonTS btnPin;
+        private System.Windows.Forms.ButtonTS btnSettings;
     }
 }
