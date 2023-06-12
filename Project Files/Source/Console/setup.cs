@@ -50,6 +50,7 @@ namespace Thetis
     using System.Threading.Tasks;
     using System.Security.Cryptography;
     using System.Xml;
+    using System.Xml.Serialization;
 
     public partial class Setup : Form
     {
@@ -486,6 +487,8 @@ namespace Thetis
 
             comboKeyerConnSecondary_SelectedIndexChanged(this, EventArgs.Empty);
 
+            chkConsoleDarkModeTitleBar.Visible = Common.IsWindows10OrGreater(); //MW0LGE [2.9.0.8]
+
             ForceAllEvents();
 
             EventArgs e = EventArgs.Empty;
@@ -567,8 +570,6 @@ namespace Thetis
             if (console == null || _bAddedDelegates) return;
 
             console.MoxChangeHandlers += OnMoxChangeHandler;
-            //console.BandChangeHandlers += OnBandChangeHandler;
-            //console.VFOTXChangedHandlers += OnVFOTXChanged;
             console.TXBandChangeHandlers += OnTXBandChanged;
             console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
 
@@ -580,8 +581,6 @@ namespace Thetis
 
             // used outside by console exit
             console.MoxChangeHandlers -= OnMoxChangeHandler;
-            //console.BandChangeHandlers -= OnBandChangeHandler;
-            //console.VFOTXChangedHandlers -= OnVFOTXChanged;
             console.TXBandChangeHandlers -= OnTXBandChanged;
             console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
 
@@ -1430,6 +1429,15 @@ namespace Thetis
             }
             //
 
+            //
+            DB.PurgeMeters(MeterManager.GetFormGuidList()); // clear the db of any meter info before we try to add it
+            if (!MeterManager.StoreSettings2(ref a))
+            {
+                MessageBox.Show("There was an issue storing the settings for MultiMeter.", "MultiMeter StoreSettings",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            //
+
             // remove any outdated options from the DB MW0LGE_22b
             handleOutdatedOptions(false);
 
@@ -1604,7 +1612,14 @@ namespace Thetis
                     }
                     else if (name.StartsWith("PAProfile_") || name == "PAProfileCount")
                     {
-                        // ignore
+                        // ignore, done later
+                    }
+                    else if (name.StartsWith("meterContData_") ||
+                        name.StartsWith("meterData_") ||
+                        name.StartsWith("meterIGData_") ||
+                        name.StartsWith("meterIGSettings_"))
+                    {
+                        // ignore, done later
                     }
                     else
                     {
@@ -1655,6 +1670,17 @@ namespace Thetis
                         }
                     }
                     if (bFound) comboPAProfile.Text = sPAProfileName;
+                }
+            }
+            //
+
+            //
+            if (recoveryList == null) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
+            {
+                if (!MeterManager.RestoreSettings2(ref a)) // pass this dictionary of settings to the meter manager to restore from
+                {
+                    MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
             //
@@ -2003,6 +2029,8 @@ namespace Thetis
             chkShowRXFilterOnWaterfall_CheckedChanged(this, e);
             chkShowRXZeroLineOnWaterfall_CheckedChanged(this, e);
             chkShowTXFilterOnRXWaterfall_CheckedChanged(this, e);
+
+            chkConsoleDarkModeTitleBar_CheckedChanged(this, e); //MW0LGE [2.9.0.8]
 
             // DSP Tab
             udLMSANF_ValueChanged(this, e);
@@ -6906,7 +6934,11 @@ namespace Thetis
             get { return tcDisplay; }
             //set { tcDisplay = value; }
         }
-
+        public TabControl TabAppearance
+        {
+            get { return tcAppearance; }
+            //set { tcAppearance = value; }
+        }
         public TabControl TabDSP
         {
             get { return tcDSP; }
@@ -12257,12 +12289,9 @@ namespace Thetis
         }
 
         private Thread m_objSaveLoadThread = null;
-        public Thread SaveLoadThread
+        public bool StillWaitingForSaveLoad
         {
-            get { return m_objSaveLoadThread; }
-            set
-            {
-            }
+            get { return (m_objSaveLoadThread != null && m_objSaveLoadThread.IsAlive); }
         }
         private bool m_bIgnoreButtonState = false;
         public bool IgnoreButtonState
@@ -12270,9 +12299,15 @@ namespace Thetis
             get { return m_bIgnoreButtonState; }
             set { m_bIgnoreButtonState = value; }
         }
-        public void WaitForSaveLoad()
+        public void WaitForSaveLoad(int nWait = -1)
         {
-            if (m_objSaveLoadThread != null && m_objSaveLoadThread.IsAlive) m_objSaveLoadThread.Join();
+            if (m_objSaveLoadThread != null && m_objSaveLoadThread.IsAlive)
+            {
+                if (nWait == -1)
+                    m_objSaveLoadThread.Join();
+                else
+                    m_objSaveLoadThread.Join(nWait);
+            }
         }
 
         private void btnOK_Click(object sender, System.EventArgs e)
@@ -12411,7 +12446,19 @@ namespace Thetis
                 if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
                 string justFileName = console.DBFileName.Substring(console.DBFileName.LastIndexOf("\\") + 1);
                 string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
-                File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + ".xml");
+
+                // MW0LGE [2.9.0.8] issue if you do multiple imports in same minute, this will fail, we could add seconds, but let us increment counter
+                //File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + ".xml");
+                string sInc = "";
+                int n = 0;
+                while(File.Exists(archivePath + "Thetis_database_" + datetime + "_" + sInc + ".xml"))
+                {
+                    sInc = n.ToString();
+                    n++;
+                }
+                File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + "_" + sInc + ".xml");
+                //
+
                 File.Delete(console.DBFileName);
                 //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
                 DB.WriteDB(console.DBFileName);
@@ -17327,6 +17374,8 @@ namespace Thetis
 
         private void tbDisplayFFTSize_Scroll(object sender, EventArgs e)
         {
+            if (console._spectrum_mutex != null) console._spectrum_mutex.WaitOne();
+
             console.specRX.GetSpecRX(0).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
             // console.specRX.GetSpecRX(2).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
             //  console.specRX.GetSpecRX(1).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
@@ -17336,10 +17385,14 @@ namespace Thetis
             Display.RX1FFTSizeOffset = tbDisplayFFTSize.Value * 2;
             // Display.RX2FFTSizeOffset = tbDisplayFFTSize.Value * 2;
             Display.FastAttackNoiseFloorRX1 = true;
+
+            if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
         }
 
         private void tbRX2DisplayFFTSize_Scroll(object sender, EventArgs e)
         {
+            if (console._spectrum_mutex != null) console._spectrum_mutex.WaitOne();
+
             // console.specRX.GetSpecRX(0).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
             console.specRX.GetSpecRX(1).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbRX2DisplayFFTSize.Value))));
             double bin_width = (double)Display.SampleRateRX2 / (double)console.specRX.GetSpecRX(1).FFTSize;
@@ -17347,6 +17400,8 @@ namespace Thetis
             // Display.RX1FFTSizeOffset = tbDisplayFFTSize.Value * 2;
             Display.RX2FFTSizeOffset = tbRX2DisplayFFTSize.Value * 2;
             Display.FastAttackNoiseFloorRX2 = true;
+
+            if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
         }
 
         private void comboDispWinType_SelectedIndexChanged(object sender, EventArgs e)
@@ -25288,8 +25343,10 @@ namespace Thetis
         {
             console.PreventTXonDifferentBandToRXband = chkPreventTXonDifferentBandToRX.Checked;
         }
-
+        #region MulitMeter2
         // multimeter 2
+        private const int MAX_CONTAINERS = 10;
+
         private class clsContainerComboboxItem
         {
             public string Text { get; set; }
@@ -25333,7 +25390,7 @@ namespace Thetis
         }
         private void btnAddRX1Container_Click(object sender, EventArgs e)
         {
-            if (MeterManager.TotalMeterContainers < 10)
+            if (MeterManager.TotalMeterContainers < MAX_CONTAINERS)
             {
                 string sId = MeterManager.AddMeterContainer(1, false, true);
                 updateMeter2Controls(sId);
@@ -25342,7 +25399,7 @@ namespace Thetis
 
         private void btnAddRX2Container_Click(object sender, EventArgs e)
         {
-            if (MeterManager.TotalMeterContainers < 10)
+            if (MeterManager.TotalMeterContainers < MAX_CONTAINERS)
             {
                 string sId = MeterManager.AddMeterContainer(2, false, true);
                 updateMeter2Controls(sId);
@@ -25350,7 +25407,7 @@ namespace Thetis
         }
         private void updateMeter2Controls(string sId = "")
         {
-            bool bEnableAdd = MeterManager.TotalMeterContainers < 10;
+            bool bEnableAdd = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
 
             btnAddRX1Container.Enabled = bEnableAdd;
             btnAddRX2Container.Enabled = bEnableAdd && console.RX2Enabled;
@@ -25694,6 +25751,7 @@ namespace Thetis
                 igs.Colour = clrbtnMeterItemHBackground.Color;
                 igs.MarkerColour = clrbtnMeterItemIndiciator.Color;
                 igs.SubMarkerColour = clrbtnMeterItemSubIndiciator.Color;
+                igs.ShowSubMarker = chkMeterItemShowSubIndicator.Checked;
                 igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
                 igs.PeakValue = chkMeterItemPeakValue.Checked;
                 igs.Average = chkMeterItemSignalAverage.Checked;
@@ -25807,6 +25865,7 @@ namespace Thetis
                 clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
                 chkMeterItemPeakValue.Checked = igs.PeakValue;
                 chkMeterItemSignalAverage.Checked = igs.Average;
+                chkMeterItemShowSubIndicator.Checked = igs.ShowSubMarker;
 
                 nudMeterItemHistoryDuration.Value = igs.HistoryDuration < nudMeterItemHistoryDuration.Minimum ? nudMeterItemHistoryDuration.Minimum : igs.HistoryDuration;
                 nudMeterItemIgnoreHistoryDuration.Value = igs.IgnoreHistoryDuration;
@@ -25822,7 +25881,7 @@ namespace Thetis
 
                 lblMMIndicatorSub.Enabled = true;
                 clrbtnMeterItemSubIndiciator.Enabled = true;
-                chkMeterItemShowSubIndicator.Enabled = false;
+                chkMeterItemShowSubIndicator.Enabled = true;
 
                 lblMMBackground.Enabled = true;
                 clrbtnMeterItemHBackground.Enabled = true;
@@ -26428,6 +26487,70 @@ namespace Thetis
 
             return bPaste;
         }
+        public void ShowMultiMeterSetupTab(string sID = "")
+        {
+            // show multimeter tab, with meter container already selected if sID is provided
+            if (sID != "" && comboContainerSelect.Items.Count > 0)
+            {
+                for (int n = 0; n < comboContainerSelect.Items.Count; n++)
+                {
+                    clsContainerComboboxItem cci = comboContainerSelect.Items[n] as clsContainerComboboxItem;
+                    if (cci != null && cci.ID == sID)
+                    {
+                        comboContainerSelect.SelectedIndex = n;
+                        break;
+                    }
+                }
+            }
+
+            Show();
+            Focus();
+            WindowState = FormWindowState.Normal;
+            TabSetup.SelectedIndex = 6; // appearance
+            TabAppearance.SelectedIndex = 3; // multimeter
+        }
+        #endregion
+
+        #region VoiceSQL
+        private void udVSQLMuteTimeConstant_ValueChanged(object sender, EventArgs e)
+        {
+            if (console == null || console.radio == null) return;
+
+            float fSeconds = (float)udVSQLMuteTimeConstant.Value / 1000f;
+
+            //rx1
+            console.radio.GetDSPRX(0, 0).SqlMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(0, 1).SqlMuteTimeConstant = fSeconds;
+
+            //rx2
+            console.radio.GetDSPRX(1, 0).SqlMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(1, 1).SqlMuteTimeConstant = fSeconds;
+        }
+
+        private void udVSQLUnMuteTimeConstant_ValueChanged(object sender, EventArgs e)
+        {
+            if (console == null || console.radio == null) return;
+
+            float fSeconds = (float)udVSQLUnMuteTimeConstant.Value / 1000f;
+
+            //rx1
+            console.radio.GetDSPRX(0, 0).SqlUnMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(0, 1).SqlUnMuteTimeConstant = fSeconds;
+
+            //rx2
+            console.radio.GetDSPRX(1, 0).SqlUnMuteTimeConstant = fSeconds;
+            console.radio.GetDSPRX(1, 1).SqlUnMuteTimeConstant = fSeconds;
+        }
+
+        private void chkConsoleDarkModeTitleBar_CheckedChanged(object sender, EventArgs e)
+        {
+            if(console != null)
+            {
+                bool bOk = Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
+                if (sender != this && bOk) console.Invalidate();
+            }
+        }
+        #endregion
     }
 
     #region PADeviceInfo Helper Class

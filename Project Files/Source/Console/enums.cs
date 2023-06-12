@@ -418,5 +418,12 @@
         TUNE_SLIDER = 1,
         FIXED = 2
     }
+
+    public enum SquelchState
+    {
+        OFF = 0,
+        SQL = 1,
+        VSQL = 2
+    }
     #endregion
 }

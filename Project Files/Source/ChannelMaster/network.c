@@ -158,7 +158,7 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol)
 
 	sndbufsize = 0xfa000;
 	setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char *)&sndbufsize, sizeof(int));	
-	sndbufsize = 0x10000; 
+	sndbufsize = 0xfa000; // MW0LGE [2.9.0.8] from Warren, changed from 0x10000
 	setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char *)&sndbufsize, sizeof(int));
 	
 	DestIp = inet_addr(netaddr);

@@ -23,11 +23,18 @@ namespace Thetis
         [Category("Action")]
         public event EventHandler FloatingDockedClicked;
 
+        [Browsable(true)]
+        [Category("Action")]
+        public event EventHandler SettingsClicked;
+
         public event EventHandler DockedMoved;
 
         public ucMeter()
         {
             InitializeComponent();
+
+            picContainer.Location = new Point(0, 0);
+            picContainer.Size = new Size(Size.Width, Size.Height);
 
             _console = null;
             _id = System.Guid.NewGuid().ToString();
@@ -127,8 +134,7 @@ namespace Thetis
 
         private void pnlBar_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
 
         private void pnlBar_MouseUp(object sender, MouseEventArgs e)
@@ -350,8 +356,7 @@ namespace Thetis
 
         private void btnFloat_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public int RX
@@ -415,8 +420,7 @@ namespace Thetis
 
         private void lblRX_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
 
         private void ucMeter_LocationChanged(object sender, EventArgs e)
@@ -617,7 +621,7 @@ namespace Thetis
                     if (bOk) bOk = bool.TryParse(tmp[11], out border);
                     if (bOk) UCBorder = border;
                     Color c = Common.ColourFromString(tmp[12]);
-                    bOk = c != System.Drawing.Color.Transparent;
+                    bOk = c != System.Drawing.Color.Empty;
                     if(bOk) this.BackColor = c;
                 }
             }
@@ -631,11 +635,25 @@ namespace Thetis
 
         private void btnAxis_MouseLeave(object sender, EventArgs e)
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
-                mouseLeave();
+            uiComponentMouseLeave();
         }
 
         private void btnPin_MouseLeave(object sender, EventArgs e)
+        {
+            uiComponentMouseLeave();
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            SettingsClicked?.Invoke(this, e);
+        }
+
+        private void btnSettings_MouseLeave(object sender, EventArgs e)
+        {
+            uiComponentMouseLeave();
+        }
+
+        private void uiComponentMouseLeave()
         {
             if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
                 mouseLeave();

@@ -1744,6 +1744,16 @@ namespace Thetis
 
         }
 
+        private static RadioProtocol _lastRadioProtocol = RadioProtocol.None;
+        public static RadioProtocol LastRadioProtocol
+        {
+            get { return _lastRadioProtocol; }
+            set 
+            {
+                if (value == RadioProtocol.None) return;
+                _lastRadioProtocol = value; 
+            }
+        }
         public static bool Start()
         {
             RadioProtocol oldProto = NetworkIO.CurrentRadioProtocol;
@@ -1792,8 +1802,15 @@ namespace Thetis
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
                 puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
                 //console.psform.PSdefpeak = "0.2899";
+            }
+
+            //console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6
+            //MW0LGE [2.9.0.8] fix if protocol is changed at some point
+            if (_lastRadioProtocol != RadioProtocol.None && _lastRadioProtocol != NetworkIO.CurrentRadioProtocol)
+            {
+                console.psform.SetDefaultPeaks(true);
+                _lastRadioProtocol = NetworkIO.CurrentRadioProtocol;
             }            
-            console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6
 
             c.SetupForm.InitAudioTab();
             c.SetupForm.ForceAudioReset();

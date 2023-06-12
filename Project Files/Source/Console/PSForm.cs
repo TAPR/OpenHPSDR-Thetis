@@ -91,7 +91,7 @@ namespace Thetis
                 {
                     Name = "PureSignal Thread",
                     Priority = ThreadPriority.AboveNormal,
-                    IsBackground = false
+                    IsBackground = true
                 };
                 _ps_thread.Start();
             }
@@ -107,6 +107,7 @@ namespace Thetis
         public void StopPSThread()
         {
             _bPSRunning = false;
+            if (_ps_thread != null && _ps_thread.IsAlive) _ps_thread.Join(300);
         }
 
         private bool _bPSRunning = false;

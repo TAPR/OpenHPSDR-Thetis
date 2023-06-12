@@ -1389,8 +1389,10 @@
             this.chkRX2Squelch.FlatAppearance.BorderSize = 0;
             this.chkRX2Squelch.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkRX2Squelch.Name = "chkRX2Squelch";
+            this.chkRX2Squelch.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkRX2Squelch, resources.GetString("chkRX2Squelch.ToolTip"));
-            this.chkRX2Squelch.CheckedChanged += new System.EventHandler(this.chkRX2Squelch_CheckedChanged);
+            this.chkRX2Squelch.CheckStateChanged += new System.EventHandler(this.chkRX2Squelch_CheckStateChanged);
+            this.chkRX2Squelch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkRX2Squelch_MouseDown);
             // 
             // chkRX2Mute
             // 
@@ -2568,8 +2570,10 @@
             this.chkSquelch.FlatAppearance.BorderSize = 0;
             this.chkSquelch.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkSquelch.Name = "chkSquelch";
+            this.chkSquelch.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkSquelch, resources.GetString("chkSquelch.ToolTip"));
-            this.chkSquelch.CheckedChanged += new System.EventHandler(this.chkSquelch_CheckedChanged);
+            this.chkSquelch.CheckStateChanged += new System.EventHandler(this.chkSquelch_CheckStateChanged);
+            this.chkSquelch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkSquelch_MouseDown);
             // 
             // btnMemoryQuickRestore
             // 
@@ -5473,13 +5477,13 @@
             this.ptbRX2Squelch.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX2Squelch.LimitEnabled = false;
             this.ptbRX2Squelch.LimitValue = 0;
-            this.ptbRX2Squelch.Maximum = 0;
-            this.ptbRX2Squelch.Minimum = -160;
+            this.ptbRX2Squelch.Maximum = 100;
+            this.ptbRX2Squelch.Minimum = 0;
             this.ptbRX2Squelch.Name = "ptbRX2Squelch";
             this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.ptbRX2Squelch.SmallChange = 1;
             this.ptbRX2Squelch.TabStop = false;
-            this.ptbRX2Squelch.Value = -150;
+            this.ptbRX2Squelch.Value = 0;
             this.ptbRX2Squelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
             // 
             // panelRX2DSP
@@ -7159,13 +7163,13 @@
             this.ptbSquelch.LimitBarColor = System.Drawing.Color.Red;
             this.ptbSquelch.LimitEnabled = false;
             this.ptbSquelch.LimitValue = 0;
-            this.ptbSquelch.Maximum = 0;
-            this.ptbSquelch.Minimum = -160;
+            this.ptbSquelch.Maximum = 100;
+            this.ptbSquelch.Minimum = 0;
             this.ptbSquelch.Name = "ptbSquelch";
             this.ptbSquelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.ptbSquelch.SmallChange = 1;
             this.ptbSquelch.TabStop = false;
-            this.ptbSquelch.Value = -150;
+            this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
             // panelModeSpecificFM

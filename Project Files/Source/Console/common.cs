@@ -811,10 +811,19 @@ namespace Thetis
         }
         public static System.Drawing.Color ColourFromString(string str)
         {
+			//format of string "A.R.G.B"
             string[] tmp = str.Split('.');
             if (tmp.Length == 4)
             {
-                return System.Drawing.Color.FromArgb(Int32.Parse(tmp[0]), Int32.Parse(tmp[1]), Int32.Parse(tmp[2]), Int32.Parse(tmp[3]));
+                bool bOk;
+                int A = 0, R = 0, G = 0, B = 0;
+
+				bOk = int.TryParse(tmp[0], out A);
+				if (bOk) bOk = int.TryParse(tmp[1], out R);
+                if (bOk) bOk = int.TryParse(tmp[2], out G);
+                if (bOk) bOk = int.TryParse(tmp[3], out B);
+
+				if (bOk) return System.Drawing.Color.FromArgb(A, R, G, B);
             }
             return System.Drawing.Color.Empty;
         }
@@ -926,5 +935,34 @@ namespace Thetis
                 else { S = 9; over9dBm = 60; }
             }
         }
+
+        #region DarkMode
+        //MW0LGE [2.9.0.8]
+        //https://stackoverflow.com/questions/57124243/winforms-dark-title-bar-on-windows-10
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+        private const int DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19;
+        private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+        public static bool UseImmersiveDarkMode(IntPtr handle, bool enabled)
+        {
+            if (IsWindows10OrGreater(17763))
+            {
+                int attribute = DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
+                if (IsWindows10OrGreater(18985))
+                {
+                    attribute = DWMWA_USE_IMMERSIVE_DARK_MODE;
+                }
+
+                int useImmersiveDarkMode = enabled ? 1 : 0;
+                return DwmSetWindowAttribute(handle, attribute, ref useImmersiveDarkMode, sizeof(int)) == 0;
+            }
+
+            return false;
+        }
+        public static bool IsWindows10OrGreater(int build = -1)
+        {
+            return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
+        }
+        #endregion
     }
 }
