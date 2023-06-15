@@ -1221,11 +1221,12 @@ namespace Thetis
             {
                 // power choice based on code from console.getMeterPixelPosAndDrawScales
                 // TODO: 8000mk2  !!!!!!!!!!!!!!!!!!!!
+                // TODO: ANAN_G2_1K
 
                 int nWatts = 500;
 
                 if (_alexPresent && 
-                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D) 
+                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D || _currentHPSDRmodel == HPSDRModel.ANAN_G2) 
                     && _transverterIndex < 0))
                 {
                     nWatts = 200;
