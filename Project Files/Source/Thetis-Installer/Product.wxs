@@ -327,6 +327,12 @@
               />
 		</Component>
       <Component Guid="*">
+        <File Id="FTDI2xxDLL"
+            Source="$(var.FilesPath)FTDI2XX.dll"
+            KeyPath="yes"
+              />
+      </Component>
+      <Component Guid="*">
         <File Id="PureSignalPDF"
               Source="$(var.DocumentationPath)PureSignal.pdf"
               KeyPath="yes"

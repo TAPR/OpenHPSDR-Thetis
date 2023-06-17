@@ -158,7 +158,7 @@ namespace Thetis
 
             //MW0LGE_21h
             string sTip =
-            "The feedback gain loop attempts to keep the sample buffer about ½ full." + System.Environment.NewLine +
+            "The feedback gain loop attempts to keep the sample buffer about ï¿½ full." + System.Environment.NewLine +
             "This gives the maximum amount of margin before an overflow or underflow will occur." + System.Environment.NewLine +
             "If the gain is too high, the loop will respond too fast and strongly and we may " + System.Environment.NewLine +
             "end up with an over-full buffer (overflow) or empty buffer (underflow)." + System.Environment.NewLine +
@@ -169,7 +169,7 @@ namespace Thetis
             "In the event of an underflow, the sample stream is slewed to zero, held there until there are more samples available," + System.Environment.NewLine +
             "and then slewed back up to maximum output amplitude. In the event of an overflow," + System.Environment.NewLine +
             "some samples are discarded and the ends of the before and after curves are blended along a raised-cosine trajectory." + System.Environment.NewLine +
-            "‘slew time’ controls the rate of slewing or blending. - NR0V";
+            "ï¿½slew timeï¿½ controls the rate of slewing or blending. - NR0V";
             toolTip1.SetToolTip(pbVAC1SlewTimeInfo, sTip);
 
             //MW0LGE_21j
@@ -179,9 +179,9 @@ namespace Thetis
             toolTip1.SetToolTip(pbVAC1PropFeedbackMinInfo, sTip);
 
             sTip =
-            "The size/length of a moving average filter in the feedback loop. To reduce computation, it’s value must be a power of two." + System.Environment.NewLine +
+            "The size/length of a moving average filter in the feedback loop. To reduce computation, itï¿½s value must be a power of two." + System.Environment.NewLine +
             "Making this smaller will make the loop more responsive; however, you may need to reduce the feedback gain in that case." + System.Environment.NewLine +
-            "Making it larger will make output values more stable and consistent – you might need to increase feedback gain in that case. - NR0V";
+            "Making it larger will make output values more stable and consistent ï¿½ you might need to increase feedback gain in that case. - NR0V";
             toolTip1.SetToolTip(pbVAC1PropFeedbackMaxInfo, sTip);
 
             sTip =
@@ -191,11 +191,11 @@ namespace Thetis
             toolTip1.SetToolTip(pbVAC1FFMinInfo, sTip);
 
             sTip =
-            "In controlling the sampling ratio, this is the size/length of the moving average filter. To reduce computation, it’s value must be a power of two. - NR0V";
+            "In controlling the sampling ratio, this is the size/length of the moving average filter. To reduce computation, itï¿½s value must be a power of two. - NR0V";
             toolTip1.SetToolTip(pbVAC1FFMaxInfo, sTip);
 
             sTip =
-            "FF_Alpha is a smoothing parameter on the recursive filter. In summary, the ‘var’ ratio of the resampler is currently determined from two sources:" + System.Environment.NewLine +
+            "FF_Alpha is a smoothing parameter on the recursive filter. In summary, the ï¿½varï¿½ ratio of the resampler is currently determined from two sources:" + System.Environment.NewLine +
             "(1) a feedback loop that attempts to keep the buffer half full, and " + System.Environment.NewLine +
             "(2) a feed-forward term that attempts to keep the resampler at the correct sampling ratio. - NR0V";
             toolTip1.SetToolTip(pbVAC1FFAlphaInfo, sTip);
@@ -26548,6 +26548,83 @@ namespace Thetis
             {
                 bool bOk = Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
                 if (sender != this && bOk) console.Invalidate();
+            }
+        }
+        #endregion
+
+        #region USB/BCD Cable
+        UsbBCDDevices _usbbcddevices;
+        private bool usbBCD = false;
+        public bool UsbBCD
+        {
+            get { return usbBCD; }
+            set
+            {
+                usbBCD = value;
+               // if (!usbBCD && _usbbcddevices != null) 
+               // {
+               //     _usbbcddevices = null;
+               // }
+            }
+        }
+
+        public void UpdateUsbBCDdevice(Band rx1band)
+        {
+            if(usbBCD) 
+            _usbbcddevices.SetBCDbyBand(_usbdevicesn, rx1band);
+        }
+        private string _usbdevicesn;
+        private void chkUsbBCD_CheckedChanged(object sender, EventArgs e)
+        {
+            UsbBCD = chkUsbBCD.Checked;
+
+            if (usbBCD)
+            {
+                if (_usbbcddevices == null)
+                {
+                    _usbbcddevices = new UsbBCDDevices();
+
+                    if (_usbbcddevices.DeviceCount != 0)
+                    {
+                        foreach (string device in _usbbcddevices.DeviceSerialNumbers)
+                        {
+                            _usbbcddevices.OpenDevice(device);
+                        }
+                    }
+                    else
+                    {
+                        chkUsbBCD.Checked = false;
+                        return;
+                    }
+                }
+
+                comboUsbDevices.DataSource = _usbbcddevices.DeviceSerialNumbers;
+                comboUsbDevices.SelectedIndex = 0;
+
+                _usbdevicesn = comboUsbDevices.Text;
+                if (_usbdevicesn == "")
+                {
+                    return;
+                }
+
+                byte values = _usbbcddevices.GetRelays(_usbdevicesn);
+                //_usbbcddevices.SetRelays(sn, values);
+                _usbbcddevices.SetBCDbyBand(_usbdevicesn, console.RX1Band);
+
+            }
+            else
+            {
+                if (_usbbcddevices != null &&_usbbcddevices.DeviceCount != 0)
+                {
+                    // String sn = comboUsbDevices.Text;
+                    _usbbcddevices.SetRelays(_usbdevicesn, 0);                   
+                    _usbbcddevices.CloseDevice(_usbdevicesn);
+                    _usbbcddevices = null;
+                    
+                    comboUsbDevices.Text = "";
+
+                   // comboUsbDevices.SelectedIndex = -1;
+                }
             }
         }
         #endregion

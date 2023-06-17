@@ -499,6 +499,9 @@
             this.tpPennyCtrl = new System.Windows.Forms.TabPage();
             this.grpTransmitPinActionSWL = new System.Windows.Forms.TabControl();
             this.tpOCHFControl = new System.Windows.Forms.TabPage();
+            this.grpUSBBCD = new System.Windows.Forms.GroupBoxTS();
+            this.comboUsbDevices = new System.Windows.Forms.ComboBoxTS();
+            this.chkUsbBCD = new System.Windows.Forms.CheckBoxTS();
             this.grpExtPAControlHF = new System.Windows.Forms.GroupBoxTS();
             this.labelTS577 = new System.Windows.Forms.LabelTS();
             this.labelTS582 = new System.Windows.Forms.LabelTS();
@@ -3596,6 +3599,7 @@
             this.tpPennyCtrl.SuspendLayout();
             this.grpTransmitPinActionSWL.SuspendLayout();
             this.tpOCHFControl.SuspendLayout();
+            this.grpUSBBCD.SuspendLayout();
             this.grpExtPAControlHF.SuspendLayout();
             this.grpOCPinState.SuspendLayout();
             this.grpTransmitPinActionHF.SuspendLayout();
@@ -11299,6 +11303,7 @@
             // tpOCHFControl
             // 
             this.tpOCHFControl.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOCHFControl.Controls.Add(this.grpUSBBCD);
             this.tpOCHFControl.Controls.Add(this.grpExtPAControlHF);
             this.tpOCHFControl.Controls.Add(this.chkAllowHotSwitching);
             this.tpOCHFControl.Controls.Add(this.grpOCPinState);
@@ -11314,6 +11319,39 @@
             this.tpOCHFControl.Size = new System.Drawing.Size(716, 384);
             this.tpOCHFControl.TabIndex = 0;
             this.tpOCHFControl.Text = "HF";
+            // 
+            // grpUSBBCD
+            // 
+            this.grpUSBBCD.Controls.Add(this.comboUsbDevices);
+            this.grpUSBBCD.Controls.Add(this.chkUsbBCD);
+            this.grpUSBBCD.Location = new System.Drawing.Point(544, 257);
+            this.grpUSBBCD.Name = "grpUSBBCD";
+            this.grpUSBBCD.Size = new System.Drawing.Size(165, 66);
+            this.grpUSBBCD.TabIndex = 15;
+            this.grpUSBBCD.TabStop = false;
+            this.grpUSBBCD.Text = "USB/BCD Cable";
+            this.toolTip1.SetToolTip(this.grpUSBBCD, "Outputs Yaesu BCD data on USB/BCD cable.");
+            // 
+            // comboUsbDevices
+            // 
+            this.comboUsbDevices.FormattingEnabled = true;
+            this.comboUsbDevices.Location = new System.Drawing.Point(27, 39);
+            this.comboUsbDevices.Name = "comboUsbDevices";
+            this.comboUsbDevices.Size = new System.Drawing.Size(124, 21);
+            this.comboUsbDevices.TabIndex = 13;
+            // 
+            // chkUsbBCD
+            // 
+            this.chkUsbBCD.AutoSize = true;
+            this.chkUsbBCD.Image = null;
+            this.chkUsbBCD.Location = new System.Drawing.Point(9, 19);
+            this.chkUsbBCD.Name = "chkUsbBCD";
+            this.chkUsbBCD.Size = new System.Drawing.Size(59, 17);
+            this.chkUsbBCD.TabIndex = 9;
+            this.chkUsbBCD.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkUsbBCD, "Enables USB BCD outputs for FTDI cable.");
+            this.chkUsbBCD.UseVisualStyleBackColor = true;
+            this.chkUsbBCD.CheckedChanged += new System.EventHandler(this.chkUsbBCD_CheckedChanged);
             // 
             // grpExtPAControlHF
             // 
@@ -55061,6 +55099,8 @@
             this.grpTransmitPinActionSWL.ResumeLayout(false);
             this.tpOCHFControl.ResumeLayout(false);
             this.tpOCHFControl.PerformLayout();
+            this.grpUSBBCD.ResumeLayout(false);
+            this.grpUSBBCD.PerformLayout();
             this.grpExtPAControlHF.ResumeLayout(false);
             this.grpExtPAControlHF.PerformLayout();
             this.grpOCPinState.ResumeLayout(false);
@@ -59398,5 +59438,8 @@
         private LabelTS labelTS178;
         private CheckBoxTS chkConsoleDarkModeTitleBar;
         private LabelTS labelTS181;
+        private GroupBoxTS grpUSBBCD;
+        private CheckBoxTS chkUsbBCD;
+        private ComboBoxTS comboUsbDevices;
     }
 }
