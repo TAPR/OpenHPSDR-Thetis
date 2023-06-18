@@ -18838,6 +18838,7 @@ namespace Thetis
 
                 }
                 DisplayAriesRXAntenna();
+                SetupForm.UpdateUsbBCDdevice(rx1_band);
 
                 //MW0LGE_21b
                 if (old_band != rx1_band)
