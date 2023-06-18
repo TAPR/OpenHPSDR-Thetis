@@ -887,6 +887,7 @@
             this.thetisOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripStatusLabel_Volts = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_Amps = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_TXInhibit = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_SeqWarning = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelRXAnt = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripMenuItem();
@@ -4901,6 +4902,7 @@
             this.toolStripDropDownButton_CPU,
             this.toolStripStatusLabel_Volts,
             this.toolStripStatusLabel_Amps,
+            this.toolStripStatusLabel_TXInhibit,
             this.toolStripStatusLabel_SeqWarning,
             this.toolStripStatusLabelRXAnt,
             this.toolStripStatusLabelTXAnt,
@@ -5136,6 +5138,14 @@
             this.toolStripStatusLabel_Amps.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.toolStripStatusLabel_Amps.Name = "toolStripStatusLabel_Amps";
             this.toolStripStatusLabel_Amps.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            // 
+            // toolStripStatusLabel_TXInhibit
+            // 
+            this.toolStripStatusLabel_TXInhibit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_TXInhibit.Image = global::Thetis.Properties.Resources.stop;
+            resources.ApplyResources(this.toolStripStatusLabel_TXInhibit, "toolStripStatusLabel_TXInhibit");
+            this.toolStripStatusLabel_TXInhibit.Name = "toolStripStatusLabel_TXInhibit";
+            this.toolStripStatusLabel_TXInhibit.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             // 
             // toolStripStatusLabel_SeqWarning
             // 
@@ -7715,5 +7725,6 @@
         private LabelTS labelTS2;
         private NumericUpDownTS nudPwrTemp;
         private NumericUpDownTS nudPwrTemp2;
+        private ToolStripStatusLabel toolStripStatusLabel_TXInhibit;
     }
 }

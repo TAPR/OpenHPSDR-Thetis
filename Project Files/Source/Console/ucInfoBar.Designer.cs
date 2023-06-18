@@ -34,6 +34,7 @@
             this.lblPS = new System.Windows.Forms.LabelTS();
             this.chkButton2 = new System.Windows.Forms.CheckBoxTS();
             this.chkButton1 = new System.Windows.Forms.CheckBoxTS();
+            this.lblPageNo = new System.Windows.Forms.LabelTS();
             this.lblSplitter = new System.Windows.Forms.LabelTS();
             this.lblWarning = new System.Windows.Forms.LabelTS();
             this.lblRight3 = new System.Windows.Forms.LabelTS();
@@ -42,7 +43,6 @@
             this.lblLeft3 = new System.Windows.Forms.LabelTS();
             this.lblLeft2 = new System.Windows.Forms.LabelTS();
             this.lblLeft1 = new System.Windows.Forms.LabelTS();
-            this.lblPageNo = new System.Windows.Forms.LabelTS();
             this.SuspendLayout();
             // 
             // lblFB
@@ -121,6 +121,19 @@
             this.toolTip1.SetToolTip(this.chkButton1, "Show/hide spectrum peak blobs");
             this.chkButton1.CheckedChanged += new System.EventHandler(this.chkButton1_CheckedChanged);
             this.chkButton1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkButton1_MouseDown);
+            // 
+            // lblPageNo
+            // 
+            this.lblPageNo.AutoSize = true;
+            this.lblPageNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPageNo.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblPageNo.Image = null;
+            this.lblPageNo.Location = new System.Drawing.Point(115, 6);
+            this.lblPageNo.Name = "lblPageNo";
+            this.lblPageNo.Size = new System.Drawing.Size(24, 13);
+            this.lblPageNo.TabIndex = 43;
+            this.lblPageNo.Text = "2/2";
+            this.lblPageNo.Click += new System.EventHandler(this.InfoBar_Click);
             // 
             // lblSplitter
             // 
@@ -239,19 +252,6 @@
             this.lblLeft1.Text = "000000000000";
             this.lblLeft1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblLeft1.Click += new System.EventHandler(this.InfoBar_Click);
-            // 
-            // lblPageNo
-            // 
-            this.lblPageNo.AutoSize = true;
-            this.lblPageNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPageNo.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.lblPageNo.Image = null;
-            this.lblPageNo.Location = new System.Drawing.Point(115, 6);
-            this.lblPageNo.Name = "lblPageNo";
-            this.lblPageNo.Size = new System.Drawing.Size(24, 13);
-            this.lblPageNo.TabIndex = 43;
-            this.lblPageNo.Text = "2/2";
-            this.lblPageNo.Click += new System.EventHandler(this.InfoBar_Click);
             // 
             // ucInfoBar
             // 

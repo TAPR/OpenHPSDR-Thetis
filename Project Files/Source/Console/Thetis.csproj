@@ -671,6 +671,7 @@
     <None Include="Resources\pipette32border.png" />
     <None Include="Resources\gear.png" />
     <Content Include="FTDI2XX.xml" />
+    <None Include="Resources\stop.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
