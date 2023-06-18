@@ -240,6 +240,7 @@
     <ClInclude Include="osctrl.h" />
     <ClInclude Include="patchpanel.h" />
     <ClInclude Include="resample.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="rmatch.h" />
     <ClInclude Include="RXA.h" />
     <ClInclude Include="sender.h" />
@@ -314,6 +315,9 @@
     <ClCompile Include="version.c" />
     <ClCompile Include="wcpAGC.c" />
     <ClCompile Include="wisdom.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="wdsp.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -416,11 +416,21 @@ void create_iobuffs (int channel)
 	a->Sem_OutReady  = CreateSemaphore(0, n, 1000, 0);
 	a->bfo = ch[channel].bfo;
 	create_slews (a);
+
+	InterlockedBitTestAndReset(&a->flush_bypass, 0);
+	a->Sem_Flush = CreateSemaphore(0, 0, 1, 0);
+	_beginthread(flushChannel, 0, (void*)(uintptr_t)a->channel);
 }
 
 void destroy_iobuffs (int channel)
 {
 	IOB a = ch[channel].iob.pc;
+
+	InterlockedBitTestAndSet(&a->flush_bypass, 0);
+	ReleaseSemaphore(a->Sem_Flush, 1, 0);
+	while (InterlockedAnd(&a->flush_bypass, 0xffffffff)) Sleep(1);
+	CloseHandle(a->Sem_Flush);
+
 	destroy_slews (a);
 	CloseHandle (a->Sem_OutReady);
 	CloseHandle (a->Sem_BuffReady);
@@ -489,7 +499,7 @@ void fexchange0 (int channel, double* in, double* out, int* error)
 				if (!_InterlockedAnd (&a->slew.downflag, 1))
 				{
 					InterlockedBitTestAndReset (&ch[channel].exchange, 0);
-					_beginthread (flushChannel, 0, (void *)(uintptr_t)channel);
+					ReleaseSemaphore(a->Sem_Flush, 1, 0);
 				}
 			}
 			else
@@ -548,7 +558,7 @@ void fexchange2 (int channel, INREAL *Iin, INREAL *Qin, OUTREAL *Iout, OUTREAL *
 				if (!_InterlockedAnd (&a->slew.downflag, 1))
 				{
 					InterlockedBitTestAndReset (&ch[channel].exchange, 0);
-					_beginthread (flushChannel, 0, (void *)(uintptr_t)channel);
+					ReleaseSemaphore(a->Sem_Flush, 1, 0);
 				}
 			}
 			else

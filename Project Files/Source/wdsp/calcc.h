@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2023 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@ warren@wpratt.com
 #ifndef _calcc_h
 #define _calcc_h
 #include "delay.h"
+#include "lmath.h"
 typedef struct _calcc
 {
 	int channel;
@@ -47,6 +48,16 @@ typedef struct _calcc
 	double hw_scale;
 	double rx_scale;
 	double alpha;
+
+	int tsamps;
+	double* env_TX;
+	double* env_RX;
+	double* x;
+	double* ym;
+	double* yc;
+	double* ys;
+	double* cat;
+
 	double* t;
 	double* tmap;
 	double* cm;
@@ -59,6 +70,15 @@ typedef struct _calcc
 	int* info;
 	int* binfo;
 	double txdel;
+	BLDR ccbld;
+	volatile long savecorr_bypass;
+	HANDLE Sem_SaveCorr;
+	volatile long restcorr_bypass;
+	HANDLE Sem_RestCorr;
+	volatile long calccorr_bypass;
+	HANDLE Sem_CalcCorr;
+	volatile long turnoff_bypass;
+	HANDLE Sem_TurnOff;
 	struct _ctrl
 	{
 		double moxdelay;
@@ -103,6 +123,9 @@ typedef struct _calcc
 		char restfile[256];
 		int ints;
 		int channel;
+		double* pm;
+		double* pc;
+		double* ps;
 	} util;
 	double* temptx;				//////////////////////////////////////////////////// temporary tx complex buffer - remove with new callback3port()
 	double* temprx;				//////////////////////////////////////////////////// temporary rx complex buffer - remove with new callback3port()
@@ -117,6 +140,14 @@ extern void destroy_calcc (CALCC a);
 extern void flush_calcc (CALCC a);
 
 extern __declspec(dllexport) void pscc (int channel, int size, double* tx, double* rx);
+
+extern void __cdecl PSSaveCorrection(void* pargs);
+
+extern void __cdecl PSRestoreCorrection(void* pargs);
+
+extern void __cdecl doPSCalcCorrection(void* arg);
+
+extern void __cdecl doPSTurnoff(void* arg);
 
 #endif
 

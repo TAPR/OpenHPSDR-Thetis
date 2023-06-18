@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2014, 2016, 2019 Warren Pratt, NR0V
+Copyright (C) 2013, 2014, 2016, 2019, 2023 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,6 +31,16 @@ void size_calcc (CALCC a)
 {	// for change in ints or spi
 	int i;
 	a->nsamps = a->ints * a->spi;
+
+	a->tsamps = a->nsamps + a->npsamps;
+	a->env_TX = (double*)malloc0(a->nsamps * sizeof(double));
+	a->env_RX = (double*)malloc0(a->nsamps * sizeof(double));
+	a->x = (double*)malloc0(a->tsamps * sizeof(double));
+	a->ym = (double*)malloc0(a->tsamps * sizeof(double));
+	a->yc = (double*)malloc0(a->tsamps * sizeof(double));
+	a->ys = (double*)malloc0(a->tsamps * sizeof(double));
+	a->cat = (double*)malloc0(4 * a->nsamps * sizeof(double));
+
 	a->t    = (double *) malloc0 ((a->ints + 1) * sizeof(double));
 	a->tmap = (double *) malloc0 ((a->ints + 1) * sizeof(double));
 	for (i = 0; i < a->ints + 1; i++)
@@ -43,6 +53,8 @@ void size_calcc (CALCC a)
 
 	a->rxs = (double *) malloc0 (a->nsamps * sizeof (complex));
 	a->txs = (double *) malloc0 (a->nsamps * sizeof (complex));
+
+	a->ccbld = create_builder(a->nsamps + a->npsamps, a->ints);
 
 	a->ctrl.cpi = (int *) malloc0 (a->ints * sizeof (int));
 	a->ctrl.sindex = (int *) malloc0 (a->ints * sizeof (int));
@@ -62,10 +74,18 @@ void size_calcc (CALCC a)
 	a->disp.cm = (double *) malloc0 (a->ints * 4 * sizeof(double));
 	a->disp.cc = (double *) malloc0 (a->ints * 4 * sizeof(double));
 	a->disp.cs = (double *) malloc0 (a->ints * 4 * sizeof(double));
+
+	a->util.pm = (double *) malloc0 (4 * a->util.ints * sizeof(double));
+	a->util.pc = (double *) malloc0 (4 * a->util.ints * sizeof(double));
+	a->util.ps = (double *) malloc0 (4 * a->util.ints * sizeof(double));
 }
 
 void desize_calcc (CALCC a)
 {
+	_aligned_free(a->util.pm);
+	_aligned_free(a->util.pc);
+	_aligned_free(a->util.ps);
+
 	_aligned_free (a->disp.cs);
 	_aligned_free (a->disp.cc);
 	_aligned_free (a->disp.cm);
@@ -73,9 +93,11 @@ void desize_calcc (CALCC a)
 	_aligned_free (a->disp.yc);
 	_aligned_free (a->disp.ym);
 	_aligned_free (a->disp.x);
+
 	_aligned_free (a->ctrl.sbase);
 	_aligned_free (a->ctrl.sindex);
 	_aligned_free (a->ctrl.cpi);
+	destroy_builder(a->ccbld);
 	_aligned_free (a->rxs);
 	_aligned_free (a->txs);
 	_aligned_free (a->cm_old);
@@ -84,6 +106,14 @@ void desize_calcc (CALCC a)
 	_aligned_free (a->cs);
 	_aligned_free (a->tmap);
 	_aligned_free (a->t);
+
+	_aligned_free(a->cat);
+	_aligned_free(a->x);
+	_aligned_free(a->ym);
+	_aligned_free(a->yc);
+	_aligned_free(a->ys);
+	_aligned_free(a->env_TX);
+	_aligned_free(a->env_RX);
 }
 
 CALCC create_calcc (int channel, int runcal, int size, int rate, int ints, int spi, double hw_scale, 
@@ -151,13 +181,46 @@ CALCC create_calcc (int channel, int runcal, int size, int rate, int ints, int s
 
 	size_calcc (a);
 
-	a->temprx = (double *)malloc0 (2048 * sizeof (complex));														// remove later
-	a->temptx = (double *)malloc0 (2048 * sizeof (complex));														// remove later
+	a->temprx = (double*)malloc0(2048 * sizeof(complex));														// remove later
+	a->temptx = (double*)malloc0(2048 * sizeof(complex));														// remove later
+
+	// correction save and restore threads
+	InterlockedBitTestAndReset(&a->savecorr_bypass, 0);
+	a->Sem_SaveCorr = CreateSemaphore(0, 0, 1, 0);
+	_beginthread(PSSaveCorrection, 0, (void*)a);
+	InterlockedBitTestAndReset(&a->restcorr_bypass, 0);
+	a->Sem_RestCorr = CreateSemaphore(0, 0, 1, 0);
+	_beginthread(PSRestoreCorrection, 0, (void*)a);
+	InterlockedBitTestAndReset(&a->calccorr_bypass, 0);
+	a->Sem_CalcCorr = CreateSemaphore(0, 0, 1, 0);
+	_beginthread(doPSCalcCorrection, 0, (void*)a);
+	InterlockedBitTestAndReset(&a->turnoff_bypass, 0);
+	a->Sem_TurnOff = CreateSemaphore(0, 0, 1, 0);
+	_beginthread(doPSTurnoff, 0, (void*)a);
+
 	return a;
 }
 
 void destroy_calcc (CALCC a)
 {
+	// correction save and restore threads
+	InterlockedBitTestAndSet(&a->savecorr_bypass, 0);
+	ReleaseSemaphore(a->Sem_SaveCorr, 1, 0);
+	while (InterlockedAnd(&a->savecorr_bypass, 0xffffffff)) Sleep(1);
+	CloseHandle(a->Sem_SaveCorr);
+	InterlockedBitTestAndSet(&a->restcorr_bypass, 0);
+	ReleaseSemaphore(a->Sem_RestCorr, 1, 0);
+	while (InterlockedAnd(&a->restcorr_bypass, 0xffffffff)) Sleep(1);
+	CloseHandle(a->Sem_RestCorr);
+	InterlockedBitTestAndSet(&a->calccorr_bypass, 0);
+	ReleaseSemaphore(a->Sem_CalcCorr, 1, 0);
+	while (InterlockedAnd(&a->calccorr_bypass, 0xffffffff)) Sleep(1);
+	CloseHandle(a->Sem_CalcCorr);
+	InterlockedBitTestAndSet(&a->turnoff_bypass, 0);
+	ReleaseSemaphore(a->Sem_TurnOff, 1, 0);
+	while (InterlockedAnd(&a->turnoff_bypass, 0xffffffff)) Sleep(1);
+	CloseHandle(a->Sem_TurnOff);
+
 	_aligned_free (a->temptx);																						// remove later
 	_aligned_free (a->temprx);																						// remove later
 	desize_calcc (a);
@@ -167,6 +230,7 @@ void destroy_calcc (CALCC a)
 	DeleteCriticalSection (&txa[a->channel].calcc.cs_update);
 	_aligned_free (a->binfo);
 	_aligned_free (a->info);
+
 	_aligned_free (a);
 }
 
@@ -174,322 +238,6 @@ void flush_calcc (CALCC a)
 {
 	flush_delay (a->rxdelay);
 	flush_delay (a->txdelay);
-}
-
-int fcompare (const void * a, const void * b)
-{
-	if (*(double*)a < *(double*)b)
-		return -1;
-	else if (*(double*)a == *(double*)b)
-		return 0;
-	else
-		return 1;
-}
-
-void decomp(int n, double *a, int *piv, int *info)
-{
-	int i, j, k;
-	int t_piv;
-	double m_row, mt_row, m_col, mt_col;
-	double *wrk = (double *)malloc0(n * sizeof(double));
-	*info = 0;
-	for (i = 0; i < n; i++)
-	{
-		piv[i] = i;
-		m_row = 0.0;
-		for (j = 0; j < n; j++)
-		{
-			mt_row = a[n * i + j];
-			if (mt_row < 0.0)  mt_row = - mt_row;
-			if (mt_row > m_row)  m_row = mt_row;
-		}
-		if (m_row == 0.0)
-		{
-			*info = i;
-			goto cleanup;
-		}
-		wrk[i] = m_row;
-	}
-	for (k = 0; k < n - 1; k++)
-	{
-		j = k;
-		m_col = a[n * piv[k] + k] / wrk[piv[k]];
-		if (m_col < 0)  m_col = - m_col;
-		for (i = k + 1; i < n; i++)
-		{
-			mt_col = a[n * piv[i] + k] / wrk[piv[k]];
-			if (mt_col < 0.0)  mt_col = - mt_col;
-			if (mt_col > m_col)
-			{
-				m_col = mt_col;
-				j = i;
-			}
-		}
-		if (m_col == 0)
-		{
-			*info = - k;
-			goto cleanup;
-		}
-		t_piv = piv[k];
-		piv[k] = piv[j];
-		piv[j] = t_piv;
-		for (i = k + 1; i < n; i++)
-		{
-			a[n * piv[i] + k] /= a[n * piv[k] + k];
-			for (j = k + 1; j < n; j++)
-				a[n * piv[i] + j] -= a[n * piv[i] + k] * a[n * piv[k] + j];
-		}
-	}
-	if (a[n * n - 1] == 0.0)
-		*info = - n;
-cleanup:
-	_aligned_free (wrk);
-}
-
-void dsolve(int n, double *a, int *piv, double *b, double *x)
-{
-	int j, k;
-	double sum;
-
-	for (k = 0; k < n; k++)
-	{
-		sum = 0.0;
-		for (j = 0; j < k; j++)
-			sum += a[n * piv[k] + j] * x[j];
-		x[k] = b[piv[k]] - sum;
-	}
-
-	for (k = n - 1; k >= 0; k--)
-	{
-		sum = 0.0;
-		for (j = k + 1; j < n; j++)
-			sum += a[n * piv[k] + j] * x[j];
-		x[k] = (x[k] - sum) / a[n * piv[k] + k];
-	}
-}
-
-void cull (int* n, int ints, double* x, double* t, double ptol)
-{
-	int k = 0;
-	int i = *n;	
-	int ntopint;
-	int npx;
-
-	while (x[i - 1] > t[ints - 1])
-		i--;
-	ntopint = *n - i;	
-	npx = (int)(ntopint * (1.0 - ptol));
-	i = *n;
-	while ((k < npx) && (x[--i] > t[ints]))
-		k++;
-	*n -= k;
-}
-
-void builder (int points, double *x, double *y, int ints, double *t, int *info, double *c, double ptol)
-{
-	double *catxy = (double *)malloc0(2 * points * sizeof(double));
-	double *sx =	(double *)malloc0(points * sizeof(double));
-	double *sy =	(double *)malloc0(points * sizeof(double));
-	double *h =		(double *)malloc0(ints * sizeof(double));
-	int *p =		(int *)   malloc0(ints * sizeof(int));
-	int *np =	    (int *)   malloc0(ints * sizeof(int));
-	double u, v, alpha, beta, gamma, delta;
-	double *taa =   (double *)malloc0(ints * sizeof(double));
-	double *tab =   (double *)malloc0(ints * sizeof(double));
-	double *tag =   (double *)malloc0(ints * sizeof(double));
-	double *tad =   (double *)malloc0(ints * sizeof(double));
-	double *tbb =   (double *)malloc0(ints * sizeof(double));
-	double *tbg =   (double *)malloc0(ints * sizeof(double));
-	double *tbd =   (double *)malloc0(ints * sizeof(double));
-	double *tgg =   (double *)malloc0(ints * sizeof(double));
-	double *tgd =   (double *)malloc0(ints * sizeof(double));
-	double *tdd =   (double *)malloc0(ints * sizeof(double));
-	int nsize = 3*ints + 1;
-	int intp1 = ints + 1;
-	int intm1 = ints - 1;
-	double *A =     (double *)malloc0(intp1 * intp1 * sizeof(double));
-	double *B =     (double *)malloc0(intp1 * intp1 * sizeof(double));
-	double *C =     (double *)malloc0(intm1 * intp1 * sizeof(double));
-	double *D =     (double *)malloc0(intp1 * sizeof(double));
-	double *E =     (double *)malloc0(intp1 * intp1 * sizeof(double));
-	double *F =     (double *)malloc0(intm1 * intp1 * sizeof(double));
-	double *G =     (double *)malloc0(intp1 * sizeof(double));
-	double *MAT =   (double *)malloc0(nsize * nsize * sizeof(double));
-	double *RHS =   (double *)malloc0(nsize * sizeof(double));
-	double *SLN =   (double *)malloc0(nsize * sizeof(double));
-	double *z =	    (double *)malloc0(intp1 * sizeof(double));
-	double *zp =    (double *)malloc0(intp1 * sizeof(double));
-	int i, j, k, m;
-	int dinfo;
-	int *ipiv =        (int *)malloc0(nsize * sizeof(int));
-
-	for (i = 0; i < points; i++)
-	{
-		catxy[2 * i + 0] = x[i];
-		catxy[2 * i + 1] = y[i];
-	}
-	qsort(catxy, points, 2 * sizeof(double), fcompare);
-	for (i = 0; i < points; i++)
-	{
-		sx[i] = catxy[2 * i + 0];
-		sy[i] = catxy[2 * i + 1];
-	}
-	cull (&points, ints, sx, t, ptol);
-	if (points <= 0 || sx[points - 1] > t[ints])
-	{
-		*info = -1000;
-		goto cleanup;
-	}
-	else *info = 0;
-
-	for(j = 0; j < ints; j++)
-		h[j] = t[j + 1] - t[j];
-	p[0] = 0;
-	j = 0;
-	for (i = 0; i < points; i++)
-	{
-		if(sx[i] <= t[j + 1])
-			np[j]++;
-		else
-		{
-			p[++j] = i;
-			while (sx[i] > t[j + 1])
-				p[++j] = i;
-			np[j] = 1;
-		}
-	}
-	for (i = 0; i < ints; i++)
-		for (j = p[i]; j < p[i] + np[i]; j++)
-		{
-			u = (sx[j] - t[i]) / h[i];
-			v = u - 1.0;
-			alpha = (2.0 * u + 1.0) * v * v;
-			beta = u * u * (1.0 - 2.0 * v);
-			gamma = h[i] * u * v * v;
-			delta = h[i] * u * u * v;
-			taa[i] += alpha * alpha;
-			tab[i] += alpha * beta;
-			tag[i] += alpha * gamma;
-			tad[i] += alpha * delta;
-			tbb[i] += beta * beta;
-			tbg[i] += beta * gamma;
-			tbd[i] += beta * delta;
-			tgg[i] += gamma * gamma;
-			tgd[i] += gamma * delta;
-			tdd[i] += delta * delta;
-			D[i + 0] += 2.0 * sy[j] * alpha;
-			D[i + 1] += 2.0 * sy[j] * beta;
-			G[i + 0] += 2.0 * sy[j] * gamma;
-			G[i + 1] += 2.0 * sy[j] * delta;
-		}
-	for (i = 0; i < ints; i++)
-	{
-		A[(i + 0) * intp1 + (i + 0)] += 2.0 * taa[i];
-		A[(i + 1) * intp1 + (i + 1)] =  2.0 * tbb[i];
-		A[(i + 0) * intp1 + (i + 1)] =  2.0 * tab[i];
-		A[(i + 1) * intp1 + (i + 0)] =  2.0 * tab[i];
-		B[(i + 0) * intp1 + (i + 0)] += 2.0 * tag[i];
-		B[(i + 1) * intp1 + (i + 1)] =  2.0 * tbd[i];
-		B[(i + 0) * intp1 + (i + 1)] =  2.0 * tbg[i];
-		B[(i + 1) * intp1 + (i + 0)] =  2.0 * tad[i];
-		E[(i + 0) * intp1 + (i + 0)] += 2.0 * tgg[i];
-		E[(i + 1) * intp1 + (i + 1)] =  2.0 * tdd[i];
-		E[(i + 0) * intp1 + (i + 1)] =  2.0 * tgd[i];
-		E[(i + 1) * intp1 + (i + 0)] =  2.0 * tgd[i];
-	}
-	for (i = 0; i < intm1; i++)
-	{
-		C[i * intp1 + (i + 0)] = +3.0 * h[i + 1] / h[i];
-		C[i * intp1 + (i + 2)] = -3.0 * h[i] / h[i + 1];
-		C[i * intp1 + (i + 1)] = -C[i * intp1 + (i + 0)] - C[i * intp1 + (i + 2)];
-		F[i * intp1 + (i + 0)] =  h[i + 1];
-		F[i * intp1 + (i + 1)] = 2.0 * (h[i] + h[i + 1]);
-		F[i * intp1 + (i + 2)] = h[i];
-	}
-	for (i = 0, k = 0; i < intp1; i++, k++)
-	{
-		for (j = 0, m = 0; j < intp1; j++, m++)
-			MAT[k*nsize + m] = A[i * intp1 + j];
-		for (j = 0, m = intp1; j < intp1; j++, m++)
-			MAT[k*nsize + m] = B[j * intp1 + i];
-		for (j = 0, m = 2 * intp1; j < intm1; j++, m++)
-			MAT[k*nsize + m] = C[j * intp1 + i];
-		RHS[k] = D[i];
-	}
-	for (i = 0, k = intp1; i < intp1; i++, k++)
-	{
-		for (j = 0, m = 0; j < intp1; j++, m++)
-			MAT[k*nsize + m] = B[i * intp1 + j];
-		for (j = 0, m = intp1; j < intp1; j++, m++)
-			MAT[k*nsize + m] = E[i * intp1 + j];
-		for (j = 0, m = 2 * intp1; j < intm1; j++, m++)
-			MAT[k*nsize + m] = F[j * intp1 + i];
-		RHS[k] = G[i];
-	}
-	for (i = 0, k = 2 * intp1; i < intm1; i++, k++)
-	{
-		for (j = 0, m = 0; j < intp1; j++, m++)
-			MAT[k*nsize + m] = C[i * intp1 + j];
-		for (j = 0, m = intp1; j < intp1; j++, m++)
-			MAT[k*nsize + m] = F[i * intp1 + j];
-		for (j = 0, m = 2 * intp1; j < intm1; j++, m++)
-			MAT[k*nsize + m] = 0.0;
-		RHS[k] = 0.0;
-	}
-	decomp(nsize, MAT, ipiv, &dinfo);
-	dsolve(nsize, MAT, ipiv, RHS, SLN);
-	if (dinfo != 0)
-	{
-		*info = dinfo;
-		goto cleanup;
-	}
-
-	for (i = 0; i <= ints; i++)
-	{
-		z[i] = SLN[i];
-		zp[i] = SLN[i + ints + 1];
-	}
-	for (i = 0; i < ints; i++)
-	{
-		c[4 * i + 0] = z[i];
-		c[4 * i + 1] = zp[i];
-		c[4 * i + 2] = -3.0 / (h[i] * h[i]) * (z[i] - z[i + 1]) - 1.0 / h[i] * (2.0 * zp[i] + zp[i + 1]);
-		c[4 * i + 3] = 2.0 / (h[i] * h[i] * h[i]) * (z[i] - z[i + 1]) + 1.0 / (h[i] * h[i]) * (zp[i] + zp[i + 1]);
-	}
-cleanup:
-	_aligned_free (ipiv);
-	_aligned_free (catxy);
-	_aligned_free (sx);
-	_aligned_free (sy);
-	_aligned_free (h);
-	_aligned_free (p);
-	_aligned_free (np);
-
-	_aligned_free (taa);
-	_aligned_free (tab);
-	_aligned_free (tag);
-	_aligned_free (tad);
-	_aligned_free (tbb);
-	_aligned_free (tbg);
-	_aligned_free (tbd);
-	_aligned_free (tgg);
-	_aligned_free (tgd);
-	_aligned_free (tdd);
-
-	_aligned_free (A);
-	_aligned_free (B);
-	_aligned_free (C);
-	_aligned_free (D);
-	_aligned_free (E);
-	_aligned_free (F);
-	_aligned_free (G);
-
-	_aligned_free (MAT);
-	_aligned_free (RHS);
-	_aligned_free (SLN);
-
-	_aligned_free (z);
-	_aligned_free (zp);
 }
 
 void scheck(CALCC a)
@@ -572,18 +320,11 @@ void rxscheck (int rints, double* tvec, double* coef, int* info)
 void calc (CALCC a)
 {
 	int i;
-	int tsamps = a->nsamps + a->npsamps;
-	double *env_TX =	(double *)malloc0(a->nsamps * sizeof(double));
-	double *env_RX =	(double *)malloc0(a->nsamps * sizeof(double));
-	double *x =			(double *)malloc0(   tsamps * sizeof(double));
-	double *ym =		(double *)malloc0(   tsamps * sizeof(double));
-	double *yc =		(double *)malloc0(   tsamps * sizeof(double));
-	double *ys =		(double *)malloc0(   tsamps * sizeof(double));
 	double norm;
 	for (i = 0; i < a->nsamps; i++)
 	{
-		env_TX[i] = sqrt (a->txs[2 * i + 0] * a->txs[2 * i + 0] + a->txs[2 * i + 1] * a->txs[2 * i + 1]);
-		env_RX[i] = sqrt (a->rxs[2 * i + 0] * a->rxs[2 * i + 0] + a->rxs[2 * i + 1] * a->rxs[2 * i + 1]);
+		a->env_TX[i] = sqrt (a->txs[2 * i + 0] * a->txs[2 * i + 0] + a->txs[2 * i + 1] * a->txs[2 * i + 1]);
+		a->env_RX[i] = sqrt (a->rxs[2 * i + 0] * a->rxs[2 * i + 0] + a->rxs[2 * i + 1] * a->rxs[2 * i + 1]);
 	}
 	{
 		int rints, ix;
@@ -597,7 +338,7 @@ void calc (CALCC a)
 		for (i = 0; i <= rints; i++)
 			tvec[i] = (double)i / (double)rints / a->hw_scale;
 		dx = tvec[rints] - tvec[rints - 1];
-		builder(a->nsamps, env_TX, env_RX, rints, tvec, &(a->binfo[0]), txrxcoefs, a->ptol);
+		xbuilder(a->ccbld, a->nsamps, a->env_TX, a->env_RX, rints, tvec, &(a->binfo[0]), txrxcoefs, a->ptol);
 		rxscheck (rints, tvec, txrxcoefs, &a->binfo[7]);
 		if ((a->binfo[0] == 0) && (a->binfo[7] == 0))
 			rx_scale = 1.0 / (txrxcoefs[4 * ix + 0] + dx * (txrxcoefs[4 * ix + 1] + dx * (txrxcoefs[4 * ix + 2] + dx * txrxcoefs[4 * ix + 3])));
@@ -621,31 +362,31 @@ void calc (CALCC a)
 		double max_rx;
 		for (i = 0; i < a->nsamps; i++)
 		{
-			max_rx = (1.0 - slope + slope * a->hw_scale * env_TX[i]) / a->rx_scale;
-			if (env_RX[i] > max_rx)
-				env_RX[i] = max_rx;
+			max_rx = (1.0 - slope + slope * a->hw_scale * a->env_TX[i]) / a->rx_scale;
+			if (a->env_RX[i] > max_rx)
+				a->env_RX[i] = max_rx;
 		}
 	}
 
 	for (i = 0; i < a->nsamps; i++)
 	{
-		norm = env_TX[i] * env_RX[i];
-		x[i]  = a->rx_scale * env_RX[i];
-		ym[i] = (a->hw_scale * env_TX[i]) / (a->rx_scale * env_RX[i]);
-		yc[i] = (+ a->txs[2 * i + 0] * a->rxs[2 * i + 0] + a->txs[2 * i + 1] * a->rxs[2 * i + 1]) / norm;
-		ys[i] = (- a->txs[2 * i + 0] * a->rxs[2 * i + 1] + a->txs[2 * i + 1] * a->rxs[2 * i + 0]) / norm;
+		norm = a->env_TX[i] * a->env_RX[i];
+		a->x[i]  = a->rx_scale * a->env_RX[i];
+		a->ym[i] = (a->hw_scale * a->env_TX[i]) / (a->rx_scale * a->env_RX[i]);
+		a->yc[i] = (+ a->txs[2 * i + 0] * a->rxs[2 * i + 0] + a->txs[2 * i + 1] * a->rxs[2 * i + 1]) / norm;
+		a->ys[i] = (- a->txs[2 * i + 0] * a->rxs[2 * i + 1] + a->txs[2 * i + 1] * a->rxs[2 * i + 0]) / norm;
 		if (a->stbl && _InterlockedAnd (&a->ctrl.running, 1) && a->scOK)
 		{
 			int k;
 			double dx, ymo, yco, yso;
-			if ((k = (int)(x[i] * a->ints)) > a->ints - 1) k = a->ints - 1;
-			dx = x[i] - a->t[k];
+			if ((k = (int)(a->x[i] * a->ints)) > a->ints - 1) k = a->ints - 1;
+			dx = a->x[i] - a->t[k];
 			ymo = a->cm[4 * k + 0] + dx * (a->cm[4 * k + 1] + dx * (a->cm[4 * k + 2] + dx * a->cm[4 * k + 3]));
 			yco = a->cc[4 * k + 0] + dx * (a->cc[4 * k + 1] + dx * (a->cc[4 * k + 2] + dx * a->cc[4 * k + 3]));
 			yso = a->cs[4 * k + 0] + dx * (a->cs[4 * k + 1] + dx * (a->cs[4 * k + 2] + dx * a->cs[4 * k + 3]));
-			ym[i] = a->alpha * ymo + (1.0 - a->alpha) * ym[i];
-			yc[i] = a->alpha * yco + (1.0 - a->alpha) * yc[i];
-			ys[i] = a->alpha * yso + (1.0 - a->alpha) * ys[i];
+			a->ym[i] = a->alpha * ymo + (1.0 - a->alpha) * a->ym[i];
+			a->yc[i] = a->alpha * yco + (1.0 - a->alpha) * a->yc[i];
+			a->ys[i] = a->alpha * yso + (1.0 - a->alpha) * a->ys[i];
 		}
 	}
 
@@ -653,48 +394,46 @@ void calc (CALCC a)
 	{
 		const double mval = 1.0e+00 - 1.0e-10;
 		double cval, sval;
-		double *cat = (double *)malloc0 (4 * a->nsamps * sizeof(double));
 		for (i = 0; i < a->nsamps; i++)
 		{
-			cat[4 * i + 0] = x[i];
-			cat[4 * i + 1] = ym[i];
-			cat[4 * i + 2] = yc[i];
-			cat[4 * i + 3] = ys[i];
+			a->cat[4 * i + 0] = a->x[i];
+			a->cat[4 * i + 1] = a->ym[i];
+			a->cat[4 * i + 2] = a->yc[i];
+			a->cat[4 * i + 3] = a->ys[i];
 		}
-		qsort(cat, a->nsamps, 4 * sizeof(double), fcompare);
+		qsort(a->cat, a->nsamps, 4 * sizeof(double), fcompare);
 		for (i = 0; i < a->nsamps; i++)
 		{
-			x[i]  = cat[4 * i + 0];
-			ym[i] = cat[4 * i + 1];
-			yc[i] = cat[4 * i + 2];
-			ys[i] = cat[4 * i + 3];
+			a->x[i]  = a->cat[4 * i + 0];
+			a->ym[i] = a->cat[4 * i + 1];
+			a->yc[i] = a->cat[4 * i + 2];
+			a->ys[i] = a->cat[4 * i + 3];
 		}
-		_aligned_free (cat);
 		cval = 0.0;
 		sval = 0.0;
 		for (i = a->nsamps - 1; i > a->nsamps - 17; i--)
 		{
-			cval += yc[i];
-			sval += ys[i];
+			cval += a->yc[i];
+			sval += a->ys[i];
 		}
 		cval /= 16.0;
 		sval /= 16.0;
-		for (i = a->nsamps; i < tsamps; i++)
+		for (i = a->nsamps; i < a->tsamps; i++)
 		{
-			x[i]  = mval;
-			ym[i] = mval;
-			yc[i] = cval;
-			ys[i] = sval;
+			a->x[i]  = mval;
+			a->ym[i] = mval;
+			a->yc[i] = cval;
+			a->ys[i] = sval;
 		}
-		builder (   tsamps, x, ym, a->ints, a->t, &(a->binfo[1]), a->cm, a->ptol);
-		builder (   tsamps, x, yc, a->ints, a->t, &(a->binfo[2]), a->cc, a->ptol);
-	    builder (   tsamps, x, ys, a->ints, a->t, &(a->binfo[3]), a->cs, a->ptol);
+		xbuilder(a->ccbld, a->tsamps, a->x, a->ym, a->ints, a->t, &(a->binfo[1]), a->cm, a->ptol);
+		xbuilder(a->ccbld, a->tsamps, a->x, a->yc, a->ints, a->t, &(a->binfo[2]), a->cc, a->ptol);
+		xbuilder(a->ccbld, a->tsamps, a->x, a->ys, a->ints, a->t, &(a->binfo[3]), a->cs, a->ptol);
 	}
 	else
 	{
-		builder (a->nsamps, x, ym, a->ints, a->t, &(a->binfo[1]), a->cm, a->ptol);
-		builder (a->nsamps, x, yc, a->ints, a->t, &(a->binfo[2]), a->cc, a->ptol);
-		builder (a->nsamps, x, ys, a->ints, a->t, &(a->binfo[3]), a->cs, a->ptol);
+		xbuilder(a->ccbld, a->nsamps, a->x, a->ym, a->ints, a->t, &(a->binfo[1]), a->cm, a->ptol);
+		xbuilder(a->ccbld, a->nsamps, a->x, a->yc, a->ints, a->t, &(a->binfo[2]), a->cc, a->ptol);
+		xbuilder(a->ccbld, a->nsamps, a->x, a->ys, a->ints, a->t, &(a->binfo[3]), a->cs, a->ptol);
 	}
 
 	if (a->pin)	// tune
@@ -718,10 +457,10 @@ void calc (CALCC a)
 	}
 
 	EnterCriticalSection (&a->disp.cs_disp);
-	memcpy(a->disp.x,  x,  a->nsamps * sizeof (double));
-	memcpy(a->disp.ym, ym, a->nsamps * sizeof (double));
-	memcpy(a->disp.yc, yc, a->nsamps * sizeof (double));
-	memcpy(a->disp.ys, ys, a->nsamps * sizeof (double));
+	memcpy(a->disp.x, a->x,  a->nsamps * sizeof (double));
+	memcpy(a->disp.ym, a->ym, a->nsamps * sizeof (double));
+	memcpy(a->disp.yc, a->yc, a->nsamps * sizeof (double));
+	memcpy(a->disp.ys, a->ys, a->nsamps * sizeof (double));
 	if (a->scOK)
 	{
 		memcpy(a->disp.cm, a->cm, a->ints * 4 * sizeof (double));
@@ -736,35 +475,43 @@ void calc (CALCC a)
 	}
 	LeaveCriticalSection (&a->disp.cs_disp);
 cleanup:
-	_aligned_free (x);
-	_aligned_free (ym);
-	_aligned_free (yc);
-	_aligned_free (ys);
-
-	_aligned_free (env_TX);
-	_aligned_free (env_RX);
+	return;
 }
 
-void __cdecl doCalcCorrection (void *arg)
+void __cdecl doPSCalcCorrection (void *arg)
 {
 	CALCC a = (CALCC)arg;
-	calc (a);
-	if (a->scOK)
+	while (!InterlockedAnd(&a->calccorr_bypass, 0xffffffff))
 	{
-		if (!InterlockedBitTestAndSet (&a->ctrl.running, 0))
-			SetTXAiqcStart (a->channel, a->cm, a->cc, a->cs);
-		else
-			SetTXAiqcSwap  (a->channel, a->cm, a->cc, a->cs);
+		WaitForSingleObject(a->Sem_CalcCorr, INFINITE);
+		if (!InterlockedAnd(&a->calccorr_bypass, 0xffffffff))
+		{
+			calc(a);
+			if (a->scOK)
+			{
+				if (!InterlockedBitTestAndSet(&a->ctrl.running, 0))
+					SetTXAiqcStart(a->channel, a->cm, a->cc, a->cs);
+				else
+					SetTXAiqcSwap(a->channel, a->cm, a->cc, a->cs);
+			}
+			InterlockedBitTestAndSet(&a->ctrl.calcdone, 0);
+		}
 	}
-	InterlockedBitTestAndSet (&a->ctrl.calcdone, 0);
-	_endthread();
+	InterlockedBitTestAndReset(&a->calccorr_bypass, 0);
 }
 
-void __cdecl doTurnoff (void *arg)
+void __cdecl doPSTurnoff (void *arg)
 {
 	CALCC a = (CALCC)arg;
-	SetTXAiqcEnd (a->channel);
-	_endthread();
+	while (!InterlockedAnd(&a->turnoff_bypass, 0xffffffff))
+	{
+		WaitForSingleObject(a->Sem_TurnOff, INFINITE);
+		if (!InterlockedAnd(&a->turnoff_bypass, 0xffffffff))
+		{
+			SetTXAiqcEnd(a->channel);
+		}
+	}
+	InterlockedBitTestAndReset(&a->turnoff_bypass, 0);
 }
 
 enum _calcc_state
@@ -781,61 +528,63 @@ enum _calcc_state
 	LTURNON
 };
 
-void __cdecl SaveCorrection (void *pargs)
+void __cdecl PSSaveCorrection (void *pargs)
 {
 	int i, k;
 	CALCC a = (CALCC)pargs;
-	double* pm = (double *)malloc0 (4 * a->util.ints * sizeof (double));
-	double* pc = (double *)malloc0 (4 * a->util.ints * sizeof (double));
-	double* ps = (double *)malloc0 (4 * a->util.ints * sizeof (double));
-	FILE* file = fopen(a->util.savefile, "w");
-	GetTXAiqcValues (a->util.channel, pm, pc, ps);
-	for (i = 0; i < a->util.ints; i++)
+	while (!InterlockedAnd(&a->savecorr_bypass, 0xffffffff))
 	{
-		for (k = 0; k < 4; k++)
-			fprintf (file, "%.17e\t", pm[4 * i + k]);
-		fprintf (file, "\n");
-		for (k = 0; k < 4; k++)
-			fprintf (file, "%.17e\t", pc[4 * i + k]);
-		fprintf (file, "\n");
-		for (k = 0; k < 4; k++)
-			fprintf (file, "%.17e\t", ps[4 * i + k]);
-		fprintf (file, "\n\n");
+		WaitForSingleObject(a->Sem_SaveCorr, INFINITE);
+		if (!InterlockedAnd(&a->savecorr_bypass, 0xffffffff))
+		{
+			FILE* file = fopen(a->util.savefile, "w");
+			GetTXAiqcValues(a->util.channel, a->util.pm, a->util.pc, a->util.ps);
+			for (i = 0; i < a->util.ints; i++)
+			{
+				for (k = 0; k < 4; k++)
+					fprintf(file, "%.17e\t", a->util.pm[4 * i + k]);
+				fprintf(file, "\n");
+				for (k = 0; k < 4; k++)
+					fprintf(file, "%.17e\t", a->util.pc[4 * i + k]);
+				fprintf(file, "\n");
+				for (k = 0; k < 4; k++)
+					fprintf(file, "%.17e\t", a->util.ps[4 * i + k]);
+				fprintf(file, "\n\n");
+			}
+			fflush(file);
+			fclose(file);
+		}
 	}
-	fflush (file);
-	fclose (file);
-	_aligned_free (ps);
-	_aligned_free (pc);
-	_aligned_free (pm);
-	_endthread();
+	InterlockedBitTestAndReset(&a->savecorr_bypass, 0);
 }
 
-void __cdecl RestoreCorrection(void *pargs)
+void __cdecl PSRestoreCorrection(void *pargs)
 {
 	int i, k;
 	CALCC a = (CALCC)pargs;
-	double* pm = (double *)malloc0 (4 * a->util.ints * sizeof (double));
-	double* pc = (double *)malloc0 (4 * a->util.ints * sizeof (double));
-	double* ps = (double *)malloc0 (4 * a->util.ints * sizeof (double));
-	FILE* file = fopen (a->util.restfile, "r");
-	for (i = 0; i < a->util.ints; i++)
+	while (!InterlockedAnd(&a->restcorr_bypass, 0xffffffff))
 	{
-		for (k = 0; k < 4; k++)
-			fscanf (file, "%le", &(pm[4 * i + k]));
-		for (k = 0; k < 4; k++)
-			fscanf (file, "%le", &(pc[4 * i + k]));
-		for (k = 0; k < 4; k++)
-			fscanf (file, "%le", &(ps[4 * i + k]));
+		WaitForSingleObject(a->Sem_RestCorr, INFINITE);
+		if (!InterlockedAnd(&a->restcorr_bypass, 0xffffffff))
+		{
+			FILE* file = fopen(a->util.restfile, "r");
+			for (i = 0; i < a->util.ints; i++)
+			{
+				for (k = 0; k < 4; k++)
+					fscanf(file, "%le", &(a->util.pm[4 * i + k]));
+				for (k = 0; k < 4; k++)
+					fscanf(file, "%le", &(a->util.pc[4 * i + k]));
+				for (k = 0; k < 4; k++)
+					fscanf(file, "%le", &(a->util.ps[4 * i + k]));
+			}
+			fclose(file);
+			if (!InterlockedBitTestAndSet(&a->ctrl.running, 0))
+				SetTXAiqcStart(a->channel, a->util.pm, a->util.pc, a->util.ps);
+			else
+				SetTXAiqcSwap(a->channel, a->util.pm, a->util.pc, a->util.ps);
+		}
 	}
-	fclose (file);
-	if (!InterlockedBitTestAndSet (&a->ctrl.running, 0))
-		SetTXAiqcStart (a->channel, pm, pc, ps);
-	else
-		SetTXAiqcSwap  (a->channel, pm, pc, ps);
-	_aligned_free (ps);
-	_aligned_free (pc);
-	_aligned_free (pm);
-	_endthread();
+	InterlockedBitTestAndReset(&a->restcorr_bypass, 0);
 }
 
 
@@ -871,8 +620,8 @@ void pscc (int channel, int size, double* tx, double* rx)
 				InterlockedExchange (&a->ctrl.current_state, LRESET);
 				a->ctrl.reset = 0;
 				if (!a->ctrl.turnon)
-					if (InterlockedBitTestAndReset (&a->ctrl.running, 0))
-						_beginthread (doTurnoff, 0, (void *)a);
+					if (InterlockedBitTestAndReset(&a->ctrl.running, 0))
+						ReleaseSemaphore(a->Sem_TurnOff, 1, 0);
 				a->info[14] = 0;
 				a->ctrl.env_maxtx = 0.0;
 				a->ctrl.bs_count = 0;
@@ -1007,7 +756,7 @@ void pscc (int channel, int size, double* tx, double* rx)
 				if (!a->ctrl.calcinprogress)	
 				{
 					a->ctrl.calcinprogress = 1;
-					_beginthread(doCalcCorrection, 0, (void *)a);
+					ReleaseSemaphore(a->Sem_CalcCorr, 1, 0);
 				}
 
 				if (InterlockedBitTestAndReset(&a->ctrl.calcdone, 0))
@@ -1096,7 +845,7 @@ void PSSaveCorr (int channel, char* filename)
 	EnterCriticalSection (&txa[channel].calcc.cs_update);
 	a = txa[channel].calcc.p;
 	while (a->util.savefile[i++] = *filename++);
-	_beginthread(SaveCorrection, 0, (void *)a);
+	ReleaseSemaphore(a->Sem_SaveCorr, 1, 0);
 	LeaveCriticalSection (&txa[channel].calcc.cs_update);
 }
 
@@ -1109,7 +858,7 @@ void PSRestoreCorr (int channel, char* filename)
 	a = txa[channel].calcc.p;
 	while (a->util.restfile[i++] = *filename++);
 	a->ctrl.turnon = 1;
-	_beginthread(RestoreCorrection, 0, (void *)a);
+	ReleaseSemaphore(a->Sem_RestCorr, 1, 0);
 	LeaveCriticalSection (&txa[channel].calcc.cs_update);
 }
 
