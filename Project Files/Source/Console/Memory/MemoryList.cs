@@ -61,6 +61,12 @@ namespace Thetis
             }
         }
 
+        private static string app_data_path = "";
+        public static string AppDataPath
+        {
+            set { app_data_path = value; }
+        }
+
         private static int current_major_version = 1;
         private int major_version = 1;        
         public int MajorVersion
@@ -106,7 +112,7 @@ namespace Thetis
         //======================================================================================================================
         public void Save()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\";
+            string path = app_data_path; // Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\";
             string file_name = path + "memory.xml";
 
             Save(file_name);
@@ -116,7 +122,7 @@ namespace Thetis
         //======================================================================================================================
         public static MemoryList Restore()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\";
+            string path = app_data_path; // Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\";
             string file_name = path + "memory.xml";
             string bak_file_name = path + "memory_bak.xml";
 

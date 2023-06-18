@@ -99,7 +99,7 @@ namespace Thetis
             console = c;
             if (!Directory.Exists(wave_folder))
             {
-                // create PowerSDR audio folder if it does not exist
+                // create Thetis audio folder if it does not exist
                 Directory.CreateDirectory(wave_folder);
             }
             // openFileDialog1.InitialDirectory = console.AppDataPath;
