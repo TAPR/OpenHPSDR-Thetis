@@ -248,6 +248,24 @@ namespace Thetis
         #region Properties
 
         /// <summary>
+        /// Determine if any devices exist
+        /// </summary>
+        public bool HasDevices
+        {
+            get
+            {
+                try
+                {
+                    return GetDeviceCount() != 0;
+                }
+                catch (UsbRelayStatusException)
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Device Count
         /// </summary>
         public int DeviceCount

@@ -26792,7 +26792,7 @@ namespace Thetis
                 {
                     _usbbcddevices = new UsbBCDDevices();
 
-                    if (_usbbcddevices.DeviceCount != 0)
+                    if (_usbbcddevices.HasDevices)
                     {
                         foreach (string device in _usbbcddevices.DeviceSerialNumbers)
                         {
@@ -26824,7 +26824,7 @@ namespace Thetis
             {
                 if (_usbbcddevices != null)
                 {
-                    if (_usbbcddevices.DeviceCount != 0) _usbbcddevices.SetRelays(_usbdevicesn, 0);                   
+                    if (_usbbcddevices.HasDevices) _usbbcddevices.SetRelays(_usbdevicesn, 0);                   
                     _usbbcddevices.CloseDevice(_usbdevicesn);
                     _usbbcddevices = null;
                     _usbdevicesn = "";
