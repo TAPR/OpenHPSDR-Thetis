@@ -686,7 +686,7 @@ namespace Thetis
 
                         if (dr == DialogResult.Yes)
                         {
-                            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                            //string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                             string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" +
                                 DateTime.Now.ToShortTimeString().Replace(":", ".");
 
@@ -706,7 +706,7 @@ namespace Thetis
                 {
                     if (!DB.Init()) // Init throws an exception on reading XML files that are too corrupted for DataSet.ReadXml to handle.
                     {
-                        string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                       // string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                         string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" +
                             DateTime.Now.ToShortTimeString().Replace(":", ".");
 
@@ -776,7 +776,7 @@ namespace Thetis
                             else  // Not yet ready for trying an automatic merge - get set up for it
                             {
                                 // Archive the old database file and reset database
-                                string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                               // string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                                 string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" +
                                     DateTime.Now.ToShortTimeString().Replace(":", ".");
 
@@ -13008,6 +13008,8 @@ namespace Thetis
             {
                 app_data_path = value;
                 Skin.AppDataPath = value;
+                MemoryList.AppDataPath = value;
+                DXMemList.AppDataPath = value;
             }
         }
 

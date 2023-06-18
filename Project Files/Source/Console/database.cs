@@ -1407,6 +1407,7 @@ namespace Thetis
 								18.900000, 19.020000, "15M Short Wave",			false,
 								21.450000, 21.850000, "13M Short Wave",			false,
 								25.600000, 26.100000, "11M Short Wave",			false,
+                                26.330000, 27.865000, "11M Band",               true
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -9687,6 +9688,7 @@ namespace Thetis
                     //MW0LGE_21d BandStack2 AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion2BandText();
+                    AddBandTextSWB();
                     break;
 
                 case FRSRegion.Japan:

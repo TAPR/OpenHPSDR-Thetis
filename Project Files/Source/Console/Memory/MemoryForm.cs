@@ -252,14 +252,14 @@ namespace Thetis
             //----------------------------------------------------------------------------------
             ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
 
-            if (!Directory.Exists(wave_folder))
-            {
+          //  if (!Directory.Exists(wave_folder))
+           // {
                 // create PowerSDR audio folder if it does not exist
-                Directory.CreateDirectory(wave_folder);
-            }
+             //   Directory.CreateDirectory(wave_folder);
+           // }
             // openFileDialog1.InitialDirectory = console.AppDataPath;
-            openFileDialog1.InitialDirectory = String.Empty;
-            openFileDialog1.InitialDirectory = wave_folder;
+           // openFileDialog1.InitialDirectory = String.Empty;
+           // openFileDialog1.InitialDirectory = wave_folder;
 
 
 
@@ -1381,14 +1381,14 @@ namespace Thetis
         } // thread SCHEDULER() 
 
      
-        private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Thetis";
+      //  private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Thetis";
 
         private void buttonTS1_Click(object sender, EventArgs e)
         {
-            string argument = @"/root," + wave_folder;
-            Debug.WriteLine("path===:" + wave_folder);
+           // string argument = @"/root," + wave_folder;
+           // Debug.WriteLine("path===:" + wave_folder);
 
-            System.Diagnostics.Process.Start("explorer.exe", argument);
+          //  System.Diagnostics.Process.Start("explorer.exe", argument);
 
           //  Debug.WriteLine("WaveControl.scheduleName " + WaveControl.scheduleName);
           //  WaveToMP3(WaveControl.scheduleName, WaveControl.scheduleName1, 128);
