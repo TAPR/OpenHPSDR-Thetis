@@ -23929,7 +23929,7 @@ namespace Thetis
                     case MeterTXMode.REVERSE_POWER:
                         if (alexpresent || apollopresent) num = Math.Round(num);
 
-                        if (alexpresent && ((current_hpsdr_model == HPSDRModel.ORIONMKII || current_hpsdr_model == HPSDRModel.ANAN8000D) && tx_xvtr_index < 0))
+                        if (alexpresent && ((current_hpsdr_model == HPSDRModel.ORIONMKII || current_hpsdr_model == HPSDRModel.ANAN8000D || current_hpsdr_model == HPSDRModel.ANAN_G2) && tx_xvtr_index < 0))
                         {
                             if (bDrawMarkers)
                             {
