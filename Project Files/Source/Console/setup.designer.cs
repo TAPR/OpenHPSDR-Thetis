@@ -7585,7 +7585,9 @@
             "ANAN-100D",
             "ANAN-200D",
             "ANAN-7000DLE",
-            "ANAN-8000DLE"});
+            "ANAN-8000DLE",
+            "ANAN-G2",          //G8NJJ
+            "ANAN-G2-1K"});     //G8NJJ
             this.comboRadioModel.Location = new System.Drawing.Point(11, 25);
             this.comboRadioModel.Name = "comboRadioModel";
             this.comboRadioModel.Size = new System.Drawing.Size(136, 23);

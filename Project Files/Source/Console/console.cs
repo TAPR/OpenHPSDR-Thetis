@@ -7184,6 +7184,8 @@ namespace Thetis
                     watts = PowerKernel(watts, interval, entries, ANAN100DCal);
                     break;
                 case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN_G2:                // G8NJJ
+                case HPSDRModel.ANAN_G2_1K:             // G8NJJ
                     interval = 10.0f;
                     break;
                 case HPSDRModel.ANAN8000D:
@@ -7352,7 +7354,7 @@ namespace Thetis
 
         public void SetAlexHPF(double freq)
         {
-            if (CurrentHPSDRHardware == HPSDRHW.OrionMKII) SetBPF1(freq);
+            if ((CurrentHPSDRHardware == HPSDRHW.OrionMKII) || (CurrentHPSDRHardware == HPSDRHW.Saturn)) SetBPF1(freq);     //G8NJJ
             else
             {
                 if (alexpresent && !initializing)
@@ -8734,6 +8736,8 @@ namespace Thetis
                 case HPSDRModel.ORIONMKII:
                 case HPSDRModel.ANAN7000D:
                 case HPSDRModel.ANAN8000D:
+                case HPSDRModel.ANAN_G2:
+                case HPSDRModel.ANAN_G2_1K:
                     P1_rxcount = 5;                     // RX5 used for puresignal feedback
                     nddc = 5;
                     if (!mox)
@@ -8991,7 +8995,8 @@ namespace Thetis
                 {
                     case HPSDRHW.Angelia: // ANAN-100D
                     case HPSDRHW.Orion: // ANAN-200D
-                    case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+                    case HPSDRHW.OrionMKII: // ANAN-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+                    case HPSDRHW.Saturn:        // ANAN-G2, G21K    (G8NJJ)
                         switch (tot)
                         {
                             case 0: // off[2] off[1] off[0]
@@ -9084,7 +9089,8 @@ namespace Thetis
                 {
                     case HPSDRHW.Angelia: // ANAN-100D (all 5 adc)
                     case HPSDRHW.Orion: // ANAN-200D
-                    case HPSDRHW.OrionMKII: // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+                    case HPSDRHW.OrionMKII: // ANAN-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+                                            // (note Saturn would only be used with P2, so not added here)
                         switch (tot)
                         {
                             case 0: // off off off
@@ -10762,7 +10768,9 @@ namespace Thetis
                 current_hpsdr_model != HPSDRModel.ANAN10E &&
                 current_hpsdr_model != HPSDRModel.ANAN7000D &&
                 current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                current_hpsdr_model != HPSDRModel.ORIONMKII)
+                current_hpsdr_model != HPSDRModel.ORIONMKII &&
+                current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                current_hpsdr_model != HPSDRModel.ANAN_G2_1K)
             {
                 RX1PreampMode = PreampMode.HPSDR_MINUS10; //-10dB
                 Thread.Sleep(100);
@@ -12254,7 +12262,9 @@ namespace Thetis
                     current_hpsdr_model != HPSDRModel.ANAN10E &&
                     current_hpsdr_model != HPSDRModel.ANAN7000D &&
                     current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                    current_hpsdr_model != HPSDRModel.ORIONMKII)
+                    current_hpsdr_model != HPSDRModel.ORIONMKII &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K)
                     udRX1StepAttData.Maximum = (decimal)61;
                 else udRX1StepAttData.Maximum = (decimal)31;
 
@@ -12272,7 +12282,9 @@ namespace Thetis
                         current_hpsdr_model != HPSDRModel.ANAN10E &&
                         current_hpsdr_model != HPSDRModel.ANAN7000D &&
                         current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                        current_hpsdr_model != HPSDRModel.ORIONMKII)
+                        current_hpsdr_model != HPSDRModel.ORIONMKII  &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2_1K)
                     {
                         if (rx1_attenuator_data <= 31)
                         {
@@ -12417,7 +12429,9 @@ namespace Thetis
                     current_hpsdr_model != HPSDRModel.ANAN10E &&
                     current_hpsdr_model != HPSDRModel.ANAN7000D &&
                     current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                    current_hpsdr_model != HPSDRModel.ORIONMKII)
+                    current_hpsdr_model != HPSDRModel.ORIONMKII &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K)
                     udRX2StepAttData.Maximum = (decimal)61; //MW0LGE_[2.9.0.7]  changed to udRX2
                 else udRX2StepAttData.Maximum = (decimal)31;
 
@@ -12435,7 +12449,9 @@ namespace Thetis
                         current_hpsdr_model != HPSDRModel.ANAN10E &&
                         current_hpsdr_model != HPSDRModel.ANAN7000D &&
                         current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                        current_hpsdr_model != HPSDRModel.ORIONMKII)
+                        current_hpsdr_model != HPSDRModel.ORIONMKII &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2_1K)
                     {
                         if (rx2_attenuator_data <= 31)
                         {
@@ -12918,7 +12934,9 @@ namespace Thetis
                         current_hpsdr_model != HPSDRModel.ANAN200D &&
                         current_hpsdr_model != HPSDRModel.ORIONMKII &&
                         current_hpsdr_model != HPSDRModel.ANAN7000D &&
-                        current_hpsdr_model != HPSDRModel.ANAN8000D) return;
+                        current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2_1K) return;
                     if (diversityForm == null || diversityForm.IsDisposed)
                         diversityForm = new DiversityForm(this);
                     diversityForm.Focus();
@@ -13545,6 +13563,8 @@ namespace Thetis
                     current_hpsdr_model != HPSDRModel.ORIONMKII &&
                     current_hpsdr_model != HPSDRModel.ANAN7000D &&
                     current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
                     !rx2_preamp_present || mox)
                     Display.RX2PreampOffset = rx1_attenuator_data;
             }
@@ -13557,6 +13577,8 @@ namespace Thetis
                     current_hpsdr_model != HPSDRModel.ORIONMKII &&
                     current_hpsdr_model != HPSDRModel.ANAN7000D &&
                     current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
                     !rx2_preamp_present)
                     Display.RX2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
             }
@@ -13638,6 +13660,8 @@ namespace Thetis
                     current_hpsdr_model != HPSDRModel.ORIONMKII &&
                     current_hpsdr_model != HPSDRModel.ANAN7000D &&
                     current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
                     !rx2_preamp_present)
                     Display.RX2PreampOffset = rx1_attenuator_data;
             }
@@ -13650,6 +13674,8 @@ namespace Thetis
                     current_hpsdr_model != HPSDRModel.ORIONMKII &&
                     current_hpsdr_model != HPSDRModel.ANAN7000D &&
                     current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
                     !rx2_preamp_present)
                     Display.RX2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
             }
@@ -16320,6 +16346,24 @@ namespace Thetis
                         NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.OrionMKII;
                         break;
+                    case HPSDRModel.ANAN_G2:
+                        chkDX.Visible = true;
+                        rx2_preamp_present = true;
+                        NetworkIO.SetRxADC(2);
+                        NetworkIO.SetMKIIBPF(1);
+                        cmaster.SetADCSupply(0, 50);
+                        NetworkIO.LRAudioSwap(0);
+                        CurrentHPSDRHardware = HPSDRHW.Saturn;
+                        break;
+                    case HPSDRModel.ANAN_G2_1K:             // G8NJJ: likely to need further changes for PA
+                        chkDX.Visible = true;
+                        rx2_preamp_present = true;
+                        NetworkIO.SetRxADC(2);
+                        NetworkIO.SetMKIIBPF(1);
+                        cmaster.SetADCSupply(0, 50);
+                        NetworkIO.LRAudioSwap(0);
+                        CurrentHPSDRHardware = HPSDRHW.Saturn;
+                        break;
 
                 }
 
@@ -16337,6 +16381,8 @@ namespace Thetis
                     case HPSDRModel.ORIONMKII:
                     case HPSDRModel.ANAN7000D:
                     case HPSDRModel.ANAN8000D:
+                    case HPSDRModel.ANAN_G2:
+                    case HPSDRModel.ANAN_G2_1K:
                         if (!comboMeterTXMode.Items.Contains("Ref Pwr"))
                             comboMeterTXMode.Items.Insert(1, "Ref Pwr");
                         if (!comboMeterTXMode.Items.Contains("SWR"))
@@ -16974,7 +17020,9 @@ namespace Thetis
 
             if (current_hpsdr_model == HPSDRModel.ORIONMKII ||
                 current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                current_hpsdr_model == HPSDRModel.ANAN8000D)
+                current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
             {
                 SetAlex2HPF(rx2_dds_freq_mhz);
             }
@@ -20384,7 +20432,8 @@ namespace Thetis
                 double freq = Double.Parse(txtVFOAFreq.Text);
                 double freq2 = Double.Parse(txtVFOBFreq.Text);
                 SetAlexHPF(freq);
-                if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
+                if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                    current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
                 {
                     SetAlex2HPF(freq2);
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -21120,7 +21169,9 @@ namespace Thetis
                     current_hpsdr_model == HPSDRModel.ANAN200D ||
                     current_hpsdr_model == HPSDRModel.ORIONMKII ||
                     current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                    current_hpsdr_model == HPSDRModel.ANAN8000D))
+                    current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                    current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                    current_hpsdr_model == HPSDRModel.ANAN_G2_1K))
                 {
                     //NetworkIO.SetADC2StepAttenData(rx2_att_value);
                     if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_att_value);
@@ -23154,6 +23205,8 @@ namespace Thetis
                             current_hpsdr_model == HPSDRModel.ORIONMKII ||
                             current_hpsdr_model == HPSDRModel.ANAN7000D ||
                             current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                            current_hpsdr_model == HPSDRModel.ANAN_G2 || 
+                            current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
                             rx2_preamp_present)
                         {
                             if (rx2_step_att_present)
@@ -23173,7 +23226,8 @@ namespace Thetis
                         rx2_meter_cal_offset +
                         rx2PreampOffset +
                         rx2_xvtr_gain_offset;
-                        if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D) num += rx2_6m_gain_offset;
+                        if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) num += rx2_6m_gain_offset;
 
                         if (num > _avNumRX2) // quick rise
                             num = _avNumRX2 = num * 0.8f + _avNumRX2 * 0.2f;
@@ -27242,6 +27296,8 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ORIONMKII ||
                         current_hpsdr_model == HPSDRModel.ANAN7000D ||
                         current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
                         rx2_preamp_present)
                     {
                         if (rx2_step_att_present)
@@ -27275,7 +27331,8 @@ namespace Thetis
                               rx2_meter_cal_offset + // MW0LGE was rx1_meter_cal_offset
                               rx2PreampOffset +
                               rx2_xvtr_gain_offset;
-                            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D) num += rx2_6m_gain_offset;
+                            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                                current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) num += rx2_6m_gain_offset;
                             rx2_meter_new_data = num;
                             break;
                         case MeterRXMode.SIGNAL_AVERAGE:
@@ -27284,7 +27341,8 @@ namespace Thetis
                             rx2_meter_cal_offset + // MW0LGE was rx1_meter_cal_offset
                             rx2PreampOffset +
                             rx2_xvtr_gain_offset;
-                            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D) num += rx2_6m_gain_offset;
+                            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                                current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) num += rx2_6m_gain_offset;
                             rx2_meter_new_data = num;
                             break;
                         case MeterRXMode.ADC_L:
@@ -27339,6 +27397,7 @@ namespace Thetis
             // old method ran ~100ms of volts and ~100ms of amps, then waited 600ms, total time for 100 readings of each = 800ms
             // new method takes two readings every 8ms into a threadsafe fifo queue, so those 100 of each will be spread over 800ms
             // MW0LGE [2.9.0.7] changed volts to 150
+            //G8NJJ need similar code for Saturn here, but rates from Ssaturn will be different
             while (chkPower.Checked && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D))
             {
                 _voltsQueue.Enqueue(NetworkIO.getUserADC0());
@@ -27518,6 +27577,8 @@ namespace Thetis
                     adc_cal_offset = 2;
                     break;
                 case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN_G2:
+                case HPSDRModel.ANAN_G2_1K:                 // will need to be edited for scaling
                     bridge_volt = 0.15f;
                     if (tx_band == Band.B6M)
                         bridge_volt = 0.7f;
@@ -27596,6 +27657,8 @@ namespace Thetis
                     adc_cal_offset = 4;
                     break;
                 case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN_G2:
+                case HPSDRModel.ANAN_G2_1K:             // !K will need different scaling
                     bridge_volt = 0.12f;
                     refvoltage = 5.0f;
                     adc_cal_offset = 32;
@@ -28201,7 +28264,9 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ANAN200D ||
                         current_hpsdr_model == HPSDRModel.ORIONMKII ||
                         current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                        current_hpsdr_model == HPSDRModel.ANAN8000D)
+                        current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
                     {
                         SetupForm.RX2EnableAtt = old_rx2_satt;
                         SetupForm.HermesAttenuatorDataRX2 = old_rx2_satt_data; //MW0LGE_21d atten
@@ -28225,7 +28290,9 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ANAN200D ||
                         current_hpsdr_model == HPSDRModel.ORIONMKII ||
                         current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                        current_hpsdr_model == HPSDRModel.ANAN8000D)
+                        current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
                     {
                         old_rx2_satt = SetupForm.RX2EnableAtt;// RX2StepAttPresent;
                         old_rx2_satt_data = SetupForm.HermesAttenuatorDataRX2;// MW0LGE_21d atten          rx2_attenuator_data;// RX2AttenuatorData;
@@ -28257,7 +28324,8 @@ namespace Thetis
                     else 
                     {
                         // protocol 2
-                        if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
+                        if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
                             inhibit_input = NetworkIO.getUserI05_p2(); // bit[1] of byte 59 from the HPSP 1025 packet
                         else
                             inhibit_input = NetworkIO.getUserI04_p2(); // bit[0] of byte 59 from the HPSP 1025 packet
@@ -28855,6 +28923,8 @@ namespace Thetis
                         case HPSDRModel.ORIONMKII:
                         case HPSDRModel.ANAN7000D:
                         case HPSDRModel.ANAN8000D:
+                        case HPSDRModel.ANAN_G2:
+                        case HPSDRModel.ANAN_G2_1K:
                             drivepwr = computeOrionMkIIExciterPower();
                             break;
                         default:
@@ -28981,7 +29051,8 @@ namespace Thetis
 
             computeMKIIPAVoltsAmps(); //MW0LGE_21k9c
 
-            if ((current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D) && ANAN8000DLEDisplayVoltsAmps)
+            if ((current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                 current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) && ANAN8000DLEDisplayVoltsAmps)
             {
                 if (!toolStripStatusLabel_Volts.Visible) toolStripStatusLabel_Volts.Visible = true;
                 if (!toolStripStatusLabel_Amps.Visible) toolStripStatusLabel_Amps.Visible = true;
@@ -30631,7 +30702,8 @@ namespace Thetis
                     poll_tx_inhibit_thead.Start();
                 }
 
-                if ((display_volts_amps_thead == null || !display_volts_amps_thead.IsAlive) && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D))
+                if ((display_volts_amps_thead == null || !display_volts_amps_thead.IsAlive) && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                    current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K))
                 {
                     display_volts_amps_thead = new Thread(new ThreadStart(readMKIIPAVoltsAmps))
                     {
@@ -34403,7 +34475,9 @@ namespace Thetis
             if (current_hpsdr_model == HPSDRModel.ANAN200D ||
                  current_hpsdr_model == HPSDRModel.ORIONMKII ||
                  current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                 current_hpsdr_model == HPSDRModel.ANAN8000D) UpdateDDCs(rx2_enabled);// UpdateRXADCCtrl();
+                 current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                 current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                 current_hpsdr_model == HPSDRModel.ANAN_G2_1K) UpdateDDCs(rx2_enabled);// UpdateRXADCCtrl();
 
             double freq = m_dVFOAFreq;
 
@@ -34869,7 +34943,8 @@ namespace Thetis
                 }
             }
 
-            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
+            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
             {
                 if (alexpresent && rx1_band == Band.B6M && // chksr button was hidden and always unchecked. This has become the 2TON button MW0LGE_21a
                    (/*chkSR.Checked || */(/*!chkSR.Checked && */!disable_6m_lna_on_rx && !bpf1_6bp_bypass && !alex_hpf_bypass)))
@@ -35433,7 +35508,8 @@ namespace Thetis
 
             double freq = m_dVFOBFreq;
 
-            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
+            if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
             {
                 if (alexpresent && rx2_band == Band.B6M && // chkSR2 button was hidden and always unchecked. This has become the 2TON button MW0LGE_21a
                    (/*chkSR2.Checked || */(/*!chkSR2.Checked && */!disable_6m_lna_on_rx && !alex26bphpf_bypass && !alex2_hpf_bypass)))
@@ -47808,13 +47884,16 @@ namespace Thetis
                 case HPSDRModel.ANAN7000D:
                 case HPSDRModel.ANAN8000D:
                 case HPSDRModel.ORIONMKII:
+                case HPSDRModel.ANAN_G2:
+                case HPSDRModel.ANAN_G2_1K:
                     comboPreamp.Items.AddRange(anan100d_preamp_settings);
                     break;
             }
 
             comboRX2Preamp.Items.Clear();
             if (current_hpsdr_model == HPSDRModel.ANAN100D || current_hpsdr_model == HPSDRModel.ANAN200D || current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                current_hpsdr_model == HPSDRModel.ANAN8000D || current_hpsdr_model == HPSDRModel.ORIONMKII)
+                current_hpsdr_model == HPSDRModel.ANAN8000D || current_hpsdr_model == HPSDRModel.ORIONMKII ||
+                current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
                 comboRX2Preamp.Items.AddRange(anan100d_preamp_settings);
             else
                 comboRX2Preamp.Items.AddRange(on_off_preamp_settings);
@@ -54426,7 +54505,7 @@ namespace Thetis
         private void enableAudioAmplfier(bool bEnable)
         {
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH &&
-                (CurrentHPSDRModel == HPSDRModel.ANAN7000D || CurrentHPSDRModel == HPSDRModel.ANAN8000D))
+                (CurrentHPSDRModel == HPSDRModel.ANAN7000D || CurrentHPSDRModel == HPSDRModel.ANAN8000D))           // G8NJJ not adding Saturn in this list just yet
             {
                 NetworkIO.SetAudioAmpEnable(_bEnableAudioAmplifier);
             }
@@ -54448,6 +54527,11 @@ namespace Thetis
                     case HPSDRModel.ORIONMKII:
                         rx_meter_cal_offset_by_radio[i] = 4.841644f;
                         rx_display_cal_offset_by_radio[i] = 5.259f;
+                        break;
+                    case HPSDRModel.ANAN_G2:
+                    case HPSDRModel.ANAN_G2_1K:
+                        rx_meter_cal_offset_by_radio[i] = -4.476f;
+                        rx_display_cal_offset_by_radio[i] = -4.4005f;
                         break;
                     default:
                         rx_meter_cal_offset_by_radio[i] = 0.98f;
@@ -54616,6 +54700,8 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ORIONMKII ||
                         current_hpsdr_model == HPSDRModel.ANAN7000D ||
                         current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
                         rx2_preamp_present)
                     {
                         if (rx2_step_att_present)
@@ -54631,7 +54717,8 @@ namespace Thetis
                             offset = rx1_preamp_offset[(int)rx1_preamp_mode];
                     }
                     offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset;
-                    if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D) offset += rx2_6m_gain_offset;
+                    if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                        current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) offset += rx2_6m_gain_offset;
 
                     // get all readings
                     if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH)) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;

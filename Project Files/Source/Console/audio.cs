@@ -1800,7 +1800,10 @@ namespace Thetis
             {
                 console.SampleRateTX = 192000;
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
-                puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
+                if(console.CurrentHPSDRHardware == HPSDRHW.Saturn)                              // G8NJJ
+                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
+                else
+                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
                 //console.psform.PSdefpeak = "0.2899";
             }
 
@@ -1811,7 +1814,6 @@ namespace Thetis
                 console.psform.SetDefaultPeaks(true);
                 _lastRadioProtocol = NetworkIO.CurrentRadioProtocol;
             }            
-
             c.SetupForm.InitAudioTab();
             c.SetupForm.ForceAudioReset();
             cmaster.PSLoopback = cmaster.PSLoopback;
