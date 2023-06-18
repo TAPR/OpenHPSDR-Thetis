@@ -429,7 +429,7 @@ namespace Thetis
         public void CloseDevice(string serialNumber)
         {
             if (_device.IsOpen) _status = _device.Close();
-            _relays[serialNumber].CloseDevice();
+            if (serialNumber != null && _relays.Count() != 0) _relays[serialNumber].CloseDevice();
         }
 
         public void ResetDevice()
