@@ -572,6 +572,7 @@ namespace Thetis
             console.MoxChangeHandlers += OnMoxChangeHandler;
             console.TXBandChangeHandlers += OnTXBandChanged;
             console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
+            console.TXInhibitChangedHandlers += OnTXInhibit;
 
             _bAddedDelegates = true;
         }
@@ -583,8 +584,15 @@ namespace Thetis
             console.MoxChangeHandlers -= OnMoxChangeHandler;
             console.TXBandChangeHandlers -= OnTXBandChanged;
             console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
+            console.TXInhibitChangedHandlers -= OnTXInhibit;
 
             _bAddedDelegates = false;
+        }
+        private void OnTXInhibit(bool oldState, bool newState)
+        {
+            if(TestIMD && newState) TestIMD = false; // return button state etc
+
+            chkTestIMD.Enabled = !newState;
         }
         private void OnRX2EnabledChanged(bool enabled)
         {
@@ -17814,12 +17822,12 @@ namespace Thetis
 
         private void chkTXInhibit_CheckedChanged(object sender, EventArgs e)
         {
-            console.tx_inhibit_enabled = chkTXInhibit.Checked;
+            //console.tx_inhibit_enabled = chkTXInhibit.Checked; //not used
         }
 
         private void chkTXInhibitSense_CheckedChanged(object sender, EventArgs e)
         {
-            console.tx_inhibit_sense = chkTXInhibitSense.Checked;
+            //console.tx_inhibit_sense = chkTXInhibitSense.Checked; //not used
         }
 
         private void udTXGenPulseFreq_ValueChanged(object sender, EventArgs e)

@@ -16933,29 +16933,33 @@ namespace Thetis
             }
         }
 
-        public bool tx_inhibit_enabled = false;
-        public bool tx_inhibit_sense = false;
-        private bool tx_inhibit = false;
+        //public bool tx_inhibit_enabled = false; // not used
+        //public bool tx_inhibit_sense = false; // not used
+        private bool _tx_inhibit = false;
         public bool TXInhibit
         {
-            get { return tx_inhibit; }
+            get { return _tx_inhibit; }
             set
             {
-                tx_inhibit = value;
+                _tx_inhibit = value;
                 if (rx1_dsp_mode != DSPMode.SPEC &&
                     rx1_dsp_mode != DSPMode.DRM &&
                     chkPower.Checked)
-                    chkMOX.Enabled = !tx_inhibit;
-                chkTUN.Enabled = !tx_inhibit;
-                chk2TONE.Enabled = !tx_inhibit; //MW0LGE_21a
-                chkVOX.Enabled = !tx_inhibit;
+                    chkMOX.Enabled = !_tx_inhibit;
+                
+                chkTUN.Enabled = !_tx_inhibit;
+                chk2TONE.Enabled = !_tx_inhibit; //MW0LGE_21a
+                chkVOX.Enabled = !_tx_inhibit;
+
                 if ((rx1_dsp_mode == DSPMode.CWL ||
                     rx1_dsp_mode == DSPMode.CWU) &&
                     chkPower.Checked)
-                    chkMOX.Enabled = !tx_inhibit;
+                    chkMOX.Enabled = !_tx_inhibit;
 
-                if (tx_inhibit && chkMOX.Checked)
+                if (_tx_inhibit && chkMOX.Checked)
                     chkMOX.Checked = false;
+
+                toolStripStatusLabel_TXInhibit.Visible = _tx_inhibit;
             }
         }
 
@@ -23045,8 +23049,6 @@ namespace Thetis
 
                     if (_bInfoBarShowSEQErrors) infoBar.Warning("Sequence error : " + ooo.ToString() + " (" + s.Trim() + ")"); //MW0LGE_21k9c show/hide flag
                 }
-                else if (tx_inhibit)
-                    infoBar.Warning("TX Inhibit !! Overload !!", change_overload_color_count);
             }
 
             if (txtVFOAFreq.Text == "" ||
@@ -28043,7 +28045,7 @@ namespace Thetis
 
                 if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
 
-                if (!manual_mox && !disable_ptt && !rx_only && !tx_inhibit && !QSKEnabled)
+                if (!manual_mox && !disable_ptt && !rx_only && !_tx_inhibit && !QSKEnabled)
                 {
                     bool mic_ptt = (dotdashptt & 0x01) != 0; // PTT from radio
                     bool cat_hs_ptt = CWInput.CATPTT; // CAT serial PTT
@@ -28310,60 +28312,33 @@ namespace Thetis
         private async void PollTXInhibit()
         {
             //WIP bool b_andromeda_or_newIOboard = false;
-            bool inhibit_input;
             while (chkPower.Checked)
             {
                 //MW0LGE_22b converted to protocol, so we use correctly named userI functions
-                if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
+                if (current_hpsdr_model != HPSDRModel.HPSDR)
                 {
+                    bool inhibit_input;
+
                     if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
                     {
                         // protocol 1
                         if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
-                            inhibit_input = NetworkIO.getUserI02(); // bit[2] of C1 where C0 = 00000000 (C&C)
+                            inhibit_input = !NetworkIO.getUserI02(); // bit[2] of C1 where C0 = 00000000 (C&C)
                         else
-                            inhibit_input = NetworkIO.getUserI01(); // bit[1] of C1 where C0 = 00000000 (C&C)
+                            inhibit_input = !NetworkIO.getUserI01(); // bit[1] of C1 where C0 = 00000000 (C&C)
                     }
                     else 
                     {
                         // protocol 2
                         if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
                             current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
-                            inhibit_input = NetworkIO.getUserI05_p2(); // bit[1] of byte 59 from the HPSP 1025 packet
+                            inhibit_input = !NetworkIO.getUserI05_p2(); // bit[1] of byte 59 from the HPSP 1025 packet
                         else
-                            inhibit_input = NetworkIO.getUserI04_p2(); // bit[0] of byte 59 from the HPSP 1025 packet
+                            inhibit_input = !NetworkIO.getUserI04_p2(); // bit[0] of byte 59 from the HPSP 1025 packet
                     }
 
-                    if (tx_inhibit_sense)
-                    {
-                        if (inhibit_input) TXInhibit = true;
-                        else TXInhibit = false;
-                    }
-                    else
-                    {
-                        if (inhibit_input) TXInhibit = false;
-                        else TXInhibit = true;
-                    }
+                    if (TXInhibit != inhibit_input) TXInhibitChangedHandlers?.Invoke(TXInhibit, inhibit_input);
                 }
-
-                //if (tx_inhibit_enabled && current_hpsdr_model != HPSDRModel.HPSDR)
-                //{
-                //    if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D)
-                //        inhibit_input = NetworkIO.getUserI02();
-                //    else
-                //        inhibit_input = NetworkIO.getUserI01();
-
-                //    if (tx_inhibit_sense)
-                //    {
-                //        if (inhibit_input) TXInhibit = true;
-                //        else TXInhibit = false;
-                //    }
-                //    else
-                //    {
-                //        if (inhibit_input) TXInhibit = false;
-                //        else TXInhibit = true;
-                //    }
-                //}
 
                 await Task.Delay(100);
             }
@@ -52698,6 +52673,8 @@ namespace Thetis
         public delegate void CurrentModelChanged(HPSDRModel oldModel, HPSDRModel newModel);
         public delegate void TransverterIndexChanged(int oldIndex, int newIndex);
 
+        public delegate void TXInhibitChanged(bool oldState, bool newState);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -52739,6 +52716,8 @@ namespace Thetis
         public ApolloPresentChanged ApolloPresentChangedHandlers;
         public CurrentModelChanged CurrentModelChangedHandlers;
         public TransverterIndexChanged TransverterIndexChangedHandlers;
+
+        public TXInhibitChanged TXInhibitChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -52794,6 +52773,8 @@ namespace Thetis
             CurrentModelChangedHandlers += OnCurrentModelChanged;
             TransverterIndexChangedHandlers += OnTransverterIndexChanged;
 
+            TXInhibitChangedHandlers += OnTXInhibitChanged;
+
             Display.SetupDelegates();
         }
         private void removeDelegates()
@@ -52845,6 +52826,8 @@ namespace Thetis
             CurrentModelChangedHandlers -= OnCurrentModelChanged;
             TransverterIndexChangedHandlers -= OnTransverterIndexChanged;
 
+            TXInhibitChangedHandlers -= OnTXInhibitChanged;
+
             if (m_frmBandStack2 != null) // dont use the singleton accessor as we dont want to make one if one does not exist
             {
                 BandStack2Form.EntrySelectedHandlers -= OnEntryClicked; // added in the forms Singleton function BandStack2Form
@@ -52859,6 +52842,10 @@ namespace Thetis
             Display.RemoveDelegates();
         }
         //
+        private void OnTXInhibitChanged(bool oldState, bool newState)
+        {
+            TXInhibit = newState;
+        }
         private void OnTransverterIndexChanged(int oldIndex, int newIndex)
         {
 

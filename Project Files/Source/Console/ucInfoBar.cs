@@ -398,7 +398,7 @@ namespace Thetis
             if (_shutDown) return;
             if (this.IsDisposed || this.Disposing) return;
             if (lblWarning.IsDisposed || lblWarning.Disposing) return;
-            
+
             lblWarning.Visible = false;
         }
         private Color _lastColor = Color.SeaGreen;
@@ -880,7 +880,6 @@ namespace Thetis
             lblWarning.Visible = true;
             _warningTimer.Start();
         }
-
         private void InfoBar_Resize(object sender, EventArgs e)
         {
             //splitter
