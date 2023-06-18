@@ -16933,8 +16933,11 @@ namespace Thetis
             }
         }
 
-        //public bool tx_inhibit_enabled = false; // not used
-        //public bool tx_inhibit_sense = false; // not used
+        private bool _useTxInhibit = false;
+        private bool _reverseTxInhibit = false;
+        public bool UseTxInhibit { get { return _useTxInhibit; } set { _useTxInhibit = value; } }
+        public bool ReverseTxInhibit { get { return _reverseTxInhibit; } set { _reverseTxInhibit = value; } }
+
         private bool _tx_inhibit = false;
         public bool TXInhibit
         {
@@ -28315,7 +28318,7 @@ namespace Thetis
             while (chkPower.Checked)
             {
                 //MW0LGE_22b converted to protocol, so we use correctly named userI functions
-                if (current_hpsdr_model != HPSDRModel.HPSDR)
+                if (_useTxInhibit && current_hpsdr_model != HPSDRModel.HPSDR)
                 {
                     bool inhibit_input;
 
@@ -28337,8 +28340,12 @@ namespace Thetis
                             inhibit_input = !NetworkIO.getUserI04_p2(); // bit[0] of byte 59 from the HPSP 1025 packet
                     }
 
+                    if (_reverseTxInhibit) inhibit_input = !inhibit_input;
+
                     if (TXInhibit != inhibit_input) TXInhibitChangedHandlers?.Invoke(TXInhibit, inhibit_input);
                 }
+                else if(!_useTxInhibit && TXInhibit) // used if previously on, and now swithced off in setup
+                    TXInhibitChangedHandlers?.Invoke(TXInhibit, false);
 
                 await Task.Delay(100);
             }

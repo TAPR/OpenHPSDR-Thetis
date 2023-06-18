@@ -17822,14 +17822,12 @@ namespace Thetis
 
         private void chkTXInhibit_CheckedChanged(object sender, EventArgs e)
         {
-            //console.tx_inhibit_enabled = chkTXInhibit.Checked; //not used
+            console.UseTxInhibit = chkTXInhibit.Checked;
         }
-
-        private void chkTXInhibitSense_CheckedChanged(object sender, EventArgs e)
+        private void chkTXInhibitReverse_CheckedChanged(object sender, EventArgs e)
         {
-            //console.tx_inhibit_sense = chkTXInhibitSense.Checked; //not used
+            console.ReverseTxInhibit = chkTXInhibitReverse.Checked;
         }
-
         private void udTXGenPulseFreq_ValueChanged(object sender, EventArgs e)
         {
             console.radio.GetDSPTX(0).TXPreGenPulseFreq = (double)udTXGenPulseFreq.Value;

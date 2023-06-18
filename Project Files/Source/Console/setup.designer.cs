@@ -2212,6 +2212,7 @@
             this.radTXLSB = new System.Windows.Forms.RadioButtonTS();
             this.radTXDSB = new System.Windows.Forms.RadioButtonTS();
             this.grpAMSQMaxTail = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS181 = new System.Windows.Forms.LabelTS();
             this.labelTS355 = new System.Windows.Forms.LabelTS();
             this.udRXAMSQMaxTail = new System.Windows.Forms.NumericUpDownTS();
             this.grpAMSAM = new System.Windows.Forms.GroupBoxTS();
@@ -2519,7 +2520,7 @@
             this.chkDSPCESSB = new System.Windows.Forms.CheckBoxTS();
             this.grpExtTXInhibit = new System.Windows.Forms.GroupBoxTS();
             this.chkTXInhibit = new System.Windows.Forms.CheckBoxTS();
-            this.chkTXInhibitSense = new System.Windows.Forms.CheckBoxTS();
+            this.chkTXInhibitReverse = new System.Windows.Forms.CheckBoxTS();
             this.chkSaveTXProfileOnExit = new System.Windows.Forms.CheckBoxTS();
             this.chkAutoSaveTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.udTXFilterLowSave = new System.Windows.Forms.NumericUpDownTS();
@@ -3446,7 +3447,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS181 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -7590,8 +7590,8 @@
             "ANAN-200D",
             "ANAN-7000DLE",
             "ANAN-8000DLE",
-            "ANAN-G2",          //G8NJJ
-            "ANAN-G2-1K"});     //G8NJJ
+            "ANAN-G2",
+            "ANAN-G2-1K"});
             this.comboRadioModel.Location = new System.Drawing.Point(11, 25);
             this.comboRadioModel.Name = "comboRadioModel";
             this.comboRadioModel.Size = new System.Drawing.Size(136, 23);
@@ -35866,6 +35866,16 @@
             this.grpAMSQMaxTail.TabStop = false;
             this.grpAMSQMaxTail.Text = "RX AM/SSB Max Squelch Tail";
             // 
+            // labelTS181
+            // 
+            this.labelTS181.AutoSize = true;
+            this.labelTS181.Image = null;
+            this.labelTS181.Location = new System.Drawing.Point(106, 39);
+            this.labelTS181.Name = "labelTS181";
+            this.labelTS181.Size = new System.Drawing.Size(18, 13);
+            this.labelTS181.TabIndex = 49;
+            this.labelTS181.Text = "(s)";
+            // 
             // labelTS355
             // 
             this.labelTS355.AutoSize = true;
@@ -40731,7 +40741,7 @@
             // grpDSPSpeechProcessor
             // 
             this.grpDSPSpeechProcessor.Controls.Add(this.chkDSPCESSB);
-            this.grpDSPSpeechProcessor.Location = new System.Drawing.Point(376, 241);
+            this.grpDSPSpeechProcessor.Location = new System.Drawing.Point(377, 241);
             this.grpDSPSpeechProcessor.Name = "grpDSPSpeechProcessor";
             this.grpDSPSpeechProcessor.Size = new System.Drawing.Size(179, 48);
             this.grpDSPSpeechProcessor.TabIndex = 43;
@@ -40753,36 +40763,35 @@
             // grpExtTXInhibit
             // 
             this.grpExtTXInhibit.Controls.Add(this.chkTXInhibit);
-            this.grpExtTXInhibit.Controls.Add(this.chkTXInhibitSense);
-            this.grpExtTXInhibit.Location = new System.Drawing.Point(375, 154);
+            this.grpExtTXInhibit.Controls.Add(this.chkTXInhibitReverse);
+            this.grpExtTXInhibit.Location = new System.Drawing.Point(377, 152);
             this.grpExtTXInhibit.Name = "grpExtTXInhibit";
-            this.grpExtTXInhibit.Size = new System.Drawing.Size(180, 72);
+            this.grpExtTXInhibit.Size = new System.Drawing.Size(178, 72);
             this.grpExtTXInhibit.TabIndex = 71;
             this.grpExtTXInhibit.TabStop = false;
             this.grpExtTXInhibit.Text = "External TX Inhibit";
-            this.grpExtTXInhibit.Visible = false;
             // 
             // chkTXInhibit
             // 
             this.chkTXInhibit.Image = null;
             this.chkTXInhibit.Location = new System.Drawing.Point(11, 19);
             this.chkTXInhibit.Name = "chkTXInhibit";
-            this.chkTXInhibit.Size = new System.Drawing.Size(109, 16);
+            this.chkTXInhibit.Size = new System.Drawing.Size(161, 16);
             this.chkTXInhibit.TabIndex = 68;
-            this.chkTXInhibit.Text = "Enable TX Inhibit";
-            this.toolTip1.SetToolTip(this.chkTXInhibit, "Enables TX Inhibit feature");
+            this.chkTXInhibit.Text = "Update with TX Inhibit state";
+            this.toolTip1.SetToolTip(this.chkTXInhibit, "Thetis will update on TX inhibit state change");
             this.chkTXInhibit.CheckedChanged += new System.EventHandler(this.chkTXInhibit_CheckedChanged);
             // 
-            // chkTXInhibitSense
+            // chkTXInhibitReverse
             // 
-            this.chkTXInhibitSense.Image = null;
-            this.chkTXInhibitSense.Location = new System.Drawing.Point(11, 41);
-            this.chkTXInhibitSense.Name = "chkTXInhibitSense";
-            this.chkTXInhibitSense.Size = new System.Drawing.Size(109, 16);
-            this.chkTXInhibitSense.TabIndex = 69;
-            this.chkTXInhibitSense.Text = "Rev Input Logic";
-            this.toolTip1.SetToolTip(this.chkTXInhibitSense, "High Level on TX Inhibit line = Active");
-            this.chkTXInhibitSense.CheckedChanged += new System.EventHandler(this.chkTXInhibitSense_CheckedChanged);
+            this.chkTXInhibitReverse.Image = null;
+            this.chkTXInhibitReverse.Location = new System.Drawing.Point(11, 41);
+            this.chkTXInhibitReverse.Name = "chkTXInhibitReverse";
+            this.chkTXInhibitReverse.Size = new System.Drawing.Size(109, 20);
+            this.chkTXInhibitReverse.TabIndex = 69;
+            this.chkTXInhibitReverse.Text = "Reversed logic";
+            this.toolTip1.SetToolTip(this.chkTXInhibitReverse, "Reverse the input state logic");
+            this.chkTXInhibitReverse.CheckedChanged += new System.EventHandler(this.chkTXInhibitReverse_CheckedChanged);
             // 
             // chkSaveTXProfileOnExit
             // 
@@ -54885,16 +54894,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // labelTS181
-            // 
-            this.labelTS181.AutoSize = true;
-            this.labelTS181.Image = null;
-            this.labelTS181.Location = new System.Drawing.Point(106, 39);
-            this.labelTS181.Name = "labelTS181";
-            this.labelTS181.Size = new System.Drawing.Size(18, 13);
-            this.labelTS181.TabIndex = 49;
-            this.labelTS181.Text = "(s)";
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -57624,7 +57623,7 @@
         private System.Windows.Forms.LabelTS labelTS314;
         private System.Windows.Forms.GroupBoxTS grpExtTXInhibit;
         private System.Windows.Forms.CheckBoxTS chkTXInhibit;
-        private System.Windows.Forms.CheckBoxTS chkTXInhibitSense;
+        private System.Windows.Forms.CheckBoxTS chkTXInhibitReverse;
         private System.Windows.Forms.GroupBoxTS grpPulse;
         private System.Windows.Forms.NumericUpDownTS udTXGenPulseDutyCycle;
         private System.Windows.Forms.LabelTS labelTS316;
