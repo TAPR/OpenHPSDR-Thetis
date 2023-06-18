@@ -493,7 +493,7 @@ void destroy_rxa (int channel)
 {
 	destroy_resample (rxa[channel].rsmpout.p);
 	destroy_panel (rxa[channel].panel.p);
-	destroy_ssql(rxa[channel].ssql.p);
+	destroy_ssql (rxa[channel].ssql.p);
 	destroy_mpeak (rxa[channel].mpeak.p);
 	destroy_speak (rxa[channel].speak.p);
 	destroy_cbl (rxa[channel].cbl.p);
@@ -553,7 +553,7 @@ void flush_rxa (int channel)
 	flush_cbl (rxa[channel].cbl.p);
 	flush_speak (rxa[channel].speak.p);
 	flush_mpeak (rxa[channel].mpeak.p);
-	flush_ssql(rxa[channel].ssql.p);
+	flush_ssql (rxa[channel].ssql.p);
 	flush_panel (rxa[channel].panel.p);
 	flush_resample (rxa[channel].rsmpout.p);
 }
@@ -591,7 +591,7 @@ void xrxa (int channel)
 	xcbl (rxa[channel].cbl.p);
 	xspeak (rxa[channel].speak.p);
 	xmpeak (rxa[channel].mpeak.p);
-	xssql(rxa[channel].ssql.p);
+	xssql (rxa[channel].ssql.p);
 	xpanel (rxa[channel].panel.p);
 	xamsq (rxa[channel].amsq.p);
 	xresample (rxa[channel].rsmpout.p);
@@ -662,7 +662,7 @@ void setDSPSamplerate_rxa (int channel)
 	setSamplerate_cbl (rxa[channel].cbl.p, ch[channel].dsp_rate);
 	setSamplerate_speak (rxa[channel].speak.p, ch[channel].dsp_rate);
 	setSamplerate_mpeak (rxa[channel].mpeak.p, ch[channel].dsp_rate);
-	setSamplerate_ssql(rxa[channel].ssql.p, ch[channel].dsp_rate);
+	setSamplerate_ssql (rxa[channel].ssql.p, ch[channel].dsp_rate);
 	setSamplerate_panel (rxa[channel].panel.p, ch[channel].dsp_rate);
 	// output resampler
 	setBuffers_resample (rxa[channel].rsmpout.p, rxa[channel].midbuff, rxa[channel].outbuff);
@@ -730,8 +730,8 @@ void setDSPBuffsize_rxa (int channel)
 	setSize_speak (rxa[channel].speak.p, ch[channel].dsp_size);
 	setBuffers_mpeak (rxa[channel].mpeak.p, rxa[channel].midbuff, rxa[channel].midbuff);
 	setSize_mpeak (rxa[channel].mpeak.p, ch[channel].dsp_size);
-	setBuffers_ssql(rxa[channel].ssql.p, rxa[channel].midbuff, rxa[channel].midbuff);
-	setSize_ssql(rxa[channel].ssql.p, ch[channel].dsp_size);
+	setBuffers_ssql (rxa[channel].ssql.p, rxa[channel].midbuff, rxa[channel].midbuff);
+	setSize_ssql (rxa[channel].ssql.p, ch[channel].dsp_size);
 	setBuffers_panel (rxa[channel].panel.p, rxa[channel].midbuff, rxa[channel].midbuff);
 	setSize_panel (rxa[channel].panel.p, ch[channel].dsp_size);
 	// output resampler

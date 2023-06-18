@@ -84,6 +84,22 @@ typedef struct _snba
 	{
 		double pmultmin;
 	} scan;
+	struct _wrk
+	{
+		int xHat_a1rows_max;
+		int xHat_a2cols_max;
+		double* xHat_r;
+		double* xHat_ATAI;
+		double* xHat_A1;
+		double* xHat_A2;
+		double* xHat_P1;
+		double* xHat_P2;
+		double* trI_y;
+		double* trI_v;
+		double* dR_z;
+		double* asolve_r;
+		double* asolve_z;
+	} wrk;
 	double out_low_cut;
 	double out_high_cut;
 } snba, *SNBA;

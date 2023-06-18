@@ -55,6 +55,8 @@ typedef struct _iobf
 	HANDLE Sem_OutReady;						// count = number of 'out_size' buffers processed and available for output
 	HANDLE Sem_BuffReady;						// count = number of 'dsp_size' buffers queued for processing
 	volatile long exec_bypass;
+	volatile long flush_bypass;
+	HANDLE Sem_Flush;
 	struct
 	{
 		int ustate;

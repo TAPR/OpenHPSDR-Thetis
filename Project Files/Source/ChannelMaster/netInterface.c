@@ -103,6 +103,8 @@ void StopAudio()
 	printf("iothread stopped\n");   fflush(stdout);
 
 	StopReadThread();
+	destroy_obbuffs(0);
+	destroy_obbuffs(1);
 }
 
 int getDDPTTcount = 0;
@@ -1488,8 +1490,8 @@ void destroy_rnet()
 	free(prn);
 	_aligned_free(prbpfilter);
 	_aligned_free(prbpfilter2);
-	destroy_obbuffs(0);
-	destroy_obbuffs(1);
+	// destroy_obbuffs(0);
+	// destroy_obbuffs(1);
 }
 
 void

@@ -912,7 +912,7 @@ void __cdecl sendbuf(void *arg)
 			}
 		Sleep(1);
 	}
-	a->dispatcher = 0;
+	InterlockedBitTestAndReset(&a->dispatcher, 0);
 	_endthread();
 }
 
@@ -950,7 +950,7 @@ void SetAnalyzer (	int disp,			// display identifier
 
 	EnterCriticalSection(&a->SetAnalyzerSection);
 	a->end_dispatcher = 1;
-	while (a->dispatcher)
+	while (InterlockedAnd(&a->dispatcher, 1))
 		Sleep(1);
 	a->stop = 1;
 	while (_InterlockedAnd(a->pnum_threads, 1023))
@@ -1171,7 +1171,7 @@ void DestroyAnalyzer(int disp)
 	int i, j;
 
 	a->end_dispatcher = 1;
-	while (a->dispatcher)
+	while (InterlockedAnd(&a->dispatcher, 1))
 		Sleep(1);
 
 	for (i = 0; i < a->max_stitch; i++)
@@ -1346,9 +1346,9 @@ void CloseBuffer(int disp, int ss, int LO)
 	if((a->IQin_index[ss][LO] += a->buff_size) >= a->bsize)	//REQUIRES buff_size IS A SUB-MULTIPLE OF SIZE OF INPUT SAMPLE BUFFS!
 		a->IQin_index[ss][LO] = 0;
 
-	if (!a->dispatcher)
+	if (!InterlockedAnd(&a->dispatcher, 1))
 	{
-		a->dispatcher = 1;
+		InterlockedBitTestAndSet (&a->dispatcher, 0);
 		LeaveCriticalSection(&a->SetAnalyzerSection);
 		_beginthread(sendbuf, 0, (void *)(uintptr_t)disp);
 	}
@@ -1385,9 +1385,9 @@ void Spectrum(int disp, int ss, int LO, dINREAL* pI, dINREAL* pQ)
 	if((a->IQin_index[ss][LO] += a->buff_size) >= a->bsize)	//REQUIRES buff_size IS A SUB-MULTIPLE OF SIZE OF INPUT SAMPLE BUFFS!
 		a->IQin_index[ss][LO] = 0;
 
-	if (!a->dispatcher)
+	if (!InterlockedAnd(&a->dispatcher, 1))
 	{
-		a->dispatcher = 1;
+		InterlockedBitTestAndSet(&a->dispatcher, 0);
 		LeaveCriticalSection(&a->SetAnalyzerSection);
 		_beginthread(sendbuf, 0, (void *)(uintptr_t)disp);
 	}
@@ -1430,9 +1430,9 @@ void Spectrum2(int run, int disp, int ss, int LO, dINREAL* pbuff)
 		if((a->IQin_index[ss][LO] += a->buff_size) >= a->bsize)	//REQUIRES buff_size IS A SUB-MULTIPLE OF SIZE OF INPUT SAMPLE BUFFS!
 			a->IQin_index[ss][LO] = 0;
 
-		if (!a->dispatcher)
+		if (!InterlockedAnd(&a->dispatcher, 1))
 		{
-			a->dispatcher = 1;
+			InterlockedBitTestAndSet(&a->dispatcher, 0);
 			LeaveCriticalSection(&a->SetAnalyzerSection);
 			_beginthread(sendbuf, 0, (void *)(uintptr_t)disp);
 		}
@@ -1476,9 +1476,9 @@ void Spectrum0(int run, int disp, int ss, int LO, double* pbuff)
 		if((a->IQin_index[ss][LO] += a->buff_size) >= a->bsize)	//REQUIRES buff_size IS A SUB-MULTIPLE OF SIZE OF INPUT SAMPLE BUFFS!
 			a->IQin_index[ss][LO] = 0;
 
-		if (!a->dispatcher)
+		if (!InterlockedAnd(&a->dispatcher, 1))
 		{
-			a->dispatcher = 1;
+			InterlockedBitTestAndSet(&a->dispatcher, 0);
 			LeaveCriticalSection(&a->SetAnalyzerSection);
 			_beginthread(sendbuf, 0, (void *)(uintptr_t)disp);
 		}

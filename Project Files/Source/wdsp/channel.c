@@ -128,15 +128,23 @@ void CloseChannel (int channel)
 void flushChannel (void* p)
 {
 	int channel = (int)(uintptr_t)p;
-	EnterCriticalSection (&ch[channel].csDSP);
-	EnterCriticalSection (&ch[channel].csEXCH);
-	flush_iobuffs (channel);
-	InterlockedBitTestAndSet (&ch[channel].iob.pc->exec_bypass, 0);
-	flush_main (channel);
-	LeaveCriticalSection (&ch[channel].csEXCH);
-	LeaveCriticalSection (&ch[channel].csDSP);
-	InterlockedBitTestAndReset (&ch[channel].flushflag, 0);
-	_endthread();
+	IOB a = ch[channel].iob.pc;
+	while (!InterlockedAnd(&a->flush_bypass, 0xffffffff))
+	{
+		WaitForSingleObject(a->Sem_Flush, INFINITE);
+		if (!InterlockedAnd(&a->flush_bypass, 0xffffffff))
+		{
+			EnterCriticalSection(&ch[channel].csDSP);
+			EnterCriticalSection(&ch[channel].csEXCH);
+			flush_iobuffs(channel);
+			InterlockedBitTestAndSet(&a->exec_bypass, 0);
+			flush_main(channel);
+			LeaveCriticalSection(&ch[channel].csEXCH);
+			LeaveCriticalSection(&ch[channel].csDSP);
+			InterlockedBitTestAndReset(&ch[channel].flushflag, 0);
+		}
+	}
+	InterlockedBitTestAndReset(&a->flush_bypass, 0);
 }
 
 /********************************************************************************************************
