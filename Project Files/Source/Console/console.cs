@@ -43332,7 +43332,9 @@ namespace Thetis
             //if (initializing) return; // ignore this if initalising, as it also gets called from powerON/OFF MW0LGE_21k9
             //MW0LGE [2.9.0.7] need to remove this so sub values get initialiased
 
-            radio.GetDSPRX(0, 1).Active = chkEnableMultiRX.Checked;
+            if (!initializing) radio.GetDSPRX(0, 1).Active = chkEnableMultiRX.Checked; //MW0LGE only set after init complete
+                                                                                       //for some reason fixes issue where multirx has no audio if
+                                                                                       //thetis loaded with multirx already on
             if (chkEnableMultiRX.Checked)
             {
                 cmaster.SetAAudioMixWhat((void*)0, 0, 1, true);
