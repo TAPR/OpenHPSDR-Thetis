@@ -1162,6 +1162,7 @@ namespace Thetis
         {
             PA19.PA_Initialize();
             _portAudioInitalising = false;
+            Debug.Print("PA init done");
         }
         public bool IsSetupFormNull
         {
@@ -22541,7 +22542,8 @@ namespace Thetis
             catch
             {
 
-            }            
+            }
+            Debug.Print("Get instance name done");
         }
         private void CpuUsage()
         {
@@ -27479,7 +27481,7 @@ namespace Thetis
 
                 bool bOk;
                 int nTries = 0;
-                while (_voltsQueue.Count > 150 && nTries < 150) // keep max 150 in the queue
+                while (_voltsQueue.Count > 150 && nTries < 100) // keep max 150 in the queue
                 {
                     bOk = _voltsQueue.TryDequeue(out int tmp);
                     if (!bOk)

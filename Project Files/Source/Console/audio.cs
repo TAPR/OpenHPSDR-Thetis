@@ -1750,7 +1750,6 @@ namespace Thetis
             get { return _lastRadioProtocol; }
             set 
             {
-                if (value == RadioProtocol.None) return;
                 _lastRadioProtocol = value; 
             }
         }
@@ -1800,20 +1799,25 @@ namespace Thetis
             {
                 console.SampleRateTX = 192000;
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
-                if(console.CurrentHPSDRHardware == HPSDRHW.Saturn)                              // G8NJJ
-                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
-                else
-                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
-                //console.psform.PSdefpeak = "0.2899";
+                //if(console.CurrentHPSDRHardware == HPSDRHW.Saturn)                              // G8NJJ  // MW0LGE note, we do this below by calling SetDefaultPeaks if needed
+                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
+                //else
+                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
+                //console.psform.PSdefpeak = "0.2899"; //moved to psform.SetDefaultPeaks()
             }
 
             //console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6
-            //MW0LGE [2.9.0.8] fix if protocol is changed at some point
-            if (_lastRadioProtocol != RadioProtocol.None && _lastRadioProtocol != NetworkIO.CurrentRadioProtocol)
+            ////MW0LGE [2.9.0.8] fix if protocol is changed at some point
+            //
+            //note: setdefaultpeaks will only be called if fresh DB, or if at some point the protcol changes ie user has flashed the radio with different protocol
+            //we dont recover or assign here as psform stores the peak data in the form save/close. Those values can be tweaked by end user and are store/recovered
+            //against the form. This is to enable the reset of peaks for a new install or new protocol
+            if (LastRadioProtocol == RadioProtocol.None || (LastRadioProtocol != RadioProtocol.None && LastRadioProtocol != NetworkIO.CurrentRadioProtocol))
             {
-                console.psform.SetDefaultPeaks(true);
-                _lastRadioProtocol = NetworkIO.CurrentRadioProtocol;
-            }            
+                console.psform.SetDefaultPeaks();
+                LastRadioProtocol = NetworkIO.CurrentRadioProtocol;
+            }
+
             c.SetupForm.InitAudioTab();
             c.SetupForm.ForceAudioReset();
             cmaster.PSLoopback = cmaster.PSLoopback;
