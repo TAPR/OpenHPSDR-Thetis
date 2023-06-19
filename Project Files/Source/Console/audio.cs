@@ -230,22 +230,25 @@ namespace Thetis
                 monitor_volume = value;
                 cmaster.CMSetAudioVolume(value);
 
-                //MW0LGE_21k-rc2
-                if (vfob_tx)
-                {
-                    if (rx2_enabled) // need to check the vac2 split thing ?
-                    {
-                        ivac.SetIVACmonVol(1, monitor_volume);
-                    }
-                    else
-                    {
-                        ivac.SetIVACmonVol(0, monitor_volume);
-                    }
-                }
-                else
-                {
-                    ivac.SetIVACmonVol(0, monitor_volume);
-                }
+                ////MW0LGE_21k-rc2
+                //if (vfob_tx)
+                //{
+                //    if (rx2_enabled) // need to check the vac2 split thing ?
+                //    {
+                //        ivac.SetIVACmonVol(1, monitor_volume);
+                //    }
+                //    else
+                //    {
+                //        ivac.SetIVACmonVol(0, monitor_volume);
+                //    }
+                //}
+                //else
+                //{
+                //    ivac.SetIVACmonVol(0, monitor_volume);
+                //}
+
+                //MW0LGE [pre g2]
+                ivac.SetIVACmonVol(0, monitor_volume);
             }
         }
 
@@ -344,17 +347,13 @@ namespace Thetis
             set
             {
                 mox = value;
-                if (mox && vfob_tx)
-                {
-                    ivac.SetIVACmox(0, 0);
-                    ivac.SetIVACmox(1, 1);
-                }
-                if (mox && !vfob_tx)
+
+                if (mox)
                 {
                     ivac.SetIVACmox(0, 1);
-                    ivac.SetIVACmox(1, 0);
+                    ivac.SetIVACmox(1, 1);
                 }
-                if (!mox)
+                else
                 {
                     ivac.SetIVACmox(0, 0);
                     ivac.SetIVACmox(1, 0);
@@ -364,29 +363,42 @@ namespace Thetis
 
         private static void setupIVACforMon()
         {
-            //MW0LGE_21k9d - reworked
-            if (mon && vfob_tx)
-            {
-                if (rx2_enabled) // need to check the vac2 split thing?
-                {
-                    ivac.SetIVACmon(0, 0);
-                    ivac.SetIVACmon(1, 1);
-                    ivac.SetIVACmonVol(1, monitor_volume);
-                }
-                else
-                {
-                    ivac.SetIVACmon(0, 1);
-                    ivac.SetIVACmon(1, 0);
-                    ivac.SetIVACmonVol(0, monitor_volume);
-                }                                    
-            }
-            else if (mon && !vfob_tx)
+            ////MW0LGE_21k9d - reworked
+            //if (mon && vfob_tx)
+            //{
+            //    if (rx2_enabled) // need to check the vac2 split thing?
+            //    {
+            //        ivac.SetIVACmon(0, 0);
+            //        ivac.SetIVACmon(1, 1);
+            //        ivac.SetIVACmonVol(1, monitor_volume);
+            //    }
+            //    else
+            //    {
+            //        ivac.SetIVACmon(0, 1);
+            //        ivac.SetIVACmon(1, 0);
+            //        ivac.SetIVACmonVol(0, monitor_volume);
+            //    }                                    
+            //}
+            //else if (mon && !vfob_tx)
+            //{
+            //    ivac.SetIVACmon(0, 1);
+            //    ivac.SetIVACmon(1, 0);
+            //    ivac.SetIVACmonVol(0, monitor_volume);
+            //}
+            //else if (!mon)
+            //{
+            //    ivac.SetIVACmon(0, 0);
+            //    ivac.SetIVACmon(1, 0);
+            //}
+
+            //MW0LGE [pre g2]
+            if (mon)
             {
                 ivac.SetIVACmon(0, 1);
                 ivac.SetIVACmon(1, 0);
                 ivac.SetIVACmonVol(0, monitor_volume);
             }
-            else if (!mon)
+            else
             {
                 ivac.SetIVACmon(0, 0);
                 ivac.SetIVACmon(1, 0);
@@ -1750,13 +1762,21 @@ namespace Thetis
             get { return _lastRadioProtocol; }
             set 
             {
-                if (value == RadioProtocol.None) return;
                 _lastRadioProtocol = value; 
+            }
+        }
+        private static HPSDRHW _lastRadiohadware = HPSDRHW.Unknown;
+        public static HPSDRHW LastRadioHardware
+        {
+            get { return _lastRadiohadware; }
+            set
+            {
+                _lastRadiohadware = value;
             }
         }
         public static bool Start()
         {
-            RadioProtocol oldProto = NetworkIO.CurrentRadioProtocol;
+            //RadioProtocol oldProto = NetworkIO.CurrentRadioProtocol;
 
             bool retval = false;
             int rc;
@@ -1793,27 +1813,40 @@ namespace Thetis
             {
                 console.SampleRateTX = 48000; // set tx audio sampling rate  
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), false);
-                puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
-                //console.psform.PSdefpeak = "0.4072"; //MW0LGE_21k9rc5 moved to psform.SetDefaultPeaks()
+                //puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
+                //console.psform.PSdefpeak = "0.4072"; //MW0LGE_21k9rc5 moved to psform.SetDefaultPeaks(), called below
             }
             else
             {
                 console.SampleRateTX = 192000;
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
-                if(console.CurrentHPSDRHardware == HPSDRHW.Saturn)                              // G8NJJ
-                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
-                else
-                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
-                //console.psform.PSdefpeak = "0.2899";
+                //if(console.CurrentHPSDRHardware == HPSDRHW.Saturn)                              // G8NJJ  // MW0LGE note, we do this below by calling SetDefaultPeaks if needed
+                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
+                //else
+                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
+                //console.psform.PSdefpeak = "0.2899"; //moved to psform.SetDefaultPeaks(), called below
             }
 
             //console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6
-            //MW0LGE [2.9.0.8] fix if protocol is changed at some point
-            if (_lastRadioProtocol != RadioProtocol.None && _lastRadioProtocol != NetworkIO.CurrentRadioProtocol)
+            ////MW0LGE [2.9.0.8] fix if protocol is changed at some point
+            //
+            //note: setdefaultpeaks will only be called if fresh DB, or if at some point the protcol changes ie user has flashed the radio with different protocol
+            //we dont recover or assign here as psform stores the peak data in the form save/close. Those values can be tweaked by end user and are store/recovered
+            //against the form. This is to enable the reset of peaks for a new install or new protocol
+            bool bSetDefaultPeaks = false;
+            if (LastRadioHardware == HPSDRHW.Unknown || (LastRadioHardware != HPSDRHW.Unknown && LastRadioHardware != NetworkIO.BoardID))
             {
-                console.psform.SetDefaultPeaks(true);
-                _lastRadioProtocol = NetworkIO.CurrentRadioProtocol;
-            }            
+                bSetDefaultPeaks = true;
+                LastRadioHardware = NetworkIO.BoardID; // saved in db
+            }
+
+            if (LastRadioProtocol == RadioProtocol.None || (LastRadioProtocol != RadioProtocol.None && LastRadioProtocol != NetworkIO.CurrentRadioProtocol))
+            {
+                bSetDefaultPeaks = true;                
+                LastRadioProtocol = NetworkIO.CurrentRadioProtocol; // saved in db
+            }
+            if(bSetDefaultPeaks) console.psform.SetDefaultPeaks(); // if false, will use the psform recovered values
+
             c.SetupForm.InitAudioTab();
             c.SetupForm.ForceAudioReset();
             cmaster.PSLoopback = cmaster.PSLoopback;
