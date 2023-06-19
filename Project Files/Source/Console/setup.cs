@@ -77,10 +77,18 @@ namespace Thetis
         public Setup(Console c)
         {
             InitializeComponent();
-            console = c;
 
+            console = c;
+            this.Owner = c;
+
+            //everything here moved to AfterConstructor, which is called during singleton instance // G8KLJ's idea/implementation
+        }
+        internal void AfterConstructor()
+        { 
             //
             addDelegates();
+
+            Splash.SetStatus("Setting up controls");
 
             // timeout stuff
             lblTimeout.Visible = Common.IsTimeOutEnabled;

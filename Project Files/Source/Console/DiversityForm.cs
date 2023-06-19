@@ -116,11 +116,8 @@ namespace Thetis
         private LabelTS labelTS1;
         private NumericUpDownTS udGainMulti;
         private CheckBoxTS chkAlwaysOnTop;
-
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.Container components = null;
+        private ToolTip toolTip1;
+        private IContainer components;
 
         public DiversityForm(Console c)
         {
@@ -186,10 +183,10 @@ namespace Thetis
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DiversityForm));
             this.chkAuto = new System.Windows.Forms.CheckBox();
             this.chkEnable = new System.Windows.Forms.CheckBox();
-            this.btnSync = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.picRadar = new System.Windows.Forms.PictureBox();
             this.panelDivControls = new System.Windows.Forms.GroupBoxTS();
@@ -217,6 +214,7 @@ namespace Thetis
             this.radioButtonMerc2 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonMerc1 = new System.Windows.Forms.RadioButtonTS();
             this.btnShiftUp45 = new System.Windows.Forms.ButtonTS();
+            this.btnSync = new System.Windows.Forms.Button();
             this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.labelTS41 = new System.Windows.Forms.LabelTS();
             this.labelTS30 = new System.Windows.Forms.LabelTS();
@@ -226,10 +224,11 @@ namespace Thetis
             this.udR = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.udCalib = new System.Windows.Forms.NumericUpDownTS();
-            this.labelDirection = new System.Windows.Forms.LabelTS();
-            this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.udAngle = new System.Windows.Forms.NumericUpDownTS();
+            this.labelDirection = new System.Windows.Forms.LabelTS();
+            this.labelTS9 = new System.Windows.Forms.LabelTS();
+            this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
             this.panelDivControls.SuspendLayout();
             this.grpRxSource.SuspendLayout();
@@ -242,8 +241,8 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCalib)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
             this.SuspendLayout();
             // 
             // chkAuto
@@ -268,16 +267,6 @@ namespace Thetis
             this.chkEnable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.chkEnable.Visible = false;
             this.chkEnable.CheckedChanged += new System.EventHandler(this.chkEnable_CheckedChanged);
-            // 
-            // btnSync
-            // 
-            this.btnSync.Location = new System.Drawing.Point(307, 654);
-            this.btnSync.Name = "btnSync";
-            this.btnSync.Size = new System.Drawing.Size(48, 23);
-            this.btnSync.TabIndex = 47;
-            this.btnSync.Text = "Sync";
-            this.btnSync.Visible = false;
-            this.btnSync.Click += new System.EventHandler(this.btnSync_Click);
             // 
             // textBox1
             // 
@@ -316,6 +305,7 @@ namespace Thetis
             this.panelDivControls.Controls.Add(this.labelTS6);
             this.panelDivControls.Controls.Add(this.groupBox_refMerc);
             this.panelDivControls.Controls.Add(this.btnShiftUp45);
+            this.panelDivControls.Controls.Add(this.btnSync);
             this.panelDivControls.ImeMode = System.Windows.Forms.ImeMode.AlphaFull;
             this.panelDivControls.Location = new System.Drawing.Point(8, 3);
             this.panelDivControls.Name = "panelDivControls";
@@ -411,6 +401,7 @@ namespace Thetis
             this.btnShiftDwn45.Image = null;
             this.btnShiftDwn45.Location = new System.Drawing.Point(10, 87);
             this.btnShiftDwn45.Name = "btnShiftDwn45";
+            this.btnShiftDwn45.Selectable = true;
             this.btnShiftDwn45.Size = new System.Drawing.Size(46, 26);
             this.btnShiftDwn45.TabIndex = 62;
             this.btnShiftDwn45.Text = "-45";
@@ -424,6 +415,7 @@ namespace Thetis
             this.btnShift180.Image = null;
             this.btnShift180.Location = new System.Drawing.Point(10, 57);
             this.btnShift180.Name = "btnShift180";
+            this.btnShift180.Selectable = true;
             this.btnShift180.Size = new System.Drawing.Size(46, 26);
             this.btnShift180.TabIndex = 57;
             this.btnShift180.Text = "180";
@@ -705,11 +697,22 @@ namespace Thetis
             this.btnShiftUp45.Image = null;
             this.btnShiftUp45.Location = new System.Drawing.Point(10, 27);
             this.btnShiftUp45.Name = "btnShiftUp45";
+            this.btnShiftUp45.Selectable = true;
             this.btnShiftUp45.Size = new System.Drawing.Size(46, 26);
             this.btnShiftUp45.TabIndex = 58;
             this.btnShiftUp45.Text = "+45";
             this.btnShiftUp45.UseVisualStyleBackColor = false;
             this.btnShiftUp45.Click += new System.EventHandler(this.btnShiftUp45_Click);
+            // 
+            // btnSync
+            // 
+            this.btnSync.Location = new System.Drawing.Point(235, 89);
+            this.btnSync.Name = "btnSync";
+            this.btnSync.Size = new System.Drawing.Size(66, 23);
+            this.btnSync.TabIndex = 47;
+            this.btnSync.Text = "VFO Sync";
+            this.toolTip1.SetToolTip(this.btnSync, "Sync RX2 with RX1");
+            this.btnSync.Click += new System.EventHandler(this.btnSync_Click);
             // 
             // groupBoxTS1
             // 
@@ -876,6 +879,37 @@ namespace Thetis
             this.udCalib.Visible = false;
             this.udCalib.ValueChanged += new System.EventHandler(this.udCalib_ValueChanged);
             // 
+            // udAngle
+            // 
+            this.udAngle.DecimalPlaces = 3;
+            this.udAngle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udAngle.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAngle.Location = new System.Drawing.Point(275, 706);
+            this.udAngle.Maximum = new decimal(new int[] {
+            65,
+            0,
+            0,
+            65536});
+            this.udAngle.Minimum = new decimal(new int[] {
+            65,
+            0,
+            0,
+            -2147418112});
+            this.udAngle.Name = "udAngle";
+            this.udAngle.Size = new System.Drawing.Size(60, 23);
+            this.udAngle.TabIndex = 6;
+            this.udAngle.TinyStep = false;
+            this.udAngle.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAngle.ValueChanged += new System.EventHandler(this.udTheta_ValueChanged);
+            // 
             // labelDirection
             // 
             this.labelDirection.AutoSize = true;
@@ -890,6 +924,17 @@ namespace Thetis
             this.labelDirection.Text = "NW";
             this.labelDirection.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.labelDirection.Visible = false;
+            // 
+            // labelTS9
+            // 
+            this.labelTS9.AutoSize = true;
+            this.labelTS9.Image = null;
+            this.labelTS9.Location = new System.Drawing.Point(351, 24);
+            this.labelTS9.Name = "labelTS9";
+            this.labelTS9.Size = new System.Drawing.Size(76, 13);
+            this.labelTS9.TabIndex = 64;
+            this.labelTS9.Text = "Direction (deg)";
+            this.labelTS9.Visible = false;
             // 
             // udAngle0
             // 
@@ -924,48 +969,6 @@ namespace Thetis
             this.udAngle0.Visible = false;
             this.udAngle0.ValueChanged += new System.EventHandler(this.udAngle0_ValueChanged);
             // 
-            // labelTS9
-            // 
-            this.labelTS9.AutoSize = true;
-            this.labelTS9.Image = null;
-            this.labelTS9.Location = new System.Drawing.Point(351, 24);
-            this.labelTS9.Name = "labelTS9";
-            this.labelTS9.Size = new System.Drawing.Size(76, 13);
-            this.labelTS9.TabIndex = 64;
-            this.labelTS9.Text = "Direction (deg)";
-            this.labelTS9.Visible = false;
-            // 
-            // udAngle
-            // 
-            this.udAngle.DecimalPlaces = 3;
-            this.udAngle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udAngle.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAngle.Location = new System.Drawing.Point(275, 706);
-            this.udAngle.Maximum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            65536});
-            this.udAngle.Minimum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            -2147418112});
-            this.udAngle.Name = "udAngle";
-            this.udAngle.Size = new System.Drawing.Size(60, 23);
-            this.udAngle.TabIndex = 6;
-            this.udAngle.TinyStep = false;
-            this.udAngle.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAngle.ValueChanged += new System.EventHandler(this.udTheta_ValueChanged);
-            // 
             // DiversityForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -978,7 +981,6 @@ namespace Thetis
             this.Controls.Add(this.udR);
             this.Controls.Add(this.chkEnable);
             this.Controls.Add(this.labelTS5);
-            this.Controls.Add(this.btnSync);
             this.Controls.Add(this.udCalib);
             this.Controls.Add(this.udAngle);
             this.Controls.Add(this.labelDirection);
@@ -1007,8 +1009,8 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCalib)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
