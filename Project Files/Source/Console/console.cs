@@ -530,6 +530,9 @@ namespace Thetis
         private frmSeqLog m_frmSeqLog;
         private Thread multimeter2_thread_rx1;
         private Thread multimeter2_thread_rx2;
+        private bool _onlyOneSetupInstance; // used by setup to ensure only one instance created
+
+        private bool _portAudioInitalising = false;
 
         public CWX CWXForm
         {
@@ -563,7 +566,6 @@ namespace Thetis
         // ======================================================
         // Constructor and Destructor
         // ======================================================
-
         public Console(string[] args)
         {
             //CheckIfRussian(); //#UKRAINE
@@ -802,10 +804,34 @@ namespace Thetis
 
             }
 
-
             CmdLineArgs = args;
             Splash.ShowSplashScreen();							// Start splash screen
-            Splash.SetStatus("Initializing Components");		// Set progress point
+
+            // PA init thread - from G7KLJ changes - done as early as possible
+            Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
+            _portAudioInitalising = true;
+            Thread portAudioThread = new Thread(new ThreadStart(initialisePortAudio))
+            {
+                Name = "Initalise PortAudioThread",
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+            };
+            portAudioThread.SetApartmentState(ApartmentState.STA); // no ASIO deivces without this
+            portAudioThread.Start();
+            //
+
+            // Instance name - done as early as possible as very slow
+            _getInstanceNameComplete = false;
+            Thread instanceNameThread = new Thread(new ThreadStart(getInstanceName))
+            {
+                Name = "getInstanceNameThread",
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+            };
+            instanceNameThread.Start();
+            //
+
+            Splash.SetStatus("Initializing Components");        // Set progress point
 
             InitializeComponent();								// Windows Forms Generated Code
             InitialiseAndromedaMenus();
@@ -880,8 +906,9 @@ namespace Thetis
             specRX = new SpecRX();
             Display.specready = true;
 
-            Splash.SetStatus("Initializing PortAudio");			// Set progress point
-            PA19.PA_Initialize();                               // Initialize the audio interface
+            //test
+            //Splash.SetStatus("Initializing PortAudio");			// Set progress point
+            //PA19.PA_Initialize();                               // Initialize the audio interface
 
             break_in_timer = new HiPerfTimer();
 
@@ -989,6 +1016,14 @@ namespace Thetis
             specRX.GetSpecRX(0).Update = true;
             specRX.GetSpecRX(1).Update = true;
             specRX.GetSpecRX(cmaster.inid(1, 0)).Update = true;
+
+            // still waiting?
+            if (_portAudioInitalising && portAudioThread != null && portAudioThread.IsAlive)
+            {
+                Splash.SetStatus("Waiting for PortAudio");
+                bool bOk = portAudioThread.Join(5000);
+                if(!bOk) MessageBox.Show("There was an issue initialising PortAudio", "PortAudio", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
 
             Splash.SetStatus("Finished");
 
@@ -1123,7 +1158,11 @@ namespace Thetis
                 }
             }
         }
-
+        private void initialisePortAudio()
+        {
+            PA19.PA_Initialize();
+            _portAudioInitalising = false;
+        }
         public bool IsSetupFormNull
         {
             // MW0LGE used because some aspects of thetis test for null.
@@ -1138,8 +1177,10 @@ namespace Thetis
                 {
                     if (IsSetupFormNull)
                     {
+                        Debug.Assert(_onlyOneSetupInstance); // this should not happen, ever !  // G8KLJ's idea/implementation
                         Debug.Print("New setup form - should happen only once");
                         m_frmSetupForm = new Setup(this);
+                        m_frmSetupForm.AfterConstructor(); // G8KLJ's idea/implementation
                     }
                     return m_frmSetupForm;
                 }
@@ -1825,7 +1866,9 @@ namespace Thetis
             httpServer = new HttpServer(this);      // rn3kk add
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
+            _onlyOneSetupInstance = true; // make sure that we limit to one instance
             SetupForm.StartPosition = FormStartPosition.Manual; // first use of singleton will create Setup form       INIT_SLOW
+            _onlyOneSetupInstance = false;
 
             BuildTXProfileCombos(); // MW0LGE_21k9rc4b build them, so that GetState can apply the combobox text
 
@@ -1953,7 +1996,7 @@ namespace Thetis
 
             CalcDisplayFreq();
             CalcRX2DisplayFreq();
-            CpuUsage();// m_bShowSystemCPUUsage);
+            //CpuUsage();// m_bShowSystemCPUUsage); //MW0LGE done in thread intially
 
             tune_step_index--;					// Setup wheel tuning
             ChangeTuneStepUp();
@@ -22459,35 +22502,57 @@ namespace Thetis
         }
 
         private bool m_bShowSystemCPUUsage = true;
-        public PerformanceCounter cpu_usage = null;
-        private void CpuUsage(/*bool bGetOverallCpuUsage = true*/)
+        public volatile PerformanceCounter cpu_usage = null;
+        private volatile string _sInstanceName = "";
+        private volatile bool _getInstanceNameComplete = false;
+
+        private void getInstanceName()
         {
+            //MW0LGE_21k9 updated to get actual process name used by perf counter
+            //moved to thread, as GetInstanceNames is very very slow
+
+            _sInstanceName = "";
+
             try
             {
                 string sMachineName = System.Environment.MachineName;
 
-                //MW0LGE_21k9 updated to get actual process name used by perf counter
-                string sInstanceName = "";
                 Process p = Process.GetCurrentProcess();
 
-                foreach (string sName in new PerformanceCounterCategory("Process").GetInstanceNames())
+                PerformanceCounterCategory pcc = new PerformanceCounterCategory("Process", sMachineName);
+                string[] sInstanceNames = pcc.GetInstanceNames();
+
+                foreach (string sName in sInstanceNames.Where(o => o.StartsWith(p.ProcessName)))
                 {
-                    if (sName.StartsWith(p.ProcessName))
+                    using (PerformanceCounter processId = new PerformanceCounter("Process", "ID Process", sName, true))
                     {
-                        using (PerformanceCounter processId = new PerformanceCounter("Process", "ID Process", sName, true))
+                        if (p.Id == (int)processId.RawValue)
                         {
-                            if (p.Id == (int)processId.RawValue)
-                            {
-                                sInstanceName = sName;
-                                break;
-                            }
+                            _sInstanceName = sName;
+                            break;
                         }
                     }
                 }
 
-                //m_bShowSystemCPUUsage = bGetOverallCpuUsage;
+                _getInstanceNameComplete = true;
+
+                CpuUsage();
+            }
+            catch
+            {
+
+            }            
+        }
+        private void CpuUsage()
+        {
+            try
+            {
                 systemToolStripMenuItem.Checked = m_bShowSystemCPUUsage;
                 thetisOnlyToolStripMenuItem.Checked = !m_bShowSystemCPUUsage;
+
+                if (!_getInstanceNameComplete) return; // thread has not finished getting the process counter related instance name
+
+                string sMachineName = System.Environment.MachineName;
 
                 if (cpu_usage != null)
                 {
@@ -22496,9 +22561,9 @@ namespace Thetis
                     cpu_usage = null;
                 }
 
-                if (m_bShowSystemCPUUsage/*bGetOverallCpuUsage*/ || sInstanceName == "")
+                if (m_bShowSystemCPUUsage || _sInstanceName == "")
                 {
-                    if (sInstanceName == "") // if issue with instance name
+                    if (_sInstanceName == "") // if issue with instance name
                     {
                         m_bShowSystemCPUUsage = true;
                         if (!systemToolStripMenuItem.Checked)
@@ -22514,7 +22579,7 @@ namespace Thetis
                 {
                     //NOTE: Environment.ProcessorCount in timer_cpu_meter_Tick is required in the calculation
                     //as .nextvalue returns a % compared to a single processor such that over 100% would mean 100% of a single cpu machine
-                    cpu_usage = new PerformanceCounter("Process", "% Processor Time", sInstanceName, sMachineName);
+                    cpu_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
                 }
                 float cpuPerc = cpu_usage.NextValue(); //MW0LGE_21k8 get the next value - prevents status bar showing 0% when swapping from overall to thetis only
             }
@@ -29073,16 +29138,19 @@ namespace Thetis
             // cpu ussage
             try
             {
-                if (cpu_usage != null)
+                if (_getInstanceNameComplete)
                 {
-                    if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
-                    float cpuPerc = cpu_usage.NextValue();
-                    if (!m_bShowSystemCPUUsage) cpuPerc /= Environment.ProcessorCount;
-                    toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", cpuPerc);
-                }
-                else
-                {
-                    disableCpuUsage();
+                    if (cpu_usage != null)
+                    {
+                        if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
+                        float cpuPerc = cpu_usage.NextValue();
+                        if (!m_bShowSystemCPUUsage) cpuPerc /= Environment.ProcessorCount;
+                        toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", cpuPerc);
+                    }
+                    else
+                    {
+                        disableCpuUsage();
+                    }
                 }
             }
             catch
@@ -52086,14 +52154,12 @@ namespace Thetis
         private void systemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_bShowSystemCPUUsage = true;
-            //CpuUsage(true);
             CpuUsage();
         }
 
         private void thetisOnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_bShowSystemCPUUsage = false;
-            //CpuUsage(false);
             CpuUsage();
         }
         #region QSOTimer
