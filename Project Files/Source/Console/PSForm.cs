@@ -157,11 +157,13 @@ namespace Thetis
             set
             {
                 _psenabled = value;
+
                 if (_psenabled)
                 {
                     // Set the system to supply feedback.
                     console.UpdateDDCs(console.RX2Enabled);
                     NetworkIO.SetPureSignal(1);
+                    NetworkIO.SendHighPriority(1); // send the HP packet
                     //console.UpdateRXADCCtrl();
                     console.UpdateAAudioMixerStates();
                     unsafe { cmaster.LoadRouterControlBit((void*)0, 0, 0, 1); }
@@ -172,14 +174,16 @@ namespace Thetis
                     // Set the system to turn-off feedback.
                     console.UpdateDDCs(console.RX2Enabled);
                     NetworkIO.SetPureSignal(0);
+                    NetworkIO.SendHighPriority(1); // send the HP packet
                     //console.UpdateRXADCCtrl();
                     console.UpdateAAudioMixerStates();
                     unsafe { cmaster.LoadRouterControlBit((void*)0, 0, 0, 0); }
                     console.radio.GetDSPTX(0).PSRunCal = false;
                 }
-               // console.EnableDup();
+                                               
+                // console.EnableDup();
                 if (console.path_Illustrator != null)
-                    console.path_Illustrator.pi_Changed();
+                    console.path_Illustrator.pi_Changed();                
             }
         }
 

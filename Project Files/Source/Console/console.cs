@@ -33270,8 +33270,18 @@ namespace Thetis
             //consider psstate ??
             if (!RX2Enabled || !tx)
             {
+                if (tx)
+                {
+                    if (!VFOATX && VFOBTX)
+                        txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+                    else if (VFOATX && !VFOBTX)
+                        txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                }
+                else
+                { 
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+                    }
             }
             else
             {
