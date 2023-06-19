@@ -27401,7 +27401,8 @@ namespace Thetis
             // new method takes two readings every 8ms into a threadsafe fifo queue, so those 100 of each will be spread over 800ms
             // MW0LGE [2.9.0.7] changed volts to 150
             //G8NJJ need similar code for Saturn here, but rates from Ssaturn will be different
-            while (chkPower.Checked && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D))
+            while (chkPower.Checked && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D || 
+                                        current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K))         //G8NJJ
             {
                 _voltsQueue.Enqueue(NetworkIO.getUserADC0());
                 _ampsQueue.Enqueue(NetworkIO.getUserADC1());
