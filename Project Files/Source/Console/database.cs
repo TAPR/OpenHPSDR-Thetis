@@ -36,6 +36,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Thetis
 {
@@ -9076,12 +9077,18 @@ namespace Thetis
 
                 if (oldTable.TableName == "State")
                 {
+                    //// test code using linq
+                    //DataRow tdr = oldTable.Rows.Cast<DataRow>().Where(key => key[0].ToString() == "VersionNumber").FirstOrDefault();
+                    //if(tdr != null) Debug.Print(Convert.ToString(tdr["Value"]));
+                    ////
+
                     foreach (DataRow rw in oldTable.Rows)
                     {
                         string thisKey = Convert.ToString(rw["Key"]);
                         if (thisKey == "VersionNumber")
                         {
                             _versionnumber = Convert.ToString(rw["Value"]);
+                            break;
                         }
                     }
                 }
@@ -9294,6 +9301,7 @@ namespace Thetis
                     case "DiversityForm":
                     case "AmpView":
                     case "PureSignal":
+                    case "BandStack2Form":
                         // Get table of same name in oldDB     
                         tempTable.Clear();
                         tempMergedTable.Clear();
