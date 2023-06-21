@@ -1076,7 +1076,11 @@ namespace Thetis
                         ClickTuneDisplay = bse.CTUNEnabled;
                         chkFWCATU.Checked = ClickTuneDisplay;
                         CentreFrequency = bse.CentreFrequency;
-                        ptbDisplayZoom.Value = bse.ZoomSlider;
+                        if (bse.ZoomSlider != ptbDisplayZoom.Value)
+                        {
+                            ptbDisplayZoom.Value = bse.ZoomSlider;
+                            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                        }
 
                         if (RX1Filter != bse.Filter)
                         {
@@ -5337,41 +5341,43 @@ namespace Thetis
 
             // Continuation of QSK-related band/mode-change management - see also QSKEnabled()
             qsk_band_changing = false;
+
+            //MW0LGE [pre g2] changed to use the property instead of checking the text, as one and the same
             if (RX1_band_change != oldBand) // actual band change, not just rotating the stack
             {
-                if (chkQSK.Text == "QSK" && !QSKEnabled) // We're changing from QSK off to on due to a mode change
+                if (/*chkQSK.Text == "QSK"*/ CurrentBreakInMode == BreakIn.QSK && !QSKEnabled) // We're changing from QSK off to on due to a mode change
                 {
                     QSKEnabled = true; // complete the postponed change started in SetRX1Mode() via QSKEnabled()                  
                 }
-                else if (!(chkQSK.Text == "QSK") && QSKEnabled) // We're changing from QSK on to off due to a mode change
+                else if (!(/*chkQSK.Text == "QSK"*/ CurrentBreakInMode == BreakIn.QSK) && QSKEnabled) // We're changing from QSK on to off due to a mode change
                 {
                     rx1_agcm_by_band[(int)oldBand] = non_qsk_agc;  // was set on the old band where it was on                     
                     non_qsk_agc = rx1_agcm_by_band[(int)RX1_band_change];
                     QSKEnabled = false;  // complete the postponed change started in SetRX1Mode() via QSKEnabled() 
                 }
-                else if (chkQSK.Text == "QSK" && QSKEnabled) // CW mode to CW mode with QSK on 
+                else if (/*chkQSK.Text == "QSK"*/ CurrentBreakInMode == BreakIn.QSK && QSKEnabled) // CW mode to CW mode with QSK on 
                 {
                     rx1_agcm_by_band[(int)oldBand] = non_qsk_agc;  // was set on the old band where it was on
                     non_qsk_agc = rx1_agcm_by_band[(int)RX1_band_change];
                     RX1AGCMode = AGCMode.CUSTOM;
                     ; // don't need to turn QSK on - it's already on
                 }
-                else if (!(chkQSK.Text == "QSK") && !QSKEnabled) // Either CW to CW or non-CW to non-CW, with QSK off
+                else if (!(/*chkQSK.Text == "QSK"*/ CurrentBreakInMode == BreakIn.QSK) && !QSKEnabled) // Either CW to CW or non-CW to non-CW, with QSK off
                 {
                     RX1AGCMode = rx1_agcm_by_band[(int)RX1_band_change];
                 }
             }
             else // just rotating the stack without changing bands
             {
-                if (chkQSK.Text == "QSK" && !QSKEnabled) // We're changing from QSK off to on due to a mode change
+                if (/*chkQSK.Text == "QSK"*/ CurrentBreakInMode == BreakIn.QSK && !QSKEnabled) // We're changing from QSK off to on due to a mode change
                 {
                     QSKEnabled = true; // complete the postponed change started in SetRX1Mode() via QSKEnabled()                  
                 }
-                else if (!(chkQSK.Text == "QSK") && QSKEnabled) // We're changing from QSK on to off due to a mode change
+                else if (!(/*chkQSK.Text == "QSK"*/ CurrentBreakInMode == BreakIn.QSK) && QSKEnabled) // We're changing from QSK on to off due to a mode change
                 {
                     QSKEnabled = false;  // complete the postponed change started in SetRX1Mode() via QSKEnabled() 
                 }
-                else if (chkQSK.Text == "QSK" && QSKEnabled) // CW mode to CW mode with QSK on 
+                else if (/*chkQSK.Text == "QSK"*/ CurrentBreakInMode == BreakIn.QSK && QSKEnabled) // CW mode to CW mode with QSK on 
                 {
                     ; // don't need to turn QSK on - it's already on
                 }
@@ -21416,20 +21422,6 @@ namespace Thetis
                     lblVFOSplit.BackColor = System.Drawing.Color.Transparent;
             }
         }
-
-        public bool RIT
-        {
-            get { return chkRIT.Checked; }
-            set
-            {
-                chkRIT.Checked = value;
-                if (value == true)
-                    lblRITLabel.BackColor = System.Drawing.Color.Blue;
-                else
-                    lblRITLabel.BackColor = System.Drawing.Color.Transparent;
-            }
-        }
-
         public bool RITOn
         {
             get { return chkRIT.Checked; }
@@ -23587,6 +23579,15 @@ namespace Thetis
                         low += offset;
                         high += offset;
                     }
+                }
+            }
+            else //RS
+            {
+                if (VFOSync && chkRIT.Checked)
+                {
+                    int offset = (int)udRIT.Value;
+                    low += offset;
+                    high += offset;
                 }
             }
 
@@ -35173,7 +35174,7 @@ namespace Thetis
                         {
                             radio.GetDSPRX(0, 1).RXOsc = rx2_osc;
                         }
-                        else chkEnableMultiRX.Checked = false;
+                        else chkEnableMultiRX.Checked = false;                        
                     }
 
                 }
@@ -35736,20 +35737,21 @@ namespace Thetis
             if (chkEnableMultiRX.Checked && !rx2_enabled && !mox)  //MW0LGE [2.7.0.9] only when RX'ing. Fixes issue where multirx would be outside sample area after a tx
             {
                 int diff = (int)((VFOBFreq - VFOAFreq) * 1e6);
-                //if (chkRIT.Checked && !mox) diff -= (int)udRIT.Value; // MW0LGE [2.9.0.7]
+                if (chkRIT.Checked && !mox) diff -= (int)udRIT.Value; // MW0LGE [2.9.0.7] //RS uncommented
                 double rx2_osc = radio.GetDSPRX(0, 0).RXOsc - diff;
 
+                //RS re-added
                 // MW0LGE [2.9.0.7] commented out
-                //if (rx2_osc < -sample_rate_rx1 / 2)
-                //{
-                //    VFOBFreq = VFOAFreq + (sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc - 1) * 0.0000010;
-                //    return;
-                //}
-                //else if (rx2_osc > sample_rate_rx1 / 2)
-                //{
-                //    VFOBFreq = VFOAFreq + (-sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc + 1) * 0.0000010;
-                //    return;
-                //}
+                if (rx2_osc < -sample_rate_rx1 / 2)
+                {
+                    VFOBFreq = VFOAFreq + (sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc - 1) * 0.0000010;
+                    return;
+                }
+                else if (rx2_osc > sample_rate_rx1 / 2)
+                {
+                    VFOBFreq = VFOAFreq + (-sample_rate_rx1 / 2 + radio.GetDSPRX(0, 0).RXOsc + 1) * 0.0000010;
+                    return;
+                }
 
                 if (rx2_osc > -sample_rate_rx1 / 2 && rx2_osc < sample_rate_rx1 / 2)
                 {
@@ -36649,7 +36651,22 @@ namespace Thetis
 
             return (dspMode == DSPMode.AM || dspMode == DSPMode.DSB || dspMode == DSPMode.FM || dspMode == DSPMode.SAM || dspMode == DSPMode.SPEC || dspMode == DSPMode.DRM);
         }
+        /// <summary>
+        /// used by various functions that need to be adjusted by the rit value
+        /// for hz calcs
+        /// </summary>
+        private int ritShiftForCTUNDisplay(int rx)
+        {
+            int nRitShift; //RS
+            bool bCTuneDisplay = rx == 1 ? CTuneDisplay : CTuneRX2Display;
 
+            if (RITOn && bCTuneDisplay)
+                nRitShift = RITValue;
+            else
+                nRitShift = 0;
+
+            return nRitShift;
+        }
         unsafe private void picDisplay_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -36660,9 +36677,20 @@ namespace Thetis
                 int filt_low_x = 0;
                 int filt_high_x = 0;
 
+                int nRitShift = 0; //RS
+
+                if (rx2_enabled && e.Y > picDisplay.Height / 2)
+                {
+                    if (VFOSync) nRitShift = ritShiftForCTUNDisplay(2);                    
+                }
+                else     
+                {
+                    nRitShift = ritShiftForCTUNDisplay(1);
+                }
+
                 //MW0LGE_21h
-                int RX1diff = HzToPixel((float)((VFOAFreq - CentreFrequency) * 1e6));
-                int RX2diff = HzToPixel((float)((VFOBFreq - CentreRX2Frequency) * 1e6), 2);
+                int RX1diff = HzToPixel((float)((VFOAFreq - CentreFrequency) * 1e6) + nRitShift);
+                int RX2diff = HzToPixel((float)((VFOBFreq - CentreRX2Frequency) * 1e6) + nRitShift, 2);
 
                 if (rx2_enabled && e.Y > picDisplay.Height / 2) // if RX2 is enabled and the cursor is in the lower half of the display
                 {
@@ -36759,6 +36787,7 @@ namespace Thetis
                         {
                             dCentreFreq = CentreFrequency * 1e6;
                             dVfo = dCentreFreq + PixelToHz(e.X, 1);
+                            dVfo -= nRitShift; //RS
                             nL = Display.RXDisplayLow;
                             nH = Display.RXDisplayHigh;
                             if (rx1_dsp_mode == DSPMode.CWL)
@@ -36770,6 +36799,7 @@ namespace Thetis
                         {
                             dCentreFreq = CentreRX2Frequency * 1e6;
                             dVfo = dCentreFreq + PixelToHz(e.X, 2);
+                            dVfo -= nRitShift; //RS
                             nL = Display.RX2DisplayLow;
                             nH = Display.RX2DisplayHigh;
                             if (rx2_dsp_mode == DSPMode.CWL)
@@ -37892,6 +37922,7 @@ namespace Thetis
                         bOn60mChan = RX2IsOn60mChannel();
                         x = PixelToHz(e.X, 2);
                         rf_freq = VFOBFreq + (double)x * 0.0000010;
+                        rf_freq -= nRitShift * 1e-6; //RS
                         localFreq = VFOBFreq;
                         loclCentreFrequency = CentreRX2Frequency;
                         localClickTuneDisplay = click_tune_rx2_display;
@@ -37921,6 +37952,7 @@ namespace Thetis
                         bOn60mChan = RX1IsOn60mChannel();
                         x = PixelToHz(e.X, 1);
                         rf_freq = VFOAFreq + (double)x * 0.0000010;
+                        rf_freq -= nRitShift * 1e-6; //RS
                         localFreq = VFOAFreq;
                         loclCentreFrequency = CentreFrequency;
                         localClickTuneDisplay = click_tune_display;
@@ -38126,8 +38158,12 @@ namespace Thetis
 
         private void getFilterEdgesInPixels(MouseEventArgs e, ref int low_x, ref int high_x, ref int vfoa_sub_x, ref int vfoa_sub_low_x, ref int vfoa_sub_high_x)
         {
+            int nRitShift;
+
             if (rx2_enabled && e.Y > picDisplay.Height / 2)//rx2
             {
+                nRitShift = VFOSync ? ritShiftForCTUNDisplay(2) : 0;
+
                 if (mox)// && chkVFOBTX.Checked)
                 {
                     low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow);
@@ -38136,13 +38172,15 @@ namespace Thetis
                 else if (rx2_dsp_mode != DSPMode.DRM)
                 {
                     //MW0LGE_21h changes so that CTUN on works for filter drag
-                    int diff = HzToPixel((float)((VFOBFreq - CentreRX2Frequency) * 1e6), 2);
+                    int diff = HzToPixel((float)((VFOBFreq - CentreRX2Frequency) * 1e6) + nRitShift, 2); //RS
                     low_x = diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterLow, 2) - HzToPixel(0.0f, 2);
                     high_x = diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterHigh, 2) - HzToPixel(0.0f, 2);
                 }
             }
             else
             {
+                nRitShift = ritShiftForCTUNDisplay(1);
+
                 if (mox)// && chkVFOATX.Checked)
                 {
                     low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow);
@@ -38151,7 +38189,7 @@ namespace Thetis
                 else if (rx1_dsp_mode != DSPMode.DRM)
                 {
                     //MW0LGE_21h changes so that CTUN on works for filter drag
-                    int diff = HzToPixel((float)((VFOAFreq - CentreFrequency) * 1e6));
+                    int diff = HzToPixel((float)((VFOAFreq - CentreFrequency) * 1e6) + nRitShift); //RS
                     low_x = diff + HzToPixel(radio.GetDSPRX(0, 0).RXFilterLow) - HzToPixel(0.0f);
                     high_x = diff + HzToPixel(radio.GetDSPRX(0, 0).RXFilterHigh) - HzToPixel(0.0f);
                 }
@@ -38700,7 +38738,7 @@ namespace Thetis
                                 //  if (click_tune_rx2_display || click_tune_display)
                                 // {
                                 // spectrum_drag_last_x = e.X;
-
+                                
                                 // MW0LGE block below handles dragging top frequency bars
 
                                 int low_x = 0, high_x = 0;
@@ -46730,6 +46768,7 @@ namespace Thetis
                 //  radio.GetDSPRX(1, 0).Copy(radio.GetDSPRX(0, 0));
 
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                if(rx2_enabled) txtVFOBFreq_LostFocus(this, EventArgs.Empty); //RS force update even if freqs the same for vfoa/b as will be ignored in txtVFOAFreq_LostFocus
             }
             else
             {
@@ -47493,7 +47532,7 @@ namespace Thetis
             if (SetupForm.NotchAdminBusy) return; // dont add if using add/edit on the setup form
 
             double vfoHz = VFOAFreq * 1.0e6;
-            if (RIT) vfoHz += (double)RITValue * 1e-6; // check for RIT
+            if (RITOn) vfoHz += (double)RITValue;// * 1e-6; // check for RIT  //RS
 
             // shift into sideband
             vfoHz += notchSidebandShift(1); //MW0LGE_21k9rc4

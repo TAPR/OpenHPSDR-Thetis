@@ -6660,14 +6660,22 @@ namespace Thetis
                 _widthHz = nWidthHz;
             }
         }        
-        private static List<clsNotchCoords> handleNotches(int rx, bool bottom, int cwSideToneShift, int Low, int High, int nVerticalShift, int top, int width, int W, int H, bool bDraw)//, int expandHz = 0)
+        private static List<clsNotchCoords> handleNotches(int rx, bool bottom, int cwSideToneShift, int nLow, int nHigh, int nVerticalShift, int top, int width, int W, int H, bool bDraw)//, int expandHz = 0)
         {
             long rf_freq = vfoa_hz;
-            int rit = rit_hz;
+            int rit;// rit_hz; //RS
 
-            if (/*bottom || */(current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) // MW0LGE
+            if (/*bottom || */(/*current_display_mode_bottom == DisplayMode.PANAFALL &&*/ rx == 2)) // MW0LGE //RS /*
             {
                 rf_freq = vfob_hz;
+                if (console.VFOSync)
+                    rit = console.ClickTuneRX2Display ? 0 : rit_hz;
+                else
+                    rit = 0;
+            }
+            else
+            {
+                rit = console.CTuneDisplay ? 0 : rit_hz;
             }
 
             rf_freq += cwSideToneShift;
@@ -6676,7 +6684,7 @@ namespace Thetis
             SharpDX.Direct2D1.Brush b;
             SharpDX.Direct2D1.Brush t;
 
-            List<MNotch> notches = MNotchDB.NotchesInBW(rf_freq, Low - console.MaxFilterWidth, High + console.MaxFilterWidth);
+            List<MNotch> notches = MNotchDB.NotchesInBW(rf_freq, nLow - console.MaxFilterWidth, nHigh + console.MaxFilterWidth);
             List<clsNotchCoords> notchData = new List<clsNotchCoords>();
 
             foreach (MNotch n in notches)
@@ -6688,9 +6696,9 @@ namespace Thetis
                 
                 if (bDraw)
                 {
-                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
-                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - n.FWidth / 2 - Low - rit) / width * W);
-                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + n.FWidth / 2 - Low - rit) / width * W);
+                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - nLow - rit) / width * W);
+                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - n.FWidth / 2 - nLow - rit) / width * W);
+                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + n.FWidth / 2 - nLow - rit) / width * W);
                 }
                 else
                 {
@@ -6698,9 +6706,9 @@ namespace Thetis
                     //double nw = n.FWidth < 100 ? 100 : n.FWidth;
                     double dNewWidth = n.FWidth < _mnfMinSize ? _mnfMinSize : n.FWidth; // use the min width of filter from WDSP
                     dNewWidth += 20; // fudge factor to align better with spectrum notch
-                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
-                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - rit/* - expandHz*/) / width * W);
-                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - rit/* + expandHz*/) / width * W);
+                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - nLow - rit) / width * W);
+                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - nLow - rit/* - expandHz*/) / width * W);
+                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - nLow - rit/* + expandHz*/) / width * W);
                 }
 
                 clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, _tnf_active && n.Active, (int)n.FWidth);
@@ -6931,12 +6939,14 @@ namespace Thetis
             #region RX filter and filter lines
             if (!local_mox && sub_rx1_enabled && rx == 1) //multi-rx
             {
+                int local_rit_hz = console.CTuneDisplay ? 0 : rit_hz; //RS
+
                 if ((bIsWaterfall && m_bShowRXFilterOnWaterfall) || !bIsWaterfall)
                 {
                     // draw Sub RX filter
                     // get filter screen coordinates
-                    int filter_left_x = (int)((float)(filter_low - Low + vfoa_sub_hz - vfoa_hz - rit_hz) / width * W);
-                    int filter_right_x = (int)((float)(filter_high - Low + vfoa_sub_hz - vfoa_hz - rit_hz) / width * W);
+                    int filter_left_x = (int)((float)(filter_low - Low + vfoa_sub_hz - vfoa_hz - local_rit_hz) / width * W); //RS
+                    int filter_right_x = (int)((float)(filter_high - Low + vfoa_sub_hz - vfoa_hz - local_rit_hz) / width * W); //RS
 
                     drawFilterOverlayDX2D(m_bDX2_sub_rx_filter_brush, filter_left_x, filter_right_x, W, H, rx, top, bottom, nVerticalShift);
                 }
@@ -6944,7 +6954,7 @@ namespace Thetis
                 if ((bIsWaterfall && m_bShowRXZeroLineOnWaterfall) || !bIsWaterfall)
                 {
                     // draw Sub RX 0Hz line
-                    int x = (int)((float)(vfoa_sub_hz - vfoa_hz - Low) / width * W);
+                    int x = (int)((float)(vfoa_sub_hz - vfoa_hz - Low - local_rit_hz) / width * W);
                     drawLineDX2D(m_bDX2_sub_rx_zero_line_pen, x, nVerticalShift + top, x, nVerticalShift + H, 2);
                 }
             }
@@ -6998,6 +7008,17 @@ namespace Thetis
                     int filter_low_tmp;
                     int filter_high_tmp;
 
+                    int local_rit_hz; //RS
+                    if (rx == 1)
+                    {
+                        if (split_enabled && console.CTuneDisplay)
+                            local_rit_hz = 0;
+                        else
+                            local_rit_hz = rit_hz;
+                    }
+                    else
+                        local_rit_hz = 0;
+
                     if (local_mox)
                     {
                         filter_low_tmp = filter_low;
@@ -7011,13 +7032,13 @@ namespace Thetis
 
                     if (!split_enabled)
                     {
-                        filter_left_x = (int)((float)(filter_low_tmp - Low - f_diff + xit_hz) / width * W);
-                        filter_right_x = (int)((float)(filter_high_tmp - Low - f_diff + xit_hz) / width * W);
+                        filter_left_x = (int)((float)(filter_low_tmp - Low - f_diff + xit_hz - local_rit_hz) / width * W); //RS rit aded
+                        filter_right_x = (int)((float)(filter_high_tmp - Low - f_diff + xit_hz - local_rit_hz) / width * W); //RS rit aded
                     }
                     else // MW0LGE_21k8
                     {
-                        filter_left_x = (int)((float)(filter_low_tmp - Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-                        filter_right_x = (int)((float)(filter_high_tmp - Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
+                        filter_left_x = (int)((float)(filter_low_tmp - Low + xit_hz + (vfoa_sub_hz - vfoa_hz) - local_rit_hz) / width * W); //RS rit aded
+                        filter_right_x = (int)((float)(filter_high_tmp - Low + xit_hz + (vfoa_sub_hz - vfoa_hz) - local_rit_hz) / width * W); //RS rit aded
                     }
 
                     if (local_mox)
@@ -7253,14 +7274,15 @@ namespace Thetis
                 }
                 if (draw_tx_cw_freq)
                 {
-                    if (rx == 1 && !local_mox &&
+                    if (rx == 1 && !local_mox && !(rx2_enabled && tx_on_vfob) && //RS no show if txing on vfob and rx2 in use
                         (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
+                        int local_rit_hz = console.CTuneDisplay ? 0 : rit_hz; //RS
                         int cw_line_x1;
                         if (!split_enabled)
                             cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz - rit_hz) / width * W);
                         else
-                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
+                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - local_rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W); //RS rit change
 
                         drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x1, nVerticalShift + top, cw_line_x1, nVerticalShift + H, tx_filter_pen.Width);
                     }
@@ -7270,9 +7292,9 @@ namespace Thetis
                     {
                         int cw_line_x1;
                         if (!split_enabled)
-                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz - rit_hz) / width * W);
+                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz) / width * W); //RS rit removed
                         else
-                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
+                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W); //RS rit removed
 
                         drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x1, nVerticalShift + top, cw_line_x1, nVerticalShift + H, tx_filter_pen.Width);
                     }
@@ -7388,6 +7410,8 @@ namespace Thetis
 
             if (rx == 1)
             {
+                int local_rit_hz = console.CTuneDisplay ? 0 : rit_hz; // scales dont need to move in CTUN on mode //RS
+
                 if (local_mox)
                 {
                     //if (split_enabled) vfo = vfoa_sub_hz;//MW0LGE_21k8
@@ -7395,20 +7419,22 @@ namespace Thetis
                     else vfo = vfoa_hz;
                     vfo += xit_hz;
                 }
-                else if (/*mox*/local_mox && tx_on_vfob)
-                {
-                    if (console.RX2Enabled) vfo = vfoa_hz + rit_hz;
-                    else vfo = vfoa_sub_hz;
-                }
-                else vfo = vfoa_hz + rit_hz;
+                //else if (/*mox*/local_mox && tx_on_vfob)
+                //{
+                //    if (console.RX2Enabled) vfo = vfoa_hz + rit_hz;
+                //    else vfo = vfoa_sub_hz;
+                //}
+                else vfo = vfoa_hz + local_rit_hz;
             }
             else //if(rx==2)
             {
+                int local_rit_hz = console.CTuneRX2Display ? 0 : rit_hz; // scales dont need to move in CTUN on mode //RS
+
                 if (local_mox)
-                    vfo = vfob_hz + xit_hz;
+                    vfo = vfob_hz + local_rit_hz;
                 else
                 {
-                    if (console.VFOSync) vfo = vfob_hz + rit_hz;
+                    if (console.VFOSync) vfo = vfob_hz + local_rit_hz;
                     else vfo = vfob_hz;
                 }
             }
