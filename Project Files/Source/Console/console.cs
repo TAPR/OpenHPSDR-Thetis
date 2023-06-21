@@ -38158,7 +38158,7 @@ namespace Thetis
 
         private void getFilterEdgesInPixels(MouseEventArgs e, ref int low_x, ref int high_x, ref int vfoa_sub_x, ref int vfoa_sub_low_x, ref int vfoa_sub_high_x)
         {
-            int nRitShift;
+            int nRitShift; //RS
 
             if (rx2_enabled && e.Y > picDisplay.Height / 2)//rx2
             {
