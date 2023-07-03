@@ -19116,7 +19116,7 @@ namespace Thetis
         private void btnVFOFreq_Click(object sender, EventArgs e)
         {
             double vfo = console.VFOAFreq;
-            if (console.RIT) vfo += (double)console.RITValue * 1e-6; // check for RIT
+            if (console.RITOn) vfo += (double)console.RITValue * 1e-6; // check for RIT
             udMNFFreq.Value = (decimal)vfo;
         }
 
