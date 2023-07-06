@@ -16408,6 +16408,8 @@ namespace Thetis
                         cmaster.SetADCSupply(0, 50);
                         NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.Saturn;
+                        AmpSens = 66.23f;                                // current reading sensitivity
+                        AmpVoff = 0.0f;                                  // current sensor voltage offset
                         break;
                     case HPSDRModel.ANAN_G2_1K:             // G8NJJ: likely to need further changes for PA
                         chkDX.Visible = true;
@@ -16417,6 +16419,8 @@ namespace Thetis
                         cmaster.SetADCSupply(0, 50);
                         NetworkIO.LRAudioSwap(0);
                         CurrentHPSDRHardware = HPSDRHW.Saturn;
+                        AmpSens = 66.23f;                                // current reading sensitivity
+                        AmpVoff = 0.0f;                                  // current sensor voltage offset
                         break;
 
                 }
